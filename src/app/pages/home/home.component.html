@@ -1,0 +1,43 @@
+<div class="home-container">
+
+  <div class="theme-toggle">
+    <mat-slide-toggle (change)="toggleTheme()" [checked]="isDark">
+      🌙 Dark mode
+    </mat-slide-toggle>
+  </div>
+
+  <h1>Game Library</h1>
+
+  <div class="card-grid">
+    <mat-card class="home-card" [routerLink]="'/list'">
+      <mat-card-title>
+        <mat-icon>sports_esports</mat-icon>
+        View Collection
+      </mat-card-title>
+      <mat-card-content>
+        <p>Filter and browse your game collection by platform.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="home-card" [routerLink]="'/add'">
+      <mat-card-title>
+        <mat-icon>add_circle</mat-icon>
+        Add New Game
+      </mat-card-title>
+      <mat-card-content>
+        <p>Add a new game to your library.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="home-card" [routerLink]="'/tools'">
+      <mat-card-title>
+        <mat-icon>settings</mat-icon>
+        Database Tools
+      </mat-card-title>
+      <mat-card-content>
+        <p>Import from file or export your collection.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
