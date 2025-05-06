@@ -1,8 +1,8 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
 import { GameInterface } from '../../models/game.interface';
-import {MatCard, MatCardContent, MatCardTitle} from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
@@ -25,7 +25,7 @@ export class DatabaseToolsComponent {
   async clearDatabase(): Promise<void> {
     const games = await this._db.getAll();
     if (!games.length) {
-      this._snackbar.open('No data to clear.', 'Close', { duration: 3000 });
+      this._snackbar.open('No data to clear.', 'Close', {duration: 3000});
       return;
     }
 
@@ -39,7 +39,7 @@ export class DatabaseToolsComponent {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this._db.clear().then(() => {
-          this._snackbar.open('All data has been deleted.', 'Close', { duration: 3000 });
+          this._snackbar.open('All data has been deleted.', 'Close', {duration: 3000});
         });
       }
     });
@@ -48,11 +48,11 @@ export class DatabaseToolsComponent {
   async exportDatabaseAsJSON(): Promise<void> {
     const data = await this._db.getAll();
     if (!data.length) {
-      this._snackbar.open('No data to export.', 'Close', { duration: 3000 });
+      this._snackbar.open('No data to export.', 'Close', {duration: 3000});
       return;
     }
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -93,9 +93,9 @@ export class DatabaseToolsComponent {
         await this._db.add(game);
       }
 
-      this._snackbar.open('Default data imported successfully.', 'Close', { duration: 3000 });
+      this._snackbar.open('Default data imported successfully.', 'Close', {duration: 3000});
     } catch {
-      this._snackbar.open('Failed to import default data.', 'Close', { duration: 3000 });
+      this._snackbar.open('Failed to import default data.', 'Close', {duration: 3000});
     }
   }
 
@@ -111,6 +111,6 @@ export class DatabaseToolsComponent {
       await this._db.add(game);
     }
 
-    this._snackbar.open('Games imported successfully.', 'Close', { duration: 3000 });
+    this._snackbar.open('Games imported successfully.', 'Close', {duration: 3000});
   }
 }

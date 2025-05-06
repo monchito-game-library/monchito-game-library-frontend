@@ -1,6 +1,6 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ThemeService {
   private renderer: Renderer2;
   private readonly themeKey = 'user-theme';
@@ -10,8 +10,8 @@ export class ThemeService {
   }
 
   initTheme(): void {
-    const saved = localStorage.getItem(this.themeKey);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved: string | null = localStorage.getItem(this.themeKey);
+    const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     if (saved === 'dark' || (!saved && prefersDark)) {
       this.setDarkTheme();

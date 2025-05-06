@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 import { GameRepositoryInterface } from '../models/game-repository.interface';
 import { GameInterface } from '../models/game.interface';
-import {GamesConsoleType} from '../models/games-console.type';
+import { GamesConsoleType } from '../models/games-console.type';
 
 function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== 'undefined';
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class IndexedDBRepository extends Dexie implements GameRepositoryInterface {
   private _dbEnabled = false;
   games!: Table<GameInterface, number>;
