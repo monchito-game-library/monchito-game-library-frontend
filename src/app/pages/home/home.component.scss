@@ -4,11 +4,25 @@
   padding: 4rem 2rem;
   text-align: center;
 
-  .theme-toggle {
+  .top-controls {
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     z-index: 1000;
+
+    .lang-selector {
+      width: 130px;
+    }
+
+    .theme-toggle {
+      background-color: var(--mat-sys-surface-container-high);
+      color: var(--mat-sys-on-surface);
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
   }
 
   h1 {

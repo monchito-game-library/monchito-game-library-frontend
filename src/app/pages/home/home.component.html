@@ -1,42 +1,61 @@
 <div class="home-container">
-  <div class="theme-toggle">
-    <mat-slide-toggle (change)="toggleTheme()" [checked]="isDark">
-      🌙 Dark mode
-    </mat-slide-toggle>
+  <div class="top-controls">
+    <mat-form-field appearance="outline" class="lang-selector">
+      <mat-label>{{ 'home.language.title' | transloco }}</mat-label>
+      <mat-select [formControl]="selectedLangControl">
+        <mat-select-trigger>
+          {{ 'home.language.option.' + selectedLangControl.value | transloco }}
+        </mat-select-trigger>
+        @for (lang of availableLanguages; track lang.code) {
+          <mat-option [value]="lang.code">
+            {{ lang.labelKey | transloco }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-icon-button
+      class="theme-toggle"
+      (click)="toggleTheme()"
+      [matTooltip]="isDark ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco)"
+      aria-label="Toggle dark mode"
+    >
+      <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
   </div>
 
-  <h1>Game Library</h1>
+  <h1>{{ 'home.title' | transloco }}</h1>
 
   <div class="card-grid">
-    <mat-card class="home-card" [routerLink]="'/list'">
+    <mat-card [routerLink]="'/list'" class="home-card">
       <mat-card-title>
         <mat-icon>sports_esports</mat-icon>
-        View Collection
+        {{ 'home.viewCollection.title' | transloco }}
       </mat-card-title>
       <mat-card-content>
-        <p>Filter and browse your game collection by platform.</p>
+        <p>{{ 'home.viewCollection.description' | transloco }}</p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="home-card" [routerLink]="'/add'">
+    <mat-card [routerLink]="'/add'" class="home-card">
       <mat-card-title>
         <mat-icon>add_circle</mat-icon>
-        Add New Game
+        {{ 'home.addGame.title' | transloco }}
       </mat-card-title>
       <mat-card-content>
-        <p>Add a new game to your library.</p>
+        <p>{{ 'home.addGame.description' | transloco }}</p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="home-card" [routerLink]="'/tools'">
+    <mat-card [routerLink]="'/tools'" class="home-card">
       <mat-card-title>
         <mat-icon>settings</mat-icon>
-        Database Tools
+        {{ 'home.databaseTools.title' | transloco }}
       </mat-card-title>
       <mat-card-content>
-        <p>Import from file or export your collection.</p>
+        <p>{{ 'home.databaseTools.description' | transloco }}</p>
       </mat-card-content>
     </mat-card>
   </div>
 </div>
-
