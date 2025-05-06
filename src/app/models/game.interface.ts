@@ -1,5 +1,5 @@
-import {GameConditionType} from './game-condition.type';
-import {GamesConsoleType} from './games-console.type';
+import { GameConditionType } from './game-condition.type';
+import { GamesConsoleType } from './games-console.type';
 
 export interface GameInterface {
   id?: number; // Autogenerado por IndexedDB
