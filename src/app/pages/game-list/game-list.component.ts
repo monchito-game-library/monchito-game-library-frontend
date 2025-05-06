@@ -1,9 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GameInterface } from '../../models/game.interface';
+import { GameInterface } from '../../models/interfaces/game.interface';
 import { FormsModule } from '@angular/forms';
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
-import { GamesConsoleType } from '../../models/games-console.type';
+import { GamesConsoleType } from '../../models/types/games-console.type';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
