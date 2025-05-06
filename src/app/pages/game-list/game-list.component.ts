@@ -1,23 +1,17 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameInterface } from '../../models/game.interface';
 import { FormsModule } from '@angular/forms';
-import {IndexedDBRepository} from '../../repositories/indexeddb.repository';
-import {GamesConsoleType} from '../../models/games-console.type';
-import {MatInput} from '@angular/material/input';
-import {MatFormField, MatLabel} from '@angular/material/form-field';
-import {MatSelect} from '@angular/material/select';
-import {MatOption} from '@angular/material/core';
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardSubtitle,
-  MatCardTitle
-} from '@angular/material/card';
-import {MatIconButton} from '@angular/material/button';
-import {RouterLink} from '@angular/router';
-import {MatIcon} from '@angular/material/icon';
+import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { GamesConsoleType } from '../../models/games-console.type';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
+import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatIconButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-game-list',
@@ -42,7 +36,7 @@ export class GameListComponent implements OnInit {
   allGames = signal<GameInterface[]>([]);
   searchTerm = signal('');
 
-  consoles = ['PS5','PS4','PS3','PS2','PSP','XBOX ORIGINAL','XBOX 360','XBOX ONE','XBOX SERIES','SWITCH'];
+  consoles = ['PS5', 'PS4', 'PS3', 'PS2', 'PSP', 'XBOX ORIGINAL', 'XBOX 360', 'XBOX ONE', 'XBOX SERIES', 'SWITCH'];
 
   filteredGames = computed(() => {
     const platform = this.selectedConsole;

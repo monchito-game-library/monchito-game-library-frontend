@@ -1,7 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { GameInterface } from './models/game.interface';
-import {IndexedDBRepository} from './repositories/indexeddb.repository'
+import { IndexedDBRepository } from './repositories/indexeddb.repository'
 
 @Component({
   selector: 'app-root',

@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {MatCard, MatCardContent, MatCardTitle} from '@angular/material/card';
-import {MatIcon} from '@angular/material/icon';
-import {MatSlideToggle} from '@angular/material/slide-toggle';
-import {ThemeService} from '../../services/theme.service';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +13,9 @@ import {ThemeService} from '../../services/theme.service';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  isDark = false;
+  isDark: boolean = false;
 
-  constructor(private themeService: ThemeService) {
-  }
+  private themeService: ThemeService = inject(ThemeService);
 
   ngOnInit(): void {
     this.themeService.initTheme();
