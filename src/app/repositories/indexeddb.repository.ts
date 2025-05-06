@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
-import { GameRepositoryInterface } from '../models/game-repository.interface';
-import { GameInterface } from '../models/game.interface';
-import { GamesConsoleType } from '../models/games-console.type';
+import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
+import { GameInterface } from '../models/interfaces/game.interface';
+import { GamesConsoleType } from '../models/types/games-console.type';
 
 function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== 'undefined';

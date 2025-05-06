@@ -19,7 +19,8 @@ import { MatButton } from '@angular/material/button';
     MatDialogClose
   ],
   templateUrl: './confirm-dialog.component.html',
-  styleUrl: './confirm-dialog.component.scss'
+  styleUrl: './confirm-dialog.component.scss',
+  standalone: true
 })
 export class ConfirmDialogComponent {
   data = inject<{ title: string; message: string }>(MAT_DIALOG_DATA);

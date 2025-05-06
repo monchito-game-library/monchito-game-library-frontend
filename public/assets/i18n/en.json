@@ -1,0 +1,50 @@
+{
+  "home": {
+    "darkMode": "Dark mode",
+    "title": "Game Library",
+    "viewCollection": {
+      "title": "View Collection",
+      "description": "Filter and browse your game collection by platform."
+    },
+    "addGame": {
+      "title": "Add New Game",
+      "description": "Add a new game to your library."
+    },
+    "databaseTools": {
+      "title": "Database Tools",
+      "description": "Import from file or export your collection."
+    },
+    "tooltip": {
+      "darkMode": "Switch to dark mode",
+      "lightMode": "Switch to light mode"
+    },
+    "language": {
+      "title": "Language",
+      "option": {
+        "en": "English",
+        "es": "Spanish"
+      }
+    }
+  },
+  "tools": {
+    "title": "Database Tools",
+    "description": "You can export, import or clear your local game database.",
+    "export": "Export as games.json",
+    "import": "Import from JSON",
+    "clear": "Clear all data",
+    "snackbar": {
+      "noDataToExport": "No data to export.",
+      "noDataToClear": "No data to clear.",
+      "dataCleared": "All data has been deleted.",
+      "importSuccess": "Games imported successfully.",
+      "defaultImportSuccess": "Default data imported successfully.",
+      "defaultImportFail": "Failed to import default data."
+    },
+    "dialog": {
+      "clearTitle": "Clear All Data",
+      "clearMessage": "Are you sure you want to delete all saved data? This action cannot be undone.",
+      "loadTitle": "Load Default Data?",
+      "loadMessage": "No data found. Would you like to load the default data from assets/games.json?"
+    }
+  }
+}
