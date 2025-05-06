@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.tools-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  box-sizing: border-box;
+  position: relative;
+
+  .back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+  }
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  mat-card-content {
+    margin-top: 1.5rem;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+
+    button {
+      width: 100%;
+    }
+  }
+}

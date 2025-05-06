@@ -1,0 +1,29 @@
+<mat-card class="tools-card">
+
+  <button mat-icon-button class="back-button" [routerLink]="['/']" aria-label="Go back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <mat-card-title>Database Tools</mat-card-title>
+
+  <mat-card-content>
+
+    <p>You can export, import or clear your local game database.</p>
+
+    <div class="button-group">
+      <button mat-flat-button color="primary" (click)="exportDatabaseAsJSON()">
+        Export as games.json
+      </button>
+
+      <input type="file" accept="application/json" hidden #fileInput (change)="importGamesFromFile($event)">
+      <button mat-flat-button color="accent" (click)="handleImport(fileInput)">
+        Import from JSON
+      </button>
+
+      <button mat-flat-button color="primary" type="submit" (click)="clearDatabase()">
+        Clear all data
+      </button>
+    </div>
+  </mat-card-content>
+
+</mat-card>

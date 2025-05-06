@@ -1,0 +1,50 @@
+<div class="list-container">
+
+  <div class="summary-bar">
+    <button mat-icon-button class="back-button" routerLink="/home" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <mat-form-field appearance="outline" class="filter-input">
+      <mat-label>Search by Title</mat-label>
+      <input matInput [(ngModel)]="searchTerm" placeholder="e.g. Uncharted">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-select">
+      <mat-label>Filter by Console</mat-label>
+      <mat-select [(ngModel)]="selectedConsole">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let c of consoles" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="summary-info">
+      <span><strong>Total Games:</strong> {{ filteredGames().length }}</span>
+      <span><strong>Total Spent:</strong> {{ getTotalPrice() | currency:'EUR' }}</span>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <mat-card class="game-card" *ngFor="let game of filteredGames()">
+      <mat-card-header>
+        <mat-card-title>
+          {{ game.title }}
+          <button mat-icon-button color="primary" [routerLink]="['/update', game.id]">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-card-title>
+        <mat-card-subtitle>{{ game.platform }} - {{ game.condition }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p><strong>Price:</strong> {{ game.price | currency:'EUR' }}</p>
+        <p><strong>Store:</strong> {{ game.store }}</p>
+        <p><strong>Platinum:</strong> {{ game.platinum ? '✔' : '✘' }}</p>
+        <p><strong>Description:</strong> {{ game.description }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <p *ngIf="filteredGames().length === 0" class="no-games">No games found.</p>
+</div>
+

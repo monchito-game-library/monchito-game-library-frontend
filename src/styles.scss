@@ -1,0 +1,24 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+
+  @include mat.theme((
+    color: mat.$blue-palette,
+    typography: Roboto,
+    density: 0
+  ));
+}
+
+html.dark-mode {
+  color-scheme: dark;
+}
+
+// Estilos base
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
