@@ -9,8 +9,7 @@ describe('DatabaseToolsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DatabaseToolsComponent]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DatabaseToolsComponent);
     component = fixture.componentInstance;

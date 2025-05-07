@@ -6,7 +6,7 @@
 
     <mat-form-field appearance="outline" class="filter-input">
       <mat-label>Search by Title</mat-label>
-      <input matInput [(ngModel)]="searchTerm" placeholder="e.g. Uncharted">
+      <input matInput [(ngModel)]="searchTerm" placeholder="e.g. Uncharted" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-select">
@@ -19,14 +19,13 @@
 
     <div class="summary-info">
       <span><strong>Total Games:</strong> {{ filteredGames().length }}</span>
-      <span><strong>Total Spent:</strong> {{ getTotalPrice() | currency:'EUR' }}</span>
+      <span><strong>Total Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
     </div>
   </div>
 
   <div class="card-grid">
-    <app-game-card *ngFor="let game of filteredGames()" [game]="game"/>
+    <app-game-card *ngFor="let game of filteredGames()" [game]="game" />
   </div>
 
   <p *ngIf="filteredGames().length === 0" class="no-games">No games found.</p>
 </div>
-

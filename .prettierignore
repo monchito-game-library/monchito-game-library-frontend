@@ -1,0 +1,13 @@
+#Add files here to ignore them from prettier formatting
+
+# folders
+node_modules
+coverage
+dist
+tmp
+.angular
+
+# IDEs
+.idea
+.vscode
+

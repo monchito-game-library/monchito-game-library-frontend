@@ -6,7 +6,6 @@
   <h1>Add New Game</h1>
 
   <form (ngSubmit)="submit()" #gameForm="ngForm" class="game-form">
-
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
       <input matInput name="title" [(ngModel)]="game.title" required #title="ngModel" />
@@ -35,9 +34,7 @@
         <mat-error *ngIf="price.invalid && price.touched">Price is required</mat-error>
       </mat-form-field>
 
-      <mat-checkbox name="platinum" [(ngModel)]="game.platinum" class="platinum-checkbox">
-        Platinum
-      </mat-checkbox>
+      <mat-checkbox name="platinum" [(ngModel)]="game.platinum" class="platinum-checkbox"> Platinum </mat-checkbox>
     </div>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -58,4 +55,3 @@
     </div>
   </form>
 </mat-card>
-

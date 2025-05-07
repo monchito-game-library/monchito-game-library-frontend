@@ -14,9 +14,19 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 @Component({
   selector: 'app-database-tools',
   standalone: true,
-  imports: [CommonModule, MatCard, MatButton, MatIconButton, RouterLink, MatIcon, MatCardTitle, MatCardContent, TranslocoPipe],
+  imports: [
+    CommonModule,
+    MatCard,
+    MatButton,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatCardTitle,
+    MatCardContent,
+    TranslocoPipe
+  ],
   templateUrl: './database-tools.component.html',
-  styleUrls: ['./database-tools.component.scss'],
+  styleUrls: ['./database-tools.component.scss']
 })
 export class DatabaseToolsComponent {
   private _db = inject(IndexedDBRepository);
@@ -27,21 +37,21 @@ export class DatabaseToolsComponent {
   async clearDatabase(): Promise<void> {
     const games = await this._db.getAll();
     if (!games.length) {
-      this._snackbar.open(this._t('snackbar.noDataToClear'), 'Close', {duration: 3000});
+      this._snackbar.open(this._t('snackbar.noDataToClear'), 'Close', { duration: 3000 });
       return;
     }
 
     const dialogRef = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._t('dialog.clearTitle'),
-        message: this._t('dialog.clearMessage'),
-      },
+        message: this._t('dialog.clearMessage')
+      }
     });
 
-    dialogRef.afterClosed().subscribe(confirmed => {
+    dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
         this._db.clear().then(() => {
-          this._snackbar.open(this._t('snackbar.dataCleared'), 'Close', {duration: 3000});
+          this._snackbar.open(this._t('snackbar.dataCleared'), 'Close', { duration: 3000 });
         });
       }
     });
@@ -50,11 +60,11 @@ export class DatabaseToolsComponent {
   async exportDatabaseAsJSON(): Promise<void> {
     const data = await this._db.getAll();
     if (!data.length) {
-      this._snackbar.open(this._t('snackbar.noDataToExport'), 'Close', {duration: 3000});
+      this._snackbar.open(this._t('snackbar.noDataToExport'), 'Close', { duration: 3000 });
       return;
     }
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -64,16 +74,16 @@ export class DatabaseToolsComponent {
   }
 
   handleImport(fileInput: HTMLInputElement): void {
-    this._db.getAll().then(existing => {
+    this._db.getAll().then((existing) => {
       if (!existing.length) {
         const dialogRef = this._dialog.open(ConfirmDialogComponent, {
           data: {
             title: this._t('dialog.loadTitle'),
-            message: this._t('dialog.loadMessage'),
+            message: this._t('dialog.loadMessage')
           }
         });
 
-        dialogRef.afterClosed().subscribe(confirmed => {
+        dialogRef.afterClosed().subscribe((confirmed) => {
           if (confirmed) {
             this.importDefault();
           } else {
@@ -95,9 +105,9 @@ export class DatabaseToolsComponent {
         await this._db.add(game);
       }
 
-      this._snackbar.open(this._t('snackbar.defaultImportSuccess'), 'Close', {duration: 3000});
+      this._snackbar.open(this._t('snackbar.defaultImportSuccess'), 'Close', { duration: 3000 });
     } catch {
-      this._snackbar.open(this._t('snackbar.defaultImportFail'), 'Close', {duration: 3000});
+      this._snackbar.open(this._t('snackbar.defaultImportFail'), 'Close', { duration: 3000 });
     }
   }
 
@@ -113,7 +123,7 @@ export class DatabaseToolsComponent {
       await this._db.add(game);
     }
 
-    this._snackbar.open(this._t('snackbar.importSuccess'), 'Close', {duration: 3000});
+    this._snackbar.open(this._t('snackbar.importSuccess'), 'Close', { duration: 3000 });
   }
 
   private _t(path: string) {

@@ -5,5 +5,4 @@ import { applySavedTheme } from './app/apply-saved.theme';
 
 applySavedTheme();
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));

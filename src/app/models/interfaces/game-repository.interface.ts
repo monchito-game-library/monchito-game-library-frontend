@@ -12,4 +12,6 @@ export interface GameRepositoryInterface {
   update(game: GameInterface): Promise<void>;
 
   clear(): Promise<void>;
+
+  getById(id: number): Promise<GameInterface | undefined>;
 }
