@@ -24,24 +24,7 @@
   </div>
 
   <div class="card-grid">
-    <mat-card class="game-card" *ngFor="let game of filteredGames()">
-      <mat-card-header>
-        <mat-card-title>
-          {{ game.title }}
-          <button mat-icon-button color="primary" [routerLink]="['/update', game.id]">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </mat-card-title>
-        <mat-card-subtitle>{{ game.platform }} - {{ game.condition }}</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <p><strong>Price:</strong> {{ game.price | currency:'EUR' }}</p>
-        <p><strong>Store:</strong> {{ game.store }}</p>
-        <p><strong>Platinum:</strong> {{ game.platinum ? '✔' : '✘' }}</p>
-        <p><strong>Description:</strong> {{ game.description }}</p>
-      </mat-card-content>
-    </mat-card>
+    <app-game-card *ngFor="let game of filteredGames()" [game]="game"/>
   </div>
 
   <p *ngIf="filteredGames().length === 0" class="no-games">No games found.</p>

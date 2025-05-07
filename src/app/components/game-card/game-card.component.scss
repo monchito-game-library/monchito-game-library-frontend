@@ -1,0 +1,78 @@
+.game-card {
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .image-wrapper {
+    position: relative;
+    aspect-ratio: 4 / 5;
+
+    .game-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .edit-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .info-button {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      color: rgba(255, 255, 255, 0.3);
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      &:hover {
+        background-color: var(--mat-primary);
+        color: var(--mat-sys-on-surface);
+      }
+    }
+  }
+
+  .card-header {
+    padding: 1rem;
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      .game-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        line-height: 1.3;
+        flex: 1;
+        padding-right: 0.5rem;
+      }
+
+      .platinum-icon {
+        height: 1.5rem;
+        width: auto;
+      }
+    }
+
+    .meta-chip {
+      font-size: 0.75rem;
+      height: 24px;
+    }
+  }
+
+  mat-card-content {
+    padding: 1rem;
+    font-size: 0.9rem;
+
+    p {
+      margin: 0.4rem 0;
+    }
+  }
+}
