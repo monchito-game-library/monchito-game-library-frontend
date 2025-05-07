@@ -4,24 +4,23 @@
   padding: 4rem 2rem;
   text-align: center;
 
-  .top-controls {
-    position: absolute;
+  .profile-wrapper {
+    position: fixed;
     top: 1rem;
-    left: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    right: 1rem;
     z-index: 1000;
 
-    .lang-selector {
-      width: 130px;
-    }
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease;
 
-    .theme-toggle {
-      background-color: var(--mat-sys-surface-container-high);
-      color: var(--mat-sys-on-surface);
-      border-radius: 8px;
-      transition: background-color 0.3s;
+      &:hover {
+        transform: scale(1.05);
+      }
     }
   }
 

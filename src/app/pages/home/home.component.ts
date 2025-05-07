@@ -4,14 +4,11 @@ import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { ThemeService } from '../../services/theme.service';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect, MatSelectTrigger } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { availableLangConstant } from '../../models/constants/available-lang.constant';
 import { AvailableLangInterface } from '../../models/interfaces/available-lang.interface';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-home',
@@ -23,14 +20,11 @@ import { AvailableLangInterface } from '../../models/interfaces/available-lang.i
     RouterLink,
     MatIcon,
     TranslocoPipe,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatSelectTrigger,
-    MatOption,
-    MatIconButton,
-    MatTooltip,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatDivider
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
