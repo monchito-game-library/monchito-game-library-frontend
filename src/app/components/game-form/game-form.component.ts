@@ -11,13 +11,15 @@ import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
 import { GameInterface } from '../../models/interfaces/game.interface';
 import { GameConditionType } from '../../models/types/game-condition.type';
 import { GamesConsoleType } from '../../models/types/games-console.type';
 import { availableConditions } from '../../models/constants/available-conditions.constant';
 import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-game-form',
@@ -48,6 +50,8 @@ export class GameFormComponent implements OnInit {
   private repo = inject(IndexedDBRepository);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
+  private transloco = inject(TranslocoService);
 
   form = this.fb.group({
     title: ['', Validators.required],
@@ -85,24 +89,45 @@ export class GameFormComponent implements OnInit {
       this.isEditMode = true;
       this.gameId = +id;
       const game = await this.repo.getById(this.gameId);
-      if (game) this.form.patchValue(game);
+      if (game) {
+        this.form.patchValue(game);
+      }
     }
   }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
-    const game: GameInterface = {
-      ...this.form.value,
-      id: this.gameId
-    } as GameInterface;
+    const confirmTitle = this.transloco.translate(
+      this.isEditMode ? 'gameForm.dialog.confirm.update.title' : 'gameForm.dialog.confirm.save.title'
+    );
 
-    if (this.isEditMode) {
-      await this.repo.update(game);
-    } else {
-      await this.repo.add(game);
-    }
+    const confirmMessage = this.transloco.translate(
+      this.isEditMode ? 'gameForm.dialog.confirm.update.message' : 'gameForm.dialog.confirm.save.message'
+    );
 
-    await this.router.navigate(['/list']);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: confirmTitle,
+        message: confirmMessage
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+
+      const game: GameInterface = {
+        ...this.form.value,
+        id: this.gameId
+      } as GameInterface;
+
+      if (this.isEditMode) {
+        await this.repo.update(game);
+      } else {
+        await this.repo.add(game);
+      }
+
+      await this.router.navigate(['/list']);
+    });
   }
 }
