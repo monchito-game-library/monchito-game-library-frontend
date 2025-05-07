@@ -22,10 +22,17 @@
       "update": "Update",
       "add": "Add"
     },
-    "messages": {
-      "saved": "Game saved successfully",
-      "updated": "Game updated successfully",
-      "error": "Something went wrong"
+    "dialog": {
+      "confirm": {
+        "save": {
+          "title": "Save Game",
+          "message": "Are you sure you want to save this new game?"
+        },
+        "update": {
+          "title": "Update Game",
+          "message": "Are you sure you want to update this game?"
+        }
+      }
     }
   },
   "home": {
