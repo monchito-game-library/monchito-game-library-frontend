@@ -1,4 +1,33 @@
 {
+  "gameForm": {
+    "title": {
+      "add": "Add New Game",
+      "edit": "Update Game"
+    },
+    "fields": {
+      "title": "Title",
+      "price": "Price",
+      "store": "Store",
+      "condition": "Condition",
+      "description": "Description",
+      "platform": "Platform",
+      "platinum": "Platinum"
+    },
+    "conditions": {
+      "new": "New",
+      "used": "Used",
+      "unknown": "Unknown"
+    },
+    "buttons": {
+      "update": "Update",
+      "add": "Add"
+    },
+    "messages": {
+      "saved": "Game saved successfully",
+      "updated": "Game updated successfully",
+      "error": "Something went wrong"
+    }
+  },
   "home": {
     "darkMode": "Dark mode",
     "title": "Game Library",
