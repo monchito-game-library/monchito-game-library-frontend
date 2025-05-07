@@ -1,7 +1,7 @@
 // eslint.config.js
 const angular = require('@angular-eslint/eslint-plugin');
-const tseslint = require('typescript-eslint');
 const parser = require('@typescript-eslint/parser');
+const prettier = require('eslint-config-prettier');
 
 module.exports = [
   {
@@ -24,7 +24,8 @@ module.exports = [
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' }
-      ]
+      ],
+      ...prettier.rules
     }
   },
   {

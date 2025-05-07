@@ -1,0 +1,52 @@
+<mat-card class="form-container">
+  <button mat-icon-button class="back-button" routerLink="/list" aria-label="Go back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <mat-card-title>Edit Game</mat-card-title>
+
+  <mat-card-content>
+    <form (ngSubmit)="submit()" #gameFormRef="ngForm" class="game-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput type="text" name="title" [(ngModel)]="gameForm.title" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Price</mat-label>
+        <input matInput type="number" name="price" [(ngModel)]="gameForm.price" required min="0" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Store</mat-label>
+        <input matInput type="text" name="store" [(ngModel)]="gameForm.store" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Condition</mat-label>
+        <mat-select name="condition" [(ngModel)]="gameForm.condition">
+          <mat-option *ngFor="let c of conditions" [value]="c">{{ c }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-checkbox name="platinum" [(ngModel)]="gameForm.platinum"> Platinum </mat-checkbox>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput name="description" [(ngModel)]="gameForm.description" rows="4"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Platform</mat-label>
+        <mat-select name="platform" [(ngModel)]="gameForm.platform" required>
+          <mat-option *ngFor="let p of platforms" [value]="p">{{ p }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="buttons">
+        <button mat-flat-button color="primary" type="submit" [disabled]="!gameFormRef.valid">Save</button>
+        <button mat-stroked-button color="warn" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
   private _translocoService: TranslocoService = inject(TranslocoService);
 
   isDark: boolean = false;
-  availableLanguages: AvailableLangInterface[] = availableLangConstant
+  availableLanguages: AvailableLangInterface[] = availableLangConstant;
   selectedLangControl: FormControl<string | null> = new FormControl(this._translocoService.getActiveLang());
 
   ngOnInit(): void {
@@ -56,8 +56,6 @@ export class HomeComponent implements OnInit {
 
   toggleTheme(): void {
     this.isDark = !this.isDark;
-    this.isDark
-      ? this._themeService.setDarkTheme()
-      : this._themeService.setLightTheme();
+    this.isDark ? this._themeService.setDarkTheme() : this._themeService.setLightTheme();
   }
 }
