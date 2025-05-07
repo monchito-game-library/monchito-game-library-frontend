@@ -1,28 +1,24 @@
 <div class="home-container">
-  <div class="top-controls">
-    <mat-form-field appearance="outline" class="lang-selector">
-      <mat-label>{{ 'home.language.title' | transloco }}</mat-label>
-      <mat-select [formControl]="selectedLangControl">
-        <mat-select-trigger>
-          {{ 'home.language.option.' + selectedLangControl.value | transloco }}
-        </mat-select-trigger>
-        @for (lang of availableLanguages; track lang.code) {
-          <mat-option [value]="lang.code">
-            {{ lang.labelKey | transloco }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <button
-      mat-icon-button
-      class="theme-toggle"
-      (click)="toggleTheme()"
-      [matTooltip]="isDark ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco)"
-      aria-label="Toggle dark mode">
-      <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
-    </button>
+  <div class="profile-wrapper" [matMenuTriggerFor]="profileMenu">
+    <img src="assets/images/espi-profile.png" class="profile-avatar" alt="User profile" />
   </div>
+
+  <mat-menu #profileMenu="matMenu">
+    <button mat-menu-item disabled>{{ 'home.language.title' | transloco }}</button>
+    <mat-divider></mat-divider>
+
+    @for (lang of availableLanguages; track lang.code) {
+      <button mat-menu-item (click)="selectedLangControl.setValue(lang.code)">
+        {{ lang.labelKey | transloco }}
+      </button>
+    }
+
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="toggleTheme()">
+      <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
+      {{ isDark ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco) }}
+    </button>
+  </mat-menu>
 
   <h1>{{ 'home.title' | transloco }}</h1>
 
