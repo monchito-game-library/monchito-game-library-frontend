@@ -8,7 +8,7 @@ function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== 'undefined';
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class IndexedDBRepository extends Dexie implements GameRepositoryInterface {
   private _dbEnabled = false;
   games!: Table<GameInterface, number>;
@@ -57,5 +57,9 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   async clear(): Promise<void> {
     if (!this._dbEnabled) return;
     await this.games.clear();
+  }
+
+  async getById(id: number): Promise<GameInterface | undefined> {
+    return (await this.getAll()).find((game) => game.id === id);
   }
 }

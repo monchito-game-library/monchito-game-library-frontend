@@ -18,7 +18,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-add-game',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormField, MatLabel, MatInput, MatCard, MatSelect, MatOption, MatCheckbox, MatButton, MatIconButton, MatIcon, MatError],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatCard,
+    MatSelect,
+    MatOption,
+    MatCheckbox,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    MatError
+  ],
   templateUrl: './add-game.component.html',
   styleUrls: ['./add-game.component.scss']
 })
@@ -40,9 +54,17 @@ export class AddGameComponent {
   };
 
   platforms: GamesConsoleType[] = [
-    'PS5', 'PS4', 'PS3', 'PS2', 'PSP',
-    'XBOX ORIGINAL', 'XBOX 360', 'XBOX ONE',
-    'XBOX SERIES', 'SWITCH', 'XBOX'
+    'PS5',
+    'PS4',
+    'PS3',
+    'PS2',
+    'PSP',
+    'XBOX ORIGINAL',
+    'XBOX 360',
+    'XBOX ONE',
+    'XBOX SERIES',
+    'SWITCH',
+    'XBOX'
   ];
 
   goBack(): void {
@@ -52,7 +74,7 @@ export class AddGameComponent {
   async submit() {
     if (this.gameForm.valid) {
       await this._indexedDBRepository.add(this.game);
-      this._matSnackBar.open('Game saved successfully!', 'Close', {duration: 3000});
+      this._matSnackBar.open('Game saved successfully!', 'Close', { duration: 3000 });
       this.goBack();
     }
   }

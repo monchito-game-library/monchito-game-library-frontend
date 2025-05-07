@@ -3,11 +3,13 @@
 html {
   color-scheme: light;
 
-  @include mat.theme((
-    color: mat.$blue-palette,
-    typography: Roboto,
-    density: 0
-  ));
+  @include mat.theme(
+    (
+      color: mat.$blue-palette,
+      typography: Roboto,
+      density: 0
+    )
+  );
 }
 
 html.dark-mode {
@@ -15,10 +17,11 @@ html.dark-mode {
 }
 
 // Estilos base
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
   overflow-y: auto;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }

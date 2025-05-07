@@ -46,7 +46,9 @@
     padding: 1.25rem;
     background-color: var(--mat-sys-surface-container-high);
     color: var(--mat-sys-on-surface);
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    transition:
+      box-shadow 0.3s ease,
+      transform 0.2s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
     &:hover {
@@ -69,4 +71,3 @@
     }
   }
 }
-
