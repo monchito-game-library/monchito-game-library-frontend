@@ -1,0 +1,46 @@
+.game-form-card {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+  position: relative;
+  background-color: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+
+  .back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .form-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+
+  .form-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  .description {
+    grid-column: 1 / -1;
+  }
+
+  .platinum-toggle {
+    justify-self: start;
+    padding-top: 1rem;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+
+    button {
+      min-width: 200px;
+    }
+  }
+}

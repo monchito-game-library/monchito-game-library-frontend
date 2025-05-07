@@ -12,5 +12,5 @@ export const routes: Routes = [
   { path: 'add', component: AddGameComponent },
   { path: 'tools', component: DatabaseToolsComponent },
   { path: 'update/:id', component: UpdateGameComponent },
-  { path: '**', redirectTo: '' } // fallback para rutas inválidas
+  { path: '**', redirectTo: '' }
 ];
