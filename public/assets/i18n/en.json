@@ -1,4 +1,12 @@
 {
+  "gameCard": {
+    "dialog": {
+      "delete": {
+        "title": "Delete Game",
+        "message": "Are you sure you want to delete this game?"
+      }
+    }
+  },
   "gameForm": {
     "title": {
       "add": "Add New Game",
@@ -82,5 +90,26 @@
       "loadTitle": "Load Default Data?",
       "loadMessage": "No data found. Would you like to load the default data from assets/games.json?"
     }
+  },
+  "consoles": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "ps2": "PlayStation 2",
+    "ps1": "PlayStation 1",
+    "psVita": "PlayStation Vita",
+    "psp": "PlayStation Portable",
+    "xboxSeries": "Xbox Series",
+    "xboxOne": "Xbox One",
+    "xbox360": "Xbox 360",
+    "xbox": "Xbox Original",
+    "gbc": "Game Boy Color",
+    "gba": "Game Boy Advance",
+    "ds": "Nintendo DS",
+    "3ds": "Nintendo 3DS",
+    "gameCube": "GameCube",
+    "wii": "Wii",
+    "switch": "Nintendo Switch",
+    "pc": "PC"
   }
 }
