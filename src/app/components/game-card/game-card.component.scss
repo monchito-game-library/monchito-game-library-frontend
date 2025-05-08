@@ -17,11 +17,32 @@
       object-fit: cover;
     }
 
-    .edit-button {
+    .options-button {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background-color: rgba(0, 0, 0, 0.5);
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+    }
+
+    .options-menu {
+      position: absolute;
+      top: 50px;
+      right: 8px;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--mat-sys-surface);
+      color: var(--mat-sys-on-surface);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+      z-index: 3;
+
+      button {
+        margin: 0.25rem 0;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
     }
 
     .info-button {

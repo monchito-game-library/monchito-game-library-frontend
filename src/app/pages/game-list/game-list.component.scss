@@ -2,29 +2,36 @@
   padding: 2rem;
   overflow-x: hidden;
 
-  .summary-bar {
+  .header-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 2rem;
 
-    .back-button {
-      flex-shrink: 0;
-      order: -1;
+    .left-actions {
+      flex: 0 0 auto;
     }
 
-    .filter-input,
-    .filter-select {
-      flex: 1 1 200px;
+    .filters {
+      display: flex;
+      gap: 1rem;
+      flex: 1 1 auto;
+      min-width: 250px;
+
+      mat-form-field {
+        flex: 1;
+      }
     }
 
-    .summary-info {
+    .summary {
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
-      min-width: 200px;
+      gap: 0.2rem;
+      min-width: 160px;
+      text-align: right;
     }
   }
 
@@ -38,5 +45,22 @@
     text-align: center;
     margin-top: 3rem;
     color: gray;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+
+    .page-info {
+      font-weight: bold;
+    }
+
+    button[disabled] {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   }
 }
