@@ -20,6 +20,8 @@ import { availableConditions } from '../../models/constants/available-conditions
 import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { availableConsolesConstant } from '../../models/constants/available-consoles.constant';
+import { AvailableConsolesInterface } from '../../models/interfaces/available-consoles.interface';
 
 @Component({
   selector: 'app-game-form',
@@ -66,20 +68,7 @@ export class GameFormComponent implements OnInit {
   isEditMode = false;
   private gameId?: number;
 
-  readonly platforms: GamesConsoleType[] = [
-    'PS5',
-    'PS4',
-    'PS3',
-    'PS2',
-    'PSP',
-    'XBOX ORIGINAL',
-    'XBOX 360',
-    'XBOX ONE',
-    'XBOX SERIES',
-    'SWITCH',
-    'Nintendo Switch',
-    'XBOX'
-  ];
+  readonly platforms: AvailableConsolesInterface[] = availableConsolesConstant;
 
   readonly conditions: AvailableConditionInterface[] = availableConditions;
 

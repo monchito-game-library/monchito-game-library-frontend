@@ -60,6 +60,7 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   }
 
   async getById(id: number): Promise<GameInterface | undefined> {
+    if (!this._dbEnabled) return;
     return (await this.getAll()).find((game) => game.id === id);
   }
 }

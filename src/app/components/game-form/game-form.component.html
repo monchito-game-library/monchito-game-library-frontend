@@ -1,5 +1,5 @@
 <mat-card class="game-form-card">
-  <button mat-icon-button class="back-button" [routerLink]="['/']" aria-label="Back">
+  <button mat-icon-button class="back-button" [routerLink]="['/list']" aria-label="Back">
     <mat-icon>arrow_back</mat-icon>
   </button>
 
@@ -28,8 +28,8 @@
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
           <mat-select formControlName="platform">
-            @for (p of platforms; track p) {
-              <mat-option [value]="p">{{ p }}</mat-option>
+            @for (p of platforms; track p.code) {
+              <mat-option [value]="p.code">{{ p.labelKey | transloco }}</mat-option>
             }
           </mat-select>
         </mat-form-field>

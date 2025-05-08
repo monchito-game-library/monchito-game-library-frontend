@@ -1,30 +1,49 @@
 <div class="list-container">
-  <div class="summary-bar">
-    <button mat-icon-button class="back-button" routerLink="/home" aria-label="Go back">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+  <div class="header-row">
+    <div class="left-actions">
+      <button mat-icon-button routerLink="/home" aria-label="Go back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    </div>
 
-    <mat-form-field appearance="outline" class="filter-input">
-      <mat-label>Search by Title</mat-label>
-      <input matInput [(ngModel)]="searchTerm" placeholder="e.g. Uncharted" />
-    </mat-form-field>
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Search by Title</mat-label>
+        <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="filter-select">
-      <mat-label>Filter by Console</mat-label>
-      <mat-select [(ngModel)]="selectedConsole">
-        <mat-option value="">All</mat-option>
-        <mat-option *ngFor="let c of consoles" [value]="c">{{ c }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Filter by Console</mat-label>
+        <mat-select [value]="selectedConsole" (selectionChange)="selectedConsole.set($event.value)">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let c of consoles" [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-    <div class="summary-info">
-      <span><strong>Total Games:</strong> {{ filteredGames().length }}</span>
-      <span><strong>Total Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
+    <div class="summary">
+      <span><strong>Total:</strong> {{ filteredGames().length }} games</span>
+      <span><strong>Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
     </div>
   </div>
 
   <div class="card-grid">
-    <app-game-card *ngFor="let game of filteredGames()" [game]="game" />
+    <app-game-card
+      *ngFor="let game of paginatedGames(); trackBy: trackById"
+      [game]="game"
+      (gameDeleted)="onGameDeleted($event)" />
+  </div>
+
+  <div class="pagination" *ngIf="filteredGames().length > pageSize">
+    <button mat-button (click)="setPage(page() - 1)" [disabled]="page() === 0">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span class="page-info"> Page {{ page() + 1 }} of {{ totalPages() }} </span>
+
+    <button mat-button (click)="setPage(page() + 1)" [disabled]="(page() + 1) * pageSize >= filteredGames().length">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
 
   <p *ngIf="filteredGames().length === 0" class="no-games">No games found.</p>
