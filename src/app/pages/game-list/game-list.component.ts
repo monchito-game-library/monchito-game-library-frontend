@@ -8,7 +8,7 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -32,8 +32,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     RouterLink,
     MatIcon,
     GameCardComponent,
-    TranslocoPipe,
-    MatButton
+    TranslocoPipe
+    // MatButton
   ],
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.scss']

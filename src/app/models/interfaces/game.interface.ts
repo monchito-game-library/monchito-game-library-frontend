@@ -2,8 +2,8 @@ import { GameConditionType } from '../types/game-condition.type';
 import { GamesConsoleType } from '../types/games-console.type';
 
 export interface GameInterface {
-  id?: number; // Autogenerado por IndexedDB
-  image?: string; // URL de la imagen
+  id?: number;
+  image?: string;
   title: string;
   price: number;
   store: string;

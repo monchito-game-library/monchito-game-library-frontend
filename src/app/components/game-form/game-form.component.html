@@ -1,5 +1,5 @@
 <mat-card class="game-form-card">
-  <button mat-icon-button class="back-button" [routerLink]="['/list']" aria-label="Back">
+  <button mat-icon-button class="back-button" [routerLink]="[isEditMode ? '/list' : '/home']" aria-label="Back">
     <mat-icon>arrow_back</mat-icon>
   </button>
 
