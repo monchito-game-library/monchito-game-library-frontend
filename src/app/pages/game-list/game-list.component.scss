@@ -59,29 +59,16 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .pagination {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+  mat-paginator {
     margin-top: 2rem;
+    z-index: 1;
+    position: relative;
+    color: var(--mat-sys-on-surface);
 
-    .page-size-select {
-      flex: 0 1 200px;
-      min-width: 180px;
-    }
-
-    .page-info {
-      font-weight: bold;
-      color: var(--mat-sys-on-surface);
-    }
-
-    button[disabled] {
-      opacity: 0.5;
-      pointer-events: none;
+    ::ng-deep .mat-paginator-container {
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
   }
 }
