@@ -36,26 +36,13 @@
   </div>
 
   @if (filteredGames().length > pageSize()) {
-    <div class="pagination">
-      <mat-form-field appearance="outline" class="page-size-select">
-        <mat-label>Items per page</mat-label>
-        <mat-select [value]="pageSize()" (selectionChange)="pageSize.set($event.value)">
-          @for (size of [12, 24, 48]; track size) {
-            <mat-option [value]="size">{{ size }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-button (click)="setPage(page() - 1)" [disabled]="page() === 0">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-
-      <span class="page-info"> Page {{ page() + 1 }} of {{ totalPages() }} </span>
-
-      <button mat-button (click)="setPage(page() + 1)" [disabled]="(page() + 1) * pageSize() >= filteredGames().length">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
+    <mat-paginator
+      [length]="filteredGames().length"
+      [pageSize]="pageSize()"
+      [pageIndex]="page()"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
   }
 
   @if (filteredGames().length === 0) {
