@@ -56,17 +56,23 @@
     z-index: 1;
     text-align: center;
     margin-top: 3rem;
-    color: var(--mat-sys-on-surface-variant); // más sutil, coherente con diseño Material
+    color: var(--mat-sys-on-surface-variant);
   }
 
   .pagination {
     position: relative;
     z-index: 1;
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
     align-items: center;
-    margin-top: 2rem;
+    justify-content: space-between;
     gap: 1rem;
+    margin-top: 2rem;
+
+    .page-size-select {
+      flex: 0 1 200px;
+      min-width: 180px;
+    }
 
     .page-info {
       font-weight: bold;
