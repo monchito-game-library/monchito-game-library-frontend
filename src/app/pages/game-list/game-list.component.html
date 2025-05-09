@@ -30,25 +30,33 @@
 
 <div class="list-container">
   <div class="card-grid">
-    <!--    @for (game of paginatedGames(); track game.id) {-->
-    @for (game of filteredGames(); track game.id) {
+    @for (game of paginatedGames(); track game.id) {
       <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)"></app-game-card>
     }
   </div>
 
-  <!--  @if (filteredGames().length > pageSize) {-->
-  <!--    <div class="pagination">-->
-  <!--      <button mat-button (click)="setPage(page() - 1)" [disabled]="page() === 0">-->
-  <!--        <mat-icon>chevron_left</mat-icon>-->
-  <!--      </button>-->
+  @if (filteredGames().length > pageSize()) {
+    <div class="pagination">
+      <mat-form-field appearance="outline" class="page-size-select">
+        <mat-label>Items per page</mat-label>
+        <mat-select [value]="pageSize()" (selectionChange)="pageSize.set($event.value)">
+          @for (size of [12, 24, 48]; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-  <!--      <span class="page-info"> Page {{ page() + 1 }} of {{ totalPages() }} </span>-->
+      <button mat-button (click)="setPage(page() - 1)" [disabled]="page() === 0">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
 
-  <!--      <button mat-button (click)="setPage(page() + 1)" [disabled]="(page() + 1) * pageSize >= filteredGames().length">-->
-  <!--        <mat-icon>chevron_right</mat-icon>-->
-  <!--      </button>-->
-  <!--    </div>-->
-  <!--  }-->
+      <span class="page-info"> Page {{ page() + 1 }} of {{ totalPages() }} </span>
+
+      <button mat-button (click)="setPage(page() + 1)" [disabled]="(page() + 1) * pageSize() >= filteredGames().length">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  }
 
   @if (filteredGames().length === 0) {
     <p class="no-games">No games found.</p>
