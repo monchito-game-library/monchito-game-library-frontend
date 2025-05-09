@@ -5,6 +5,10 @@
         "title": "Delete Game",
         "message": "Are you sure you want to delete this game?"
       }
+    },
+    "menu": {
+      "edit": "Edit",
+      "delete": "Delete"
     }
   },
   "gameForm": {

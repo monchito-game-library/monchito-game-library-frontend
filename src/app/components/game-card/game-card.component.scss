@@ -24,27 +24,6 @@
       z-index: 2;
     }
 
-    .options-menu {
-      position: absolute;
-      top: 50px;
-      right: 8px;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--mat-sys-surface);
-      color: var(--mat-sys-on-surface);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      border-radius: 0.5rem;
-      padding: 0.25rem;
-      z-index: 3;
-
-      button {
-        margin: 0.25rem 0;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-      }
-    }
-
     .info-button {
       position: absolute;
       bottom: 0.5rem;
@@ -79,8 +58,16 @@
       }
 
       .platinum-icon {
-        height: 1.5rem;
-        width: auto;
+        margin-left: 0.5rem;
+        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 6px rgba(0, 0, 0, 0.3));
+        transition:
+          transform 0.2s ease,
+          filter 0.2s ease;
+
+        &:hover {
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.4));
+        }
       }
     }
 
