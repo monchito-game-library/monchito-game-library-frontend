@@ -1,21 +1,21 @@
 <mat-card class="game-card">
   <div class="image-wrapper">
-    <img mat-card-image [src]="defaultImage()" alt="Game cover" class="game-image" loading="lazy" />
+    <img mat-card-image [ngSrc]="defaultImage()" width="300" height="375" alt="Game cover" class="game-image" />
 
-    <button mat-icon-button color="primary" class="options-button" (click)="toggleOptions()">
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="editGame()">
+        <mat-icon>edit</mat-icon>
+        <span>{{ 'gameCard.menu.edit' | transloco }}</span>
+      </button>
+      <button mat-menu-item (click)="deleteGame()">
+        <mat-icon>close</mat-icon>
+        <span>{{ 'gameCard.menu.delete' | transloco }}</span>
+      </button>
+    </mat-menu>
+
+    <button mat-icon-button color="primary" class="options-button" [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
-
-    @if (showOptions()) {
-      <div class="options-menu">
-        <button mat-icon-button color="primary" (click)="editGame()">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteGame()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
-    }
 
     @if (game().description) {
       <button class="info-button" mat-icon-button [matTooltip]="game().description" aria-label="More info">
@@ -27,7 +27,7 @@
   <div class="card-header">
     <div class="title-row">
       <span class="game-title">{{ game().title }}</span>
-      <img class="platinum-icon" [src]="platinumIcon()" alt="Platinum status" />
+      <img class="platinum-icon" [ngSrc]="platinumIcon()" width="24" height="24" alt="Platinum status" />
     </div>
 
     <mat-chip class="meta-chip" color="primary"> {{ game().platform }} - {{ game().condition }} </mat-chip>
