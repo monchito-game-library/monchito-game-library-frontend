@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameInterface } from '../../models/interfaces/game.interface';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -32,8 +32,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     RouterLink,
     MatIcon,
     GameCardComponent,
-    TranslocoPipe
-    // MatButton
+    TranslocoPipe,
+    MatButton
   ],
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.scss']
@@ -42,22 +42,22 @@ export class GameListComponent implements OnInit {
   private _indexedDBRepository = inject(IndexedDBRepository);
   private _snackBar = inject(MatSnackBar);
 
-  // Inputs reactivos
-  allGames = signal<GameInterface[]>([]);
-  searchTerm = signal('');
-  selectedConsole = signal<GamesConsoleType | ''>('');
+  // Signals reactivas
+  readonly allGames = signal<GameInterface[]>([]);
+  readonly searchTerm = signal('');
+  readonly selectedConsole = signal<GamesConsoleType | ''>('');
 
-  // Paginación reactiva
+  // Paginación
   readonly page = signal(0);
-  readonly pageSize = 12;
+  readonly pageSize = signal(12); // ahora también editable desde el template
 
   /**
    * Consolas disponibles para el filtro.
    */
-  consoles: AvailableConsolesInterface[] = availableConsolesConstant;
+  readonly consoles: AvailableConsolesInterface[] = availableConsolesConstant;
 
   /**
-   * Lista filtrada de juegos, por título y consola.
+   * Lista filtrada de juegos.
    */
   readonly filteredGames = computed(() => {
     const platform = this.selectedConsole();
@@ -74,17 +74,27 @@ export class GameListComponent implements OnInit {
    * Subconjunto paginado de juegos.
    */
   readonly paginatedGames = computed(() => {
-    const start = this.page() * this.pageSize;
-    return this.filteredGames().slice(start, start + this.pageSize);
+    const start = this.page() * this.pageSize();
+    return this.filteredGames().slice(start, start + this.pageSize());
   });
 
   /**
-   * Número total de páginas según el filtrado actual.
+   * Número total de páginas.
    */
-  readonly totalPages = computed(() => Math.ceil(this.filteredGames().length / this.pageSize));
+  readonly totalPages = computed(() => Math.ceil(this.filteredGames().length / this.pageSize()));
 
   /**
-   * Carga los juegos desde IndexedDB al iniciar el componente.
+   * Reinicia la página si el tamaño de página o el filtro cambian.
+   */
+  private _resetPageOnFilterChange = effect(() => {
+    const totalPages = this.totalPages();
+    if (this.page() >= totalPages && totalPages > 0) {
+      this.page.set(0);
+    }
+  });
+
+  /**
+   * Carga los juegos desde IndexedDB.
    */
   async ngOnInit() {
     const data = await this._indexedDBRepository.getAll();
@@ -92,16 +102,14 @@ export class GameListComponent implements OnInit {
   }
 
   /**
-   * Calcula el precio total gastado en juegos visibles.
-   * @returns Total en euros
+   * Total gastado en juegos filtrados.
    */
   getTotalPrice(): number {
     return this.filteredGames().reduce((acc, game) => acc + (game.price || 0), 0);
   }
 
   /**
-   * Maneja el borrado de un juego.
-   * @param id ID del juego eliminado
+   * Borrar juego de la lista.
    */
   onGameDeleted(id: number) {
     const updatedGames = this.allGames().filter((game) => game.id !== id);
@@ -110,21 +118,19 @@ export class GameListComponent implements OnInit {
   }
 
   /**
-   * Para optimizar ngFor en la lista de juegos.
+   * trackBy para *for
    */
   trackById = (_: number, game: GameInterface) => game.id;
 
   /**
-   * Cambia de página.
-   * @param newPage Número de página
+   * Cambiar página actual.
    */
   setPage(newPage: number) {
     this.page.set(newPage);
   }
 
   /**
-   * Actualiza el filtro de consola.
-   * @param event Evento de cambio
+   * Actualiza el término de búsqueda.
    */
   onSearchInput(event: Event) {
     const target = event.target as HTMLInputElement | null;
