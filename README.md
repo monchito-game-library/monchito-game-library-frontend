@@ -1,59 +1,120 @@
-# MonchitoGameLibrary
+# 🎮 Monchito Game Library
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
+**Monchito Game Library** es una aplicación Angular 19 diseñada para gestionar tu colección personal de videojuegos por consola, incluyendo detalles como precio, tienda, condición y si tiene platino. Es completamente local, usando IndexedDB, pero preparada para integrarse con una API en el futuro.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Demo en producción
 
-```bash
-ng serve
-```
+👉 [https://monchito-game-library.github.io/monchito-game-library-frontend/](https://monchito-game-library.github.io/monchito-game-library-frontend/)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🧩 Características
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Gestión de videojuegos: título, precio, consola, condición, tienda, platino, descripción e imagen.
+- Soporte multiusuario local con selección visual por avatar.
+- Búsqueda, filtro por consola y paginación.
+- Estadísticas rápidas (total de juegos y gasto total).
+- Responsive y adaptado a móviles.
+- Soporte multilenguaje con Transloco.
+- Temas visuales dinámicos (light/dark/orange).
+- Importación/exportación JSON.
+- Guardado local con IndexedDB, fácilmente reemplazable por API REST.
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🛠️ Scripts importantes
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Desarrollo
 
 ```bash
-ng build
+  npm install
+  npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Producción en GitHub Pages
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Publica tu aplicación en GitHub Pages con:
 
 ```bash
-ng test
+  npm run deploy:pages
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Este comando ejecuta internamente:
 
 ```bash
-ng e2e
+  npm run build:pages && npm run compile:pages
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+> Asegúrate de que `baseHref` esté configurado como `/monchito-game-library-frontend/` en `angular.json` para rutas correctas en Pages.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🖥️ Instalación desde cero (Windows)
+
+Si quieres clonar y ejecutar este proyecto en tu máquina local:
+
+1. Asegúrate de tener instalado:
+  - [Node.js 18.x o superior](https://nodejs.org/)
+  - [Git](https://git-scm.com/)
+  - [Angular CLI](https://angular.io/cli) (`npm install -g @angular/cli`)
+
+2. Clona el repositorio:
+
+```bash
+  git clone https://github.com/monchito-game-library/monchito-game-library-frontend.git
+  cd monchito-game-library-frontend
+```
+
+3. Instala dependencias:
+
+```bash
+  npm install
+```
+
+4. Inicia el proyecto en desarrollo:
+
+```bash
+  npm start
+```
+
+La app estará disponible en `http://localhost:4200`.
+
+---
+
+## 🧱 Tecnologías utilizadas
+
+- Angular 19
+- Angular Material
+- Signals & Control Flow (`@for`, `@if`)
+- IndexedDB local
+- Transloco (i18n)
+- SCSS y theming Angular Material v15+
+
+---
+
+## 📁 Estructura de carpetas
+
+```
+src/
+├── components/         # Componentes reutilizables como game-card, game-form, select-user
+├── models/             # Interfaces, tipos y constantes
+├── pages/              # Vistas principales (listado, formulario, selección)
+├── repositories/       # Acceso a IndexedDB
+├── services/           # Servicios globales: user, theme, context
+├── assets/images/      # Avatares de usuario y portadas por defecto
+└── styles/             # SCSS global y temas
+```
+
+---
+
+## 👥 Créditos
+
+Proyecto creado por [@albertocheca](https://github.com/albertocheca) para gestionar colecciones de videojuegos con estilo y eficiencia.
+
+---
+
+## 📄 Licencia
+
+MIT
