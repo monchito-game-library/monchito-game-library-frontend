@@ -18,12 +18,15 @@
     gap: 0.75rem;
     font-weight: 500;
     font-size: 1rem;
+    flex: 1 1 auto;
   }
 
   .profile-wrapper {
     display: flex;
     align-items: center;
     cursor: pointer;
+    justify-content: flex-end;
+    flex: 0 0 auto;
   }
 
   .profile-avatar {
@@ -40,7 +43,7 @@
   }
 
   // Adaptación a móviles
-  @media (max-width: 600px) {
+  @media (max-width: 22rem) {
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;

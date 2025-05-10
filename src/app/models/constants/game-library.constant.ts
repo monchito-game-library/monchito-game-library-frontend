@@ -8,7 +8,7 @@ export const imagePlatinumPath = 'assets/images/platinum-trophy.png';
  * Ruta a la imagen del trofeo oculto.
  * Se muestra cuando el juego no tiene platino.
  */
-export const imageTrophyHiddenPath = 'assets/images/hidden-trophy.webp';
+export const imageTrophyHiddenPath = 'assets/images/hidden-trophy.png';
 
 /**
  * Imagen por defecto usada si el juego no tiene imagen asignada.
