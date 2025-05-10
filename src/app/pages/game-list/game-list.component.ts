@@ -17,6 +17,7 @@ import { AvailableConsolesInterface } from '../../models/interfaces/available-co
 import { TranslocoPipe } from '@ngneat/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { UserContextService } from '../../services/user-context.service';
 
 @Component({
   selector: 'app-game-list',
@@ -40,26 +41,23 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
   styleUrls: ['./game-list.component.scss']
 })
 export class GameListComponent implements OnInit {
-  private _indexedDBRepository = inject(IndexedDBRepository);
-  private _snackBar = inject(MatSnackBar);
+  private readonly _db = inject(IndexedDBRepository);
+  private readonly _snackBar = inject(MatSnackBar);
+  private readonly _userContext = inject(UserContextService);
 
-  // Signals reactivas
+  readonly consoles: AvailableConsolesInterface[] = availableConsolesConstant;
   readonly allGames = signal<GameInterface[]>([]);
   readonly searchTerm = signal('');
   readonly selectedConsole = signal<GamesConsoleType | ''>('');
-
-  // Paginación
   readonly page = signal(0);
   readonly pageSize = signal(12);
 
-  /**
-   * Consolas disponibles para el filtro.
-   */
-  readonly consoles: AvailableConsolesInterface[] = availableConsolesConstant;
+  private get userId(): string {
+    const id = this._userContext.userId();
+    if (!id) throw new Error('No user selected');
+    return id;
+  }
 
-  /**
-   * Lista filtrada de juegos.
-   */
   readonly filteredGames = computed(() => {
     const platform = this.selectedConsole();
     const search = this.searchTerm().toLowerCase();
@@ -71,22 +69,13 @@ export class GameListComponent implements OnInit {
     });
   });
 
-  /**
-   * Juegos mostrados en la página actual.
-   */
   readonly paginatedGames = computed(() => {
     const start = this.page() * this.pageSize();
     return this.filteredGames().slice(start, start + this.pageSize());
   });
 
-  /**
-   * Total de páginas posibles.
-   */
   readonly totalPages = computed(() => Math.ceil(this.filteredGames().length / this.pageSize()));
 
-  /**
-   * Reinicia la página si cambia el filtro o el tamaño.
-   */
   private _resetPageOnFilterChange = effect(() => {
     const totalPages = this.totalPages();
     if (this.page() >= totalPages && totalPages > 0) {
@@ -94,46 +83,29 @@ export class GameListComponent implements OnInit {
     }
   });
 
-  /**
-   * Carga todos los juegos al iniciar el componente.
-   */
   async ngOnInit() {
-    const data = await this._indexedDBRepository.getAll();
+    const data = await this._db.getAllGamesForUser(this.userId);
     this.allGames.set(data);
   }
 
-  /**
-   * Total gastado en juegos visibles.
-   */
   getTotalPrice(): number {
     return this.filteredGames().reduce((acc, game) => acc + (game.price || 0), 0);
   }
 
-  /**
-   * Elimina un juego.
-   */
-  onGameDeleted(id: number) {
+  async onGameDeleted(id: number) {
+    await this._db.deleteById(this.userId, id);
     const updatedGames = this.allGames().filter((game) => game.id !== id);
     this.allGames.set(updatedGames);
     this._snackBar.open('Game deleted', 'Close', { duration: 2000 });
   }
 
-  /**
-   * TrackBy para @for
-   */
   trackById = (_: number, game: GameInterface) => game.id;
 
-  /**
-   * Maneja los cambios en el paginador de Angular Material.
-   */
   onPageChange(event: PageEvent): void {
     this.page.set(event.pageIndex);
     this.pageSize.set(event.pageSize);
   }
 
-  /**
-   * Actualiza el término de búsqueda.
-   */
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
     if (target) {

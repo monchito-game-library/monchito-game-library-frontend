@@ -1,36 +1,53 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { effect, Injectable, Renderer2, RendererFactory2, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private renderer: Renderer2;
-  private readonly themeKey = 'user-theme';
+  private readonly _renderer: Renderer2;
+  private readonly _themeKey = 'user-theme';
+
+  /** Señal interna para representar el modo oscuro/claro */
+  private readonly _isDark = signal<boolean>(true);
+
+  /** Exposición pública y reactiva del estado del tema */
+  readonly isDarkMode = this._isDark.asReadonly();
 
   constructor(rendererFactory: RendererFactory2) {
-    this.renderer = rendererFactory.createRenderer(null, null);
+    this._renderer = rendererFactory.createRenderer(null, null);
+
+    // Reactividad: aplica la clase al documento automáticamente cuando cambia el tema
+    effect(() => {
+      const isDark = this._isDark();
+
+      if (isDark) {
+        this._renderer.addClass(document.documentElement, 'dark-mode');
+        localStorage.setItem(this._themeKey, 'dark');
+      } else {
+        this._renderer.removeClass(document.documentElement, 'dark-mode');
+        localStorage.setItem(this._themeKey, 'light');
+      }
+    });
   }
 
+  /** Inicializa el tema desde localStorage o preferencia del sistema */
   initTheme(): void {
-    const saved: string | null = localStorage.getItem(this.themeKey);
-    const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved = localStorage.getItem(this._themeKey);
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      this.setDarkTheme();
-    } else {
-      this.setLightTheme();
-    }
+    this._isDark.set(saved === 'dark' || (!saved && prefersDark));
   }
 
+  /** Alterna entre tema claro y oscuro */
+  toggleTheme(): void {
+    this._isDark.update((prev) => !prev);
+  }
+
+  /** Fuerza modo oscuro */
   setDarkTheme(): void {
-    this.renderer.addClass(document.documentElement, 'dark-mode');
-    localStorage.setItem(this.themeKey, 'dark');
+    this._isDark.set(true);
   }
 
+  /** Fuerza modo claro */
   setLightTheme(): void {
-    this.renderer.removeClass(document.documentElement, 'dark-mode');
-    localStorage.setItem(this.themeKey, 'light');
-  }
-
-  isDarkTheme(): boolean {
-    return document.documentElement.classList.contains('dark-mode');
+    this._isDark.set(false);
   }
 }

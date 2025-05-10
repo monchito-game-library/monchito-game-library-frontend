@@ -1,4 +1,10 @@
 {
+  "users": {
+    "alberto": "Espinilleitor",
+    "alen": "Tanarium",
+    "rafa": "Kunohami",
+    "andres": "Galanmg"
+  },
   "consoles": {
     "ps5": "PlayStation 5",
     "ps4": "PlayStation 4",
@@ -68,6 +74,7 @@
     }
   },
   "home": {
+    "selectUser": "Select User",
     "darkMode": "Dark mode",
     "title": "Game Library",
     "viewCollection": {
@@ -120,5 +127,8 @@
       "search": "Search by Title",
       "select": "Filter by Console"
     }
+  },
+  "selectUser": {
+    "title": "Select User"
   }
 }

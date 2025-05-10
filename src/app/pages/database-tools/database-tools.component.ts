@@ -1,70 +1,88 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
-import { GameInterface } from '../../models/interfaces/game.interface';
+import { RouterLink } from '@angular/router';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+
+import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { UserContextService } from '../../services/user-context.service';
+import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { defaultIndexedDbPath } from '../../models/constants/game-library.constant';
+import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
+import { GameRecord } from '../../models/interfaces/game-record.interface';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-database-tools',
   standalone: true,
   imports: [
     CommonModule,
-    MatCard,
-    MatButton,
-    MatIconButton,
     RouterLink,
-    MatIcon,
+    MatCard,
     MatCardTitle,
     MatCardContent,
+    MatButton,
+    MatIconButton,
+    MatIcon,
     TranslocoPipe
   ],
   templateUrl: './database-tools.component.html',
   styleUrls: ['./database-tools.component.scss']
 })
 export class DatabaseToolsComponent {
-  private _db = inject(IndexedDBRepository);
-  private _snackbar = inject(MatSnackBar);
-  private _dialog = inject(MatDialog);
-  private _transloco = inject(TranslocoService);
+  // --- Inyecciones de servicios ---
+  private readonly _db = inject(IndexedDBRepository);
+  private readonly _snackbar = inject(MatSnackBar);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _transloco = inject(TranslocoService);
+  private readonly _userContext = inject(UserContextService);
 
+  /**
+   * Computed signal que obtiene el ID del usuario actual o lanza error si no hay ninguno.
+   */
+  readonly userId = computed(() => {
+    const id = this._userContext.userId();
+    if (!id) throw new Error('No user selected');
+    return id;
+  });
+
+  /**
+   * Elimina todos los juegos del usuario actual tras confirmación.
+   */
   async clearDatabase(): Promise<void> {
-    const games = await this._db.getAll();
-    if (!games.length) {
+    const games = await this._db.getAllGamesForUser(this.userId());
+    if (games.length === 0) {
       this._snackbar.open(this._t('snackbar.noDataToClear'), 'Close', { duration: 3000 });
       return;
     }
 
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this._t('dialog.clearTitle'),
-        message: this._t('dialog.clearMessage')
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this._db.clear().then(() => {
-          this._snackbar.open(this._t('snackbar.dataCleared'), 'Close', { duration: 3000 });
-        });
-      }
-    });
+    const confirmed = await this._confirmDialog('dialog.clearTitle', 'dialog.clearMessage');
+    if (confirmed) {
+      await this._db.clearAllForUser(this.userId());
+      this._snackbar.open(this._t('snackbar.dataCleared'), 'Close', { duration: 3000 });
+    }
   }
 
+  /**
+   * Exporta todos los juegos del usuario actual como un archivo `.json`.
+   */
   async exportDatabaseAsJSON(): Promise<void> {
-    const data = await this._db.getAll();
-    if (!data.length) {
+    const games = await this._db.getAllGamesForUser(this.userId());
+    if (games.length === 0) {
       this._snackbar.open(this._t('snackbar.noDataToExport'), 'Close', { duration: 3000 });
       return;
     }
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const records: GameRecord[] = games.map((game) => ({
+      userId: this.userId(),
+      game
+    }));
+
+    const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -73,36 +91,35 @@ export class DatabaseToolsComponent {
     window.URL.revokeObjectURL(url);
   }
 
+  /**
+   * Muestra un diálogo si no hay datos previos, y luego permite al usuario importar manualmente desde archivo.
+   * @param fileInput Elemento `<input type="file">` invisible que se activa en caso de confirmación.
+   */
   handleImport(fileInput: HTMLInputElement): void {
-    this._db.getAll().then((existing) => {
+    this._db.getAllGamesForUser(this.userId()).then(async (existing) => {
       if (!existing.length) {
-        const dialogRef = this._dialog.open(ConfirmDialogComponent, {
-          data: {
-            title: this._t('dialog.loadTitle'),
-            message: this._t('dialog.loadMessage')
-          }
-        });
-
-        dialogRef.afterClosed().subscribe((confirmed) => {
-          if (confirmed) {
-            this.importDefault();
-          } else {
-            fileInput.click();
-          }
-        });
+        const confirmed = await this._confirmDialog('dialog.loadTitle', 'dialog.loadMessage');
+        if (confirmed) {
+          await this.importDefault();
+        } else {
+          fileInput.click();
+        }
       } else {
         fileInput.click();
       }
     });
   }
 
+  /**
+   * Carga un fichero JSON predeterminado desde `assets/` y lo importa al usuario correspondiente.
+   */
   async importDefault(): Promise<void> {
     try {
-      const response = await fetch('assets/games.json');
-      const games: GameInterface[] = await response.json();
+      const response = await fetch(defaultIndexedDbPath);
+      const records: GameRecord[] = await response.json();
 
-      for (const game of games) {
-        await this._db.add(game);
+      for (const record of records) {
+        await this._db.addGameForUser(record.userId, record.game);
       }
 
       this._snackbar.open(this._t('snackbar.defaultImportSuccess'), 'Close', { duration: 3000 });
@@ -111,22 +128,57 @@ export class DatabaseToolsComponent {
     }
   }
 
+  /**
+   * Importa juegos desde un archivo local JSON arrastrado o seleccionado por el usuario.
+   * @param event Evento de cambio del input tipo `file`
+   */
   async importGamesFromFile(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
-    const file = input.files[0];
-    const text = await file.text();
-    const data: GameInterface[] = JSON.parse(text);
+    try {
+      const file = input.files[0];
+      const text = await file.text();
+      const data = JSON.parse(text);
 
-    for (const game of data) {
-      await this._db.add(game);
+      if (!Array.isArray(data)) throw new Error('Invalid format');
+
+      for (const record of data) {
+        const userId = record.userId ?? this.userId();
+        const game = record.game ?? record;
+        await this._db.addGameForUser(userId, game);
+      }
+
+      this._snackbar.open(this._t('snackbar.importSuccess'), 'Close', { duration: 3000 });
+    } catch (err) {
+      console.error(err);
+      this._snackbar.open(this._t('snackbar.importFail'), 'Close', { duration: 3000 });
     }
-
-    this._snackbar.open(this._t('snackbar.importSuccess'), 'Close', { duration: 3000 });
   }
 
-  private _t(path: string) {
+  /**
+   * Traduce una clave del scope `tools` con Transloco.
+   * @param path Ruta relativa a `tools.` dentro del archivo de traducción.
+   * @returns Traducción localizada
+   */
+  private _t(path: string): string {
     return this._transloco.translate(`tools.${path}`);
+  }
+
+  /**
+   * Muestra un diálogo de confirmación reutilizable.
+   * @param titleKey Clave de traducción para el título
+   * @param messageKey Clave de traducción para el mensaje
+   * @returns Promesa con `true` si el usuario confirma
+   */
+  private _confirmDialog(titleKey: string, messageKey: string): Promise<boolean> {
+    const ref = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._t(titleKey),
+        message: this._t(messageKey)
+      } satisfies ConfirmDialogInterface
+    });
+
+    return firstValueFrom(ref.afterClosed());
   }
 }

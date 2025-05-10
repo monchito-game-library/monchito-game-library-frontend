@@ -1,25 +1,4 @@
 <div class="home-container">
-  <div class="profile-wrapper" [matMenuTriggerFor]="profileMenu">
-    <img src="assets/images/espi-profile.png" class="profile-avatar" alt="User profile" />
-  </div>
-
-  <mat-menu #profileMenu="matMenu">
-    <button mat-menu-item disabled>{{ 'home.language.title' | transloco }}</button>
-    <mat-divider></mat-divider>
-
-    @for (lang of availableLanguages; track lang.code) {
-      <button mat-menu-item (click)="selectedLangControl.setValue(lang.code)">
-        {{ lang.labelKey | transloco }}
-      </button>
-    }
-
-    <mat-divider></mat-divider>
-    <button mat-menu-item (click)="toggleTheme()">
-      <mat-icon>{{ isDark ? 'dark_mode' : 'light_mode' }}</mat-icon>
-      {{ isDark ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco) }}
-    </button>
-  </mat-menu>
-
   <h1>{{ 'home.title' | transloco }}</h1>
 
   <div class="card-grid">

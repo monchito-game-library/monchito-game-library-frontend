@@ -1,5 +1,9 @@
 import { AvailableConsolesInterface } from '../interfaces/available-consoles.interface';
 
+/**
+ * Consolas disponibles para seleccionar o filtrar videojuegos.
+ * La propiedad `labelKey` se utiliza con Transloco.
+ */
 export const availableConsolesConstant: AvailableConsolesInterface[] = [
   { code: 'PS5', labelKey: 'consoles.ps5' },
   { code: 'PS4', labelKey: 'consoles.ps4' },

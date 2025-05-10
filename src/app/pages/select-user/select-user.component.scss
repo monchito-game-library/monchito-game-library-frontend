@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.user-select-card {
+  max-width: 35rem;
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+.user-chip-grid {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+
+  mat-chip {
+    margin: 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+  }
+}

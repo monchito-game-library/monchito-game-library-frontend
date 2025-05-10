@@ -7,4 +7,4 @@ import { GameFormComponent } from '../../components/game-form/game-form.componen
   imports: [GameFormComponent],
   template: ` <app-game-form />`
 })
-export class UpdateGameComponent {}
+export class CreateAndUpdateGameComponent {}
