@@ -1,66 +1,96 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
-import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
+
 import { GameInterface } from '../models/interfaces/game.interface';
 import { GamesConsoleType } from '../models/types/games-console.type';
+import { GameRecord } from '../models/interfaces/game-record.interface';
+import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
 
+/**
+ * Utilidad para comprobar si IndexedDB está disponible (evita errores en entornos como SSR o testing).
+ */
 function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== 'undefined';
 }
 
+/**
+ * Repositorio concreto que implementa `GameRepositoryInterface` usando IndexedDB con Dexie.
+ * Gestiona videojuegos asociados a un usuario concreto.
+ */
 @Injectable({ providedIn: 'root' })
 export class IndexedDBRepository extends Dexie implements GameRepositoryInterface {
   private _dbEnabled = false;
-  games!: Table<GameInterface, number>;
+
+  /**
+   * Tabla principal donde se almacenan los juegos con referencia a usuario.
+   */
+  games!: Table<GameRecord, number>;
 
   constructor() {
-    // Solo inicializar Dexie si indexedDB está disponible
+    super('videojuegosDB');
+
     if (!isIndexedDBAvailable()) {
       console.warn('IndexedDB is not available in this environment.');
-      super('disabled'); // evita error de constructor
       return;
     }
 
-    super('videojuegosDB');
     this.version(1).stores({
-      games: '++id,title,price,platform'
+      // Indexes: id autoincremental, userId, título y plataforma (para filtros rápidos)
+      games: '++id,userId,game.title,game.platform'
     });
 
     this._dbEnabled = true;
   }
 
-  async getAll(): Promise<GameInterface[]> {
+  /** Retorna todos los juegos del usuario indicado */
+  async getAllGamesForUser(userId: string): Promise<GameInterface[]> {
     if (!this._dbEnabled) return [];
-    return this.games.toArray();
+    const records = await this.games.where('userId').equals(userId).toArray();
+    return records.map((r) => r.game);
   }
 
-  async getByConsole(console: GamesConsoleType): Promise<GameInterface[]> {
+  /** Retorna los juegos del usuario filtrados por consola */
+  async getByConsole(userId: string, console: GamesConsoleType): Promise<GameInterface[]> {
     if (!this._dbEnabled) return [];
-    return this.games.where('platform').equals(console).toArray();
+    const records = await this.games.filter((r) => r.userId === userId && r.game.platform === console).toArray();
+    return records.map((r) => r.game);
   }
 
-  async add(game: GameInterface): Promise<void> {
+  /** Añade un nuevo juego para un usuario */
+  async addGameForUser(userId: string, game: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    await this.games.add(game);
+    await this.games.add({ userId, game });
   }
 
-  async deleteById(id: number): Promise<void> {
+  /** Elimina un juego por ID, si pertenece al usuario */
+  async deleteById(userId: string, id: number): Promise<void> {
     if (!this._dbEnabled) return;
-    await this.games.delete(id);
+    const record = await this.games.get(id);
+    if (record?.userId === userId) {
+      await this.games.delete(id);
+    }
   }
 
-  async update(game: GameInterface): Promise<void> {
+  /** Actualiza un juego, siempre que pertenezca al usuario */
+  async updateGameForUser(userId: string, id: number, updated: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    await this.games.put(game);
+    const record = await this.games.get(id);
+    if (record?.userId === userId) {
+      await this.games.put({ id, userId, game: updated });
+    }
   }
 
-  async clear(): Promise<void> {
+  /** Elimina todos los juegos asociados al usuario */
+  async clearAllForUser(userId: string): Promise<void> {
     if (!this._dbEnabled) return;
-    await this.games.clear();
+    const userGames = await this.games.where('userId').equals(userId).primaryKeys();
+    await this.games.bulkDelete(userGames);
   }
 
-  async getById(id: number): Promise<GameInterface | undefined> {
+  /** Retorna un juego si el ID existe y pertenece al usuario */
+  async getById(userId: string, id: number): Promise<GameInterface | undefined> {
     if (!this._dbEnabled) return;
-    return (await this.getAll()).find((game) => game.id === id);
+    const record = await this.games.get(id);
+    return record?.userId === userId ? record.game : undefined;
   }
 }

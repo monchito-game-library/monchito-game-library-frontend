@@ -1,0 +1,14 @@
+<mat-card class="user-select-card">
+  <mat-card-title>{{ 'selectUser.title' | transloco }}</mat-card-title>
+  <mat-card-content>
+    <div class="user-chip-grid">
+      <mat-chip-listbox>
+        @for (user of users; track user.id) {
+          <mat-chip-option color="primary" (click)="selectUser(user.id)">
+            {{ user.labelKey | transloco }}
+          </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+  </mat-card-content>
+</mat-card>

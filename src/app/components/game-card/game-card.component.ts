@@ -1,28 +1,29 @@
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { GameInterface } from '../../models/interfaces/game.interface';
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
+
 import { MatCard, MatCardContent, MatCardImage } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { MatChip } from '@angular/material/chips';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+
+import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { UserContextService } from '../../services/user-context.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { GameInterface } from '../../models/interfaces/game.interface';
+
 import {
   defaultGameCover,
   imagePlatinumPath,
   imageTrophyHiddenPath
 } from '../../models/constants/game-library.constant';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
 
-/**
- * Componente que representa una tarjeta individual de videojuego en la lista.
- * Muestra información básica del juego (título, plataforma, precio, tienda, platino),
- * e incluye acciones para editar o eliminar el juego.
- */
 @Component({
   selector: 'app-game-card',
   standalone: true,
@@ -45,31 +46,59 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
   styleUrl: './game-card.component.scss'
 })
 export class GameCardComponent {
-  /** Servicios necesarios */
-  private _router = inject(Router);
-  private _indexedDBRepository = inject(IndexedDBRepository);
-  private _dialog = inject(MatDialog);
-  private _transloco = inject(TranslocoService);
+  /** Servicio de rutas para navegación */
+  private readonly _router = inject(Router);
 
-  /** Input obligatorio del juego a mostrar */
+  /** Repositorio de juegos por usuario */
+  private readonly _db = inject(IndexedDBRepository);
+
+  /** Servicio de diálogo para confirmaciones */
+  private readonly _dialog = inject(MatDialog);
+
+  /** Servicio de traducción (Transloco) */
+  private readonly _transloco = inject(TranslocoService);
+
+  /** Servicio que proporciona el contexto del usuario actual */
+  private readonly _userContext = inject(UserContextService);
+
+  /** Juego a mostrar (obligatorio) */
   readonly game = input.required<GameInterface>();
 
-  /** Imagen por defecto si no hay portada */
+  /**
+   * Imagen del juego o imagen por defecto si no se proporciona ninguna.
+   */
   readonly defaultImage = computed(() => this.game().image || defaultGameCover);
 
-  /** Icono de platino */
+  /**
+   * Icono que representa si el juego tiene platino o no.
+   */
   readonly platinumIcon = computed(() => (this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath));
 
-  /** Evento emitido al borrar un juego */
+  /**
+   * Evento emitido cuando un juego es eliminado correctamente.
+   */
   @Output() gameDeleted = new EventEmitter<number>();
 
-  /** Redirección a la pantalla de edición */
-  editGame = () => {
-    this._router.navigate(['/update', this.game().id]).then();
+  /**
+   * Obtiene el ID del usuario actual o lanza error si no está definido.
+   */
+  private get userId(): string {
+    const id = this._userContext.userId();
+    if (!id) throw new Error('No user selected');
+    return id;
+  }
+
+  /**
+   * Navega al formulario de edición para el juego actual.
+   */
+  editGame = (): void => {
+    void this._router.navigate(['/update', this.game().id]);
   };
 
-  /** Confirmación y borrado del juego */
-  deleteGame = () => {
+  /**
+   * Muestra un diálogo de confirmación y elimina el juego si el usuario lo confirma.
+   */
+  deleteGame = (): void => {
     const game = this.game();
     if (!game.id) return;
 
@@ -77,14 +106,16 @@ export class GameCardComponent {
     const confirmMessage = this._transloco.translate('gameForm.dialog.delete.message');
 
     const dialogRef = this._dialog.open(ConfirmDialogComponent, {
-      data: { title: confirmTitle, message: confirmMessage }
+      data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed && game.id) {
-        this._indexedDBRepository.deleteById(game.id).then(() => {
-          this.gameDeleted.emit(game.id);
-        });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        const id = game.id;
+        if (id !== undefined) {
+          await this._db.deleteById(this.userId, id);
+          this.gameDeleted.emit(id);
+        }
       }
     });
   };

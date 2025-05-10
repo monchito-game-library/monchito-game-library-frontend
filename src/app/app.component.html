@@ -1,1 +1,48 @@
-<router-outlet></router-outlet>
+@if (currentUser() !== null) {
+  <header class="app-header sticky-header" role="banner">
+    <mat-chip color="accent" selected>
+      <div class="user-info">
+        <mat-icon>person</mat-icon>
+        <span class>{{ currentUser()?.labelKey | transloco }}</span>
+      </div>
+    </mat-chip>
+
+    <div class="profile-wrapper" [matMenuTriggerFor]="profileMenu" aria-label="Open user menu">
+      <img
+        class="profile-avatar"
+        [ngSrc]="'assets/images/user-profile/' + currentUser()?.image"
+        width="40"
+        height="40"
+        alt="{{ currentUser()?.labelKey | transloco }}" />
+    </div>
+
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item disabled>
+        {{ 'home.language.title' | transloco }}
+      </button>
+      <mat-divider />
+
+      @for (lang of availableLanguages; track lang.code) {
+        <button mat-menu-item (click)="selectedLangControl.setValue(lang.code)">
+          {{ lang.labelKey | transloco }}
+        </button>
+      }
+
+      <mat-divider />
+
+      <button mat-menu-item (click)="toggleTheme()">
+        <mat-icon>{{ isDark() ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        {{ isDark() ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco) }}
+      </button>
+
+      <mat-divider />
+
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>switch_account</mat-icon>
+        {{ 'home.selectUser' | transloco }}
+      </button>
+    </mat-menu>
+  </header>
+}
+
+<router-outlet />
