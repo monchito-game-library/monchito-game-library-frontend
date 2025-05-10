@@ -2,7 +2,7 @@
  * Tipos válidos de consolas para un videojuego.
  * Utilizados en formularios, filtros y validaciones.
  */
-export type GamesConsoleType =
+export type PlatformType =
   | 'PS5'
   | 'PS4'
   | 'PS3'

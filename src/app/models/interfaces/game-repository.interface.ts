@@ -1,5 +1,5 @@
 import { GameInterface } from './game.interface';
-import { GamesConsoleType } from '../types/games-console.type';
+import { PlatformType } from '../types/platform.type';
 
 /**
  * Contrato para cualquier repositorio que gestione juegos persistidos por usuario.
@@ -17,7 +17,7 @@ export interface GameRepositoryInterface {
    * @param userId ID del usuario
    * @param console Consola por la que filtrar
    */
-  getByConsole(userId: string, console: GamesConsoleType): Promise<GameInterface[]>;
+  getByConsole(userId: string, console: PlatformType): Promise<GameInterface[]>;
 
   /**
    * Añade un nuevo juego para el usuario.

@@ -1,5 +1,5 @@
 import { GameConditionType } from '../types/game-condition.type';
-import { GamesConsoleType } from '../types/games-console.type';
+import { PlatformType } from '../types/platform.type';
 
 /**
  * Representa un videojuego registrado por un usuario en la aplicación.
@@ -30,5 +30,5 @@ export interface GameInterface {
   description: string;
 
   /** Plataforma del juego (puede ser null si no se ha seleccionado) */
-  platform: GamesConsoleType | null;
+  platform: PlatformType | null;
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 
 import { GameInterface } from '../models/interfaces/game.interface';
-import { GamesConsoleType } from '../models/types/games-console.type';
+import { PlatformType } from '../models/types/platform.type';
 import { GameRecord } from '../models/interfaces/game-record.interface';
 import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
 
@@ -50,7 +50,7 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   }
 
   /** Retorna los juegos del usuario filtrados por consola */
-  async getByConsole(userId: string, console: GamesConsoleType): Promise<GameInterface[]> {
+  async getByConsole(userId: string, console: PlatformType): Promise<GameInterface[]> {
     if (!this._dbEnabled) return [];
     const records = await this.games.filter((r) => r.userId === userId && r.game.platform === console).toArray();
     return records.map((r) => r.game);
