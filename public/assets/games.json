@@ -542,11 +542,11 @@
   {
     "title": "Baldur’s Gate 3 - Deluxe Edition",
     "price": 99.99,
-    "store": "",
+    "store": "LARIAN STORE",
+    "platform": "PS5",
     "condition": "New",
     "platinum": false,
-    "description": "Larian Store",
-    "platform": "PS5",
+    "description": "",
     "id": 7783
   },
   {
