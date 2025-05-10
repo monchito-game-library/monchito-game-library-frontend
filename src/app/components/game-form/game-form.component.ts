@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -17,11 +17,11 @@ import { GameInterface } from '../../models/interfaces/game.interface';
 import { GameConditionType } from '../../models/types/game-condition.type';
 import { GamesConsoleType } from '../../models/types/games-console.type';
 import { availableConditions } from '../../models/constants/available-conditions.constant';
-import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { availableConsolesConstant } from '../../models/constants/available-consoles.constant';
-import { AvailableConsolesInterface } from '../../models/interfaces/available-consoles.interface';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-game-form',
@@ -42,81 +42,85 @@ import { AvailableConsolesInterface } from '../../models/interfaces/available-co
     MatButton,
     MatIcon,
     MatIconButton,
-    TranslocoPipe
+    TranslocoPipe,
+    MatAutocompleteTrigger,
+    MatAutocomplete
   ],
   templateUrl: './game-form.component.html',
   styleUrl: './game-form.component.scss'
 })
 export class GameFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private repo = inject(IndexedDBRepository);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private dialog = inject(MatDialog);
-  private transloco = inject(TranslocoService);
+  private readonly _fb = inject(FormBuilder);
+  private readonly _repo = inject(IndexedDBRepository);
+  private readonly _router = inject(Router);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _transloco = inject(TranslocoService);
 
-  form = this.fb.group({
+  readonly platforms = availableConsolesConstant;
+  readonly conditions = availableConditions;
+
+  readonly form = this._fb.nonNullable.group({
     title: ['', Validators.required],
-    price: [0, [Validators.required, Validators.min(0)]],
+    price: 0,
     store: ['', Validators.required],
-    platform: ['PS5' as GamesConsoleType, Validators.required],
-    condition: ['New' as GameConditionType, Validators.required],
-    platinum: [false],
-    description: ['']
+    platform: [null as GamesConsoleType | null, Validators.required],
+    condition: 'New' as GameConditionType,
+    platinum: false,
+    description: ''
+  });
+
+  readonly platformInput = toSignal(this.form.controls.platform.valueChanges, {
+    initialValue: this.form.controls.platform.value
+  });
+
+  readonly filteredPlatforms = computed(() => {
+    const input = this.platformInput()?.toString().toLowerCase() ?? '';
+    return this.platforms.filter(
+      (p) => p.code.toLowerCase().includes(input) || this._transloco.translate(p.labelKey).toLowerCase().includes(input)
+    );
   });
 
   isEditMode = false;
-  private gameId?: number;
-
-  readonly platforms: AvailableConsolesInterface[] = availableConsolesConstant;
-
-  readonly conditions: AvailableConditionInterface[] = availableConditions;
+  private _gameId?: number;
 
   async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.gameId = +id;
-      const game = await this.repo.getById(this.gameId);
-      if (game) {
-        this.form.patchValue(game);
-      }
-    }
+    const id = this._route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    this.isEditMode = true;
+    this._gameId = +id;
+
+    const game = await this._repo.getById(this._gameId);
+    if (game) this.form.patchValue(game);
   }
 
   async onSubmit(): Promise<void> {
-    if (this.form.invalid) return;
+    if (this.form.invalid || !this.form.value.platform) return;
 
-    const confirmTitle = this.transloco.translate(
-      this.isEditMode ? 'gameForm.dialog.confirm.update.title' : 'gameForm.dialog.confirm.save.title'
-    );
+    const key = this.isEditMode ? 'update' : 'save';
+    const confirmTitle = this._transloco.translate(`gameForm._dialog.confirm.${key}.title`);
+    const confirmMessage = this._transloco.translate(`gameForm._dialog.confirm.${key}.message`);
 
-    const confirmMessage = this.transloco.translate(
-      this.isEditMode ? 'gameForm.dialog.confirm.update.message' : 'gameForm.dialog.confirm.save.message'
-    );
-
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: confirmTitle,
-        message: confirmMessage
-      }
+    const dialogRef = this._dialog.open(ConfirmDialogComponent, {
+      data: { title: confirmTitle, message: confirmMessage }
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
 
       const game: GameInterface = {
-        ...this.form.value,
-        id: this.gameId
-      } as GameInterface;
+        ...this.form.getRawValue(),
+        id: this._gameId
+      };
 
       if (this.isEditMode) {
-        await this.repo.update(game);
+        await this._repo.update(game);
       } else {
-        await this.repo.add(game);
+        await this._repo.add(game);
       }
 
-      await this.router.navigate(['/list']);
+      await this._router.navigate(['/list']);
     });
   }
 }

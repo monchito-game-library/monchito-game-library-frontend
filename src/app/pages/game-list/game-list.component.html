@@ -12,12 +12,12 @@
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Search by Title</mat-label>
+      <mat-label>{{ 'gameList.filters.search' | transloco }}</mat-label>
       <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Filter by Console</mat-label>
+      <mat-label>{{ 'gameList.filters.search' | transloco }}</mat-label>
       <mat-select [value]="selectedConsole" (selectionChange)="selectedConsole.set($event.value)">
         <mat-option value="">All</mat-option>
         @for (c of consoles; track c.code) {
