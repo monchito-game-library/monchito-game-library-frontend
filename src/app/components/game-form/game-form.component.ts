@@ -99,8 +99,8 @@ export class GameFormComponent implements OnInit {
     if (this.form.invalid || !this.form.value.platform) return;
 
     const key = this.isEditMode ? 'update' : 'save';
-    const confirmTitle = this._transloco.translate(`gameForm._dialog.confirm.${key}.title`);
-    const confirmMessage = this._transloco.translate(`gameForm._dialog.confirm.${key}.message`);
+    const confirmTitle = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
+    const confirmMessage = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
     const dialogRef = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage }
