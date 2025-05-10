@@ -1,1 +1,1 @@
-export type GameConditionType = 'New' | 'Used' | 'Unknown';
+export type GameConditionType = 'New' | 'Used';
