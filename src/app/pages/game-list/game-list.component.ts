@@ -13,9 +13,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 import { GameInterface } from '../../models/interfaces/game.interface';
-import { GamesConsoleType } from '../../models/types/games-console.type';
-import { AvailableConsolesInterface } from '../../models/interfaces/available-consoles.interface';
-import { availableConsolesConstant } from '../../models/constants/available-consoles.constant';
+import { PlatformType } from '../../models/types/platform.type';
+import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
 import { UserContextService } from '../../services/user-context.service';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -48,7 +48,7 @@ export class GameListComponent implements OnInit {
   private readonly _userContext = inject(UserContextService);
 
   /** Consolas disponibles para el filtro */
-  readonly consoles: AvailableConsolesInterface[] = availableConsolesConstant;
+  readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
 
   /** Lista completa de juegos del usuario */
   readonly allGames = signal<GameInterface[]>([]);
@@ -57,7 +57,7 @@ export class GameListComponent implements OnInit {
   readonly searchTerm = signal('');
 
   /** Consola seleccionada para filtrar */
-  readonly selectedConsole = signal<GamesConsoleType | ''>('');
+  readonly selectedConsole = signal<PlatformType | ''>('');
 
   /** Página actual de la paginación */
   readonly page = signal(0);

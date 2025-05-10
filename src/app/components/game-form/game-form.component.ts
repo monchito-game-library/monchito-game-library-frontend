@@ -19,12 +19,13 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
 import { GameInterface } from '../../models/interfaces/game.interface';
 import { GameConditionType } from '../../models/types/game-condition.type';
-import { GamesConsoleType } from '../../models/types/games-console.type';
+import { PlatformType } from '../../models/types/platform.type';
 import { availableConditions } from '../../models/constants/available-conditions.constant';
-import { availableConsolesConstant } from '../../models/constants/available-consoles.constant';
+import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
+import { selectOneValidator } from '../../shared/validators';
 
 @Component({
   selector: 'app-game-form',
@@ -63,7 +64,7 @@ export class GameFormComponent implements OnInit {
   private readonly _userContext = inject(UserContextService);
 
   // ────────────────────── Constantes ───────────────────────
-  readonly platforms = availableConsolesConstant;
+  readonly platforms = availablePlatformsConstant;
   readonly conditions = availableConditions;
 
   // ────────────────────── Formulario ───────────────────────
@@ -71,7 +72,10 @@ export class GameFormComponent implements OnInit {
     title: ['', Validators.required],
     price: 0,
     store: ['', Validators.required],
-    platform: [null as GamesConsoleType | null, Validators.required],
+    platform: [
+      null as PlatformType | null,
+      [Validators.required, selectOneValidator(this.platforms.map((p) => p.code))]
+    ],
     condition: 'New' as GameConditionType,
     platinum: false,
     description: ''
