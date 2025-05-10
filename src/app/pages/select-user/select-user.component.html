@@ -5,6 +5,12 @@
       <mat-chip-listbox>
         @for (user of users; track user.id) {
           <mat-chip-option color="primary" (click)="selectUser(user.id)">
+            <img
+              matChipAvatar
+              width="32"
+              height="32"
+              [ngSrc]="'assets/images/user-profile/' + user.image"
+              alt="{{ user.labelKey | transloco }}" />
             {{ user.labelKey | transloco }}
           </mat-chip-option>
         }
