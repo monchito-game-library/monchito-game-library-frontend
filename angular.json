@@ -39,6 +39,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/monchito-game-library-frontend/",
               "budgets": [
                 {
                   "type": "initial",
