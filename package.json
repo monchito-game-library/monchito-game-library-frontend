@@ -35,6 +35,7 @@
     "@angular/router": "19.2.9",
     "@ngneat/transloco": "6.0.4",
     "@typescript-eslint/parser": "8.32.0",
+    "angular-cli-ghpages": "2.0.3",
     "dexie": "4.0.11",
     "rxjs": "7.8.0",
     "tslib": "2.3.0",
