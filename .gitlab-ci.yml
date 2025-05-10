@@ -23,7 +23,8 @@ build:
 pages:
   stage: deploy
   script:
-    - mv dist/monchito-game-library public
+    - mkdir public
+    - cp -r dist/monchito-game-library/* public/
   artifacts:
     paths:
       - public
