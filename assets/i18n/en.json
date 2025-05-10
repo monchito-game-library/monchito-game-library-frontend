@@ -1,0 +1,124 @@
+{
+  "consoles": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "ps2": "PlayStation 2",
+    "ps1": "PlayStation 1",
+    "psVita": "PlayStation Vita",
+    "psp": "PlayStation Portable",
+    "xboxSeries": "Xbox Series",
+    "xboxOne": "Xbox One",
+    "xbox360": "Xbox 360",
+    "xbox": "Xbox Original",
+    "gbc": "Game Boy Color",
+    "gba": "Game Boy Advance",
+    "ds": "Nintendo DS",
+    "3ds": "Nintendo 3DS",
+    "gameCube": "GameCube",
+    "wii": "Wii",
+    "switch": "Nintendo Switch",
+    "pc": "PC"
+  },
+  "gameCard": {
+    "dialog": {
+      "delete": {
+        "title": "Delete Game",
+        "message": "Are you sure you want to delete this game?"
+      }
+    },
+    "menu": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "gameForm": {
+    "title": {
+      "add": "Add New Game",
+      "edit": "Update Game"
+    },
+    "fields": {
+      "title": "Title",
+      "price": "Price",
+      "store": "Store",
+      "condition": "Condition",
+      "description": "Description",
+      "platform": "Platform",
+      "platinum": "Platinum"
+    },
+    "conditions": {
+      "new": "New",
+      "used": "Used"
+    },
+    "buttons": {
+      "update": "Update",
+      "add": "Add"
+    },
+    "dialog": {
+      "confirm": {
+        "save": {
+          "title": "Save Game",
+          "message": "Are you sure you want to save this new game?"
+        },
+        "update": {
+          "title": "Update Game",
+          "message": "Are you sure you want to update this game?"
+        }
+      }
+    }
+  },
+  "home": {
+    "darkMode": "Dark mode",
+    "title": "Game Library",
+    "viewCollection": {
+      "title": "View Collection",
+      "description": "Filter and browse your game collection by platform."
+    },
+    "addGame": {
+      "title": "Add New Game",
+      "description": "Add a new game to your library."
+    },
+    "databaseTools": {
+      "title": "Database Tools",
+      "description": "Import from file or export your collection."
+    },
+    "tooltip": {
+      "darkMode": "Switch to dark mode",
+      "lightMode": "Switch to light mode"
+    },
+    "language": {
+      "title": "Language",
+      "option": {
+        "en": "English",
+        "es": "Spanish"
+      }
+    }
+  },
+  "tools": {
+    "title": "Database Tools",
+    "description": "You can export, import or clear your local game database.",
+    "export": "Export as games.json",
+    "import": "Import from JSON",
+    "clear": "Clear all data",
+    "snackbar": {
+      "noDataToExport": "No data to export.",
+      "noDataToClear": "No data to clear.",
+      "dataCleared": "All data has been deleted.",
+      "importSuccess": "Games imported successfully.",
+      "defaultImportSuccess": "Default data imported successfully.",
+      "defaultImportFail": "Failed to import default data."
+    },
+    "dialog": {
+      "clearTitle": "Clear All Data",
+      "clearMessage": "Are you sure you want to delete all saved data? This action cannot be undone.",
+      "loadTitle": "Load Default Data?",
+      "loadMessage": "No data found. Would you like to load the default data from assets/games.json?"
+    }
+  },
+  "gameList": {
+    "filters": {
+      "search": "Search by Title",
+      "select": "Filter by Console"
+    }
+  }
+}
