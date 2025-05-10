@@ -10,5 +10,5 @@ export interface GameInterface {
   condition: GameConditionType;
   platinum: boolean;
   description: string;
-  platform: GamesConsoleType;
+  platform: GamesConsoleType | null;
 }
