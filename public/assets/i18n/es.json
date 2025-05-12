@@ -1,1 +1,134 @@
-{}
+{
+  "users": {
+    "alberto": "Espinilleitor",
+    "alen": "Tanarium",
+    "rafa": "Kunohami",
+    "andres": "Galanmg"
+  },
+  "consoles": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "ps2": "PlayStation 2",
+    "ps1": "PlayStation 1",
+    "psVita": "PlayStation Vita",
+    "psp": "PlayStation Portable",
+    "xboxSeries": "Xbox Series",
+    "xboxOne": "Xbox One",
+    "xbox360": "Xbox 360",
+    "xbox": "Xbox Original",
+    "gbc": "Game Boy Color",
+    "gba": "Game Boy Advance",
+    "ds": "Nintendo DS",
+    "3ds": "Nintendo 3DS",
+    "gameCube": "GameCube",
+    "wii": "Wii",
+    "switch": "Nintendo Switch",
+    "pc": "PC"
+  },
+  "gameCard": {
+    "dialog": {
+      "delete": {
+        "title": "Eliminar juego",
+        "message": "¿Estás seguro de que quieres eliminar este juego?"
+      }
+    },
+    "menu": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    }
+  },
+  "gameForm": {
+    "title": {
+      "add": "Añadir nuevo juego",
+      "edit": "Actualizar juego"
+    },
+    "fields": {
+      "title": "Título",
+      "price": "Precio",
+      "store": "Tienda",
+      "condition": "Estado",
+      "description": "Descripción",
+      "platform": "Plataforma",
+      "platinum": "Platino"
+    },
+    "conditions": {
+      "new": "Nuevo",
+      "used": "Segunda mano"
+    },
+    "buttons": {
+      "update": "Actualizar",
+      "add": "Añadir"
+    },
+    "dialog": {
+      "confirm": {
+        "save": {
+          "title": "Guardar juego",
+          "message": "¿Estás seguro de que quieres guardar este nuevo juego?"
+        },
+        "update": {
+          "title": "Actualizar juego",
+          "message": "¿Estás seguro de que quieres actualizar este juego?"
+        }
+      }
+    }
+  },
+  "home": {
+    "selectUser": "Seleccionar usuario",
+    "darkMode": "Modo oscuro",
+    "title": "Biblioteca de juegos",
+    "viewCollection": {
+      "title": "Ver colección",
+      "description": "Filtra y navega por tu colección de juegos por plataforma."
+    },
+    "addGame": {
+      "title": "Añadir nuevo juego",
+      "description": "Añade un nuevo juego a tu biblioteca."
+    },
+    "databaseTools": {
+      "title": "Herramientas de base de datos",
+      "description": "Importa desde archivo o exporta tu colección."
+    },
+    "tooltip": {
+      "darkMode": "Cambiar a modo oscuro",
+      "lightMode": "Cambiar a modo claro"
+    },
+    "language": {
+      "title": "Idioma",
+      "option": {
+        "en": "Inglés",
+        "es": "Español"
+      }
+    }
+  },
+  "tools": {
+    "title": "Herramientas de base de datos",
+    "description": "Puedes exportar, importar o borrar tu base de datos local de juegos.",
+    "export": "Exportar como games.json",
+    "import": "Importar desde JSON",
+    "clear": "Borrar todos los datos",
+    "snackbar": {
+      "noDataToExport": "No hay datos para exportar.",
+      "noDataToClear": "No hay datos para borrar.",
+      "dataCleared": "Todos los datos han sido eliminados.",
+      "importSuccess": "Juegos importados correctamente.",
+      "defaultImportSuccess": "Datos por defecto importados correctamente.",
+      "defaultImportFail": "Error al importar los datos por defecto."
+    },
+    "dialog": {
+      "clearTitle": "Borrar todos los datos",
+      "clearMessage": "¿Estás seguro de que quieres borrar todos los datos guardados? Esta acción no se puede deshacer.",
+      "loadTitle": "¿Cargar datos por defecto?",
+      "loadMessage": "No se encontraron datos. ¿Quieres cargar los datos por defecto desde assets/games.json?"
+    }
+  },
+  "gameList": {
+    "filters": {
+      "search": "Buscar por título",
+      "select": "Filtrar por consola"
+    }
+  },
+  "selectUser": {
+    "title": "Seleccionar usuario"
+  }
+}
