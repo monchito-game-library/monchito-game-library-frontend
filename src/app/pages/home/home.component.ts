@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@ngneat/transloco';
-import { ReactiveFormsModule } from '@angular/forms';
+import { HomeActionCardComponent } from '../../components/home-action-card/home-action-card.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatCard, MatCardTitle, MatCardContent, RouterLink, MatIcon, TranslocoPipe, ReactiveFormsModule],
+  imports: [TranslocoPipe, HomeActionCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

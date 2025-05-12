@@ -1,0 +1,9 @@
+<mat-card [routerLink]="routerLink" class="home-card">
+  <mat-card-title>
+    <mat-icon class="card-icon">{{ icon }}</mat-icon>
+    <span class="card-title-text">{{ titleKey | transloco }}</span>
+  </mat-card-title>
+  <mat-card-content>
+    <p>{{ descriptionKey | transloco }}</p>
+  </mat-card-content>
+</mat-card>
