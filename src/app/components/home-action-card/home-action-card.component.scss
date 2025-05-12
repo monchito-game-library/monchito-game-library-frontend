@@ -1,0 +1,61 @@
+@use '@angular/material' as mat;
+
+.home-card {
+  width: 17.5rem;
+  min-height: 12.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
+
+  // Breakpoint para móviles (≤ 600px)
+  @media (max-width: 37.5rem) {
+    width: 100%;
+    max-width: 20rem;
+    min-height: 12.5rem;
+  }
+
+  &:hover {
+    box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.25);
+    transform: translateY(-0.125rem);
+  }
+
+  mat-card-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .card-icon {
+      flex-shrink: 0;
+      font-size: 1.5rem;
+      margin-top: 0.1rem;
+    }
+
+    .card-title-text {
+      flex-grow: 1;
+      text-align: left;
+      word-break: break-word;
+    }
+  }
+
+  mat-card-content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: left;
+    word-break: break-word;
+    margin-top: auto;
+
+    // Breakpoint para móviles (≤ 600px)
+    @media (max-width: 37.5rem) {
+      font-size: 0.9rem;
+    }
+  }
+}

@@ -2,34 +2,22 @@
   <h1>{{ 'home.title' | transloco }}</h1>
 
   <div class="card-grid">
-    <mat-card [routerLink]="'/list'" class="home-card">
-      <mat-card-title>
-        <mat-icon>sports_esports</mat-icon>
-        {{ 'home.viewCollection.title' | transloco }}
-      </mat-card-title>
-      <mat-card-content>
-        <p>{{ 'home.viewCollection.description' | transloco }}</p>
-      </mat-card-content>
-    </mat-card>
+    <app-home-action-card
+      icon="sports_esports"
+      routerLink="/list"
+      titleKey="home.viewCollection.title"
+      descriptionKey="home.viewCollection.description" />
 
-    <mat-card [routerLink]="'/add'" class="home-card">
-      <mat-card-title>
-        <mat-icon>add_circle</mat-icon>
-        {{ 'home.addGame.title' | transloco }}
-      </mat-card-title>
-      <mat-card-content>
-        <p>{{ 'home.addGame.description' | transloco }}</p>
-      </mat-card-content>
-    </mat-card>
+    <app-home-action-card
+      icon="add_circle"
+      routerLink="/add"
+      titleKey="home.addGame.title"
+      descriptionKey="home.addGame.description" />
 
-    <mat-card [routerLink]="'/tools'" class="home-card">
-      <mat-card-title>
-        <mat-icon>settings</mat-icon>
-        {{ 'home.databaseTools.title' | transloco }}
-      </mat-card-title>
-      <mat-card-content>
-        <p>{{ 'home.databaseTools.description' | transloco }}</p>
-      </mat-card-content>
-    </mat-card>
+    <app-home-action-card
+      icon="settings"
+      routerLink="/tools"
+      titleKey="home.databaseTools.title"
+      descriptionKey="home.databaseTools.description" />
   </div>
 </div>
