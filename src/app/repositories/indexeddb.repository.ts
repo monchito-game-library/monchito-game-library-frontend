@@ -59,24 +59,25 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   /** Añade un nuevo juego para un usuario */
   async addGameForUser(userId: string, game: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    await this.games.add({ userId, game });
+    const generatedId = await this.games.add({ userId, game });
+    await this.games.update(generatedId, { game: { ...game, id: generatedId } });
   }
 
   /** Elimina un juego por ID, si pertenece al usuario */
-  async deleteById(userId: string, id: number): Promise<void> {
+  async deleteById(userId: string, gameId: number): Promise<void> {
     if (!this._dbEnabled) return;
-    const record = await this.games.get(id);
-    if (record?.userId === userId) {
-      await this.games.delete(id);
+    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    if (record && record.id != null) {
+      await this.games.delete(record.id);
     }
   }
 
   /** Actualiza un juego, siempre que pertenezca al usuario */
-  async updateGameForUser(userId: string, id: number, updated: GameInterface): Promise<void> {
+  async updateGameForUser(userId: string, gameId: number, updated: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    const record = await this.games.get(id);
-    if (record?.userId === userId) {
-      await this.games.put({ id, userId, game: updated });
+    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    if (record) {
+      await this.games.put({ id: record.id, userId, game: updated });
     }
   }
 
@@ -88,9 +89,9 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   }
 
   /** Retorna un juego si el ID existe y pertenece al usuario */
-  async getById(userId: string, id: number): Promise<GameInterface | undefined> {
+  async getById(userId: string, gameId: number): Promise<GameInterface | undefined> {
     if (!this._dbEnabled) return;
-    const record = await this.games.get(id);
-    return record?.userId === userId ? record.game : undefined;
+    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    return record?.game;
   }
 }
