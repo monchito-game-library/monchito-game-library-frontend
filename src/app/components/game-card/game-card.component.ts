@@ -103,7 +103,7 @@ export class GameCardComponent {
     if (!game.id) return;
 
     const confirmTitle = this._transloco.translate('gameCard.dialog.delete.title');
-    const confirmMessage = this._transloco.translate('gameForm.dialog.delete.message');
+    const confirmMessage = this._transloco.translate('gameCard.dialog.delete.message');
 
     const dialogRef = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
