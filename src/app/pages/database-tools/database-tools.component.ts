@@ -1,5 +1,5 @@
 import { Component, computed, inject, Signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -20,17 +20,7 @@ import { GameInterface } from '../../models/interfaces/game.interface';
 @Component({
   selector: 'app-database-tools',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    MatCard,
-    MatCardTitle,
-    MatCardContent,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    TranslocoPipe
-  ],
+  imports: [RouterLink, MatCard, MatCardTitle, MatCardContent, MatButton, MatIconButton, MatIcon, TranslocoPipe],
   templateUrl: './database-tools.component.html',
   styleUrls: ['./database-tools.component.scss']
 })

@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, Signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
@@ -37,7 +37,6 @@ import { cardActionType } from '../../models/types/card-action.type';
   selector: 'app-game-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     MatCard,
