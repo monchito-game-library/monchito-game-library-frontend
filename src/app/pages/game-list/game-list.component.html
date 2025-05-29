@@ -12,16 +12,26 @@
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>{{ 'gameList.filters.search' | transloco }}</mat-label>
+      <mat-label>{{ 'gameList.filters.title' | transloco }}</mat-label>
       <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>{{ 'gameList.filters.select' | transloco }}</mat-label>
+      <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
       <mat-select [value]="selectedConsole" (selectionChange)="selectedConsole.set($event.value)">
         <mat-option value="">All</mat-option>
         @for (c of consoles; track c.code) {
           <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
+      <mat-select [value]="selectedStore" (selectionChange)="selectedStore.set($event.value)">
+        <mat-option value="">All</mat-option>
+        @for (s of stores; track s.code) {
+          <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

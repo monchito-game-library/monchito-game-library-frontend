@@ -19,6 +19,9 @@ import { availablePlatformsConstant } from '../../models/constants/available-pla
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
 import { UserContextService } from '../../services/user-context.service';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
+import { availableStoresConstant } from '../../models/constants/available-stores.constant';
+import { StoreType } from '../../models/types/stores.type';
 
 @Component({
   selector: 'app-game-list',
@@ -50,6 +53,9 @@ export class GameListComponent implements OnInit {
   /** Consolas disponibles para el filtro */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
 
+  /** Tiendas disponibles para el filtro */
+  readonly stores: AvailableStoresInterface[] = availableStoresConstant;
+
   /** Lista completa de juegos del usuario */
   readonly allGames: WritableSignal<GameInterface[]> = signal<GameInterface[]>([]);
 
@@ -59,6 +65,9 @@ export class GameListComponent implements OnInit {
   /** Consola seleccionada para filtrar */
   readonly selectedConsole: WritableSignal<'' | PlatformType> = signal<PlatformType | ''>('');
 
+  /** Tienda seleccionada para filtrar */
+  readonly selectedStore: WritableSignal<'' | StoreType> = signal<StoreType | ''>('');
+
   /** Página actual de la paginación */
   readonly page: WritableSignal<number> = signal(0);
 
@@ -67,13 +76,15 @@ export class GameListComponent implements OnInit {
 
   /** Lista de juegos filtrados por consola y búsqueda */
   readonly filteredGames: Signal<GameInterface[]> = computed((): GameInterface[] => {
-    const platform: '' | PlatformType = this.selectedConsole();
     const search: string = this.searchTerm().toLowerCase();
+    const platform: '' | PlatformType = this.selectedConsole();
+    const store: '' | StoreType = this.selectedStore();
 
     return this.allGames().filter((game: GameInterface): boolean => {
-      const matchesPlatform: boolean = platform ? game.platform === platform : true;
       const matchesSearch: boolean = game.title.toLowerCase().includes(search);
-      return matchesPlatform && matchesSearch;
+      const matchesPlatform: boolean = platform ? game.platform === platform : true;
+      const matchesStore: boolean = store ? game.store === store : true;
+      return matchesSearch && matchesPlatform && matchesStore;
     });
   });
 

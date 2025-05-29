@@ -146,8 +146,9 @@
   },
   "gameList": {
     "filters": {
-      "search": "Search by Title",
-      "select": "Filter by Console"
+      "title": "Search by Title",
+      "console": "Filter by Console",
+      "store": "Filter by Store"
     }
   },
   "selectUser": {
