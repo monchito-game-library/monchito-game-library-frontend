@@ -5,12 +5,18 @@ import { GameInterface } from './game.interface';
  * Asocia un juego con el identificador de usuario que lo posee.
  */
 export interface GameRecord {
-  /** ID primario en IndexedDB (autogenerado por Dexie) */
+  /**
+   * ID primario en IndexedDB (autogenerado por Dexie)
+   */
   id?: number;
 
-  /** ID del usuario propietario del juego */
+  /**
+   * ID del usuario propietario del juego
+   */
   userId: string;
 
-  /** Datos del juego */
+  /**
+   * Datos del juego
+   */
   game: GameInterface;
 }

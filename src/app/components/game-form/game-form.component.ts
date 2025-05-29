@@ -28,6 +28,10 @@ import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.i
 import { selectOneValidator } from '../../shared/validators';
 import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
 import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
+import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
+import { availableStoresConstant } from '../../models/constants/available-stores.constant';
+import { SToreType } from '../../models/types/stores.type';
+import { cardActionType } from '../../models/types/card-action.type';
 
 @Component({
   selector: 'app-game-form',
@@ -68,12 +72,19 @@ export class GameFormComponent implements OnInit {
   // ────────────────────── Constantes ───────────────────────
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
   readonly conditions: AvailableConditionInterface[] = availableConditions;
+  readonly stores: AvailableStoresInterface[] = availableStoresConstant;
 
   // ────────────────────── Formulario ───────────────────────
-  readonly form = this._fb.nonNullable.group({
+  readonly form = this._fb.group({
     title: ['', Validators.required],
-    price: 0,
-    store: ['', Validators.required],
+    price: [null as number | null, Validators.required],
+    store: [
+      null as SToreType | null,
+      [
+        Validators.required,
+        selectOneValidator(this.stores.map((store: AvailableStoresInterface): SToreType => store.code))
+      ]
+    ],
     platform: [
       null as PlatformType | null,
       [
@@ -100,18 +111,36 @@ export class GameFormComponent implements OnInit {
     );
   });
 
+  // ────── Autocompletado dinámico de tiendas ──────
+  readonly storeInput = toSignal(this.form.controls.store.valueChanges, {
+    initialValue: this.form.controls.store.value ?? ''
+  });
+
+  readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
+    const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
+    return this.stores.filter(
+      (store: AvailableStoresInterface): boolean =>
+        store.code.toLowerCase().includes(input) ||
+        this._transloco.translate(store.labelKey).toLowerCase().includes(input)
+    );
+  });
+
   // ────────────────────── Estado interno ──────────────────────
   isEditMode: boolean = false;
   private _gameId?: number;
 
-  /** Obtiene el ID del usuario actual o lanza error si no está definido */
+  /**
+   * Obtiene el ID del usuario actual o lanza error si no está definido
+   */
   private get userId(): string {
     const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   }
 
-  /** Inicializa el formulario y carga datos si se está en modo edición */
+  /**
+   * Inicializa el formulario y carga datos si se está en modo edición
+   */
   async ngOnInit(): Promise<void> {
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) return;
@@ -120,14 +149,18 @@ export class GameFormComponent implements OnInit {
     this._gameId = +idParam;
 
     const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
-    if (game) this.form.patchValue(game);
+    if (game) {
+      this.form.patchValue(game);
+    }
   }
 
-  /** Maneja el envío del formulario, con diálogo de confirmación */
+  /**
+   * Maneja el envío del formulario, con diálogo de confirmación
+   */
   async onSubmit(): Promise<void> {
-    if (this.form.invalid || !this.form.value.platform) return;
+    if (this.form.invalid || !this.form.value.platform || !this.form.value.title?.trim()) return;
 
-    const key = this.isEditMode ? 'update' : 'save';
+    const key: cardActionType = this.isEditMode ? 'update' : 'save';
     const confirmTitle: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
     const confirmMessage: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
@@ -138,9 +171,16 @@ export class GameFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
 
+      const raw = this.form.getRawValue();
       const game: GameInterface = {
-        ...this.form.getRawValue(),
-        id: this._gameId
+        id: this._gameId,
+        title: raw.title ?? '',
+        price: raw.price ?? null,
+        store: raw.store ?? null,
+        platform: raw.platform ?? null,
+        condition: raw.condition ?? 'new',
+        platinum: raw.platinum ?? false,
+        description: raw.description ?? ''
       };
 
       if (this.isEditMode && this._gameId !== undefined) {
@@ -152,4 +192,28 @@ export class GameFormComponent implements OnInit {
       void this._router.navigate(['/list']);
     });
   }
+
+  /**
+   * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
+   * Si no se encuentra la tienda, devuelve el código original.
+   */
+  displayStoreLabel = (code: SToreType | null): string => {
+    if (!code) return '';
+    const store: AvailableStoresInterface | undefined = this.stores.find(
+      (s: AvailableStoresInterface): boolean => s.code === code
+    );
+    return store ? this._transloco.translate(store.labelKey) : code;
+  };
+
+  /**
+   * Devuelve la etiqueta de la plataforma del juego, traducida al idioma actual.
+   * Si no se encuentra la plataforma, devuelve el código original.
+   */
+  displayPlatformLabel = (code: PlatformType | null): string => {
+    if (!code) return '';
+    const platform: AvailablePlatformInterface | undefined = this.platforms.find(
+      (p: AvailablePlatformInterface): boolean => p.code === code
+    );
+    return platform ? this._transloco.translate(platform.labelKey) : code;
+  };
 }

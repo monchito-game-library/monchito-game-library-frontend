@@ -3,9 +3,13 @@
  * Se utiliza como `data` al abrir `MatDialog`.
  */
 export interface ConfirmDialogInterface {
-  /** Título que aparece en la parte superior del diálogo */
+  /**
+   * Título que aparece en la parte superior del diálogo
+   */
   title: string;
 
-  /** Mensaje principal que describe la acción a confirmar */
+  /**
+   * Mensaje principal que describe la acción a confirmar
+   */
   message: string;
 }
