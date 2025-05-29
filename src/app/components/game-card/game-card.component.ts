@@ -23,7 +23,7 @@ import {
   imageTrophyHiddenPath
 } from '../../models/constants/game-library.constant';
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
-import { SToreType } from '../../models/types/stores.type';
+import { StoreType } from '../../models/types/stores.type';
 import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
 import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
 import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
@@ -134,7 +134,7 @@ export class GameCardComponent {
    * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
    * Si no se encuentra la tienda, devuelve el código original.
    */
-  displayStoreLabel = (code: SToreType | null): string => {
+  displayStoreLabel = (code: StoreType | null): string => {
     if (!code) return '';
     const store: AvailableStoresInterface | undefined = this._stores.find(
       (s: AvailableStoresInterface): boolean => s.code === code

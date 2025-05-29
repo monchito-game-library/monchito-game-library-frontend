@@ -1,4 +1,4 @@
-import { SToreType } from '../types/stores.type';
+import { StoreType } from '../types/stores.type';
 
 /**
  * Representa una tienda de videojuegos disponible para selección o filtrado.
@@ -8,7 +8,7 @@ export interface AvailableStoresInterface {
   /**
    * Código de la tienda (ej.: 'gm-ibe', 'amz', etc.
    */
-  code: SToreType;
+  code: StoreType;
 
   /**
    * Clave Transloco para mostrar el nombre traducido del idioma

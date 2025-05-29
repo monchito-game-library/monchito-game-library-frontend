@@ -3,7 +3,7 @@ import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -30,7 +30,7 @@ import { AvailablePlatformInterface } from '../../models/interfaces/available-pl
 import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
 import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
 import { availableStoresConstant } from '../../models/constants/available-stores.constant';
-import { SToreType } from '../../models/types/stores.type';
+import { StoreType } from '../../models/types/stores.type';
 import { cardActionType } from '../../models/types/card-action.type';
 
 @Component({
@@ -53,7 +53,8 @@ import { cardActionType } from '../../models/types/card-action.type';
     MatIconButton,
     TranslocoPipe,
     MatAutocompleteTrigger,
-    MatAutocomplete
+    MatAutocomplete,
+    MatSuffix
   ],
   templateUrl: './game-form.component.html',
   styleUrl: './game-form.component.scss'
@@ -78,10 +79,10 @@ export class GameFormComponent implements OnInit {
     title: ['', Validators.required],
     price: [null as number | null, Validators.required],
     store: [
-      'none' as SToreType,
+      'none' as StoreType,
       [
         Validators.required,
-        selectOneValidator(this.stores.map((store: AvailableStoresInterface): SToreType => store.code))
+        selectOneValidator(this.stores.map((store: AvailableStoresInterface): StoreType => store.code))
       ]
     ],
     platform: [
@@ -196,7 +197,7 @@ export class GameFormComponent implements OnInit {
    * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
    * Si no se encuentra la tienda, devuelve el código original.
    */
-  displayStoreLabel = (code: SToreType | null): string => {
+  displayStoreLabel = (code: StoreType | null): string => {
     if (!code) return '';
     const store: AvailableStoresInterface | undefined = this.stores.find(
       (s: AvailableStoresInterface): boolean => s.code === code
