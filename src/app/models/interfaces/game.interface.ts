@@ -1,6 +1,6 @@
 import { GameConditionType } from '../types/game-condition.type';
 import { PlatformType } from '../types/platform.type';
-import { SToreType } from '../types/stores.type';
+import { StoreType } from '../types/stores.type';
 
 /**
  * Representa un videojuego registrado por un usuario en la aplicación.
@@ -29,7 +29,7 @@ export interface GameInterface {
   /**
    * Tienda donde fue comprado el juego (ej.: Amazon, Game, Wallapop)
    */
-  store: SToreType;
+  store: StoreType;
 
   /**
    * Estado del juego: nuevo o usado

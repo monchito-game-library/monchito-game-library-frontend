@@ -1,4 +1,4 @@
-export type SToreType =
+export type StoreType =
   | 'gm-ibe'
   | 'amz'
   | 'ebay'

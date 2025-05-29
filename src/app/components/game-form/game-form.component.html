@@ -36,6 +36,11 @@
               </mat-option>
             }
           </mat-autocomplete>
+          @if (form.controls.store.value) {
+            <button class="clear-button" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -48,6 +53,11 @@
               </mat-option>
             }
           </mat-autocomplete>
+          @if (form.controls.platform.value) {
+            <button class="clear-button" mat-icon-button matSuffix (click)="form.controls.platform.setValue(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
