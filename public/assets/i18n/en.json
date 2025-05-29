@@ -45,7 +45,8 @@
     "nis": "NIS Online Store",
     "imp-ga": "Impact Games",
     "akb-ga": "Akiba Games",
-    "td-cons": "Todoconsolas"
+    "td-cons": "TodoConsolas",
+    "none": "None"
   },
   "gameCard": {
     "dialog": {

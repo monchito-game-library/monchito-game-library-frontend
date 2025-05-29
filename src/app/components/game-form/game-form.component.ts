@@ -79,7 +79,7 @@ export class GameFormComponent implements OnInit {
     title: ['', Validators.required],
     price: [null as number | null, Validators.required],
     store: [
-      null as SToreType | null,
+      'none' as SToreType,
       [
         Validators.required,
         selectOneValidator(this.stores.map((store: AvailableStoresInterface): SToreType => store.code))
@@ -113,7 +113,7 @@ export class GameFormComponent implements OnInit {
 
   // ────── Autocompletado dinámico de tiendas ──────
   readonly storeInput = toSignal(this.form.controls.store.valueChanges, {
-    initialValue: this.form.controls.store.value ?? ''
+    initialValue: this.form.controls.store.value ?? 'none'
   });
 
   readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
@@ -176,7 +176,7 @@ export class GameFormComponent implements OnInit {
         id: this._gameId,
         title: raw.title ?? '',
         price: raw.price ?? null,
-        store: raw.store ?? null,
+        store: raw.store ?? 'none',
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
