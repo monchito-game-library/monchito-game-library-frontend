@@ -5,9 +5,13 @@ import { LanguageType } from '../types/language.type';
  * Usado para mostrar el selector de idioma y traducir el contenido.
  */
 export interface AvailableLanguageInterface {
-  /** Código del idioma según el estándar IETF (ej.: 'es', 'en') */
+  /**
+   * Código del idioma según el estándar IETF (ej.: 'es', 'en')
+   */
   code: LanguageType;
 
-  /** Clave Transloco para mostrar el nombre traducido del idioma */
+  /**
+   * Clave Transloco para mostrar el nombre traducido del idioma
+   */
   labelKey: string;
 }
