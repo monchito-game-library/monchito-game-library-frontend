@@ -23,5 +23,6 @@ export const availableStoresConstant: AvailableStoresInterface[] = [
   { code: 'nis', labelKey: 'stores.nis' },
   { code: 'imp-ga', labelKey: 'stores.imp-ga' },
   { code: 'akb-ga', labelKey: 'stores.akb-ga' },
-  { code: 'td-cons', labelKey: 'stores.td-cons' }
+  { code: 'td-cons', labelKey: 'stores.td-cons' },
+  { code: 'none', labelKey: 'stores.none' }
 ];
