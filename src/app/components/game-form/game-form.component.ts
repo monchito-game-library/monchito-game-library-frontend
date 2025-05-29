@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -10,7 +10,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -26,6 +26,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
 import { selectOneValidator } from '../../shared/validators';
+import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
+import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
 
 @Component({
   selector: 'app-game-form',
@@ -55,17 +57,17 @@ import { selectOneValidator } from '../../shared/validators';
 })
 export class GameFormComponent implements OnInit {
   // ────────────────────── Inyecciones ──────────────────────
-  private readonly _fb = inject(FormBuilder);
-  private readonly _db = inject(IndexedDBRepository);
-  private readonly _router = inject(Router);
-  private readonly _route = inject(ActivatedRoute);
-  private readonly _dialog = inject(MatDialog);
-  private readonly _transloco = inject(TranslocoService);
-  private readonly _userContext = inject(UserContextService);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _router: Router = inject(Router);
+  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
+  private readonly _userContext: UserContextService = inject(UserContextService);
 
   // ────────────────────── Constantes ───────────────────────
-  readonly platforms = availablePlatformsConstant;
-  readonly conditions = availableConditions;
+  readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
+  readonly conditions: AvailableConditionInterface[] = availableConditions;
 
   // ────────────────────── Formulario ───────────────────────
   readonly form = this._fb.nonNullable.group({
@@ -74,7 +76,10 @@ export class GameFormComponent implements OnInit {
     store: ['', Validators.required],
     platform: [
       null as PlatformType | null,
-      [Validators.required, selectOneValidator(this.platforms.map((p) => p.code))]
+      [
+        Validators.required,
+        selectOneValidator(this.platforms.map((platform: AvailablePlatformInterface): PlatformType => platform.code))
+      ]
     ],
     condition: 'New' as GameConditionType,
     platinum: false,
@@ -86,33 +91,35 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.platform.value
   });
 
-  readonly filteredPlatforms = computed(() => {
-    const input = this.platformInput()?.toString().toLowerCase() ?? '';
+  readonly filteredPlatforms: Signal<AvailablePlatformInterface[]> = computed((): AvailablePlatformInterface[] => {
+    const input: string = this.platformInput()?.toString().toLowerCase() ?? '';
     return this.platforms.filter(
-      (p) => p.code.toLowerCase().includes(input) || this._transloco.translate(p.labelKey).toLowerCase().includes(input)
+      (platform: AvailablePlatformInterface): boolean =>
+        platform.code.toLowerCase().includes(input) ||
+        this._transloco.translate(platform.labelKey).toLowerCase().includes(input)
     );
   });
 
   // ────────────────────── Estado interno ──────────────────────
-  isEditMode = false;
+  isEditMode: boolean = false;
   private _gameId?: number;
 
   /** Obtiene el ID del usuario actual o lanza error si no está definido */
   private get userId(): string {
-    const id = this._userContext.userId();
+    const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   }
 
   /** Inicializa el formulario y carga datos si se está en modo edición */
   async ngOnInit(): Promise<void> {
-    const idParam = this._route.snapshot.paramMap.get('id');
+    const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) return;
 
     this.isEditMode = true;
     this._gameId = +idParam;
 
-    const game = await this._db.getById(this.userId, this._gameId);
+    const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
     if (game) this.form.patchValue(game);
   }
 
@@ -121,10 +128,10 @@ export class GameFormComponent implements OnInit {
     if (this.form.invalid || !this.form.value.platform) return;
 
     const key = this.isEditMode ? 'update' : 'save';
-    const confirmTitle = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
-    const confirmMessage = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
+    const confirmTitle: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
+    const confirmMessage: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 

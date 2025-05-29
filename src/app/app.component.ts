@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
@@ -15,6 +15,8 @@ import { GameRecord } from './models/interfaces/game-record.interface';
 import { availableLangConstant } from './models/constants/available-lang.constant';
 import { AvailableLanguageInterface } from './models/interfaces/available-language.interface';
 import { availableUsers } from './models/constants/available-users.constant';
+import { AvailableUserInterface } from './models/interfaces/available-user.interface';
+import { GameInterface } from './models/interfaces/game.interface';
 
 @Component({
   selector: 'app-root',
@@ -35,37 +37,39 @@ import { availableUsers } from './models/constants/available-users.constant';
 })
 export class AppComponent implements OnInit {
   // --- Servicios inyectados ---
-  private readonly _db = inject(IndexedDBRepository);
-  private readonly _router = inject(Router);
-  private readonly _themeService = inject(ThemeService);
-  private readonly _transloco = inject(TranslocoService);
-  readonly userContext = inject(UserContextService);
+  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _router: Router = inject(Router);
+  private readonly _themeService: ThemeService = inject(ThemeService);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
+  readonly userContext: UserContextService = inject(UserContextService);
 
   // --- Idiomas disponibles y selección ---
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
-  readonly selectedLangControl = new FormControl(this._transloco.getActiveLang(), { nonNullable: true });
+  readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
+    nonNullable: true
+  });
 
   // --- Tema visual reactivo (modo oscuro) ---
-  readonly isDark = signal(this._themeService.isDarkMode());
+  readonly isDark: WritableSignal<boolean> = signal(this._themeService.isDarkMode());
 
   // --- Usuario actual resuelto desde userId ---
-  readonly currentUser = computed(() => {
-    const id = this.userContext.userId();
-    return availableUsers.find((u) => u.id === id) ?? null;
+  readonly currentUser: Signal<AvailableUserInterface | null> = computed((): AvailableUserInterface | null => {
+    const id: string | null = this.userContext.userId();
+    return availableUsers.find((u: AvailableUserInterface): boolean => u.id === id) ?? null;
   });
 
   constructor() {
     // Efecto que carga automáticamente los juegos por defecto al seleccionar usuario (si no tiene juegos guardados)
     effect(() => {
-      const userId = this.userContext.userId();
+      const userId: string | null = this.userContext.userId();
       if (!userId || typeof window === 'undefined') return;
 
-      this._db.getAllGamesForUser(userId).then(async (games) => {
+      this._db.getAllGamesForUser(userId).then(async (games: GameInterface[]) => {
         if (games.length === 0) {
           try {
-            const response = await fetch(defaultIndexedDbPath);
+            const response: Response = await fetch(defaultIndexedDbPath);
             const records: GameRecord[] = await response.json();
-            const userGames = records.filter((r) => r.userId === userId);
+            const userGames: GameRecord[] = records.filter((r: GameRecord): boolean => r.userId === userId);
 
             for (const record of userGames) {
               await this._db.addGameForUser(userId, record.game);
@@ -84,7 +88,7 @@ export class AppComponent implements OnInit {
     this.isDark.set(this._themeService.isDarkMode());
 
     // Reactividad a cambio de idioma
-    this.selectedLangControl.valueChanges.subscribe((lang) => {
+    this.selectedLangControl.valueChanges.subscribe((lang: string) => {
       if (lang) this._transloco.setActiveLang(lang);
     });
   }
@@ -93,7 +97,7 @@ export class AppComponent implements OnInit {
    * Alterna entre tema oscuro y claro.
    */
   toggleTheme(): void {
-    this.isDark.update((prev) => !prev);
+    this.isDark.update((prev: boolean): boolean => !prev);
     this.isDark() ? this._themeService.setDarkTheme() : this._themeService.setLightTheme();
   }
 

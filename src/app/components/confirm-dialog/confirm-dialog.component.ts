@@ -32,5 +32,5 @@ export class ConfirmDialogComponent {
   /**
    * Referencia al diálogo para poder cerrarlo manualmente si es necesario.
    */
-  dialogRef = inject(MatDialogRef<ConfirmDialogComponent>);
+  dialogRef: MatDialogRef<any, any> = inject(MatDialogRef<ConfirmDialogComponent>);
 }

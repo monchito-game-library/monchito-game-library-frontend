@@ -19,7 +19,7 @@ function isIndexedDBAvailable(): boolean {
  */
 @Injectable({ providedIn: 'root' })
 export class IndexedDBRepository extends Dexie implements GameRepositoryInterface {
-  private _dbEnabled = false;
+  private _dbEnabled: boolean = false;
 
   /**
    * Tabla principal donde se almacenan los juegos con referencia a usuario.
@@ -35,7 +35,7 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
     }
 
     this.version(1).stores({
-      // Indexes: id autoincremental, userId, título y plataforma (para filtros rápidos)
+      // Indexes: id auto-incremental, userId, título y plataforma (para filtros rápidos)
       games: '++id,userId,game.title,game.platform'
     });
 
@@ -45,28 +45,32 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   /** Retorna todos los juegos del usuario indicado */
   async getAllGamesForUser(userId: string): Promise<GameInterface[]> {
     if (!this._dbEnabled) return [];
-    const records = await this.games.where('userId').equals(userId).toArray();
-    return records.map((r) => r.game);
+    const records: GameRecord[] = await this.games.where('userId').equals(userId).toArray();
+    return records.map((game: GameRecord): GameInterface => game.game);
   }
 
   /** Retorna los juegos del usuario filtrados por consola */
   async getByConsole(userId: string, console: PlatformType): Promise<GameInterface[]> {
     if (!this._dbEnabled) return [];
-    const records = await this.games.filter((r) => r.userId === userId && r.game.platform === console).toArray();
-    return records.map((r) => r.game);
+    const records: GameRecord[] = await this.games
+      .filter((game: GameRecord): boolean => game.userId === userId && game.game.platform === console)
+      .toArray();
+    return records.map((game: GameRecord): GameInterface => game.game);
   }
 
   /** Añade un nuevo juego para un usuario */
   async addGameForUser(userId: string, game: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    const generatedId = await this.games.add({ userId, game });
+    const generatedId: number = await this.games.add({ userId, game });
     await this.games.update(generatedId, { game: { ...game, id: generatedId } });
   }
 
   /** Elimina un juego por ID, si pertenece al usuario */
   async deleteById(userId: string, gameId: number): Promise<void> {
     if (!this._dbEnabled) return;
-    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    const record: GameRecord | undefined = await this.games
+      .filter((game: GameRecord): boolean => game.userId === userId && game.game.id === gameId)
+      .first();
     if (record && record.id != null) {
       await this.games.delete(record.id);
     }
@@ -75,7 +79,9 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   /** Actualiza un juego, siempre que pertenezca al usuario */
   async updateGameForUser(userId: string, gameId: number, updated: GameInterface): Promise<void> {
     if (!this._dbEnabled) return;
-    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    const record: GameRecord | undefined = await this.games
+      .filter((r: GameRecord): boolean => r.userId === userId && r.game.id === gameId)
+      .first();
     if (record) {
       await this.games.put({ id: record.id, userId, game: updated });
     }
@@ -84,14 +90,16 @@ export class IndexedDBRepository extends Dexie implements GameRepositoryInterfac
   /** Elimina todos los juegos asociados al usuario */
   async clearAllForUser(userId: string): Promise<void> {
     if (!this._dbEnabled) return;
-    const userGames = await this.games.where('userId').equals(userId).primaryKeys();
+    const userGames: number[] = await this.games.where('userId').equals(userId).primaryKeys();
     await this.games.bulkDelete(userGames);
   }
 
   /** Retorna un juego si el ID existe y pertenece al usuario */
   async getById(userId: string, gameId: number): Promise<GameInterface | undefined> {
     if (!this._dbEnabled) return;
-    const record = await this.games.filter((r) => r.userId === userId && r.game.id === gameId).first();
+    const record: GameRecord | undefined = await this.games
+      .filter((game: GameRecord): boolean => game.userId === userId && game.game.id === gameId)
+      .first();
     return record?.game;
   }
 }

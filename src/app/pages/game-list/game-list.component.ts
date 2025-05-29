@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -43,43 +43,43 @@ import { GameCardComponent } from '../../components/game-card/game-card.componen
 })
 export class GameListComponent implements OnInit {
   // --- Servicios inyectados ---
-  private readonly _db = inject(IndexedDBRepository);
-  private readonly _snackBar = inject(MatSnackBar);
-  private readonly _userContext = inject(UserContextService);
+  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _userContext: UserContextService = inject(UserContextService);
 
   /** Consolas disponibles para el filtro */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
 
   /** Lista completa de juegos del usuario */
-  readonly allGames = signal<GameInterface[]>([]);
+  readonly allGames: WritableSignal<GameInterface[]> = signal<GameInterface[]>([]);
 
   /** Término de búsqueda libre */
-  readonly searchTerm = signal('');
+  readonly searchTerm: WritableSignal<string> = signal('');
 
   /** Consola seleccionada para filtrar */
-  readonly selectedConsole = signal<PlatformType | ''>('');
+  readonly selectedConsole: WritableSignal<'' | PlatformType> = signal<PlatformType | ''>('');
 
   /** Página actual de la paginación */
-  readonly page = signal(0);
+  readonly page: WritableSignal<number> = signal(0);
 
   /** Número de juegos por página */
-  readonly pageSize = signal(12);
+  readonly pageSize: WritableSignal<number> = signal(12);
 
   /** Lista de juegos filtrados por consola y búsqueda */
-  readonly filteredGames = computed(() => {
-    const platform = this.selectedConsole();
-    const search = this.searchTerm().toLowerCase();
+  readonly filteredGames: Signal<GameInterface[]> = computed((): GameInterface[] => {
+    const platform: '' | PlatformType = this.selectedConsole();
+    const search: string = this.searchTerm().toLowerCase();
 
-    return this.allGames().filter((game) => {
-      const matchesPlatform = platform ? game.platform === platform : true;
-      const matchesSearch = game.title.toLowerCase().includes(search);
+    return this.allGames().filter((game: GameInterface): boolean => {
+      const matchesPlatform: boolean = platform ? game.platform === platform : true;
+      const matchesSearch: boolean = game.title.toLowerCase().includes(search);
       return matchesPlatform && matchesSearch;
     });
   });
 
   /** Juegos visibles en la página actual */
-  readonly paginatedGames = computed(() => {
-    const start = this.page() * this.pageSize();
+  readonly paginatedGames: Signal<GameInterface[]> = computed((): GameInterface[] => {
+    const start: number = this.page() * this.pageSize();
     return this.filteredGames().slice(start, start + this.pageSize());
   });
 
@@ -87,7 +87,7 @@ export class GameListComponent implements OnInit {
    * Obtiene el ID del usuario actual o lanza error si no hay usuario seleccionado.
    */
   private get userId(): string {
-    const id = this._userContext.userId();
+    const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   }
@@ -96,7 +96,7 @@ export class GameListComponent implements OnInit {
    * Carga todos los juegos del usuario al inicializar el componente.
    */
   async ngOnInit(): Promise<void> {
-    const data = await this._db.getAllGamesForUser(this.userId);
+    const data: GameInterface[] = await this._db.getAllGamesForUser(this.userId);
     this.allGames.set(data);
   }
 
@@ -104,7 +104,7 @@ export class GameListComponent implements OnInit {
    * Devuelve la suma total de precios de los juegos filtrados.
    */
   getTotalPrice(): number {
-    return this.filteredGames().reduce((acc, game) => acc + (game.price || 0), 0);
+    return this.filteredGames().reduce((acc: number, game: GameInterface): number => acc + (game.price || 0), 0);
   }
 
   /**
@@ -113,7 +113,7 @@ export class GameListComponent implements OnInit {
    */
   async onGameDeleted(id: number): Promise<void> {
     await this._db.deleteById(this.userId, id);
-    const updatedGames = this.allGames().filter((game) => game.id !== id);
+    const updatedGames: GameInterface[] = this.allGames().filter((game: GameInterface): boolean => game.id !== id);
     this.allGames.set(updatedGames);
     this._snackBar.open('Game deleted', 'Close', { duration: 2000 });
   }

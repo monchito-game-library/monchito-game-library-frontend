@@ -7,6 +7,7 @@ import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { TranslocoPipe } from '@ngneat/transloco';
 import { availableUsers } from '../../models/constants/available-users.constant';
 import { NgOptimizedImage } from '@angular/common';
+import { AvailableUserInterface } from '../../models/interfaces/available-user.interface';
 
 @Component({
   selector: 'app-select-user',
@@ -26,9 +27,9 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './select-user.component.scss'
 })
 export class SelectUserComponent {
-  private readonly router = inject(Router);
-  readonly userContext = inject(UserContextService);
-  readonly users = availableUsers;
+  private readonly router: Router = inject(Router);
+  readonly userContext: UserContextService = inject(UserContextService);
+  readonly users: AvailableUserInterface[] = availableUsers;
 
   selectUser(user: string) {
     this.userContext.setUser(user);
