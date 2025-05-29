@@ -16,7 +16,7 @@ export class ThemeService {
 
     // Reactividad: aplica la clase al documento automáticamente cuando cambia el tema
     effect(() => {
-      const isDark = this._isDark();
+      const isDark: boolean = this._isDark();
 
       if (isDark) {
         this._renderer.addClass(document.documentElement, 'dark-mode');
@@ -30,15 +30,10 @@ export class ThemeService {
 
   /** Inicializa el tema desde localStorage o preferencia del sistema */
   initTheme(): void {
-    const saved = localStorage.getItem(this._themeKey);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved: string | null = localStorage.getItem(this._themeKey);
+    const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     this._isDark.set(saved === 'dark' || (!saved && prefersDark));
-  }
-
-  /** Alterna entre tema claro y oscuro */
-  toggleTheme(): void {
-    this._isDark.update((prev) => !prev);
   }
 
   /** Fuerza modo oscuro */

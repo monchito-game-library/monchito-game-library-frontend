@@ -1,6 +1,6 @@
 @if (currentUser() !== null) {
   <header class="app-header sticky-header" role="banner">
-    <mat-chip color="accent" selected>
+    <mat-chip color="accent">
       <div class="user-info">
         <mat-icon>person</mat-icon>
         <span class>{{ currentUser()?.labelKey | transloco }}</span>
