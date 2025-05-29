@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
 /**
  * Servicio global para gestionar el usuario actualmente seleccionado.
@@ -7,10 +7,10 @@ import { computed, Injectable, signal } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class UserContextService {
   /** Señal interna que almacena el ID del usuario (o null si no se ha seleccionado) */
-  private readonly _userId = signal<string | null>(null);
+  private readonly _userId: WritableSignal<string | null> = signal<string | null>(null);
 
   /** Señal computada expuesta públicamente con el valor del usuario actual */
-  readonly userId = computed(() => this._userId());
+  readonly userId: Signal<string | null> = computed((): string | null => this._userId());
 
   /**
    * Establece el ID del usuario activo en la aplicación

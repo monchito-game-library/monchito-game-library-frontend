@@ -1,11 +1,11 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
@@ -15,6 +15,7 @@ import { defaultIndexedDbPath } from '../../models/constants/game-library.consta
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
 import { GameRecord } from '../../models/interfaces/game-record.interface';
 import { firstValueFrom } from 'rxjs';
+import { GameInterface } from '../../models/interfaces/game.interface';
 
 @Component({
   selector: 'app-database-tools',
@@ -35,17 +36,17 @@ import { firstValueFrom } from 'rxjs';
 })
 export class DatabaseToolsComponent {
   // --- Inyecciones de servicios ---
-  private readonly _db = inject(IndexedDBRepository);
-  private readonly _snackbar = inject(MatSnackBar);
-  private readonly _dialog = inject(MatDialog);
-  private readonly _transloco = inject(TranslocoService);
-  private readonly _userContext = inject(UserContextService);
+  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _snackbar: MatSnackBar = inject(MatSnackBar);
+  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
+  private readonly _userContext: UserContextService = inject(UserContextService);
 
   /**
    * Computed signal que obtiene el ID del usuario actual o lanza error si no hay ninguno.
    */
-  readonly userId = computed(() => {
-    const id = this._userContext.userId();
+  readonly userId: Signal<string> = computed((): string => {
+    const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   });
@@ -54,13 +55,13 @@ export class DatabaseToolsComponent {
    * Elimina todos los juegos del usuario actual tras confirmación.
    */
   async clearDatabase(): Promise<void> {
-    const games = await this._db.getAllGamesForUser(this.userId());
+    const games: GameInterface[] = await this._db.getAllGamesForUser(this.userId());
     if (games.length === 0) {
       this._snackbar.open(this._t('snackbar.noDataToClear'), 'Close', { duration: 3000 });
       return;
     }
 
-    const confirmed = await this._confirmDialog('dialog.clearTitle', 'dialog.clearMessage');
+    const confirmed: boolean = await this._confirmDialog('dialog.clearTitle', 'dialog.clearMessage');
     if (confirmed) {
       await this._db.clearAllForUser(this.userId());
       this._snackbar.open(this._t('snackbar.dataCleared'), 'Close', { duration: 3000 });
@@ -71,23 +72,23 @@ export class DatabaseToolsComponent {
    * Exporta todos los juegos del usuario actual como un archivo `.json`.
    */
   async exportDatabaseAsJSON(): Promise<void> {
-    const games = await this._db.getAllGamesForUser(this.userId());
+    const games: GameInterface[] = await this._db.getAllGamesForUser(this.userId());
     if (games.length === 0) {
       this._snackbar.open(this._t('snackbar.noDataToExport'), 'Close', { duration: 3000 });
       return;
     }
 
-    const records: GameRecord[] = games.map((game) => ({
+    const records: GameRecord[] = games.map((game: GameInterface) => ({
       userId: this.userId(),
       game
     }));
 
     const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'my-game-library.json';
-    a.click();
+    const url: string = window.URL.createObjectURL(blob);
+    const anchor: HTMLAnchorElement = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'my-game-library.json';
+    anchor.click();
     window.URL.revokeObjectURL(url);
   }
 
@@ -96,9 +97,9 @@ export class DatabaseToolsComponent {
    * @param fileInput Elemento `<input type="file">` invisible que se activa en caso de confirmación.
    */
   handleImport(fileInput: HTMLInputElement): void {
-    this._db.getAllGamesForUser(this.userId()).then(async (existing) => {
+    this._db.getAllGamesForUser(this.userId()).then(async (existing: GameInterface[]) => {
       if (!existing.length) {
-        const confirmed = await this._confirmDialog('dialog.loadTitle', 'dialog.loadMessage');
+        const confirmed: boolean = await this._confirmDialog('dialog.loadTitle', 'dialog.loadMessage');
         if (confirmed) {
           await this.importDefault();
         } else {
@@ -115,7 +116,7 @@ export class DatabaseToolsComponent {
    */
   async importDefault(): Promise<void> {
     try {
-      const response = await fetch(defaultIndexedDbPath);
+      const response: Response = await fetch(defaultIndexedDbPath);
       const records: GameRecord[] = await response.json();
 
       for (const record of records) {
@@ -137,15 +138,15 @@ export class DatabaseToolsComponent {
     if (!input.files?.length) return;
 
     try {
-      const file = input.files[0];
-      const text = await file.text();
-      const data = JSON.parse(text);
+      const file: File = input.files[0];
+      const text: string = await file.text();
+      const data: any = JSON.parse(text);
 
       if (!Array.isArray(data)) throw new Error('Invalid format');
 
       for (const record of data) {
-        const userId = record.userId ?? this.userId();
-        const game = record.game ?? record;
+        const userId: any = record.userId ?? this.userId();
+        const game: any = record.game ?? record;
         await this._db.addGameForUser(userId, game);
       }
 
@@ -172,7 +173,7 @@ export class DatabaseToolsComponent {
    * @returns Promesa con `true` si el usuario confirma
    */
   private _confirmDialog(titleKey: string, messageKey: string): Promise<boolean> {
-    const ref = this._dialog.open(ConfirmDialogComponent, {
+    const ref: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._t(titleKey),
         message: this._t(messageKey)

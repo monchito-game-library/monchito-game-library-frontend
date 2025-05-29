@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, InputSignal, Output, Signal } from '@angular/core';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatChip } from '@angular/material/chips';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
@@ -47,43 +47,45 @@ import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.i
 })
 export class GameCardComponent {
   /** Servicio de rutas para navegación */
-  private readonly _router = inject(Router);
+  private readonly _router: Router = inject(Router);
 
   /** Repositorio de juegos por usuario */
-  private readonly _db = inject(IndexedDBRepository);
+  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
 
   /** Servicio de diálogo para confirmaciones */
-  private readonly _dialog = inject(MatDialog);
+  private readonly _dialog: MatDialog = inject(MatDialog);
 
   /** Servicio de traducción (Transloco) */
-  private readonly _transloco = inject(TranslocoService);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Servicio que proporciona el contexto del usuario actual */
-  private readonly _userContext = inject(UserContextService);
+  private readonly _userContext: UserContextService = inject(UserContextService);
 
   /** Juego a mostrar (obligatorio) */
-  readonly game = input.required<GameInterface>();
+  readonly game: InputSignal<GameInterface> = input.required<GameInterface>();
 
   /**
    * Imagen del juego o imagen por defecto si no se proporciona ninguna.
    */
-  readonly defaultImage = computed(() => this.game().image || defaultGameCover);
+  readonly defaultImage: Signal<string> = computed((): string => this.game().image || defaultGameCover);
 
   /**
    * Icono que representa si el juego tiene platino o no.
    */
-  readonly platinumIcon = computed(() => (this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath));
+  readonly platinumIcon: Signal<string> = computed((): string =>
+    this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath
+  );
 
   /**
    * Evento emitido cuando un juego es eliminado correctamente.
    */
-  @Output() gameDeleted = new EventEmitter<number>();
+  @Output() gameDeleted: EventEmitter<number> = new EventEmitter<number>();
 
   /**
    * Obtiene el ID del usuario actual o lanza error si no está definido.
    */
   private get userId(): string {
-    const id = this._userContext.userId();
+    const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   }
@@ -99,19 +101,19 @@ export class GameCardComponent {
    * Muestra un diálogo de confirmación y elimina el juego si el usuario lo confirma.
    */
   deleteGame = (): void => {
-    const game = this.game();
+    const game: GameInterface = this.game();
     if (!game.id) return;
 
-    const confirmTitle = this._transloco.translate('gameCard.dialog.delete.title');
-    const confirmMessage = this._transloco.translate('gameCard.dialog.delete.message');
+    const confirmTitle: string = this._transloco.translate('gameCard.dialog.delete.title');
+    const confirmMessage: string = this._transloco.translate('gameCard.dialog.delete.message');
 
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (confirmed) {
-        const id = game.id;
+        const id: number | undefined = game.id;
         if (id !== undefined) {
           await this._db.deleteById(this.userId, id);
           this.gameDeleted.emit(id);
