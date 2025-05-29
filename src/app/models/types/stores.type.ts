@@ -18,4 +18,4 @@ export type SToreType =
   | 'imp-ga'
   | 'akb-ga'
   | 'td-cons'
-  | '';
+  | 'none';

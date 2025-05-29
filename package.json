@@ -8,7 +8,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration development",
     "build": "ng build",
     "build:pages:windows": "rmdir /s /q dist && rmdir /s /q .angular && ng build --configuration production --base-href=/monchito-game-library-frontend/",
     "build:pages:unix": "rm -rf dist .angular && ng build --configuration production --base-href=/monchito-game-library-frontend/",

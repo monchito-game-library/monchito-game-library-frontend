@@ -29,7 +29,7 @@ export interface GameInterface {
   /**
    * Tienda donde fue comprado el juego (ej.: Amazon, Game, Wallapop)
    */
-  store: SToreType | null;
+  store: SToreType;
 
   /**
    * Estado del juego: nuevo o usado
