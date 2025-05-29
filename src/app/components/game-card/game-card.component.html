@@ -30,11 +30,13 @@
       <img class="platinum-icon" [ngSrc]="platinumIcon()" width="24" height="24" alt="Platinum status" />
     </div>
 
-    <mat-chip class="meta-chip" color="primary"> {{ game().platform }} - {{ game().condition }} </mat-chip>
+    <mat-chip class="meta-chip" color="primary">
+      {{ displayPlatformLabel(game().platform) }} - {{ displayConditionLabel(game().condition) }}
+    </mat-chip>
   </div>
 
   <mat-card-content>
     <p><strong>Price:</strong> {{ game().price | currency: 'EUR' }}</p>
-    <p><strong>Store:</strong> {{ game().store }}</p>
+    <p><strong>Store:</strong> {{ displayStoreLabel(game().store) }}</p>
   </mat-card-content>
 </mat-card>

@@ -5,9 +5,13 @@ import { GameConditionType } from '../types/game-condition.type';
  * Utilizado en formularios y listas desplegables.
  */
 export interface AvailableConditionInterface {
-  /** Código interno de la condición ('New' o 'Used') */
+  /**
+   * Código interno de la condición ('new' o 'used')
+   */
   code: GameConditionType;
 
-  /** Clave de traducción para mostrar en la interfaz (ej.: 'gameForm.conditions.new') */
+  /**
+   * Clave de traducción para mostrar en la interfaz (ej.: 'gameForm.conditions.new')
+   */
   labelKey: string;
 }

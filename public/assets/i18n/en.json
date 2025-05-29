@@ -26,6 +26,27 @@
     "switch": "Nintendo Switch",
     "pc": "PC"
   },
+  "stores": {
+    "game": "GAME",
+    "amz": "Amazon",
+    "ebay": "eBay",
+    "mrv": "Miravia",
+    "psn": "PlayStation Store",
+    "ms": "Microsoft Store",
+    "ns-store": "Nintendo Store",
+    "pla": "Play Asia",
+    "xtr": "Xtralife",
+    "mdk": "MediaMarkt",
+    "lmt": "Limited Run Games",
+    "lrn": "Larian Store",
+    "wall": "Wallapop",
+    "cex": "CEX",
+    "cnd-ga": "Canadian Games",
+    "nis": "NIS Online Store",
+    "imp-ga": "Impact Games",
+    "akb-ga": "Akiba Games",
+    "td-cons": "Todoconsolas"
+  },
   "gameCard": {
     "dialog": {
       "delete": {

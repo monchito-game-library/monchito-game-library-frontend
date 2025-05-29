@@ -23,6 +23,15 @@ import {
   imageTrophyHiddenPath
 } from '../../models/constants/game-library.constant';
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
+import { SToreType } from '../../models/types/stores.type';
+import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
+import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
+import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
+import { availableConditions } from '../../models/constants/available-conditions.constant';
+import { availableStoresConstant } from '../../models/constants/available-stores.constant';
+import { PlatformType } from '../../models/types/platform.type';
+import { GameConditionType } from '../../models/types/game-condition.type';
 
 @Component({
   selector: 'app-game-card',
@@ -46,22 +55,21 @@ import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.i
   styleUrl: './game-card.component.scss'
 })
 export class GameCardComponent {
-  /** Servicio de rutas para navegación */
+  // ────────────────────── Constantes ───────────────────────
+  private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
+  private readonly _conditions: AvailableConditionInterface[] = availableConditions;
+  private readonly _stores: AvailableStoresInterface[] = availableStoresConstant;
+
+  // ────────────────────── Inyecciones ───────────────────────
   private readonly _router: Router = inject(Router);
-
-  /** Repositorio de juegos por usuario */
   private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
-
-  /** Servicio de diálogo para confirmaciones */
   private readonly _dialog: MatDialog = inject(MatDialog);
-
-  /** Servicio de traducción (Transloco) */
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-
-  /** Servicio que proporciona el contexto del usuario actual */
   private readonly _userContext: UserContextService = inject(UserContextService);
 
-  /** Juego a mostrar (obligatorio) */
+  /**
+   * Juego a mostrar (obligatorio)
+   */
   readonly game: InputSignal<GameInterface> = input.required<GameInterface>();
 
   /**
@@ -120,5 +128,41 @@ export class GameCardComponent {
         }
       }
     });
+  };
+
+  /**
+   * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
+   * Si no se encuentra la tienda, devuelve el código original.
+   */
+  displayStoreLabel = (code: SToreType | null): string => {
+    if (!code) return '';
+    const store: AvailableStoresInterface | undefined = this._stores.find(
+      (s: AvailableStoresInterface): boolean => s.code === code
+    );
+    return store ? this._transloco.translate(store.labelKey) : code;
+  };
+
+  /**
+   * Devuelve la etiqueta de la plataforma del juego, traducida al idioma actual.
+   * Si no se encuentra la plataforma, devuelve el código original.
+   */
+  displayPlatformLabel = (code: PlatformType | null): string => {
+    if (!code) return '';
+    const platform: AvailablePlatformInterface | undefined = this._platforms.find(
+      (p: AvailablePlatformInterface): boolean => p.code === code
+    );
+    return platform ? this._transloco.translate(platform.labelKey) : code;
+  };
+
+  /**
+   * Devuelve la etiqueta de la condición del juego, traducida al idioma actual.
+   * Si no se encuentra la condición, devuelve el código original.
+   */
+  displayConditionLabel = (code: GameConditionType | null): string => {
+    if (!code) return '';
+    const condition: AvailableConditionInterface | undefined = this._conditions.find(
+      (c: AvailableConditionInterface): boolean => c.code === code
+    );
+    return condition ? this._transloco.translate(condition.labelKey) : code;
   };
 }

@@ -23,21 +23,28 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.price' | transloco }}</mat-label>
-          <input matInput formControlName="price" type="number" min="0" />
+          <input matInput formControlName="price" type="number" placeholder="0" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
-          <input matInput formControlName="store" />
+          <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
+          <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
+            @for (store of filteredStores(); track store.code) {
+              <mat-option [value]="store.code">
+                {{ store.labelKey | transloco }}
+              </mat-option>
+            }
+          </mat-autocomplete>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
           <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
-          <mat-autocomplete #platformAuto="matAutocomplete">
-            @for (p of filteredPlatforms(); track p.code) {
-              <mat-option [value]="p.code">
-                {{ p.labelKey | transloco }}
+          <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
+            @for (platform of filteredPlatforms(); track platform.code) {
+              <mat-option [value]="platform.code">
+                {{ platform.labelKey | transloco }}
               </mat-option>
             }
           </mat-autocomplete>
@@ -45,9 +52,9 @@
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.condition' | transloco }}</mat-label>
-          <mat-select formControlName="condition">
-            @for (c of conditions; track c.code) {
-              <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+          <mat-select [formControl]="form.controls.condition">
+            @for (condition of conditions; track condition.code) {
+              <mat-option [value]="condition.code">{{ condition.labelKey | transloco }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
