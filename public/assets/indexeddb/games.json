@@ -2946,7 +2946,7 @@
       "condition": "new",
       "platinum": false,
       "description": "Los compre hace mucho no me acuerdo de como los compre",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7958
     }
@@ -2960,7 +2960,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7959
     }
@@ -2974,7 +2974,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7960
     }
@@ -2988,7 +2988,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7961
     }
@@ -3002,7 +3002,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "SI",
       "id": 7962
     }
@@ -3016,7 +3016,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "NO",
       "id": 7963
     }
@@ -3030,7 +3030,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7964
     }
@@ -3044,7 +3044,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 7965
     }
@@ -3058,7 +3058,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7966
     }
@@ -3072,7 +3072,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7967
     }
@@ -3086,7 +3086,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "NO",
       "id": 7968
     }
@@ -3100,7 +3100,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7969
     }
@@ -3114,7 +3114,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7970
     }
@@ -3128,7 +3128,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7971
     }
@@ -3142,7 +3142,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7972
     }
@@ -3156,7 +3156,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7973
     }
@@ -3170,7 +3170,7 @@
       "condition": "used",
       "platinum": false,
       "description": "No me acuerdo del precio al que lo compre",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7974
     }
@@ -3184,7 +3184,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "SI",
       "id": 7975
     }
@@ -3198,7 +3198,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7976
     }
@@ -3212,7 +3212,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7977
     }
@@ -3226,7 +3226,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 7978
     }
@@ -3240,7 +3240,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "NO",
       "id": 7979
     }
@@ -3254,7 +3254,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7980
     }
@@ -3268,7 +3268,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7981
     }
@@ -3282,7 +3282,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7982
     }
@@ -3296,7 +3296,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7983
     }
@@ -3323,7 +3323,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7985
     }
@@ -3337,7 +3337,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 7986
     }
@@ -3351,7 +3351,7 @@
       "condition": "new",
       "platinum": false,
       "description": "12,99€ + 0,75€ (gastos de envío entre 4)",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7987
     }
@@ -3365,7 +3365,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7988
     }
@@ -3379,7 +3379,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "NO",
       "id": 7989
     }
@@ -3393,7 +3393,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "NO",
       "id": 7990
     }
@@ -3407,7 +3407,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7991
     }
@@ -3421,7 +3421,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7992
     }
@@ -3435,7 +3435,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 7993
     }
@@ -3449,7 +3449,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 7994
     }
@@ -3463,7 +3463,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "NO",
       "id": 7995
     }
@@ -3477,7 +3477,7 @@
       "condition": "new",
       "platinum": false,
       "description": "Al ser la version NTCS (USA) no funciona en la xbox 360 PAL",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 7996
     }
@@ -3491,7 +3491,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7997
     }
@@ -3505,7 +3505,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 7998
     }
@@ -3519,7 +3519,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 7999
     }
@@ -3527,13 +3527,13 @@
   {
     "userId": "alberto",
     "game": {
-      "title": "Mando XBOX ONE Ed Proyect Scorpio",
+      "title": "Mando XBOX-ONE Ed Proyect Scorpio",
       "price": 18,
       "store": "wall",
       "condition": "used",
       "platinum": false,
       "description": "40€ - 22€ (Vender mando xbox one del pack de la consola)",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8000
     }
@@ -3547,7 +3547,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "NO",
       "id": 8001
     }
@@ -3561,7 +3561,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8002
     }
@@ -3575,7 +3575,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8003
     }
@@ -3589,7 +3589,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8004
     }
@@ -3603,7 +3603,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8005
     }
@@ -3617,7 +3617,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8006
     }
@@ -3631,7 +3631,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8007
     }
@@ -3645,7 +3645,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8008
     }
@@ -3659,7 +3659,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "SI",
       "id": 8009
     }
@@ -3673,7 +3673,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8010
     }
@@ -3687,7 +3687,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8011
     }
@@ -3701,7 +3701,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8012
     }
@@ -3715,7 +3715,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8013
     }
@@ -3729,7 +3729,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8014
     }
@@ -3743,7 +3743,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8015
     }
@@ -3757,7 +3757,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8016
     }
@@ -3771,7 +3771,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8017
     }
@@ -3785,7 +3785,7 @@
       "condition": "new",
       "platinum": false,
       "description": "Alen me regaló la caja metálica",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8018
     }
@@ -3799,7 +3799,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8019
     }
@@ -3813,7 +3813,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "SI",
       "id": 8020
     }
@@ -3821,13 +3821,13 @@
   {
     "userId": "alberto",
     "game": {
-      "title": "Red Dead Redemption GOTY (Edicion XBOX ONE)",
+      "title": "Red Dead Redemption GOTY (Edicion XBOX-ONE)",
       "price": 26.49,
       "store": "amz",
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8021
     }
@@ -3841,7 +3841,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8022
     }
@@ -3855,7 +3855,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8023
     }
@@ -3869,7 +3869,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8024
     }
@@ -3883,7 +3883,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8025
     }
@@ -3897,7 +3897,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8026
     }
@@ -3911,7 +3911,7 @@
       "condition": "new",
       "platinum": false,
       "description": "Expansión en fisico del juego base.",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8027
     }
@@ -3925,7 +3925,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8028
     }
@@ -3939,7 +3939,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8030
     }
@@ -3953,7 +3953,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8031
     }
@@ -3967,7 +3967,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8032
     }
@@ -3981,7 +3981,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8033
     }
@@ -3995,7 +3995,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8034
     }
@@ -4009,7 +4009,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8035
     }
@@ -4023,7 +4023,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8036
     }
@@ -4037,7 +4037,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "SI",
       "id": 8037
     }
@@ -4051,7 +4051,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8038
     }
@@ -4065,7 +4065,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8039
     }
@@ -4079,7 +4079,7 @@
       "condition": "new",
       "platinum": false,
       "description": "Caja metálica del Rey Misterio",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8040
     }
@@ -4093,7 +4093,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8041
     }
@@ -4107,7 +4107,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8042
     }
@@ -4121,7 +4121,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ORIGINAL",
+      "platform": "XBOX",
       "backwardsCompatible": "SI",
       "id": 8043
     }
@@ -4135,7 +4135,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX ONE",
+      "platform": "XBOX-ONE",
       "backwardsCompatible": "",
       "id": 8044
     }
@@ -4143,13 +4143,13 @@
   {
     "userId": "alberto",
     "game": {
-      "title": "XBOX 360 SLIM",
+      "title": "XBOX-360 SLIM",
       "price": 75,
       "store": "wall",
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "",
       "id": 8045
     }
@@ -4163,7 +4163,7 @@
       "condition": "used",
       "platinum": false,
       "description": "",
-      "platform": "XBOX 360",
+      "platform": "XBOX-360",
       "backwardsCompatible": "SI",
       "id": 8046
     }
@@ -4177,7 +4177,7 @@
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "",
       "id": 8047
     }
@@ -4185,13 +4185,13 @@
   {
     "userId": "alberto",
     "game": {
-      "title": "XBOX SERIES",
+      "title": "XBOX-SERIES",
       "price": 499.99,
       "store": "ms",
       "condition": "new",
       "platinum": false,
       "description": "",
-      "platform": "XBOX SERIES",
+      "platform": "XBOX-SERIES",
       "backwardsCompatible": "SI",
       "id": 8048
     }
