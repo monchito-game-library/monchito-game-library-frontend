@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { MatChip } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
@@ -41,6 +42,12 @@ export class AppComponent implements OnInit {
 
   // --- Tema visual reactivo (modo oscuro) ---
   readonly isDark: WritableSignal<boolean> = signal(this._themeService.isDarkMode());
+
+  // --- Ruta actual ---
+  readonly currentRoute: WritableSignal<string> = signal('');
+
+  // --- Rutas públicas donde NO se debe mostrar el header ---
+  private readonly publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
 
   // --- Usuario autenticado (deprecado currentUser para compatibilidad) ---
   readonly currentUser: Signal<AvailableUserInterface | null> = computed((): AvailableUserInterface | null => {
@@ -84,6 +91,16 @@ export class AppComponent implements OnInit {
     this.selectedLangControl.valueChanges.subscribe((lang: string) => {
       if (lang) this._transloco.setActiveLang(lang);
     });
+
+    // Escuchar cambios de ruta
+    this._router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.currentRoute.set(event.urlAfterRedirects);
+      });
+
+    // Establecer ruta inicial
+    this.currentRoute.set(this._router.url);
   }
 
   /**
@@ -95,10 +112,12 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Verifica si hay un usuario autenticado
+   * Verifica si hay un usuario autenticado Y no estamos en una ruta pública
    */
   isAuthenticated(): boolean {
-    return this.userContext.isUserSelected();
+    const isUserAuthenticated = this.userContext.isUserSelected();
+    const isPublicRoute = this.publicRoutes.some((route) => this.currentRoute().startsWith(route));
+    return isUserAuthenticated && !isPublicRoute;
   }
 
   /**

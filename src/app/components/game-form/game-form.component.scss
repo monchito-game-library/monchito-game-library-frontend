@@ -19,6 +19,69 @@
     font-weight: bold;
   }
 
+  .game-search-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--mat-sys-surface-variant);
+    border-radius: 8px;
+
+    .search-game-button {
+      width: 100%;
+      height: 48px;
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+
+    .selected-game-preview {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--mat-sys-surface);
+      border-radius: 8px;
+      border: 2px solid var(--mat-sys-primary);
+
+      .game-preview-image {
+        width: 120px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .game-preview-info {
+        flex: 1;
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: var(--mat-sys-on-surface);
+        }
+
+        .game-preview-meta {
+          display: flex;
+          gap: 1rem;
+          font-size: 0.875rem;
+          color: var(--mat-sys-on-surface-variant);
+
+          span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+
+            mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+
   .form-grid {
     display: grid;
     grid-template-columns: 1fr;
