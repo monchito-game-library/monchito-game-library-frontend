@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, Signal } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -12,12 +12,14 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { DatePipe } from '@angular/common';
 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
 import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
+import { SupabaseRepository } from '../../repositories/supabase.repository';
 import { GameInterface } from '../../models/interfaces/game.interface';
 import { GameConditionType } from '../../models/types/game-condition.type';
 import { PlatformType } from '../../models/types/platform.type';
@@ -33,6 +35,8 @@ import { AvailableStoresInterface } from '../../models/interfaces/available-stor
 import { availableStoresConstant } from '../../models/constants/available-stores.constant';
 import { StoreType } from '../../models/types/stores.type';
 import { cardActionType } from '../../models/types/card-action.type';
+import { GameSearchDialogComponent } from '../game-search-dialog/game-search-dialog.component';
+import { GameCatalog } from '../../services/rawg/rawg.interface';
 
 @Component({
   selector: 'app-game-form',
@@ -55,7 +59,8 @@ import { cardActionType } from '../../models/types/card-action.type';
     TranslocoPipe,
     MatAutocompleteTrigger,
     MatAutocomplete,
-    MatSuffix
+    MatSuffix,
+    DatePipe
   ],
   templateUrl: './game-form.component.html',
   styleUrl: './game-form.component.scss'
@@ -129,6 +134,7 @@ export class GameFormComponent implements OnInit {
   // ────────────────────── Estado interno ──────────────────────
   isEditMode: boolean = false;
   private _gameId?: number;
+  readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
   /**
    * Obtiene el ID del usuario actual o lanza error si no está definido
@@ -184,6 +190,11 @@ export class GameFormComponent implements OnInit {
         description: raw.description ?? ''
       };
 
+      // Pasar el juego seleccionado de RAWG al repository (si existe)
+      if (this._db instanceof SupabaseRepository) {
+        this._db.setSelectedGameCatalog(this.selectedGame());
+      }
+
       if (this.isEditMode && this._gameId !== undefined) {
         await this._db.updateGameForUser(this.userId, this._gameId, game);
       } else {
@@ -217,4 +228,25 @@ export class GameFormComponent implements OnInit {
     );
     return platform ? this._transloco.translate(platform.labelKey) : code;
   };
+
+  /**
+   * Abre el diálogo de búsqueda de juegos
+   */
+  openGameSearch(): void {
+    const dialogRef = this._dialog.open(GameSearchDialogComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh'
+    });
+
+    dialogRef.afterClosed().subscribe((selectedGame: GameCatalog | null) => {
+      if (selectedGame) {
+        this.selectedGame.set(selectedGame);
+        // Auto-rellenar el título con el juego seleccionado
+        this.form.patchValue({
+          title: selectedGame.title
+        });
+      }
+    });
+  }
 }
