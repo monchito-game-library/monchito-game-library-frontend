@@ -15,10 +15,40 @@
 
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Game Search Section -->
+      <div class="game-search-section">
+        <button mat-raised-button color="accent" type="button" (click)="openGameSearch()" class="search-game-button">
+          <mat-icon>search</mat-icon>
+          Buscar Juego en Catálogo
+        </button>
+
+        @if (selectedGame()) {
+          <div class="selected-game-preview">
+            @if (selectedGame()!.image_url) {
+              <img [src]="selectedGame()!.image_url" [alt]="selectedGame()!.title" class="game-preview-image" />
+            }
+            <div class="game-preview-info">
+              <h3>{{ selectedGame()!.title }}</h3>
+              <div class="game-preview-meta">
+                @if (selectedGame()!.released_date) {
+                  <span><mat-icon>calendar_today</mat-icon> {{ selectedGame()!.released_date | date: 'yyyy' }}</span>
+                }
+                @if (selectedGame()!.rating > 0) {
+                  <span><mat-icon>star</mat-icon> {{ selectedGame()!.rating }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
       <div class="form-grid">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
-          <input matInput formControlName="title" />
+          <input matInput formControlName="title" [readonly]="!!selectedGame()" />
+          @if (selectedGame()) {
+            <mat-icon matSuffix>lock</mat-icon>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
