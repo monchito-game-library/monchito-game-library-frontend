@@ -11,6 +11,8 @@ import { AvailableUserInterface } from '../../models/interfaces/available-user.i
 
 @Component({
   selector: 'app-select-user',
+  templateUrl: './select-user.component.html',
+  styleUrl: './select-user.component.scss',
   standalone: true,
   imports: [
     MatButtonModule,
@@ -22,9 +24,7 @@ import { AvailableUserInterface } from '../../models/interfaces/available-user.i
     MatChipOption,
     NgOptimizedImage,
     MatChipAvatar
-  ],
-  templateUrl: './select-user.component.html',
-  styleUrl: './select-user.component.scss'
+  ]
 })
 export class SelectUserComponent {
   private readonly router: Router = inject(Router);

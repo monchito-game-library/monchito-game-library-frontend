@@ -8,7 +8,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
+import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { defaultIndexedDbPath } from '../../models/constants/game-library.constant';
@@ -26,7 +27,7 @@ import { GameInterface } from '../../models/interfaces/game.interface';
 })
 export class DatabaseToolsComponent {
   // --- Inyecciones de servicios ---
-  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _snackbar: MatSnackBar = inject(MatSnackBar);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);

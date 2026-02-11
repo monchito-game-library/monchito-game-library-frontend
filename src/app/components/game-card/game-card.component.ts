@@ -12,7 +12,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
+import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { GameInterface } from '../../models/interfaces/game.interface';
@@ -62,7 +63,7 @@ export class GameCardComponent {
 
   // ────────────────────── Inyecciones ───────────────────────
   private readonly _router: Router = inject(Router);
-  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);

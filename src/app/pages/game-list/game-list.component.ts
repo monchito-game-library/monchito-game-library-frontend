@@ -16,7 +16,8 @@ import { GameInterface } from '../../models/interfaces/game.interface';
 import { PlatformType } from '../../models/types/platform.type';
 import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
 import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
+import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
 import { UserContextService } from '../../services/user-context.service';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
@@ -46,7 +47,7 @@ import { StoreType } from '../../models/types/stores.type';
 })
 export class GameListComponent implements OnInit {
   // --- Servicios inyectados ---
-  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _userContext: UserContextService = inject(UserContextService);
 

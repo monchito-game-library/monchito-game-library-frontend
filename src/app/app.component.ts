@@ -1,13 +1,13 @@
 import { Component, computed, effect, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { NgOptimizedImage } from '@angular/common';
 import { MatChip } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
-import { IndexedDBRepository } from './repositories/indexeddb.repository';
+import { GAME_REPOSITORY } from './tokens/game-repository.token';
+import { GameRepositoryInterface } from './models/interfaces/game-repository.interface';
 import { UserContextService } from './services/user-context.service';
 import { ThemeService } from './services/theme.service';
 import { defaultIndexedDbPath } from './models/constants/game-library.constant';
@@ -21,23 +21,13 @@ import { GameInterface } from './models/interfaces/game.interface';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    NgOptimizedImage,
-    MatChip,
-    MatIcon,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
-    MatDivider,
-    TranslocoPipe
-  ],
+  imports: [RouterOutlet, MatChip, MatIcon, MatMenu, MatMenuTrigger, MatMenuItem, MatDivider, TranslocoPipe],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   // --- Servicios inyectados ---
-  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
@@ -52,14 +42,16 @@ export class AppComponent implements OnInit {
   // --- Tema visual reactivo (modo oscuro) ---
   readonly isDark: WritableSignal<boolean> = signal(this._themeService.isDarkMode());
 
-  // --- Usuario actual resuelto desde userId ---
+  // --- Usuario autenticado (deprecado currentUser para compatibilidad) ---
   readonly currentUser: Signal<AvailableUserInterface | null> = computed((): AvailableUserInterface | null => {
-    const id: string | null = this.userContext.userId();
-    return availableUsers.find((u: AvailableUserInterface): boolean => u.id === id) ?? null;
+    // Mantenido para compatibilidad pero ya no usado
+    return null;
   });
 
   constructor() {
-    // Efecto que carga automáticamente los juegos por defecto al seleccionar usuario (si no tiene juegos guardados)
+    // Carga automática de juegos por defecto DESACTIVADA para usar Supabase
+    // Si quieres volver a activarla, descomenta el código siguiente:
+    /*
     effect(() => {
       const userId: string | null = this.userContext.userId();
       if (!userId || typeof window === 'undefined') return;
@@ -80,6 +72,7 @@ export class AppComponent implements OnInit {
         }
       });
     });
+    */
   }
 
   ngOnInit(): void {
@@ -102,10 +95,30 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Limpia la sesión de usuario y redirige al selector.
+   * Verifica si hay un usuario autenticado
+   */
+  isAuthenticated(): boolean {
+    return this.userContext.isUserSelected();
+  }
+
+  /**
+   * Obtiene el nombre para mostrar del usuario autenticado
+   */
+  getDisplayName(): string {
+    return this.userContext.getDisplayName();
+  }
+
+  /**
+   * Obtiene la URL del avatar del usuario
+   */
+  getAvatarUrl(): string {
+    return this.userContext.getAvatarUrl();
+  }
+
+  /**
+   * Cierra la sesión del usuario
    */
   logout(): void {
     this.userContext.clearUser();
-    void this._router.navigateByUrl('/select-user');
   }
 }
