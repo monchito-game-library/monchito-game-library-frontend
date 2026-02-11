@@ -1,0 +1,125 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-title class="register-title">
+      <mat-icon class="register-icon">person_add</mat-icon>
+      <h2>{{ 'auth.register.title' | transloco }}</h2>
+    </mat-card-title>
+
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Display Name Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.register.displayName' | transloco }}</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="displayName"
+            [placeholder]="'auth.register.displayNamePlaceholder' | transloco"
+            autocomplete="name" />
+          <mat-icon matPrefix>person</mat-icon>
+          @if (registerForm.get('displayName')?.hasError('required') && registerForm.get('displayName')?.touched) {
+            <mat-error>{{ 'auth.register.displayNameRequired' | transloco }}</mat-error>
+          }
+          @if (registerForm.get('displayName')?.hasError('minlength') && registerForm.get('displayName')?.touched) {
+            <mat-error>{{ 'auth.register.displayNameMinLength' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Email Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.register.email' | transloco }}</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            [placeholder]="'auth.register.emailPlaceholder' | transloco"
+            autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+            <mat-error>{{ 'auth.register.emailRequired' | transloco }}</mat-error>
+          }
+          @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
+            <mat-error>{{ 'auth.register.emailInvalid' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.register.password' | transloco }}</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword() ? 'password' : 'text'"
+            formControlName="password"
+            [placeholder]="'auth.register.passwordPlaceholder' | transloco"
+            autocomplete="new-password" />
+          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+            <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+            <mat-error>{{ 'auth.register.passwordRequired' | transloco }}</mat-error>
+          }
+          @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
+            <mat-error>{{ 'auth.register.passwordMinLength' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Confirm Password Field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'auth.register.confirmPassword' | transloco }}</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="hideConfirmPassword() ? 'password' : 'text'"
+            formControlName="confirmPassword"
+            [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
+            autocomplete="new-password" />
+          <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPasswordVisibility()">
+            <mat-icon>{{ hideConfirmPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          @if (
+            registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched
+          ) {
+            <mat-error>{{ 'auth.register.confirmPasswordRequired' | transloco }}</mat-error>
+          }
+          @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+            <mat-error>{{ 'auth.register.passwordMismatch' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="error-message">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <!-- Success Message -->
+        @if (successMessage()) {
+          <div class="success-message">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ successMessage() }}</span>
+          </div>
+        }
+
+        <!-- Submit Button -->
+        <button mat-raised-button color="primary" type="submit" class="full-width submit-button" [disabled]="loading()">
+          @if (loading()) {
+            <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+          } @else {
+            {{ 'auth.register.submit' | transloco }}
+          }
+        </button>
+
+        <!-- Login Link -->
+        <div class="login-prompt">
+          <span>{{ 'auth.register.hasAccount' | transloco }}</span>
+          <a routerLink="/login" class="link">
+            {{ 'auth.register.login' | transloco }}
+          </a>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
