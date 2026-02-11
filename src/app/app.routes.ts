@@ -5,15 +5,28 @@ import { HomeComponent } from './pages/home/home.component';
 import { GameListComponent } from './pages/game-list/game-list.component';
 import { DatabaseToolsComponent } from './pages/database-tools/database-tools.component';
 import { CreateAndUpdateGameComponent } from './pages/create-update-game/create-and-update-game.component';
-import { SelectUserComponent } from './pages/select-user/select-user.component';
+import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 
 export const routes: Routes = [
+  // Public routes (no authentication required)
   {
-    path: 'select-user',
-    component: SelectUserComponent
+    path: 'login',
+    component: LoginComponent
   },
   {
-    path: '',
+    path: 'register',
+    component: RegisterComponent
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
+  },
+
+  // Protected routes (authentication required)
+  {
+    path: 'home',
     component: HomeComponent,
     canActivate: [canActivateUser]
   },
@@ -37,8 +50,15 @@ export const routes: Routes = [
     component: CreateAndUpdateGameComponent,
     canActivate: [canActivateUser]
   },
+
+  // Default and fallback routes
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'login'
   }
 ];

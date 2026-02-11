@@ -16,7 +16,8 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { IndexedDBRepository } from '../../repositories/indexeddb.repository';
+import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
+import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
 import { GameInterface } from '../../models/interfaces/game.interface';
 import { GameConditionType } from '../../models/types/game-condition.type';
 import { PlatformType } from '../../models/types/platform.type';
@@ -62,7 +63,7 @@ import { cardActionType } from '../../models/types/card-action.type';
 export class GameFormComponent implements OnInit {
   // ────────────────────── Inyecciones ──────────────────────
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _db: IndexedDBRepository = inject(IndexedDBRepository);
+  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);

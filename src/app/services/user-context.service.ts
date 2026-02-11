@@ -1,32 +1,64 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, Signal } from '@angular/core';
+import { AuthService } from './auth.service';
 
 /**
- * Servicio global para gestionar el usuario actualmente seleccionado.
- * Utiliza señales reactivas para exponer y modificar el contexto del usuario.
+ * Servicio global para gestionar el usuario actualmente autenticado.
+ * Ahora usa AuthService de Supabase en lugar de selección manual.
+ * Mantiene compatibilidad con el código existente.
  */
 @Injectable({ providedIn: 'root' })
 export class UserContextService {
-  /** Señal interna que almacena el ID del usuario (o null si no se ha seleccionado) */
-  private readonly _userId: WritableSignal<string | null> = signal<string | null>(null);
-
-  /** Señal computada expuesta públicamente con el valor del usuario actual */
-  readonly userId: Signal<string | null> = computed((): string | null => this._userId());
+  private readonly authService = inject(AuthService);
 
   /**
-   * Establece el ID del usuario activo en la aplicación
-   * @param id ID del usuario (ej.: 'alberto')
+   * Señal computada que devuelve el ID del usuario autenticado
+   * Mantiene compatibilidad con el código existente
+   */
+  readonly userId: Signal<string | null> = computed((): string | null => {
+    return this.authService.getUserId();
+  });
+
+  /**
+   * @deprecated Ya no es necesario con autenticación real
+   * Mantenido para compatibilidad
    */
   setUser(id: string): void {
-    this._userId.set(id);
+    console.warn('setUser() is deprecated with Supabase Auth');
   }
 
-  /** Elimina el usuario actual (útil para logout o cambio de perfil) */
+  /**
+   * Cierra la sesión del usuario
+   * Ahora usa AuthService
+   */
   clearUser(): void {
-    this._userId.set(null);
+    void this.authService.signOut();
   }
 
-  /** Indica si hay un usuario actualmente seleccionado */
+  /**
+   * Indica si hay un usuario actualmente autenticado
+   */
   isUserSelected(): boolean {
-    return !!this._userId();
+    return this.authService.isAuthenticated();
+  }
+
+  /**
+   * Obtiene el email del usuario autenticado
+   */
+  getUserEmail(): string | null {
+    return this.authService.getUserEmail();
+  }
+
+  /**
+   * Obtiene el nombre para mostrar del usuario
+   */
+  getDisplayName(): string {
+    return this.authService.getDisplayName();
+  }
+
+  /**
+   * Obtiene la URL del avatar del usuario
+   */
+  getAvatarUrl(): string {
+    return this.authService.getAvatarUrl();
   }
 }

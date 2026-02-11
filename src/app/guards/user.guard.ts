@@ -1,19 +1,19 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { UserContextService } from '../services/user-context.service';
+import { AuthService } from '../services/auth.service';
 
 /**
- * Guard que impide acceder a rutas protegidas si no hay usuario seleccionado.
- * Redirige automáticamente a `/select-user` si no hay usuario en contexto.
+ * Guard que impide acceder a rutas protegidas si no hay usuario autenticado.
+ * Redirige automáticamente a `/login` si no hay sesión activa.
  */
 export const canActivateUser: CanActivateFn = (): boolean => {
-  const userContext: UserContextService = inject(UserContextService);
+  const authService: AuthService = inject(AuthService);
   const router: Router = inject(Router);
 
-  const isUserSet: boolean = userContext.isUserSelected();
+  const isAuthenticated: boolean = authService.isAuthenticated();
 
-  if (!isUserSet) {
-    void router.navigateByUrl('/select-user');
+  if (!isAuthenticated) {
+    void router.navigateByUrl('/login');
     return false;
   }
 
