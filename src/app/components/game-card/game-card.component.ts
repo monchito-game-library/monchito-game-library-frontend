@@ -33,6 +33,7 @@ import { availableConditions } from '../../models/constants/available-conditions
 import { availableStoresConstant } from '../../models/constants/available-stores.constant';
 import { PlatformType } from '../../models/types/platform.type';
 import { GameConditionType } from '../../models/types/game-condition.type';
+import { availableGameStatuses, GameStatusOption } from '../../models/constants/game-status.constant';
 
 @Component({
   selector: 'app-game-card',
@@ -60,6 +61,7 @@ export class GameCardComponent {
   private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
   private readonly _conditions: AvailableConditionInterface[] = availableConditions;
   private readonly _stores: AvailableStoresInterface[] = availableStoresConstant;
+  private readonly _statuses: GameStatusOption[] = availableGameStatuses;
 
   // ────────────────────── Inyecciones ───────────────────────
   private readonly _router: Router = inject(Router);
@@ -84,6 +86,49 @@ export class GameCardComponent {
   readonly platinumIcon: Signal<string> = computed((): string =>
     this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath
   );
+
+  /**
+   * Estado del juego (campos del schema v3)
+   */
+  readonly gameStatus: Signal<GameStatusOption | undefined> = computed(() => {
+    const gameAny = this.game() as any;
+    const statusCode = gameAny.status || 'owned';
+    return this._statuses.find((s) => s.code === statusCode);
+  });
+
+  /**
+   * Rating personal del usuario (0-10)
+   */
+  readonly personalRating: Signal<number | null> = computed(() => {
+    const gameAny = this.game() as any;
+    return gameAny.personal_rating ?? null;
+  });
+
+  /**
+   * Horas jugadas
+   */
+  readonly hoursPlayed: Signal<number> = computed(() => {
+    const gameAny = this.game() as any;
+    return gameAny.hours_played ?? 0;
+  });
+
+  /**
+   * Es favorito
+   */
+  readonly isFavorite: Signal<boolean> = computed(() => {
+    const gameAny = this.game() as any;
+    return gameAny.is_favorite ?? false;
+  });
+
+  /**
+   * Genera array de estrellas para mostrar el rating
+   */
+  readonly ratingStars: Signal<number[]> = computed(() => {
+    const rating = this.personalRating();
+    if (rating === null) return [];
+    const fullStars = Math.floor(rating / 2); // Convertir 0-10 a 0-5 estrellas
+    return Array(fullStars).fill(1);
+  });
 
   /**
    * Evento emitido cuando un juego es eliminado correctamente.

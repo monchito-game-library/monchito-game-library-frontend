@@ -25,6 +25,7 @@ import { GameConditionType } from '../../models/types/game-condition.type';
 import { PlatformType } from '../../models/types/platform.type';
 import { availableConditions } from '../../models/constants/available-conditions.constant';
 import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
+import { availableGameStatuses, GameStatusOption } from '../../models/constants/game-status.constant';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
@@ -79,6 +80,7 @@ export class GameFormComponent implements OnInit {
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
   readonly conditions: AvailableConditionInterface[] = availableConditions;
   readonly stores: AvailableStoresInterface[] = availableStoresConstant;
+  readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
   // ────────────────────── Formulario ───────────────────────
   readonly form = this._fb.group({
@@ -98,9 +100,14 @@ export class GameFormComponent implements OnInit {
         selectOneValidator(this.platforms.map((platform: AvailablePlatformInterface): PlatformType => platform.code))
       ]
     ],
-    condition: 'New' as GameConditionType,
+    condition: 'new' as GameConditionType,
     platinum: false,
-    description: ''
+    description: '',
+    // Nuevos campos del schema v3
+    status: ['owned' as 'wishlist' | 'backlog' | 'playing' | 'completed' | 'platinum' | 'abandoned' | 'owned'],
+    personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
+    hours_played: [0, [Validators.min(0)]],
+    is_favorite: [false]
   });
 
   // ────── Autocompletado dinámico de plataformas ──────
@@ -110,6 +117,35 @@ export class GameFormComponent implements OnInit {
 
   readonly filteredPlatforms: Signal<AvailablePlatformInterface[]> = computed((): AvailablePlatformInterface[] => {
     const input: string = this.platformInput()?.toString().toLowerCase() ?? '';
+    const gamePlatforms = this.gamePlatforms();
+
+    // Si hay plataformas del juego seleccionado, usar SOLO esas
+    if (gamePlatforms.length > 0) {
+      // Convertir las plataformas del juego a AvailablePlatformInterface
+      const dynamicPlatforms: AvailablePlatformInterface[] = gamePlatforms
+        .filter((gp) => gp.code !== null) // Solo las que pudimos mapear
+        .map((gp) => {
+          // Buscar la plataforma en nuestro catálogo para obtener el labelKey
+          const existingPlatform = this.platforms.find((p) => p.code === gp.code);
+          return (
+            existingPlatform || {
+              code: gp.code!,
+              labelKey: gp.name // Usar el nombre de RAWG como fallback
+            }
+          );
+        });
+
+      // Aplicar filtro de búsqueda
+      return dynamicPlatforms.filter(
+        (platform: AvailablePlatformInterface): boolean =>
+          platform.code.toLowerCase().includes(input) ||
+          (typeof platform.labelKey === 'string' ? platform.labelKey : this._transloco.translate(platform.labelKey))
+            .toLowerCase()
+            .includes(input)
+      );
+    }
+
+    // Si NO hay juego seleccionado, mostrar todas las plataformas normalmente
     return this.platforms.filter(
       (platform: AvailablePlatformInterface): boolean =>
         platform.code.toLowerCase().includes(input) ||
@@ -135,6 +171,11 @@ export class GameFormComponent implements OnInit {
   isEditMode: boolean = false;
   private _gameId?: number;
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
+
+  /**
+   * Plataformas del juego seleccionado de RAWG (nombres originales y códigos mapeados)
+   */
+  readonly gamePlatforms: WritableSignal<Array<{ name: string; code: PlatformType | null }>> = signal([]);
 
   /**
    * Obtiene el ID del usuario actual o lanza error si no está definido
@@ -187,8 +228,13 @@ export class GameFormComponent implements OnInit {
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
-        description: raw.description ?? ''
-      };
+        description: raw.description ?? '',
+        // Campos del schema v3 (no están en GameInterface, pero se manejarán en el repository)
+        ...(raw.status && { status: raw.status }),
+        ...(raw.personal_rating !== null && { personal_rating: raw.personal_rating }),
+        ...(raw.hours_played !== null && { hours_played: raw.hours_played }),
+        ...(raw.is_favorite !== null && { is_favorite: raw.is_favorite })
+      } as any;
 
       // Pasar el juego seleccionado de RAWG al repository (si existe)
       if (this._db instanceof SupabaseRepository) {
@@ -230,6 +276,45 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
+   * Mapea nombres de plataformas de RAWG a nuestros códigos de plataforma
+   */
+  private mapRawgPlatformToCode(rawgPlatformName: string): PlatformType | null {
+    const platformMap: Record<string, PlatformType> = {
+      'PlayStation 5': 'PS5',
+      PS5: 'PS5',
+      'PlayStation 4': 'PS4',
+      PS4: 'PS4',
+      'PlayStation 3': 'PS3',
+      PS3: 'PS3',
+      'PlayStation 2': 'PS2',
+      PS2: 'PS2',
+      PlayStation: 'PS1',
+      PS1: 'PS1',
+      'PS Vita': 'PS-VITA',
+      'PlayStation Vita': 'PS-VITA',
+      PSP: 'PSP',
+      PC: 'PC',
+      'Nintendo Switch': 'SWITCH',
+      Switch: 'SWITCH',
+      Wii: 'WII',
+      'Wii U': 'WII',
+      GameCube: 'GAME-CUBE',
+      'Nintendo DS': 'DS',
+      'Nintendo 3DS': '3DS',
+      '3DS': '3DS',
+      'Game Boy Color': 'GBC',
+      'Game Boy Advance': 'GBA',
+      'Xbox Series S/X': 'XBOX-SERIES',
+      'Xbox Series X': 'XBOX-SERIES',
+      'Xbox One': 'XBOX-ONE',
+      'Xbox 360': 'XBOX-360',
+      Xbox: 'XBOX'
+    };
+
+    return platformMap[rawgPlatformName] || null;
+  }
+
+  /**
    * Abre el diálogo de búsqueda de juegos
    */
   openGameSearch(): void {
@@ -242,10 +327,31 @@ export class GameFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe((selectedGame: GameCatalog | null) => {
       if (selectedGame) {
         this.selectedGame.set(selectedGame);
+
         // Auto-rellenar el título con el juego seleccionado
         this.form.patchValue({
           title: selectedGame.title
         });
+
+        // Cargar plataformas del juego seleccionado
+        if (selectedGame.platforms && selectedGame.platforms.length > 0) {
+          // Mapear cada plataforma de RAWG a su código
+          const platformsData = selectedGame.platforms.map((rawgName) => ({
+            name: rawgName,
+            code: this.mapRawgPlatformToCode(rawgName)
+          }));
+
+          // Actualizar las plataformas del juego (reemplaza las opciones del select)
+          this.gamePlatforms.set(platformsData);
+
+          // Resetear la plataforma seleccionada para que el usuario elija
+          this.form.patchValue({
+            platform: null
+          });
+        } else {
+          // Si no hay plataformas del juego, limpiar y mostrar todas
+          this.gamePlatforms.set([]);
+        }
       }
     });
   }

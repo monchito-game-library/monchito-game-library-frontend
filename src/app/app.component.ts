@@ -11,8 +11,6 @@ import { GAME_REPOSITORY } from './tokens/game-repository.token';
 import { GameRepositoryInterface } from './models/interfaces/game-repository.interface';
 import { UserContextService } from './services/user-context.service';
 import { ThemeService } from './services/theme.service';
-import { defaultIndexedDbPath } from './models/constants/game-library.constant';
-import { GameRecord } from './models/interfaces/game-record.interface';
 import { availableLangConstant } from './models/constants/available-lang.constant';
 import { AvailableLanguageInterface } from './models/interfaces/available-language.interface';
 import { availableUsers } from './models/constants/available-users.constant';
@@ -54,33 +52,6 @@ export class AppComponent implements OnInit {
     // Mantenido para compatibilidad pero ya no usado
     return null;
   });
-
-  constructor() {
-    // Carga automática de juegos por defecto DESACTIVADA para usar Supabase
-    // Si quieres volver a activarla, descomenta el código siguiente:
-    /*
-    effect(() => {
-      const userId: string | null = this.userContext.userId();
-      if (!userId || typeof window === 'undefined') return;
-
-      this._db.getAllGamesForUser(userId).then(async (games: GameInterface[]) => {
-        if (games.length === 0) {
-          try {
-            const response: Response = await fetch(defaultIndexedDbPath);
-            const records: GameRecord[] = await response.json();
-            const userGames: GameRecord[] = records.filter((r: GameRecord): boolean => r.userId === userId);
-
-            for (const record of userGames) {
-              await this._db.addGameForUser(userId, record.game);
-            }
-          } catch (err) {
-            console.error('Error loading default games:', err);
-          }
-        }
-      });
-    });
-    */
-  }
 
   ngOnInit(): void {
     // Inicializa tema visual

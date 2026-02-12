@@ -3,7 +3,6 @@ import { canActivateUser } from './guards/user.guard';
 
 import { HomeComponent } from './pages/home/home.component';
 import { GameListComponent } from './pages/game-list/game-list.component';
-import { DatabaseToolsComponent } from './pages/database-tools/database-tools.component';
 import { CreateAndUpdateGameComponent } from './pages/create-update-game/create-and-update-game.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
@@ -38,11 +37,6 @@ export const routes: Routes = [
   {
     path: 'list',
     component: GameListComponent,
-    canActivate: [canActivateUser]
-  },
-  {
-    path: 'tools',
-    component: DatabaseToolsComponent,
     canActivate: [canActivateUser]
   },
   {
