@@ -107,10 +107,6 @@
       "title": "Añadir nuevo juego",
       "description": "Añade un nuevo juego a tu biblioteca."
     },
-    "databaseTools": {
-      "title": "Herramientas de base de datos",
-      "description": "Importa desde archivo o exporta tu colección."
-    },
     "tooltip": {
       "darkMode": "Cambiar a modo oscuro",
       "lightMode": "Cambiar a modo claro"
@@ -123,26 +119,13 @@
       }
     }
   },
-  "tools": {
-    "title": "Herramientas de base de datos",
-    "description": "Puedes exportar, importar o borrar tu base de datos local de juegos.",
-    "export": "Exportar como games.json",
-    "import": "Importar desde JSON",
-    "clear": "Borrar todos los datos",
-    "snackbar": {
-      "noDataToExport": "No hay datos para exportar.",
-      "noDataToClear": "No hay datos para borrar.",
-      "dataCleared": "Todos los datos han sido eliminados.",
-      "importSuccess": "Juegos importados correctamente.",
-      "defaultImportSuccess": "Datos por defecto importados correctamente.",
-      "defaultImportFail": "Error al importar los datos por defecto."
-    },
-    "dialog": {
-      "clearTitle": "Borrar todos los datos",
-      "clearMessage": "¿Estás seguro de que quieres borrar todos los datos guardados? Esta acción no se puede deshacer.",
-      "loadTitle": "¿Cargar datos por defecto?",
-      "loadMessage": "No se encontraron datos. ¿Quieres cargar los datos por defecto desde assets/games.json?"
-    }
+  "gameStatus": {
+    "owned": "En Biblioteca",
+    "backlog": "Pendiente",
+    "playing": "Jugando",
+    "completed": "Completado",
+    "platinum": "Platino",
+    "abandoned": "Abandonado"
   },
   "gameList": {
     "filters": {

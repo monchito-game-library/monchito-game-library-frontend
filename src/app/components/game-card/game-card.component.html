@@ -2,6 +2,20 @@
   <div class="image-wrapper">
     <img mat-card-image [ngSrc]="defaultImage()" width="300" height="375" alt="Game cover" class="game-image" />
 
+    <!-- Badge de estado -->
+    @if (gameStatus()) {
+      <div class="status-badge" [style.background-color]="gameStatus()!.color">
+        <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
+      </div>
+    }
+
+    <!-- Indicador de favorito -->
+    @if (isFavorite()) {
+      <div class="favorite-indicator">
+        <mat-icon>favorite</mat-icon>
+      </div>
+    }
+
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="editGame()">
         <mat-icon>edit</mat-icon>
@@ -36,7 +50,30 @@
   </div>
 
   <mat-card-content>
-    <p><strong>Price:</strong> {{ game().price | currency: 'EUR' }}</p>
-    <p><strong>Store:</strong> {{ displayStoreLabel(game().store) }}</p>
+    <div class="info-row">
+      <span><strong>Price:</strong> {{ game().price | currency: 'EUR' }}</span>
+      <span><strong>Store:</strong> {{ displayStoreLabel(game().store) }}</span>
+    </div>
+
+    <!-- Rating personal con estrellas -->
+    @if (personalRating() !== null) {
+      <div class="rating-row">
+        <span class="rating-label">Mi valoración:</span>
+        <div class="stars">
+          @for (star of ratingStars(); track $index) {
+            <mat-icon class="star-icon">star</mat-icon>
+          }
+          <span class="rating-value">{{ personalRating() }}/10</span>
+        </div>
+      </div>
+    }
+
+    <!-- Horas jugadas -->
+    @if (hoursPlayed() > 0) {
+      <div class="hours-row">
+        <mat-icon class="hours-icon">schedule</mat-icon>
+        <span>{{ hoursPlayed() }}h jugadas</span>
+      </div>
+    }
   </mat-card-content>
 </mat-card>
