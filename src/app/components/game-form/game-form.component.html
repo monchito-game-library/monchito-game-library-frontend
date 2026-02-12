@@ -99,14 +99,51 @@
           </mat-select>
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            @for (status of gameStatuses; track status.code) {
+              <mat-option [value]="status.code">
+                <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+                {{ status.labelKey | transloco }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mi Valoración (0-10)</mat-label>
+          <input
+            matInput
+            formControlName="personal_rating"
+            type="number"
+            min="0"
+            max="10"
+            step="0.5"
+            placeholder="8.5" />
+          <mat-icon matSuffix>star_rate</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Horas Jugadas</mat-label>
+          <input matInput formControlName="hours_played" type="number" min="0" placeholder="0" />
+          <mat-icon matSuffix>schedule</mat-icon>
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="description">
           <mat-label>{{ 'gameForm.fields.description' | transloco }}</mat-label>
           <textarea matInput formControlName="description" rows="3"></textarea>
         </mat-form-field>
 
-        <mat-slide-toggle formControlName="platinum" class="platinum-toggle">
-          🏆 {{ 'gameForm.fields.platinum' | transloco }}
-        </mat-slide-toggle>
+        <div class="toggles-section">
+          <mat-slide-toggle formControlName="platinum" class="platinum-toggle">
+            🏆 {{ 'gameForm.fields.platinum' | transloco }}
+          </mat-slide-toggle>
+
+          <mat-slide-toggle formControlName="is_favorite" class="favorite-toggle" color="warn">
+            ❤️ Favorito
+          </mat-slide-toggle>
+        </div>
       </div>
 
       <div class="form-actions">

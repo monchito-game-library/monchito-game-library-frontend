@@ -6,64 +6,28 @@ import { PlatformType } from '../models/types/platform.type';
 import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
 import { getSupabaseClient } from '../config/supabase.config';
 import { GameCatalog } from '../services/rawg/rawg.interface';
+import { GameCatalogV3, UserGame, UserGameFull } from '../models/interfaces/game-catalog-v3.interface';
 
 /**
- * Interfaz para el registro en la vista user_games_with_catalog
- * Combina datos de user_games + game_catalog
+ * Interfaz para el registro en la vista user_games_full (schema v3)
+ * Combina datos de user_games + game_catalog con campos adicionales
  */
-interface UserGameWithCatalog {
-  id: string; // UUID de user_games
-  user_id: string;
-  game_catalog_id: string;
-  rawg_id: number;
-  title: string;
-  slug: string;
-  image_url: string | null;
-  released_date: string | null;
-  rating: number;
-  available_platforms: string[];
-  genres: string[];
-  price: number | null;
-  store: string;
-  user_platform: string | null;
-  condition: string;
-  user_description: string;
-  platinum: boolean;
-  purchased_date: string | null;
-  created_at: string;
-  updated_at: string;
+interface UserGameWithCatalog extends UserGameFull {
+  // Extiende UserGameFull que ya tiene todos los campos del schema v3
 }
 
 /**
- * Interfaz para insertar en game_catalog
+ * Interfaz para insertar en game_catalog (schema v3)
  */
-interface GameCatalogRecord {
-  id?: string;
-  rawg_id: number;
-  title: string;
-  slug: string;
-  image_url: string | null;
-  released_date: string | null;
-  rating: number;
-  platforms: string[];
-  genres: string[];
-  description?: string;
+interface GameCatalogRecord extends Partial<GameCatalogV3> {
+  // Extiende GameCatalogV3 parcialmente para inserciones
 }
 
 /**
- * Interfaz para insertar en user_games
+ * Interfaz para insertar en user_games (schema v3)
  */
-interface UserGameRecord {
-  id?: string;
-  user_id: string;
-  game_catalog_id: string;
-  price: number | null;
-  store: string;
-  platform: string | null;
-  condition: string;
-  description: string;
-  platinum: boolean;
-  purchased_date?: string | null;
+interface UserGameRecord extends Partial<UserGame> {
+  // Extiende UserGame parcialmente para inserciones/actualizaciones
 }
 
 /**
@@ -73,7 +37,7 @@ interface UserGameRecord {
 @Injectable({ providedIn: 'root' })
 export class SupabaseRepository implements GameRepositoryInterface {
   private readonly supabase: SupabaseClient;
-  private readonly viewName = 'user_games_with_catalog';
+  private readonly viewName = 'user_games_full'; // Vista actualizada del schema v3
   private readonly catalogTable = 'game_catalog';
   private readonly userGamesTable = 'user_games';
 
@@ -93,17 +57,18 @@ export class SupabaseRepository implements GameRepositoryInterface {
 
   /**
    * Convierte un registro de la vista a GameInterface
+   * Mapea los campos del schema v3 al formato legacy GameInterface
    */
   private fromViewRecord(record: UserGameWithCatalog): GameInterface {
     return {
-      id: parseInt(record.id.split('-').join('').substring(0, 8), 16), // Convertir UUID a número temporal
+      id: parseInt((record.id || '').split('-').join('').substring(0, 8), 16), // Convertir UUID a número temporal
       title: record.title,
       price: record.price,
       store: record.store as any,
       condition: record.condition as any,
       platinum: record.platinum,
-      description: record.user_description,
-      platform: record.user_platform as PlatformType | null,
+      description: (record as any).user_notes || record.description || '', // Soportar ambos nombres
+      platform: ((record as any).user_platform || record.platform) as PlatformType | null,
       image: record.image_url || undefined
     };
   }
@@ -126,7 +91,7 @@ export class SupabaseRepository implements GameRepositoryInterface {
         return existing.id;
       }
 
-      // No existe, crear nuevo
+      // No existe, crear nuevo con todos los campos del schema v3
       const catalogRecord: GameCatalogRecord = {
         rawg_id: gameCatalog.rawg_id,
         title: gameCatalog.title,
@@ -136,7 +101,8 @@ export class SupabaseRepository implements GameRepositoryInterface {
         rating: gameCatalog.rating,
         platforms: gameCatalog.platforms,
         genres: gameCatalog.genres,
-        description: gameCatalog.description
+        description: gameCatalog.description,
+        source: 'rawg' // Indicar que viene de RAWG
       };
 
       const { data: newCatalog, error } = await this.supabase
@@ -159,19 +125,19 @@ export class SupabaseRepository implements GameRepositoryInterface {
       return existing.id;
     }
 
-    // Crear nuevo con datos mínimos
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    const rawgId = Math.abs(title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0));
+    // Crear nuevo con datos mínimos (juego manual)
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
 
     const catalogRecord: GameCatalogRecord = {
-      rawg_id: rawgId,
+      rawg_id: null, // NULL para juegos manuales (schema v3)
       title: title,
       slug: slug,
       image_url: null,
       released_date: null,
       rating: 0,
       platforms: [],
-      genres: []
+      genres: [],
+      source: 'manual' // Indicar que es juego manual
     };
 
     const { data: newCatalog, error } = await this.supabase
@@ -231,16 +197,22 @@ export class SupabaseRepository implements GameRepositoryInterface {
     // 1. Obtener o crear en game_catalog
     const gameCatalogId = await this.getOrCreateGameCatalog(game.title, this.selectedGameCatalog);
 
-    // 2. Crear en user_games
+    // 2. Crear en user_games con campos del schema v3
+    const gameAny = game as any; // Cast para acceder a campos opcionales
     const userGameRecord: UserGameRecord = {
       user_id: userId,
       game_catalog_id: gameCatalogId,
       price: game.price,
       store: game.store,
       platform: game.platform,
-      condition: game.condition,
+      condition: game.condition as 'new' | 'used',
       description: game.description,
-      platinum: game.platinum
+      platinum: game.platinum,
+      // Campos del schema v3
+      status: gameAny.status || (game.platinum ? 'platinum' : 'owned'),
+      personal_rating: gameAny.personal_rating || null,
+      hours_played: gameAny.hours_played || 0,
+      is_favorite: gameAny.is_favorite || false
     };
 
     const { error } = await this.supabase.from(this.userGamesTable).insert(userGameRecord);
@@ -316,15 +288,21 @@ export class SupabaseRepository implements GameRepositoryInterface {
       gameCatalogId = await this.getOrCreateGameCatalog(updated.title, this.selectedGameCatalog);
     }
 
-    // Actualizar user_games
+    // Actualizar user_games con campos del schema v3
+    const updatedAny = updated as any; // Cast para acceder a campos opcionales
     const userGameRecord: Partial<UserGameRecord> = {
       game_catalog_id: gameCatalogId,
       price: updated.price,
       store: updated.store,
       platform: updated.platform,
-      condition: updated.condition,
+      condition: updated.condition as 'new' | 'used',
       description: updated.description,
-      platinum: updated.platinum
+      platinum: updated.platinum,
+      // Campos del schema v3
+      status: updatedAny.status || (updated.platinum ? 'platinum' : 'owned'),
+      personal_rating: updatedAny.personal_rating !== undefined ? updatedAny.personal_rating : null,
+      hours_played: updatedAny.hours_played !== undefined ? updatedAny.hours_played : 0,
+      is_favorite: updatedAny.is_favorite !== undefined ? updatedAny.is_favorite : false
     };
 
     const { error } = await this.supabase.from(this.userGamesTable).update(userGameRecord).eq('id', viewRecord.id);
