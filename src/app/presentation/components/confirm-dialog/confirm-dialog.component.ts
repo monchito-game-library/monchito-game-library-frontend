@@ -8,7 +8,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
-import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
+import { ConfirmDialogInterface } from '../../../entities/interfaces/confirm-dialog.interface';
 
 /**
  * Componente de diálogo de confirmación reutilizable.

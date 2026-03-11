@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import Dexie, { Table } from 'dexie';
 
-import { GameInterface } from '../models/interfaces/game.interface';
-import { PlatformType } from '../models/types/platform.type';
-import { GameRecord } from '../models/interfaces/game-record.interface';
-import { GameRepositoryInterface } from '../models/interfaces/game-repository.interface';
+import { GameInterface } from '../../entities/interfaces/game.interface';
+import { PlatformType } from '../../entities/types/platform.type';
+import { GameRecord } from '../../entities/interfaces/game-record.interface';
+import { GameRepositoryInterface } from '../../domain/repositories/game.repository.contract';
 
 /**
  * Utilidad para comprobar si IndexedDB está disponible (evita errores en entornos como SSR o testing).
