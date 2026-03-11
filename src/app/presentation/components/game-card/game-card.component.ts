@@ -12,28 +12,24 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '../../../di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '../../../domain/repositories/game.repository.contract';
-import { UserContextService } from '../../services/user-context.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { GameInterface } from '../../../entities/interfaces/game.interface';
+import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { UserContextService } from '@/services/user-context.service';
+import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
+import { GameInterface } from '@/interfaces/game.interface';
 
-import {
-  defaultGameCover,
-  imagePlatinumPath,
-  imageTrophyHiddenPath
-} from '../../../entities/constants/game-library.constant';
-import { ConfirmDialogInterface } from '../../../entities/interfaces/confirm-dialog.interface';
-import { StoreType } from '../../../entities/types/stores.type';
-import { AvailableStoresInterface } from '../../../entities/interfaces/available-stores.interface';
-import { AvailablePlatformInterface } from '../../../entities/interfaces/available-platform.interface';
-import { availablePlatformsConstant } from '../../../entities/constants/available-platforms.constant';
-import { AvailableConditionInterface } from '../../../entities/interfaces/available-condition.interface';
-import { availableConditions } from '../../../entities/constants/available-conditions.constant';
-import { availableStoresConstant } from '../../../entities/constants/available-stores.constant';
-import { PlatformType } from '../../../entities/types/platform.type';
-import { GameConditionType } from '../../../entities/types/game-condition.type';
-import { availableGameStatuses, GameStatusOption } from '../../../entities/constants/game-status.constant';
+import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
+import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { StoreType } from '@/types/stores.type';
+import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
+import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
+import { availableConditions } from '@/constants/available-conditions.constant';
+import { availableStoresConstant } from '@/constants/available-stores.constant';
+import { PlatformType } from '@/types/platform.type';
+import { GameConditionType } from '@/types/game-condition.type';
+import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 
 @Component({
   selector: 'app-game-card',

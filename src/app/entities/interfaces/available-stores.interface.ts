@@ -1,4 +1,4 @@
-import { StoreType } from '../types/stores.type';
+import { StoreType } from '@/types/stores.type';
 
 /**
  * Representa una tienda de videojuegos disponible para selección o filtrado.

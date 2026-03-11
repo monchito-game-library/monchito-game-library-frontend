@@ -1,4 +1,4 @@
-import { AvailableConditionInterface } from '../interfaces/available-condition.interface';
+import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
 
 /**
  * Lista de condiciones disponibles para un videojuego.

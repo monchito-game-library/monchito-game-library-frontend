@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserContextService } from '../../services/user-context.service';
+import { UserContextService } from '@/services/user-context.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipAvatar, MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { TranslocoPipe } from '@ngneat/transloco';
-import { availableUsers } from '../../../entities/constants/available-users.constant';
+import { availableUsers } from '@/constants/available-users.constant';
 import { NgOptimizedImage } from '@angular/common';
-import { AvailableUserInterface } from '../../../entities/interfaces/available-user.interface';
+import { AvailableUserInterface } from '@/interfaces/available-user.interface';
 
 @Component({
   selector: 'app-select-user',

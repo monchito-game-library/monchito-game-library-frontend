@@ -1,4 +1,4 @@
-import { PlatformType } from '../types/platform.type';
+import { PlatformType } from '@/types/platform.type';
 
 /**
  * Representa una consola de videojuegos disponible para selección o filtrado.

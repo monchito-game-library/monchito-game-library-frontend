@@ -1,4 +1,4 @@
-import { LanguageType } from '../types/language.type';
+import { LanguageType } from '@/types/language.type';
 
 /**
  * Representa un idioma disponible en la aplicación.

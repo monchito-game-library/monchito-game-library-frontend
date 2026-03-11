@@ -1,4 +1,4 @@
-import { AvailableUserInterface } from '../interfaces/available-user.interface';
+import { AvailableUserInterface } from '@/interfaces/available-user.interface';
 
 /**
  * Usuarios disponibles para seleccionar en la app.

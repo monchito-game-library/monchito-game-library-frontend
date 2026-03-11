@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
-import { gameRepositoryProvider } from './di/repositories/game.repository.provider';
+import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
