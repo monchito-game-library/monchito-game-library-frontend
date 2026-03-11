@@ -1,5 +1,5 @@
-import { GameInterface } from './game.interface';
-import { PlatformType } from '../types/platform.type';
+import { GameInterface } from '../../entities/interfaces/game.interface';
+import { PlatformType } from '../../entities/types/platform.type';
 
 /**
  * Contrato para cualquier repositorio que gestione juegos persistidos por usuario.

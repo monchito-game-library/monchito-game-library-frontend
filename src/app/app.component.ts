@@ -7,15 +7,15 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
-import { GAME_REPOSITORY } from './tokens/game-repository.token';
-import { GameRepositoryInterface } from './models/interfaces/game-repository.interface';
-import { UserContextService } from './services/user-context.service';
-import { ThemeService } from './services/theme.service';
-import { availableLangConstant } from './models/constants/available-lang.constant';
-import { AvailableLanguageInterface } from './models/interfaces/available-language.interface';
-import { availableUsers } from './models/constants/available-users.constant';
-import { AvailableUserInterface } from './models/interfaces/available-user.interface';
-import { GameInterface } from './models/interfaces/game.interface';
+import { GAME_REPOSITORY } from './di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from './domain/repositories/game.repository.contract';
+import { UserContextService } from './presentation/services/user-context.service';
+import { ThemeService } from './presentation/services/theme.service';
+import { availableLangConstant } from './entities/constants/available-lang.constant';
+import { AvailableLanguageInterface } from './entities/interfaces/available-language.interface';
+import { availableUsers } from './entities/constants/available-users.constant';
+import { AvailableUserInterface } from './entities/interfaces/available-user.interface';
+import { GameInterface } from './entities/interfaces/game.interface';
 
 @Component({
   selector: 'app-root',

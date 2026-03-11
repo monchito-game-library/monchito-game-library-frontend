@@ -13,18 +13,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-import { GameInterface } from '../../models/interfaces/game.interface';
-import { PlatformType } from '../../models/types/platform.type';
-import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
-import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
-import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
-import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
+import { GameInterface } from '../../../entities/interfaces/game.interface';
+import { PlatformType } from '../../../entities/types/platform.type';
+import { AvailablePlatformInterface } from '../../../entities/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '../../../entities/constants/available-platforms.constant';
+import { GAME_REPOSITORY } from '../../../di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from '../../../domain/repositories/game.repository.contract';
 import { UserContextService } from '../../services/user-context.service';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
-import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
-import { availableStoresConstant } from '../../models/constants/available-stores.constant';
-import { StoreType } from '../../models/types/stores.type';
-import { availableGameStatuses, GameStatusOption } from '../../models/constants/game-status.constant';
+import { AvailableStoresInterface } from '../../../entities/interfaces/available-stores.interface';
+import { availableStoresConstant } from '../../../entities/constants/available-stores.constant';
+import { StoreType } from '../../../entities/types/stores.type';
+import { availableGameStatuses, GameStatusOption } from '../../../entities/constants/game-status.constant';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({

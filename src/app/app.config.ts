@@ -5,9 +5,7 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
-import { GAME_REPOSITORY } from './tokens/game-repository.token';
-import { SupabaseRepository } from './repositories/supabase.repository';
-// import { IndexedDBRepository } from './repositories/indexeddb.repository'; // Descomenta para usar IndexedDB
+import { gameRepositoryProvider } from './di/repositories/game.repository.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,11 +21,6 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
-    // Configuración del repositorio de juegos
-    // Cambia entre SupabaseRepository e IndexedDBRepository según necesites
-    {
-      provide: GAME_REPOSITORY,
-      useClass: SupabaseRepository // Cambia a IndexedDBRepository para usar base de datos local
-    }
+    gameRepositoryProvider
   ]
 };
