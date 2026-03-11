@@ -10,7 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 
 import { RawgService } from '../../services/rawg/rawg.service';
-import { GameCatalog } from '../../services/rawg/rawg.interface';
+import { GameCatalog } from '../../../data/dtos/rawg/rawg.dto';
 
 @Component({
   selector: 'app-game-search-dialog',

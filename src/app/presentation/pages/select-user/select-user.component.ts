@@ -5,9 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipAvatar, MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { TranslocoPipe } from '@ngneat/transloco';
-import { availableUsers } from '../../models/constants/available-users.constant';
+import { availableUsers } from '../../../entities/constants/available-users.constant';
 import { NgOptimizedImage } from '@angular/common';
-import { AvailableUserInterface } from '../../models/interfaces/available-user.interface';
+import { AvailableUserInterface } from '../../../entities/interfaces/available-user.interface';
 
 @Component({
   selector: 'app-select-user',

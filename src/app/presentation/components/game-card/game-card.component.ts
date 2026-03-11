@@ -12,28 +12,28 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '../../tokens/game-repository.token';
-import { GameRepositoryInterface } from '../../models/interfaces/game-repository.interface';
+import { GAME_REPOSITORY } from '../../../di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from '../../../domain/repositories/game.repository.contract';
 import { UserContextService } from '../../services/user-context.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { GameInterface } from '../../models/interfaces/game.interface';
+import { GameInterface } from '../../../entities/interfaces/game.interface';
 
 import {
   defaultGameCover,
   imagePlatinumPath,
   imageTrophyHiddenPath
-} from '../../models/constants/game-library.constant';
-import { ConfirmDialogInterface } from '../../models/interfaces/confirm-dialog.interface';
-import { StoreType } from '../../models/types/stores.type';
-import { AvailableStoresInterface } from '../../models/interfaces/available-stores.interface';
-import { AvailablePlatformInterface } from '../../models/interfaces/available-platform.interface';
-import { availablePlatformsConstant } from '../../models/constants/available-platforms.constant';
-import { AvailableConditionInterface } from '../../models/interfaces/available-condition.interface';
-import { availableConditions } from '../../models/constants/available-conditions.constant';
-import { availableStoresConstant } from '../../models/constants/available-stores.constant';
-import { PlatformType } from '../../models/types/platform.type';
-import { GameConditionType } from '../../models/types/game-condition.type';
-import { availableGameStatuses, GameStatusOption } from '../../models/constants/game-status.constant';
+} from '../../../entities/constants/game-library.constant';
+import { ConfirmDialogInterface } from '../../../entities/interfaces/confirm-dialog.interface';
+import { StoreType } from '../../../entities/types/stores.type';
+import { AvailableStoresInterface } from '../../../entities/interfaces/available-stores.interface';
+import { AvailablePlatformInterface } from '../../../entities/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '../../../entities/constants/available-platforms.constant';
+import { AvailableConditionInterface } from '../../../entities/interfaces/available-condition.interface';
+import { availableConditions } from '../../../entities/constants/available-conditions.constant';
+import { availableStoresConstant } from '../../../entities/constants/available-stores.constant';
+import { PlatformType } from '../../../entities/types/platform.type';
+import { GameConditionType } from '../../../entities/types/game-condition.type';
+import { availableGameStatuses, GameStatusOption } from '../../../entities/constants/game-status.constant';
 
 @Component({
   selector: 'app-game-card',
