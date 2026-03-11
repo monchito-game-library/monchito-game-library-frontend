@@ -64,17 +64,13 @@ export class AuthService {
   private handleAuthChange(event: AuthChangeEvent, session: Session | null): void {
     switch (event) {
       case 'SIGNED_IN':
-        console.log('User signed in:', session?.user?.email);
         break;
       case 'SIGNED_OUT':
-        console.log('User signed out');
         void this.router.navigate(['/login']);
         break;
       case 'TOKEN_REFRESHED':
-        console.log('Token refreshed');
         break;
       case 'USER_UPDATED':
-        console.log('User updated');
         break;
     }
   }
