@@ -1,4 +1,4 @@
-import { AvailableStoresInterface } from '../interfaces/available-stores.interface';
+import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
 
 /**
  * Lista de tiendas disponibles para un videojuego.

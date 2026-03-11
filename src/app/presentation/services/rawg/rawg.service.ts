@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { RawgGame, RawgSearchResponse, RawgGameDetail, GameCatalog } from '../../../data/dtos/rawg/rawg.dto';
-import { GameCatalogV3 } from '../../../entities/interfaces/game-catalog-v3.interface';
+import { RawgGame, RawgSearchResponse, RawgGameDetail, GameCatalog } from '@/dtos/rawg/rawg.dto';
+import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
 
 /**
  * Servicio para interactuar con la API de RAWG

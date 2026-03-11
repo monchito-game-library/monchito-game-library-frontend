@@ -1,4 +1,4 @@
-import { GameConditionType } from '../types/game-condition.type';
+import { GameConditionType } from '@/types/game-condition.type';
 
 /**
  * Representa una opción de condición para un videojuego (Nuevo o Usado).

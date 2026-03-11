@@ -17,27 +17,27 @@ import { DatePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '../../../di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '../../../domain/repositories/game.repository.contract';
-import { SupabaseRepository } from '../../../data/repositories/supabase.repository';
-import { GameInterface } from '../../../entities/interfaces/game.interface';
-import { GameConditionType } from '../../../entities/types/game-condition.type';
-import { PlatformType } from '../../../entities/types/platform.type';
-import { availableConditions } from '../../../entities/constants/available-conditions.constant';
-import { availablePlatformsConstant } from '../../../entities/constants/available-platforms.constant';
-import { availableGameStatuses, GameStatusOption } from '../../../entities/constants/game-status.constant';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { UserContextService } from '../../services/user-context.service';
-import { ConfirmDialogInterface } from '../../../entities/interfaces/confirm-dialog.interface';
-import { selectOneValidator } from '../../shared/validators';
-import { AvailablePlatformInterface } from '../../../entities/interfaces/available-platform.interface';
-import { AvailableConditionInterface } from '../../../entities/interfaces/available-condition.interface';
-import { AvailableStoresInterface } from '../../../entities/interfaces/available-stores.interface';
-import { availableStoresConstant } from '../../../entities/constants/available-stores.constant';
-import { StoreType } from '../../../entities/types/stores.type';
-import { cardActionType } from '../../../entities/types/card-action.type';
-import { GameSearchDialogComponent } from '../game-search-dialog/game-search-dialog.component';
-import { GameCatalog } from '../../../data/dtos/rawg/rawg.dto';
+import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { SupabaseRepository } from '@/repositories/supabase.repository';
+import { GameInterface } from '@/interfaces/game.interface';
+import { GameConditionType } from '@/types/game-condition.type';
+import { PlatformType } from '@/types/platform.type';
+import { availableConditions } from '@/constants/available-conditions.constant';
+import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
+import { UserContextService } from '@/services/user-context.service';
+import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { selectOneValidator } from '@/shared/validators';
+import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
+import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
+import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
+import { availableStoresConstant } from '@/constants/available-stores.constant';
+import { StoreType } from '@/types/stores.type';
+import { cardActionType } from '@/types/card-action.type';
+import { GameSearchDialogComponent } from '@/components/game-search-dialog/game-search-dialog.component';
+import { GameCatalog } from '@/dtos/rawg/rawg.dto';
 
 @Component({
   selector: 'app-game-form',

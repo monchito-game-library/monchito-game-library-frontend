@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { GameInterface } from '../../entities/interfaces/game.interface';
-import { PlatformType } from '../../entities/types/platform.type';
-import { GameRepositoryInterface } from '../../domain/repositories/game.repository.contract';
-import { getSupabaseClient } from '../config/supabase.config';
-import { GameCatalog } from '../dtos/rawg/rawg.dto';
-import { GameCatalogV3, UserGame, UserGameFull } from '../../entities/interfaces/game-catalog-v3.interface';
+import { GameInterface } from '@/interfaces/game.interface';
+import { PlatformType } from '@/types/platform.type';
+import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { getSupabaseClient } from '@/data/config/supabase.config';
+import { GameCatalog } from '@/dtos/rawg/rawg.dto';
+import { GameCatalogV3, UserGame, UserGameFull } from '@/interfaces/game-catalog-v3.interface';
 
 /**
  * Interfaz para el registro en la vista user_games_full (schema v3)

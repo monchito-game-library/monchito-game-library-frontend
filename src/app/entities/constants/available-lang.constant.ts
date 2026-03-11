@@ -1,4 +1,4 @@
-import { AvailableLanguageInterface } from '../interfaces/available-language.interface';
+import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 
 /**
  * Idiomas soportados por la aplicación.

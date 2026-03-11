@@ -9,7 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '@/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',

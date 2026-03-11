@@ -13,18 +13,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-import { GameInterface } from '../../../entities/interfaces/game.interface';
-import { PlatformType } from '../../../entities/types/platform.type';
-import { AvailablePlatformInterface } from '../../../entities/interfaces/available-platform.interface';
-import { availablePlatformsConstant } from '../../../entities/constants/available-platforms.constant';
-import { GAME_REPOSITORY } from '../../../di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '../../../domain/repositories/game.repository.contract';
-import { UserContextService } from '../../services/user-context.service';
-import { GameCardComponent } from '../../components/game-card/game-card.component';
-import { AvailableStoresInterface } from '../../../entities/interfaces/available-stores.interface';
-import { availableStoresConstant } from '../../../entities/constants/available-stores.constant';
-import { StoreType } from '../../../entities/types/stores.type';
-import { availableGameStatuses, GameStatusOption } from '../../../entities/constants/game-status.constant';
+import { GameInterface } from '@/interfaces/game.interface';
+import { PlatformType } from '@/types/platform.type';
+import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
+import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
+import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { UserContextService } from '@/services/user-context.service';
+import { GameCardComponent } from '@/components/game-card/game-card.component';
+import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
+import { availableStoresConstant } from '@/constants/available-stores.constant';
+import { StoreType } from '@/types/stores.type';
+import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
