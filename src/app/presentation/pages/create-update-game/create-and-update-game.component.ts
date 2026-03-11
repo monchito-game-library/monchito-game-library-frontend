@@ -5,6 +5,16 @@ import { GameFormComponent } from '@/components/game-form/game-form.component';
   selector: 'app-update-game',
   standalone: true,
   imports: [GameFormComponent],
-  template: ` <app-game-form />`
+  template: `<app-game-form />`,
+  styles: [
+    `
+      :host {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+    `
+  ]
 })
 export class CreateAndUpdateGameComponent {}
