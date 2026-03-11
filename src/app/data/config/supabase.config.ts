@@ -16,7 +16,8 @@ export function getSupabaseClient(): SupabaseClient {
     supabaseClient = createClient(environment.supabase.url, environment.supabase.anonKey, {
       auth: {
         persistSession: true,
-        autoRefreshToken: true
+        autoRefreshToken: true,
+        lock: (name, acquireTimeout, fn) => fn()
       }
     });
   }

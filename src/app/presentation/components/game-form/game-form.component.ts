@@ -2,7 +2,6 @@ import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } f
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatCard, MatCardContent, MatCardTitle } from '@angular/material/card';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -45,9 +44,6 @@ import { GameCatalog } from '@/dtos/rawg/rawg.dto';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatCard,
-    MatCardTitle,
-    MatCardContent,
     MatFormField,
     MatLabel,
     MatInput,
@@ -312,6 +308,16 @@ export class GameFormComponent implements OnInit {
     };
 
     return platformMap[rawgPlatformName] || null;
+  }
+
+  /**
+   * Limpia el juego seleccionado del catálogo y desbloquea el campo título.
+   */
+  clearSelectedGame(): void {
+    this.selectedGame.set(null);
+    this.gamePlatforms.set([]);
+    this.form.controls.title.enable();
+    this.form.controls.title.setValue('');
   }
 
   /**
