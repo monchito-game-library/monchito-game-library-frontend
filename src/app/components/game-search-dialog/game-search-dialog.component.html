@@ -77,9 +77,11 @@
                 </div>
                 @if (game.platforms.length > 0) {
                   <div class="platforms">
-                    <span class="platform-badge" *ngFor="let platform of game.platforms.slice(0, 3)">
-                      {{ platform }}
-                    </span>
+                    @for (platform of game.platforms.slice(0, 3); track platform) {
+                      <span class="platform-badge">
+                        {{ platform }}
+                      </span>
+                    }
                     @if (game.platforms.length > 3) {
                       <span class="platform-badge more">+{{ game.platforms.length - 3 }}</span>
                     }
