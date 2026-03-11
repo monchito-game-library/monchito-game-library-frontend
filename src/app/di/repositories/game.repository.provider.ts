@@ -1,6 +1,6 @@
 import { InjectionToken, Provider } from '@angular/core';
-import { GameRepositoryInterface } from '../../domain/repositories/game.repository.contract';
-import { SupabaseRepository } from '../../data/repositories/supabase.repository';
+import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { SupabaseRepository } from '@/repositories/supabase.repository';
 
 /**
  * Token de inyección para el repositorio de juegos.

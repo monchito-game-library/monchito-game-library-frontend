@@ -1,7 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthChangeEvent, AuthSession, Session, User } from '@supabase/supabase-js';
-import { getSupabaseClient } from '../../data/config/supabase.config';
+import { getSupabaseClient } from '@/data/config/supabase.config';
 
 /**
  * Interfaz para los datos de registro

@@ -1,4 +1,4 @@
-import { AvailablePlatformInterface } from '../interfaces/available-platform.interface';
+import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 
 /**
  * Consolas disponibles para seleccionar o filtrar videojuegos.

@@ -9,8 +9,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 
-import { RawgService } from '../../services/rawg/rawg.service';
-import { GameCatalog } from '../../../data/dtos/rawg/rawg.dto';
+import { RawgService } from '@/services/rawg/rawg.service';
+import { GameCatalog } from '@/dtos/rawg/rawg.dto';
 
 @Component({
   selector: 'app-game-search-dialog',
