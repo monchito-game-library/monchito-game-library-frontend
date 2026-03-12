@@ -83,6 +83,19 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   }
 
   /**
+   * Updates the display name in the user's Supabase auth metadata.
+   * Triggers onAuthStateChange with USER_UPDATED, updating the reactive state automatically.
+   *
+   * @param {string} displayName - New display name
+   */
+  async updateDisplayName(displayName: string): Promise<void> {
+    const { error } = await this._supabase.auth.updateUser({
+      data: { display_name: displayName }
+    });
+    if (error) throw new Error(`Failed to update display name: ${error.message}`);
+  }
+
+  /**
    * Maps a Supabase User object to the domain AuthUserModel.
    *
    * @param {User} user

@@ -1,0 +1,31 @@
+.crop-dialog__container {
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mat-sys-surface-variant);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.crop-dialog__loading {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crop-dialog__hint {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+  margin: 0.75rem 0 0;
+  opacity: 0.75;
+}
+
+image-cropper {
+  width: 100%;
+  max-height: 340px;
+}

@@ -29,6 +29,14 @@ export interface UserPreferencesUseCasesContract {
    * @param {File} file - Image file selected by the user
    */
   uploadAvatar(userId: string, file: File): Promise<string>;
+
+  /**
+   * Persists the banner URL selected by the user.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {string} bannerUrl - URL of the selected banner image
+   */
+  saveBannerUrl(userId: string, bannerUrl: string): Promise<void>;
 }
 
 /** InjectionToken for UserPreferencesUseCasesContract. */

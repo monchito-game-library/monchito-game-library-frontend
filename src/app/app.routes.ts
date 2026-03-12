@@ -49,6 +49,13 @@ export const routes: Routes = [
     canActivate: [canActivateUser]
   },
 
+  {
+    path: 'settings',
+    loadComponent: (): Promise<typeof import('@/pages/settings/settings.component').SettingsComponent> =>
+      import('@/pages/settings/settings.component').then((m) => m.SettingsComponent),
+    canActivate: [canActivateUser]
+  },
+
   // Default and fallback routes
   {
     path: '',

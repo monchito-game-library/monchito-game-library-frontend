@@ -26,6 +26,14 @@ export interface UserPreferencesRepositoryContract {
   saveAvatarUrl(userId: string, avatarUrl: string): Promise<void>;
 
   /**
+   * Updates only the banner URL without touching other preferences.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {string} bannerUrl - URL of the selected banner image
+   */
+  saveBannerUrl(userId: string, bannerUrl: string): Promise<void>;
+
+  /**
    * Uploads an avatar image to storage and returns its public URL.
    *
    * @param {string} userId - Authenticated user ID
