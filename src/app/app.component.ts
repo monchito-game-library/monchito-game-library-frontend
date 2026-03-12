@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
@@ -10,6 +10,7 @@ import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { ThemeService } from '@/services/theme.service';
+import { UserPreferencesService } from '@/services/user-preferences.service';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
+  private readonly _userPreferences: UserPreferencesService = inject(UserPreferencesService);
   readonly userContext: UserContextService = inject(UserContextService);
 
   // --- Rutas públicas donde NO se debe mostrar la navegación ---
@@ -67,12 +69,22 @@ export class AppComponent implements OnInit {
   /** Ruta actual */
   readonly currentRoute: WritableSignal<string> = signal('');
 
+  constructor() {
+    // Carga las preferencias de Supabase cada vez que el usuario se autentica
+    effect(() => {
+      const userId: string | null = this.userContext.userId();
+      if (userId) void this._userPreferences.load(userId);
+    });
+  }
+
   ngOnInit(): void {
     this._themeService.initTheme();
     this.isDark.set(this._themeService.isDarkMode());
 
     this.selectedLangControl.valueChanges.subscribe((lang: string) => {
-      if (lang) this._transloco.setActiveLang(lang);
+      if (!lang) return;
+      this._transloco.setActiveLang(lang);
+      this._savePreferences();
     });
 
     this._router.events
@@ -87,9 +99,24 @@ export class AppComponent implements OnInit {
   /**
    * Alterna entre tema oscuro y claro.
    */
+  /**
+   * Alterna entre tema oscuro y claro y persiste la preferencia.
+   */
   toggleTheme(): void {
     this.isDark.update((prev: boolean): boolean => !prev);
     this.isDark() ? this._themeService.setDarkTheme() : this._themeService.setLightTheme();
+    this._savePreferences();
+  }
+
+  /**
+   * Persiste el tema e idioma actuales en Supabase si hay usuario autenticado.
+   */
+  private _savePreferences(): void {
+    const userId: string | null = this.userContext.userId();
+    if (!userId) return;
+    const theme: 'light' | 'dark' = this.isDark() ? 'dark' : 'light';
+    const language: 'es' | 'en' = this._transloco.getActiveLang() as 'es' | 'en';
+    void this._userPreferences.save(userId, theme, language);
   }
 
   /**
