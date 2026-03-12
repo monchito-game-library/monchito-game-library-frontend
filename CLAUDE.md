@@ -28,6 +28,9 @@
   @/services/*     → src/app/presentation/services/*
   @/guards/*       → src/app/presentation/guards/*
   @/shared/*       → src/app/presentation/shared/*
+  @/models/*       → src/app/entities/models/*
+  @/mappers/*      → src/app/data/mappers/*
+  @/env            → src/environments/environment
   ```
 
 ## SCSS

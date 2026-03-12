@@ -23,9 +23,8 @@ export const routes: Routes = [
   // Protected routes (authentication required)
   {
     path: 'home',
-    loadComponent: (): Promise<typeof import('@/pages/home/home.component').HomeComponent> =>
-      import('@/pages/home/home.component').then((m) => m.HomeComponent),
-    canActivate: [canActivateUser]
+    redirectTo: 'list',
+    pathMatch: 'full'
   },
   {
     path: 'add',
@@ -47,6 +46,13 @@ export const routes: Routes = [
       typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
     > =>
       import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
+    canActivate: [canActivateUser]
+  },
+
+  {
+    path: 'settings',
+    loadComponent: (): Promise<typeof import('@/pages/settings/settings.component').SettingsComponent> =>
+      import('@/pages/settings/settings.component').then((m) => m.SettingsComponent),
     canActivate: [canActivateUser]
   },
 

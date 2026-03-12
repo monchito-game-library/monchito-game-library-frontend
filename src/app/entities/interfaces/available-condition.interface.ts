@@ -1,17 +1,9 @@
 import { GameConditionType } from '@/types/game-condition.type';
 
-/**
- * Representa una opción de condición para un videojuego (Nuevo o Usado).
- * Utilizado en formularios y listas desplegables.
- */
+/** Represents a game condition option (new or used) for use in form selectors. */
 export interface AvailableConditionInterface {
-  /**
-   * Código interno de la condición ('new' o 'used')
-   */
+  /** Internal condition code ('new' or 'used'). */
   code: GameConditionType;
-
-  /**
-   * Clave de traducción para mostrar en la interfaz (ej.: 'gameForm.conditions.new')
-   */
+  /** Transloco key for the human-readable label (e.g. 'gameForm.conditions.new'). */
   labelKey: string;
 }

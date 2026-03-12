@@ -1,17 +1,9 @@
 import { StoreType } from '@/types/stores.type';
 
-/**
- * Representa una tienda de videojuegos disponible para selección o filtrado.
- * Usado en formularios y filtros por tienda.
- */
+/** Represents a store option available for selection in the game form. */
 export interface AvailableStoresInterface {
-  /**
-   * Código de la tienda (ej.: 'gm-ibe', 'amz', etc.
-   */
+  /** Store code (e.g. 'gm-ibe', 'amz'). */
   code: StoreType;
-
-  /**
-   * Clave Transloco para mostrar el nombre traducido del idioma
-   */
+  /** Transloco key for the human-readable store name. */
   labelKey: string;
 }

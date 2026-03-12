@@ -1,9 +1,6 @@
 import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
 
-/**
- * Lista de tiendas disponibles para un videojuego.
- * La propiedad `labelKey` se utiliza con Transloco.
- */
+/** All supported stores where a game can be purchased, used in form selectors. */
 export const availableStoresConstant: AvailableStoresInterface[] = [
   { code: 'gm-ibe', labelKey: 'stores.game' },
   { code: 'amz', labelKey: 'stores.amz' },

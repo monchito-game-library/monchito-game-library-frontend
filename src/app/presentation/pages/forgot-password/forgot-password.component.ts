@@ -9,14 +9,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-import { AuthService } from '@/services/auth.service';
+import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
 @Component({
   selector: 'app-forgot-password',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     RouterLink,
@@ -34,21 +34,28 @@ import { AuthService } from '@/services/auth.service';
     TranslocoPipe
   ]
 })
+/** Forgot-password page component. Sends a password-reset email and redirects to login on success. */
 export class ForgotPasswordComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
+  private readonly _router: Router = inject(Router);
 
+  /** Whether a password-reset request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
+
+  /** Error message to display when the request fails. */
   readonly errorMessage: WritableSignal<string> = signal('');
+
+  /** Success message shown after the reset email is sent. */
   readonly successMessage: WritableSignal<string> = signal('');
 
-  readonly forgotPasswordForm = this.fb.group({
+  /** Reactive form with a single email field. */
+  readonly forgotPasswordForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
 
   /**
-   * Maneja el submit del formulario de recuperación de contraseña
+   * Validates the form, sends the password-reset email and redirects to login on success.
    */
   async onSubmit(): Promise<void> {
     if (this.forgotPasswordForm.invalid) {
@@ -61,26 +68,15 @@ export class ForgotPasswordComponent {
     this.successMessage.set('');
 
     const { email } = this.forgotPasswordForm.value;
-
-    const result = await this.authService.resetPassword(email!);
+    const result: AuthResult = await this._authUseCases.resetPassword(email!);
 
     this.loading.set(false);
 
-    if (!result.success) {
-      this.errorMessage.set(result.error || 'Failed to send reset email');
-    } else {
+    if (result.success) {
       this.successMessage.set('Password reset email sent! Please check your inbox.');
-      // Redirigir al login después de unos segundos
-      setTimeout(() => {
-        void this.router.navigate(['/login']);
-      }, 3000);
+      setTimeout(() => void this._router.navigate(['/login']), 3000);
+    } else {
+      this.errorMessage.set(result.error ?? 'Failed to send reset email');
     }
-  }
-
-  /**
-   * Navega a la página de login
-   */
-  goToLogin(): void {
-    void this.router.navigate(['/login']);
   }
 }

@@ -72,7 +72,9 @@
       "condition": "Condition",
       "description": "Description",
       "platform": "Platform",
-      "platinum": "Platinum"
+      "status": "Status",
+      "platinum": "Platinum",
+      "is_favorite": "Favourite"
     },
     "conditions": {
       "new": "New",
@@ -120,8 +122,8 @@
     }
   },
   "gameStatus": {
-    "owned": "Owned",
-    "backlog": "Backlog",
+    "wishlist": "Wishlist",
+    "backlog": "Not Started",
     "playing": "Playing",
     "completed": "Completed",
     "platinum": "Platinum",

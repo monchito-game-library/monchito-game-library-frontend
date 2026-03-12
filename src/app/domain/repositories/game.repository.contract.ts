@@ -1,56 +1,69 @@
-import { GameInterface } from '@/interfaces/game.interface';
+import { InjectionToken } from '@angular/core';
+import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
+import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 
-/**
- * Contrato para cualquier repositorio que gestione juegos persistidos por usuario.
- * Define operaciones CRUD sobre la colección de videojuegos por usuario.
- */
-export interface GameRepositoryInterface {
+/** Contract for the game repository. */
+export interface GameRepositoryContract {
   /**
-   * Obtiene todos los juegos de un usuario específico.
-   * @param userId ID del usuario
+   * Returns all games in the user's collection.
+   *
+   * @param {string} userId
    */
-  getAllGamesForUser(userId: string): Promise<GameInterface[]>;
+  getAllGamesForUser(userId: string): Promise<GameModel[]>;
 
   /**
-   * Obtiene los juegos filtrados por consola para un usuario.
-   * @param userId ID del usuario
-   * @param console Consola por la que filtrar
+   * Returns all games in the user's collection filtered by platform.
+   *
+   * @param {string} userId
+   * @param {PlatformType} platform
    */
-  getByConsole(userId: string, console: PlatformType): Promise<GameInterface[]>;
+  getByConsole(userId: string, platform: PlatformType): Promise<GameModel[]>;
 
   /**
-   * Añade un nuevo juego para el usuario.
-   * @param userId ID del usuario
-   * @param game Juego a añadir
+   * Adds a new game to the user's collection.
+   * If a catalog entry is provided it will be linked to the game record.
+   *
+   * @param {string} userId
+   * @param {GameModel} game
+   * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  addGameForUser(userId: string, game: GameInterface): Promise<void>;
+  addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Elimina un juego por ID, solo si pertenece al usuario.
-   * @param userId ID del usuario
-   * @param id ID del juego
+   * Deletes a game by ID if it belongs to the user.
+   *
+   * @param {string} userId
+   * @param {number} id
    */
   deleteById(userId: string, id: number): Promise<void>;
 
   /**
-   * Actualiza un juego existente si pertenece al usuario.
-   * @param userId ID del usuario
-   * @param id ID del juego
-   * @param game Datos actualizados
+   * Updates an existing game if it belongs to the user.
+   * If a catalog entry is provided the catalog link will also be updated.
+   *
+   * @param {string} userId
+   * @param {number} id
+   * @param {GameModel} game
+   * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  updateGameForUser(userId: string, id: number, game: GameInterface): Promise<void>;
+  updateGameForUser(userId: string, id: number, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Elimina todos los juegos de un usuario.
-   * @param userId ID del usuario
+   * Deletes all games for a user.
+   *
+   * @param {string} userId
    */
   clearAllForUser(userId: string): Promise<void>;
 
   /**
-   * Obtiene un juego por ID si pertenece al usuario.
-   * @param userId ID del usuario
-   * @param id ID del juego
+   * Returns a single game by ID if it belongs to the user.
+   *
+   * @param {string} userId
+   * @param {number} id
    */
-  getById(userId: string, id: number): Promise<GameInterface | undefined>;
+  getById(userId: string, id: number): Promise<GameModel | undefined>;
 }
+
+/** InjectionToken for GameRepositoryContract. */
+export const GAME_REPOSITORY = new InjectionToken<GameRepositoryContract>('GAME_REPOSITORY');

@@ -9,14 +9,14 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@ngneat/transloco';
 
-import { AuthService } from '@/services/auth.service';
+import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     RouterLink,
@@ -36,29 +36,36 @@ import { AuthService } from '@/services/auth.service';
     TranslocoPipe
   ]
 })
+/** Login page component. Handles user authentication and redirects to the game list on success. */
 export class LoginComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
+  private readonly _router: Router = inject(Router);
 
+  /** Whether a login request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
+
+  /** Error message to display when login fails. */
   readonly errorMessage: WritableSignal<string> = signal('');
+
+  /** Whether the password field is hidden. */
   readonly hidePassword: WritableSignal<boolean> = signal(true);
 
-  readonly loginForm = this.fb.group({
+  /** Reactive login form with email and password fields. */
+  readonly loginForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   /**
-   * Alterna la visibilidad de la contraseña
+   * Toggles the password field visibility.
    */
   togglePasswordVisibility(): void {
-    this.hidePassword.update((value) => !value);
+    this.hidePassword.update((value: boolean) => !value);
   }
 
   /**
-   * Maneja el submit del formulario de login
+   * Validates the form, executes login and navigates to the game collection on success.
    */
   async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
@@ -70,31 +77,14 @@ export class LoginComponent {
     this.errorMessage.set('');
 
     const { email, password } = this.loginForm.value;
-
-    const result = await this.authService.signIn({
-      email: email!,
-      password: password!
-    });
+    const result: AuthResult = await this._authUseCases.signIn(email!, password!);
 
     this.loading.set(false);
 
-    if (!result.success) {
-      this.errorMessage.set(result.error || 'Login failed');
+    if (result.success) {
+      void this._router.navigate(['/list']);
+    } else {
+      this.errorMessage.set(result.error ?? 'Login failed');
     }
-    // Si es exitoso, AuthService ya navega al home
-  }
-
-  /**
-   * Navega a la página de registro
-   */
-  goToRegister(): void {
-    void this.router.navigate(['/register']);
-  }
-
-  /**
-   * Navega a la página de recuperación de contraseña
-   */
-  goToForgotPassword(): void {
-    void this.router.navigate(['/forgot-password']);
   }
 }

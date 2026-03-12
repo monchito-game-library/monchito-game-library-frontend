@@ -69,10 +69,12 @@
       "title": "Título",
       "price": "Precio",
       "store": "Tienda",
-      "condition": "Estado",
+      "condition": "Condición",
       "description": "Descripción",
       "platform": "Plataforma",
-      "platinum": "Platino"
+      "status": "Estado",
+      "platinum": "Platino",
+      "is_favorite": "Favorito"
     },
     "conditions": {
       "new": "Nuevo",
@@ -120,8 +122,8 @@
     }
   },
   "gameStatus": {
-    "owned": "En Biblioteca",
-    "backlog": "Pendiente",
+    "wishlist": "Deseado",
+    "backlog": "Sin empezar",
     "playing": "Jugando",
     "completed": "Completado",
     "platinum": "Platino",

@@ -1,17 +1,9 @@
 import { PlatformType } from '@/types/platform.type';
 
-/**
- * Representa una consola de videojuegos disponible para selección o filtrado.
- * Usado en formularios y filtros por consola.
- */
+/** Represents a gaming platform available for selection or filtering in forms. */
 export interface AvailablePlatformInterface {
-  /**
-   * Código de la consola (ej.: 'PS5', 'XBOX-SERIES', etc.)
-   */
+  /** Platform code (e.g. 'PS5', 'XBOX-SERIES'). */
   code: PlatformType;
-
-  /**
-   * Clave Transloco para traducir el nombre visible de la consola
-   */
+  /** Transloco key for the human-readable platform name. */
   labelKey: string;
 }

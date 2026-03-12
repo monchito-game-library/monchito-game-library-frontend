@@ -1,15 +1,7 @@
-/**
- * Estructura esperada para mostrar un diálogo de confirmación.
- * Se utiliza como `data` al abrir `MatDialog`.
- */
+/** Data payload for the confirmation dialog, passed as `MatDialog` data. */
 export interface ConfirmDialogInterface {
-  /**
-   * Título que aparece en la parte superior del diálogo
-   */
+  /** Title shown at the top of the dialog. */
   title: string;
-
-  /**
-   * Mensaje principal que describe la acción a confirmar
-   */
+  /** Body message describing the action to confirm. */
   message: string;
 }

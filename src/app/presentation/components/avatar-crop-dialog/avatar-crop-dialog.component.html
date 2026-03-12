@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Ajusta tu foto de perfil</h2>
+
+<mat-dialog-content>
+  <div class="crop-dialog__container">
+    @if (!imageLoaded()) {
+      <div class="crop-dialog__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    }
+    <image-cropper
+      [imageFile]="imageFile"
+      [aspectRatio]="1"
+      [roundCropper]="true"
+      [maintainAspectRatio]="true"
+      [resizeToWidth]="300"
+      [imageQuality]="92"
+      [allowMoveImage]="true"
+      [hideResizeSquares]="true"
+      [hidden]="!imageLoaded()"
+      output="blob"
+      format="jpeg"
+      alignImage="center"
+      (imageCropped)="onImageCropped($event)"
+      (imageLoaded)="onImageLoaded()" />
+  </div>
+  <p class="crop-dialog__hint">Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom</p>
+</mat-dialog-content>
+
+@if (imageLoaded()) {
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-flat-button (click)="onConfirm()">Guardar</button>
+  </mat-dialog-actions>
+}
