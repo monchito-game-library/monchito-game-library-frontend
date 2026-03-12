@@ -1,19 +1,20 @@
-@if (currentUser() !== null) {
+@if (isAuthenticated()) {
   <header class="app-header sticky-header" role="banner">
     <mat-chip color="accent">
       <div class="user-info">
         <mat-icon>person</mat-icon>
-        <span class>{{ currentUser()?.labelKey | transloco }}</span>
+        <span>{{ getDisplayName() }}</span>
       </div>
     </mat-chip>
 
     <div class="profile-wrapper" [matMenuTriggerFor]="profileMenu" aria-label="Open user menu">
       <img
         class="profile-avatar"
-        [ngSrc]="'assets/images/user-profile/' + currentUser()?.image"
+        [src]="getAvatarUrl()"
         width="40"
         height="40"
-        alt="{{ currentUser()?.labelKey | transloco }}" />
+        alt="{{ getDisplayName() }}"
+        loading="lazy" />
     </div>
 
     <mat-menu #profileMenu="matMenu">
@@ -38,11 +39,13 @@
       <mat-divider />
 
       <button mat-menu-item (click)="logout()">
-        <mat-icon>switch_account</mat-icon>
-        {{ 'home.selectUser' | transloco }}
+        <mat-icon>logout</mat-icon>
+        {{ 'auth.logout' | transloco }}
       </button>
     </mat-menu>
   </header>
 }
 
-<router-outlet />
+<div class="app-content">
+  <router-outlet />
+</div>
