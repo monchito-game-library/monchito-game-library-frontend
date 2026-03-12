@@ -17,10 +17,11 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPrefix } from '@angular/material/form-field';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 import { GameInterface } from '@/interfaces/game.interface';
@@ -35,7 +36,6 @@ import { AvailableStoresInterface } from '@/interfaces/available-stores.interfac
 import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { StoreType } from '@/types/stores.type';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-game-list',
@@ -50,10 +50,11 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatInput,
     MatSelect,
     MatOption,
+    MatButton,
     MatIconButton,
     MatIcon,
     MatPaginator,
-    MatSlideToggle,
+    MatPrefix,
     TranslocoPipe,
     GameCardComponent
   ],

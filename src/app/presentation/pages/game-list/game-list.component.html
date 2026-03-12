@@ -1,42 +1,61 @@
-<div class="header-row">
-  <div class="header-top">
-    <div class="summary">
-      <span><strong>Total:</strong> {{ filteredGames().length }} games</span>
-      <span><strong>Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
-      <span><strong>Hours:</strong> {{ getTotalHours() }}h</span>
-      @if (getAverageRating() > 0) {
-        <span><strong>Avg Rating:</strong> ⭐ {{ getAverageRating() | number: '1.1-1' }}</span>
-      }
+<!-- Header fijo con stats y filtros -->
+<div class="game-list__header">
+  <!-- Stats -->
+  <div class="game-list__stats">
+    <div class="game-list__stat">
+      <mat-icon>sports_esports</mat-icon>
+      <span>{{ filteredGames().length }}</span>
     </div>
+    <div class="game-list__stat-divider"></div>
+    <div class="game-list__stat">
+      <mat-icon>euro</mat-icon>
+      <span>{{ getTotalPrice() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+    </div>
+    @if (getTotalHours() > 0) {
+      <div class="game-list__stat-divider"></div>
+      <div class="game-list__stat">
+        <mat-icon>schedule</mat-icon>
+        <span>{{ getTotalHours() }}h</span>
+      </div>
+    }
+    @if (getAverageRating() > 0) {
+      <div class="game-list__stat-divider"></div>
+      <div class="game-list__stat game-list__stat--rating">
+        <mat-icon>star</mat-icon>
+        <span>{{ getAverageRating() | number: '1.1-1' }}</span>
+      </div>
+    }
   </div>
 
-  <div class="filters">
-    <mat-form-field appearance="outline">
+  <!-- Filtros -->
+  <div class="game-list__filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter game-list__filter--search">
       <mat-label>{{ 'gameList.filters.title' | transloco }}</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
       <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
-      <mat-select [value]="selectedConsole" (selectionChange)="selectedConsole.set($event.value)">
-        <mat-option value="">All</mat-option>
+      <mat-select [value]="selectedConsole()" (selectionChange)="selectedConsole.set($event.value)">
+        <mat-option value="">Todas</mat-option>
         @for (c of consoles; track c.code) {
           <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
-      <mat-select [value]="selectedStore" (selectionChange)="selectedStore.set($event.value)">
-        <mat-option value="">All</mat-option>
+      <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
+        <mat-option value="">Todas</mat-option>
         @for (s of stores; track s.code) {
           <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>Estado</mat-label>
       <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value); page.set(0)">
         <mat-option value="">Todos</mat-option>
@@ -49,7 +68,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>Ordenar por</mat-label>
       <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value); page.set(0)">
         <mat-option value="created_at">Más recientes</mat-option>
@@ -60,46 +79,60 @@
       </mat-select>
     </mat-form-field>
 
-    <button
-      mat-icon-button
-      (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
-      [attr.aria-label]="'Toggle sort direction'">
-      <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-    </button>
-
-    <mat-slide-toggle
-      [checked]="onlyFavorites()"
-      (change)="onlyFavorites.set($event.checked); page.set(0)"
-      color="warn">
-      ❤️ Solo Favoritos
-    </mat-slide-toggle>
-
-    @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
-      <button mat-icon-button (click)="clearAllFilters()" aria-label="Clear filters" color="warn">
-        <mat-icon>filter_alt_off</mat-icon>
+    <!-- Acciones de filtro -->
+    <div class="game-list__filter-actions">
+      <button
+        mat-icon-button
+        (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
+        [attr.aria-label]="'Ordenación ' + sortDirection()">
+        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
       </button>
-    }
+
+      <button
+        mat-icon-button
+        [class.game-list__fav-btn--active]="onlyFavorites()"
+        (click)="onlyFavorites.set(!onlyFavorites()); page.set(0)"
+        aria-label="Solo favoritos">
+        <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+
+      @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+        <button mat-icon-button color="warn" (click)="clearAllFilters()" aria-label="Limpiar filtros">
+          <mat-icon>filter_alt_off</mat-icon>
+        </button>
+      }
+    </div>
   </div>
 </div>
 
-<div class="list-container">
-  <div class="card-grid">
-    @for (game of paginatedGames(); track game.id) {
-      <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)"></app-game-card>
+<!-- Contenido -->
+<div class="game-list__content">
+  @if (filteredGames().length > 0) {
+    <div class="game-list__grid">
+      @for (game of paginatedGames(); track game.id) {
+        <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)" />
+      }
+    </div>
+
+    @if (filteredGames().length > pageSize()) {
+      <mat-paginator
+        [length]="filteredGames().length"
+        [pageSize]="pageSize()"
+        [pageIndex]="page()"
+        [pageSizeOptions]="[12, 24, 48]"
+        (page)="onPageChange($event)" />
     }
-  </div>
-
-  @if (filteredGames().length > pageSize()) {
-    <mat-paginator
-      [length]="filteredGames().length"
-      [pageSize]="pageSize()"
-      [pageIndex]="page()"
-      [pageSizeOptions]="[12, 24, 48]"
-      (page)="onPageChange($event)">
-    </mat-paginator>
-  }
-
-  @if (filteredGames().length === 0) {
-    <p class="no-games">No games found.</p>
+  } @else {
+    <div class="game-list__empty">
+      <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
+      <p class="game-list__empty-title">Sin resultados</p>
+      <p class="game-list__empty-subtitle">Prueba a cambiar los filtros activos</p>
+      @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+        <button mat-stroked-button (click)="clearAllFilters()">
+          <mat-icon>filter_alt_off</mat-icon>
+          Limpiar filtros
+        </button>
+      }
+    </div>
   }
 </div>
