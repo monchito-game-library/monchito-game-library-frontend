@@ -3,7 +3,9 @@ import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatButton } from '@angular/material/button';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { UserContextService } from '@/services/user-context.service';
@@ -21,7 +23,17 @@ interface NavItem {
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, MatMenuItem, MatDivider, TranslocoPipe],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatButton,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    MatDivider,
+    MatSlideToggle,
+    TranslocoPipe
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
@@ -115,6 +127,13 @@ export class AppComponent implements OnInit {
    */
   getAvatarUrl(): string {
     return this.userContext.getAvatarUrl();
+  }
+
+  /**
+   * Obtiene el email del usuario autenticado.
+   */
+  getUserEmail(): string | null {
+    return this.userContext.getUserEmail();
   }
 
   /**
