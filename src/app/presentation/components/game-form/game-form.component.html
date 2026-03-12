@@ -115,7 +115,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>Estado</mat-label>
+          <mat-label>{{ 'gameForm.fields.status' | transloco }}</mat-label>
           <mat-select formControlName="status">
             @for (status of gameStatuses; track status.code) {
               <mat-option [value]="status.code">
