@@ -9,7 +9,7 @@
     <div class="game-list__stat-divider"></div>
     <div class="game-list__stat">
       <mat-icon>euro</mat-icon>
-      <span>{{ getTotalPrice() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+      <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
     </div>
     @if (getTotalHours() > 0) {
       <div class="game-list__stat-divider"></div>
@@ -105,8 +105,15 @@
   </div>
 </div>
 
-<!-- Virtual scroll -->
-@if (filteredGames().length > 0) {
+<!-- Estado: cargando -->
+@if (loading()) {
+  <div class="game-list__loading">
+    <mat-spinner diameter="48" />
+    <p class="game-list__loading-text">Cargando colección...</p>
+  </div>
+
+  <!-- Estado: con juegos -->
+} @else if (filteredGames().length > 0) {
   <cdk-virtual-scroll-viewport
     class="game-list__viewport"
     [itemSize]="ROW_ITEM_SIZE"
@@ -117,16 +124,28 @@
       }
     </div>
   </cdk-virtual-scroll-viewport>
+
+  <!-- Estado: sin resultados de filtros -->
+} @else if (allGames().length > 0) {
+  <div class="game-list__empty">
+    <mat-icon class="game-list__empty-icon">search_off</mat-icon>
+    <p class="game-list__empty-title">Sin resultados</p>
+    <p class="game-list__empty-subtitle">Ningún juego coincide con los filtros activos</p>
+    <button mat-stroked-button (click)="clearAllFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpiar filtros
+    </button>
+  </div>
+
+  <!-- Estado: colección vacía -->
 } @else {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
-    <p class="game-list__empty-title">Sin resultados</p>
-    <p class="game-list__empty-subtitle">Prueba a cambiar los filtros activos</p>
-    @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
-      <button mat-stroked-button (click)="clearAllFilters()">
-        <mat-icon>filter_alt_off</mat-icon>
-        Limpiar filtros
-      </button>
-    }
+    <p class="game-list__empty-title">Tu colección está vacía</p>
+    <p class="game-list__empty-subtitle">Añade tu primer juego para empezar</p>
+    <button mat-flat-button routerLink="/add">
+      <mat-icon>add_circle</mat-icon>
+      Añadir juego
+    </button>
   </div>
 }
