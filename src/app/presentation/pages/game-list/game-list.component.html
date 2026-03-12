@@ -4,21 +4,29 @@
   <div class="game-list__stats">
     <div class="game-list__stat">
       <mat-icon>sports_esports</mat-icon>
-      <span>{{ filteredGames().length }}</span>
+      @if (loading()) {
+        <div class="game-list__stat-skeleton"></div>
+      } @else {
+        <span>{{ filteredGames().length }}</span>
+      }
     </div>
     <div class="game-list__stat-divider"></div>
     <div class="game-list__stat">
       <mat-icon>euro</mat-icon>
-      <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
+      @if (loading()) {
+        <div class="game-list__stat-skeleton game-list__stat-skeleton--wide"></div>
+      } @else {
+        <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
+      }
     </div>
-    @if (getTotalHours() > 0) {
+    @if (!loading() && getTotalHours() > 0) {
       <div class="game-list__stat-divider"></div>
       <div class="game-list__stat">
         <mat-icon>schedule</mat-icon>
         <span>{{ getTotalHours() }}h</span>
       </div>
     }
-    @if (getAverageRating() > 0) {
+    @if (!loading() && getAverageRating() > 0) {
       <div class="game-list__stat-divider"></div>
       <div class="game-list__stat game-list__stat--rating">
         <mat-icon>star</mat-icon>

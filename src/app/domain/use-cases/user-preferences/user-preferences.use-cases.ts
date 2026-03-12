@@ -58,4 +58,14 @@ export class UserPreferencesUseCasesImpl implements UserPreferencesUseCasesContr
     await this._repo.saveAvatarUrl(userId, url);
     return url;
   }
+
+  /**
+   * Persists the banner URL selected by the user.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {string} bannerUrl - URL of the selected banner image
+   */
+  async saveBannerUrl(userId: string, bannerUrl: string): Promise<void> {
+    await this._repo.saveBannerUrl(userId, bannerUrl);
+  }
 }

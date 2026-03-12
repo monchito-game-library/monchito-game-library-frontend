@@ -48,6 +48,13 @@ export interface AuthUseCasesContract {
    * @param {string} email
    */
   resetPassword(email: string): Promise<AuthResult>;
+
+  /**
+   * Updates the authenticated user's display name.
+   *
+   * @param {string} displayName - New display name (may include emojis)
+   */
+  updateDisplayName(displayName: string): Promise<void>;
 }
 
 export const AUTH_USE_CASES = new InjectionToken<AuthUseCasesContract>('AUTH_USE_CASES');

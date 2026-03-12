@@ -12,7 +12,8 @@ export function mapUserPreferences(dto: UserPreferencesDto, userId: string): Use
     userId,
     theme: dto.theme,
     language: dto.language,
-    avatarUrl: dto.avatar_url ?? null
+    avatarUrl: dto.avatar_url ?? null,
+    bannerUrl: dto.banner_url ?? null
   };
 }
 
