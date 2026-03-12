@@ -69,8 +69,12 @@ export class SupabaseRepository implements GameRepositoryInterface {
       platinum: record.platinum,
       description: (record as any).user_notes || record.description || '', // Soportar ambos nombres
       platform: ((record as any).user_platform || record.platform) as PlatformType | null,
-      image: record.image_url || undefined
-    };
+      image: record.image_url || undefined,
+      status: (record as any).status || null,
+      personal_rating: (record as any).personal_rating ?? null,
+      hours_played: (record as any).hours_played ?? 0,
+      is_favorite: (record as any).is_favorite ?? false
+    } as any;
   }
 
   /**

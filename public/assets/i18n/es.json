@@ -121,8 +121,8 @@
     }
   },
   "gameStatus": {
-    "owned": "En Biblioteca",
-    "backlog": "Pendiente",
+    "wishlist": "Deseado",
+    "backlog": "Sin empezar",
     "playing": "Jugando",
     "completed": "Completado",
     "platinum": "Platino",
