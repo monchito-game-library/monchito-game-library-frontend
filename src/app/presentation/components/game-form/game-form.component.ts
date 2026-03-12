@@ -1,4 +1,13 @@
-import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -41,6 +50,7 @@ import { GameCatalog } from '@/dtos/rawg/rawg.dto';
 @Component({
   selector: 'app-game-form',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     RouterLink,

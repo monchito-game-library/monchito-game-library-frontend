@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -19,6 +19,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatDialogClose],
   templateUrl: './confirm-dialog.component.html',
   styleUrl: './confirm-dialog.component.scss'
