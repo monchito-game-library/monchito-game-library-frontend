@@ -9,6 +9,7 @@ import { UserPreferencesRepositoryInterface } from '@/domain/repositories/user-p
 export class SupabasePreferencesRepository implements UserPreferencesRepositoryInterface {
   private readonly _supabase: SupabaseClient;
   private readonly _table = 'user_preferences';
+  private readonly _bucket = 'avatars';
 
   constructor() {
     this._supabase = getSupabaseClient();
@@ -23,7 +24,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryI
   async getPreferences(userId: string): Promise<UserPreferencesInterface | null> {
     const { data, error } = await this._supabase
       .from(this._table)
-      .select('theme, language')
+      .select('theme, language, avatar_url')
       .eq('user_id', userId)
       .single();
 
@@ -32,7 +33,8 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryI
     return {
       userId,
       theme: data.theme as 'light' | 'dark',
-      language: data.language as 'es' | 'en'
+      language: data.language as 'es' | 'en',
+      avatarUrl: data.avatar_url ?? null
     };
   }
 
@@ -42,14 +44,41 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryI
    * @param {UserPreferencesInterface} preferences - Preferencias a guardar
    */
   async savePreferences(preferences: UserPreferencesInterface): Promise<void> {
-    const { error } = await this._supabase.from(this._table).upsert({
+    const record: Record<string, unknown> = {
       user_id: preferences.userId,
       theme: preferences.theme,
       language: preferences.language
-    });
+    };
+
+    if (preferences.avatarUrl !== undefined) {
+      record['avatar_url'] = preferences.avatarUrl;
+    }
+
+    const { error } = await this._supabase.from(this._table).upsert(record);
 
     if (error) {
       throw new Error(`Failed to save preferences: ${error.message}`);
     }
+  }
+
+  /**
+   * Sube un avatar al bucket de Storage y devuelve la URL pública.
+   * Sobreescribe el fichero existente del usuario si ya tenía uno.
+   *
+   * @param {string} userId - ID del usuario
+   * @param {File} file - Fichero de imagen a subir
+   */
+  async uploadAvatar(userId: string, file: File): Promise<string> {
+    const { error } = await this._supabase.storage.from(this._bucket).upload(userId, file, {
+      upsert: true,
+      contentType: file.type
+    });
+
+    if (error) {
+      throw new Error(`Failed to upload avatar: ${error.message}`);
+    }
+
+    const { data } = this._supabase.storage.from(this._bucket).getPublicUrl(userId);
+    return data.publicUrl;
   }
 }

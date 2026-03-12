@@ -4,6 +4,9 @@ import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatDivider } from '@angular/material/divider';
@@ -33,7 +36,9 @@ interface NavItem {
     MatMenuTrigger,
     MatDivider,
     MatSlideToggle,
-    TranslocoPipe
+    TranslocoPipe,
+    MatProgressSpinner,
+    MatTooltip
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -44,7 +49,14 @@ export class AppComponent implements OnInit {
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferences: UserPreferencesService = inject(UserPreferencesService);
+  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   readonly userContext: UserContextService = inject(UserContextService);
+
+  /** Señal reactiva con la URL del avatar actual */
+  readonly avatarUrl = this._userPreferences.avatarUrl;
+
+  /** Indica si se está subiendo un avatar */
+  readonly uploadingAvatar = this._userPreferences.uploadingAvatar;
 
   // --- Rutas públicas donde NO se debe mostrar la navegación ---
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
@@ -151,9 +163,33 @@ export class AppComponent implements OnInit {
 
   /**
    * Obtiene la URL del avatar del usuario.
+   * Prioriza el avatar subido por el usuario sobre el generado automáticamente.
    */
   getAvatarUrl(): string {
-    return this.userContext.getAvatarUrl();
+    return this.avatarUrl() ?? this.userContext.getAvatarUrl();
+  }
+
+  /**
+   * Maneja la selección de un fichero de avatar y lo sube a Supabase Storage.
+   *
+   * @param {Event} event - Evento del input file
+   */
+  async onAvatarFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const userId = this.userContext.userId();
+    if (!userId) return;
+
+    try {
+      await this._userPreferences.uploadAvatar(userId, file);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error al subir la imagen';
+      this._snackBar.open(message, 'Cerrar', { duration: 4000 });
+    } finally {
+      input.value = '';
+    }
   }
 
   /**
