@@ -37,7 +37,7 @@ package-lock.json
 /libpeerconnection.log
 testem.log
 /typings
-/.husky
+# /.husky — temporalmente incluido para fijar el PATH de nvm en pre-commit
 
 # System files
 .DS_Store

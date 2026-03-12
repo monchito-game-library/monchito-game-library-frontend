@@ -1,4 +1,6 @@
-import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
@@ -7,9 +9,18 @@ import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
+import { userPreferencesRepositoryProvider } from '@/di/repositories/user-preferences.repository.provider';
+import { authRepositoryProvider } from '@/di/repositories/auth.repository.provider';
+import { rawgRepositoryProvider } from '@/di/repositories/rawg.repository.provider';
+import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
+import { userPreferencesUseCasesProvider } from '@/di/use-cases/user-preferences.use-cases.provider';
+import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
+
+registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: 'es' },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimations(),
     provideRouter(routes),
@@ -23,6 +34,12 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
-    gameRepositoryProvider
+    gameRepositoryProvider,
+    userPreferencesRepositoryProvider,
+    authRepositoryProvider,
+    rawgRepositoryProvider,
+    gameUseCasesProvider,
+    userPreferencesUseCasesProvider,
+    authUseCasesProvider
   ]
 };

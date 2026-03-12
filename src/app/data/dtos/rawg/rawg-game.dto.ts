@@ -1,0 +1,147 @@
+import { RawgPlatformInfoDto, RawgParentPlatformDto } from './rawg-platform.dto';
+import {
+  RawgGenreDto,
+  RawgTagDto,
+  RawgEsrbRatingDto,
+  RawgDeveloperDto,
+  RawgPublisherDto,
+  RawgStoreInfoDto,
+  RawgScreenshotDto,
+  RawgRatingDto
+} from './rawg-metadata.dto';
+
+/** Game entry returned by the RAWG /games search endpoint. */
+export interface RawgGameDto {
+  id: number;
+  slug: string;
+  name: string;
+  released: string | null;
+  tba: boolean;
+  background_image: string | null;
+  rating: number;
+  rating_top: number;
+  ratings: RawgRatingDto[];
+  ratings_count: number;
+  reviews_text_count: number;
+  added: number;
+  added_by_status?: {
+    yet?: number;
+    owned?: number;
+    beaten?: number;
+    toplay?: number;
+    dropped?: number;
+    playing?: number;
+  };
+  metacritic: number | null;
+  playtime: number;
+  suggestions_count: number;
+  updated: string;
+  reviews_count: number;
+  saturated_color?: string;
+  dominant_color?: string;
+  platforms: RawgPlatformInfoDto[];
+  parent_platforms: RawgParentPlatformDto[];
+  genres: RawgGenreDto[];
+  stores: RawgStoreInfoDto[];
+  tags: RawgTagDto[];
+  esrb_rating: RawgEsrbRatingDto | null;
+  short_screenshots: RawgScreenshotDto[];
+}
+
+/** Full game detail returned by the RAWG /games/{id} endpoint. */
+export interface RawgGameDetailDto extends RawgGameDto {
+  name_original: string;
+  /** HTML format */
+  description: string;
+  /** Plain text format */
+  description_raw: string;
+  metacritic_platforms: Array<{
+    metascore: number;
+    url: string;
+    platform: { platform: number; name: string; slug: string };
+  }>;
+  metacritic_url?: string;
+  website: string;
+  reddit_url: string;
+  reddit_name: string;
+  reddit_description: string;
+  reddit_logo: string;
+  reddit_count: number;
+  twitch_count: number;
+  youtube_count: number;
+  screenshots_count: number;
+  movies_count: number;
+  creators_count: number;
+  achievements_count: number;
+  parent_achievements_count: number;
+  developers: RawgDeveloperDto[];
+  publishers: RawgPublisherDto[];
+  reactions?: Record<string, number>;
+  alternative_names?: string[];
+}
+
+/** Response from the RAWG /games search endpoint. */
+export interface RawgSearchResponseDto {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: RawgGameDto[];
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+  seo_h1?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+  description?: string;
+  nofollow_collections?: string[];
+}
+
+/** Query parameters for the RAWG /games endpoint. */
+export interface RawgSearchParamsDto {
+  search?: string;
+  page?: number;
+  /** Maximum 40 */
+  page_size?: number;
+  search_precise?: boolean;
+  search_exact?: boolean;
+  /** Comma-separated parent platform IDs, e.g. '1,2,3' */
+  parent_platforms?: string;
+  /** Comma-separated platform IDs, e.g. '4,187,1' */
+  platforms?: string;
+  stores?: string;
+  developers?: string;
+  publishers?: string;
+  genres?: string;
+  tags?: string;
+  /** Date range, e.g. '2020-01-01,2020-12-31' */
+  dates?: string;
+  updated?: string;
+  /** e.g. '-added', '-released', '-rating', '-metacritic', 'name' */
+  ordering?: string;
+  /** Metacritic score range, e.g. '80,100' */
+  metacritic?: string;
+  exclude_collection?: number;
+  exclude_additions?: boolean;
+  exclude_parents?: boolean;
+  exclude_game_series?: boolean;
+  exclude_stores?: string;
+}
+
+/**
+ * RAWG game entry mapped to the shape needed to insert into our game_catalog table.
+ * Used by the repository when staging a RAWG selection before saving.
+ */
+export interface GameCatalog {
+  id?: string;
+  rawg_id: number;
+  title: string;
+  slug: string;
+  image_url: string | null;
+  released_date: string | null;
+  rating: number;
+  platforms: string[];
+  genres: string[];
+  description?: string;
+  created_at?: string;
+  updated_at?: string;
+}

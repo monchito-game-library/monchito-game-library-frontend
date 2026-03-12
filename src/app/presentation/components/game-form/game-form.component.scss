@@ -135,6 +135,15 @@
   }
 }
 
+// ─── Loading state ────────────────────────────────────────────────────────────
+
+.game-form-page__loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // ─── Formulario derecho ──────────────────────────────────────────────────────
 
 .game-form {
@@ -153,17 +162,35 @@
 
     &.game-form__field--description {
       align-self: stretch;
-      min-height: 0;
+      display: flex;
+      flex-direction: column;
 
-      // [figma::textarea] Force textarea to fill the available grid row height
-      ::ng-deep .mat-mdc-text-field-wrapper,
+      // Propaga el estiramiento por toda la cadena de wrappers de Material via flexbox
+      ::ng-deep .mat-mdc-text-field-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
       ::ng-deep .mat-mdc-form-field-flex {
-        height: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      ::ng-deep .mat-mdc-form-field-infix {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
       }
 
       ::ng-deep textarea {
-        height: 100% !important;
+        flex: 1;
         resize: none;
+        overflow-y: auto;
       }
     }
   }
@@ -187,6 +214,9 @@
     gap: 2rem;
 
     ::ng-deep .mdc-label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
       padding-left: 0.5rem;
     }
   }

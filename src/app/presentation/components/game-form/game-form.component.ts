@@ -13,7 +13,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -29,15 +29,15 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
-import { SupabaseRepository } from '@/repositories/supabase.repository';
-import { GameInterface } from '@/interfaces/game.interface';
+import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
+import { GameModel } from '@/models/game/game.model';
+import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { GameConditionType } from '@/types/game-condition.type';
 import { PlatformType } from '@/types/platform.type';
 import { availableConditions } from '@/constants/available-conditions.constant';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -48,12 +48,13 @@ import { AvailableStoresInterface } from '@/interfaces/available-stores.interfac
 import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { StoreType } from '@/types/stores.type';
 import { cardActionType } from '@/types/card-action.type';
-import { GameCatalog } from '@/dtos/rawg/rawg.dto';
-import { RawgService } from '@/services/rawg/rawg.service';
-import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
+import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
 
 @Component({
   selector: 'app-game-form',
+  templateUrl: './game-form.component.html',
+  styleUrl: './game-form.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
@@ -67,7 +68,6 @@ import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
   ],
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     DatePipe,
     DecimalPipe,
     MatFormField,
@@ -85,40 +85,38 @@ import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatSuffix
-  ],
-  templateUrl: './game-form.component.html',
-  styleUrl: './game-form.component.scss'
+  ]
 })
 export class GameFormComponent implements OnInit {
   // ────────────────────── Inyecciones ──────────────────────
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
+  private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _rawgService: RawgService = inject(RawgService);
+  private readonly _rawgRepo: RawgRepositoryContract = inject(RAWG_REPOSITORY);
 
   // ────────────────────── Variables privadas ──────────────────────
   private readonly _searchSubject: Subject<string> = new Subject<string>();
   private _gameId?: number;
 
   // ────────────────────── Constantes ───────────────────────
-  /** Plataformas disponibles para el autocompletado */
+  /** Available platforms for the autocomplete input. */
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
 
-  /** Condiciones disponibles */
+  /** Available game conditions. */
   readonly conditions: AvailableConditionInterface[] = availableConditions;
 
-  /** Tiendas disponibles para el autocompletado */
+  /** Available stores for the autocomplete input. */
   readonly stores: AvailableStoresInterface[] = availableStoresConstant;
 
-  /** Estados disponibles para el juego */
+  /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
   // ────────────────────── Formulario ───────────────────────
-  /** Formulario reactivo del juego */
+  /** Reactive form for creating or editing a game entry. */
   readonly form = this._fb.group({
     title: ['', Validators.required],
     price: [null as number | null, Validators.required],
@@ -139,7 +137,7 @@ export class GameFormComponent implements OnInit {
     condition: 'new' as GameConditionType,
     platinum: false,
     description: '',
-    status: ['owned' as 'wishlist' | 'backlog' | 'playing' | 'completed' | 'platinum' | 'abandoned' | 'owned'],
+    status: ['backlog' as GameStatus],
     personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
     hours_played: [0, [Validators.min(0)]],
     is_favorite: [false]
@@ -150,7 +148,7 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.platform.value
   });
 
-  /** Plataformas filtradas según el texto introducido */
+  /** Platforms filtered by the current autocomplete input value. */
   readonly filteredPlatforms: Signal<AvailablePlatformInterface[]> = computed((): AvailablePlatformInterface[] => {
     const input: string = this.platformInput()?.toString().toLowerCase() ?? '';
     const gamePlatforms = this.gamePlatforms();
@@ -189,7 +187,7 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.store.value ?? 'none'
   });
 
-  /** Tiendas filtradas según el texto introducido */
+  /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
     const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
     return this.stores.filter(
@@ -200,25 +198,32 @@ export class GameFormComponent implements OnInit {
   });
 
   // ────────────────────── Signals públicos ──────────────────────
-  /** Juego seleccionado del catálogo RAWG */
+  /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
-  /** Plataformas del juego seleccionado de RAWG (nombres originales y códigos mapeados) */
+  /** Platforms from the selected RAWG game (original names and mapped local codes). */
   readonly gamePlatforms: WritableSignal<Array<{ name: string; code: PlatformType | null }>> = signal([]);
 
-  /** Controla si estamos en modo búsqueda (true) o modo formulario (false) */
+  /** Whether the component is in catalogue search mode (true) or form mode (false). */
   readonly searchMode: WritableSignal<boolean> = signal(false);
 
-  /** Indica si hay una búsqueda en curso */
+  /** Whether a catalogue search request is in progress. */
   readonly searchLoading: WritableSignal<boolean> = signal(false);
 
-  /** Resultados de la búsqueda en catálogo */
-  readonly searchResults: WritableSignal<GameCatalogV3[]> = signal([]);
+  /** Current catalogue search results. */
+  readonly searchResults: WritableSignal<GameCatalogDto[]> = signal([]);
 
-  /** Término de búsqueda actual */
+  /** Current search query string. */
   readonly searchQuery: WritableSignal<string> = signal('');
 
+  /** Whether the game data is being loaded in edit mode. */
+  readonly loading: WritableSignal<boolean> = signal(false);
+
+  /** Whether the form is being saved (disables all fields). */
+  readonly saving: WritableSignal<boolean> = signal(false);
+
   // ────────────────────── Configuraciones públicas ──────────────────────
+  /** Whether the form is in edit mode (true) or create mode (false). */
   isEditMode: boolean = false;
 
   constructor() {
@@ -236,15 +241,36 @@ export class GameFormComponent implements OnInit {
 
     this.isEditMode = true;
     this._gameId = +idParam;
+    this.loading.set(true);
 
-    const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
-    if (game) {
-      this.form.patchValue(game);
+    try {
+      const game: GameModel | undefined = await this._gameUseCases.getById(this._userId, this._gameId);
+      if (game) {
+        this.form.patchValue({
+          title: game.title,
+          price: game.price,
+          store: game.store,
+          platform: game.platform,
+          condition: game.condition,
+          platinum: game.platinum,
+          description: game.description,
+          status: game.status,
+          personal_rating: game.personalRating,
+          hours_played: game.hoursPlayed,
+          is_favorite: game.isFavorite
+        });
+
+        if (game.imageUrl) {
+          this.selectedGame.set({ title: game.title, image_url: game.imageUrl } as GameCatalog);
+        }
+      }
+    } finally {
+      this.loading.set(false);
     }
   }
 
   /**
-   * Maneja el envío del formulario con diálogo de confirmación previo.
+   * Handles form submission by showing a confirmation dialog before saving or updating.
    */
   async onSubmit(): Promise<void> {
     if (this.form.invalid || !this.form.value.platform || !this.form.value.title?.trim()) return;
@@ -260,8 +286,11 @@ export class GameFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
 
+      this.saving.set(true);
+      this.form.disable();
+
       const raw = this.form.getRawValue();
-      const game: GameInterface = {
+      const game: GameModel = {
         id: this._gameId,
         title: raw.title ?? '',
         price: raw.price ?? null,
@@ -270,20 +299,16 @@ export class GameFormComponent implements OnInit {
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
         description: raw.description ?? '',
-        ...(raw.status && { status: raw.status }),
-        ...(raw.personal_rating !== null && { personal_rating: raw.personal_rating }),
-        ...(raw.hours_played !== null && { hours_played: raw.hours_played }),
-        ...(raw.is_favorite !== null && { is_favorite: raw.is_favorite })
-      } as any;
-
-      if (this._db instanceof SupabaseRepository) {
-        this._db.setSelectedGameCatalog(this.selectedGame());
-      }
+        status: raw.status ?? 'backlog',
+        personalRating: raw.personal_rating ?? null,
+        hoursPlayed: raw.hours_played ?? 0,
+        isFavorite: raw.is_favorite ?? false
+      };
 
       if (this.isEditMode && this._gameId !== undefined) {
-        await this._db.updateGameForUser(this.userId, this._gameId, game);
+        await this._gameUseCases.updateGame(this._userId, this._gameId, game, this.selectedGame());
       } else {
-        await this._db.addGameForUser(this.userId, game);
+        await this._gameUseCases.addGame(this._userId, game, this.selectedGame());
       }
 
       void this._router.navigate(['/list']);
@@ -298,7 +323,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Desactiva el modo búsqueda y vuelve al formulario, limpiando el estado de búsqueda.
+   * Deactivates search mode and returns to the form, clearing the search state.
    */
   closeSearchMode(): void {
     this.searchMode.set(false);
@@ -307,9 +332,9 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Maneja el input de búsqueda y dispara el debounce de 400ms.
+   * Handles the search input event and pushes the value to the debounce subject.
    *
-   * @param {Event} event - Evento de input del campo de búsqueda
+   * @param {Event} event - Input event from the search field
    */
   onSearchInput(event: Event): void {
     const query: string = (event.target as HTMLInputElement).value;
@@ -318,13 +343,13 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Selecciona un juego del catálogo, rellena el formulario y vuelve al modo formulario.
+   * Selects a game from the catalogue, populates the form fields and switches back to form mode.
    *
-   * @param {GameCatalogV3} game - Juego seleccionado del catálogo
+   * @param {GameCatalogDto} game - The catalogue game entry selected by the user
    */
-  selectGameFromSearch(game: GameCatalogV3): void {
+  selectGameFromSearch(game: GameCatalogDto): void {
     const catalog: GameCatalog = {
-      rawg_id: game.rawg_id!,
+      rawg_id: game.rawg_id ?? 0,
       title: game.title,
       slug: game.slug,
       image_url: game.image_url,
@@ -352,7 +377,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Limpia el juego seleccionado del catálogo y desbloquea el campo título.
+   * Clears the selected catalogue game and re-enables the title field.
    */
   clearSelectedGame(): void {
     this.selectedGame.set(null);
@@ -362,8 +387,10 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
-   * Si no se encuentra la tienda, devuelve el código original.
+   * Returns the translated store label for a given store code.
+   * Falls back to the raw code if the store is not found.
+   *
+   * @param {StoreType | null} code - Store code to resolve
    */
   displayStoreLabel = (code: StoreType | null): string => {
     if (!code) return '';
@@ -374,8 +401,10 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
-   * Devuelve la etiqueta de la plataforma del juego, traducida al idioma actual.
-   * Si no se encuentra la plataforma, devuelve el código original.
+   * Returns the translated platform label for a given platform code.
+   * Falls back to the raw code if the platform is not found.
+   *
+   * @param {PlatformType | null} code - Platform code to resolve
    */
   displayPlatformLabel = (code: PlatformType | null): string => {
     if (!code) return '';
@@ -386,19 +415,19 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
-   * Obtiene el ID del usuario actual o lanza error si no hay usuario seleccionado.
+   * Returns the current user ID or throws if no user is authenticated.
    */
-  private get userId(): string {
+  private get _userId(): string {
     const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
   }
 
   /**
-   * Realiza la búsqueda en RAWG y actualiza los resultados.
-   * Se invoca automáticamente desde el Subject con debounce aplicado.
+   * Executes a RAWG catalogue search and updates the results signal.
+   * Triggered automatically by the debounced subject.
    *
-   * @param {string} query - Término de búsqueda
+   * @param {string} query - Search term
    */
   private async _performSearch(query: string): Promise<void> {
     if (!query.trim()) {
@@ -408,11 +437,9 @@ export class GameFormComponent implements OnInit {
 
     this.searchLoading.set(true);
     try {
-      const response = await this._rawgService.searchGames(query, 1, 20);
-      const results: GameCatalogV3[] = response.results.map((game) => this._rawgService.convertToGameCatalogV3(game));
+      const results: GameCatalogDto[] = await this._rawgRepo.searchGames(query, 1, 20);
       this.searchResults.set(results);
-    } catch (error) {
-      console.error('Error searching games:', error);
+    } catch {
       this.searchResults.set([]);
     } finally {
       this.searchLoading.set(false);
@@ -420,9 +447,9 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Mapea nombres de plataformas de RAWG a nuestros códigos de plataforma.
+   * Maps a RAWG platform name to the corresponding local platform code.
    *
-   * @param {string} rawgPlatformName - Nombre de la plataforma en RAWG
+   * @param {string} rawgPlatformName - Platform name as returned by the RAWG API
    */
   private _mapRawgPlatformToCode(rawgPlatformName: string): PlatformType | null {
     const platformMap: Record<string, PlatformType> = {
