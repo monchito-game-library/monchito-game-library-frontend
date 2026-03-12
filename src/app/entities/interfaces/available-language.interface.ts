@@ -1,17 +1,9 @@
 import { LanguageType } from '@/types/language.type';
 
-/**
- * Representa un idioma disponible en la aplicación.
- * Usado para mostrar el selector de idioma y traducir el contenido.
- */
+/** Represents a language available in the application, used in the language selector. */
 export interface AvailableLanguageInterface {
-  /**
-   * Código del idioma según el estándar IETF (ej.: 'es', 'en')
-   */
+  /** IETF language code (e.g. 'es', 'en'). */
   code: LanguageType;
-
-  /**
-   * Clave Transloco para mostrar el nombre traducido del idioma
-   */
+  /** Transloco key for the translated language name. */
   labelKey: string;
 }
