@@ -239,6 +239,10 @@ export class GameFormComponent implements OnInit {
     const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
     if (game) {
       this.form.patchValue(game);
+
+      if (game.image) {
+        this.selectedGame.set({ title: game.title, image_url: game.image } as GameCatalog);
+      }
     }
   }
 
