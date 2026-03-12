@@ -135,6 +135,15 @@
   }
 }
 
+// ─── Loading state ────────────────────────────────────────────────────────────
+
+.game-form-page__loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // ─── Formulario derecho ──────────────────────────────────────────────────────
 
 .game-form {
