@@ -36,17 +36,28 @@ import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-c
     TranslocoPipe
   ]
 })
+/** Registration page component. Creates a new account and redirects to login on success. */
 export class RegisterComponent {
-  private readonly _fb = inject(FormBuilder);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
 
+  /** Whether a registration request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
+
+  /** Error message to display when registration fails. */
   readonly errorMessage: WritableSignal<string> = signal('');
+
+  /** Success message shown after a successful registration. */
   readonly successMessage: WritableSignal<string> = signal('');
+
+  /** Whether the password field is hidden. */
   readonly hidePassword: WritableSignal<boolean> = signal(true);
+
+  /** Whether the confirm-password field is hidden. */
   readonly hideConfirmPassword: WritableSignal<boolean> = signal(true);
 
+  /** Reactive registration form with display name, email, password and confirm-password fields. */
   readonly registerForm = this._fb.group(
     {
       displayName: ['', [Validators.required, Validators.minLength(3)]],
@@ -58,21 +69,21 @@ export class RegisterComponent {
   );
 
   /**
-   * Alterna la visibilidad de la contraseña.
+   * Toggles the password field visibility.
    */
   togglePasswordVisibility(): void {
     this.hidePassword.update((value: boolean) => !value);
   }
 
   /**
-   * Alterna la visibilidad del campo de confirmación de contraseña.
+   * Toggles the confirm-password field visibility.
    */
   toggleConfirmPasswordVisibility(): void {
     this.hideConfirmPassword.update((value: boolean) => !value);
   }
 
   /**
-   * Valida el formulario, ejecuta el registro y redirige al login tras el éxito.
+   * Validates the form, executes registration and redirects to login on success.
    */
   async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) {
@@ -98,9 +109,9 @@ export class RegisterComponent {
   }
 
   /**
-   * Validador que comprueba que los dos campos de contraseña coincidan.
+   * Cross-field validator that checks whether the two password fields match.
    *
-   * @param {AbstractControl} control - Grupo del formulario
+   * @param {AbstractControl} control - The form group control
    */
   private _passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');

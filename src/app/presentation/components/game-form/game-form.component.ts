@@ -103,20 +103,20 @@ export class GameFormComponent implements OnInit {
   private _gameId?: number;
 
   // ────────────────────── Constantes ───────────────────────
-  /** Plataformas disponibles para el autocompletado */
+  /** Available platforms for the autocomplete input. */
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
 
-  /** Condiciones disponibles */
+  /** Available game conditions. */
   readonly conditions: AvailableConditionInterface[] = availableConditions;
 
-  /** Tiendas disponibles para el autocompletado */
+  /** Available stores for the autocomplete input. */
   readonly stores: AvailableStoresInterface[] = availableStoresConstant;
 
-  /** Estados disponibles para el juego */
+  /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
   // ────────────────────── Formulario ───────────────────────
-  /** Formulario reactivo del juego */
+  /** Reactive form for creating or editing a game entry. */
   readonly form = this._fb.group({
     title: ['', Validators.required],
     price: [null as number | null, Validators.required],
@@ -148,7 +148,7 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.platform.value
   });
 
-  /** Plataformas filtradas según el texto introducido */
+  /** Platforms filtered by the current autocomplete input value. */
   readonly filteredPlatforms: Signal<AvailablePlatformInterface[]> = computed((): AvailablePlatformInterface[] => {
     const input: string = this.platformInput()?.toString().toLowerCase() ?? '';
     const gamePlatforms = this.gamePlatforms();
@@ -187,7 +187,7 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.store.value ?? 'none'
   });
 
-  /** Tiendas filtradas según el texto introducido */
+  /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
     const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
     return this.stores.filter(
@@ -198,31 +198,32 @@ export class GameFormComponent implements OnInit {
   });
 
   // ────────────────────── Signals públicos ──────────────────────
-  /** Juego seleccionado del catálogo RAWG */
+  /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
-  /** Plataformas del juego seleccionado de RAWG (nombres originales y códigos mapeados) */
+  /** Platforms from the selected RAWG game (original names and mapped local codes). */
   readonly gamePlatforms: WritableSignal<Array<{ name: string; code: PlatformType | null }>> = signal([]);
 
-  /** Controla si estamos en modo búsqueda (true) o modo formulario (false) */
+  /** Whether the component is in catalogue search mode (true) or form mode (false). */
   readonly searchMode: WritableSignal<boolean> = signal(false);
 
-  /** Indica si hay una búsqueda en curso */
+  /** Whether a catalogue search request is in progress. */
   readonly searchLoading: WritableSignal<boolean> = signal(false);
 
-  /** Resultados de la búsqueda en catálogo */
+  /** Current catalogue search results. */
   readonly searchResults: WritableSignal<GameCatalogDto[]> = signal([]);
 
-  /** Término de búsqueda actual */
+  /** Current search query string. */
   readonly searchQuery: WritableSignal<string> = signal('');
 
-  /** Indica si se está cargando el juego en modo edición */
+  /** Whether the game data is being loaded in edit mode. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
-  /** Indica si se está guardando el formulario (deshabilita todos los campos) */
+  /** Whether the form is being saved (disables all fields). */
   readonly saving: WritableSignal<boolean> = signal(false);
 
   // ────────────────────── Configuraciones públicas ──────────────────────
+  /** Whether the form is in edit mode (true) or create mode (false). */
   isEditMode: boolean = false;
 
   constructor() {
@@ -269,7 +270,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Maneja el envío del formulario con diálogo de confirmación previo.
+   * Handles form submission by showing a confirmation dialog before saving or updating.
    */
   async onSubmit(): Promise<void> {
     if (this.form.invalid || !this.form.value.platform || !this.form.value.title?.trim()) return;
@@ -322,7 +323,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Desactiva el modo búsqueda y vuelve al formulario, limpiando el estado de búsqueda.
+   * Deactivates search mode and returns to the form, clearing the search state.
    */
   closeSearchMode(): void {
     this.searchMode.set(false);
@@ -331,9 +332,9 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Maneja el input de búsqueda y dispara el debounce de 400ms.
+   * Handles the search input event and pushes the value to the debounce subject.
    *
-   * @param {Event} event - Evento de input del campo de búsqueda
+   * @param {Event} event - Input event from the search field
    */
   onSearchInput(event: Event): void {
     const query: string = (event.target as HTMLInputElement).value;
@@ -342,9 +343,9 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Selecciona un juego del catálogo, rellena el formulario y vuelve al modo formulario.
+   * Selects a game from the catalogue, populates the form fields and switches back to form mode.
    *
-   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
+   * @param {GameCatalogDto} game - The catalogue game entry selected by the user
    */
   selectGameFromSearch(game: GameCatalogDto): void {
     const catalog: GameCatalog = {
@@ -376,7 +377,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Limpia el juego seleccionado del catálogo y desbloquea el campo título.
+   * Clears the selected catalogue game and re-enables the title field.
    */
   clearSelectedGame(): void {
     this.selectedGame.set(null);
@@ -386,8 +387,10 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
-   * Si no se encuentra la tienda, devuelve el código original.
+   * Returns the translated store label for a given store code.
+   * Falls back to the raw code if the store is not found.
+   *
+   * @param {StoreType | null} code - Store code to resolve
    */
   displayStoreLabel = (code: StoreType | null): string => {
     if (!code) return '';
@@ -398,8 +401,10 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
-   * Devuelve la etiqueta de la plataforma del juego, traducida al idioma actual.
-   * Si no se encuentra la plataforma, devuelve el código original.
+   * Returns the translated platform label for a given platform code.
+   * Falls back to the raw code if the platform is not found.
+   *
+   * @param {PlatformType | null} code - Platform code to resolve
    */
   displayPlatformLabel = (code: PlatformType | null): string => {
     if (!code) return '';
@@ -419,10 +424,10 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Realiza la búsqueda en RAWG y actualiza los resultados.
-   * Se invoca automáticamente desde el Subject con debounce aplicado.
+   * Executes a RAWG catalogue search and updates the results signal.
+   * Triggered automatically by the debounced subject.
    *
-   * @param {string} query - Término de búsqueda
+   * @param {string} query - Search term
    */
   private async _performSearch(query: string): Promise<void> {
     if (!query.trim()) {
@@ -442,9 +447,9 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Mapea nombres de plataformas de RAWG a nuestros códigos de plataforma.
+   * Maps a RAWG platform name to the corresponding local platform code.
    *
-   * @param {string} rawgPlatformName - Nombre de la plataforma en RAWG
+   * @param {string} rawgPlatformName - Platform name as returned by the RAWG API
    */
   private _mapRawgPlatformToCode(rawgPlatformName: string): PlatformType | null {
     const platformMap: Record<string, PlatformType> = {

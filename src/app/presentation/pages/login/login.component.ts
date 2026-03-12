@@ -36,29 +36,36 @@ import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-c
     TranslocoPipe
   ]
 })
+/** Login page component. Handles user authentication and redirects to the game list on success. */
 export class LoginComponent {
-  private readonly _fb = inject(FormBuilder);
+  private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
 
+  /** Whether a login request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
+
+  /** Error message to display when login fails. */
   readonly errorMessage: WritableSignal<string> = signal('');
+
+  /** Whether the password field is hidden. */
   readonly hidePassword: WritableSignal<boolean> = signal(true);
 
+  /** Reactive login form with email and password fields. */
   readonly loginForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   /**
-   * Alterna la visibilidad de la contraseña.
+   * Toggles the password field visibility.
    */
   togglePasswordVisibility(): void {
     this.hidePassword.update((value: boolean) => !value);
   }
 
   /**
-   * Valida el formulario, ejecuta el login y navega a la colección si tiene éxito.
+   * Validates the form, executes login and navigates to the game collection on success.
    */
   async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {

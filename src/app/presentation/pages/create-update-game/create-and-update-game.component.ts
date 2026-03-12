@@ -18,4 +18,5 @@ import { GameFormComponent } from '@/components/game-form/game-form.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [GameFormComponent]
 })
+/** Route-level wrapper that renders the shared GameFormComponent for both create and update flows. */
 export class CreateAndUpdateGameComponent {}

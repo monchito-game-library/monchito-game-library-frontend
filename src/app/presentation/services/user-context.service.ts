@@ -4,48 +4,48 @@ import { AuthStateService } from './auth-state.service';
 import { AUTH_USE_CASES, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
 /**
- * Facade global para acceder al usuario autenticado y ejecutar acciones de sesión.
- * Delega el estado a AuthStateService y las operaciones a AuthUseCasesContract.
+ * Global facade for accessing the authenticated user and executing session actions.
+ * Delegates state to AuthStateService and operations to AuthUseCasesContract.
  */
 @Injectable({ providedIn: 'root' })
 export class UserContextService {
   private readonly _authState: AuthStateService = inject(AuthStateService);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
-  /** Señal computada con el ID del usuario autenticado */
+  /** Computed signal with the authenticated user's ID, or null if not authenticated. */
   readonly userId: Signal<string | null> = computed((): string | null => this._authState.getUserId());
 
   /**
-   * Indica si hay un usuario actualmente autenticado.
+   * Returns true if there is a currently authenticated user.
    */
   isUserSelected(): boolean {
     return this._authState.isAuthenticated();
   }
 
   /**
-   * Cierra la sesión del usuario actual.
+   * Signs out the current user.
    */
   clearUser(): void {
     void this._authUseCases.signOut();
   }
 
   /**
-   * Devuelve el email del usuario autenticado.
+   * Returns the authenticated user's email address, or null if not authenticated.
    */
   getUserEmail(): string | null {
     return this._authState.getUserEmail();
   }
 
   /**
-   * Devuelve el nombre para mostrar del usuario autenticado.
+   * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
     return this._authState.getDisplayName();
   }
 
   /**
-   * Devuelve la URL del avatar del usuario.
-   * Genera un avatar automático si el usuario no tiene uno personalizado.
+   * Returns the authenticated user's avatar URL.
+   * Generates an automatic avatar via ui-avatars.com if the user has no custom one.
    */
   getAvatarUrl(): string {
     const url: string | null = this._authState.getAvatarUrl();

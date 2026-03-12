@@ -1,14 +1,14 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 
 /**
- * Servicio de presentación que mantiene el estado reactivo de las preferencias de usuario.
- * No contiene lógica de negocio — solo comparte estado entre componentes.
+ * Presentation service that holds reactive user preferences state.
+ * Contains no business logic — only shares state between components.
  */
 @Injectable({ providedIn: 'root' })
 export class UserPreferencesService {
-  /** URL del avatar del usuario actual */
+  /** Current user's avatar URL, or null if not set. */
   readonly avatarUrl: WritableSignal<string | null> = signal(null);
 
-  /** Indica si se está subiendo un avatar */
+  /** Whether an avatar upload is in progress. */
   readonly uploadingAvatar: WritableSignal<boolean> = signal(false);
 }
