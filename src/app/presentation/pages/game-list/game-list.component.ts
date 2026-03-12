@@ -74,8 +74,13 @@ export class GameListComponent implements OnInit, OnDestroy {
   /** Row height (card + vertical padding) in px — used by virtual scroll. */
   readonly ROW_ITEM_SIZE = 380;
 
+  /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
+
+  /** Available store options used to populate the store filter. */
   readonly stores: AvailableStoresInterface[] = availableStoresConstant;
+
+  /** Available game status options used to populate the status filter. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
   /** Indicates whether games are being loaded from Supabase. */

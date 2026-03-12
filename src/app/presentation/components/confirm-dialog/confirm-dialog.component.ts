@@ -11,10 +11,10 @@ import { MatButton } from '@angular/material/button';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 
 /**
- * Componente de diálogo de confirmación reutilizable.
- * Muestra un mensaje y dos botones para aceptar o cancelar una acción.
+ * Reusable confirmation dialog component.
+ * Displays a message and two buttons to accept or cancel an action.
  *
- * Se utiliza típicamente para confirmar acciones destructivas como eliminar un elemento.
+ * Typically used to confirm destructive actions such as deleting an item.
  */
 @Component({
   selector: 'app-confirm-dialog',
@@ -25,13 +25,9 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class ConfirmDialogComponent {
-  /**
-   * Datos recibidos por el diálogo, incluyendo título y mensaje.
-   */
+  /** Data injected into the dialog, containing title and message. */
   data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(MAT_DIALOG_DATA);
 
-  /**
-   * Referencia al diálogo para poder cerrarlo manualmente si es necesario.
-   */
+  /** Reference to this dialog instance, used to close it programmatically if needed. */
   dialogRef: MatDialogRef<any, any> = inject(MatDialogRef<ConfirmDialogComponent>);
 }

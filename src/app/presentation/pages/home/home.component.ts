@@ -10,4 +10,5 @@ import { HomeActionCardComponent } from '@/components/home-action-card/home-acti
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslocoPipe, HomeActionCardComponent]
 })
+/** Landing page displaying the main navigation action cards. */
 export class HomeComponent {}

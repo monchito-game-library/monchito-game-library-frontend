@@ -1,14 +1,15 @@
 import { effect, Injectable, Renderer2, RendererFactory2, signal } from '@angular/core';
 
+/** Presentation service that manages the dark/light theme and persists the preference to localStorage. */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly _renderer: Renderer2;
   private readonly _themeKey = 'user-theme';
 
-  /** Señal interna para representar el modo oscuro/claro */
+  /** Internal signal tracking whether dark mode is active. */
   private readonly _isDark = signal<boolean>(true);
 
-  /** Exposición pública y reactiva del estado del tema */
+  /** Public read-only signal exposing the current dark-mode state. */
   readonly isDarkMode = this._isDark.asReadonly();
 
   constructor(rendererFactory: RendererFactory2) {
@@ -27,7 +28,7 @@ export class ThemeService {
     });
   }
 
-  /** Inicializa el tema desde localStorage o preferencia del sistema */
+  /** Initialises the theme from localStorage, falling back to the system colour-scheme preference. */
   initTheme(): void {
     const saved: string | null = localStorage.getItem(this._themeKey);
     const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -35,12 +36,12 @@ export class ThemeService {
     this._isDark.set(saved === 'dark' || (!saved && prefersDark));
   }
 
-  /** Fuerza modo oscuro */
+  /** Forces dark mode. */
   setDarkTheme(): void {
     this._isDark.set(true);
   }
 
-  /** Fuerza modo claro */
+  /** Forces light mode. */
   setLightTheme(): void {
     this._isDark.set(false);
   }
