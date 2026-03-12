@@ -1,7 +1,4 @@
-/**
- * Tipos válidos de consolas para un videojuego.
- * Utilizados en formularios, filtros y validaciones.
- */
+/** All valid gaming platforms, used in forms, filters and validations. */
 export type PlatformType =
   | 'PS5'
   | 'PS4'

@@ -1,16 +1,8 @@
-/**
- * Ruta a la imagen del trofeo de platino.
- * Se muestra cuando el juego tiene `platinum: true`.
- */
+/** Asset path for the platinum trophy image, shown when a game has `platinum: true`. */
 export const imagePlatinumPath = 'assets/images/platinum-trophy.png';
 
-/**
- * Ruta a la imagen del trofeo oculto.
- * Se muestra cuando el juego no tiene platino.
- */
+/** Asset path for the hidden trophy image, shown when a game has no platinum. */
 export const imageTrophyHiddenPath = 'assets/images/hidden-trophy.png';
 
-/**
- * Imagen por defecto usada si el juego no tiene imagen asignada.
- */
+/** Fallback cover image used when a game has no assigned image. */
 export const defaultGameCover = 'assets/images/default-game-cover.png';

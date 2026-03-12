@@ -2,26 +2,23 @@ import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { getSupabaseClient } from '@/data/config/supabase.config';
-import { UserPreferencesInterface } from '@/interfaces/user-preferences.interface';
-import { UserPreferencesRepositoryInterface } from '@/domain/repositories/user-preferences.repository.contract';
+import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
+import { UserPreferencesRepositoryContract } from '@/domain/repositories/user-preferences.repository.contract';
+import { UserPreferencesDto } from '@/dtos/supabase/user-preferences.dto';
+import { mapUserPreferences, mapUserPreferencesToInsertDto } from '@/mappers/supabase/user-preferences.mapper';
 
 @Injectable({ providedIn: 'root' })
-export class SupabasePreferencesRepository implements UserPreferencesRepositoryInterface {
-  private readonly _supabase: SupabaseClient;
+export class SupabasePreferencesRepository implements UserPreferencesRepositoryContract {
+  private readonly _supabase: SupabaseClient = getSupabaseClient();
   private readonly _table = 'user_preferences';
   private readonly _bucket = 'avatars';
 
-  constructor() {
-    this._supabase = getSupabaseClient();
-  }
-
   /**
-   * Obtiene las preferencias del usuario desde Supabase.
-   * Devuelve null si el usuario no tiene preferencias guardadas todavía.
+   * Fetches the stored preferences for a user. Returns null if none exist yet.
    *
-   * @param {string} userId - ID del usuario
+   * @param {string} userId
    */
-  async getPreferences(userId: string): Promise<UserPreferencesInterface | null> {
+  async getPreferences(userId: string): Promise<UserPreferencesModel | null> {
     const { data, error } = await this._supabase
       .from(this._table)
       .select('theme, language, avatar_url')
@@ -30,43 +27,37 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryI
 
     if (error || !data) return null;
 
-    return {
-      userId,
-      theme: data.theme as 'light' | 'dark',
-      language: data.language as 'es' | 'en',
-      avatarUrl: data.avatar_url ?? null
-    };
+    return mapUserPreferences(data as UserPreferencesDto, userId);
   }
 
   /**
-   * Guarda las preferencias del usuario en Supabase usando upsert.
+   * Upserts theme and language preferences for a user.
    *
-   * @param {UserPreferencesInterface} preferences - Preferencias a guardar
+   * @param {UserPreferencesModel} preferences
    */
-  async savePreferences(preferences: UserPreferencesInterface): Promise<void> {
-    const record: Record<string, unknown> = {
-      user_id: preferences.userId,
-      theme: preferences.theme,
-      language: preferences.language
-    };
-
-    if (preferences.avatarUrl !== undefined) {
-      record['avatar_url'] = preferences.avatarUrl;
-    }
-
-    const { error } = await this._supabase.from(this._table).upsert(record);
-
-    if (error) {
-      throw new Error(`Failed to save preferences: ${error.message}`);
-    }
+  async savePreferences(preferences: UserPreferencesModel): Promise<void> {
+    const { error } = await this._supabase.from(this._table).upsert(mapUserPreferencesToInsertDto(preferences));
+    if (error) throw new Error(`Failed to save preferences: ${error.message}`);
   }
 
   /**
-   * Sube un avatar al bucket de Storage y devuelve la URL pública.
-   * Sobreescribe el fichero existente del usuario si ya tenía uno.
+   * Upserts only the avatar URL without touching other preference fields.
    *
-   * @param {string} userId - ID del usuario
-   * @param {File} file - Fichero de imagen a subir
+   * @param {string} userId
+   * @param {string} avatarUrl - Public URL of the uploaded avatar.
+   */
+  async saveAvatarUrl(userId: string, avatarUrl: string): Promise<void> {
+    const { error } = await this._supabase.from(this._table).upsert({ user_id: userId, avatar_url: avatarUrl });
+
+    if (error) throw new Error(`Failed to save avatar URL: ${error.message}`);
+  }
+
+  /**
+   * Uploads an avatar image to the avatars bucket and returns its public URL.
+   * Overwrites any existing file for the given user.
+   *
+   * @param {string} userId
+   * @param {File} file
    */
   async uploadAvatar(userId: string, file: File): Promise<string> {
     const { error } = await this._supabase.storage.from(this._bucket).upload(userId, file, {
@@ -74,9 +65,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryI
       contentType: file.type
     });
 
-    if (error) {
-      throw new Error(`Failed to upload avatar: ${error.message}`);
-    }
+    if (error) throw new Error(`Failed to upload avatar: ${error.message}`);
 
     const { data } = this._supabase.storage.from(this._bucket).getPublicUrl(userId);
     return data.publicUrl;

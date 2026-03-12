@@ -1,355 +1,250 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { GameInterface } from '@/interfaces/game.interface';
+import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
 import { getSupabaseClient } from '@/data/config/supabase.config';
-import { GameCatalog } from '@/dtos/rawg/rawg.dto';
-import { GameCatalogV3, UserGame, UserGameFull } from '@/interfaces/game-catalog-v3.interface';
+import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { GameCatalogInsertDto, UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
+import { mapGame, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
 
 /**
- * Interfaz para el registro en la vista user_games_full (schema v3)
- * Combina datos de user_games + game_catalog con campos adicionales
- */
-interface UserGameWithCatalog extends UserGameFull {
-  // Extiende UserGameFull que ya tiene todos los campos del schema v3
-}
-
-/**
- * Interfaz para insertar en game_catalog (schema v3)
- */
-interface GameCatalogRecord extends Partial<GameCatalogV3> {
-  // Extiende GameCatalogV3 parcialmente para inserciones
-}
-
-/**
- * Interfaz para insertar en user_games (schema v3)
- */
-interface UserGameRecord extends Partial<UserGame> {
-  // Extiende UserGame parcialmente para inserciones/actualizaciones
-}
-
-/**
- * Repositorio que implementa GameRepositoryInterface usando Supabase como backend.
- * Utiliza el nuevo esquema con game_catalog y user_games.
+ * Game repository backed by Supabase.
+ * Uses the v3 schema: game_catalog (shared catalog) + user_games (per-user entries),
+ * queried through the user_games_full view.
  */
 @Injectable({ providedIn: 'root' })
-export class SupabaseRepository implements GameRepositoryInterface {
-  private readonly supabase: SupabaseClient;
-  private readonly viewName = 'user_games_full'; // Vista actualizada del schema v3
-  private readonly catalogTable = 'game_catalog';
-  private readonly userGamesTable = 'user_games';
-
-  // Propiedad temporal para almacenar el juego seleccionado de RAWG
-  private selectedGameCatalog: GameCatalog | null = null;
-
-  constructor() {
-    this.supabase = getSupabaseClient();
-  }
+export class SupabaseRepository implements GameRepositoryContract {
+  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _viewName = 'user_games_full';
+  private readonly _catalogTable = 'game_catalog';
+  private readonly _userGamesTable = 'user_games';
 
   /**
-   * Establece el juego del catálogo para la próxima operación de add/update
+   * Finds an existing game_catalog entry by RAWG ID (or by title for manual entries),
+   * creating one if it does not exist yet. Returns the catalog row UUID.
+   *
+   * @param {string} title
+   * @param {GameCatalog | null} [catalogEntry] - Provide when the game comes from RAWG.
    */
-  setSelectedGameCatalog(gameCatalog: GameCatalog | null): void {
-    this.selectedGameCatalog = gameCatalog;
-  }
-
-  /**
-   * Convierte un registro de la vista a GameInterface
-   * Mapea los campos del schema v3 al formato legacy GameInterface
-   */
-  private fromViewRecord(record: UserGameWithCatalog): GameInterface {
-    return {
-      id: parseInt((record.id || '').split('-').join('').substring(0, 8), 16), // Convertir UUID a número temporal
-      title: record.title,
-      price: record.price,
-      store: record.store as any,
-      condition: record.condition as any,
-      platinum: record.platinum,
-      description: (record as any).user_notes || record.description || '', // Soportar ambos nombres
-      platform: ((record as any).user_platform || record.platform) as PlatformType | null,
-      image: record.image_url || undefined,
-      status: (record as any).status || null,
-      personal_rating: (record as any).personal_rating ?? null,
-      hours_played: (record as any).hours_played ?? 0,
-      is_favorite: (record as any).is_favorite ?? false
-    } as any;
-  }
-
-  /**
-   * Obtiene o crea un registro en game_catalog
-   * @returns ID del catálogo
-   */
-  private async getOrCreateGameCatalog(title: string, gameCatalog?: GameCatalog | null): Promise<string> {
-    // Si viene de RAWG, usar sus datos
-    if (gameCatalog) {
-      // Buscar por rawg_id
-      const { data: existing } = await this.supabase
-        .from(this.catalogTable)
+  private async _getOrCreateGameCatalog(title: string, catalogEntry?: GameCatalog | null): Promise<string> {
+    if (catalogEntry) {
+      const { data: existing } = await this._supabase
+        .from(this._catalogTable)
         .select('id')
-        .eq('rawg_id', gameCatalog.rawg_id)
+        .eq('rawg_id', catalogEntry.rawg_id)
         .single();
 
-      if (existing) {
-        return existing.id;
-      }
+      if (existing) return existing.id;
 
-      // No existe, crear nuevo con todos los campos del schema v3
-      const catalogRecord: GameCatalogRecord = {
-        rawg_id: gameCatalog.rawg_id,
-        title: gameCatalog.title,
-        slug: gameCatalog.slug,
-        image_url: gameCatalog.image_url,
-        released_date: gameCatalog.released_date,
-        rating: gameCatalog.rating,
-        platforms: gameCatalog.platforms,
-        genres: gameCatalog.genres,
-        description: gameCatalog.description,
-        source: 'rawg' // Indicar que viene de RAWG
+      const catalogRecord: GameCatalogInsertDto = {
+        rawg_id: catalogEntry.rawg_id,
+        title: catalogEntry.title,
+        slug: catalogEntry.slug,
+        image_url: catalogEntry.image_url,
+        released_date: catalogEntry.released_date,
+        rating: catalogEntry.rating,
+        platforms: catalogEntry.platforms,
+        genres: catalogEntry.genres,
+        description: catalogEntry.description,
+        source: 'rawg'
       };
 
-      const { data: newCatalog, error } = await this.supabase
-        .from(this.catalogTable)
+      const { data: newCatalog, error } = await this._supabase
+        .from(this._catalogTable)
         .insert(catalogRecord)
         .select('id')
         .single();
 
-      if (error) {
-        throw new Error(`Failed to create game catalog: ${error.message}`);
-      }
-
+      if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
       return newCatalog.id;
     }
 
-    // Entrada manual: buscar por título
-    const { data: existing } = await this.supabase.from(this.catalogTable).select('id').ilike('title', title).single();
+    const { data: existing } = await this._supabase
+      .from(this._catalogTable)
+      .select('id')
+      .ilike('title', title)
+      .single();
 
-    if (existing) {
-      return existing.id;
-    }
+    if (existing) return existing.id;
 
-    // Crear nuevo con datos mínimos (juego manual)
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
 
-    const catalogRecord: GameCatalogRecord = {
-      rawg_id: null, // NULL para juegos manuales (schema v3)
-      title: title,
-      slug: slug,
+    const catalogRecord: GameCatalogInsertDto = {
+      rawg_id: null,
+      title,
+      slug,
       image_url: null,
       released_date: null,
       rating: 0,
       platforms: [],
       genres: [],
-      source: 'manual' // Indicar que es juego manual
+      source: 'manual'
     };
 
-    const { data: newCatalog, error } = await this.supabase
-      .from(this.catalogTable)
+    const { data: newCatalog, error } = await this._supabase
+      .from(this._catalogTable)
       .insert(catalogRecord)
       .select('id')
       .single();
 
-    if (error) {
-      throw new Error(`Failed to create game catalog: ${error.message}`);
-    }
-
+    if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
     return newCatalog.id;
   }
 
   /**
-   * Retorna todos los juegos del usuario indicado
+   * Returns all games for a user, paginating in batches of 1000 to work around
+   * Supabase's default query limit.
+   *
+   * @param {string} userId
    */
-  async getAllGamesForUser(userId: string): Promise<GameInterface[]> {
-    // Supabase tiene un límite de 1000 filas por query por defecto.
-    // Paginamos en lotes de 1000 para soportar colecciones de cualquier tamaño.
+  async getAllGamesForUser(userId: string): Promise<GameModel[]> {
     const PAGE_SIZE = 1000;
-    let all: UserGameWithCatalog[] = [];
+    let all: UserGameFullDto[] = [];
     let from = 0;
 
     while (true) {
-      const { data, error } = await this.supabase
-        .from(this.viewName)
+      const { data, error } = await this._supabase
+        .from(this._viewName)
         .select('*')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .range(from, from + PAGE_SIZE - 1);
 
-      if (error) {
-        console.error('Error fetching games:', error);
-        throw new Error(`Failed to fetch games: ${error.message}`);
-      }
-
+      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
       if (!data || data.length === 0) break;
+
       all = all.concat(data);
-      if (data.length < PAGE_SIZE) break; // última página
+      if (data.length < PAGE_SIZE) break;
       from += PAGE_SIZE;
     }
 
-    return all.map((record) => this.fromViewRecord(record));
+    return all.map(mapGame);
   }
 
   /**
-   * Retorna los juegos del usuario filtrados por consola
+   * Returns all games for a user filtered by platform.
+   *
+   * @param {string} userId
+   * @param {PlatformType} platform
    */
-  async getByConsole(userId: string, platform: PlatformType): Promise<GameInterface[]> {
-    const { data, error } = await this.supabase
-      .from(this.viewName)
+  async getByConsole(userId: string, platform: PlatformType): Promise<GameModel[]> {
+    const { data, error } = await this._supabase
+      .from(this._viewName)
       .select('*')
       .eq('user_id', userId)
       .eq('user_platform', platform)
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching games by console:', error);
-      throw new Error(`Failed to fetch games by console: ${error.message}`);
-    }
-
-    return (data || []).map((record) => this.fromViewRecord(record));
+    if (error) throw new Error(`Failed to fetch games by console: ${error.message}`);
+    return (data || []).map(mapGame);
   }
 
   /**
-   * Añade un nuevo juego para un usuario
+   * Adds a new game for a user. If a RAWG catalog entry is provided it will be
+   * linked to the record; otherwise the game is created as a manual entry.
+   *
+   * @param {string} userId
+   * @param {GameModel} game
+   * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  async addGameForUser(userId: string, game: GameInterface): Promise<void> {
-    // 1. Obtener o crear en game_catalog
-    const gameCatalogId = await this.getOrCreateGameCatalog(game.title, this.selectedGameCatalog);
+  async addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
+    const gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
 
-    // 2. Crear en user_games con campos del schema v3
-    const gameAny = game as any; // Cast para acceder a campos opcionales
-    const userGameRecord: UserGameRecord = {
+    const userGameRecord: UserGameInsertDto = {
       user_id: userId,
       game_catalog_id: gameCatalogId,
-      price: game.price,
-      store: game.store,
-      platform: game.platform,
-      condition: game.condition as 'new' | 'used',
-      description: game.description,
-      platinum: game.platinum,
-      // Campos del schema v3
-      status: gameAny.status || (game.platinum ? 'platinum' : 'owned'),
-      personal_rating: gameAny.personal_rating || null,
-      hours_played: gameAny.hours_played || 0,
-      is_favorite: gameAny.is_favorite || false
+      ...mapGameToInsertDto(game)
     };
 
-    const { error } = await this.supabase.from(this.userGamesTable).insert(userGameRecord);
-
-    if (error) {
-      console.error('Error adding game:', error);
-      throw new Error(`Failed to add game: ${error.message}`);
-    }
-
-    // Limpiar el juego seleccionado
-    this.selectedGameCatalog = null;
+    const { error } = await this._supabase.from(this._userGamesTable).insert(userGameRecord);
+    if (error) throw new Error(`Failed to add game: ${error.message}`);
   }
 
   /**
-   * Elimina un juego por ID, si pertenece al usuario
+   * Deletes a game by its numeric ID if it belongs to the given user.
+   *
+   * @param {string} userId
+   * @param {number} gameId
    */
   async deleteById(userId: string, gameId: number): Promise<void> {
-    // Convertir el gameId numérico a UUID
-    // Necesitamos buscar en user_games por user_id y extraer el UUID real
     const games = await this.getAllGamesForUser(userId);
     const game = games.find((g) => g.id === gameId);
+    if (!game) throw new Error('Game not found');
 
-    if (!game) {
-      throw new Error('Game not found');
-    }
-
-    // Obtener el UUID real desde la vista
-    const { data: viewRecord } = await this.supabase
-      .from(this.viewName)
+    const { data: viewRecord } = await this._supabase
+      .from(this._viewName)
       .select('id')
       .eq('user_id', userId)
       .eq('title', game.title)
       .single();
 
-    if (!viewRecord) {
-      throw new Error('Game record not found');
-    }
+    if (!viewRecord) throw new Error('Game record not found');
 
-    const { error } = await this.supabase.from(this.userGamesTable).delete().eq('id', viewRecord.id);
-
-    if (error) {
-      console.error('Error deleting game:', error);
-      throw new Error(`Failed to delete game: ${error.message}`);
-    }
+    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('id', viewRecord.id);
+    if (error) throw new Error(`Failed to delete game: ${error.message}`);
   }
 
   /**
-   * Actualiza un juego, siempre que pertenezca al usuario
+   * Updates an existing game. If a RAWG catalog entry is provided the catalog
+   * link will also be updated.
+   *
+   * @param {string} userId
+   * @param {number} gameId
+   * @param {GameModel} updated
+   * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  async updateGameForUser(userId: string, gameId: number, updated: GameInterface): Promise<void> {
-    // Obtener el UUID real del juego
+  async updateGameForUser(
+    userId: string,
+    gameId: number,
+    updated: GameModel,
+    catalogEntry?: GameCatalog | null
+  ): Promise<void> {
     const games = await this.getAllGamesForUser(userId);
     const game = games.find((g) => g.id === gameId);
+    if (!game) throw new Error('Game not found');
 
-    if (!game) {
-      throw new Error('Game not found');
-    }
-
-    const { data: viewRecord } = await this.supabase
-      .from(this.viewName)
+    const { data: viewRecord } = await this._supabase
+      .from(this._viewName)
       .select('id, game_catalog_id')
       .eq('user_id', userId)
       .eq('title', game.title)
       .single();
 
-    if (!viewRecord) {
-      throw new Error('Game record not found');
-    }
+    if (!viewRecord) throw new Error('Game record not found');
 
-    // Si hay un nuevo juego seleccionado de RAWG, actualizar el catálogo
     let gameCatalogId = viewRecord.game_catalog_id;
-    if (this.selectedGameCatalog) {
-      gameCatalogId = await this.getOrCreateGameCatalog(updated.title, this.selectedGameCatalog);
+    if (catalogEntry) {
+      gameCatalogId = await this._getOrCreateGameCatalog(updated.title, catalogEntry);
     }
 
-    // Actualizar user_games con campos del schema v3
-    const updatedAny = updated as any; // Cast para acceder a campos opcionales
-    const userGameRecord: Partial<UserGameRecord> = {
+    const userGameRecord: UserGameInsertDto = {
       game_catalog_id: gameCatalogId,
-      price: updated.price,
-      store: updated.store,
-      platform: updated.platform,
-      condition: updated.condition as 'new' | 'used',
-      description: updated.description,
-      platinum: updated.platinum,
-      // Campos del schema v3
-      status: updatedAny.status || (updated.platinum ? 'platinum' : 'owned'),
-      personal_rating: updatedAny.personal_rating !== undefined ? updatedAny.personal_rating : null,
-      hours_played: updatedAny.hours_played !== undefined ? updatedAny.hours_played : 0,
-      is_favorite: updatedAny.is_favorite !== undefined ? updatedAny.is_favorite : false
+      ...mapGameToInsertDto(updated)
     };
 
-    const { error } = await this.supabase.from(this.userGamesTable).update(userGameRecord).eq('id', viewRecord.id);
-
-    if (error) {
-      console.error('Error updating game:', error);
-      throw new Error(`Failed to update game: ${error.message}`);
-    }
-
-    // Limpiar el juego seleccionado
-    this.selectedGameCatalog = null;
+    const { error } = await this._supabase.from(this._userGamesTable).update(userGameRecord).eq('id', viewRecord.id);
+    if (error) throw new Error(`Failed to update game: ${error.message}`);
   }
 
   /**
-   * Elimina todos los juegos asociados al usuario
+   * Deletes all games associated with a user.
+   *
+   * @param {string} userId
    */
   async clearAllForUser(userId: string): Promise<void> {
-    const { error } = await this.supabase.from(this.userGamesTable).delete().eq('user_id', userId);
-
-    if (error) {
-      console.error('Error clearing games:', error);
-      throw new Error(`Failed to clear games: ${error.message}`);
-    }
+    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('user_id', userId);
+    if (error) throw new Error(`Failed to clear games: ${error.message}`);
   }
 
   /**
-   * Retorna un juego si el ID existe y pertenece al usuario
+   * Returns a single game by numeric ID if it belongs to the given user.
+   *
+   * @param {string} userId
+   * @param {number} gameId
    */
-  async getById(userId: string, gameId: number): Promise<GameInterface | undefined> {
+  async getById(userId: string, gameId: number): Promise<GameModel | undefined> {
     const games = await this.getAllGamesForUser(userId);
     return games.find((g) => g.id === gameId);
   }

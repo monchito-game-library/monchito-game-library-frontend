@@ -1,3 +1,4 @@
+/** All valid store codes where a game can be purchased. */
 export type StoreType =
   | 'gm-ibe'
   | 'amz'

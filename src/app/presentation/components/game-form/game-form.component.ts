@@ -29,15 +29,15 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
-import { SupabaseRepository } from '@/repositories/supabase.repository';
-import { GameInterface } from '@/interfaces/game.interface';
+import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
+import { GameModel } from '@/models/game/game.model';
+import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { GameConditionType } from '@/types/game-condition.type';
 import { PlatformType } from '@/types/platform.type';
 import { availableConditions } from '@/constants/available-conditions.constant';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -48,12 +48,13 @@ import { AvailableStoresInterface } from '@/interfaces/available-stores.interfac
 import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { StoreType } from '@/types/stores.type';
 import { cardActionType } from '@/types/card-action.type';
-import { GameCatalog } from '@/dtos/rawg/rawg.dto';
-import { RawgService } from '@/services/rawg/rawg.service';
-import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
+import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
 
 @Component({
   selector: 'app-game-form',
+  templateUrl: './game-form.component.html',
+  styleUrl: './game-form.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
@@ -84,20 +85,18 @@ import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatSuffix
-  ],
-  templateUrl: './game-form.component.html',
-  styleUrl: './game-form.component.scss'
+  ]
 })
 export class GameFormComponent implements OnInit {
   // ────────────────────── Inyecciones ──────────────────────
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
+  private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _rawgService: RawgService = inject(RawgService);
+  private readonly _rawgRepo: RawgRepositoryContract = inject(RAWG_REPOSITORY);
 
   // ────────────────────── Variables privadas ──────────────────────
   private readonly _searchSubject: Subject<string> = new Subject<string>();
@@ -138,7 +137,7 @@ export class GameFormComponent implements OnInit {
     condition: 'new' as GameConditionType,
     platinum: false,
     description: '',
-    status: ['owned' as 'wishlist' | 'backlog' | 'playing' | 'completed' | 'platinum' | 'abandoned' | 'owned'],
+    status: ['backlog' as GameStatus],
     personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
     hours_played: [0, [Validators.min(0)]],
     is_favorite: [false]
@@ -212,7 +211,7 @@ export class GameFormComponent implements OnInit {
   readonly searchLoading: WritableSignal<boolean> = signal(false);
 
   /** Resultados de la búsqueda en catálogo */
-  readonly searchResults: WritableSignal<GameCatalogV3[]> = signal([]);
+  readonly searchResults: WritableSignal<GameCatalogDto[]> = signal([]);
 
   /** Término de búsqueda actual */
   readonly searchQuery: WritableSignal<string> = signal('');
@@ -244,12 +243,24 @@ export class GameFormComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
+      const game: GameModel | undefined = await this._gameUseCases.getById(this._userId, this._gameId);
       if (game) {
-        this.form.patchValue(game);
+        this.form.patchValue({
+          title: game.title,
+          price: game.price,
+          store: game.store,
+          platform: game.platform,
+          condition: game.condition,
+          platinum: game.platinum,
+          description: game.description,
+          status: game.status,
+          personal_rating: game.personalRating,
+          hours_played: game.hoursPlayed,
+          is_favorite: game.isFavorite
+        });
 
-        if (game.image) {
-          this.selectedGame.set({ title: game.title, image_url: game.image } as GameCatalog);
+        if (game.imageUrl) {
+          this.selectedGame.set({ title: game.title, image_url: game.imageUrl } as GameCatalog);
         }
       }
     } finally {
@@ -278,7 +289,7 @@ export class GameFormComponent implements OnInit {
       this.form.disable();
 
       const raw = this.form.getRawValue();
-      const game: GameInterface = {
+      const game: GameModel = {
         id: this._gameId,
         title: raw.title ?? '',
         price: raw.price ?? null,
@@ -287,20 +298,16 @@ export class GameFormComponent implements OnInit {
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
         description: raw.description ?? '',
-        ...(raw.status && { status: raw.status }),
-        ...(raw.personal_rating !== null && { personal_rating: raw.personal_rating }),
-        ...(raw.hours_played !== null && { hours_played: raw.hours_played }),
-        ...(raw.is_favorite !== null && { is_favorite: raw.is_favorite })
-      } as any;
-
-      if (this._db instanceof SupabaseRepository) {
-        this._db.setSelectedGameCatalog(this.selectedGame());
-      }
+        status: raw.status ?? 'backlog',
+        personalRating: raw.personal_rating ?? null,
+        hoursPlayed: raw.hours_played ?? 0,
+        isFavorite: raw.is_favorite ?? false
+      };
 
       if (this.isEditMode && this._gameId !== undefined) {
-        await this._db.updateGameForUser(this.userId, this._gameId, game);
+        await this._gameUseCases.updateGame(this._userId, this._gameId, game, this.selectedGame());
       } else {
-        await this._db.addGameForUser(this.userId, game);
+        await this._gameUseCases.addGame(this._userId, game, this.selectedGame());
       }
 
       void this._router.navigate(['/list']);
@@ -337,11 +344,11 @@ export class GameFormComponent implements OnInit {
   /**
    * Selecciona un juego del catálogo, rellena el formulario y vuelve al modo formulario.
    *
-   * @param {GameCatalogV3} game - Juego seleccionado del catálogo
+   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
    */
-  selectGameFromSearch(game: GameCatalogV3): void {
+  selectGameFromSearch(game: GameCatalogDto): void {
     const catalog: GameCatalog = {
-      rawg_id: game.rawg_id!,
+      rawg_id: game.rawg_id ?? 0,
       title: game.title,
       slug: game.slug,
       image_url: game.image_url,
@@ -403,9 +410,9 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
-   * Obtiene el ID del usuario actual o lanza error si no hay usuario seleccionado.
+   * Returns the current user ID or throws if no user is authenticated.
    */
-  private get userId(): string {
+  private get _userId(): string {
     const id: string | null = this._userContext.userId();
     if (!id) throw new Error('No user selected');
     return id;
@@ -425,11 +432,9 @@ export class GameFormComponent implements OnInit {
 
     this.searchLoading.set(true);
     try {
-      const response = await this._rawgService.searchGames(query, 1, 20);
-      const results: GameCatalogV3[] = response.results.map((game) => this._rawgService.convertToGameCatalogV3(game));
+      const results: GameCatalogDto[] = await this._rawgRepo.searchGames(query, 1, 20);
       this.searchResults.set(results);
-    } catch (error) {
-      console.error('Error searching games:', error);
+    } catch {
       this.searchResults.set([]);
     } finally {
       this.searchLoading.set(false);

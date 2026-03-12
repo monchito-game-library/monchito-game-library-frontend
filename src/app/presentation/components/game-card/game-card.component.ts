@@ -20,186 +20,148 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslocoService } from '@ngneat/transloco';
 
-import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
-import { GameInterface } from '@/interfaces/game.interface';
-
+import { GameModel } from '@/models/game/game.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { StoreType } from '@/types/stores.type';
-import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
-import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
-import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
-import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
-import { availableConditions } from '@/constants/available-conditions.constant';
-import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { PlatformType } from '@/types/platform.type';
 import { GameConditionType } from '@/types/game-condition.type';
+import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
+import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
+import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
+import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { availableConditions } from '@/constants/available-conditions.constant';
+import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 
 @Component({
   selector: 'app-game-card',
+  templateUrl: './game-card.component.html',
+  styleUrl: './game-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, MatTooltip, NgOptimizedImage],
-  templateUrl: './game-card.component.html',
-  styleUrl: './game-card.component.scss'
+  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, MatTooltip, NgOptimizedImage]
 })
 export class GameCardComponent {
-  // ────────────────────── Constantes ───────────────────────
   private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
   private readonly _conditions: AvailableConditionInterface[] = availableConditions;
   private readonly _stores: AvailableStoresInterface[] = availableStoresConstant;
   private readonly _statuses: GameStatusOption[] = availableGameStatuses;
 
-  // ────────────────────── Inyecciones ───────────────────────
   private readonly _router: Router = inject(Router);
-  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
+  private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
-  /**
-   * Juego a mostrar (obligatorio)
-   */
-  readonly game: InputSignal<GameInterface> = input.required<GameInterface>();
+  /** Game to display (required). */
+  readonly game: InputSignal<GameModel> = input.required<GameModel>();
 
-  /**
-   * Imagen del juego o imagen por defecto si no se proporciona ninguna.
-   */
-  readonly defaultImage: Signal<string> = computed((): string => this.game().image || defaultGameCover);
+  /** Cover image URL, falls back to the default cover. */
+  readonly defaultImage: Signal<string> = computed((): string => this.game().imageUrl || defaultGameCover);
 
-  /**
-   * Icono que representa si el juego tiene platino o no.
-   */
+  /** Platinum or hidden-trophy icon depending on platinum status. */
   readonly platinumIcon: Signal<string> = computed((): string =>
     this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath
   );
 
-  /**
-   * Estado del juego (campos del schema v3)
-   */
-  readonly gameStatus: Signal<GameStatusOption | undefined> = computed(() => {
-    const gameAny = this.game() as any;
-    const statusCode = gameAny.status || 'owned';
-    return this._statuses.find((s) => s.code === statusCode);
-  });
+  /** Status option for the current game. */
+  readonly gameStatus: Signal<GameStatusOption | undefined> = computed(() =>
+    this._statuses.find((s) => s.code === this.game().status)
+  );
+
+  /** Personal rating (0–10). */
+  readonly personalRating: Signal<number | null> = computed(() => this.game().personalRating);
+
+  /** Hours played. */
+  readonly hoursPlayed: Signal<number> = computed(() => this.game().hoursPlayed);
+
+  /** Whether the game is marked as favourite. */
+  readonly isFavorite: Signal<boolean> = computed(() => this.game().isFavorite);
 
   /**
-   * Rating personal del usuario (0-10)
-   */
-  readonly personalRating: Signal<number | null> = computed(() => {
-    const gameAny = this.game() as any;
-    return gameAny.personal_rating ?? null;
-  });
-
-  /**
-   * Horas jugadas
-   */
-  readonly hoursPlayed: Signal<number> = computed(() => {
-    const gameAny = this.game() as any;
-    return gameAny.hours_played ?? 0;
-  });
-
-  /**
-   * Es favorito
-   */
-  readonly isFavorite: Signal<boolean> = computed(() => {
-    const gameAny = this.game() as any;
-    return gameAny.is_favorite ?? false;
-  });
-
-  /**
-   * Genera array de estrellas para mostrar el rating
+   * Star array for the rating display (0–5 stars mapped from the 0–10 rating).
    */
   readonly ratingStars: Signal<number[]> = computed(() => {
     const rating = this.personalRating();
     if (rating === null) return [];
-    const fullStars = Math.floor(rating / 2); // Convertir 0-10 a 0-5 estrellas
-    return Array(fullStars).fill(1);
+    return Array(Math.floor(rating / 2)).fill(1);
   });
 
-  /**
-   * Evento emitido cuando un juego es eliminado correctamente.
-   */
+  /** Emitted when the game has been successfully deleted. */
   @Output() gameDeleted: EventEmitter<number> = new EventEmitter<number>();
 
   /**
-   * Obtiene el ID del usuario actual o lanza error si no está definido.
-   */
-  private get userId(): string {
-    const id: string | null = this._userContext.userId();
-    if (!id) throw new Error('No user selected');
-    return id;
-  }
-
-  /**
-   * Navega al formulario de edición para el juego actual.
+   * Navigates to the edit form for this game.
    */
   editGame = (): void => {
     void this._router.navigate(['/update', this.game().id]);
   };
 
   /**
-   * Muestra un diálogo de confirmación y elimina el juego si el usuario lo confirma.
+   * Opens a confirmation dialog and deletes the game if confirmed.
    */
   deleteGame = (): void => {
-    const game: GameInterface = this.game();
+    const game: GameModel = this.game();
     if (!game.id) return;
 
-    const confirmTitle: string = this._transloco.translate('gameCard.dialog.delete.title');
-    const confirmMessage: string = this._transloco.translate('gameCard.dialog.delete.message');
-
     const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
-      data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
+      data: {
+        title: this._transloco.translate('gameCard.dialog.delete.title'),
+        message: this._transloco.translate('gameCard.dialog.delete.message')
+      } satisfies ConfirmDialogInterface
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (confirmed) {
-        const id: number | undefined = game.id;
-        if (id !== undefined) {
-          await this._db.deleteById(this.userId, id);
-          this.gameDeleted.emit(id);
-        }
+      if (confirmed && game.id !== undefined) {
+        await this._gameUseCases.deleteGame(this._userId, game.id);
+        this.gameDeleted.emit(game.id);
       }
     });
   };
 
   /**
-   * Devuelve la etiqueta de la tienda del juego, traducida al idioma actual.
-   * Si no se encuentra la tienda, devuelve el código original.
+   * Returns the translated store label for a given store code.
+   *
+   * @param {StoreType | null} code
    */
   displayStoreLabel = (code: StoreType | null): string => {
     if (!code) return '';
-    const store: AvailableStoresInterface | undefined = this._stores.find(
-      (s: AvailableStoresInterface): boolean => s.code === code
-    );
+    const store = this._stores.find((s: AvailableStoresInterface): boolean => s.code === code);
     return store ? this._transloco.translate(store.labelKey) : code;
   };
 
   /**
-   * Devuelve la etiqueta de la plataforma del juego, traducida al idioma actual.
-   * Si no se encuentra la plataforma, devuelve el código original.
+   * Returns the translated platform label for a given platform code.
+   *
+   * @param {PlatformType | null} code
    */
   displayPlatformLabel = (code: PlatformType | null): string => {
     if (!code) return '';
-    const platform: AvailablePlatformInterface | undefined = this._platforms.find(
-      (p: AvailablePlatformInterface): boolean => p.code === code
-    );
+    const platform = this._platforms.find((p: AvailablePlatformInterface): boolean => p.code === code);
     return platform ? this._transloco.translate(platform.labelKey) : code;
   };
 
   /**
-   * Devuelve la etiqueta de la condición del juego, traducida al idioma actual.
-   * Si no se encuentra la condición, devuelve el código original.
+   * Returns the translated condition label for a given condition code.
+   *
+   * @param {GameConditionType | null} code
    */
   displayConditionLabel = (code: GameConditionType | null): string => {
     if (!code) return '';
-    const condition: AvailableConditionInterface | undefined = this._conditions.find(
-      (c: AvailableConditionInterface): boolean => c.code === code
-    );
+    const condition = this._conditions.find((c: AvailableConditionInterface): boolean => c.code === code);
     return condition ? this._transloco.translate(condition.labelKey) : code;
   };
+
+  /**
+   * Returns the current user ID or throws if no user is authenticated.
+   */
+  private get _userId(): string {
+    const id: string | null = this._userContext.userId();
+    if (!id) throw new Error('No user selected');
+    return id;
+  }
 }
