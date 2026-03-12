@@ -12,7 +12,11 @@
     }
   </header>
 
-  @if (!searchMode()) {
+  @if (loading()) {
+    <div class="game-form-page__loading">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (!searchMode()) {
     <div class="game-form-page__content" @fadeSlide>
       <!-- Columna izquierda: portada y búsqueda -->
       <aside class="game-cover-panel">
