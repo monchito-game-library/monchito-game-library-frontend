@@ -72,7 +72,8 @@
       "condition": "Condition",
       "description": "Description",
       "platform": "Platform",
-      "platinum": "Platinum"
+      "platinum": "Platinum",
+      "is_favorite": "Favourite"
     },
     "conditions": {
       "new": "New",

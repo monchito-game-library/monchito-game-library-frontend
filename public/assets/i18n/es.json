@@ -72,7 +72,8 @@
       "condition": "Estado",
       "description": "Descripción",
       "platform": "Plataforma",
-      "platinum": "Platino"
+      "platinum": "Platino",
+      "is_favorite": "Favorito"
     },
     "conditions": {
       "new": "Nuevo",

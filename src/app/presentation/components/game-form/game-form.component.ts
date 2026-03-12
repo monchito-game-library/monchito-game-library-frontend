@@ -13,7 +13,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -67,7 +67,6 @@ import { GameCatalogV3 } from '@/interfaces/game-catalog-v3.interface';
   ],
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     DatePipe,
     DecimalPipe,
     MatFormField,
