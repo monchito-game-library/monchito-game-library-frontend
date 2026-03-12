@@ -1,120 +1,122 @@
-# 🎮 Monchito Game Library
+# Monchito Game Library
 
-**Monchito Game Library** es una aplicación Angular 19 diseñada para gestionar tu colección personal de videojuegos por consola, incluyendo detalles como precio, tienda, condición y si tiene platino. Es completamente local, usando IndexedDB, pero preparada para integrarse con una API en el futuro.
-
----
-
-## 🚀 Demo en producción
-
-👉 [https://monchito-game-library.github.io/monchito-game-library-frontend/](https://monchito-game-library.github.io/monchito-game-library-frontend/)
+Aplicación Angular para gestionar tu colección personal de videojuegos. Permite registrar cada juego con su consola, precio, tienda, condición, estado de completado, platino, valoración personal y horas jugadas.
 
 ---
 
-## 🧩 Características
+## Demo
 
-- Gestión de videojuegos: título, precio, consola, condición, tienda, platino, descripción e imagen.
-- Soporte multiusuario local con selección visual por avatar.
-- Búsqueda, filtro por consola y paginación.
-- Estadísticas rápidas (total de juegos y gasto total).
-- Responsive y adaptado a móviles.
-- Soporte multilenguaje con Transloco.
-- Temas visuales dinámicos (light/dark/orange).
-- Importación/exportación JSON.
-- Guardado local con IndexedDB, fácilmente reemplazable por API REST.
+[https://monchito-game-library.github.io/monchito-game-library-frontend/](https://monchito-game-library.github.io/monchito-game-library-frontend/)
 
 ---
 
-## 🛠️ Scripts importantes
+## Características
 
-### Desarrollo
-
-```bash
-  npm install
-  npm start
-```
-
-### Producción en GitHub Pages
-
-Publica tu aplicación en GitHub Pages con:
-
-```bash
-  npm run deploy:pages
-```
-
-Este comando ejecuta internamente:
-
-```bash
-  npm run build:pages && npm run compile:pages
-```
-
-> Asegúrate de que `baseHref` esté configurado como `/monchito-game-library-frontend/` en `angular.json` para rutas correctas en Pages.
+- Autenticación con Supabase (email/contraseña)
+- Catálogo personal con virtual scroll (renderiza solo lo visible, soporta colecciones de cualquier tamaño)
+- Filtros por consola, tienda, estado y favoritos — instantáneos al estar en memoria
+- Ordenación por título, precio, valoración y horas jugadas
+- Estadísticas en tiempo real: juegos, gasto total, horas y valoración media
+- Búsqueda de juegos del catálogo RAWG para rellenar portada y metadatos
+- Formulario de juego con soporte para entradas manuales y desde catálogo
+- Tema claro/oscuro con Angular Material 3
+- Navegación Rail (desktop) y Bottom Navigation (móvil)
+- Soporte multilenguaje (ES/EN) con Transloco
 
 ---
 
-## 🖥️ Instalación desde cero (Windows)
+## Tecnologías
 
-Si quieres clonar y ejecutar este proyecto en tu máquina local:
-
-1. Asegúrate de tener instalado:
-  - [Node.js 18.x o superior](https://nodejs.org/)
-  - [Git](https://git-scm.com/)
-  - [Angular CLI](https://angular.io/cli) (`npm install -g @angular/cli`)
-
-2. Clona el repositorio:
-
-```bash
-  git clone https://github.com/monchito-game-library/monchito-game-library-frontend.git
-  cd monchito-game-library-frontend
-```
-
-3. Instala dependencias:
-
-```bash
-  npm install
-```
-
-4. Inicia el proyecto en desarrollo:
-
-```bash
-  npm start
-```
-
-La app estará disponible en `http://localhost:4200`.
-
----
-
-## 🧱 Tecnologías utilizadas
-
-- Angular 19
-- Angular Material
-- Signals & Control Flow (`@for`, `@if`)
-- IndexedDB local
+- Angular 21 + Signals + Control Flow (`@for`, `@if`)
+- Angular Material 3 (MD3)
+- Angular CDK Virtual Scroll
+- Supabase (PostgreSQL + Auth + RLS)
 - Transloco (i18n)
-- SCSS y theming Angular Material v15+
+- SCSS con design tokens de Material
 
 ---
 
-## 📁 Estructura de carpetas
+## Scripts
+
+```bash
+# Desarrollo
+npm install
+npm start
+
+# Build producción
+npm run build
+
+# Deploy a GitHub Pages (Unix)
+npm run deploy:unix
+
+# Migración masiva de datos legacy a Supabase
+npm run migrate:legacy
+```
+
+---
+
+## Instalación
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/monchito-game-library/monchito-game-library-frontend.git
+cd monchito-game-library-frontend
+```
+
+2. Instala dependencias:
+
+```bash
+npm install
+```
+
+3. Crea tu proyecto en [Supabase](https://supabase.com) y configura las variables en `src/environments/environment.ts`:
+
+```typescript
+export const environment = {
+  supabase: {
+    url: 'https://<tu-proyecto>.supabase.co',
+    anonKey: '<tu-anon-key>'
+  },
+  rawg: {
+    apiUrl: 'https://api.rawg.io/api',
+    apiKey: '<tu-rawg-key>'  // opcional
+  }
+};
+```
+
+4. Inicia el servidor de desarrollo:
+
+```bash
+npm start
+```
+
+---
+
+## Arquitectura
 
 ```
-src/
-├── components/         # Componentes reutilizables como game-card, game-form, select-user
-├── models/             # Interfaces, tipos y constantes
-├── pages/              # Vistas principales (listado, formulario, selección)
-├── repositories/       # Acceso a IndexedDB
-├── services/           # Servicios globales: user, theme, context
-├── assets/images/      # Avatares de usuario y portadas por defecto
-└── styles/             # SCSS global y temas
+presentation  →  domain (contratos de repositorio)  →  data (implementaciones Supabase)
+                          ↕                                        ↕
+                       entities                              data/dtos
 ```
 
----
-
-## 👥 Créditos
-
-Proyecto creado por [@albertocheca](https://github.com/albertocheca) para gestionar colecciones de videojuegos con estilo y eficiencia.
+La capa `presentation` nunca importa directamente de `data`. Los contratos de repositorio viven en `domain/repositories/`.
 
 ---
 
-## 📄 Licencia
+## Notas sobre rendimiento
+
+El repositorio carga todos los juegos del usuario en memoria al iniciar la vista. Supabase tiene un límite por defecto de 1000 filas por query; la implementación pagina automáticamente en lotes de 1000 para soportar colecciones de cualquier tamaño sin cambios en el resto de la app. Los filtros, la búsqueda y la ordenación son operaciones en memoria (instantáneas). El virtual scroll del CDK se encarga de no renderizar más cards de las visibles en pantalla.
+
+---
+
+## Créditos
+
+Proyecto creado por [@albertocheca](https://github.com/albertocheca).
+
+---
+
+## Licencia
 
 MIT

@@ -57,7 +57,7 @@
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>Estado</mat-label>
-      <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value); page.set(0)">
+      <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value)">
         <mat-option value="">Todos</mat-option>
         @for (status of gameStatuses; track status.code) {
           <mat-option [value]="status.code">
@@ -70,7 +70,7 @@
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>Ordenar por</mat-label>
-      <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value); page.set(0)">
+      <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value)">
         <mat-option value="created_at">Más recientes</mat-option>
         <mat-option value="title">Título (A-Z)</mat-option>
         <mat-option value="price">Precio</mat-option>
@@ -91,7 +91,7 @@
       <button
         mat-icon-button
         [class.game-list__fav-btn--active]="onlyFavorites()"
-        (click)="onlyFavorites.set(!onlyFavorites()); page.set(0)"
+        (click)="onlyFavorites.set(!onlyFavorites())"
         aria-label="Solo favoritos">
         <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
       </button>
@@ -105,34 +105,28 @@
   </div>
 </div>
 
-<!-- Contenido -->
-<div class="game-list__content">
-  @if (filteredGames().length > 0) {
-    <div class="game-list__grid">
-      @for (game of paginatedGames(); track game.id) {
+<!-- Virtual scroll -->
+@if (filteredGames().length > 0) {
+  <cdk-virtual-scroll-viewport
+    class="game-list__viewport"
+    [itemSize]="ROW_ITEM_SIZE"
+    [style.--grid-cols]="columnCount()">
+    <div *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex" class="game-list__row">
+      @for (game of row; track game.id) {
         <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)" />
       }
     </div>
-
-    @if (filteredGames().length > pageSize()) {
-      <mat-paginator
-        [length]="filteredGames().length"
-        [pageSize]="pageSize()"
-        [pageIndex]="page()"
-        [pageSizeOptions]="[12, 24, 48]"
-        (page)="onPageChange($event)" />
+  </cdk-virtual-scroll-viewport>
+} @else {
+  <div class="game-list__empty">
+    <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
+    <p class="game-list__empty-title">Sin resultados</p>
+    <p class="game-list__empty-subtitle">Prueba a cambiar los filtros activos</p>
+    @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+      <button mat-stroked-button (click)="clearAllFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar filtros
+      </button>
     }
-  } @else {
-    <div class="game-list__empty">
-      <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
-      <p class="game-list__empty-title">Sin resultados</p>
-      <p class="game-list__empty-subtitle">Prueba a cambiar los filtros activos</p>
-      @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
-        <button mat-stroked-button (click)="clearAllFilters()">
-          <mat-icon>filter_alt_off</mat-icon>
-          Limpiar filtros
-        </button>
-      }
-    </div>
-  }
-</div>
+  </div>
+}
