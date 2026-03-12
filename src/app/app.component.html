@@ -84,7 +84,21 @@
 <mat-menu #profileMenu="matMenu" panelClass="profile-menu">
   <!-- Cabecera de identidad -->
   <div class="profile-menu__header" (click)="$event.stopPropagation()">
-    <img class="profile-menu__avatar" [src]="getAvatarUrl()" [alt]="getDisplayName()" width="48" height="48" />
+    <label class="profile-menu__avatar-wrapper" matTooltip="Cambiar avatar">
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="profile-menu__avatar-input"
+        (change)="onAvatarFileSelected($event)" />
+      @if (uploadingAvatar()) {
+        <mat-spinner diameter="48" />
+      } @else {
+        <img class="profile-menu__avatar" [src]="getAvatarUrl()" [alt]="getDisplayName()" width="48" height="48" />
+        <div class="profile-menu__avatar-overlay">
+          <mat-icon>photo_camera</mat-icon>
+        </div>
+      }
+    </label>
     <div class="profile-menu__identity">
       <span class="profile-menu__name">{{ getDisplayName() }}</span>
       <span class="profile-menu__email">{{ getUserEmail() }}</span>
