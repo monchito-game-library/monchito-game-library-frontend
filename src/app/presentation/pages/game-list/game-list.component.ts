@@ -9,9 +9,9 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -21,6 +21,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe } from '@ngneat/transloco';
 
@@ -42,7 +43,6 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CurrencyPipe,
     DecimalPipe,
     FormsModule,
     ScrollingModule,
@@ -54,9 +54,11 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
     MatButton,
     MatIconButton,
     MatIcon,
+    MatProgressSpinner,
     MatPrefix,
     TranslocoPipe,
-    GameCardComponent
+    GameCardComponent,
+    RouterLink
   ],
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.scss']
@@ -71,8 +73,8 @@ export class GameListComponent implements OnInit, OnDestroy {
   private _routerSubscription?: Subscription;
   private _bpSubscription?: Subscription;
 
-  /** Altura de cada fila (card + gap) en px — usada por el virtual scroll */
-  readonly ROW_ITEM_SIZE = 360;
+  /** Altura de cada fila (card + padding vertical) en px — usada por el virtual scroll */
+  readonly ROW_ITEM_SIZE = 380;
 
   /** Consolas disponibles para el filtro */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -82,6 +84,9 @@ export class GameListComponent implements OnInit, OnDestroy {
 
   /** Estados disponibles para el filtro */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
+
+  /** Indica si se está cargando datos desde Supabase */
+  readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
   /** Lista completa de juegos del usuario */
   readonly allGames: WritableSignal<GameInterface[]> = signal<GameInterface[]>([]);
@@ -216,12 +221,15 @@ export class GameListComponent implements OnInit, OnDestroy {
    * Carga los juegos del usuario desde la base de datos.
    */
   private async loadGames(): Promise<void> {
+    this.loading.set(true);
     try {
       const data: GameInterface[] = await this._db.getAllGamesForUser(this.userId);
       this.allGames.set(data);
     } catch (error) {
       console.error('Error loading games:', error);
       this._snackBar.open('Error loading games', 'Close', { duration: 3000 });
+    } finally {
+      this.loading.set(false);
     }
   }
 
