@@ -1,0 +1,194 @@
+<div class="settings">
+  <h1 class="settings__title">Ajustes</h1>
+
+  <!-- Sección: Perfil -->
+  <mat-card class="settings__card">
+    <mat-card-header>
+      <mat-card-title>Perfil</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="settings__avatar-section">
+        <label
+          class="settings__avatar-wrapper"
+          [class.settings__avatar-wrapper--disabled]="!preferencesLoaded()"
+          matTooltip="Cambiar foto de perfil">
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="settings__avatar-input"
+            [disabled]="!preferencesLoaded()"
+            (change)="onAvatarFileSelected($event)" />
+          @if (uploadingAvatar()) {
+            <mat-spinner diameter="80" />
+          } @else if (!preferencesLoaded()) {
+            <div class="settings__avatar settings__avatar--skeleton"></div>
+          } @else {
+            <img
+              class="settings__avatar settings__avatar--loaded"
+              [src]="getAvatarUrl()"
+              [alt]="getDisplayName()"
+              width="80"
+              height="80" />
+            <div class="settings__avatar-overlay">
+              <mat-icon>photo_camera</mat-icon>
+            </div>
+          }
+        </label>
+        <div class="settings__identity">
+          @if (preferencesLoaded()) {
+            @if (!editingName()) {
+              <div class="settings__name-row">
+                <span class="settings__name">{{ getDisplayName() }}</span>
+                <button class="settings__name-edit-btn" (click)="onEditName()" aria-label="Editar nombre">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            } @else {
+              <div class="settings__name-row settings__name-row--editing">
+                <input
+                  #nameInput
+                  class="settings__name-input"
+                  [value]="nameInputValue()"
+                  (input)="nameInputValue.set($any($event.target).value)"
+                  (keydown.enter)="onSaveName()"
+                  (keydown.escape)="onCancelEditName()"
+                  maxlength="30"
+                  placeholder="Tu nombre..." />
+                @if (savingName()) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <button
+                    class="settings__name-action-btn settings__name-action-btn--confirm"
+                    (click)="onSaveName()"
+                    aria-label="Confirmar">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button
+                    class="settings__name-action-btn settings__name-action-btn--cancel"
+                    (click)="onCancelEditName()"
+                    aria-label="Cancelar">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                }
+              </div>
+            }
+            <span class="settings__email">{{ getUserEmail() }}</span>
+          } @else {
+            <div class="settings__name settings__name--skeleton"></div>
+            <div class="settings__email settings__email--skeleton"></div>
+          }
+          <span class="settings__avatar-hint">Toca la imagen para cambiarla</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sección: Banner del panel -->
+  <mat-card class="settings__card">
+    <mat-card-header>
+      <mat-card-title>Banner del panel</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Preview del banner actual -->
+      @if (!preferencesLoaded()) {
+        <div class="settings__banner-preview settings__banner-preview--skeleton"></div>
+      } @else if (bannerImageUrl()) {
+        <div
+          class="settings__banner-preview settings__banner-preview--loaded"
+          [style.background-image]="'url(' + bannerImageUrl() + ')'"></div>
+      }
+
+      <!-- Portadas de la colección -->
+      @if (!gamesLoaded() || gameImageUrls().length) {
+        <p class="settings__banner-section-label">De tu colección</p>
+        <div class="settings__banner-grid">
+          @if (!gamesLoaded()) {
+            @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+              <div class="settings__banner-thumb settings__banner-thumb--skeleton"></div>
+            }
+          } @else {
+            @for (url of gameImageUrls(); track url) {
+              <button
+                class="settings__banner-thumb"
+                [class.settings__banner-thumb--active]="bannerImageUrl() === url"
+                (click)="onSelectBanner(url)">
+                <img [src]="url" alt="" loading="lazy" />
+                @if (bannerImageUrl() === url) {
+                  <div class="settings__banner-thumb-check">
+                    <mat-icon>check_circle</mat-icon>
+                  </div>
+                }
+              </button>
+            }
+          }
+        </div>
+        <mat-divider class="settings__banner-divider" />
+      }
+
+      <!-- Búsqueda en RAWG -->
+      <p class="settings__banner-section-label">O busca cualquier juego</p>
+      <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Buscar en RAWG...</mat-label>
+        <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
+      </mat-form-field>
+
+      @if (rawgSearchLoading()) {
+        <div class="settings__banner-loading">
+          <mat-spinner diameter="28" />
+        </div>
+      } @else if (rawgResults().length) {
+        <div class="settings__banner-grid">
+          @for (game of rawgResults(); track game.rawg_id) {
+            <button
+              class="settings__banner-thumb"
+              [class.settings__banner-thumb--active]="bannerImageUrl() === game.image_url"
+              (click)="onSelectBanner(game.image_url!)">
+              <img [src]="game.image_url" [alt]="game.title" loading="lazy" />
+              @if (bannerImageUrl() === game.image_url) {
+                <div class="settings__banner-thumb-check">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+              }
+            </button>
+          }
+        </div>
+      } @else if (rawgSearchQuery() && !rawgSearchLoading()) {
+        <p class="settings__banner-empty">Sin resultados para "{{ rawgSearchQuery() }}"</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sección: Apariencia -->
+  <mat-card class="settings__card">
+    <mat-card-header>
+      <mat-card-title>Apariencia</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="settings__row">
+        <span class="settings__row-label">
+          <mat-icon>dark_mode</mat-icon>
+          Modo oscuro
+        </span>
+        <mat-slide-toggle [checked]="isDark()" (change)="toggleTheme()" />
+      </div>
+      <mat-divider />
+      <div class="settings__row">
+        <span class="settings__row-label">
+          <mat-icon>language</mat-icon>
+          Idioma
+        </span>
+        <div class="settings__lang-toggle">
+          @for (lang of availableLanguages; track lang.code) {
+            <button
+              class="settings__lang-btn"
+              [class.settings__lang-btn--active]="selectedLangControl.value === lang.code"
+              (click)="selectedLangControl.setValue(lang.code)">
+              {{ lang.code.toUpperCase() }}
+            </button>
+          }
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

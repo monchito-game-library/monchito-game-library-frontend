@@ -3,9 +3,6 @@ import { GameFormComponent } from '@/components/game-form/game-form.component';
 
 @Component({
   selector: 'app-update-game',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [GameFormComponent],
   template: `<app-game-form />`,
   styles: [
     `
@@ -16,6 +13,10 @@ import { GameFormComponent } from '@/components/game-form/game-form.component';
         min-height: 0;
       }
     `
-  ]
+  ],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [GameFormComponent]
 })
+/** Route-level wrapper that renders the shared GameFormComponent for both create and update flows. */
 export class CreateAndUpdateGameComponent {}

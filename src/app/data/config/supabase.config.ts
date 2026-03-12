@@ -1,15 +1,11 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { environment } from '../../../environments/environment';
+import { environment } from '@/env';
 
-/**
- * Cliente singleton de Supabase
- * Se inicializa una sola vez y se reutiliza en toda la aplicación
- */
+/** Singleton instance — created once and reused across the entire app. */
 let supabaseClient: SupabaseClient | null = null;
 
 /**
- * Obtiene o crea el cliente de Supabase
- * @returns Cliente de Supabase configurado
+ * Returns the shared Supabase client, creating it on first call.
  */
 export function getSupabaseClient(): SupabaseClient {
   if (!supabaseClient) {

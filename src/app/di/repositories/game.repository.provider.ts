@@ -1,17 +1,9 @@
-import { InjectionToken, Provider } from '@angular/core';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
+import { Provider } from '@angular/core';
+
+import { GAME_REPOSITORY } from '@/domain/repositories/game.repository.contract';
 import { SupabaseRepository } from '@/repositories/supabase.repository';
 
-/**
- * Token de inyección para el repositorio de juegos.
- * Permite cambiar fácilmente entre diferentes implementaciones (IndexedDB, Supabase, etc.)
- */
-export const GAME_REPOSITORY = new InjectionToken<GameRepositoryInterface>('GAME_REPOSITORY');
-
-/**
- * Provider por defecto: usa Supabase como implementación.
- * Cambia a IndexedDBRepository para usar base de datos local.
- */
+/** Binds GAME_REPOSITORY to the Supabase-backed implementation. */
 export const gameRepositoryProvider: Provider = {
   provide: GAME_REPOSITORY,
   useClass: SupabaseRepository

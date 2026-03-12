@@ -1,64 +1,57 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
-import { AuthService } from './auth.service';
+
+import { AuthStateService } from './auth-state.service';
+import { AUTH_USE_CASES, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
 /**
- * Servicio global para gestionar el usuario actualmente autenticado.
- * Ahora usa AuthService de Supabase en lugar de selección manual.
- * Mantiene compatibilidad con el código existente.
+ * Global facade for accessing the authenticated user and executing session actions.
+ * Delegates state to AuthStateService and operations to AuthUseCasesContract.
  */
 @Injectable({ providedIn: 'root' })
 export class UserContextService {
-  private readonly authService = inject(AuthService);
+  private readonly _authState: AuthStateService = inject(AuthStateService);
+  private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
+
+  /** Computed signal with the authenticated user's ID, or null if not authenticated. */
+  readonly userId: Signal<string | null> = computed((): string | null => this._authState.getUserId());
 
   /**
-   * Señal computada que devuelve el ID del usuario autenticado
-   * Mantiene compatibilidad con el código existente
-   */
-  readonly userId: Signal<string | null> = computed((): string | null => {
-    return this.authService.getUserId();
-  });
-
-  /**
-   * @deprecated Ya no es necesario con autenticación real
-   * Mantenido para compatibilidad
-   */
-  setUser(id: string): void {
-    console.warn('setUser() is deprecated with Supabase Auth');
-  }
-
-  /**
-   * Cierra la sesión del usuario
-   * Ahora usa AuthService
-   */
-  clearUser(): void {
-    void this.authService.signOut();
-  }
-
-  /**
-   * Indica si hay un usuario actualmente autenticado
+   * Returns true if there is a currently authenticated user.
    */
   isUserSelected(): boolean {
-    return this.authService.isAuthenticated();
+    return this._authState.isAuthenticated();
   }
 
   /**
-   * Obtiene el email del usuario autenticado
+   * Signs out the current user.
+   */
+  clearUser(): void {
+    void this._authUseCases.signOut();
+  }
+
+  /**
+   * Returns the authenticated user's email address, or null if not authenticated.
    */
   getUserEmail(): string | null {
-    return this.authService.getUserEmail();
+    return this._authState.getUserEmail();
   }
 
   /**
-   * Obtiene el nombre para mostrar del usuario
+   * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
-    return this.authService.getDisplayName();
+    return this._authState.getDisplayName();
   }
 
   /**
-   * Obtiene la URL del avatar del usuario
+   * Returns the authenticated user's avatar URL.
+   * Generates an automatic avatar via ui-avatars.com if the user has no custom one.
    */
   getAvatarUrl(): string {
-    return this.authService.getAvatarUrl();
+    const url: string | null = this._authState.getAvatarUrl();
+    if (url) return url;
+
+    const name: string = this._authState.getDisplayName();
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=128`;
   }
 }

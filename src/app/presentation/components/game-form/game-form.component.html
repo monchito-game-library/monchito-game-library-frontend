@@ -6,16 +6,17 @@
       </button>
       <h1 class="game-form-page__title">Buscar en catálogo</h1>
     } @else {
-      <button mat-icon-button [routerLink]="[isEditMode ? '/list' : '/home']" aria-label="Volver">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
       <h1 class="game-form-page__title">
         {{ isEditMode ? ('gameForm.title.edit' | transloco) : ('gameForm.title.add' | transloco) }}
       </h1>
     }
   </header>
 
-  @if (!searchMode()) {
+  @if (loading()) {
+    <div class="game-form-page__loading">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (!searchMode()) {
     <div class="game-form-page__content" @fadeSlide>
       <!-- Columna izquierda: portada y búsqueda -->
       <aside class="game-cover-panel">
@@ -118,7 +119,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>Estado</mat-label>
+          <mat-label>{{ 'gameForm.fields.status' | transloco }}</mat-label>
           <mat-select formControlName="status">
             @for (status of gameStatuses; track status.code) {
               <mat-option [value]="status.code">
@@ -164,13 +165,26 @@
         <div class="game-form__footer">
           <div class="game-form__toggles">
             <mat-slide-toggle formControlName="platinum">
-              🏆 {{ 'gameForm.fields.platinum' | transloco }}
+              <mat-icon>emoji_events</mat-icon>
+              {{ 'gameForm.fields.platinum' | transloco }}
             </mat-slide-toggle>
-            <mat-slide-toggle formControlName="is_favorite" color="warn"> ❤️ Favorito </mat-slide-toggle>
+            <mat-slide-toggle formControlName="is_favorite" color="warn">
+              <mat-icon>favorite</mat-icon>
+              {{ 'gameForm.fields.is_favorite' | transloco }}
+            </mat-slide-toggle>
           </div>
 
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="game-form__submit-btn">
-            <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || saving()"
+            class="game-form__submit-btn">
+            @if (saving()) {
+              <mat-spinner diameter="18" />
+            } @else {
+              <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+            }
             {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
           </button>
         </div>
@@ -190,13 +204,16 @@
             (input)="onSearchInput($event)"
             placeholder="Ej: Elden Ring, The Last of Us, Zelda..."
             autofocus />
-          @if (searchLoading()) {
-            <mat-progress-spinner matSuffix diameter="20" mode="indeterminate" />
-          }
         </mat-form-field>
       </div>
 
       <div class="game-search-panel__results">
+        @if (searchLoading()) {
+          <div class="game-search-panel__placeholder">
+            <mat-spinner diameter="40" />
+          </div>
+        }
+
         @if (!searchQuery()) {
           <div class="game-search-panel__placeholder">
             <mat-icon>sports_esports</mat-icon>

@@ -4,10 +4,11 @@ import { HomeActionCardComponent } from '@/components/home-action-card/home-acti
 
 @Component({
   selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HomeActionCardComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  imports: [TranslocoPipe, HomeActionCardComponent]
 })
+/** Landing page displaying the main navigation action cards. */
 export class HomeComponent {}
