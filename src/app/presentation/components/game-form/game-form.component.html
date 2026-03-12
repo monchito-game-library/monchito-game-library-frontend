@@ -6,9 +6,6 @@
       </button>
       <h1 class="game-form-page__title">Buscar en catálogo</h1>
     } @else {
-      <button mat-icon-button routerLink="/list" aria-label="Volver">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
       <h1 class="game-form-page__title">
         {{ isEditMode ? ('gameForm.title.edit' | transloco) : ('gameForm.title.add' | transloco) }}
       </h1>
@@ -164,9 +161,13 @@
         <div class="game-form__footer">
           <div class="game-form__toggles">
             <mat-slide-toggle formControlName="platinum">
-              🏆 {{ 'gameForm.fields.platinum' | transloco }}
+              <mat-icon>emoji_events</mat-icon>
+              {{ 'gameForm.fields.platinum' | transloco }}
             </mat-slide-toggle>
-            <mat-slide-toggle formControlName="is_favorite" color="warn"> ❤️ Favorito </mat-slide-toggle>
+            <mat-slide-toggle formControlName="is_favorite" color="warn">
+              <mat-icon>favorite</mat-icon>
+              {{ 'gameForm.fields.is_favorite' | transloco }}
+            </mat-slide-toggle>
           </div>
 
           <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="game-form__submit-btn">
