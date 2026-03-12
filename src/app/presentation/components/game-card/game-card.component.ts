@@ -12,15 +12,13 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { MatCard, MatCardContent, MatCardImage } from '@angular/material/card';
+import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatChip } from '@angular/material/chips';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@ngneat/transloco';
 
 import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
 import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
@@ -45,21 +43,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   selector: 'app-game-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatCard,
-    MatCardImage,
-    MatIconButton,
-    MatIcon,
-    CurrencyPipe,
-    MatCardContent,
-    MatChip,
-    MatTooltip,
-    MatMenu,
-    MatMenuTrigger,
-    MatMenuItem,
-    TranslocoPipe,
-    NgOptimizedImage
-  ],
+  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, MatTooltip, NgOptimizedImage],
   templateUrl: './game-card.component.html',
   styleUrl: './game-card.component.scss'
 })
