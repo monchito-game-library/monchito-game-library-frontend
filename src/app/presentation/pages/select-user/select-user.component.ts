@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserContextService } from '@/services/user-context.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,9 +11,10 @@ import { AvailableUserInterface } from '@/interfaces/available-user.interface';
 
 @Component({
   selector: 'app-select-user',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './select-user.component.html',
   styleUrl: './select-user.component.scss',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatCard,

@@ -1,4 +1,4 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 import { RawgService } from '@/services/rawg/rawg.service';
 import { GameCatalog } from '@/dtos/rawg/rawg.dto';
@@ -15,8 +15,9 @@ import { GameCatalog } from '@/dtos/rawg/rawg.dto';
 @Component({
   selector: 'app-game-search-dialog',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     MatDialogModule,
     MatFormField,

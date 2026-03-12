@@ -1,47 +1,52 @@
 import { Routes } from '@angular/router';
 import { canActivateUser } from '@/guards/user.guard';
 
-import { HomeComponent } from '@/pages/home/home.component';
-import { GameListComponent } from '@/pages/game-list/game-list.component';
-import { CreateAndUpdateGameComponent } from '@/pages/create-update-game/create-and-update-game.component';
-import { LoginComponent } from '@/pages/login/login.component';
-import { RegisterComponent } from '@/pages/register/register.component';
-import { ForgotPasswordComponent } from '@/pages/forgot-password/forgot-password.component';
-
 export const routes: Routes = [
   // Public routes (no authentication required)
   {
     path: 'login',
-    component: LoginComponent
+    loadComponent: (): Promise<typeof import('@/pages/login/login.component').LoginComponent> =>
+      import('@/pages/login/login.component').then((m) => m.LoginComponent)
   },
   {
     path: 'register',
-    component: RegisterComponent
+    loadComponent: (): Promise<typeof import('@/pages/register/register.component').RegisterComponent> =>
+      import('@/pages/register/register.component').then((m) => m.RegisterComponent)
   },
   {
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    loadComponent: (): Promise<
+      typeof import('@/pages/forgot-password/forgot-password.component').ForgotPasswordComponent
+    > => import('@/pages/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent)
   },
 
   // Protected routes (authentication required)
   {
     path: 'home',
-    component: HomeComponent,
+    loadComponent: (): Promise<typeof import('@/pages/home/home.component').HomeComponent> =>
+      import('@/pages/home/home.component').then((m) => m.HomeComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'add',
-    component: CreateAndUpdateGameComponent,
+    loadComponent: (): Promise<
+      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
+    > =>
+      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'list',
-    component: GameListComponent,
+    loadComponent: (): Promise<typeof import('@/pages/game-list/game-list.component').GameListComponent> =>
+      import('@/pages/game-list/game-list.component').then((m) => m.GameListComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'update/:id',
-    component: CreateAndUpdateGameComponent,
+    loadComponent: (): Promise<
+      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
+    > =>
+      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
     canActivate: [canActivateUser]
   },
 
