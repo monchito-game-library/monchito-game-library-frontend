@@ -53,6 +53,33 @@
   background-color: var(--mat-sys-outline-variant);
 }
 
+.game-list__stat-skeleton {
+  width: 24px;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--mat-sys-surface-variant) 25%,
+    var(--mat-sys-surface-container-highest) 50%,
+    var(--mat-sys-surface-variant) 75%
+  );
+  background-size: 200% 100%;
+  animation: stat-shimmer 1.4s infinite;
+
+  &--wide {
+    width: 40px;
+  }
+}
+
+@keyframes stat-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .game-list__filters {
   display: flex;
   flex-wrap: wrap;

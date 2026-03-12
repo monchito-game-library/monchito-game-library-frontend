@@ -21,7 +21,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   async getPreferences(userId: string): Promise<UserPreferencesModel | null> {
     const { data, error } = await this._supabase
       .from(this._table)
-      .select('theme, language, avatar_url')
+      .select('theme, language, avatar_url, banner_url')
       .eq('user_id', userId)
       .single();
 
@@ -53,6 +53,18 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   }
 
   /**
+   * Upserts only the banner URL without touching other preference fields.
+   *
+   * @param {string} userId
+   * @param {string} bannerUrl - URL of the selected banner image.
+   */
+  async saveBannerUrl(userId: string, bannerUrl: string): Promise<void> {
+    const { error } = await this._supabase.from(this._table).upsert({ user_id: userId, banner_url: bannerUrl });
+
+    if (error) throw new Error(`Failed to save banner URL: ${error.message}`);
+  }
+
+  /**
    * Uploads an avatar image to the avatars bucket and returns its public URL.
    * Overwrites any existing file for the given user.
    *
@@ -68,6 +80,6 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
     if (error) throw new Error(`Failed to upload avatar: ${error.message}`);
 
     const { data } = this._supabase.storage.from(this._bucket).getPublicUrl(userId);
-    return data.publicUrl;
+    return `${data.publicUrl}?t=${Date.now()}`;
   }
 }

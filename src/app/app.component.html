@@ -1,5 +1,5 @@
 @if (isAuthenticated()) {
-  <div class="app-shell">
+  <div class="app-shell" [style.--banner-url]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : 'none'">
     <!-- Navigation Rail — visible en desktop -->
     <nav class="nav-rail" role="navigation" aria-label="Navegación principal">
       <div class="nav-rail__brand">
@@ -25,13 +25,16 @@
           [matMenuTriggerFor]="profileMenu"
           role="button"
           [attr.aria-label]="'Menú de ' + getDisplayName()">
-          <img
-            class="nav-rail__avatar"
-            [src]="getAvatarUrl()"
-            [alt]="getDisplayName()"
-            width="40"
-            height="40"
-            loading="lazy" />
+          @if (preferencesLoaded()) {
+            <img
+              class="nav-rail__avatar nav-rail__avatar--loaded"
+              [src]="getAvatarUrl()"
+              [alt]="getDisplayName()"
+              width="40"
+              height="40" />
+          } @else {
+            <div class="nav-rail__avatar nav-rail__avatar--skeleton"></div>
+          }
         </div>
       </div>
     </nav>
@@ -47,13 +50,16 @@
           [matMenuTriggerFor]="profileMenu"
           role="button"
           aria-label="Abrir menú de usuario">
-          <img
-            class="app-topbar__avatar"
-            [src]="getAvatarUrl()"
-            [alt]="getDisplayName()"
-            width="36"
-            height="36"
-            loading="lazy" />
+          @if (preferencesLoaded()) {
+            <img
+              class="app-topbar__avatar app-topbar__avatar--loaded"
+              [src]="getAvatarUrl()"
+              [alt]="getDisplayName()"
+              width="36"
+              height="36" />
+          } @else {
+            <div class="app-topbar__avatar app-topbar__avatar--skeleton"></div>
+          }
         </div>
       </header>
 
@@ -82,57 +88,38 @@
 
 <!-- Menú de perfil compartido entre rail y topbar -->
 <mat-menu #profileMenu="matMenu" panelClass="profile-menu">
-  <!-- Cabecera de identidad -->
-  <div class="profile-menu__header" (click)="$event.stopPropagation()">
-    <label class="profile-menu__avatar-wrapper" matTooltip="Cambiar avatar">
-      <input
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        class="profile-menu__avatar-input"
-        (change)="onAvatarFileSelected($event)" />
-      @if (uploadingAvatar()) {
-        <mat-spinner diameter="48" />
-      } @else {
-        <img class="profile-menu__avatar" [src]="getAvatarUrl()" [alt]="getDisplayName()" width="48" height="48" />
-        <div class="profile-menu__avatar-overlay">
-          <mat-icon>photo_camera</mat-icon>
-        </div>
-      }
-    </label>
-    <div class="profile-menu__identity">
-      <span class="profile-menu__name">{{ getDisplayName() }}</span>
-      <span class="profile-menu__email">{{ getUserEmail() }}</span>
-    </div>
-  </div>
+  <div
+    class="profile-menu__panel"
+    [style.background-image]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : null"
+    (click)="$event.stopPropagation()">
+    <div class="profile-menu__overlay">
+      <!-- Identidad -->
+      <div class="profile-menu__identity">
+        @if (preferencesLoaded()) {
+          <img
+            class="profile-menu__avatar profile-menu__avatar--loaded"
+            [src]="getAvatarUrl()"
+            [alt]="getDisplayName()"
+            width="64"
+            height="64" />
+        } @else {
+          <div class="profile-menu__avatar profile-menu__avatar--skeleton"></div>
+        }
+        <span class="profile-menu__name">{{ getDisplayName() }}</span>
+        <span class="profile-menu__email">{{ getUserEmail() }}</span>
+      </div>
 
-  <mat-divider />
-
-  <!-- Idioma -->
-  <div class="profile-menu__section" (click)="$event.stopPropagation()">
-    <span class="profile-menu__section-label">{{ 'home.language.title' | transloco }}</span>
-    <div class="profile-menu__lang-toggle">
-      @for (lang of availableLanguages; track lang.code) {
-        <button
-          class="profile-menu__lang-btn"
-          [class.profile-menu__lang-btn--active]="selectedLangControl.value === lang.code"
-          (click)="selectedLangControl.setValue(lang.code)">
-          {{ lang.code.toUpperCase() }}
+      <!-- Acciones -->
+      <div class="profile-menu__actions">
+        <button class="profile-menu__action-btn" (click)="onNavigateToSettings()">
+          <mat-icon>settings</mat-icon>
+          <span>Ajustes</span>
         </button>
-      }
+        <button class="profile-menu__action-btn profile-menu__action-btn--logout" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Salir</span>
+        </button>
+      </div>
     </div>
-  </div>
-
-  <!-- Tema -->
-  <div class="profile-menu__section" (click)="$event.stopPropagation()">
-    <span class="profile-menu__section-label">Modo oscuro</span>
-    <mat-slide-toggle [checked]="isDark()" (change)="toggleTheme()" />
-  </div>
-
-  <!-- Logout -->
-  <div class="profile-menu__footer">
-    <button mat-stroked-button class="profile-menu__logout-btn" (click)="logout()">
-      <mat-icon>logout</mat-icon>
-      {{ 'auth.logout' | transloco }}
-    </button>
   </div>
 </mat-menu>

@@ -4,6 +4,7 @@ export interface UserPreferencesDto {
   theme: 'light' | 'dark';
   language: 'es' | 'en';
   avatar_url: string | null;
+  banner_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }

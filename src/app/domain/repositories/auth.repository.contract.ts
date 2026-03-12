@@ -44,6 +44,13 @@ export interface AuthRepositoryContract {
    * @param {(user: AuthUserModel | null) => void} callback
    */
   onAuthStateChange(callback: (user: AuthUserModel | null) => void): void;
+
+  /**
+   * Updates the display name stored in the user's auth metadata.
+   *
+   * @param {string} displayName - New display name (may include emojis)
+   */
+  updateDisplayName(displayName: string): Promise<void>;
 }
 
 /** InjectionToken for AuthRepositoryContract. */

@@ -1,0 +1,488 @@
+:host {
+  display: block;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.settings {
+  padding: 2rem;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.settings__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  margin: 0 0 0.25rem;
+}
+
+// ─── Sección Perfil ───────────────────────────────────────────────────────────
+
+.settings__avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.settings__avatar-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden;
+
+  &:hover {
+    .settings__avatar-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.settings__avatar-input {
+  display: none;
+}
+
+.settings__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--mat-sys-outline-variant);
+  display: block;
+
+  &--loaded {
+    animation: avatar-fade-in 250ms ease;
+  }
+
+  &--skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-surface-variant) 25%,
+      var(--mat-sys-surface-container-highest) 50%,
+      var(--mat-sys-surface-variant) 75%
+    );
+    background-size: 200% 100%;
+    animation: avatar-shimmer 1.4s infinite;
+    border: 2px solid var(--mat-sys-outline-variant);
+  }
+}
+
+.settings__avatar-wrapper {
+  &--disabled {
+    cursor: default;
+  }
+}
+
+@keyframes avatar-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes avatar-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.settings__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  color: #fff;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.settings__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.settings__name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--mat-sys-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--skeleton {
+    height: 1rem;
+    width: 120px;
+    border-radius: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-surface-variant) 25%,
+      var(--mat-sys-surface-container-highest) 50%,
+      var(--mat-sys-surface-variant) 75%
+    );
+    background-size: 200% 100%;
+    animation: avatar-shimmer 1.4s infinite;
+  }
+}
+
+.settings__email {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--skeleton {
+    height: 0.8rem;
+    width: 160px;
+    border-radius: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-surface-variant) 25%,
+      var(--mat-sys-surface-container-highest) 50%,
+      var(--mat-sys-surface-variant) 75%
+    );
+    background-size: 200% 100%;
+    animation: avatar-shimmer 1.4s infinite;
+  }
+}
+
+.settings__avatar-hint {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.settings__name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+
+  &--editing {
+    gap: 2px;
+  }
+}
+
+.settings__name-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--mat-sys-on-surface-variant);
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+
+  mat-icon {
+    font-size: 0.9rem;
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.settings__name-input {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface-container-highest);
+  border: 1px solid var(--mat-sys-primary);
+  border-radius: 6px;
+  padding: 2px 6px;
+  outline: none;
+  min-width: 0;
+  flex: 1;
+  font-family: inherit;
+}
+
+.settings__name-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease;
+
+  mat-icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &--confirm {
+    color: var(--mat-sys-primary);
+
+    &:hover {
+      background: var(--mat-sys-primary-container);
+    }
+  }
+
+  &--cancel {
+    color: var(--mat-sys-on-surface-variant);
+
+    &:hover {
+      background: var(--mat-sys-surface-container-highest);
+    }
+  }
+}
+
+// mat-card tiene overflow: hidden por defecto — lo sobreescribimos para
+// permitir el scroll horizontal del grid de portadas
+::ng-deep .settings__card {
+  overflow: visible !important;
+}
+
+// ─── Sección Banner ───────────────────────────────────────────────────────────
+
+.settings__banner-preview {
+  width: 100%;
+  height: 110px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+
+  &--skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-surface-variant) 25%,
+      var(--mat-sys-surface-container-highest) 50%,
+      var(--mat-sys-surface-variant) 75%
+    );
+    background-size: 200% 100%;
+    animation: banner-shimmer 1.4s infinite;
+  }
+
+  &--loaded {
+    animation: banner-fade-in 300ms ease;
+  }
+}
+
+.settings__banner-section-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.settings__banner-divider {
+  margin: 1.25rem 0;
+}
+
+.settings__banner-search {
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.settings__banner-loading {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem 0;
+}
+
+.settings__banner-grid {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 6px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--mat-sys-outline-variant);
+    border-radius: 2px;
+  }
+}
+
+.settings__banner-thumb {
+  flex-shrink: 0;
+  width: 88px;
+  height: 58px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  padding: 0;
+  position: relative;
+  transition:
+    border-color 150ms ease,
+    transform 150ms ease;
+
+  &--skeleton {
+    cursor: default;
+    background: linear-gradient(
+      90deg,
+      var(--mat-sys-surface-variant) 25%,
+      var(--mat-sys-surface-container-highest) 50%,
+      var(--mat-sys-surface-variant) 75%
+    );
+    background-size: 200% 100%;
+    animation: banner-shimmer 1.4s infinite;
+    border: none;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &--active {
+    border-color: var(--mat-sys-primary);
+  }
+
+  &:not(.settings__banner-thumb--active):hover {
+    transform: scale(1.05);
+  }
+}
+
+.settings__banner-thumb-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+
+  mat-icon {
+    color: var(--mat-sys-primary);
+    font-size: 1.4rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+  }
+}
+
+.settings__banner-empty {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+// ─── Sección Apariencia ───────────────────────────────────────────────────────
+
+.settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 0;
+  gap: 1rem;
+}
+
+.settings__row-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--mat-sys-on-surface);
+
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.settings__lang-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.settings__lang-btn {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1.4;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+
+  &--active {
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    border-color: var(--mat-sys-primary);
+  }
+
+  &:not(.settings__lang-btn--active):hover {
+    background: var(--mat-sys-surface-container-highest);
+  }
+}
+
+// ─── Animaciones de skeleton ──────────────────────────────────────────────────
+
+@keyframes banner-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes banner-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .settings {
+    padding: 1.25rem 1rem;
+  }
+}

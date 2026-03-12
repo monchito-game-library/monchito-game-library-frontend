@@ -75,4 +75,14 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
       return { success: false, error: error instanceof Error ? error.message : 'Failed to send reset email' };
     }
   }
+
+  /**
+   * Updates the authenticated user's display name in auth metadata.
+   * Triggers onAuthStateChange internally, updating the reactive state automatically.
+   *
+   * @param {string} displayName - New display name
+   */
+  async updateDisplayName(displayName: string): Promise<void> {
+    await this._repo.updateDisplayName(displayName);
+  }
 }
