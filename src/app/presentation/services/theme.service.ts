@@ -14,7 +14,6 @@ export class ThemeService {
   constructor(rendererFactory: RendererFactory2) {
     this._renderer = rendererFactory.createRenderer(null, null);
 
-    // Reactividad: aplica la clase al documento automáticamente cuando cambia el tema
     effect(() => {
       const isDark: boolean = this._isDark();
 

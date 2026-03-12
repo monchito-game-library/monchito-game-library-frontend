@@ -6,11 +6,11 @@ import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home-action-card',
+  templateUrl: './home-action-card.component.html',
+  styleUrl: './home-action-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatCardTitle, MatIcon, TranslocoPipe, MatCardContent, RouterLink],
-  templateUrl: './home-action-card.component.html',
-  styleUrl: './home-action-card.component.scss'
+  imports: [MatCard, MatCardTitle, MatIcon, TranslocoPipe, MatCardContent, RouterLink]
 })
 export class HomeActionCardComponent {
   @Input({ required: true }) icon!: string;

@@ -10,6 +10,11 @@ import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
 import { userPreferencesRepositoryProvider } from '@/di/repositories/user-preferences.repository.provider';
+import { authRepositoryProvider } from '@/di/repositories/auth.repository.provider';
+import { rawgRepositoryProvider } from '@/di/repositories/rawg.repository.provider';
+import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
+import { userPreferencesUseCasesProvider } from '@/di/use-cases/user-preferences.use-cases.provider';
+import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
 
 registerLocaleData(localeEs);
 
@@ -30,6 +35,11 @@ export const appConfig: ApplicationConfig = {
       loader: TranslocoHttpLoader
     }),
     gameRepositoryProvider,
-    userPreferencesRepositoryProvider
+    userPreferencesRepositoryProvider,
+    authRepositoryProvider,
+    rawgRepositoryProvider,
+    gameUseCasesProvider,
+    userPreferencesUseCasesProvider,
+    authUseCasesProvider
   ]
 };

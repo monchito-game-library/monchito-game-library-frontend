@@ -1,30 +1,40 @@
 import { InjectionToken } from '@angular/core';
-import { UserPreferencesInterface } from '@/interfaces/user-preferences.interface';
+import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
 
-export interface UserPreferencesRepositoryInterface {
+/** Contract for the user preferences repository. */
+export interface UserPreferencesRepositoryContract {
   /**
-   * Obtiene las preferencias del usuario. Devuelve null si no existen aún.
+   * Returns the stored preferences for a user, or null if none exist yet.
    *
-   * @param {string} userId - ID del usuario
+   * @param {string} userId - Authenticated user ID
    */
-  getPreferences(userId: string): Promise<UserPreferencesInterface | null>;
+  getPreferences(userId: string): Promise<UserPreferencesModel | null>;
 
   /**
-   * Guarda (upsert) las preferencias del usuario.
+   * Upserts the user's preferences.
    *
-   * @param {UserPreferencesInterface} preferences - Preferencias a guardar
+   * @param {UserPreferencesModel} preferences - Preferences to persist
    */
-  savePreferences(preferences: UserPreferencesInterface): Promise<void>;
+  savePreferences(preferences: UserPreferencesModel): Promise<void>;
 
   /**
-   * Sube un avatar al bucket de Storage y devuelve la URL pública.
+   * Updates only the avatar URL without touching other preferences.
    *
-   * @param {string} userId - ID del usuario
-   * @param {File} file - Fichero de imagen a subir
+   * @param {string} userId - Authenticated user ID
+   * @param {string} avatarUrl - Public URL of the uploaded avatar
+   */
+  saveAvatarUrl(userId: string, avatarUrl: string): Promise<void>;
+
+  /**
+   * Uploads an avatar image to storage and returns its public URL.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {File} file - Image file selected by the user
    */
   uploadAvatar(userId: string, file: File): Promise<string>;
 }
 
-export const USER_PREFERENCES_REPOSITORY = new InjectionToken<UserPreferencesRepositoryInterface>(
+/** InjectionToken for UserPreferencesRepositoryContract. */
+export const USER_PREFERENCES_REPOSITORY = new InjectionToken<UserPreferencesRepositoryContract>(
   'USER_PREFERENCES_REPOSITORY'
 );
