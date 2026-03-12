@@ -9,6 +9,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
+import { userPreferencesRepositoryProvider } from '@/di/repositories/user-preferences.repository.provider';
 
 registerLocaleData(localeEs);
 
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
-    gameRepositoryProvider
+    gameRepositoryProvider,
+    userPreferencesRepositoryProvider
   ]
 };
