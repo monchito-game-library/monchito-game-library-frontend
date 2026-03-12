@@ -16,10 +16,10 @@ export class AuthStateService {
   private readonly _currentUser: WritableSignal<AuthUserModel | null> = signal(null);
   private readonly _loading: WritableSignal<boolean> = signal(true);
 
-  /** Usuario actualmente autenticado */
+  /** Currently authenticated user, or null if not authenticated. */
   readonly currentUser: Signal<AuthUserModel | null> = this._currentUser.asReadonly();
 
-  /** Indica si se está resolviendo la sesión inicial */
+  /** Whether the initial session is still being resolved. */
   readonly loading: Signal<boolean> = this._loading.asReadonly();
 
   constructor() {
@@ -27,7 +27,7 @@ export class AuthStateService {
   }
 
   /**
-   * Resuelve la sesión activa al arrancar y registra el listener de cambios de auth.
+   * Resolves the active session on startup and registers the auth-state change listener.
    */
   private async _initSession(): Promise<void> {
     const user: AuthUserModel | null = await this._authUseCases.getSession();
@@ -45,35 +45,35 @@ export class AuthStateService {
   }
 
   /**
-   * Indica si hay un usuario autenticado.
+   * Returns true if there is an authenticated user.
    */
   isAuthenticated(): boolean {
     return this._currentUser() !== null;
   }
 
   /**
-   * Devuelve el ID del usuario autenticado, o null si no hay sesión.
+   * Returns the authenticated user's ID, or null if no session is active.
    */
   getUserId(): string | null {
     return this._currentUser()?.id ?? null;
   }
 
   /**
-   * Devuelve el email del usuario autenticado.
+   * Returns the authenticated user's email address.
    */
   getUserEmail(): string | null {
     return this._currentUser()?.email ?? null;
   }
 
   /**
-   * Devuelve el nombre para mostrar del usuario autenticado.
+   * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
     return this._currentUser()?.displayName ?? '';
   }
 
   /**
-   * Devuelve la URL del avatar del usuario en Supabase, o null si no tiene.
+   * Returns the authenticated user's avatar URL, or null if none is set.
    */
   getAvatarUrl(): string | null {
     return this._currentUser()?.avatarUrl ?? null;
