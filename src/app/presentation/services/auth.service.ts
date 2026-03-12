@@ -126,8 +126,8 @@ export class AuthService {
         return { success: false, error: 'Login failed' };
       }
 
-      // Navegar al home después del login exitoso
-      await this.router.navigate(['/home']);
+      // Navegar a la colección después del login exitoso
+      await this.router.navigate(['/list']);
       return { success: true };
     } catch (error: any) {
       return { success: false, error: error.message || 'An unexpected error occurred' };

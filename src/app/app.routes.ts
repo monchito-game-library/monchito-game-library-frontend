@@ -23,9 +23,8 @@ export const routes: Routes = [
   // Protected routes (authentication required)
   {
     path: 'home',
-    loadComponent: (): Promise<typeof import('@/pages/home/home.component').HomeComponent> =>
-      import('@/pages/home/home.component').then((m) => m.HomeComponent),
-    canActivate: [canActivateUser]
+    redirectTo: 'list',
+    pathMatch: 'full'
   },
   {
     path: 'add',

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -45,7 +45,6 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     CurrencyPipe,
     DecimalPipe,
     FormsModule,
-    RouterLink,
     MatFormField,
     MatLabel,
     MatInput,

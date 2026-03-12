@@ -1,87 +1,74 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal
-} from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
-import { MatChip } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
-import { GAME_REPOSITORY } from '@/di/repositories/game.repository.provider';
-import { GameRepositoryInterface } from '@/domain/repositories/game.repository.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { ThemeService } from '@/services/theme.service';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
-import { availableUsers } from '@/constants/available-users.constant';
-import { AvailableUserInterface } from '@/interfaces/available-user.interface';
-import { GameInterface } from '@/interfaces/game.interface';
+
+interface NavItem {
+  icon: string;
+  label: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, MatChip, MatIcon, MatMenu, MatMenuTrigger, MatMenuItem, MatDivider, TranslocoPipe],
+  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, MatMenuItem, MatDivider, TranslocoPipe],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   // --- Servicios inyectados ---
-  private readonly _db: GameRepositoryInterface = inject(GAME_REPOSITORY);
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   readonly userContext: UserContextService = inject(UserContextService);
 
-  // --- Idiomas disponibles y selección ---
+  // --- Rutas públicas donde NO se debe mostrar la navegación ---
+  private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
+
+  /** Idiomas disponibles */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
+
+  /** Control de selección de idioma */
   readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
     nonNullable: true
   });
 
-  // --- Tema visual reactivo (modo oscuro) ---
+  /** Ítems de navegación principal */
+  readonly navItems: NavItem[] = [
+    { icon: 'sports_esports', label: 'Colección', route: '/list' },
+    { icon: 'add_circle', label: 'Añadir', route: '/add' }
+  ];
+
+  /** Modo oscuro activo */
   readonly isDark: WritableSignal<boolean> = signal(this._themeService.isDarkMode());
 
-  // --- Ruta actual ---
+  /** Ruta actual */
   readonly currentRoute: WritableSignal<string> = signal('');
 
-  // --- Rutas públicas donde NO se debe mostrar el header ---
-  private readonly publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
-
-  // --- Usuario autenticado (deprecado currentUser para compatibilidad) ---
-  readonly currentUser: Signal<AvailableUserInterface | null> = computed((): AvailableUserInterface | null => {
-    // Mantenido para compatibilidad pero ya no usado
-    return null;
-  });
-
   ngOnInit(): void {
-    // Inicializa tema visual
     this._themeService.initTheme();
     this.isDark.set(this._themeService.isDarkMode());
 
-    // Reactividad a cambio de idioma
     this.selectedLangControl.valueChanges.subscribe((lang: string) => {
       if (lang) this._transloco.setActiveLang(lang);
     });
 
-    // Escuchar cambios de ruta
     this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentRoute.set(event.urlAfterRedirects);
       });
 
-    // Establecer ruta inicial
     this.currentRoute.set(this._router.url);
   }
 
@@ -94,30 +81,44 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Verifica si hay un usuario autenticado Y no estamos en una ruta pública
+   * Verifica si hay un usuario autenticado y no estamos en una ruta pública.
    */
   isAuthenticated(): boolean {
     const isUserAuthenticated = this.userContext.isUserSelected();
-    const isPublicRoute = this.publicRoutes.some((route) => this.currentRoute().startsWith(route));
+    const isPublicRoute = this._publicRoutes.some((route) => this.currentRoute().startsWith(route));
     return isUserAuthenticated && !isPublicRoute;
   }
 
   /**
-   * Obtiene el nombre para mostrar del usuario autenticado
+   * Determina si un ítem de navegación está activo según la ruta actual.
+   * La ruta /update/:id se considera activa para el ítem /add.
+   *
+   * @param {string} route - Ruta del ítem de navegación
+   */
+  isNavActive(route: string): boolean {
+    const current = this.currentRoute();
+    if (route === '/add') {
+      return current.startsWith('/add') || current.startsWith('/update/');
+    }
+    return current.startsWith(route);
+  }
+
+  /**
+   * Obtiene el nombre para mostrar del usuario autenticado.
    */
   getDisplayName(): string {
     return this.userContext.getDisplayName();
   }
 
   /**
-   * Obtiene la URL del avatar del usuario
+   * Obtiene la URL del avatar del usuario.
    */
   getAvatarUrl(): string {
     return this.userContext.getAvatarUrl();
   }
 
   /**
-   * Cierra la sesión del usuario
+   * Cierra la sesión del usuario.
    */
   logout(): void {
     this.userContext.clearUser();
