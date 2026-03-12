@@ -15,6 +15,14 @@ export interface UserPreferencesRepositoryInterface {
    * @param {UserPreferencesInterface} preferences - Preferencias a guardar
    */
   savePreferences(preferences: UserPreferencesInterface): Promise<void>;
+
+  /**
+   * Sube un avatar al bucket de Storage y devuelve la URL pública.
+   *
+   * @param {string} userId - ID del usuario
+   * @param {File} file - Fichero de imagen a subir
+   */
+  uploadAvatar(userId: string, file: File): Promise<string>;
 }
 
 export const USER_PREFERENCES_REPOSITORY = new InjectionToken<UserPreferencesRepositoryInterface>(
