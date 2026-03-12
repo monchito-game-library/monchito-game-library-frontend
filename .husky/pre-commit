@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-export PATH="$HOME/.nvm/versions/node/v24.14.0/bin:$PATH"
+export PATH="/Users/alcheca/.nvm/versions/node/v24.14.0/bin:$PATH"
 
 npx lint-staged
