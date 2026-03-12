@@ -81,29 +81,44 @@
 }
 
 <!-- Menú de perfil compartido entre rail y topbar -->
-<mat-menu #profileMenu="matMenu">
-  <button mat-menu-item disabled>
-    {{ 'home.language.title' | transloco }}
-  </button>
+<mat-menu #profileMenu="matMenu" panelClass="profile-menu">
+  <!-- Cabecera de identidad -->
+  <div class="profile-menu__header" (click)="$event.stopPropagation()">
+    <img class="profile-menu__avatar" [src]="getAvatarUrl()" [alt]="getDisplayName()" width="48" height="48" />
+    <div class="profile-menu__identity">
+      <span class="profile-menu__name">{{ getDisplayName() }}</span>
+      <span class="profile-menu__email">{{ getUserEmail() }}</span>
+    </div>
+  </div>
+
   <mat-divider />
 
-  @for (lang of availableLanguages; track lang.code) {
-    <button mat-menu-item (click)="selectedLangControl.setValue(lang.code)">
-      {{ lang.labelKey | transloco }}
+  <!-- Idioma -->
+  <div class="profile-menu__section" (click)="$event.stopPropagation()">
+    <span class="profile-menu__section-label">{{ 'home.language.title' | transloco }}</span>
+    <div class="profile-menu__lang-toggle">
+      @for (lang of availableLanguages; track lang.code) {
+        <button
+          class="profile-menu__lang-btn"
+          [class.profile-menu__lang-btn--active]="selectedLangControl.value === lang.code"
+          (click)="selectedLangControl.setValue(lang.code)">
+          {{ lang.code.toUpperCase() }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Tema -->
+  <div class="profile-menu__section" (click)="$event.stopPropagation()">
+    <span class="profile-menu__section-label">Modo oscuro</span>
+    <mat-slide-toggle [checked]="isDark()" (change)="toggleTheme()" />
+  </div>
+
+  <!-- Logout -->
+  <div class="profile-menu__footer">
+    <button mat-stroked-button class="profile-menu__logout-btn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      {{ 'auth.logout' | transloco }}
     </button>
-  }
-
-  <mat-divider />
-
-  <button mat-menu-item (click)="toggleTheme()">
-    <mat-icon>{{ isDark() ? 'dark_mode' : 'light_mode' }}</mat-icon>
-    {{ isDark() ? ('home.tooltip.lightMode' | transloco) : ('home.tooltip.darkMode' | transloco) }}
-  </button>
-
-  <mat-divider />
-
-  <button mat-menu-item (click)="logout()">
-    <mat-icon>logout</mat-icon>
-    {{ 'auth.logout' | transloco }}
-  </button>
+  </div>
 </mat-menu>
