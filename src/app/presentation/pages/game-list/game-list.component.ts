@@ -13,15 +13,15 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatInput } from '@angular/material/input';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatPrefix } from '@angular/material/form-field';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 import { GameInterface } from '@/interfaces/game.interface';
@@ -45,6 +45,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
     CurrencyPipe,
     DecimalPipe,
     FormsModule,
+    ScrollingModule,
     MatFormField,
     MatLabel,
     MatInput,
@@ -53,7 +54,6 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
     MatButton,
     MatIconButton,
     MatIcon,
-    MatPaginator,
     MatPrefix,
     TranslocoPipe,
     GameCardComponent
@@ -67,7 +67,12 @@ export class GameListComponent implements OnInit, OnDestroy {
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
+  private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private _routerSubscription?: Subscription;
+  private _bpSubscription?: Subscription;
+
+  /** Altura de cada fila (card + gap) en px — usada por el virtual scroll */
+  readonly ROW_ITEM_SIZE = 360;
 
   /** Consolas disponibles para el filtro */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -103,11 +108,8 @@ export class GameListComponent implements OnInit, OnDestroy {
   /** Dirección de ordenación */
   readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('desc');
 
-  /** Página actual de la paginación */
-  readonly page: WritableSignal<number> = signal(0);
-
-  /** Número de juegos por página */
-  readonly pageSize: WritableSignal<number> = signal(12);
+  /** Número de columnas según el viewport */
+  readonly columnCount: WritableSignal<number> = signal(4);
 
   /** Lista de juegos filtrados y ordenados */
   readonly filteredGames: Signal<GameInterface[]> = computed((): GameInterface[] => {
@@ -117,9 +119,8 @@ export class GameListComponent implements OnInit, OnDestroy {
     const status: string = this.selectedStatus();
     const favorites: boolean = this.onlyFavorites();
 
-    // Filtrar
     let filtered = this.allGames().filter((game: GameInterface): boolean => {
-      const gameAny = game as any; // Cast para acceder a campos opcionales
+      const gameAny = game as any;
       const matchesSearch: boolean = game.title.toLowerCase().includes(search);
       const matchesPlatform: boolean = platform ? game.platform === platform : true;
       const matchesStore: boolean = store ? game.store === store : true;
@@ -128,13 +129,11 @@ export class GameListComponent implements OnInit, OnDestroy {
       return matchesSearch && matchesPlatform && matchesStore && matchesStatus && matchesFavorites;
     });
 
-    // Ordenar
     const sortBy = this.sortBy();
     const direction = this.sortDirection();
     filtered = filtered.sort((a: GameInterface, b: GameInterface): number => {
       const aAny = a as any;
       const bAny = b as any;
-
       let comparison = 0;
       switch (sortBy) {
         case 'title':
@@ -151,7 +150,6 @@ export class GameListComponent implements OnInit, OnDestroy {
           break;
         case 'created_at':
         default:
-          // Asumimos que los IDs más altos son más recientes
           comparison = (b.id || 0) - (a.id || 0);
           break;
       }
@@ -161,10 +159,15 @@ export class GameListComponent implements OnInit, OnDestroy {
     return filtered;
   });
 
-  /** Juegos visibles en la página actual */
-  readonly paginatedGames: Signal<GameInterface[]> = computed((): GameInterface[] => {
-    const start: number = this.page() * this.pageSize();
-    return this.filteredGames().slice(start, start + this.pageSize());
+  /** Juegos agrupados en filas para el virtual scroll */
+  readonly gameRows: Signal<GameInterface[][]> = computed((): GameInterface[][] => {
+    const games = this.filteredGames();
+    const cols = this.columnCount();
+    const rows: GameInterface[][] = [];
+    for (let i = 0; i < games.length; i += cols) {
+      rows.push(games.slice(i, i + cols));
+    }
+    return rows;
   });
 
   /**
@@ -177,12 +180,11 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga todos los juegos del usuario al inicializar el componente.
+   * Carga todos los juegos y configura los observadores al inicializar.
    */
   async ngOnInit(): Promise<void> {
     await this.loadGames();
 
-    // Suscribirse a eventos de navegación para recargar cuando volvamos a esta ruta
     this._routerSubscription = this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -190,17 +192,28 @@ export class GameListComponent implements OnInit, OnDestroy {
           void this.loadGames();
         }
       });
+
+    this._bpSubscription = this._breakpointObserver
+      .observe(['(max-width: 600px)', '(max-width: 900px)', '(max-width: 1200px)', '(max-width: 1600px)'])
+      .subscribe((state) => {
+        if (state.breakpoints['(max-width: 600px)']) this.columnCount.set(2);
+        else if (state.breakpoints['(max-width: 900px)']) this.columnCount.set(3);
+        else if (state.breakpoints['(max-width: 1200px)']) this.columnCount.set(4);
+        else if (state.breakpoints['(max-width: 1600px)']) this.columnCount.set(5);
+        else this.columnCount.set(6);
+      });
   }
 
   /**
-   * Limpia la suscripción al destruir el componente
+   * Limpia todas las suscripciones al destruir el componente.
    */
   ngOnDestroy(): void {
     this._routerSubscription?.unsubscribe();
+    this._bpSubscription?.unsubscribe();
   }
 
   /**
-   * Carga los juegos del usuario desde la base de datos
+   * Carga los juegos del usuario desde la base de datos.
    */
   private async loadGames(): Promise<void> {
     try {
@@ -254,17 +267,15 @@ export class GameListComponent implements OnInit, OnDestroy {
     this.selectedStore.set('');
     this.selectedStatus.set('');
     this.onlyFavorites.set(false);
-    this.page.set(0);
   }
 
   /**
    * Maneja el borrado de un juego desde el componente hijo.
-   * @param id ID del juego a eliminar.
+   * @param {number} id - ID del juego a eliminar.
    */
   async onGameDeleted(id: number): Promise<void> {
     try {
       await this._db.deleteById(this.userId, id);
-      // Recargar la lista completa para asegurar sincronización
       await this.loadGames();
       this._snackBar.open('Game deleted successfully', 'Close', { duration: 2000 });
     } catch (error) {
@@ -274,17 +285,14 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Actualiza los valores de paginación.
-   * @param event Evento de cambio de página del paginador.
+   * Función de tracking para las filas del scroll virtual.
+   * @param {number} index - Índice de la fila
    */
-  onPageChange(event: PageEvent): void {
-    this.page.set(event.pageIndex);
-    this.pageSize.set(event.pageSize);
-  }
+  trackByRowIndex = (index: number): number => index;
 
   /**
    * Actualiza el término de búsqueda al escribir en el input.
-   * @param event Evento de entrada de texto.
+   * @param {Event} event - Evento de entrada de texto.
    */
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;

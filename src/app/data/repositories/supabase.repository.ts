@@ -157,18 +157,32 @@ export class SupabaseRepository implements GameRepositoryInterface {
    * Retorna todos los juegos del usuario indicado
    */
   async getAllGamesForUser(userId: string): Promise<GameInterface[]> {
-    const { data, error } = await this.supabase
-      .from(this.viewName)
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+    // Supabase tiene un límite de 1000 filas por query por defecto.
+    // Paginamos en lotes de 1000 para soportar colecciones de cualquier tamaño.
+    const PAGE_SIZE = 1000;
+    let all: UserGameWithCatalog[] = [];
+    let from = 0;
 
-    if (error) {
-      console.error('Error fetching games:', error);
-      throw new Error(`Failed to fetch games: ${error.message}`);
+    while (true) {
+      const { data, error } = await this.supabase
+        .from(this.viewName)
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) {
+        console.error('Error fetching games:', error);
+        throw new Error(`Failed to fetch games: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE_SIZE) break; // última página
+      from += PAGE_SIZE;
     }
 
-    return (data || []).map((record) => this.fromViewRecord(record));
+    return all.map((record) => this.fromViewRecord(record));
   }
 
   /**
