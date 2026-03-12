@@ -1,4 +1,14 @@
-import { Component, computed, EventEmitter, inject, input, InputSignal, Output, Signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  input,
+  InputSignal,
+  Output,
+  Signal
+} from '@angular/core';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -34,6 +44,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
 @Component({
   selector: 'app-game-card',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
     MatCardImage,
