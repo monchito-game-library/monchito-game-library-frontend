@@ -1,164 +1,260 @@
 <div class="game-form-page">
   <header class="game-form-page__header">
-    <button mat-icon-button [routerLink]="[isEditMode ? '/list' : '/home']" aria-label="Volver">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1 class="game-form-page__title">
-      {{ isEditMode ? ('gameForm.title.edit' | transloco) : ('gameForm.title.add' | transloco) }}
-    </h1>
+    @if (searchMode()) {
+      <button mat-icon-button type="button" (click)="closeSearchMode()" aria-label="Volver al formulario">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="game-form-page__title">Buscar en catálogo</h1>
+    } @else {
+      <button mat-icon-button [routerLink]="[isEditMode ? '/list' : '/home']" aria-label="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="game-form-page__title">
+        {{ isEditMode ? ('gameForm.title.edit' | transloco) : ('gameForm.title.add' | transloco) }}
+      </h1>
+    }
   </header>
 
-  <div class="game-form-page__content">
-    <!-- Columna izquierda: portada y búsqueda -->
-    <aside class="game-cover-panel">
-      <div class="game-cover-panel__cover">
-        @if (selectedGame()?.image_url) {
-          <img [src]="selectedGame()!.image_url!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
-          <button
-            mat-icon-button
-            type="button"
-            (click)="clearSelectedGame()"
-            class="game-cover-panel__clear-btn"
-            aria-label="Quitar selección">
-            <mat-icon>close</mat-icon>
-          </button>
-        } @else {
-          <div class="game-cover-panel__placeholder">
-            <mat-icon>sports_esports</mat-icon>
-            <span>Sin portada</span>
-          </div>
-        }
-      </div>
-
-      <button mat-flat-button type="button" (click)="openGameSearch()" class="game-cover-panel__search-btn">
-        <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
-        {{ selectedGame() ? 'Cambiar juego' : 'Buscar en catálogo' }}
-      </button>
-
-      @if (selectedGame()) {
-        <div class="game-cover-panel__info">
-          <p class="game-cover-panel__info-title">{{ selectedGame()!.title }}</p>
-          <div class="game-cover-panel__info-meta">
-            @if (selectedGame()!.released_date) {
-              <span>
-                <mat-icon>calendar_today</mat-icon>
-                {{ selectedGame()!.released_date | date: 'yyyy' }}
-              </span>
-            }
-            @if (selectedGame()!.rating > 0) {
-              <span>
-                <mat-icon>star</mat-icon>
-                {{ selectedGame()!.rating }}
-              </span>
-            }
-          </div>
-        </div>
-      }
-    </aside>
-
-    <!-- Columna derecha: campos del formulario -->
-    <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-        <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
-        <input matInput formControlName="title" [readonly]="!!selectedGame()" />
-        @if (selectedGame()) {
-          <mat-icon matSuffix>lock</mat-icon>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
-        <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
-          @for (platform of filteredPlatforms(); track platform.code) {
-            <mat-option [value]="platform.code">{{ platform.labelKey | transloco }}</mat-option>
+  @if (!searchMode()) {
+    <div class="game-form-page__content" @fadeSlide>
+      <!-- Columna izquierda: portada y búsqueda -->
+      <aside class="game-cover-panel">
+        <div class="game-cover-panel__cover">
+          @if (selectedGame()?.image_url) {
+            <img [src]="selectedGame()!.image_url!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
+            <button
+              mat-icon-button
+              type="button"
+              (click)="clearSelectedGame()"
+              class="game-cover-panel__clear-btn"
+              aria-label="Quitar selección">
+              <mat-icon>close</mat-icon>
+            </button>
+          } @else {
+            <div class="game-cover-panel__placeholder">
+              <mat-icon>sports_esports</mat-icon>
+              <span>Sin portada</span>
+            </div>
           }
-        </mat-autocomplete>
-        @if (form.controls.platform.value) {
-          <button
-            class="game-form__clear-btn"
-            mat-icon-button
-            matSuffix
-            (click)="form.controls.platform.setValue(null)">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
-        <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
-          @for (store of filteredStores(); track store.code) {
-            <mat-option [value]="store.code">{{ store.labelKey | transloco }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (form.controls.store.value) {
-          <button class="game-form__clear-btn" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>{{ 'gameForm.fields.condition' | transloco }}</mat-label>
-        <mat-select [formControl]="form.controls.condition">
-          @for (condition of conditions; track condition.code) {
-            <mat-option [value]="condition.code">{{ condition.labelKey | transloco }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>Estado</mat-label>
-        <mat-select formControlName="status">
-          @for (status of gameStatuses; track status.code) {
-            <mat-option [value]="status.code">
-              <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
-              {{ status.labelKey | transloco }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>{{ 'gameForm.fields.price' | transloco }}</mat-label>
-        <input matInput formControlName="price" type="number" placeholder="0" />
-        <mat-icon matSuffix>euro</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>Mi Valoración (0-10)</mat-label>
-        <input matInput formControlName="personal_rating" type="number" min="0" max="10" step="0.5" placeholder="8.5" />
-        <mat-icon matSuffix>star_rate</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="game-form__field">
-        <mat-label>Horas Jugadas</mat-label>
-        <input matInput formControlName="hours_played" type="number" min="0" placeholder="0" />
-        <mat-icon matSuffix>schedule</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field
-        appearance="outline"
-        class="game-form__field game-form__field--full game-form__field--description">
-        <mat-label>{{ 'gameForm.fields.description' | transloco }}</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-      </mat-form-field>
-
-      <div class="game-form__footer">
-        <div class="game-form__toggles">
-          <mat-slide-toggle formControlName="platinum">
-            🏆 {{ 'gameForm.fields.platinum' | transloco }}
-          </mat-slide-toggle>
-          <mat-slide-toggle formControlName="is_favorite" color="warn"> ❤️ Favorito </mat-slide-toggle>
         </div>
 
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="game-form__submit-btn">
-          <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-          {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+        <button mat-flat-button type="button" (click)="openSearchMode()" class="game-cover-panel__search-btn">
+          <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
+          {{ selectedGame() ? 'Cambiar juego' : 'Buscar en catálogo' }}
         </button>
+
+        @if (selectedGame()) {
+          <div class="game-cover-panel__info">
+            <p class="game-cover-panel__info-title">{{ selectedGame()!.title }}</p>
+            <div class="game-cover-panel__info-meta">
+              @if (selectedGame()!.released_date) {
+                <span>
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ selectedGame()!.released_date | date: 'yyyy' }}
+                </span>
+              }
+              @if (selectedGame()!.rating > 0) {
+                <span>
+                  <mat-icon>star</mat-icon>
+                  {{ selectedGame()!.rating }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </aside>
+
+      <!-- Columna derecha: campos del formulario -->
+      <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
+          <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
+          <input matInput formControlName="title" [readonly]="!!selectedGame()" />
+          @if (selectedGame()) {
+            <mat-icon matSuffix>lock</mat-icon>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
+          <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
+          <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
+            @for (platform of filteredPlatforms(); track platform.code) {
+              <mat-option [value]="platform.code">{{ platform.labelKey | transloco }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (form.controls.platform.value) {
+            <button
+              class="game-form__clear-btn"
+              mat-icon-button
+              matSuffix
+              (click)="form.controls.platform.setValue(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
+          <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
+          <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
+            @for (store of filteredStores(); track store.code) {
+              <mat-option [value]="store.code">{{ store.labelKey | transloco }}</mat-option>
+            }
+          </mat-autocomplete>
+          @if (form.controls.store.value) {
+            <button class="game-form__clear-btn" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>{{ 'gameForm.fields.condition' | transloco }}</mat-label>
+          <mat-select [formControl]="form.controls.condition">
+            @for (condition of conditions; track condition.code) {
+              <mat-option [value]="condition.code">{{ condition.labelKey | transloco }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            @for (status of gameStatuses; track status.code) {
+              <mat-option [value]="status.code">
+                <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+                {{ status.labelKey | transloco }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>{{ 'gameForm.fields.price' | transloco }}</mat-label>
+          <input matInput formControlName="price" type="number" placeholder="0" />
+          <mat-icon matSuffix>euro</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>Mi Valoración (0-10)</mat-label>
+          <input
+            matInput
+            formControlName="personal_rating"
+            type="number"
+            min="0"
+            max="10"
+            step="0.5"
+            placeholder="8.5" />
+          <mat-icon matSuffix>star_rate</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-form__field">
+          <mat-label>Horas Jugadas</mat-label>
+          <input matInput formControlName="hours_played" type="number" min="0" placeholder="0" />
+          <mat-icon matSuffix>schedule</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          class="game-form__field game-form__field--full game-form__field--description">
+          <mat-label>{{ 'gameForm.fields.description' | transloco }}</mat-label>
+          <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+
+        <div class="game-form__footer">
+          <div class="game-form__toggles">
+            <mat-slide-toggle formControlName="platinum">
+              🏆 {{ 'gameForm.fields.platinum' | transloco }}
+            </mat-slide-toggle>
+            <mat-slide-toggle formControlName="is_favorite" color="warn"> ❤️ Favorito </mat-slide-toggle>
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="game-form__submit-btn">
+            <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+            {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (searchMode()) {
+    <div class="game-search-panel" @fadeSlide>
+      <div class="game-search-panel__input-wrapper">
+        <mat-form-field appearance="outline" class="game-search-panel__field">
+          <mat-label>Busca un juego...</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            placeholder="Ej: Elden Ring, The Last of Us, Zelda..."
+            autofocus />
+          @if (searchLoading()) {
+            <mat-progress-spinner matSuffix diameter="20" mode="indeterminate" />
+          }
+        </mat-form-field>
       </div>
-    </form>
-  </div>
+
+      <div class="game-search-panel__results">
+        @if (!searchQuery()) {
+          <div class="game-search-panel__placeholder">
+            <mat-icon>sports_esports</mat-icon>
+            <p>Escribe el nombre de un juego para buscarlo</p>
+          </div>
+        }
+
+        @if (searchQuery() && !searchLoading() && !searchResults().length) {
+          <div class="game-search-panel__placeholder">
+            <mat-icon>search_off</mat-icon>
+            <p>No se encontraron resultados para "{{ searchQuery() }}"</p>
+          </div>
+        }
+
+        @for (game of searchResults(); track game.rawg_id) {
+          <div class="search-result-card" (click)="selectGameFromSearch(game)">
+            <div class="search-result-card__cover">
+              @if (game.image_url) {
+                <img [src]="game.image_url" [alt]="game.title" class="search-result-card__img" />
+              } @else {
+                <div class="search-result-card__cover-placeholder">
+                  <mat-icon>videogame_asset</mat-icon>
+                </div>
+              }
+            </div>
+            <div class="search-result-card__info">
+              <h3 class="search-result-card__title">{{ game.title }}</h3>
+              <div class="search-result-card__meta">
+                @if (game.released_date) {
+                  <span class="search-result-card__year">{{ game.released_date | date: 'yyyy' }}</span>
+                }
+                @if (game.metacritic_score) {
+                  <span class="search-result-card__metacritic">MC {{ game.metacritic_score }}</span>
+                }
+                @if (game.rating > 0) {
+                  <span class="search-result-card__rating">
+                    <mat-icon>star</mat-icon>
+                    {{ game.rating | number: '1.1-1' }}
+                  </span>
+                }
+              </div>
+              <div class="search-result-card__platforms">
+                @for (platform of game.platforms.slice(0, 4); track platform) {
+                  <span class="search-result-card__badge">{{ platform }}</span>
+                }
+                @if (game.platforms.length > 4) {
+                  <span class="search-result-card__badge search-result-card__badge--more">
+                    +{{ game.platforms.length - 4 }}
+                  </span>
+                }
+              </div>
+              @if (game.genres.length > 0) {
+                <p class="search-result-card__genres">{{ game.genres.slice(0, 3).join(' · ') }}</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
