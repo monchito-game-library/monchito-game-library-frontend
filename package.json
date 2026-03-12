@@ -21,7 +21,8 @@
     "lint": "eslint . --ext .ts,.html",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
-    "husky": "husky"
+    "husky": "husky",
+    "migrate:legacy": "node scripts/migrate-legacy.mjs"
   },
   "dependencies": {
     "@angular-eslint/eslint-plugin": "21.3.0",
