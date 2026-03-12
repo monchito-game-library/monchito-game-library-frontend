@@ -174,8 +174,17 @@
             </mat-slide-toggle>
           </div>
 
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" class="game-form__submit-btn">
-            <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || saving()"
+            class="game-form__submit-btn">
+            @if (saving()) {
+              <mat-spinner diameter="18" />
+            } @else {
+              <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+            }
             {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
           </button>
         </div>

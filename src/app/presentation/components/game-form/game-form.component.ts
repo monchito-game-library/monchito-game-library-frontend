@@ -220,6 +220,9 @@ export class GameFormComponent implements OnInit {
   /** Indica si se está cargando el juego en modo edición */
   readonly loading: WritableSignal<boolean> = signal(false);
 
+  /** Indica si se está guardando el formulario (deshabilita todos los campos) */
+  readonly saving: WritableSignal<boolean> = signal(false);
+
   // ────────────────────── Configuraciones públicas ──────────────────────
   isEditMode: boolean = false;
 
@@ -270,6 +273,9 @@ export class GameFormComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
+
+      this.saving.set(true);
+      this.form.disable();
 
       const raw = this.form.getRawValue();
       const game: GameInterface = {
