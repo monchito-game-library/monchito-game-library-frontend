@@ -1,0 +1,101 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    <mat-icon>search</mat-icon>
+    Buscar Juego
+  </h2>
+
+  <mat-dialog-content>
+    <!-- Search Input -->
+    <div class="search-section">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre del juego</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchQuery"
+          (keypress)="onKeyPress($event)"
+          placeholder="Ej: The Last of Us, Elden Ring..."
+          [disabled]="loading()" />
+        <mat-icon matPrefix>videogame_asset</mat-icon>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="onSearch()"
+        [disabled]="!searchQuery() || loading()"
+        class="search-button">
+        @if (loading()) {
+          <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+        }
+        @if (!loading()) {
+          <ng-container>
+            <mat-icon>search</mat-icon>
+            Buscar
+          </ng-container>
+        }
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    @if (errorMessage()) {
+      <div class="error-message">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Search Results -->
+    <div class="results-section">
+      @if (searchResults().length > 0) {
+        <div class="results-grid">
+          @for (game of searchResults(); track game.rawg_id) {
+            <mat-card class="game-card" (click)="selectGame(game)">
+              <div class="game-image-container">
+                @if (game.image_url) {
+                  <img [src]="game.image_url" [alt]="game.title" class="game-image" />
+                } @else {
+                  <div class="no-image">
+                    <mat-icon>videogame_asset</mat-icon>
+                  </div>
+                }
+              </div>
+              <mat-card-content class="game-info">
+                <h3 class="game-title">{{ game.title }}</h3>
+                <div class="game-meta">
+                  @if (game.released_date) {
+                    <span class="meta-item">
+                      <mat-icon>calendar_today</mat-icon>
+                      {{ game.released_date | date: 'yyyy' }}
+                    </span>
+                  }
+                  @if (game.rating > 0) {
+                    <span class="meta-item">
+                      <mat-icon>star</mat-icon>
+                      {{ game.rating }}
+                    </span>
+                  }
+                </div>
+                @if (game.platforms.length > 0) {
+                  <div class="platforms">
+                    @for (platform of game.platforms.slice(0, 3); track platform) {
+                      <span class="platform-badge">
+                        {{ platform }}
+                      </span>
+                    }
+                    @if (game.platforms.length > 3) {
+                      <span class="platform-badge more">+{{ game.platforms.length - 3 }}</span>
+                    }
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancelar</button>
+  </mat-dialog-actions>
+</div>

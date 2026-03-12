@@ -1,44 +1,63 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from './guards/user.guard';
-
-import { HomeComponent } from './pages/home/home.component';
-import { GameListComponent } from './pages/game-list/game-list.component';
-import { DatabaseToolsComponent } from './pages/database-tools/database-tools.component';
-import { CreateAndUpdateGameComponent } from './pages/create-update-game/create-and-update-game.component';
-import { SelectUserComponent } from './pages/select-user/select-user.component';
+import { canActivateUser } from '@/guards/user.guard';
 
 export const routes: Routes = [
+  // Public routes (no authentication required)
   {
-    path: 'select-user',
-    component: SelectUserComponent
+    path: 'login',
+    loadComponent: (): Promise<typeof import('@/pages/login/login.component').LoginComponent> =>
+      import('@/pages/login/login.component').then((m) => m.LoginComponent)
   },
   {
-    path: '',
-    component: HomeComponent,
+    path: 'register',
+    loadComponent: (): Promise<typeof import('@/pages/register/register.component').RegisterComponent> =>
+      import('@/pages/register/register.component').then((m) => m.RegisterComponent)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: (): Promise<
+      typeof import('@/pages/forgot-password/forgot-password.component').ForgotPasswordComponent
+    > => import('@/pages/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent)
+  },
+
+  // Protected routes (authentication required)
+  {
+    path: 'home',
+    loadComponent: (): Promise<typeof import('@/pages/home/home.component').HomeComponent> =>
+      import('@/pages/home/home.component').then((m) => m.HomeComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'add',
-    component: CreateAndUpdateGameComponent,
+    loadComponent: (): Promise<
+      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
+    > =>
+      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'list',
-    component: GameListComponent,
-    canActivate: [canActivateUser]
-  },
-  {
-    path: 'tools',
-    component: DatabaseToolsComponent,
+    loadComponent: (): Promise<typeof import('@/pages/game-list/game-list.component').GameListComponent> =>
+      import('@/pages/game-list/game-list.component').then((m) => m.GameListComponent),
     canActivate: [canActivateUser]
   },
   {
     path: 'update/:id',
-    component: CreateAndUpdateGameComponent,
+    loadComponent: (): Promise<
+      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
+    > =>
+      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
     canActivate: [canActivateUser]
+  },
+
+  // Default and fallback routes
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'login'
   }
 ];

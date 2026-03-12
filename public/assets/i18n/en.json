@@ -107,10 +107,6 @@
       "title": "Add New Game",
       "description": "Add a new game to your library."
     },
-    "databaseTools": {
-      "title": "Database Tools",
-      "description": "Import from file or export your collection."
-    },
     "tooltip": {
       "darkMode": "Switch to dark mode",
       "lightMode": "Switch to light mode"
@@ -123,26 +119,13 @@
       }
     }
   },
-  "tools": {
-    "title": "Database Tools",
-    "description": "You can export, import or clear your local game database.",
-    "export": "Export as games.json",
-    "import": "Import from JSON",
-    "clear": "Clear all data",
-    "snackbar": {
-      "noDataToExport": "No data to export.",
-      "noDataToClear": "No data to clear.",
-      "dataCleared": "All data has been deleted.",
-      "importSuccess": "Games imported successfully.",
-      "defaultImportSuccess": "Default data imported successfully.",
-      "defaultImportFail": "Failed to import default data."
-    },
-    "dialog": {
-      "clearTitle": "Clear All Data",
-      "clearMessage": "Are you sure you want to delete all saved data? This action cannot be undone.",
-      "loadTitle": "Load Default Data?",
-      "loadMessage": "No data found. Would you like to load the default data from assets/games.json?"
-    }
+  "gameStatus": {
+    "owned": "Owned",
+    "backlog": "Backlog",
+    "playing": "Playing",
+    "completed": "Completed",
+    "platinum": "Platinum",
+    "abandoned": "Abandoned"
   },
   "gameList": {
     "filters": {
@@ -153,5 +136,55 @@
   },
   "selectUser": {
     "title": "Select User"
+  },
+  "auth": {
+    "logout": "Logout",
+    "login": {
+      "title": "Sign In",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "submit": "Sign In",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "register": "Register here"
+    },
+    "register": {
+      "title": "Create Account",
+      "displayName": "Name",
+      "displayNamePlaceholder": "Your name",
+      "displayNameRequired": "Name is required",
+      "displayNameMinLength": "Name must be at least 3 characters",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "confirmPasswordRequired": "You must confirm your password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in here"
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "submit": "Send Reset Link",
+      "backToLogin": "Back to Sign In"
+    }
   }
 }

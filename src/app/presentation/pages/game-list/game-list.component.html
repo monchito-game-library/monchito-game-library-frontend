@@ -1,0 +1,109 @@
+<div class="header-row">
+  <div class="header-top">
+    <button mat-icon-button routerLink="/home" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="summary">
+      <span><strong>Total:</strong> {{ filteredGames().length }} games</span>
+      <span><strong>Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
+      <span><strong>Hours:</strong> {{ getTotalHours() }}h</span>
+      @if (getAverageRating() > 0) {
+        <span><strong>Avg Rating:</strong> ⭐ {{ getAverageRating() | number: '1.1-1' }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'gameList.filters.title' | transloco }}</mat-label>
+      <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
+      <mat-select [value]="selectedConsole" (selectionChange)="selectedConsole.set($event.value)">
+        <mat-option value="">All</mat-option>
+        @for (c of consoles; track c.code) {
+          <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
+      <mat-select [value]="selectedStore" (selectionChange)="selectedStore.set($event.value)">
+        <mat-option value="">All</mat-option>
+        @for (s of stores; track s.code) {
+          <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value); page.set(0)">
+        <mat-option value="">Todos</mat-option>
+        @for (status of gameStatuses; track status.code) {
+          <mat-option [value]="status.code">
+            <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+            {{ status.labelKey | transloco }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ordenar por</mat-label>
+      <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value); page.set(0)">
+        <mat-option value="created_at">Más recientes</mat-option>
+        <mat-option value="title">Título (A-Z)</mat-option>
+        <mat-option value="price">Precio</mat-option>
+        <mat-option value="personal_rating">Mi valoración</mat-option>
+        <mat-option value="hours_played">Horas jugadas</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-icon-button
+      (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
+      [attr.aria-label]="'Toggle sort direction'">
+      <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+    </button>
+
+    <mat-slide-toggle
+      [checked]="onlyFavorites()"
+      (change)="onlyFavorites.set($event.checked); page.set(0)"
+      color="warn">
+      ❤️ Solo Favoritos
+    </mat-slide-toggle>
+
+    @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+      <button mat-icon-button (click)="clearAllFilters()" aria-label="Clear filters" color="warn">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
+    }
+  </div>
+</div>
+
+<div class="list-container">
+  <div class="card-grid">
+    @for (game of paginatedGames(); track game.id) {
+      <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)"></app-game-card>
+    }
+  </div>
+
+  @if (filteredGames().length > pageSize()) {
+    <mat-paginator
+      [length]="filteredGames().length"
+      [pageSize]="pageSize()"
+      [pageIndex]="page()"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  }
+
+  @if (filteredGames().length === 0) {
+    <p class="no-games">No games found.</p>
+  }
+</div>
