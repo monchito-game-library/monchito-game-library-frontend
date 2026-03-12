@@ -204,13 +204,16 @@
             (input)="onSearchInput($event)"
             placeholder="Ej: Elden Ring, The Last of Us, Zelda..."
             autofocus />
-          @if (searchLoading()) {
-            <mat-progress-spinner matSuffix diameter="20" mode="indeterminate" />
-          }
         </mat-form-field>
       </div>
 
       <div class="game-search-panel__results">
+        @if (searchLoading()) {
+          <div class="game-search-panel__placeholder">
+            <mat-spinner diameter="40" />
+          </div>
+        }
+
         @if (!searchQuery()) {
           <div class="game-search-panel__placeholder">
             <mat-icon>sports_esports</mat-icon>
