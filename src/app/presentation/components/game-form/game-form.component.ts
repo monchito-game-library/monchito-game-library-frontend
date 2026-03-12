@@ -217,6 +217,9 @@ export class GameFormComponent implements OnInit {
   /** Término de búsqueda actual */
   readonly searchQuery: WritableSignal<string> = signal('');
 
+  /** Indica si se está cargando el juego en modo edición */
+  readonly loading: WritableSignal<boolean> = signal(false);
+
   // ────────────────────── Configuraciones públicas ──────────────────────
   isEditMode: boolean = false;
 
@@ -235,14 +238,19 @@ export class GameFormComponent implements OnInit {
 
     this.isEditMode = true;
     this._gameId = +idParam;
+    this.loading.set(true);
 
-    const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
-    if (game) {
-      this.form.patchValue(game);
+    try {
+      const game: GameInterface | undefined = await this._db.getById(this.userId, this._gameId);
+      if (game) {
+        this.form.patchValue(game);
 
-      if (game.image) {
-        this.selectedGame.set({ title: game.title, image_url: game.image } as GameCatalog);
+        if (game.image) {
+          this.selectedGame.set({ title: game.title, image_url: game.image } as GameCatalog);
+        }
       }
+    } finally {
+      this.loading.set(false);
     }
   }
 
