@@ -1,9 +1,5 @@
 <div class="header-row">
   <div class="header-top">
-    <button mat-icon-button routerLink="/home" aria-label="Go back">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-
     <div class="summary">
       <span><strong>Total:</strong> {{ filteredGames().length }} games</span>
       <span><strong>Spent:</strong> {{ getTotalPrice() | currency: 'EUR' }}</span>
