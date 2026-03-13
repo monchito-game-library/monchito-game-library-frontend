@@ -19,7 +19,6 @@ import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field'
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoService } from '@ngneat/transloco';
@@ -36,6 +35,8 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/components/avatar-crop-dialog/avatar-crop-dialog.component';
+import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-settings',
@@ -55,8 +56,9 @@ import { AvatarCropDialogComponent } from '@/components/avatar-crop-dialog/avata
     MatPrefix,
     MatIcon,
     MatProgressSpinner,
-    MatSlideToggle,
-    MatTooltip
+    MatTooltip,
+    ToggleSwitchComponent,
+    SkeletonComponent
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
@@ -79,7 +81,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Referencia al input de edición de nombre para enfocar al activar el modo edición. */
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
 
-  // --- Variables públicas readonly ---
   /** Idiomas disponibles para el selector. */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
 
@@ -90,8 +91,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Indica si se está subiendo un avatar en este momento. */
   readonly uploadingAvatar: WritableSignal<boolean> = this._userPreferencesState.uploadingAvatar;
 
-  /** URLs de portada disponibles extraídas de la colección del usuario. */
-  readonly gameImageUrls: WritableSignal<string[]> = this._userPreferencesState.gameImageUrls;
+  /** Indica si se está subiendo un banner en este momento. */
+  readonly uploadingBanner: WritableSignal<boolean> = this._userPreferencesState.uploadingBanner;
 
   /** URL de la portada actualmente usada como fondo del panel de perfil. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
@@ -99,10 +100,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Estado actual del modo oscuro, sincronizado con ThemeService. */
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
-  /** Resultados de búsqueda de RAWG. */
+  /** Resultados de búsqueda de RAWG (o juegos populares cuando no hay búsqueda). */
   readonly rawgResults: WritableSignal<GameCatalogDto[]> = this._userPreferencesState.rawgSearchResults;
 
-  /** Indica si hay una búsqueda de RAWG en curso. */
+  /** Indica si hay una carga de RAWG en curso. */
   readonly rawgSearchLoading: WritableSignal<boolean> = this._userPreferencesState.rawgSearchLoading;
 
   /** Último término buscado en RAWG, para mostrar el estado vacío. */
@@ -111,8 +112,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Indica si las preferencias del usuario ya han sido cargadas desde Supabase. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
 
-  /** Indica si las portadas de la colección ya han sido cargadas desde Supabase. */
-  readonly gamesLoaded: WritableSignal<boolean> = this._userPreferencesState.gamesLoaded;
+  /** Array de 12 elementos para renderizar los skeletons del grid de portadas. */
+  readonly skeletonThumbs: undefined[] = Array(12);
 
   /** Indica si el modo de edición del nombre está activo. */
   readonly editingName: WritableSignal<boolean> = signal(false);
@@ -139,6 +140,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this._searchSubscription = this._searchSubject
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((query: string) => void this._executeSearch(query));
+
+    void this._loadInitialBanners();
   }
 
   ngOnDestroy(): void {
@@ -151,10 +154,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * @param {string} url - URL de la portada elegida
    */
   onSelectBanner(url: string): void {
+    const currentBannerUrl: string | null = this._userPreferencesState.bannerImageUrl();
     this._userPreferencesState.bannerImageUrl.set(url);
     const userId: string | null = this._userContext.userId();
     if (userId) {
-      void this._userPreferencesUseCases.saveBannerUrl(userId, url);
+      void this._userPreferencesUseCases.saveBannerUrl(userId, url, currentBannerUrl);
     }
   }
 
@@ -190,7 +194,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: file,
+      data: { file, title: 'Ajusta tu foto de perfil', aspectRatio: 1, roundCropper: true, resizeToWidth: 300 },
       width: '480px',
       maxWidth: '95vw'
     });
@@ -212,6 +216,44 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this._snackBar.open(message, 'Cerrar', { duration: 4000 });
     } finally {
       this._userPreferencesState.uploadingAvatar.set(false);
+    }
+  }
+
+  /**
+   * Abre el dialog de recorte al seleccionar un fichero para el banner.
+   * Una vez confirmado el recorte, sube el blob resultante a Supabase Storage.
+   *
+   * @param {Event} event - Evento del input file
+   */
+  async onBannerFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
+      data: { file, title: 'Ajusta tu banner', aspectRatio: 16 / 9, roundCropper: false, resizeToWidth: 1280 },
+      width: '640px',
+      maxWidth: '95vw'
+    });
+
+    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    if (!blob) return;
+
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
+
+    const croppedFile = new File([blob], 'banner.jpg', { type: 'image/jpeg' });
+
+    this._userPreferencesState.uploadingBanner.set(true);
+    try {
+      const url: string = await this._userPreferencesUseCases.uploadBanner(userId, croppedFile);
+      this._userPreferencesState.bannerImageUrl.set(url);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error al subir el banner';
+      this._snackBar.open(message, 'Cerrar', { duration: 4000 });
+    } finally {
+      this._userPreferencesState.uploadingBanner.set(false);
     }
   }
 
@@ -278,18 +320,34 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   /**
    * Llama a la API de RAWG con el término de búsqueda y actualiza los resultados.
+   * Si la búsqueda está vacía, recarga los juegos populares iniciales.
    * Filtra los juegos sin imagen para garantizar que todos los resultados son usables como banner.
    *
    * @param {string} query - Término de búsqueda
    */
   private async _executeSearch(query: string): Promise<void> {
     if (!query.trim()) {
-      this._userPreferencesState.rawgSearchResults.set([]);
+      await this._loadInitialBanners();
       return;
     }
     this._userPreferencesState.rawgSearchLoading.set(true);
     try {
       const results: GameCatalogDto[] = await this._rawgRepo.searchGames(query, 1, 12);
+      this._userPreferencesState.rawgSearchResults.set(results.filter((game: GameCatalogDto) => !!game.image_url));
+    } catch {
+      this._userPreferencesState.rawgSearchResults.set([]);
+    } finally {
+      this._userPreferencesState.rawgSearchLoading.set(false);
+    }
+  }
+
+  /**
+   * Carga los juegos más valorados de RAWG para mostrar como sugerencias iniciales de banner.
+   */
+  private async _loadInitialBanners(): Promise<void> {
+    this._userPreferencesState.rawgSearchLoading.set(true);
+    try {
+      const results: GameCatalogDto[] = await this._rawgRepo.getTopGames(12);
       this._userPreferencesState.rawgSearchResults.set(results.filter((game: GameCatalogDto) => !!game.image_url));
     } catch {
       this._userPreferencesState.rawgSearchResults.set([]);
