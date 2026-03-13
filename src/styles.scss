@@ -14,6 +14,12 @@ html {
 
 html.dark-mode {
   color-scheme: dark;
+
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    box-shadow:
+      0 0 0 1px var(--mat-sys-outline-variant),
+      0 12px 40px rgba(0, 0, 0, 0.6);
+  }
 }
 
 // Estilos base
