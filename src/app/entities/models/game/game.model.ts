@@ -27,8 +27,8 @@ export interface GameModel {
   status: GameStatus;
   /** User's personal rating (0–10). Null if not rated. */
   personalRating: number | null;
-  /** Approximate hours played. */
-  hoursPlayed: number;
+  /** Edition of the game copy (e.g. 'Deluxe Edition', 'GOTY Edition'). Null if standard. */
+  edition: string | null;
   /** Whether the game is marked as a favourite. */
   isFavorite: boolean;
 }

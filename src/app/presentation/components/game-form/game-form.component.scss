@@ -228,6 +228,12 @@
   .game-form__submit-btn {
     min-width: 140px;
   }
+
+  .game-form__submit-content {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
 }
 
 // ─── Panel de búsqueda inline ────────────────────────────────────────────────

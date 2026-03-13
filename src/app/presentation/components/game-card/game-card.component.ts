@@ -76,8 +76,8 @@ export class GameCardComponent {
   /** Personal rating (0–10). */
   readonly personalRating: Signal<number | null> = computed(() => this.game().personalRating);
 
-  /** Hours played. */
-  readonly hoursPlayed: Signal<number> = computed(() => this.game().hoursPlayed);
+  /** Edition of the game copy. */
+  readonly edition: Signal<string | null> = computed(() => this.game().edition);
 
   /** Whether the game is marked as favourite. */
   readonly isFavorite: Signal<boolean> = computed(() => this.game().isFavorite);
