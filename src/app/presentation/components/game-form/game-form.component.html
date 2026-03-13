@@ -73,6 +73,9 @@
           @if (selectedGame()) {
             <mat-icon matSuffix>lock</mat-icon>
           }
+          @if (form.controls.title.hasError('required')) {
+            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
@@ -98,6 +101,11 @@
               <mat-icon>close</mat-icon>
             </button>
           }
+          @if (form.controls.platform.hasError('required')) {
+            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          } @else if (form.controls.platform.hasError('invalidOption')) {
+            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field">
@@ -112,6 +120,11 @@
             <button class="game-form__clear-btn" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
               <mat-icon>close</mat-icon>
             </button>
+          }
+          @if (form.controls.store.hasError('required')) {
+            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          } @else if (form.controls.store.hasError('invalidOption')) {
+            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
           }
         </mat-form-field>
 
@@ -140,6 +153,9 @@
           <mat-label>{{ 'gameForm.fields.price' | transloco }}</mat-label>
           <input matInput formControlName="price" type="number" placeholder="0" />
           <mat-icon matSuffix>euro</mat-icon>
+          @if (form.controls.price.hasError('required')) {
+            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field">
@@ -153,6 +169,11 @@
             step="0.5"
             placeholder="8.5" />
           <mat-icon matSuffix>star_rate</mat-icon>
+          @if (form.controls.personal_rating.hasError('min')) {
+            <mat-error>{{ 'gameForm.errors.ratingMin' | transloco }}</mat-error>
+          } @else if (form.controls.personal_rating.hasError('max')) {
+            <mat-error>{{ 'gameForm.errors.ratingMax' | transloco }}</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field
@@ -178,7 +199,7 @@
             mat-flat-button
             color="primary"
             type="submit"
-            [disabled]="form.invalid || saving()"
+            [disabled]="form.invalid || saving() || !hasChanges()"
             class="game-form__submit-btn">
             <span class="game-form__submit-content">
               @if (saving()) {
