@@ -75,6 +75,12 @@
           }
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
+          <mat-label>Edición</mat-label>
+          <input matInput formControlName="edition" placeholder="Deluxe Edition, GOTY..." />
+          <mat-icon matSuffix>local_offer</mat-icon>
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="game-form__field">
           <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
           <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
@@ -149,12 +155,6 @@
           <mat-icon matSuffix>star_rate</mat-icon>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>Horas Jugadas</mat-label>
-          <input matInput formControlName="hours_played" type="number" min="0" placeholder="0" />
-          <mat-icon matSuffix>schedule</mat-icon>
-        </mat-form-field>
-
         <mat-form-field
           appearance="outline"
           class="game-form__field game-form__field--full game-form__field--description">
@@ -180,12 +180,14 @@
             type="submit"
             [disabled]="form.invalid || saving()"
             class="game-form__submit-btn">
-            @if (saving()) {
-              <mat-spinner diameter="18" />
-            } @else {
-              <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-            }
-            {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+            <span class="game-form__submit-content">
+              @if (saving()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+              }
+              {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+            </span>
           </button>
         </div>
       </form>

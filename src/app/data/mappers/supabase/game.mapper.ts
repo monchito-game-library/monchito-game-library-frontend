@@ -24,7 +24,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     imageUrl: dto.image_url ?? undefined,
     status: (dto.status ?? 'backlog') as GameStatus,
     personalRating: dto.personal_rating ?? null,
-    hoursPlayed: dto.hours_played ?? 0,
+    edition: dto.edition ?? null,
     isFavorite: dto.is_favorite ?? false
   };
 }
@@ -45,7 +45,7 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
     platinum: model.platinum,
     status: model.status,
     personal_rating: model.personalRating,
-    hours_played: model.hoursPlayed,
+    edition: model.edition,
     is_favorite: model.isFavorite
   };
 }

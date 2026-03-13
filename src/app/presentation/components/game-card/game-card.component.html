@@ -29,6 +29,9 @@
         }
       </div>
       <p class="game-card__title">{{ game().title }}</p>
+      @if (edition()) {
+        <p class="game-card__edition">{{ edition() }}</p>
+      }
     </div>
 
     <!-- Acciones — visibles al hover -->
@@ -54,9 +57,6 @@
         <span class="game-card__stat" [matTooltip]="game().description" matTooltipPosition="above">
           <mat-icon>info_outline</mat-icon>
         </span>
-      }
-      @if (hoursPlayed() > 0) {
-        <span class="game-card__stat"> <mat-icon>schedule</mat-icon>{{ hoursPlayed() }}h </span>
       }
       @if (personalRating() !== null) {
         <span class="game-card__stat game-card__stat--rating">
