@@ -32,11 +32,22 @@ export interface UserPreferencesUseCasesContract {
 
   /**
    * Persists the banner URL selected by the user.
+   * If the previous banner was stored in Supabase Storage, deletes it from the bucket.
    *
    * @param {string} userId - Authenticated user ID
    * @param {string} bannerUrl - URL of the selected banner image
+   * @param {string | null} currentBannerUrl - Current banner URL to delete if it belongs to the banners bucket
    */
-  saveBannerUrl(userId: string, bannerUrl: string): Promise<void>;
+  saveBannerUrl(userId: string, bannerUrl: string, currentBannerUrl: string | null): Promise<void>;
+
+  /**
+   * Validates the file, uploads it to storage, and saves the resulting banner URL.
+   * Throws if the file does not meet size or type restrictions.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {File} file - Image file selected by the user
+   */
+  uploadBanner(userId: string, file: File): Promise<string>;
 }
 
 /** InjectionToken for UserPreferencesUseCasesContract. */

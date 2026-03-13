@@ -36,6 +36,28 @@ export class RawgRepository implements RawgRepositoryContract {
   }
 
   /**
+   * Returns a list of top-rated games from RAWG without a search term.
+   * Used to pre-populate the banner picker when the user has not typed anything yet.
+   *
+   * @param {number} [pageSize=12] - Number of results to fetch (max 40)
+   */
+  async getTopGames(pageSize: number = 12): Promise<GameCatalogDto[]> {
+    const params = new URLSearchParams({
+      page: '1',
+      page_size: pageSize.toString(),
+      ordering: '-rating'
+    });
+
+    if (this._apiKey) params.append('key', this._apiKey);
+
+    const response = await fetch(`${this._apiUrl}/games?${params.toString()}`);
+    if (!response.ok) throw new Error(`RAWG API error: ${response.status} ${response.statusText}`);
+
+    const data: RawgSearchResponseDto = await response.json();
+    return data.results.map(mapRawgGame);
+  }
+
+  /**
    * Returns the full detail of a game from RAWG mapped to GameCatalogDto.
    *
    * @param {number} gameId - RAWG game ID

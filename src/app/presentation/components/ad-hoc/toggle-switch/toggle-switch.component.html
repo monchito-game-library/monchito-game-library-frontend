@@ -1,0 +1,11 @@
+<button
+  class="toggle-switch"
+  [class.toggle-switch--on]="_value()"
+  [class.toggle-switch--disabled]="_isDisabled()"
+  [disabled]="_isDisabled()"
+  (click)="onToggle()"
+  type="button">
+  <span class="toggle-switch__thumb">
+    <mat-icon>{{ getIcon() }}</mat-icon>
+  </span>
+</button>

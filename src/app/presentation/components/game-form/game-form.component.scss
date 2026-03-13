@@ -211,14 +211,18 @@
 
   .game-form__toggles {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
+  }
 
-    ::ng-deep .mdc-label {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding-left: 0.5rem;
-    }
+  .game-form__toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .game-form__toggle-label {
+    font-size: 0.9rem;
+    color: var(--mat-sys-on-surface-variant);
   }
 
   .game-form__submit-btn {

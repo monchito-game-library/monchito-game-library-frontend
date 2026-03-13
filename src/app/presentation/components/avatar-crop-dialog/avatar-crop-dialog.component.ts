@@ -10,6 +10,15 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 
+/** Configuration passed to the crop dialog via MAT_DIALOG_DATA. */
+export interface CropDialogData {
+  file: File;
+  title: string;
+  aspectRatio: number;
+  roundCropper: boolean;
+  resizeToWidth: number;
+}
+
 @Component({
   selector: 'app-avatar-crop-dialog',
   templateUrl: './avatar-crop-dialog.component.html',
@@ -26,8 +35,8 @@ export class AvatarCropDialogComponent {
   private _croppedBlob: Blob | null = null;
 
   // --- Variables públicas readonly ---
-  /** Fichero de imagen recibido desde el componente padre. */
-  readonly imageFile: File = inject<File>(MAT_DIALOG_DATA);
+  /** Configuración del cropper recibida desde el componente padre. */
+  readonly config: CropDialogData = inject<CropDialogData>(MAT_DIALOG_DATA);
 
   // --- Signals públicos ---
   /** Indica si la imagen del cropper ha terminado de cargar. */

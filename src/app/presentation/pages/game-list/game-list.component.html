@@ -5,7 +5,7 @@
     <div class="game-list__stat">
       <mat-icon>sports_esports</mat-icon>
       @if (loading()) {
-        <div class="game-list__stat-skeleton"></div>
+        <app-skeleton width="24px" height="12px" />
       } @else {
         <span>{{ filteredGames().length }}</span>
       }
@@ -14,7 +14,7 @@
     <div class="game-list__stat">
       <mat-icon>euro</mat-icon>
       @if (loading()) {
-        <div class="game-list__stat-skeleton game-list__stat-skeleton--wide"></div>
+        <app-skeleton width="40px" height="12px" />
       } @else {
         <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
       }

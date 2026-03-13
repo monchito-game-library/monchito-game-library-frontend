@@ -18,7 +18,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -76,7 +76,7 @@ import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/r
     MatInput,
     MatSelect,
     MatOption,
-    MatSlideToggle,
+    ToggleSwitchComponent,
     MatButton,
     MatIcon,
     MatIconButton,
