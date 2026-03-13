@@ -15,7 +15,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
@@ -73,6 +73,7 @@ import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/r
     MatFormField,
     MatLabel,
     MatPrefix,
+    MatError,
     MatInput,
     MatSelect,
     MatOption,
@@ -101,6 +102,10 @@ export class GameFormComponent implements OnInit {
   // ────────────────────── Variables privadas ──────────────────────
   private readonly _searchSubject: Subject<string> = new Subject<string>();
   private _gameId?: number;
+  /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
+  private _initialSnapshot: string | null = null;
+  /** Increments on every form value change to trigger hasChanges recomputation. */
+  private readonly _formVersion: WritableSignal<number> = signal(0);
 
   // ────────────────────── Constantes ───────────────────────
   /** Available platforms for the autocomplete input. */
@@ -222,6 +227,18 @@ export class GameFormComponent implements OnInit {
   /** Whether the form is being saved (disables all fields). */
   readonly saving: WritableSignal<boolean> = signal(false);
 
+  /**
+   * Whether the form differs from the snapshot taken at load time.
+   * Always true in create mode. In edit mode, enables the submit button
+   * only when at least one field or the selected game has changed.
+   */
+  readonly hasChanges: Signal<boolean> = computed((): boolean => {
+    if (!this.isEditMode || !this._initialSnapshot) return true;
+    this._formVersion();
+    const current = JSON.stringify({ ...this.form.getRawValue(), _rawgId: this.selectedGame()?.rawg_id ?? null });
+    return current !== this._initialSnapshot;
+  });
+
   // ────────────────────── Configuraciones públicas ──────────────────────
   /** Whether the form is in edit mode (true) or create mode (false). */
   isEditMode: boolean = false;
@@ -230,6 +247,8 @@ export class GameFormComponent implements OnInit {
     this._searchSubject
       .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed())
       .subscribe((query: string) => void this._performSearch(query));
+
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
   }
 
   /**
@@ -263,6 +282,11 @@ export class GameFormComponent implements OnInit {
         if (game.imageUrl) {
           this.selectedGame.set({ title: game.title, image_url: game.imageUrl } as GameCatalog);
         }
+
+        this._initialSnapshot = JSON.stringify({
+          ...this.form.getRawValue(),
+          _rawgId: this.selectedGame()?.rawg_id ?? null
+        });
       }
     } finally {
       this.loading.set(false);
@@ -273,6 +297,7 @@ export class GameFormComponent implements OnInit {
    * Handles form submission by showing a confirmation dialog before saving or updating.
    */
   async onSubmit(): Promise<void> {
+    this.form.markAllAsTouched();
     if (this.form.invalid || !this.form.value.platform || !this.form.value.title?.trim()) return;
 
     const key: cardActionType = this.isEditMode ? 'update' : 'save';

@@ -95,6 +95,12 @@
           "message": "¿Estás seguro de que quieres actualizar este juego?"
         }
       }
+    },
+    "errors": {
+      "required": "Este campo es obligatorio",
+      "invalidOption": "Selecciona una opción válida de la lista",
+      "ratingMin": "La valoración mínima es 0",
+      "ratingMax": "La valoración máxima es 10"
     }
   },
   "home": {

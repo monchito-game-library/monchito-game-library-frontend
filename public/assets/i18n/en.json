@@ -95,6 +95,12 @@
           "message": "Are you sure you want to update this game?"
         }
       }
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidOption": "Select a valid option from the list",
+      "ratingMin": "Minimum rating is 0",
+      "ratingMax": "Maximum rating is 10"
     }
   },
   "home": {
