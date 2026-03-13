@@ -96,7 +96,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   readonly selectedStore: WritableSignal<'' | StoreType> = signal<StoreType | ''>('');
   readonly selectedStatus: WritableSignal<string> = signal('');
   readonly onlyFavorites: WritableSignal<boolean> = signal(false);
-  readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'hoursPlayed' | 'id'> = signal('id');
+  readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'id'> = signal('id');
   readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('desc');
   readonly columnCount: WritableSignal<number> = signal(4);
 
@@ -130,9 +130,6 @@ export class GameListComponent implements OnInit, OnDestroy {
           break;
         case 'personalRating':
           comparison = (a.personalRating || 0) - (b.personalRating || 0);
-          break;
-        case 'hoursPlayed':
-          comparison = (a.hoursPlayed || 0) - (b.hoursPlayed || 0);
           break;
         case 'id':
         default:
@@ -194,13 +191,6 @@ export class GameListComponent implements OnInit, OnDestroy {
    */
   getTotalPrice(): number {
     return this.filteredGames().reduce((acc: number, game: GameModel): number => acc + (game.price || 0), 0);
-  }
-
-  /**
-   * Returns the total hours played across all filtered games.
-   */
-  getTotalHours(): number {
-    return this.filteredGames().reduce((acc: number, game: GameModel): number => acc + game.hoursPlayed, 0);
   }
 
   /**

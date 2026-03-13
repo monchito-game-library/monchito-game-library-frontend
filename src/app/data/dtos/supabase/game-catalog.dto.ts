@@ -60,7 +60,7 @@ export interface UserGameDto {
   status: GameStatus;
   personal_rating: number | null;
   personal_review?: string | null;
-  hours_played: number;
+  edition: string | null;
   started_date: string | null;
   completed_date: string | null;
   platinum_date: string | null;

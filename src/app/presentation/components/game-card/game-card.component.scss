@@ -153,6 +153,17 @@
     overflow: hidden;
   }
 
+  .game-card__edition {
+    margin: 0.2rem 0 0;
+    font-size: 0.72rem;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   // Botones de acción — aparecen al hover
   .game-card__actions {
     position: absolute;

@@ -139,7 +139,7 @@ export class GameFormComponent implements OnInit {
     description: '',
     status: ['backlog' as GameStatus],
     personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
-    hours_played: [0, [Validators.min(0)]],
+    edition: [null as string | null],
     is_favorite: [false]
   });
 
@@ -256,7 +256,7 @@ export class GameFormComponent implements OnInit {
           description: game.description,
           status: game.status,
           personal_rating: game.personalRating,
-          hours_played: game.hoursPlayed,
+          edition: game.edition,
           is_favorite: game.isFavorite
         });
 
@@ -301,14 +301,16 @@ export class GameFormComponent implements OnInit {
         description: raw.description ?? '',
         status: raw.status ?? 'backlog',
         personalRating: raw.personal_rating ?? null,
-        hoursPlayed: raw.hours_played ?? 0,
+        edition: raw.edition ?? null,
         isFavorite: raw.is_favorite ?? false
       };
 
+      const catalogEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
+
       if (this.isEditMode && this._gameId !== undefined) {
-        await this._gameUseCases.updateGame(this._userId, this._gameId, game, this.selectedGame());
+        await this._gameUseCases.updateGame(this._userId, this._gameId, game, catalogEntry);
       } else {
-        await this._gameUseCases.addGame(this._userId, game, this.selectedGame());
+        await this._gameUseCases.addGame(this._userId, game, catalogEntry);
       }
 
       void this._router.navigate(['/list']);

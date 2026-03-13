@@ -19,13 +19,6 @@
         <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
       }
     </div>
-    @if (!loading() && getTotalHours() > 0) {
-      <div class="game-list__stat-divider"></div>
-      <div class="game-list__stat">
-        <mat-icon>schedule</mat-icon>
-        <span>{{ getTotalHours() }}h</span>
-      </div>
-    }
     @if (!loading() && getAverageRating() > 0) {
       <div class="game-list__stat-divider"></div>
       <div class="game-list__stat game-list__stat--rating">
@@ -83,7 +76,6 @@
         <mat-option value="title">Título (A-Z)</mat-option>
         <mat-option value="price">Precio</mat-option>
         <mat-option value="personal_rating">Mi valoración</mat-option>
-        <mat-option value="hours_played">Horas jugadas</mat-option>
       </mat-select>
     </mat-form-field>
 
