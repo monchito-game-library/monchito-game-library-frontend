@@ -36,6 +36,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { GameCardComponent } from '@/components/game-card/game-card.component';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-game-list',
@@ -59,7 +60,8 @@ import { GameCardComponent } from '@/components/game-card/game-card.component';
     MatPrefix,
     TranslocoPipe,
     GameCardComponent,
-    RouterLink
+    RouterLink,
+    SkeletonComponent
   ]
 })
 export class GameListComponent implements OnInit, OnDestroy {

@@ -12,6 +12,14 @@ export interface RawgRepositoryContract {
   searchGames(query: string, page?: number, pageSize?: number): Promise<GameCatalogDto[]>;
 
   /**
+   * Returns a list of top-rated games from RAWG (no search term).
+   * Used to pre-populate the banner picker on load.
+   *
+   * @param {number} [pageSize] - Number of results to fetch (default: 12)
+   */
+  getTopGames(pageSize?: number): Promise<GameCatalogDto[]>;
+
+  /**
    * Returns the full detail of a game from RAWG mapped to GameCatalogDto.
    *
    * @param {number} gameId - RAWG game ID

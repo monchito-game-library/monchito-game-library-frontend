@@ -15,6 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { TranslocoService } from '@ngneat/transloco';
 import { UserContextService } from '@/services/user-context.service';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ThemeService } from '@/services/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import {
@@ -37,7 +38,7 @@ interface NavItem {
   styleUrls: ['./app.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger]
+  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent]
 })
 export class AppComponent implements OnInit {
   // --- Inyecciones privadas ---

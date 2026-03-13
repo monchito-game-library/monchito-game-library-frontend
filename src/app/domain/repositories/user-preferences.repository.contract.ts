@@ -40,6 +40,21 @@ export interface UserPreferencesRepositoryContract {
    * @param {File} file - Image file selected by the user
    */
   uploadAvatar(userId: string, file: File): Promise<string>;
+
+  /**
+   * Uploads a banner image to storage and returns its public URL.
+   *
+   * @param {string} userId - Authenticated user ID
+   * @param {File} file - Image file selected by the user
+   */
+  uploadBanner(userId: string, file: File): Promise<string>;
+
+  /**
+   * Deletes the user's banner file from the banners bucket.
+   *
+   * @param {string} userId - Authenticated user ID
+   */
+  deleteBanner(userId: string): Promise<void>;
 }
 
 /** InjectionToken for UserPreferencesRepositoryContract. */

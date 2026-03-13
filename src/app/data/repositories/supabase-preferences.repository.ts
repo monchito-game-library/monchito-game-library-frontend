@@ -12,6 +12,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   private readonly _supabase: SupabaseClient = getSupabaseClient();
   private readonly _table = 'user_preferences';
   private readonly _bucket = 'avatars';
+  private readonly _bannerBucket = 'banners';
 
   /**
    * Fetches the stored preferences for a user. Returns null if none exist yet.
@@ -81,5 +82,34 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
 
     const { data } = this._supabase.storage.from(this._bucket).getPublicUrl(userId);
     return `${data.publicUrl}?t=${Date.now()}`;
+  }
+
+  /**
+   * Uploads a banner image to the banners bucket and returns its public URL.
+   * Overwrites any existing file for the given user.
+   *
+   * @param {string} userId
+   * @param {File} file
+   */
+  async uploadBanner(userId: string, file: File): Promise<string> {
+    const { error } = await this._supabase.storage.from(this._bannerBucket).upload(userId, file, {
+      upsert: true,
+      contentType: file.type
+    });
+
+    if (error) throw new Error(`Failed to upload banner: ${error.message}`);
+
+    const { data } = this._supabase.storage.from(this._bannerBucket).getPublicUrl(userId);
+    return `${data.publicUrl}?t=${Date.now()}`;
+  }
+
+  /**
+   * Deletes the user's banner file from the banners bucket.
+   * Silently ignores errors if the file does not exist.
+   *
+   * @param {string} userId
+   */
+  async deleteBanner(userId: string): Promise<void> {
+    await this._supabase.storage.from(this._bannerBucket).remove([userId]);
   }
 }

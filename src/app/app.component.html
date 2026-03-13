@@ -33,7 +33,7 @@
               width="40"
               height="40" />
           } @else {
-            <div class="nav-rail__avatar nav-rail__avatar--skeleton"></div>
+            <app-skeleton width="40px" height="40px" borderRadius="50%" />
           }
         </div>
       </div>
@@ -58,7 +58,7 @@
               width="36"
               height="36" />
           } @else {
-            <div class="app-topbar__avatar app-topbar__avatar--skeleton"></div>
+            <app-skeleton width="36px" height="36px" borderRadius="50%" />
           }
         </div>
       </header>
@@ -103,7 +103,7 @@
             width="64"
             height="64" />
         } @else {
-          <div class="profile-menu__avatar profile-menu__avatar--skeleton"></div>
+          <app-skeleton width="64px" height="64px" borderRadius="50%" />
         }
         <span class="profile-menu__name">{{ getDisplayName() }}</span>
         <span class="profile-menu__email">{{ getUserEmail() }}</span>

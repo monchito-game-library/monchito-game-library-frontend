@@ -121,17 +121,6 @@
       animation: avatar-fade-in 250ms ease;
     }
 
-    &--skeleton {
-      background: linear-gradient(
-        90deg,
-        var(--mat-sys-surface-variant) 25%,
-        var(--mat-sys-surface-container-highest) 50%,
-        var(--mat-sys-surface-variant) 75%
-      );
-      background-size: 200% 100%;
-      animation: avatar-shimmer 1.4s infinite;
-    }
-
     &:hover {
       transform: scale(1.05);
     }
@@ -182,17 +171,6 @@
 
     &--loaded {
       animation: avatar-fade-in 250ms ease;
-    }
-
-    &--skeleton {
-      background: linear-gradient(
-        90deg,
-        var(--mat-sys-surface-variant) 25%,
-        var(--mat-sys-surface-container-highest) 50%,
-        var(--mat-sys-surface-variant) 75%
-      );
-      background-size: 200% 100%;
-      animation: avatar-shimmer 1.4s infinite;
     }
   }
 }
@@ -292,17 +270,6 @@
   &--loaded {
     animation: avatar-fade-in 250ms ease;
   }
-
-  &--skeleton {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.12) 25%,
-      rgba(255, 255, 255, 0.25) 50%,
-      rgba(255, 255, 255, 0.12) 75%
-    );
-    background-size: 200% 100%;
-    animation: avatar-shimmer 1.4s infinite;
-  }
 }
 
 .profile-menu__name {
@@ -373,15 +340,6 @@
 }
 
 // ─── Animaciones de avatar ────────────────────────────────────────────────────
-
-@keyframes avatar-shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
 
 @keyframes avatar-fade-in {
   from {

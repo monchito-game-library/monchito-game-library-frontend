@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Ajusta tu foto de perfil</h2>
+<h2 mat-dialog-title>{{ config.title }}</h2>
 
 <mat-dialog-content>
   <div class="crop-dialog__container">
@@ -8,11 +8,11 @@
       </div>
     }
     <image-cropper
-      [imageFile]="imageFile"
-      [aspectRatio]="1"
-      [roundCropper]="true"
+      [imageFile]="config.file"
+      [aspectRatio]="config.aspectRatio"
+      [roundCropper]="config.roundCropper"
       [maintainAspectRatio]="true"
-      [resizeToWidth]="300"
+      [resizeToWidth]="config.resizeToWidth"
       [imageQuality]="92"
       [allowMoveImage]="true"
       [hideResizeSquares]="true"

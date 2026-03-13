@@ -13,6 +13,9 @@ export class UserPreferencesService {
   /** Whether an avatar upload is in progress. */
   readonly uploadingAvatar: WritableSignal<boolean> = signal(false);
 
+  /** Whether a banner upload is in progress. */
+  readonly uploadingBanner: WritableSignal<boolean> = signal(false);
+
   /** List of game cover URLs available for use as panel banner. */
   readonly gameImageUrls: WritableSignal<string[]> = signal([]);
 

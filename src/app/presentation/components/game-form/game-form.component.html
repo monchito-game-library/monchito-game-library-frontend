@@ -164,14 +164,14 @@
 
         <div class="game-form__footer">
           <div class="game-form__toggles">
-            <mat-slide-toggle formControlName="platinum">
-              <mat-icon>emoji_events</mat-icon>
-              {{ 'gameForm.fields.platinum' | transloco }}
-            </mat-slide-toggle>
-            <mat-slide-toggle formControlName="is_favorite" color="warn">
-              <mat-icon>favorite</mat-icon>
-              {{ 'gameForm.fields.is_favorite' | transloco }}
-            </mat-slide-toggle>
+            <div class="game-form__toggle-row">
+              <span class="game-form__toggle-label">{{ 'gameForm.fields.platinum' | transloco }}</span>
+              <app-toggle-switch formControlName="platinum" icon="emoji_events" iconChecked="emoji_events" />
+            </div>
+            <div class="game-form__toggle-row">
+              <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
+              <app-toggle-switch formControlName="is_favorite" icon="favorite" iconChecked="favorite" />
+            </div>
           </div>
 
           <button
