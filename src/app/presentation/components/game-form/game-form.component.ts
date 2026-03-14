@@ -101,11 +101,11 @@ export class GameFormComponent implements OnInit {
 
   // ────────────────────── Variables privadas ──────────────────────
   private readonly _searchSubject: Subject<string> = new Subject<string>();
+  /** Increments on every form value change to trigger hasChanges recomputation. */
+  private readonly _formVersion: WritableSignal<number> = signal(0);
   private _gameId?: number;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
-  /** Increments on every form value change to trigger hasChanges recomputation. */
-  private readonly _formVersion: WritableSignal<number> = signal(0);
 
   // ────────────────────── Constantes ───────────────────────
   /** Available platforms for the autocomplete input. */

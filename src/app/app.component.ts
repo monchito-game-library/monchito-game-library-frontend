@@ -48,12 +48,13 @@ export class AppComponent implements OnInit {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  readonly userContext: UserContextService = inject(UserContextService);
 
   // --- Variables privadas ---
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
 
   // --- Variables públicas readonly ---
+  readonly userContext: UserContextService = inject(UserContextService);
+
   /** Ítems de navegación principal */
   readonly navItems: NavItem[] = [
     { icon: 'sports_esports', label: 'Colección', route: '/list' },

@@ -27,24 +27,6 @@ export class AuthStateService {
   }
 
   /**
-   * Resolves the active session on startup and registers the auth-state change listener.
-   */
-  private async _initSession(): Promise<void> {
-    const user: AuthUserModel | null = await this._authUseCases.getSession();
-    this._currentUser.set(user);
-    this._loading.set(false);
-
-    this._authUseCases.onAuthStateChange((updatedUser: AuthUserModel | null) => {
-      const wasAuthenticated: boolean = this._currentUser() !== null;
-      this._currentUser.set(updatedUser);
-
-      if (wasAuthenticated && updatedUser === null) {
-        void this._router.navigate(['/login']);
-      }
-    });
-  }
-
-  /**
    * Returns true if there is an authenticated user.
    */
   isAuthenticated(): boolean {
@@ -77,5 +59,23 @@ export class AuthStateService {
    */
   getAvatarUrl(): string | null {
     return this._currentUser()?.avatarUrl ?? null;
+  }
+
+  /**
+   * Resolves the active session on startup and registers the auth-state change listener.
+   */
+  private async _initSession(): Promise<void> {
+    const user: AuthUserModel | null = await this._authUseCases.getSession();
+    this._currentUser.set(user);
+    this._loading.set(false);
+
+    this._authUseCases.onAuthStateChange((updatedUser: AuthUserModel | null) => {
+      const wasAuthenticated: boolean = this._currentUser() !== null;
+      this._currentUser.set(updatedUser);
+
+      if (wasAuthenticated && updatedUser === null) {
+        void this._router.navigate(['/login']);
+      }
+    });
   }
 }

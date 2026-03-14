@@ -22,78 +22,6 @@ export class SupabaseRepository implements GameRepositoryContract {
   private readonly _userGamesTable = 'user_games';
 
   /**
-   * Finds an existing game_catalog entry by RAWG ID (or by title for manual entries),
-   * creating one if it does not exist yet. Returns the catalog row UUID.
-   *
-   * @param {string} title
-   * @param {GameCatalog | null} [catalogEntry] - Provide when the game comes from RAWG.
-   */
-  private async _getOrCreateGameCatalog(title: string, catalogEntry?: GameCatalog | null): Promise<string> {
-    if (catalogEntry) {
-      const { data: existing } = await this._supabase
-        .from(this._catalogTable)
-        .select('id')
-        .eq('rawg_id', catalogEntry.rawg_id)
-        .single();
-
-      if (existing) return existing.id;
-
-      const catalogRecord: GameCatalogInsertDto = {
-        rawg_id: catalogEntry.rawg_id,
-        title: catalogEntry.title,
-        slug: catalogEntry.slug,
-        image_url: catalogEntry.image_url,
-        released_date: catalogEntry.released_date,
-        rating: catalogEntry.rating,
-        platforms: catalogEntry.platforms,
-        genres: catalogEntry.genres,
-        description: catalogEntry.description,
-        source: 'rawg'
-      };
-
-      const { data: newCatalog, error } = await this._supabase
-        .from(this._catalogTable)
-        .insert(catalogRecord)
-        .select('id')
-        .single();
-
-      if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
-      return newCatalog.id;
-    }
-
-    const { data: existing } = await this._supabase
-      .from(this._catalogTable)
-      .select('id')
-      .ilike('title', title)
-      .single();
-
-    if (existing) return existing.id;
-
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
-
-    const catalogRecord: GameCatalogInsertDto = {
-      rawg_id: null,
-      title,
-      slug,
-      image_url: null,
-      released_date: null,
-      rating: 0,
-      platforms: [],
-      genres: [],
-      source: 'manual'
-    };
-
-    const { data: newCatalog, error } = await this._supabase
-      .from(this._catalogTable)
-      .insert(catalogRecord)
-      .select('id')
-      .single();
-
-    if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
-    return newCatalog.id;
-  }
-
-  /**
    * Returns all games for a user, paginating in batches of 1000 to work around
    * Supabase's default query limit.
    *
@@ -247,5 +175,77 @@ export class SupabaseRepository implements GameRepositoryContract {
   async getById(userId: string, gameId: number): Promise<GameModel | undefined> {
     const games = await this.getAllGamesForUser(userId);
     return games.find((g) => g.id === gameId);
+  }
+
+  /**
+   * Finds an existing game_catalog entry by RAWG ID (or by title for manual entries),
+   * creating one if it does not exist yet. Returns the catalog row UUID.
+   *
+   * @param {string} title
+   * @param {GameCatalog | null} [catalogEntry] - Provide when the game comes from RAWG.
+   */
+  private async _getOrCreateGameCatalog(title: string, catalogEntry?: GameCatalog | null): Promise<string> {
+    if (catalogEntry) {
+      const { data: existing } = await this._supabase
+        .from(this._catalogTable)
+        .select('id')
+        .eq('rawg_id', catalogEntry.rawg_id)
+        .single();
+
+      if (existing) return existing.id;
+
+      const catalogRecord: GameCatalogInsertDto = {
+        rawg_id: catalogEntry.rawg_id,
+        title: catalogEntry.title,
+        slug: catalogEntry.slug,
+        image_url: catalogEntry.image_url,
+        released_date: catalogEntry.released_date,
+        rating: catalogEntry.rating,
+        platforms: catalogEntry.platforms,
+        genres: catalogEntry.genres,
+        description: catalogEntry.description,
+        source: 'rawg'
+      };
+
+      const { data: newCatalog, error } = await this._supabase
+        .from(this._catalogTable)
+        .insert(catalogRecord)
+        .select('id')
+        .single();
+
+      if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
+      return newCatalog.id;
+    }
+
+    const { data: existing } = await this._supabase
+      .from(this._catalogTable)
+      .select('id')
+      .ilike('title', title)
+      .single();
+
+    if (existing) return existing.id;
+
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+
+    const catalogRecord: GameCatalogInsertDto = {
+      rawg_id: null,
+      title,
+      slug,
+      image_url: null,
+      released_date: null,
+      rating: 0,
+      platforms: [],
+      genres: [],
+      source: 'manual'
+    };
+
+    const { data: newCatalog, error } = await this._supabase
+      .from(this._catalogTable)
+      .insert(catalogRecord)
+      .select('id')
+      .single();
+
+    if (error) throw new Error(`Failed to create game catalog: ${error.message}`);
+    return newCatalog.id;
   }
 }
