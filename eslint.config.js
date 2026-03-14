@@ -1,6 +1,7 @@
 // eslint.config.js
 const angular = require('@angular-eslint/eslint-plugin');
 const parser = require('@typescript-eslint/parser');
+const tseslint = require('@typescript-eslint/eslint-plugin');
 const prettier = require('eslint-config-prettier');
 const jsdoc = require('eslint-plugin-jsdoc');
 
@@ -30,6 +31,7 @@ module.exports = [
     },
     plugins: {
       '@angular-eslint': angular,
+      '@typescript-eslint': tseslint,
       jsdoc
     },
     rules: {
@@ -40,6 +42,22 @@ module.exports = [
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' }
+      ],
+
+      // ── Naming convention ────────────────────────────────────────────────────
+
+      // Private class members (fields, methods, accessors) must start with _.
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: ['classProperty', 'classMethod', 'accessor'],
+          modifiers: ['private'],
+          format: null,
+          custom: {
+            regex: '^_',
+            match: true
+          }
+        }
       ],
 
       // ── JSDoc rules ──────────────────────────────────────────────────────────
