@@ -19,7 +19,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
@@ -44,7 +44,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   styleUrl: './game-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage]
+  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe]
 })
 export class GameCardComponent {
   private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;

@@ -39,14 +39,18 @@
 
         <!-- Acciones — visibles al hover -->
         <div class="game-card__actions">
-          <button mat-icon-button class="game-card__action-btn" (click)="editGame()" aria-label="Editar juego">
+          <button
+            mat-icon-button
+            class="game-card__action-btn"
+            (click)="editGame()"
+            [attr.aria-label]="'gameCard.aria.edit' | transloco">
             <mat-icon>edit</mat-icon>
           </button>
           <button
             mat-icon-button
             class="game-card__action-btn game-card__action-btn--danger"
             (click)="deleteGame()"
-            aria-label="Eliminar juego">
+            [attr.aria-label]="'gameCard.aria.delete' | transloco">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -57,7 +61,11 @@
         <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
         <div class="game-card__stats">
           @if (game().description) {
-            <button mat-icon-button class="game-card__flip-btn" (click)="onFlip()" aria-label="Ver descripción">
+            <button
+              mat-icon-button
+              class="game-card__flip-btn"
+              (click)="onFlip()"
+              [attr.aria-label]="'gameCard.aria.viewDescription' | transloco">
               <mat-icon>flip_to_back</mat-icon>
             </button>
           }
@@ -84,7 +92,7 @@
           mat-icon-button
           class="game-card__flip-btn game-card__flip-btn--back"
           (click)="onFlip()"
-          aria-label="Volver">
+          [attr.aria-label]="'gameCard.aria.back' | transloco">
           <mat-icon>flip_to_front</mat-icon>
         </button>
       </div>

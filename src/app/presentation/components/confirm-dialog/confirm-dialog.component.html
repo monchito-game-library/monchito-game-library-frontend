@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data.title }}</h2>
 <mat-dialog-content>{{ data.message }}</mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>No</button>
-  <button mat-flat-button color="warn" [mat-dialog-close]="true">Yes</button>
+  <button mat-button mat-dialog-close>{{ 'common.no' | transloco }}</button>
+  <button mat-flat-button color="warn" [mat-dialog-close]="true">{{ 'common.yes' | transloco }}</button>
 </mat-dialog-actions>
