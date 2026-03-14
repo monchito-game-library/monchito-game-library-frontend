@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/monchito-game-library/browser",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
