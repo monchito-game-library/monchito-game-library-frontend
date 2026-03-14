@@ -60,6 +60,30 @@ module.exports = [
         }
       ],
 
+      // ── Member ordering ──────────────────────────────────────────────────────
+
+      // Enforces the class member order defined in CLAUDE.md:
+      // private readonly fields → private fields → public readonly fields →
+      // public fields → constructor → public methods → private methods.
+      // Note: signals and configs both map to public-readonly-field so their
+      // relative order within that group is left to convention.
+      '@typescript-eslint/member-ordering': [
+        'warn',
+        {
+          default: {
+            memberTypes: [
+              'private-readonly-field',
+              'private-field',
+              'public-readonly-field',
+              'public-field',
+              'constructor',
+              'public-method',
+              'private-method'
+            ]
+          }
+        }
+      ],
+
       // ── JSDoc rules ──────────────────────────────────────────────────────────
 
       // Require JSDoc on all class methods, excluding constructors, getters/setters
