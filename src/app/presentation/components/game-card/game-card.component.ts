@@ -7,7 +7,9 @@ import {
   input,
   InputSignal,
   Output,
-  Signal
+  Signal,
+  signal,
+  WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
@@ -15,7 +17,6 @@ import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslocoService } from '@ngneat/transloco';
@@ -43,7 +44,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   styleUrl: './game-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, MatTooltip, NgOptimizedImage]
+  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage]
 })
 export class GameCardComponent {
   private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -91,8 +92,18 @@ export class GameCardComponent {
     return Array(Math.floor(rating / 2)).fill(1);
   });
 
+  /** Whether the card is currently showing its back face (description). */
+  readonly isFlipped: WritableSignal<boolean> = signal<boolean>(false);
+
   /** Emitted when the game has been successfully deleted. */
   @Output() gameDeleted: EventEmitter<number> = new EventEmitter<number>();
+
+  /**
+   * Toggles the card flip to show/hide the description on the back face.
+   */
+  onFlip = (): void => {
+    this.isFlipped.update((v: boolean) => !v);
+  };
 
   /**
    * Navigates to the edit form for this game.

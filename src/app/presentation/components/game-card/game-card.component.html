@@ -1,68 +1,93 @@
 <mat-card class="game-card">
-  <div class="game-card__image-wrapper">
-    <img class="game-card__image" [ngSrc]="defaultImage()" fill alt="Game cover" />
+  <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
+    <!-- CARA DELANTERA -->
+    <div class="game-card__front">
+      <div class="game-card__image-wrapper">
+        <img class="game-card__image" [ngSrc]="defaultImage()" fill alt="Game cover" />
 
-    <!-- Badge de estado — top left -->
-    @if (gameStatus()) {
-      <div class="game-card__status-badge" [style.background-color]="gameStatus()!.color">
-        <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
-      </div>
-    }
-
-    <!-- Favorito — top right -->
-    @if (isFavorite()) {
-      <div class="game-card__favorite">
-        <mat-icon>favorite</mat-icon>
-      </div>
-    }
-
-    <!-- Overlay degradado con título, plataforma y platino -->
-    <div class="game-card__overlay">
-      <div class="game-card__platform-row">
-        @if (game().platform) {
-          <span class="game-card__platform-chip">{{ game().platform }}</span>
+        <!-- Badge de estado — top left -->
+        @if (gameStatus()) {
+          <div class="game-card__status-badge" [style.background-color]="gameStatus()!.color">
+            <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
+          </div>
         }
-        @if (game().platinum) {
-          <span class="game-card__platinum-chip">
-            <mat-icon>emoji_events</mat-icon>
-          </span>
+
+        <!-- Favorito — top right -->
+        @if (isFavorite()) {
+          <div class="game-card__favorite">
+            <mat-icon>favorite</mat-icon>
+          </div>
         }
+
+        <!-- Overlay degradado con título, plataforma y platino -->
+        <div class="game-card__overlay">
+          <div class="game-card__platform-row">
+            @if (game().platform) {
+              <span class="game-card__platform-chip">{{ game().platform }}</span>
+            }
+            @if (game().platinum) {
+              <span class="game-card__platinum-chip">
+                <mat-icon>emoji_events</mat-icon>
+              </span>
+            }
+          </div>
+          <p class="game-card__title">{{ game().title }}</p>
+          @if (edition()) {
+            <p class="game-card__edition">{{ edition() }}</p>
+          }
+        </div>
+
+        <!-- Acciones — visibles al hover -->
+        <div class="game-card__actions">
+          <button mat-icon-button class="game-card__action-btn" (click)="editGame()" aria-label="Editar juego">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="game-card__action-btn game-card__action-btn--danger"
+            (click)="deleteGame()"
+            aria-label="Eliminar juego">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
-      <p class="game-card__title">{{ game().title }}</p>
-      @if (edition()) {
-        <p class="game-card__edition">{{ edition() }}</p>
-      }
+
+      <!-- Footer -->
+      <div class="game-card__footer">
+        <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
+        <div class="game-card__stats">
+          @if (game().description) {
+            <button mat-icon-button class="game-card__flip-btn" (click)="onFlip()" aria-label="Ver descripción">
+              <mat-icon>flip_to_back</mat-icon>
+            </button>
+          }
+          @if (personalRating() !== null) {
+            <span class="game-card__stat game-card__stat--rating">
+              <mat-icon>star</mat-icon>{{ personalRating() }}/10
+            </span>
+          }
+        </div>
+      </div>
     </div>
 
-    <!-- Acciones — visibles al hover -->
-    <div class="game-card__actions">
-      <button mat-icon-button class="game-card__action-btn" (click)="editGame()" aria-label="Editar juego">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        class="game-card__action-btn game-card__action-btn--danger"
-        (click)="deleteGame()"
-        aria-label="Eliminar juego">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div class="game-card__footer">
-    <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
-    <div class="game-card__stats">
-      @if (game().description) {
-        <span class="game-card__stat" [matTooltip]="game().description" matTooltipPosition="above">
-          <mat-icon>info_outline</mat-icon>
-        </span>
-      }
-      @if (personalRating() !== null) {
-        <span class="game-card__stat game-card__stat--rating">
-          <mat-icon>star</mat-icon>{{ personalRating() }}/10
-        </span>
-      }
+    <!-- CARA TRASERA -->
+    <div class="game-card__back" [style.background-image]="'url(' + defaultImage() + ')'">
+      <div class="game-card__back-overlay">
+        <div class="game-card__back-content">
+          <p class="game-card__back-title">{{ game().title }}</p>
+          @if (edition()) {
+            <p class="game-card__back-edition">{{ edition() }}</p>
+          }
+          <p class="game-card__back-description">{{ game().description }}</p>
+        </div>
+        <button
+          mat-icon-button
+          class="game-card__flip-btn game-card__flip-btn--back"
+          (click)="onFlip()"
+          aria-label="Volver">
+          <mat-icon>flip_to_front</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </mat-card>

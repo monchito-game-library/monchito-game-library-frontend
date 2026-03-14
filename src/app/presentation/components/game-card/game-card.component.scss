@@ -2,12 +2,14 @@
   background-color: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface);
   border-radius: 1rem;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 0;
   cursor: default;
+  border: 1px solid var(--mat-sys-outline-variant);
+  // perspective necesaria para el efecto 3D — no puede tener overflow:hidden
+  perspective: 1200px;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -22,6 +24,104 @@
 
     .game-card__image {
       transform: scale(1.04);
+    }
+  }
+
+  // Elemento interno que rota — define el espacio 3D
+  .game-card__inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+
+    &--flipped {
+      transform: rotateY(-180deg);
+    }
+  }
+
+  // Cara delantera — layout normal
+  .game-card__front {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  // Cara trasera — pre-rotada 180deg, aparece al voltear
+  .game-card__back {
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateY(180deg);
+    background-size: cover;
+    background-position: center;
+  }
+
+  // Capa semitransparente sobre la imagen de fondo
+  .game-card__back-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem 1rem 0.75rem;
+  }
+
+  .game-card__back-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .game-card__back-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .game-card__back-edition {
+    margin: 0;
+    font-size: 0.72rem;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .game-card__back-description {
+    margin: 0.35rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .game-card__flip-btn {
+    color: rgba(255, 255, 255, 0.7) !important;
+    flex-shrink: 0;
+
+    &--back {
+      align-self: flex-end;
     }
   }
 

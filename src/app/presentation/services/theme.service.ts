@@ -1,10 +1,9 @@
 import { effect, Injectable, Renderer2, RendererFactory2, signal } from '@angular/core';
 
-/** Presentation service that manages the dark/light theme and persists the preference to localStorage. */
+/** Presentation service that manages the dark/light theme. The preference is persisted in Supabase; system colour-scheme is used as the initial default. */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly _renderer: Renderer2;
-  private readonly _themeKey = 'user-theme';
 
   /** Internal signal tracking whether dark mode is active. */
   private readonly _isDark = signal<boolean>(true);
@@ -20,20 +19,17 @@ export class ThemeService {
 
       if (isDark) {
         this._renderer.addClass(document.documentElement, 'dark-mode');
-        localStorage.setItem(this._themeKey, 'dark');
       } else {
         this._renderer.removeClass(document.documentElement, 'dark-mode');
-        localStorage.setItem(this._themeKey, 'light');
       }
     });
   }
 
-  /** Initialises the theme from localStorage, falling back to the system colour-scheme preference. */
+  /** Initialises the theme from the system colour-scheme preference. Supabase will override this once user preferences are loaded. */
   initTheme(): void {
-    const saved: string | null = localStorage.getItem(this._themeKey);
+    localStorage.removeItem('user-theme');
     const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    this._isDark.set(saved === 'dark' || (!saved && prefersDark));
+    this._isDark.set(prefersDark);
   }
 
   /** Forces dark mode. */
