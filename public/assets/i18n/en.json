@@ -244,6 +244,18 @@
       "updateName": "Error updating display name"
     }
   },
+  "nav": {
+    "collection": "Collection",
+    "add": "Add",
+    "settings": "Settings",
+    "logout": "Log out",
+    "aria": {
+      "mainNav": "Main navigation",
+      "userMenu": "Menu for {{ name }}",
+      "openUserMenu": "Open user menu",
+      "bottomNav": "Navigation"
+    }
+  },
   "selectUser": {
     "title": "Select User"
   },

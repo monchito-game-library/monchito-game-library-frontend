@@ -13,7 +13,7 @@ import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ThemeService } from '@/services/theme.service';
@@ -33,7 +33,7 @@ import { NavItemInterface } from '@/interfaces/nav-item.interface';
   styleUrls: ['./app.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent]
+  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent, TranslocoPipe]
 })
 export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);
@@ -49,8 +49,8 @@ export class AppComponent implements OnInit {
 
   /** Main navigation items. */
   readonly navItems: NavItemInterface[] = [
-    { icon: 'sports_esports', label: 'Colección', route: '/list' },
-    { icon: 'add_circle', label: 'Añadir', route: '/add' }
+    { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
+    { icon: 'add_circle', label: 'nav.add', route: '/add' }
   ];
 
   /** Reactive signal with the current avatar URL. */
