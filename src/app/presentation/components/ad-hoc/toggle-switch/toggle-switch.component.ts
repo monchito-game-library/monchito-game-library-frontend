@@ -36,15 +36,11 @@ const DEFAULT_ICON_CHECKED = 'check';
   ]
 })
 export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
-  // --- CVA internals ---
-
   /**
    * True once Angular Forms has called registerOnChange, meaning formControlName
    * is in use and [checked] input should no longer drive the internal value.
    */
   private _cvaMode = false;
-
-  // --- Inputs ---
 
   /** Whether the toggle is in the checked (on) state. Used in standalone mode (without formControlName). */
   readonly checked: InputSignal<boolean> = input<boolean>(false);
@@ -58,12 +54,8 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   /** Whether the toggle is non-interactive. Used in standalone mode. CVA uses setDisabledState instead. */
   readonly disabled: InputSignal<boolean> = input<boolean>(false);
 
-  // --- Output ---
-
   /** Emits the new boolean state after each user interaction. */
   readonly changed: OutputEmitterRef<boolean> = output<boolean>();
-
-  // --- Internal state ---
 
   /** Internal value signal — driven by [checked] input (standalone) or writeValue (CVA). */
   readonly _value: WritableSignal<boolean> = signal(false);
@@ -79,8 +71,6 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
       this._isDisabled.set(changes['disabled'].currentValue ?? false);
     }
   }
-
-  // --- ControlValueAccessor ---
 
   /**
    * Called by Angular Forms to push a new value into the component.
@@ -118,8 +108,6 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   setDisabledState(isDisabled: boolean): void {
     this._isDisabled.set(isDisabled);
   }
-
-  // --- Public methods ---
 
   /**
    * Handles the click event, toggles the internal value, and notifies Angular Forms and the parent.

@@ -20,45 +20,41 @@ import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatProgressSpinner, ImageCropperComponent]
 })
 export class AvatarCropDialogComponent {
-  // --- Inyecciones privadas ---
   private readonly _dialogRef: MatDialogRef<AvatarCropDialogComponent, Blob | null> = inject(MatDialogRef);
 
-  // --- Variables privadas ---
   private _croppedBlob: Blob | null = null;
 
-  // --- Variables públicas readonly ---
-  /** Configuración del cropper recibida desde el componente padre. */
+  /** Cropper configuration received from the parent component. */
   readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(MAT_DIALOG_DATA);
 
-  // --- Signals públicos ---
-  /** Indica si la imagen del cropper ha terminado de cargar. */
+  /** Whether the cropper image has finished loading. */
   readonly imageLoaded: WritableSignal<boolean> = signal(false);
 
   /**
-   * Almacena el blob resultante cada vez que el cropper actualiza el recorte.
+   * Stores the resulting blob each time the cropper updates the crop area.
    *
-   * @param {ImageCroppedEvent} event - Evento con el blob recortado
+   * @param {ImageCroppedEvent} event - Event containing the cropped blob
    */
   onImageCropped(event: ImageCroppedEvent): void {
     this._croppedBlob = event.blob ?? null;
   }
 
   /**
-   * Marca la imagen como cargada para mostrar los controles del dialog.
+   * Marks the image as loaded so that the dialog controls are displayed.
    */
   onImageLoaded(): void {
     this.imageLoaded.set(true);
   }
 
   /**
-   * Cierra el dialog devolviendo el blob recortado al padre.
+   * Closes the dialog and returns the cropped blob to the parent.
    */
   onConfirm(): void {
     this._dialogRef.close(this._croppedBlob);
   }
 
   /**
-   * Cancela el recorte y cierra el dialog sin devolver ningún valor.
+   * Cancels the crop and closes the dialog without returning any value.
    */
   onCancel(): void {
     this._dialogRef.close(null);

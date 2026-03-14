@@ -62,7 +62,6 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  // --- Inyecciones privadas ---
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -73,61 +72,57 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
-  // --- Variables privadas ---
   private readonly _searchSubject: Subject<string> = new Subject<string>();
   private _searchSubscription?: Subscription;
 
-  // --- Variables públicas readonly ---
-  /** Idiomas disponibles para el selector. */
+  /** Available languages for the language selector. */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
 
-  // --- Signals públicos ---
-  /** URL del avatar del usuario, null si no se ha subido ninguno. */
+  /** Current user's avatar URL, or null if none has been uploaded. */
   readonly avatarUrl: WritableSignal<string | null> = this._userPreferencesState.avatarUrl;
 
-  /** Indica si se está subiendo un avatar en este momento. */
+  /** Whether an avatar upload is currently in progress. */
   readonly uploadingAvatar: WritableSignal<boolean> = this._userPreferencesState.uploadingAvatar;
 
-  /** Indica si se está subiendo un banner en este momento. */
+  /** Whether a banner upload is currently in progress. */
   readonly uploadingBanner: WritableSignal<boolean> = this._userPreferencesState.uploadingBanner;
 
-  /** URL de la portada actualmente usada como fondo del panel de perfil. */
+  /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
 
-  /** Estado actual del modo oscuro, sincronizado con ThemeService. */
+  /** Current dark-mode state, synchronised with ThemeService. */
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
-  /** Resultados de búsqueda de RAWG (o juegos populares cuando no hay búsqueda). */
+  /** RAWG search results, or popular games when no search has been performed. */
   readonly rawgResults: WritableSignal<GameCatalogDto[]> = this._userPreferencesState.rawgSearchResults;
 
-  /** Indica si hay una carga de RAWG en curso. */
+  /** Whether a RAWG search request is in progress. */
   readonly rawgSearchLoading: WritableSignal<boolean> = this._userPreferencesState.rawgSearchLoading;
 
-  /** Último término buscado en RAWG, para mostrar el estado vacío. */
+  /** Last RAWG search term entered, used to show the empty state. */
   readonly rawgSearchQuery: WritableSignal<string> = this._userPreferencesState.rawgSearchQuery;
 
-  /** Indica si las preferencias del usuario ya han sido cargadas desde Supabase. */
+  /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
 
-  /** Array de 12 elementos para renderizar los skeletons del grid de portadas. */
+  /** Array of 12 undefined elements used to render the cover grid skeletons. */
   readonly skeletonThumbs: undefined[] = Array(12);
 
-  /** Indica si el modo de edición del nombre está activo. */
+  /** Whether the display-name edit mode is active. */
   readonly editingName: WritableSignal<boolean> = signal(false);
 
-  /** Valor actual del input mientras se edita el nombre. */
+  /** Current value of the name input while editing. */
   readonly nameInputValue: WritableSignal<string> = signal('');
 
-  /** Indica si se está guardando el nuevo nombre. */
+  /** Whether the new display name is being saved. */
   readonly savingName: WritableSignal<boolean> = signal(false);
 
-  // --- Configuraciones públicas ---
-  /** Control reactivo para el idioma seleccionado. */
+  /** Reactive form control for the selected language. */
   readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
     nonNullable: true
   });
 
-  /** Referencia al input de edición de nombre para enfocar al activar el modo edición. */
+  /** Reference to the name input element, used to focus it when edit mode is activated. */
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
 
   ngOnInit(): void {
@@ -149,9 +144,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Establece la portada seleccionada como fondo del panel y la persiste en Supabase.
+   * Sets the selected cover as the profile panel background and persists it in Supabase.
    *
-   * @param {string} url - URL de la portada elegida
+   * @param {string} url - URL of the chosen cover image
    */
   onSelectBanner(url: string): void {
     const currentBannerUrl: string | null = this._userPreferencesState.bannerImageUrl();
@@ -163,9 +158,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Emite el término de búsqueda al subject para aplicar debounce.
+   * Pushes the search term to the subject to apply debounce.
    *
-   * @param {Event} event - Evento del input de búsqueda
+   * @param {Event} event - Input event from the search field
    */
   onRawgSearch(event: Event): void {
     const query: string = (event.target as HTMLInputElement).value;
@@ -174,7 +169,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Alterna entre tema oscuro y claro y persiste la preferencia en Supabase.
+   * Toggles between dark and light theme and persists the preference in Supabase.
    */
   toggleTheme(): void {
     this.isDark() ? this._themeService.setLightTheme() : this._themeService.setDarkTheme();
@@ -182,10 +177,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Abre el dialog de recorte al seleccionar un fichero de avatar.
-   * Una vez confirmado el recorte, sube el blob resultante a Supabase Storage.
+   * Opens the crop dialog when an avatar file is selected.
+   * Once the crop is confirmed, uploads the resulting blob to Supabase Storage.
    *
-   * @param {Event} event - Evento del input file
+   * @param {Event} event - File input event
    */
   async onAvatarFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -194,7 +189,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: { file, title: 'Ajusta tu foto de perfil', aspectRatio: 1, roundCropper: true, resizeToWidth: 300 },
+      data: { file, title: 'Adjust your profile photo', aspectRatio: 1, roundCropper: true, resizeToWidth: 300 },
       width: '480px',
       maxWidth: '95vw'
     });
@@ -212,18 +207,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
       const url: string = await this._userPreferencesUseCases.uploadAvatar(userId, croppedFile);
       this._userPreferencesState.avatarUrl.set(url);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error al subir la imagen';
-      this._snackBar.open(message, 'Cerrar', { duration: 4000 });
+      const message = error instanceof Error ? error.message : 'Error uploading image';
+      this._snackBar.open(message, 'Close', { duration: 4000 });
     } finally {
       this._userPreferencesState.uploadingAvatar.set(false);
     }
   }
 
   /**
-   * Abre el dialog de recorte al seleccionar un fichero para el banner.
-   * Una vez confirmado el recorte, sube el blob resultante a Supabase Storage.
+   * Opens the crop dialog when a banner file is selected.
+   * Once the crop is confirmed, uploads the resulting blob to Supabase Storage.
    *
-   * @param {Event} event - Evento del input file
+   * @param {Event} event - File input event
    */
   async onBannerFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -232,7 +227,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: { file, title: 'Ajusta tu banner', aspectRatio: 16 / 9, roundCropper: false, resizeToWidth: 1280 },
+      data: { file, title: 'Adjust your banner', aspectRatio: 16 / 9, roundCropper: false, resizeToWidth: 1280 },
       width: '640px',
       maxWidth: '95vw'
     });
@@ -250,15 +245,15 @@ export class SettingsComponent implements OnInit, OnDestroy {
       const url: string = await this._userPreferencesUseCases.uploadBanner(userId, croppedFile);
       this._userPreferencesState.bannerImageUrl.set(url);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error al subir el banner';
-      this._snackBar.open(message, 'Cerrar', { duration: 4000 });
+      const message = error instanceof Error ? error.message : 'Error uploading banner';
+      this._snackBar.open(message, 'Close', { duration: 4000 });
     } finally {
       this._userPreferencesState.uploadingBanner.set(false);
     }
   }
 
   /**
-   * Activa el modo edición del nombre e inicializa el input con el valor actual.
+   * Activates display-name edit mode and initialises the input with the current value.
    */
   onEditName(): void {
     this.nameInputValue.set(this.getDisplayName());
@@ -267,15 +262,15 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Cancela la edición del nombre y vuelve al modo lectura.
+   * Cancels display-name editing and returns to read mode.
    */
   onCancelEditName(): void {
     this.editingName.set(false);
   }
 
   /**
-   * Valida y guarda el nuevo nombre en Supabase auth metadata.
-   * Si el nombre no ha cambiado, cancela sin llamar a la API.
+   * Validates and saves the new display name to Supabase auth metadata.
+   * Cancels without calling the API if the name has not changed.
    */
   async onSaveName(): Promise<void> {
     const name: string = this.nameInputValue().trim();
@@ -289,41 +284,41 @@ export class SettingsComponent implements OnInit, OnDestroy {
       await this._authUseCases.updateDisplayName(name);
       this.editingName.set(false);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error al actualizar el nombre';
-      this._snackBar.open(message, 'Cerrar', { duration: 4000 });
+      const message = error instanceof Error ? error.message : 'Error updating display name';
+      this._snackBar.open(message, 'Close', { duration: 4000 });
     } finally {
       this.savingName.set(false);
     }
   }
 
   /**
-   * Obtiene el nombre para mostrar del usuario autenticado.
+   * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
     return this._userContext.getDisplayName();
   }
 
   /**
-   * Obtiene el email del usuario autenticado.
+   * Returns the authenticated user's email address.
    */
   getUserEmail(): string | null {
     return this._userContext.getUserEmail();
   }
 
   /**
-   * Obtiene la URL del avatar del usuario.
-   * Prioriza el avatar subido sobre el generado automáticamente.
+   * Returns the user's avatar URL.
+   * Prioritises the uploaded avatar over the automatically generated one.
    */
   getAvatarUrl(): string {
     return this.avatarUrl() ?? this._userContext.getAvatarUrl();
   }
 
   /**
-   * Llama a la API de RAWG con el término de búsqueda y actualiza los resultados.
-   * Si la búsqueda está vacía, recarga los juegos populares iniciales.
-   * Filtra los juegos sin imagen para garantizar que todos los resultados son usables como banner.
+   * Calls the RAWG API with the search term and updates the results signal.
+   * If the query is empty, reloads the initial popular games.
+   * Filters out games without an image to ensure all results are usable as banners.
    *
-   * @param {string} query - Término de búsqueda
+   * @param {string} query - Search term
    */
   private async _executeSearch(query: string): Promise<void> {
     if (!query.trim()) {
@@ -342,7 +337,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga los juegos más valorados de RAWG para mostrar como sugerencias iniciales de banner.
+   * Loads the top-rated RAWG games to display as initial banner suggestions.
    */
   private async _loadInitialBanners(): Promise<void> {
     this._userPreferencesState.rawgSearchLoading.set(true);
@@ -357,7 +352,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Persiste el tema e idioma actuales en Supabase si hay usuario autenticado.
+   * Persists the current theme and language preferences in Supabase if there is an authenticated user.
    */
   private _savePreferences(): void {
     const userId: string | null = this._userContext.userId();
