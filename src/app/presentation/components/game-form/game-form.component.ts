@@ -89,7 +89,6 @@ import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/r
   ]
 })
 export class GameFormComponent implements OnInit {
-  // ────────────────────── Inyecciones ──────────────────────
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _router: Router = inject(Router);
@@ -99,7 +98,6 @@ export class GameFormComponent implements OnInit {
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _rawgRepo: RawgRepositoryContract = inject(RAWG_REPOSITORY);
 
-  // ────────────────────── Variables privadas ──────────────────────
   private readonly _searchSubject: Subject<string> = new Subject<string>();
   /** Increments on every form value change to trigger hasChanges recomputation. */
   private readonly _formVersion: WritableSignal<number> = signal(0);
@@ -107,7 +105,6 @@ export class GameFormComponent implements OnInit {
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
 
-  // ────────────────────── Constantes ───────────────────────
   /** Available platforms for the autocomplete input. */
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
 
@@ -120,7 +117,6 @@ export class GameFormComponent implements OnInit {
   /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
-  // ────────────────────── Formulario ───────────────────────
   /** Reactive form for creating or editing a game entry. */
   readonly form = this._fb.group({
     title: ['', Validators.required],
@@ -148,7 +144,6 @@ export class GameFormComponent implements OnInit {
     is_favorite: [false]
   });
 
-  // ────── Autocompletado dinámico de plataformas ──────
   readonly platformInput = toSignal(this.form.controls.platform.valueChanges, {
     initialValue: this.form.controls.platform.value
   });
@@ -187,7 +182,6 @@ export class GameFormComponent implements OnInit {
     );
   });
 
-  // ────── Autocompletado dinámico de tiendas ──────
   readonly storeInput = toSignal(this.form.controls.store.valueChanges, {
     initialValue: this.form.controls.store.value ?? 'none'
   });
@@ -202,7 +196,6 @@ export class GameFormComponent implements OnInit {
     );
   });
 
-  // ────────────────────── Signals públicos ──────────────────────
   /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
@@ -239,7 +232,6 @@ export class GameFormComponent implements OnInit {
     return current !== this._initialSnapshot;
   });
 
-  // ────────────────────── Configuraciones públicas ──────────────────────
   /** Whether the form is in edit mode (true) or create mode (false). */
   isEditMode: boolean = false;
 
@@ -251,9 +243,6 @@ export class GameFormComponent implements OnInit {
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
   }
 
-  /**
-   * Inicializa el formulario y carga datos si se está en modo edición.
-   */
   async ngOnInit(): Promise<void> {
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) return;
@@ -343,7 +332,7 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Activa el modo búsqueda de catálogo.
+   * Activates catalogue search mode.
    */
   openSearchMode(): void {
     this.searchMode.set(true);

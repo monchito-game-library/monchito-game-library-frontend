@@ -36,7 +36,6 @@ import { NavItemInterface } from '@/interfaces/nav-item.interface';
   imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent]
 })
 export class AppComponent implements OnInit {
-  // --- Inyecciones privadas ---
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
@@ -44,33 +43,29 @@ export class AppComponent implements OnInit {
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
 
-  // --- Variables privadas ---
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
 
-  // --- Variables públicas readonly ---
   readonly userContext: UserContextService = inject(UserContextService);
 
-  /** Ítems de navegación principal */
+  /** Main navigation items. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'Colección', route: '/list' },
     { icon: 'add_circle', label: 'Añadir', route: '/add' }
   ];
 
-  // --- Signals públicos ---
-  /** Señal reactiva con la URL del avatar actual */
+  /** Reactive signal with the current avatar URL. */
   readonly avatarUrl = this._userPreferencesState.avatarUrl;
 
-  /** URL de la portada actualmente usada como fondo del panel */
+  /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl = this._userPreferencesState.bannerImageUrl;
 
-  /** Indica si las preferencias del usuario ya han sido cargadas desde Supabase. */
+  /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
 
-  /** Ruta actual */
+  /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
 
-  // --- Configuraciones públicas ---
-  /** Referencias a los disparadores del menú de perfil (rail + topbar) */
+  /** References to the profile menu triggers (rail + topbar). */
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
   constructor() {
@@ -96,7 +91,7 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Navega a la página de ajustes y cierra el menú de perfil.
+   * Navigates to the settings page and closes the profile menu.
    */
   onNavigateToSettings(): void {
     this._closeMenu();
@@ -104,7 +99,7 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Verifica si hay un usuario autenticado y no estamos en una ruta pública.
+   * Returns true if there is an authenticated user and the current route is not public.
    */
   isAuthenticated(): boolean {
     const isUserAuthenticated = this.userContext.isUserSelected();
@@ -113,10 +108,10 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Determina si un ítem de navegación está activo según la ruta actual.
-   * La ruta /update/:id se considera activa para el ítem /add.
+   * Returns true if a navigation item is active for the current route.
+   * The /update/:id route is considered active for the /add item.
    *
-   * @param {string} route - Ruta del ítem de navegación
+   * @param {string} route - Route path of the navigation item
    */
   isNavActive(route: string): boolean {
     const current = this.currentRoute();
@@ -127,38 +122,38 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Obtiene el nombre para mostrar del usuario autenticado.
+   * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
     return this.userContext.getDisplayName();
   }
 
   /**
-   * Obtiene la URL del avatar del usuario.
-   * Prioriza el avatar subido por el usuario sobre el generado automáticamente.
+   * Returns the user's avatar URL.
+   * Prioritises the uploaded avatar over the automatically generated one.
    */
   getAvatarUrl(): string {
     return this.avatarUrl() ?? this.userContext.getAvatarUrl();
   }
 
   /**
-   * Obtiene el email del usuario autenticado.
+   * Returns the authenticated user's email address.
    */
   getUserEmail(): string | null {
     return this.userContext.getUserEmail();
   }
 
   /**
-   * Cierra la sesión del usuario.
+   * Signs out the current user.
    */
   logout(): void {
     this.userContext.clearUser();
   }
 
   /**
-   * Carga las preferencias del usuario desde Supabase y aplica tema, idioma y avatar.
+   * Loads user preferences from Supabase and applies theme, language and avatar.
    *
-   * @param {string} userId - ID del usuario autenticado
+   * @param {string} userId - Authenticated user ID
    */
   private async _loadPreferences(userId: string): Promise<void> {
     const prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
@@ -189,16 +184,16 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Carga las URLs de portada de la colección del usuario y elige una aleatoria como fondo del panel.
+   * Loads cover image URLs from the user's collection and picks one at random as the panel background.
+   * The list is shuffled and capped at 24 so the Settings grid stays manageable;
+   * each session shows a different subset, adding visual variety.
    *
-   * @param {string} userId - ID del usuario autenticado
+   * @param {string} userId - Authenticated user ID
    */
   private async _loadGameImages(userId: string): Promise<void> {
     const games: GameModel[] = await this._gameUseCases.getAllGames(userId);
     const urls: string[] = games.map((game: GameModel) => game.imageUrl).filter((url): url is string => !!url);
 
-    // Barajamos y limitamos a 24 para que el grid de Settings no sea interminable.
-    // Cada sesión muestra un subconjunto distinto, lo que añade variedad.
     const shuffled = [...urls].sort(() => Math.random() - 0.5).slice(0, 24);
     this._userPreferencesState.gameImageUrls.set(shuffled);
     this._userPreferencesState.gamesLoaded.set(true);
@@ -206,10 +201,8 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Elige aleatoriamente una URL de portada de la lista disponible y la asigna al banner.
-   */
-  /**
-   * Elige aleatoriamente una URL de portada solo si el usuario no tiene banner guardado.
+   * Picks a random cover URL from the available list and sets it as the banner,
+   * only if the user does not already have a saved banner.
    */
   private _pickRandomBanner(): void {
     if (this._userPreferencesState.bannerImageUrl()) return;
@@ -219,7 +212,7 @@ export class AppComponent implements OnInit {
   }
 
   /**
-   * Cierra todos los disparadores activos del menú de perfil.
+   * Closes all active profile menu triggers.
    */
   private _closeMenu(): void {
     this.menuTriggers?.forEach((trigger: MatMenuTrigger) => trigger.closeMenu());

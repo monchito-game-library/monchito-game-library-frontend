@@ -91,13 +91,28 @@ export class GameListComponent implements OnInit, OnDestroy {
   /** Full list of games in the user's collection. */
   readonly allGames: WritableSignal<GameModel[]> = signal<GameModel[]>([]);
 
+  /** Current value of the title search input. */
   readonly searchTerm: WritableSignal<string> = signal('');
+
+  /** Currently selected platform filter, or empty string for no filter. */
   readonly selectedConsole: WritableSignal<'' | PlatformType> = signal<PlatformType | ''>('');
+
+  /** Currently selected store filter, or empty string for no filter. */
   readonly selectedStore: WritableSignal<'' | StoreType> = signal<StoreType | ''>('');
+
+  /** Currently selected status filter, or empty string for no filter. */
   readonly selectedStatus: WritableSignal<string> = signal('');
+
+  /** Whether only favourite games are shown. */
   readonly onlyFavorites: WritableSignal<boolean> = signal(false);
+
+  /** Field used to sort the game list. */
   readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'id'> = signal('id');
+
+  /** Sort direction applied to the current sort field. */
   readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('desc');
+
+  /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
   readonly columnCount: WritableSignal<number> = signal(4);
 
   /** Filtered and sorted game list. */
@@ -153,9 +168,6 @@ export class GameListComponent implements OnInit, OnDestroy {
     return rows;
   });
 
-  /**
-   * Loads all games and sets up observers on init.
-   */
   async ngOnInit(): Promise<void> {
     await this._loadGames();
 
@@ -178,9 +190,6 @@ export class GameListComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Unsubscribes from all subscriptions on destroy.
-   */
   ngOnDestroy(): void {
     this._routerSubscription?.unsubscribe();
     this._bpSubscription?.unsubscribe();
@@ -215,9 +224,9 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handles a game-deleted event from the card component.
+   * Handles a game-deleted event from the card component and reloads the list.
    *
-   * @param {number} id
+   * @param {number} id - ID of the deleted game
    */
   async onGameDeleted(id: number): Promise<void> {
     try {
@@ -232,14 +241,14 @@ export class GameListComponent implements OnInit, OnDestroy {
   /**
    * Tracking function for virtual scroll rows.
    *
-   * @param {number} index
+   * @param {number} index - Row index in the virtual scroll viewport
    */
   trackByRowIndex = (index: number): number => index;
 
   /**
-   * Updates the search term on input.
+   * Updates the search term signal from the input event.
    *
-   * @param {Event} event
+   * @param {Event} event - Input event from the search field
    */
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
