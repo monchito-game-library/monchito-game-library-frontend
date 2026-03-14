@@ -36,6 +36,14 @@ const DEFAULT_ICON_CHECKED = 'check';
   ]
 })
 export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
+  // --- CVA internals ---
+
+  /**
+   * True once Angular Forms has called registerOnChange, meaning formControlName
+   * is in use and [checked] input should no longer drive the internal value.
+   */
+  private _cvaMode = false;
+
   // --- Inputs ---
 
   /** Whether the toggle is in the checked (on) state. Used in standalone mode (without formControlName). */
@@ -62,17 +70,6 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
 
   /** Internal disabled signal — driven by [disabled] input (standalone) or setDisabledState (CVA). */
   readonly _isDisabled: WritableSignal<boolean> = signal(false);
-
-  // --- CVA internals ---
-
-  private _onChange: (value: boolean) => void = () => {};
-  private _onTouched: () => void = () => {};
-
-  /**
-   * True once Angular Forms has called registerOnChange, meaning formControlName
-   * is in use and [checked] input should no longer drive the internal value.
-   */
-  private _cvaMode = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['checked'] && !this._cvaMode) {
@@ -143,4 +140,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   getIcon(): string {
     return this._value() ? this.iconChecked() : this.icon();
   }
+
+  private _onChange: (value: boolean) => void = () => {};
+  private _onTouched: () => void = () => {};
 }
