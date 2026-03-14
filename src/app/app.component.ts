@@ -25,12 +25,7 @@ import {
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
 import { GameModel } from '@/models/game/game.model';
-
-interface NavItem {
-  icon: string;
-  label: string;
-  route: string;
-}
+import { NavItemInterface } from '@/interfaces/nav-item.interface';
 
 @Component({
   selector: 'app-root',
@@ -56,7 +51,7 @@ export class AppComponent implements OnInit {
   readonly userContext: UserContextService = inject(UserContextService);
 
   /** Ítems de navegación principal */
-  readonly navItems: NavItem[] = [
+  readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'Colección', route: '/list' },
     { icon: 'add_circle', label: 'Añadir', route: '/add' }
   ];
