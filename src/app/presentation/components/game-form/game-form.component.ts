@@ -124,7 +124,7 @@ export class GameFormComponent implements OnInit {
   /** Reactive form for creating or editing a game entry. */
   readonly form = this._fb.group({
     title: ['', Validators.required],
-    price: [null as number | null, Validators.required],
+    price: [null as number | null],
     store: [
       'none' as StoreType,
       [
