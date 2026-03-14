@@ -1,17 +1,17 @@
 <div class="settings">
-  <h1 class="settings__title">Ajustes</h1>
+  <h1 class="settings__title">{{ 'settings.title' | transloco }}</h1>
 
   <!-- Sección: Perfil -->
   <mat-card class="settings__card">
     <mat-card-header>
-      <mat-card-title>Perfil</mat-card-title>
+      <mat-card-title>{{ 'settings.profile.title' | transloco }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="settings__avatar-section">
         <label
           class="settings__avatar-wrapper"
           [class.settings__avatar-wrapper--disabled]="!preferencesLoaded()"
-          matTooltip="Cambiar foto de perfil">
+          [matTooltip]="'settings.profile.changePhotoTooltip' | transloco">
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -39,7 +39,10 @@
             @if (!editingName()) {
               <div class="settings__name-row">
                 <span class="settings__name">{{ getDisplayName() }}</span>
-                <button class="settings__name-edit-btn" (click)="onEditName()" aria-label="Editar nombre">
+                <button
+                  class="settings__name-edit-btn"
+                  (click)="onEditName()"
+                  [attr.aria-label]="'settings.profile.editNameAriaLabel' | transloco">
                   <mat-icon>edit</mat-icon>
                 </button>
               </div>
@@ -53,20 +56,20 @@
                   (keydown.enter)="onSaveName()"
                   (keydown.escape)="onCancelEditName()"
                   maxlength="30"
-                  placeholder="Tu nombre..." />
+                  [placeholder]="'settings.profile.namePlaceholder' | transloco" />
                 @if (savingName()) {
                   <mat-spinner diameter="18" />
                 } @else {
                   <button
                     class="settings__name-action-btn settings__name-action-btn--confirm"
                     (click)="onSaveName()"
-                    aria-label="Confirmar">
+                    [attr.aria-label]="'settings.profile.confirmAriaLabel' | transloco">
                     <mat-icon>check</mat-icon>
                   </button>
                   <button
                     class="settings__name-action-btn settings__name-action-btn--cancel"
                     (click)="onCancelEditName()"
-                    aria-label="Cancelar">
+                    [attr.aria-label]="'settings.profile.cancelAriaLabel' | transloco">
                     <mat-icon>close</mat-icon>
                   </button>
                 }
@@ -77,7 +80,7 @@
             <app-skeleton width="120px" height="1rem" />
             <app-skeleton width="160px" height="0.8rem" />
           }
-          <span class="settings__avatar-hint">Toca la imagen para cambiarla</span>
+          <span class="settings__avatar-hint">{{ 'settings.profile.tapToChange' | transloco }}</span>
         </div>
       </div>
     </mat-card-content>
@@ -86,16 +89,16 @@
   <!-- Sección: Apariencia -->
   <mat-card class="settings__card">
     <mat-card-header>
-      <mat-card-title>Apariencia</mat-card-title>
+      <mat-card-title>{{ 'settings.appearance.title' | transloco }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p class="settings__section-subtitle">Banner del panel</p>
+      <p class="settings__section-subtitle">{{ 'settings.appearance.bannerPanel' | transloco }}</p>
 
       <!-- Preview / placeholder clicable para subir imagen propia -->
       @if (!preferencesLoaded()) {
         <app-skeleton class="settings__banner-skeleton" width="100%" height="120px" borderRadius="10px" />
       } @else {
-        <label class="settings__banner-upload-label" matTooltip="Subir imagen propia">
+        <label class="settings__banner-upload-label" [matTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -117,7 +120,7 @@
           } @else {
             <div class="settings__banner-placeholder">
               <mat-icon>add_photo_alternate</mat-icon>
-              <span>Sube tu propia imagen</span>
+              <span>{{ 'settings.appearance.uploadOwnHint' | transloco }}</span>
             </div>
           }
         </label>
@@ -126,7 +129,7 @@
       <!-- Buscador -->
       <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
         <mat-icon matPrefix>search</mat-icon>
-        <mat-label>Buscar portada...</mat-label>
+        <mat-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</mat-label>
         <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
       </mat-form-field>
 
@@ -155,18 +158,24 @@
             }
           </div>
         } @else if (rawgSearchQuery() && !rawgSearchLoading()) {
-          <p class="settings__banner-empty">Sin resultados para "{{ rawgSearchQuery() }}"</p>
+          <p class="settings__banner-empty">
+            {{ 'settings.appearance.noResultsFor' | transloco: { query: rawgSearchQuery() } }}
+          </p>
         }
       </div>
 
       <mat-divider class="settings__section-divider" />
 
-      <p class="settings__section-subtitle">Tema</p>
+      <p class="settings__section-subtitle">{{ 'settings.appearance.theme' | transloco }}</p>
 
       <div class="settings__row">
         <span class="settings__row-label">
           <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-          {{ isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro' }}
+          {{
+            isDark()
+              ? ('settings.appearance.switchToLight' | transloco)
+              : ('settings.appearance.switchToDark' | transloco)
+          }}
         </span>
         <app-toggle-switch [checked]="isDark()" icon="light_mode" iconChecked="dark_mode" (changed)="toggleTheme()" />
       </div>
@@ -176,13 +185,13 @@
   <!-- Sección: Idioma -->
   <mat-card class="settings__card">
     <mat-card-header>
-      <mat-card-title>Idioma</mat-card-title>
+      <mat-card-title>{{ 'settings.language.title' | transloco }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="settings__row">
         <span class="settings__row-label">
           <mat-icon>language</mat-icon>
-          Idioma de la interfaz
+          {{ 'settings.language.interfaceLabel' | transloco }}
         </span>
         <div class="settings__lang-toggle">
           @for (lang of availableLanguages; track lang.code) {

@@ -21,7 +21,7 @@ import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { ThemeService } from '@/services/theme.service';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
@@ -58,7 +58,8 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatProgressSpinner,
     MatTooltip,
     ToggleSwitchComponent,
-    SkeletonComponent
+    SkeletonComponent,
+    TranslocoPipe
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
@@ -189,7 +190,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: { file, title: 'Adjust your profile photo', aspectRatio: 1, roundCropper: true, resizeToWidth: 300 },
+      data: {
+        file,
+        title: this._transloco.translate('settings.cropDialog.avatarTitle'),
+        aspectRatio: 1,
+        roundCropper: true,
+        resizeToWidth: 300
+      },
       width: '480px',
       maxWidth: '95vw'
     });
@@ -207,8 +214,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       const url: string = await this._userPreferencesUseCases.uploadAvatar(userId, croppedFile);
       this._userPreferencesState.avatarUrl.set(url);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error uploading image';
-      this._snackBar.open(message, 'Close', { duration: 4000 });
+      const message = error instanceof Error ? error.message : this._transloco.translate('settings.errors.uploadImage');
+      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
     } finally {
       this._userPreferencesState.uploadingAvatar.set(false);
     }
@@ -227,7 +234,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!file) return;
 
     const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: { file, title: 'Adjust your banner', aspectRatio: 16 / 9, roundCropper: false, resizeToWidth: 1280 },
+      data: {
+        file,
+        title: this._transloco.translate('settings.cropDialog.bannerTitle'),
+        aspectRatio: 16 / 9,
+        roundCropper: false,
+        resizeToWidth: 1280
+      },
       width: '640px',
       maxWidth: '95vw'
     });
@@ -245,8 +258,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
       const url: string = await this._userPreferencesUseCases.uploadBanner(userId, croppedFile);
       this._userPreferencesState.bannerImageUrl.set(url);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error uploading banner';
-      this._snackBar.open(message, 'Close', { duration: 4000 });
+      const message =
+        error instanceof Error ? error.message : this._transloco.translate('settings.errors.uploadBanner');
+      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
     } finally {
       this._userPreferencesState.uploadingBanner.set(false);
     }
@@ -284,8 +298,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       await this._authUseCases.updateDisplayName(name);
       this.editingName.set(false);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Error updating display name';
-      this._snackBar.open(message, 'Close', { duration: 4000 });
+      const message = error instanceof Error ? error.message : this._transloco.translate('settings.errors.updateName');
+      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
     } finally {
       this.savingName.set(false);
     }

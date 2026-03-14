@@ -1,10 +1,14 @@
 <div class="game-form-page">
   <header class="game-form-page__header">
     @if (searchMode()) {
-      <button mat-icon-button type="button" (click)="closeSearchMode()" aria-label="Volver al formulario">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="closeSearchMode()"
+        [attr.aria-label]="'gameForm.aria.backToForm' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1 class="game-form-page__title">Buscar en catálogo</h1>
+      <h1 class="game-form-page__title">{{ 'gameForm.search.title' | transloco }}</h1>
     } @else {
       <h1 class="game-form-page__title">
         {{ isEditMode ? ('gameForm.title.edit' | transloco) : ('gameForm.title.add' | transloco) }}
@@ -28,20 +32,22 @@
               type="button"
               (click)="clearSelectedGame()"
               class="game-cover-panel__clear-btn"
-              aria-label="Quitar selección">
+              [attr.aria-label]="'gameForm.aria.clearSelection' | transloco">
               <mat-icon>close</mat-icon>
             </button>
           } @else {
             <div class="game-cover-panel__placeholder">
               <mat-icon>sports_esports</mat-icon>
-              <span>Sin portada</span>
+              <span>{{ 'gameForm.cover.noCover' | transloco }}</span>
             </div>
           }
         </div>
 
         <button mat-flat-button type="button" (click)="openSearchMode()" class="game-cover-panel__search-btn">
           <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
-          {{ selectedGame() ? 'Cambiar juego' : 'Buscar en catálogo' }}
+          {{
+            selectedGame() ? ('gameForm.cover.changeGame' | transloco) : ('gameForm.cover.searchCatalogue' | transloco)
+          }}
         </button>
 
         @if (selectedGame()) {
@@ -79,8 +85,8 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-          <mat-label>Edición</mat-label>
-          <input matInput formControlName="edition" placeholder="Deluxe Edition, GOTY..." />
+          <mat-label>{{ 'gameForm.fields.edition' | transloco }}</mat-label>
+          <input matInput formControlName="edition" [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
           <mat-icon matSuffix>local_offer</mat-icon>
         </mat-form-field>
 
@@ -159,7 +165,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>Mi Valoración (0-10)</mat-label>
+          <mat-label>{{ 'gameForm.fields.rating' | transloco }}</mat-label>
           <input
             matInput
             formControlName="personal_rating"
@@ -167,7 +173,7 @@
             min="0"
             max="10"
             step="0.5"
-            placeholder="8.5" />
+            [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco" />
           <mat-icon matSuffix>star_rate</mat-icon>
           @if (form.controls.personal_rating.hasError('min')) {
             <mat-error>{{ 'gameForm.errors.ratingMin' | transloco }}</mat-error>
@@ -219,13 +225,13 @@
     <div class="game-search-panel" @fadeSlide>
       <div class="game-search-panel__input-wrapper">
         <mat-form-field appearance="outline" class="game-search-panel__field">
-          <mat-label>Busca un juego...</mat-label>
+          <mat-label>{{ 'gameForm.search.inputLabel' | transloco }}</mat-label>
           <mat-icon matPrefix>search</mat-icon>
           <input
             matInput
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
-            placeholder="Ej: Elden Ring, The Last of Us, Zelda..."
+            [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
             autofocus />
         </mat-form-field>
       </div>
@@ -240,14 +246,14 @@
         @if (!searchQuery()) {
           <div class="game-search-panel__placeholder">
             <mat-icon>sports_esports</mat-icon>
-            <p>Escribe el nombre de un juego para buscarlo</p>
+            <p>{{ 'gameForm.search.emptyHint' | transloco }}</p>
           </div>
         }
 
         @if (searchQuery() && !searchLoading() && !searchResults().length) {
           <div class="game-search-panel__placeholder">
             <mat-icon>search_off</mat-icon>
-            <p>No se encontraron resultados para "{{ searchQuery() }}"</p>
+            <p>{{ 'gameForm.search.noResults' | transloco: { query: searchQuery() } }}</p>
           </div>
         }
 
