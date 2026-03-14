@@ -9,7 +9,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
-import { CropDialogDataInterfaceInterface } from '@/interfaces/crop-dialog-data.interface';
+import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
 
 @Component({
   selector: 'app-avatar-crop-dialog',
