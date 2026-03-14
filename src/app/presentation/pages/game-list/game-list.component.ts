@@ -23,7 +23,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
@@ -67,6 +67,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
 export class GameListComponent implements OnInit, OnDestroy {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
@@ -232,9 +233,17 @@ export class GameListComponent implements OnInit, OnDestroy {
     try {
       await this._gameUseCases.deleteGame(this._userId, id);
       await this._loadGames();
-      this._snackBar.open('Game deleted successfully', 'Close', { duration: 2000 });
+      this._snackBar.open(
+        this._transloco.translate('gameList.snack.deleted'),
+        this._transloco.translate('common.close'),
+        { duration: 2000 }
+      );
     } catch {
-      this._snackBar.open('Error deleting game', 'Close', { duration: 3000 });
+      this._snackBar.open(
+        this._transloco.translate('gameList.snack.deleteError'),
+        this._transloco.translate('common.close'),
+        { duration: 3000 }
+      );
     }
   }
 
@@ -273,7 +282,11 @@ export class GameListComponent implements OnInit, OnDestroy {
       const data: GameModel[] = await this._gameUseCases.getAllGames(this._userId);
       this.allGames.set(data);
     } catch {
-      this._snackBar.open('Error loading games', 'Close', { duration: 3000 });
+      this._snackBar.open(
+        this._transloco.translate('gameList.snack.loadError'),
+        this._transloco.translate('common.close'),
+        { duration: 3000 }
+      );
     } finally {
       this.loading.set(false);
     }

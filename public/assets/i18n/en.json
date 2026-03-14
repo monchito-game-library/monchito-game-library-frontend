@@ -48,6 +48,17 @@
     "td-cons": "TodoConsolas",
     "none": "None"
   },
+  "common": {
+    "no": "No",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "cropDialog": {
+    "hint": "Drag to reposition · Pinch or use the scroll wheel to zoom"
+  },
   "gameCard": {
     "dialog": {
       "delete": {
@@ -58,6 +69,12 @@
     "menu": {
       "edit": "Edit",
       "delete": "Delete"
+    },
+    "aria": {
+      "edit": "Edit game",
+      "delete": "Delete game",
+      "viewDescription": "View description",
+      "back": "Go back"
     }
   },
   "gameForm": {
@@ -74,7 +91,11 @@
       "platform": "Platform",
       "status": "Status",
       "platinum": "Platinum",
-      "is_favorite": "Favourite"
+      "is_favorite": "Favourite",
+      "edition": "Edition",
+      "editionPlaceholder": "Deluxe Edition, GOTY...",
+      "rating": "My Rating (0-10)",
+      "ratingPlaceholder": "8.5"
     },
     "conditions": {
       "new": "New",
@@ -101,6 +122,22 @@
       "invalidOption": "Select a valid option from the list",
       "ratingMin": "Minimum rating is 0",
       "ratingMax": "Maximum rating is 10"
+    },
+    "search": {
+      "title": "Search catalogue",
+      "inputLabel": "Search for a game...",
+      "inputPlaceholder": "e.g. Elden Ring, The Last of Us, Zelda...",
+      "emptyHint": "Type the name of a game to search",
+      "noResults": "No results found for \"{{ query }}\""
+    },
+    "cover": {
+      "noCover": "No cover",
+      "changeGame": "Change game",
+      "searchCatalogue": "Search catalogue"
+    },
+    "aria": {
+      "backToForm": "Back to form",
+      "clearSelection": "Clear selection"
     }
   },
   "home": {
@@ -139,7 +176,72 @@
     "filters": {
       "title": "Search by Title",
       "console": "Filter by Console",
-      "store": "Filter by Store"
+      "store": "Filter by Store",
+      "allConsoles": "All",
+      "allStores": "All",
+      "status": "Status",
+      "allStatuses": "All",
+      "sortBy": "Sort by"
+    },
+    "sort": {
+      "recent": "Most Recent",
+      "title": "Title (A-Z)",
+      "price": "Price",
+      "rating": "My Rating"
+    },
+    "loading": "Loading collection...",
+    "snack": {
+      "deleted": "Game deleted successfully",
+      "deleteError": "Error deleting game",
+      "loadError": "Error loading games"
+    },
+    "empty": {
+      "noResults": "No results",
+      "noResultsSubtitle": "No game matches the active filters",
+      "clearFilters": "Clear filters",
+      "emptyCollection": "Your collection is empty",
+      "emptyCollectionSubtitle": "Add your first game to get started",
+      "addGame": "Add game"
+    },
+    "aria": {
+      "onlyFavorites": "Favourites only",
+      "clearFilters": "Clear filters"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "changePhotoTooltip": "Change profile photo",
+      "namePlaceholder": "Your name...",
+      "tapToChange": "Tap the image to change it",
+      "editNameAriaLabel": "Edit name",
+      "confirmAriaLabel": "Confirm",
+      "cancelAriaLabel": "Cancel"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "bannerPanel": "Panel banner",
+      "uploadOwnTooltip": "Upload your own image",
+      "uploadOwnHint": "Upload your own image",
+      "searchCoverLabel": "Search cover...",
+      "noResultsFor": "No results for \"{{ query }}\"",
+      "theme": "Theme",
+      "switchToLight": "Switch to light theme",
+      "switchToDark": "Switch to dark theme"
+    },
+    "language": {
+      "title": "Language",
+      "interfaceLabel": "Interface language"
+    },
+    "cropDialog": {
+      "avatarTitle": "Adjust your profile photo",
+      "bannerTitle": "Adjust your banner"
+    },
+    "errors": {
+      "uploadImage": "Error uploading image",
+      "uploadBanner": "Error uploading banner",
+      "updateName": "Error updating display name"
     }
   },
   "selectUser": {

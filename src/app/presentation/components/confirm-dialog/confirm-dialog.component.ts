@@ -8,6 +8,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
+import { TranslocoPipe } from '@ngneat/transloco';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 
 /**
@@ -22,7 +23,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
   styleUrl: './confirm-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatDialogClose]
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, TranslocoPipe]
 })
 export class ConfirmDialogComponent {
   /** Data injected into the dialog, containing title and message. */

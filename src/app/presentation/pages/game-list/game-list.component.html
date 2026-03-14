@@ -39,7 +39,7 @@
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
       <mat-select [value]="selectedConsole()" (selectionChange)="selectedConsole.set($event.value)">
-        <mat-option value="">Todas</mat-option>
+        <mat-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</mat-option>
         @for (c of consoles; track c.code) {
           <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
         }
@@ -49,7 +49,7 @@
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
       <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
-        <mat-option value="">Todas</mat-option>
+        <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
         @for (s of stores; track s.code) {
           <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
         }
@@ -57,9 +57,9 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>Estado</mat-label>
+      <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
       <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value)">
-        <mat-option value="">Todos</mat-option>
+        <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
         @for (status of gameStatuses; track status.code) {
           <mat-option [value]="status.code">
             <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
@@ -70,12 +70,12 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>Ordenar por</mat-label>
+      <mat-label>{{ 'gameList.filters.sortBy' | transloco }}</mat-label>
       <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value)">
-        <mat-option value="created_at">Más recientes</mat-option>
-        <mat-option value="title">Título (A-Z)</mat-option>
-        <mat-option value="price">Precio</mat-option>
-        <mat-option value="personal_rating">Mi valoración</mat-option>
+        <mat-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</mat-option>
+        <mat-option value="title">{{ 'gameList.sort.title' | transloco }}</mat-option>
+        <mat-option value="price">{{ 'gameList.sort.price' | transloco }}</mat-option>
+        <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -92,12 +92,16 @@
         mat-icon-button
         [class.game-list__fav-btn--active]="onlyFavorites()"
         (click)="onlyFavorites.set(!onlyFavorites())"
-        aria-label="Solo favoritos">
+        [attr.aria-label]="'gameList.aria.onlyFavorites' | transloco">
         <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
       </button>
 
       @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
-        <button mat-icon-button color="warn" (click)="clearAllFilters()" aria-label="Limpiar filtros">
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="clearAllFilters()"
+          [attr.aria-label]="'gameList.aria.clearFilters' | transloco">
           <mat-icon>filter_alt_off</mat-icon>
         </button>
       }
@@ -109,7 +113,7 @@
 @if (loading()) {
   <div class="game-list__loading">
     <mat-spinner diameter="48" />
-    <p class="game-list__loading-text">Cargando colección...</p>
+    <p class="game-list__loading-text">{{ 'gameList.loading' | transloco }}</p>
   </div>
 
   <!-- Estado: con juegos -->
@@ -129,11 +133,11 @@
 } @else if (allGames().length > 0) {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">search_off</mat-icon>
-    <p class="game-list__empty-title">Sin resultados</p>
-    <p class="game-list__empty-subtitle">Ningún juego coincide con los filtros activos</p>
+    <p class="game-list__empty-title">{{ 'gameList.empty.noResults' | transloco }}</p>
+    <p class="game-list__empty-subtitle">{{ 'gameList.empty.noResultsSubtitle' | transloco }}</p>
     <button mat-stroked-button (click)="clearAllFilters()">
       <mat-icon>filter_alt_off</mat-icon>
-      Limpiar filtros
+      {{ 'gameList.empty.clearFilters' | transloco }}
     </button>
   </div>
 
@@ -141,11 +145,11 @@
 } @else {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
-    <p class="game-list__empty-title">Tu colección está vacía</p>
-    <p class="game-list__empty-subtitle">Añade tu primer juego para empezar</p>
+    <p class="game-list__empty-title">{{ 'gameList.empty.emptyCollection' | transloco }}</p>
+    <p class="game-list__empty-subtitle">{{ 'gameList.empty.emptyCollectionSubtitle' | transloco }}</p>
     <button mat-flat-button routerLink="/add">
       <mat-icon>add_circle</mat-icon>
-      Añadir juego
+      {{ 'gameList.empty.addGame' | transloco }}
     </button>
   </div>
 }

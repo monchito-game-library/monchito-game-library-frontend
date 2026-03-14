@@ -23,12 +23,12 @@
       (imageCropped)="onImageCropped($event)"
       (imageLoaded)="onImageLoaded()" />
   </div>
-  <p class="crop-dialog__hint">Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom</p>
+  <p class="crop-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
 </mat-dialog-content>
 
 @if (imageLoaded()) {
   <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Cancelar</button>
-    <button mat-flat-button (click)="onConfirm()">Guardar</button>
+    <button mat-button (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button (click)="onConfirm()">{{ 'common.save' | transloco }}</button>
   </mat-dialog-actions>
 }

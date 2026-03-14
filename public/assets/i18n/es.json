@@ -48,6 +48,17 @@
     "td-cons": "TodoConsolas",
     "none": "Ninguna"
   },
+  "common": {
+    "no": "No",
+    "yes": "Sí",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "confirm": "Confirmar",
+    "close": "Cerrar"
+  },
+  "cropDialog": {
+    "hint": "Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom"
+  },
   "gameCard": {
     "dialog": {
       "delete": {
@@ -58,6 +69,12 @@
     "menu": {
       "edit": "Editar",
       "delete": "Eliminar"
+    },
+    "aria": {
+      "edit": "Editar juego",
+      "delete": "Eliminar juego",
+      "viewDescription": "Ver descripción",
+      "back": "Volver"
     }
   },
   "gameForm": {
@@ -74,7 +91,11 @@
       "platform": "Plataforma",
       "status": "Estado",
       "platinum": "Platino",
-      "is_favorite": "Favorito"
+      "is_favorite": "Favorito",
+      "edition": "Edición",
+      "editionPlaceholder": "Deluxe Edition, GOTY...",
+      "rating": "Mi Valoración (0-10)",
+      "ratingPlaceholder": "8.5"
     },
     "conditions": {
       "new": "Nuevo",
@@ -101,6 +122,22 @@
       "invalidOption": "Selecciona una opción válida de la lista",
       "ratingMin": "La valoración mínima es 0",
       "ratingMax": "La valoración máxima es 10"
+    },
+    "search": {
+      "title": "Buscar en catálogo",
+      "inputLabel": "Busca un juego...",
+      "inputPlaceholder": "Ej: Elden Ring, The Last of Us, Zelda...",
+      "emptyHint": "Escribe el nombre de un juego para buscarlo",
+      "noResults": "No se encontraron resultados para \"{{ query }}\""
+    },
+    "cover": {
+      "noCover": "Sin portada",
+      "changeGame": "Cambiar juego",
+      "searchCatalogue": "Buscar en catálogo"
+    },
+    "aria": {
+      "backToForm": "Volver al formulario",
+      "clearSelection": "Quitar selección"
     }
   },
   "home": {
@@ -139,7 +176,72 @@
     "filters": {
       "title": "Buscar por título",
       "console": "Filtrar por consola",
-      "store": "Filtrar por tienda"
+      "store": "Filtrar por tienda",
+      "allConsoles": "Todas",
+      "allStores": "Todas",
+      "status": "Estado",
+      "allStatuses": "Todos",
+      "sortBy": "Ordenar por"
+    },
+    "sort": {
+      "recent": "Más recientes",
+      "title": "Título (A-Z)",
+      "price": "Precio",
+      "rating": "Mi valoración"
+    },
+    "loading": "Cargando colección...",
+    "snack": {
+      "deleted": "Juego eliminado correctamente",
+      "deleteError": "Error al eliminar el juego",
+      "loadError": "Error al cargar los juegos"
+    },
+    "empty": {
+      "noResults": "Sin resultados",
+      "noResultsSubtitle": "Ningún juego coincide con los filtros activos",
+      "clearFilters": "Limpiar filtros",
+      "emptyCollection": "Tu colección está vacía",
+      "emptyCollectionSubtitle": "Añade tu primer juego para empezar",
+      "addGame": "Añadir juego"
+    },
+    "aria": {
+      "onlyFavorites": "Solo favoritos",
+      "clearFilters": "Limpiar filtros"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "profile": {
+      "title": "Perfil",
+      "changePhotoTooltip": "Cambiar foto de perfil",
+      "namePlaceholder": "Tu nombre...",
+      "tapToChange": "Toca la imagen para cambiarla",
+      "editNameAriaLabel": "Editar nombre",
+      "confirmAriaLabel": "Confirmar",
+      "cancelAriaLabel": "Cancelar"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "bannerPanel": "Banner del panel",
+      "uploadOwnTooltip": "Subir imagen propia",
+      "uploadOwnHint": "Sube tu propia imagen",
+      "searchCoverLabel": "Buscar portada...",
+      "noResultsFor": "Sin resultados para \"{{ query }}\"",
+      "theme": "Tema",
+      "switchToLight": "Cambiar a tema claro",
+      "switchToDark": "Cambiar a tema oscuro"
+    },
+    "language": {
+      "title": "Idioma",
+      "interfaceLabel": "Idioma de la interfaz"
+    },
+    "cropDialog": {
+      "avatarTitle": "Ajusta tu foto de perfil",
+      "bannerTitle": "Ajusta tu banner"
+    },
+    "errors": {
+      "uploadImage": "Error al subir la imagen",
+      "uploadBanner": "Error al subir el banner",
+      "updateName": "Error al actualizar el nombre"
     }
   },
   "selectUser": {

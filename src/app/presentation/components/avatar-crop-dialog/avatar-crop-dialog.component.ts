@@ -9,6 +9,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
+import { TranslocoPipe } from '@ngneat/transloco';
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
 
 @Component({
@@ -17,7 +18,15 @@ import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface
   styleUrl: './avatar-crop-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatProgressSpinner, ImageCropperComponent]
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    MatProgressSpinner,
+    ImageCropperComponent,
+    TranslocoPipe
+  ]
 })
 export class AvatarCropDialogComponent {
   private readonly _dialogRef: MatDialogRef<AvatarCropDialogComponent, Blob | null> = inject(MatDialogRef);
