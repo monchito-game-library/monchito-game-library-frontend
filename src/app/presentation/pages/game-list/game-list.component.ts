@@ -197,20 +197,33 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the sum of prices for all filtered games.
+   * Returns the number of filtered games that are owned (any status except wishlist).
    */
-  getTotalPrice(): number {
-    return this.filteredGames().reduce((acc: number, game: GameModel): number => acc + (game.price || 0), 0);
+  getOwnedCount(): number {
+    return this.filteredGames().filter((g: GameModel) => g.status !== 'wishlist').length;
   }
 
   /**
-   * Returns the average personal rating across filtered games that have one.
+   * Returns the number of filtered games with wishlist status.
    */
-  getAverageRating(): number {
-    const rated = this.filteredGames().filter((g: GameModel) => g.personalRating !== null);
-    if (rated.length === 0) return 0;
-    const sum = rated.reduce((acc: number, game: GameModel): number => acc + (game.personalRating || 0), 0);
-    return sum / rated.length;
+  getWishlistCount(): number {
+    return this.filteredGames().filter((g: GameModel) => g.status === 'wishlist').length;
+  }
+
+  /**
+   * Returns the number of filtered games with platinum status.
+   */
+  getPlatinumCount(): number {
+    return this.filteredGames().filter((g: GameModel) => g.status === 'platinum').length;
+  }
+
+  /**
+   * Returns the sum of prices for owned filtered games (excludes wishlist entries).
+   */
+  getTotalPrice(): number {
+    return this.filteredGames()
+      .filter((g: GameModel) => g.status !== 'wishlist')
+      .reduce((acc: number, game: GameModel): number => acc + (game.price || 0), 0);
   }
 
   /**
