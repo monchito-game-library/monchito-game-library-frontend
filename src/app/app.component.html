@@ -1,7 +1,7 @@
 @if (isAuthenticated()) {
   <div class="app-shell" [style.--banner-url]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : 'none'">
-    <!-- Navigation Rail — visible en desktop -->
-    <nav class="nav-rail" role="navigation" aria-label="Navegación principal">
+    <!-- Navigation Rail — desktop only -->
+    <nav class="nav-rail" role="navigation" [attr.aria-label]="'nav.aria.mainNav' | transloco">
       <div class="nav-rail__brand">
         <mat-icon>videogame_asset</mat-icon>
       </div>
@@ -12,9 +12,9 @@
             class="nav-rail__item"
             [class.nav-rail__item--active]="isNavActive(item.route)"
             [routerLink]="item.route"
-            [attr.aria-label]="item.label">
+            [attr.aria-label]="item.label | transloco">
             <mat-icon>{{ item.icon }}</mat-icon>
-            <span class="nav-rail__label">{{ item.label }}</span>
+            <span class="nav-rail__label">{{ item.label | transloco }}</span>
           </a>
         }
       </div>
@@ -24,7 +24,7 @@
           class="nav-rail__user"
           [matMenuTriggerFor]="profileMenu"
           role="button"
-          [attr.aria-label]="'Menú de ' + getDisplayName()">
+          [attr.aria-label]="'nav.aria.userMenu' | transloco: { name: getDisplayName() }">
           @if (preferencesLoaded()) {
             <img
               class="nav-rail__avatar nav-rail__avatar--loaded"
@@ -41,7 +41,7 @@
 
     <!-- Contenido principal -->
     <main class="app-main">
-      <!-- Topbar — visible solo en móvil -->
+      <!-- Topbar — mobile only -->
       <header class="app-topbar" role="banner">
         <mat-icon class="app-topbar__brand">videogame_asset</mat-icon>
         <span class="app-topbar__title">{{ getDisplayName() }}</span>
@@ -49,7 +49,7 @@
           class="app-topbar__user"
           [matMenuTriggerFor]="profileMenu"
           role="button"
-          aria-label="Abrir menú de usuario">
+          [attr.aria-label]="'nav.aria.openUserMenu' | transloco">
           @if (preferencesLoaded()) {
             <img
               class="app-topbar__avatar app-topbar__avatar--loaded"
@@ -68,16 +68,16 @@
       </div>
     </main>
 
-    <!-- Bottom Navigation — visible solo en móvil -->
-    <nav class="bottom-nav" role="navigation" aria-label="Navegación">
+    <!-- Bottom Navigation — mobile only -->
+    <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
       @for (item of navItems; track item.route) {
         <a
           class="bottom-nav__item"
           [class.bottom-nav__item--active]="isNavActive(item.route)"
           [routerLink]="item.route"
-          [attr.aria-label]="item.label">
+          [attr.aria-label]="item.label | transloco">
           <mat-icon>{{ item.icon }}</mat-icon>
-          <span class="bottom-nav__label">{{ item.label }}</span>
+          <span class="bottom-nav__label">{{ item.label | transloco }}</span>
         </a>
       }
     </nav>
@@ -86,14 +86,14 @@
   <router-outlet />
 }
 
-<!-- Menú de perfil compartido entre rail y topbar -->
+<!-- Profile menu shared between rail and topbar -->
 <mat-menu #profileMenu="matMenu" panelClass="profile-menu">
   <div
     class="profile-menu__panel"
     [style.background-image]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : null"
     (click)="$event.stopPropagation()">
     <div class="profile-menu__overlay">
-      <!-- Identidad -->
+      <!-- Identity -->
       <div class="profile-menu__identity">
         @if (preferencesLoaded()) {
           <img
@@ -109,15 +109,15 @@
         <span class="profile-menu__email">{{ getUserEmail() }}</span>
       </div>
 
-      <!-- Acciones -->
+      <!-- Actions -->
       <div class="profile-menu__actions">
         <button class="profile-menu__action-btn" (click)="onNavigateToSettings()">
           <mat-icon>settings</mat-icon>
-          <span>Ajustes</span>
+          <span>{{ 'nav.settings' | transloco }}</span>
         </button>
         <button class="profile-menu__action-btn profile-menu__action-btn--logout" (click)="logout()">
           <mat-icon>logout</mat-icon>
-          <span>Salir</span>
+          <span>{{ 'nav.logout' | transloco }}</span>
         </button>
       </div>
     </div>
