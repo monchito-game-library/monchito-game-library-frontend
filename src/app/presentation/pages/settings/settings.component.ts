@@ -78,9 +78,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private _searchSubscription?: Subscription;
 
   // --- Variables públicas readonly ---
-  /** Referencia al input de edición de nombre para enfocar al activar el modo edición. */
-  @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
-
   /** Idiomas disponibles para el selector. */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
 
@@ -129,6 +126,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
     nonNullable: true
   });
+
+  /** Referencia al input de edición de nombre para enfocar al activar el modo edición. */
+  @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
 
   ngOnInit(): void {
     this.selectedLangControl.valueChanges.subscribe((lang: string) => {
