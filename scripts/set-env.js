@@ -9,7 +9,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-const content = `export const environment = {
+const prodContent = `export const environment = {
   production: true,
   supabase: {
     url: '${process.env.SUPABASE_URL}',
@@ -22,6 +22,23 @@ const content = `export const environment = {
 };
 `;
 
-const outputPath = path.join(__dirname, '..', 'src', 'environments', 'environment.prod.ts');
-fs.writeFileSync(outputPath, content);
-console.log(`environment.prod.ts generated at ${outputPath}`);
+const devContent = `export const environment = {
+  production: false,
+  supabase: {
+    url: '${process.env.SUPABASE_URL}',
+    anonKey: '${process.env.SUPABASE_ANON_KEY}'
+  },
+  rawg: {
+    apiUrl: 'https://api.rawg.io/api',
+    apiKey: '${process.env.RAWG_API_KEY}'
+  }
+};
+`;
+
+const envDir = path.join(__dirname, '..', 'src', 'environments');
+
+fs.writeFileSync(path.join(envDir, 'environment.prod.ts'), prodContent);
+console.log('environment.prod.ts generated');
+
+fs.writeFileSync(path.join(envDir, 'environment.ts'), devContent);
+console.log('environment.ts generated');
