@@ -244,6 +244,18 @@
       "updateName": "Error al actualizar el nombre"
     }
   },
+  "nav": {
+    "collection": "Colección",
+    "add": "Añadir",
+    "settings": "Ajustes",
+    "logout": "Salir",
+    "aria": {
+      "mainNav": "Navegación principal",
+      "userMenu": "Menú de {{ name }}",
+      "openUserMenu": "Abrir menú de usuario",
+      "bottomNav": "Navegación"
+    }
+  },
   "selectUser": {
     "title": "Seleccionar usuario"
   },
