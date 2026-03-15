@@ -54,7 +54,9 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "confirm": "Confirmar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "edit": "Editar",
+    "delete": "Eliminar"
   },
   "cropDialog": {
     "hint": "Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom"
@@ -95,7 +97,13 @@
       "edition": "Edición",
       "editionPlaceholder": "Deluxe Edition, GOTY...",
       "rating": "Mi Valoración (0-10)",
-      "ratingPlaceholder": "8.5"
+      "ratingPlaceholder": "8.5",
+      "format": "Formato",
+      "formatNone": "Sin especificar"
+    },
+    "formats": {
+      "digital": "Digital",
+      "physical": "Físico"
     },
     "conditions": {
       "new": "Nuevo",
@@ -177,6 +185,10 @@
       "title": "Buscar por título",
       "console": "Filtrar por consola",
       "store": "Filtrar por tienda",
+      "format": "Formato",
+      "allFormats": "Todos",
+      "physical": "Físico",
+      "digital": "Digital",
       "allConsoles": "Todas",
       "allStores": "Todas",
       "status": "Estado",
@@ -254,7 +266,8 @@
       "userMenu": "Menú de {{ name }}",
       "openUserMenu": "Abrir menú de usuario",
       "bottomNav": "Navegación"
-    }
+    },
+    "management": "Gestión"
   },
   "selectUser": {
     "title": "Seleccionar usuario"
@@ -307,6 +320,27 @@
       "emailInvalid": "Correo electrónico inválido",
       "submit": "Enviar enlace de recuperación",
       "backToLogin": "Volver a iniciar sesión"
+    }
+  },
+  "management": {
+    "stores": {
+      "title": "Tiendas",
+      "addBtn": "Nueva tienda",
+      "editTitle": "Editar tienda",
+      "addTitle": "Nueva tienda",
+      "nameLabel": "Nombre",
+      "codeLabel": "Código",
+      "namePlaceholder": "ej. Fnac",
+      "codePlaceholder": "ej. fnac",
+      "deleteConfirm": "¿Eliminar la tienda «{{ name }}»? Los juegos vinculados a esta tienda quedarán sin tienda asignada.",
+      "emptyCustom": "Todavía no has añadido tiendas personalizadas.",
+      "systemLabel": "Sistema",
+      "customLabel": "Personalizadas",
+      "formatHintLabel": "Formato sugerido",
+      "formatHintNone": "Ambos",
+      "formatHintDigital": "Digital",
+      "formatHintPhysical": "Físico",
+      "loadError": "No se pudieron cargar las tiendas."
     }
   }
 }
