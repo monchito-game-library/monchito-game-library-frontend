@@ -60,7 +60,7 @@ export const routes: Routes = [
     path: 'management',
     loadComponent: (): Promise<typeof import('@/pages/management/management.component').ManagementComponent> =>
       import('@/pages/management/management.component').then((m) => m.ManagementComponent),
-    canActivate: [canActivateUser, canActivateAdmin],
+    canActivate: [canActivateUser],
     children: [
       { path: '', redirectTo: 'stores', pathMatch: 'full' },
       {
