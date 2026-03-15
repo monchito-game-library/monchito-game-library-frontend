@@ -1,5 +1,5 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
-import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { GameModel } from '@/models/game/game.model';
 
 /**
@@ -20,8 +20,8 @@ export class UserPreferencesService {
   /** URL of the cover currently used as the profile panel banner. */
   readonly bannerImageUrl: WritableSignal<string | null> = signal(null);
 
-  /** RAWG search results for the banner picker. */
-  readonly rawgSearchResults: WritableSignal<GameCatalogDto[]> = signal([]);
+  /** RAWG banner suggestions for the settings banner picker. */
+  readonly rawgSearchResults: WritableSignal<BannerSuggestionModel[]> = signal([]);
 
   /** Whether a RAWG banner search is in progress. */
   readonly rawgSearchLoading: WritableSignal<boolean> = signal(false);

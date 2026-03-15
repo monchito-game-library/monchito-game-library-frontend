@@ -143,13 +143,13 @@
           </div>
         } @else if (rawgResults().length) {
           <div class="settings__banner-grid">
-            @for (game of rawgResults(); track game.rawg_id) {
+            @for (banner of rawgResults(); track banner.imageUrl) {
               <button
                 class="settings__banner-thumb"
-                [class.settings__banner-thumb--active]="bannerImageUrl() === game.image_url"
-                (click)="onSelectBanner(game.image_url!)">
-                <img [src]="game.image_url" [alt]="game.title" loading="lazy" />
-                @if (bannerImageUrl() === game.image_url) {
+                [class.settings__banner-thumb--active]="bannerImageUrl() === banner.imageUrl"
+                (click)="onSelectBanner(banner.imageUrl)">
+                <img [src]="banner.imageUrl" [alt]="banner.title" loading="lazy" />
+                @if (bannerImageUrl() === banner.imageUrl) {
                   <div class="settings__banner-thumb-check">
                     <mat-icon>check_circle</mat-icon>
                   </div>
