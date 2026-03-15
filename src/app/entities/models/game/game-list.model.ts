@@ -1,3 +1,4 @@
+import { GameFormatType } from '@/types/game-format.type';
 import { GameStatus } from '@/types/game-status.type';
 import { PlatformType } from '@/types/platform.type';
 
@@ -27,6 +28,8 @@ export interface GameListModel {
   personalRating: number | null;
   /** Edition of the game copy (e.g. 'Deluxe Edition', 'GOTY Edition'). Null if standard. */
   edition: string | null;
+  /** Physical disc or digital download. Null if not specified. */
+  format: GameFormatType | null;
   /** Whether the game is marked as a favourite. */
   isFavorite: boolean;
 }

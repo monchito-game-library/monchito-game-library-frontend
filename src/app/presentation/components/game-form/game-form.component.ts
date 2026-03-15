@@ -47,6 +47,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { UserContextService } from '@/services/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { selectOneValidator } from '@/shared/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
@@ -102,6 +103,7 @@ export class GameFormComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
+  private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
 
@@ -115,6 +117,10 @@ export class GameFormComponent implements OnInit {
   private _gameUuid?: string;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
+  /** True while edit data is being loaded — prevents store valueChanges from triggering format auto-suggestion. */
+  private _loadingEditData: boolean = false;
+  /** True after the user manually changes the format toggle — prevents store auto-suggestion from overriding it. */
+  private _formatTouchedByUser: boolean = false;
 
   /** Available platforms for the autocomplete input. */
   readonly platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -290,6 +296,7 @@ export class GameFormComponent implements OnInit {
       const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, this._gameUuid);
       if (game) {
         this._gameId = game.id;
+        this._loadingEditData = true;
         this.form.patchValue({
           title: game.title,
           price: game.price,
@@ -304,6 +311,7 @@ export class GameFormComponent implements OnInit {
           format: game.format,
           is_favorite: game.isFavorite
         });
+        this._loadingEditData = false;
 
         if (game.imageUrl) {
           const slug = game.rawgSlug ?? '';
@@ -385,6 +393,7 @@ export class GameFormComponent implements OnInit {
         await this._gameUseCases.addGame(this._userId, game, catalogEntry);
       }
 
+      this._userPreferencesState.allGames.set([]);
       void this._router.navigate(['/list']);
     });
   }
@@ -503,6 +512,17 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
+   * Handles a manual format toggle change by the user.
+   * Marks the format as user-controlled so store auto-suggestion no longer overrides it.
+   *
+   * @param {GameFormatType | null} value - The format value selected by the user
+   */
+  onFormatChange(value: GameFormatType | null): void {
+    this._formatTouchedByUser = true;
+    this.form.controls.format.setValue(value);
+  }
+
+  /**
    * Returns the current user ID or throws if no user is authenticated.
    */
   private get _userId(): string {
@@ -531,7 +551,9 @@ export class GameFormComponent implements OnInit {
    * @param id
    */
   private _onStoreChange(id: string | null): void {
-    if (!id || this.form.controls.format.value) return;
+    if (this._loadingEditData) return;
+    this._formatTouchedByUser = false;
+    if (!id) return;
     const storeModel: StoreModel | undefined = this._storeModels().find((s: StoreModel) => s.id === id);
     if (storeModel?.formatHint) {
       this.form.controls.format.setValue(storeModel.formatHint);

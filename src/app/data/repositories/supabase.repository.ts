@@ -74,7 +74,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       const { data, error } = await this._supabase
         .from(this._viewName)
         .select(
-          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,is_favorite,image_url'
+          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url'
         )
         .eq('user_id', userId)
         .order('created_at', { ascending: false })

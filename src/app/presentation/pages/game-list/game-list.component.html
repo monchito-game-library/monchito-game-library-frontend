@@ -3,7 +3,7 @@
   <!-- Stats -->
   <div class="game-list__stats">
     <div class="game-list__stat">
-      <mat-icon>sports_esports</mat-icon>
+      <mat-icon>{{ formatFilterIcon() }}</mat-icon>
       @if (loading()) {
         <app-skeleton width="24px" height="12px" />
       } @else {
@@ -68,6 +68,21 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+      <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
+      <mat-select [value]="selectedFormat()" (selectionChange)="selectedFormat.set($event.value)">
+        <mat-option [value]="''">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
+        <mat-option value="physical">
+          <mat-icon>album</mat-icon>
+          {{ 'gameList.filters.physical' | transloco }}
+        </mat-option>
+        <mat-option value="digital">
+          <mat-icon>cloud</mat-icon>
+          {{ 'gameList.filters.digital' | transloco }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
       <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
       <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value)">
         <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
@@ -96,7 +111,7 @@
         mat-icon-button
         (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
         [attr.aria-label]="'Ordenación ' + sortDirection()">
-        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
       </button>
 
       <button
@@ -107,7 +122,9 @@
         <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
       </button>
 
-      @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+      @if (
+        searchTerm() || selectedConsole() || selectedStore() || selectedFormat() || selectedStatus() || onlyFavorites()
+      ) {
         <button
           mat-icon-button
           color="warn"

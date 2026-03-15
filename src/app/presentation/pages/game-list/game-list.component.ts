@@ -28,6 +28,7 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { GameListModel } from '@/models/game/game-list.model';
 import { StoreModel } from '@/models/store/store.model';
 import { PlatformType } from '@/types/platform.type';
+import { GameFormatType } from '@/types/game-format.type';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
@@ -106,14 +107,25 @@ export class GameListComponent implements OnInit, OnDestroy {
   /** Currently selected status filter, or empty string for no filter. */
   readonly selectedStatus: WritableSignal<string> = signal('');
 
+  /** Currently selected format filter, or empty string for no filter. */
+  readonly selectedFormat: WritableSignal<'' | GameFormatType> = signal<'' | GameFormatType>('');
+
   /** Whether only favourite games are shown. */
   readonly onlyFavorites: WritableSignal<boolean> = signal(false);
 
+  /** Icon shown in the total-games stat, changes based on the active format filter. */
+  readonly formatFilterIcon: Signal<string> = computed((): string => {
+    const fmt = this.selectedFormat();
+    if (fmt === 'physical') return 'album';
+    if (fmt === 'digital') return 'cloud';
+    return 'sports_esports';
+  });
+
   /** Field used to sort the game list. */
-  readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'id'> = signal('id');
+  readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'id'> = signal('title');
 
   /** Sort direction applied to the current sort field. */
-  readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('desc');
+  readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('asc');
 
   /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
   readonly columnCount: WritableSignal<number> = signal(4);
@@ -124,6 +136,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     const platform = this.selectedConsole();
     const store = this.selectedStore();
     const status = this.selectedStatus();
+    const format = this.selectedFormat();
     const favorites = this.onlyFavorites();
 
     let filtered = this.allGames().filter((game: GameListModel): boolean => {
@@ -131,8 +144,9 @@ export class GameListComponent implements OnInit, OnDestroy {
       const matchesPlatform = platform ? game.platform === platform : true;
       const matchesStore = store ? game.store === store : true;
       const matchesStatus = status ? game.status === status : true;
+      const matchesFormat = format ? game.format === format : true;
       const matchesFavorites = favorites ? game.isFavorite === true : true;
-      return matchesSearch && matchesPlatform && matchesStore && matchesStatus && matchesFavorites;
+      return matchesSearch && matchesPlatform && matchesStore && matchesStatus && matchesFormat && matchesFavorites;
     });
 
     const sortBy = this.sortBy();
@@ -237,6 +251,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     this.selectedConsole.set('');
     this.selectedStore.set('');
     this.selectedStatus.set('');
+    this.selectedFormat.set('');
     this.onlyFavorites.set(false);
   }
 

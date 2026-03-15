@@ -137,6 +137,7 @@ export interface UserGameListDto {
   status: string;
   personal_rating: number | null;
   edition: string | null;
+  format: string | null;
   is_favorite: boolean;
   image_url: string | null;
 }
