@@ -1,7 +1,7 @@
 <div class="settings">
   <h1 class="settings__title">{{ 'settings.title' | transloco }}</h1>
 
-  <!-- Sección: Perfil -->
+  <!-- Section: Profile -->
   <mat-card class="settings__card">
     <mat-card-header>
       <mat-card-title>{{ 'settings.profile.title' | transloco }}</mat-card-title>
@@ -86,7 +86,7 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Sección: Apariencia -->
+  <!-- Section: Appearance -->
   <mat-card class="settings__card">
     <mat-card-header>
       <mat-card-title>{{ 'settings.appearance.title' | transloco }}</mat-card-title>
@@ -94,7 +94,7 @@
     <mat-card-content>
       <p class="settings__section-subtitle">{{ 'settings.appearance.bannerPanel' | transloco }}</p>
 
-      <!-- Preview / placeholder clicable para subir imagen propia -->
+      <!-- Clickable preview / placeholder for custom image upload -->
       @if (!preferencesLoaded()) {
         <app-skeleton class="settings__banner-skeleton" width="100%" height="120px" borderRadius="10px" />
       } @else {
@@ -126,14 +126,14 @@
         </label>
       }
 
-      <!-- Buscador -->
+      <!-- Search -->
       <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
         <mat-icon matPrefix>search</mat-icon>
         <mat-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</mat-label>
         <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
       </mat-form-field>
 
-      <!-- Grid: populares o resultados de búsqueda -->
+      <!-- Grid: popular or search results -->
       <div class="settings__banner-results">
         @if (rawgSearchLoading()) {
           <div class="settings__banner-grid">
@@ -182,7 +182,7 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Sección: Idioma -->
+  <!-- Section: Language -->
   <mat-card class="settings__card">
     <mat-card-header>
       <mat-card-title>{{ 'settings.language.title' | transloco }}</mat-card-title>

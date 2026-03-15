@@ -22,7 +22,7 @@
   margin: 0 0 0.25rem;
 }
 
-// ─── Sección Perfil ───────────────────────────────────────────────────────────
+// ─── Profile section ──────────────────────────────────────────────────────────
 
 .settings__avatar-section {
   display: flex;
@@ -214,13 +214,13 @@
   }
 }
 
-// mat-card tiene overflow: hidden por defecto — lo sobreescribimos para
-// permitir el scroll horizontal del grid de portadas
+// mat-card has overflow: hidden by default — overridden here to
+// allow horizontal scroll on the cover grid
 ::ng-deep .settings__card {
   overflow: visible !important;
 }
 
-// ─── Subtítulos de sección ────────────────────────────────────────────────────
+// ─── Section subtitles ────────────────────────────────────────────────────────
 
 .settings__section-subtitle {
   font-size: 0.8rem;
@@ -235,7 +235,7 @@
   margin: 1.25rem 0 1rem;
 }
 
-// ─── Sección Banner ───────────────────────────────────────────────────────────
+// ─── Banner section ───────────────────────────────────────────────────────────
 
 .settings__banner-skeleton {
   margin-top: 0.75rem;
@@ -418,7 +418,7 @@
   margin: 0;
 }
 
-// ─── Sección Apariencia ───────────────────────────────────────────────────────
+// ─── Appearance section ───────────────────────────────────────────────────────
 
 .settings__row {
   display: flex;

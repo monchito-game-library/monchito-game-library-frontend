@@ -39,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Filtros -->
+  <!-- Filters -->
   <div class="game-list__filters">
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter game-list__filter--search">
       <mat-label>{{ 'gameList.filters.title' | transloco }}</mat-label>
@@ -110,7 +110,7 @@
       <button
         mat-icon-button
         (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
-        [attr.aria-label]="'Ordenación ' + sortDirection()">
+        [attr.aria-label]="'Sort direction: ' + sortDirection()">
         <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
       </button>
 
@@ -137,14 +137,14 @@
   </div>
 </div>
 
-<!-- Estado: cargando -->
+<!-- State: loading -->
 @if (loading()) {
   <div class="game-list__loading">
     <mat-spinner diameter="48" />
     <p class="game-list__loading-text">{{ 'gameList.loading' | transloco }}</p>
   </div>
 
-  <!-- Estado: con juegos -->
+  <!-- State: with games -->
 } @else if (filteredGames().length > 0) {
   <cdk-virtual-scroll-viewport
     class="game-list__viewport"
@@ -157,7 +157,7 @@
     </div>
   </cdk-virtual-scroll-viewport>
 
-  <!-- Estado: sin resultados de filtros -->
+  <!-- State: no filter results -->
 } @else if (allGames().length > 0) {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">search_off</mat-icon>
@@ -169,7 +169,7 @@
     </button>
   </div>
 
-  <!-- Estado: colección vacía -->
+  <!-- State: empty collection -->
 } @else {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>

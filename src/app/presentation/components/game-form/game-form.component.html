@@ -22,7 +22,7 @@
     </div>
   } @else if (!searchMode()) {
     <div class="game-form-page__content" @fadeSlide>
-      <!-- Columna izquierda: portada y búsqueda -->
+      <!-- Left column: cover and search -->
       <aside class="game-cover-panel">
         <div class="game-cover-panel__cover">
           @if (selectedImageUrl()) {
@@ -91,7 +91,7 @@
         }
       </aside>
 
-      <!-- Columna derecha: campos del formulario -->
+      <!-- Right column: form fields -->
       <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
           <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>

@@ -23,7 +23,6 @@
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
     "husky": "husky",
-    "migrate:legacy": "node scripts/migrate-legacy.mjs",
     "vercel-build": "node scripts/set-env.js && ng build --configuration production"
   },
   "dependencies": {

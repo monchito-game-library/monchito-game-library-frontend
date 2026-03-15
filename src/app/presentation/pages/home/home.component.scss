@@ -4,7 +4,7 @@
   padding: 4rem 2rem;
   text-align: center;
 
-  // Breakpoint para móviles (≤ 600px)
+  // Mobile breakpoint (≤ 600px)
   @media (max-width: 37.5rem) {
     padding: 2rem 1rem;
   }
@@ -15,7 +15,7 @@
     font-weight: bold;
     color: var(--mat-sys-on-surface);
 
-    // Breakpoint para móviles (≤ 600px)
+    // Mobile breakpoint (≤ 600px)
     @media (max-width: 37.5rem) {
       font-size: 1.8rem;
       margin-bottom: 2rem;
@@ -30,13 +30,13 @@
     max-width: 62.5rem;
     grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
 
-    // Breakpoint para tablets (600px–900px)
+    // Tablet breakpoint (600px–900px)
     @media (min-width: 37.51rem) and (max-width: 56.25rem) {
       grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
       max-width: 37.5rem;
     }
 
-    // Breakpoint para móviles (≤ 600px)
+    // Mobile breakpoint (≤ 600px)
     @media (max-width: 37.5rem) {
       gap: 1.5rem;
     }
