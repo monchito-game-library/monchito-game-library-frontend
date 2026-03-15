@@ -84,8 +84,26 @@ export class GameListComponent implements OnInit, OnDestroy {
   private _routerSubscription?: Subscription;
   private _bpSubscription?: Subscription;
 
-  /** Row height (card + vertical padding) in px — used by virtual scroll. */
-  readonly ROW_ITEM_SIZE = 380;
+  /**
+   * Row height in px computed from the current viewport width and column count.
+   * Recalculates whenever columnCount or isMobile change, keeping CDK virtual
+   * scroll in sync with the actual rendered row height and eliminating blank
+   * space at the bottom of the list on all screen sizes.
+   */
+  readonly rowItemSize: Signal<number> = computed((): number => {
+    const cols = this.columnCount();
+    const isMobile = this.isMobile();
+    const screenWidth = window.innerWidth;
+    const gapPx = isMobile ? 12 : 20; // 0.75rem vs 1.25rem
+    const paddingPx = isMobile ? 12 : 24; // 0.75rem vs 1.5rem each side
+    const rowVerticalPx = 20; // 0.625rem top + 0.625rem bottom
+    const footerPx = isMobile ? 36 : 44; // game-card__footer min-height
+    const navRailWidth = isMobile ? 0 : 88; // nav rail hidden on mobile
+    const availableWidth = screenWidth - navRailWidth - 2 * paddingPx - (cols - 1) * gapPx;
+    const cardWidth = availableWidth / cols;
+    const imageHeight = cardWidth * (4 / 3); // aspect-ratio: 3 / 4
+    return Math.ceil(imageHeight + footerPx + rowVerticalPx);
+  });
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;

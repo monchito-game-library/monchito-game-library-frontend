@@ -3,8 +3,6 @@ import {
   Component,
   effect,
   inject,
-  NgZone,
-  OnDestroy,
   OnInit,
   QueryList,
   signal,
@@ -35,16 +33,13 @@ import { NavItemInterface } from '@/interfaces/nav-item.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent, TranslocoPipe]
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);
-  private readonly _ngZone: NgZone = inject(NgZone);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
-  private _lastScrollY = 0;
-  private _scrollCleanup?: () => void;
 
   readonly userContext: UserContextService = inject(UserContextService);
 
@@ -73,9 +68,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
 
-  /** Whether the bottom nav is hidden (slid out of view on scroll-down). */
-  readonly navHidden: WritableSignal<boolean> = signal(false);
-
   /** References to the profile menu triggers (rail + topbar). */
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
@@ -95,16 +87,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentRoute.set(event.urlAfterRedirects);
-        this.navHidden.set(false);
-        this._lastScrollY = 0;
       });
 
     this.currentRoute.set(this._router.url);
-    this._registerScrollListener();
-  }
-
-  ngOnDestroy(): void {
-    this._scrollCleanup?.();
   }
 
   /**
@@ -177,32 +162,6 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   logout(): void {
     this.userContext.clearUser();
-  }
-
-  /**
-   * Registers a capture-phase scroll listener on the document to hide the bottom
-   * nav when scrolling down and reveal it when scrolling up.
-   * Runs outside Angular zone to avoid triggering change detection on every scroll tick.
-   */
-  private _registerScrollListener(): void {
-    this._ngZone.runOutsideAngular(() => {
-      const handler = (e: Event): void => {
-        const el = e.target as HTMLElement;
-        const y = el.scrollTop ?? 0;
-        const delta = y - this._lastScrollY;
-        this._lastScrollY = y;
-
-        if (delta > 5 && y > 60 && !this.navHidden()) {
-          this._ngZone.run(() => this.navHidden.set(true));
-        } else if ((delta < -5 || y <= 10) && this.navHidden()) {
-          this._ngZone.run(() => this.navHidden.set(false));
-        }
-      };
-
-      document.addEventListener('scroll', handler, { passive: true, capture: true });
-      this._scrollCleanup = (): void =>
-        document.removeEventListener('scroll', handler, { capture: true } as EventListenerOptions);
-    });
   }
 
   /**
