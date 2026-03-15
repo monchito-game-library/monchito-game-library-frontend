@@ -1,0 +1,67 @@
+<div class="stores-page">
+  <header class="stores-page__header">
+    <h1 class="stores-page__title">{{ 'management.stores.title' | transloco }}</h1>
+    <button mat-flat-button color="primary" (click)="onAddStore()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.stores.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="stores-page__loading">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <!-- Tiendas personalizadas -->
+    <section class="stores-section">
+      <h2 class="stores-section__label">{{ 'management.stores.customLabel' | transloco }}</h2>
+
+      @if (customStores().length === 0) {
+        <p class="stores-section__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
+      } @else {
+        <div class="stores-grid">
+          @for (store of customStores(); track store.id) {
+            <div class="store-card">
+              <mat-icon class="store-card__icon">storefront</mat-icon>
+              <div class="store-card__info">
+                <span class="store-card__name">{{ store.label }}</span>
+                <span class="store-card__code">{{ store.code }}</span>
+                <span class="store-card__format-hint">{{ getFormatHintLabel(store.formatHint) }}</span>
+              </div>
+              <div class="store-card__actions">
+                <button mat-icon-button (click)="onEditStore(store)" [attr.aria-label]="'common.edit' | transloco">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="onDeleteStore(store)"
+                  [attr.aria-label]="'common.delete' | transloco"
+                  class="store-card__delete-btn">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Tiendas del sistema -->
+    <section class="stores-section">
+      <h2 class="stores-section__label">{{ 'management.stores.systemLabel' | transloco }}</h2>
+      <div class="stores-grid">
+        @for (store of systemStores(); track store.id) {
+          <div class="store-card store-card--system">
+            <mat-icon class="store-card__icon">storefront</mat-icon>
+            <div class="store-card__info">
+              <span class="store-card__name">{{ store.label }}</span>
+              <span class="store-card__code">{{ store.code }}</span>
+              <span class="store-card__format-hint">{{ getFormatHintLabel(store.formatHint) }}</span>
+            </div>
+            <span class="store-card__system-badge">{{ 'management.stores.systemLabel' | transloco }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

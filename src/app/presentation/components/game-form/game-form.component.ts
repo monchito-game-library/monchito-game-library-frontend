@@ -19,8 +19,10 @@ import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -30,9 +32,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
+import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { GameModel } from '@/models/game/game.model';
+import { StoreModel } from '@/models/store/store.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { GameConditionType } from '@/types/game-condition.type';
+import { GameFormatType } from '@/types/game-format.type';
 import { PlatformType } from '@/types/platform.type';
 import { availableConditions } from '@/constants/available-conditions.constant';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
@@ -45,11 +51,8 @@ import { selectOneValidator } from '@/shared/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
 import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
-import { availableStoresConstant } from '@/constants/available-stores.constant';
-import { StoreType } from '@/types/stores.type';
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
-import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
 
 @Component({
   selector: 'app-game-form',
@@ -81,11 +84,14 @@ import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/r
     MatButton,
     MatIcon,
     MatIconButton,
+    MatButtonToggleGroup,
+    MatButtonToggle,
     MatProgressSpinner,
     TranslocoPipe,
     MatAutocompleteTrigger,
     MatAutocomplete,
-    MatSuffix
+    MatSuffix,
+    SkeletonComponent
   ]
 })
 export class GameFormComponent implements OnInit {
@@ -96,12 +102,17 @@ export class GameFormComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _rawgRepo: RawgRepositoryContract = inject(RAWG_REPOSITORY);
+  private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
+  private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
+  /** Raw store models loaded from Supabase. */
+  private readonly _storeModels: WritableSignal<StoreModel[]> = signal([]);
   /** Increments on every form value change to trigger hasChanges recomputation. */
   private readonly _formVersion: WritableSignal<number> = signal(0);
   private _gameId?: number;
+  /** Supabase UUID of the user_games row — set in edit mode for direct DB updates. */
+  private _gameUuid?: string;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
 
@@ -111,8 +122,10 @@ export class GameFormComponent implements OnInit {
   /** Available game conditions. */
   readonly conditions: AvailableConditionInterface[] = availableConditions;
 
-  /** Available stores for the autocomplete input. */
-  readonly stores: AvailableStoresInterface[] = availableStoresConstant;
+  /** Available stores derived from the loaded store models. */
+  readonly stores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] =>
+    this._storeModels().map((s): AvailableStoresInterface => ({ code: s.code, labelKey: s.label }))
+  );
 
   /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
@@ -121,13 +134,7 @@ export class GameFormComponent implements OnInit {
   readonly form = this._fb.group({
     title: ['', Validators.required],
     price: [null as number | null],
-    store: [
-      'none' as StoreType,
-      [
-        Validators.required,
-        selectOneValidator(this.stores.map((store: AvailableStoresInterface): StoreType => store.code))
-      ]
-    ],
+    store: ['none' as string],
     platform: [
       null as PlatformType | null,
       [
@@ -141,6 +148,7 @@ export class GameFormComponent implements OnInit {
     status: ['backlog' as GameStatus],
     personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
     edition: [null as string | null],
+    format: ['physical' as GameFormatType | null],
     is_favorite: [false]
   });
 
@@ -186,18 +194,37 @@ export class GameFormComponent implements OnInit {
     initialValue: this.form.controls.store.value ?? 'none'
   });
 
+  /** Reactive signal for the format control value — needed for OnPush compatibility with mat-button-toggle-group. */
+  readonly formatValue = toSignal(this.form.controls.format.valueChanges, {
+    initialValue: this.form.controls.format.value
+  });
+
   /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
     const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
-    return this.stores.filter(
+    return this.stores().filter(
       (store: AvailableStoresInterface): boolean =>
-        store.code.toLowerCase().includes(input) ||
-        this._transloco.translate(store.labelKey).toLowerCase().includes(input)
+        store.code.toLowerCase().includes(input) || store.labelKey.toLowerCase().includes(input)
     );
   });
 
   /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
+
+  /** Currently displayed image URL (cover or a selected screenshot). */
+  readonly selectedImageUrl: WritableSignal<string | null> = signal(null);
+
+  /** All available images for the selected game: cover first, then screenshots (duplicates removed). */
+  readonly coverImages: Signal<string[]> = computed((): string[] => {
+    const game = this.selectedGame();
+    if (!game) return [];
+    const images: string[] = [];
+    if (game.image_url) images.push(game.image_url);
+    if (game.screenshots?.length) {
+      game.screenshots.filter((url: string) => url !== game.image_url).forEach((url: string) => images.push(url));
+    }
+    return images;
+  });
 
   /** Platforms from the selected RAWG game (original names and mapped local codes). */
   readonly gamePlatforms: WritableSignal<Array<{ name: string; code: PlatformType | null }>> = signal([]);
@@ -220,6 +247,9 @@ export class GameFormComponent implements OnInit {
   /** Whether the form is being saved (disables all fields). */
   readonly saving: WritableSignal<boolean> = signal(false);
 
+  /** Whether screenshots are being fetched from RAWG. */
+  readonly screenshotsLoading: WritableSignal<boolean> = signal(false);
+
   /**
    * Whether the form differs from the snapshot taken at load time.
    * Always true in create mode. In edit mode, enables the submit button
@@ -228,7 +258,11 @@ export class GameFormComponent implements OnInit {
   readonly hasChanges: Signal<boolean> = computed((): boolean => {
     if (!this.isEditMode || !this._initialSnapshot) return true;
     this._formVersion();
-    const current = JSON.stringify({ ...this.form.getRawValue(), _rawgId: this.selectedGame()?.rawg_id ?? null });
+    const current = JSON.stringify({
+      ...this.form.getRawValue(),
+      _rawgId: this.selectedGame()?.rawg_id ?? null,
+      _imageUrl: this.selectedImageUrl()
+    });
     return current !== this._initialSnapshot;
   });
 
@@ -241,19 +275,26 @@ export class GameFormComponent implements OnInit {
       .subscribe((query: string) => void this._performSearch(query));
 
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
+
+    this.form.controls.store.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((code: string | null) => this._onStoreChange(code));
   }
 
   async ngOnInit(): Promise<void> {
+    void this._loadStores();
+
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) return;
 
     this.isEditMode = true;
-    this._gameId = +idParam;
+    this._gameUuid = idParam;
     this.loading.set(true);
 
     try {
-      const game: GameModel | undefined = await this._gameUseCases.getById(this._userId, this._gameId);
+      const game: GameModel | undefined = await this._gameUseCases.getById(this._userId, this._gameUuid);
       if (game) {
+        this._gameId = game.id;
         this.form.patchValue({
           title: game.title,
           price: game.price,
@@ -265,16 +306,33 @@ export class GameFormComponent implements OnInit {
           status: game.status,
           personal_rating: game.personalRating,
           edition: game.edition,
+          format: game.format,
           is_favorite: game.isFavorite
         });
 
         if (game.imageUrl) {
-          this.selectedGame.set({ title: game.title, image_url: game.imageUrl } as GameCatalog);
+          const slug = game.rawgSlug ?? '';
+          this.selectedGame.set({
+            title: game.title,
+            image_url: game.imageUrl,
+            rawg_id: game.rawgId ?? 0,
+            slug,
+            released_date: null,
+            rating: 0,
+            platforms: [],
+            genres: []
+          } as GameCatalog);
+          this.selectedImageUrl.set(game.imageUrl);
+
+          if (game.rawgId) {
+            void this._loadScreenshots(slug || game.rawgId, game.imageUrl);
+          }
         }
 
         this._initialSnapshot = JSON.stringify({
           ...this.form.getRawValue(),
-          _rawgId: this.selectedGame()?.rawg_id ?? null
+          _rawgId: this.selectedGame()?.rawg_id ?? null,
+          _imageUrl: this.selectedImageUrl()
         });
       }
     } finally {
@@ -306,6 +364,7 @@ export class GameFormComponent implements OnInit {
       const raw = this.form.getRawValue();
       const game: GameModel = {
         id: this._gameId,
+        uuid: this._gameUuid,
         title: raw.title ?? '',
         price: raw.price ?? null,
         store: raw.store ?? 'none',
@@ -316,13 +375,17 @@ export class GameFormComponent implements OnInit {
         status: raw.status ?? 'backlog',
         personalRating: raw.personal_rating ?? null,
         edition: raw.edition ?? null,
+        format: raw.format ?? null,
         isFavorite: raw.is_favorite ?? false
       };
 
-      const catalogEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
+      const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
+      const catalogEntry = baseEntry
+        ? { ...baseEntry, image_url: this.selectedImageUrl() ?? baseEntry.image_url }
+        : null;
 
-      if (this.isEditMode && this._gameId !== undefined) {
-        await this._gameUseCases.updateGame(this._userId, this._gameId, game, catalogEntry);
+      if (this.isEditMode && this._gameUuid) {
+        await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
       } else {
         await this._gameUseCases.addGame(this._userId, game, catalogEntry);
       }
@@ -372,10 +435,12 @@ export class GameFormComponent implements OnInit {
       released_date: game.released_date,
       rating: game.rating,
       platforms: game.platforms,
-      genres: game.genres
+      genres: game.genres,
+      screenshots: game.screenshots ?? []
     };
 
     this.selectedGame.set(catalog);
+    this.selectedImageUrl.set(game.image_url ?? null);
     this.form.patchValue({ title: game.title });
 
     if (game.platforms && game.platforms.length > 0) {
@@ -389,6 +454,10 @@ export class GameFormComponent implements OnInit {
       this.gamePlatforms.set([]);
     }
 
+    if (catalog.rawg_id) {
+      void this._loadScreenshots(catalog.slug || catalog.rawg_id, game.image_url ?? '');
+    }
+
     this.closeSearchMode();
   }
 
@@ -397,23 +466,33 @@ export class GameFormComponent implements OnInit {
    */
   clearSelectedGame(): void {
     this.selectedGame.set(null);
+    this.selectedImageUrl.set(null);
     this.gamePlatforms.set([]);
     this.form.controls.title.enable();
     this.form.controls.title.setValue('');
   }
 
   /**
-   * Returns the translated store label for a given store code.
-   * Falls back to the raw code if the store is not found.
+   * Sets the selected image URL when the user clicks a thumbnail.
    *
-   * @param {StoreType | null} code - Store code to resolve
+   * @param {string} url - URL of the chosen image
    */
-  displayStoreLabel = (code: StoreType | null): string => {
+  onSelectImage(url: string): void {
+    this.selectedImageUrl.set(url);
+  }
+
+  /**
+   * Returns the store label for a given store code.
+   * Falls back to the raw code if the store is not found in the loaded list.
+   *
+   * @param {string | null} code - Store code to resolve
+   */
+  displayStoreLabel = (code: string | null): string => {
     if (!code) return '';
-    const store: AvailableStoresInterface | undefined = this.stores.find(
+    const store: AvailableStoresInterface | undefined = this.stores().find(
       (s: AvailableStoresInterface): boolean => s.code === code
     );
-    return store ? this._transloco.translate(store.labelKey) : code;
+    return store ? store.labelKey : code;
   };
 
   /**
@@ -440,6 +519,52 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
+   * Loads all stores from Supabase and updates the store models signal.
+   */
+  private async _loadStores(): Promise<void> {
+    try {
+      const models: StoreModel[] = await this._storeUseCases.getAllStores();
+      this._storeModels.set(models);
+    } catch {
+      // silently ignore — static fallback is an empty list; stores from DB are best-effort
+    }
+  }
+
+  /**
+   * Auto-suggests a format value when the user selects a store that has a format hint.
+   * Only applies when the format field has not already been set by the user.
+   *
+   * @param {string | null} code - Selected store code
+   */
+  private _onStoreChange(code: string | null): void {
+    if (!code || this.form.controls.format.value) return;
+    const storeModel: StoreModel | undefined = this._storeModels().find((s: StoreModel) => s.code === code);
+    if (storeModel?.formatHint) {
+      this.form.controls.format.setValue(storeModel.formatHint);
+    }
+  }
+
+  /**
+   * Fetches all screenshots for a game via the dedicated RAWG screenshots endpoint
+   * and updates the selected game signal. Prefers the slug over the numeric ID.
+   *
+   * @param {string | number} gameIdentifier - RAWG game slug (preferred) or numeric ID
+   * @param {string} currentImageUrl - The image URL currently saved for the game (excluded from results)
+   */
+  private async _loadScreenshots(gameIdentifier: string | number, currentImageUrl: string): Promise<void> {
+    this.screenshotsLoading.set(true);
+    try {
+      const allScreenshots = await this._catalogUseCases.getAllGameScreenshots(gameIdentifier);
+      const screenshots = allScreenshots.filter((url: string) => url !== currentImageUrl);
+      this.selectedGame.update((game) => (game ? { ...game, screenshots } : game));
+    } catch {
+      // silently ignore — thumbnails just won't show
+    } finally {
+      this.screenshotsLoading.set(false);
+    }
+  }
+
+  /**
    * Executes a RAWG catalogue search and updates the results signal.
    * Triggered automatically by the debounced subject.
    *
@@ -453,7 +578,7 @@ export class GameFormComponent implements OnInit {
 
     this.searchLoading.set(true);
     try {
-      const results: GameCatalogDto[] = await this._rawgRepo.searchGames(query, 1, 20);
+      const results: GameCatalogDto[] = await this._catalogUseCases.searchGames(query, 1, 20);
       this.searchResults.set(results);
     } catch {
       this.searchResults.set([]);

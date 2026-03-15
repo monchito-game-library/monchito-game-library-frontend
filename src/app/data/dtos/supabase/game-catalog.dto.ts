@@ -61,6 +61,7 @@ export interface UserGameDto {
   personal_rating: number | null;
   personal_review?: string | null;
   edition: string | null;
+  format: 'digital' | 'physical' | null;
   started_date: string | null;
   completed_date: string | null;
   platinum_date: string | null;

@@ -15,6 +15,9 @@ import { rawgRepositoryProvider } from '@/di/repositories/rawg.repository.provid
 import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
 import { userPreferencesUseCasesProvider } from '@/di/use-cases/user-preferences.use-cases.provider';
 import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
+import { catalogUseCasesProvider } from '@/di/use-cases/catalog.use-cases.provider';
+import { storeRepositoryProvider } from '@/di/repositories/store.repository.provider';
+import { storeUseCasesProvider } from '@/di/use-cases/store.use-cases.provider';
 
 registerLocaleData(localeEs);
 
@@ -40,6 +43,9 @@ export const appConfig: ApplicationConfig = {
     rawgRepositoryProvider,
     gameUseCasesProvider,
     userPreferencesUseCasesProvider,
-    authUseCasesProvider
+    authUseCasesProvider,
+    catalogUseCasesProvider,
+    storeRepositoryProvider,
+    storeUseCasesProvider
   ]
 };

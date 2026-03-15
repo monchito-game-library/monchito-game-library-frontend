@@ -13,12 +13,12 @@ export interface GameUseCasesContract {
   getAllGames(userId: string): Promise<GameModel[]>;
 
   /**
-   * Returns a single game by ID, or undefined if not found.
+   * Returns a single game by UUID, or undefined if not found.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  getById(userId: string, gameId: number): Promise<GameModel | undefined>;
+  getById(userId: string, uuid: string): Promise<GameModel | undefined>;
 
   /**
    * Returns all games for a given platform.
@@ -39,23 +39,22 @@ export interface GameUseCasesContract {
   addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Updates an existing game.
+   * Updates an existing game. The model must include the uuid field.
    * Pass a catalog entry to update the RAWG catalog link.
    *
    * @param {string} userId
-   * @param {number} gameId
-   * @param {GameModel} game
+   * @param {GameModel} game - Must include uuid
    * @param {GameCatalog | null} [catalogEntry]
    */
-  updateGame(userId: string, gameId: number, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
+  updateGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Deletes a game by ID.
+   * Deletes a game by UUID.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  deleteGame(userId: string, gameId: number): Promise<void>;
+  deleteGame(userId: string, uuid: string): Promise<void>;
 
   /**
    * Deletes all games in the user's collection.
