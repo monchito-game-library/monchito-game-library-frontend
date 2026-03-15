@@ -1,13 +1,21 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
+import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
 import { getSupabaseClient } from '@/data/config/supabase.config';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
-import { GameCatalogInsertDto, UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
-import { mapGame, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
+import {
+  GameCatalogInsertDto,
+  UserGameEditDto,
+  UserGameFullDto,
+  UserGameInsertDto,
+  UserGameListDto
+} from '@/dtos/supabase/game-catalog.dto';
+import { mapGame, mapGameEdit, mapGameList, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
 
 /**
  * Game repository backed by Supabase.
@@ -52,6 +60,38 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
+   * Returns all games for a user with only the columns needed for the list view and game cards.
+   * Excludes condition, format, rawg_id, rawg_slug to reduce payload size.
+   *
+   * @param {string} userId
+   */
+  async getAllGamesForList(userId: string): Promise<GameListModel[]> {
+    const PAGE_SIZE = 1000;
+    let all: UserGameListDto[] = [];
+    let from = 0;
+
+    while (true) {
+      const { data, error } = await this._supabase
+        .from(this._viewName)
+        .select(
+          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url'
+        )
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
+      if (!data || data.length === 0) break;
+
+      all = all.concat(data as UserGameListDto[]);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+
+    return all.map(mapGameList);
+  }
+
+  /**
    * Returns all games for a user filtered by platform.
    *
    * @param {string} userId
@@ -91,56 +131,35 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
-   * Deletes a game by its numeric ID if it belongs to the given user.
+   * Deletes a game by UUID if it belongs to the given user.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  async deleteById(userId: string, gameId: number): Promise<void> {
-    const games = await this.getAllGamesForUser(userId);
-    const game = games.find((g) => g.id === gameId);
-    if (!game) throw new Error('Game not found');
-
-    const { data: viewRecord } = await this._supabase
-      .from(this._viewName)
-      .select('id')
-      .eq('user_id', userId)
-      .eq('title', game.title)
-      .single();
-
-    if (!viewRecord) throw new Error('Game record not found');
-
-    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('id', viewRecord.id);
+  async deleteById(userId: string, uuid: string): Promise<void> {
+    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('id', uuid).eq('user_id', userId);
     if (error) throw new Error(`Failed to delete game: ${error.message}`);
   }
 
   /**
    * Updates an existing game. If a RAWG catalog entry is provided the catalog
-   * link will also be updated.
+   * link will also be updated. The model must include the uuid field.
    *
    * @param {string} userId
-   * @param {number} gameId
-   * @param {GameModel} updated
+   * @param {GameModel} updated - Must include uuid
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  async updateGameForUser(
-    userId: string,
-    gameId: number,
-    updated: GameModel,
-    catalogEntry?: GameCatalog | null
-  ): Promise<void> {
-    const games = await this.getAllGamesForUser(userId);
-    const game = games.find((g) => g.id === gameId);
-    if (!game) throw new Error('Game not found');
+  async updateGameForUser(userId: string, updated: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
+    if (!updated.uuid) throw new Error('Cannot update game: uuid is missing from model');
 
-    const { data: viewRecord } = await this._supabase
+    const { data: viewRecord, error: fetchError } = await this._supabase
       .from(this._viewName)
       .select('id, game_catalog_id')
       .eq('user_id', userId)
-      .eq('title', game.title)
+      .eq('id', updated.uuid)
       .single();
 
-    if (!viewRecord) throw new Error('Game record not found');
+    if (fetchError || !viewRecord) throw new Error('Game record not found');
 
     let gameCatalogId = viewRecord.game_catalog_id;
     if (catalogEntry) {
@@ -152,7 +171,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       ...mapGameToInsertDto(updated)
     };
 
-    const { error } = await this._supabase.from(this._userGamesTable).update(userGameRecord).eq('id', viewRecord.id);
+    const { error } = await this._supabase.from(this._userGamesTable).update(userGameRecord).eq('id', updated.uuid);
     if (error) throw new Error(`Failed to update game: ${error.message}`);
   }
 
@@ -167,14 +186,42 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
-   * Returns a single game by numeric ID if it belongs to the given user.
+   * Returns a single game by UUID if it belongs to the given user.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  async getById(userId: string, gameId: number): Promise<GameModel | undefined> {
-    const games = await this.getAllGamesForUser(userId);
-    return games.find((g) => g.id === gameId);
+  async getById(userId: string, uuid: string): Promise<GameModel | undefined> {
+    const { data, error } = await this._supabase
+      .from(this._viewName)
+      .select('*')
+      .eq('user_id', userId)
+      .eq('id', uuid)
+      .single();
+
+    if (error || !data) return undefined;
+    return mapGame(data as UserGameFullDto);
+  }
+
+  /**
+   * Returns only the columns needed by the edit form for a single game.
+   * Uses an explicit column list instead of select('*') to avoid fetching unused catalog metadata.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  async getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined> {
+    const { data, error } = await this._supabase
+      .from(this._viewName)
+      .select(
+        'id,game_catalog_id,title,slug,image_url,rawg_id,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite'
+      )
+      .eq('user_id', userId)
+      .eq('id', uuid)
+      .single();
+
+    if (error || !data) return undefined;
+    return mapGameEdit(data as UserGameEditDto);
   }
 
   /**

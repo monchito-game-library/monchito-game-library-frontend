@@ -61,6 +61,7 @@ export interface UserGameDto {
   personal_rating: number | null;
   personal_review?: string | null;
   edition: string | null;
+  format: 'digital' | 'physical' | null;
   started_date: string | null;
   completed_date: string | null;
   platinum_date: string | null;
@@ -92,6 +93,53 @@ export interface UserGameFullDto extends UserGameDto {
   developers?: string[];
   publishers?: string[];
   source: 'rawg' | 'manual';
+}
+
+/**
+ * Subset of user_games_full returned by the edit-form select.
+ * Only the columns the form actually needs — avoids fetching catalog metadata.
+ */
+export interface UserGameEditDto {
+  id: string;
+  user_id: string;
+  game_catalog_id: string;
+  title: string;
+  slug: string;
+  image_url: string | null;
+  rawg_id: number | null;
+  price: number | null;
+  store: string | null;
+  user_platform: string | null;
+  condition: 'new' | 'used' | null;
+  platinum: boolean;
+  user_notes: string | null;
+  description: string | null | undefined;
+  status: string;
+  personal_rating: number | null;
+  edition: string | null;
+  format: 'digital' | 'physical' | null;
+  is_favorite: boolean;
+}
+
+/**
+ * Subset of user_games_full returned by the list select.
+ * Only the columns needed to render game cards and apply filters.
+ */
+export interface UserGameListDto {
+  id: string;
+  title: string;
+  price: number | null;
+  store: string | null;
+  user_platform: string | null;
+  platinum: boolean;
+  description: string | null | undefined;
+  user_notes: string | null;
+  status: string;
+  personal_rating: number | null;
+  edition: string | null;
+  format: string | null;
+  is_favorite: boolean;
+  image_url: string | null;
 }
 
 /** Payload for inserting or updating a row in game_catalog. */

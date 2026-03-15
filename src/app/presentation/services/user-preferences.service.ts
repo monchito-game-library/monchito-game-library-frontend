@@ -1,5 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
-import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
+import { GameListModel } from '@/models/game/game-list.model';
 
 /**
  * Presentation service that holds reactive user preferences state.
@@ -16,14 +17,11 @@ export class UserPreferencesService {
   /** Whether a banner upload is in progress. */
   readonly uploadingBanner: WritableSignal<boolean> = signal(false);
 
-  /** List of game cover URLs available for use as panel banner. */
-  readonly gameImageUrls: WritableSignal<string[]> = signal([]);
-
   /** URL of the cover currently used as the profile panel banner. */
   readonly bannerImageUrl: WritableSignal<string | null> = signal(null);
 
-  /** RAWG search results for the banner picker. */
-  readonly rawgSearchResults: WritableSignal<GameCatalogDto[]> = signal([]);
+  /** RAWG banner suggestions for the settings banner picker. */
+  readonly rawgSearchResults: WritableSignal<BannerSuggestionModel[]> = signal([]);
 
   /** Whether a RAWG banner search is in progress. */
   readonly rawgSearchLoading: WritableSignal<boolean> = signal(false);
@@ -34,6 +32,6 @@ export class UserPreferencesService {
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = signal(false);
 
-  /** Whether the game image URLs have been loaded from Supabase at least once. */
-  readonly gamesLoaded: WritableSignal<boolean> = signal(false);
+  /** Cached game collection for the list view — set on first load to avoid duplicate fetches. */
+  readonly allGames: WritableSignal<GameListModel[]> = signal([]);
 }

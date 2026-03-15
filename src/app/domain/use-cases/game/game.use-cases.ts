@@ -1,6 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 
 import { GAME_REPOSITORY, GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
+import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -20,13 +22,33 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   }
 
   /**
-   * Returns a single game by ID, or undefined if not found.
+   * Returns all games in the user's collection with only the fields needed
+   * for the list view and game cards.
    *
    * @param {string} userId
-   * @param {number} gameId
    */
-  async getById(userId: string, gameId: number): Promise<GameModel | undefined> {
-    return this._repo.getById(userId, gameId);
+  async getAllGamesForList(userId: string): Promise<GameListModel[]> {
+    return this._repo.getAllGamesForList(userId);
+  }
+
+  /**
+   * Returns a single game by UUID, or undefined if not found.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  async getById(userId: string, uuid: string): Promise<GameModel | undefined> {
+    return this._repo.getById(userId, uuid);
+  }
+
+  /**
+   * Returns only the fields needed by the edit form for a single game.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  async getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined> {
+    return this._repo.getGameForEdit(userId, uuid);
   }
 
   /**
@@ -52,26 +74,25 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   }
 
   /**
-   * Updates an existing game.
+   * Updates an existing game. The model must include the uuid field.
    * Passes the catalog entry to the repository so the catalog link can be refreshed.
    *
    * @param {string} userId
-   * @param {number} gameId
-   * @param {GameModel} game
+   * @param {GameModel} game - Must include uuid
    * @param {GameCatalog | null} [catalogEntry]
    */
-  async updateGame(userId: string, gameId: number, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
-    return this._repo.updateGameForUser(userId, gameId, game, catalogEntry);
+  async updateGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
+    return this._repo.updateGameForUser(userId, game, catalogEntry);
   }
 
   /**
-   * Deletes a game by ID.
+   * Deletes a game by UUID.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  async deleteGame(userId: string, gameId: number): Promise<void> {
-    return this._repo.deleteById(userId, gameId);
+  async deleteGame(userId: string, uuid: string): Promise<void> {
+    return this._repo.deleteById(userId, uuid);
   }
 
   /**

@@ -1,5 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
+import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -13,12 +15,28 @@ export interface GameUseCasesContract {
   getAllGames(userId: string): Promise<GameModel[]>;
 
   /**
-   * Returns a single game by ID, or undefined if not found.
+   * Returns all games in the user's collection with only the fields needed
+   * for the list view and game cards.
    *
    * @param {string} userId
-   * @param {number} gameId
    */
-  getById(userId: string, gameId: number): Promise<GameModel | undefined>;
+  getAllGamesForList(userId: string): Promise<GameListModel[]>;
+
+  /**
+   * Returns a single game by UUID, or undefined if not found.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  getById(userId: string, uuid: string): Promise<GameModel | undefined>;
+
+  /**
+   * Returns only the fields needed by the edit form for a single game.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined>;
 
   /**
    * Returns all games for a given platform.
@@ -39,23 +57,22 @@ export interface GameUseCasesContract {
   addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Updates an existing game.
+   * Updates an existing game. The model must include the uuid field.
    * Pass a catalog entry to update the RAWG catalog link.
    *
    * @param {string} userId
-   * @param {number} gameId
-   * @param {GameModel} game
+   * @param {GameModel} game - Must include uuid
    * @param {GameCatalog | null} [catalogEntry]
    */
-  updateGame(userId: string, gameId: number, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
+  updateGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Deletes a game by ID.
+   * Deletes a game by UUID.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  deleteGame(userId: string, gameId: number): Promise<void>;
+  deleteGame(userId: string, uuid: string): Promise<void>;
 
   /**
    * Deletes all games in the user's collection.

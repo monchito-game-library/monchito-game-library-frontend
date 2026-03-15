@@ -3,7 +3,7 @@
   <!-- Stats -->
   <div class="game-list__stats">
     <div class="game-list__stat">
-      <mat-icon>sports_esports</mat-icon>
+      <mat-icon>{{ formatFilterIcon() }}</mat-icon>
       @if (loading()) {
         <app-skeleton width="24px" height="12px" />
       } @else {
@@ -61,9 +61,24 @@
       <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
       <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
         <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
-        @for (s of stores; track s.code) {
-          <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
+        @for (s of stores(); track s.id) {
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
         }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+      <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
+      <mat-select [value]="selectedFormat()" (selectionChange)="selectedFormat.set($event.value)">
+        <mat-option [value]="''">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
+        <mat-option value="physical">
+          <mat-icon>album</mat-icon>
+          {{ 'gameList.filters.physical' | transloco }}
+        </mat-option>
+        <mat-option value="digital">
+          <mat-icon>cloud</mat-icon>
+          {{ 'gameList.filters.digital' | transloco }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -96,7 +111,7 @@
         mat-icon-button
         (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
         [attr.aria-label]="'Ordenación ' + sortDirection()">
-        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
       </button>
 
       <button
@@ -107,7 +122,9 @@
         <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
       </button>
 
-      @if (searchTerm() || selectedConsole() || selectedStore() || selectedStatus() || onlyFavorites()) {
+      @if (
+        searchTerm() || selectedConsole() || selectedStore() || selectedFormat() || selectedStatus() || onlyFavorites()
+      ) {
         <button
           mat-icon-button
           color="warn"
@@ -135,7 +152,7 @@
     [style.--grid-cols]="columnCount()">
     <div *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex" class="game-list__row">
       @for (game of row; track game.id) {
-        <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)" />
+        <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
       }
     </div>
   </cdk-virtual-scroll-viewport>
