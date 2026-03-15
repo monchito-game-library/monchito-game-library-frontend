@@ -31,7 +31,7 @@ import {
 } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
 import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
 import { AUTH_USE_CASES, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
-import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/components/avatar-crop-dialog/avatar-crop-dialog.component';
@@ -94,8 +94,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Current dark-mode state, synchronised with ThemeService. */
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
-  /** RAWG search results, or popular games when no search has been performed. */
-  readonly rawgResults: WritableSignal<GameCatalogDto[]> = this._userPreferencesState.rawgSearchResults;
+  /** RAWG banner suggestions, or popular games when no search has been performed. */
+  readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._userPreferencesState.rawgSearchResults;
 
   /** Whether a RAWG search request is in progress. */
   readonly rawgSearchLoading: WritableSignal<boolean> = this._userPreferencesState.rawgSearchLoading;
@@ -341,8 +341,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
     this._userPreferencesState.rawgSearchLoading.set(true);
     try {
-      const results: GameCatalogDto[] = await this._rawgRepo.searchGames(query, 1, 12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((game: GameCatalogDto) => !!game.image_url));
+      const results: BannerSuggestionModel[] = await this._rawgRepo.searchBanners(query, 12);
+      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
       this._userPreferencesState.rawgSearchResults.set([]);
     } finally {
@@ -356,8 +356,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private async _loadInitialBanners(): Promise<void> {
     this._userPreferencesState.rawgSearchLoading.set(true);
     try {
-      const results: GameCatalogDto[] = await this._rawgRepo.getTopGames(12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((game: GameCatalogDto) => !!game.image_url));
+      const results: BannerSuggestionModel[] = await this._rawgRepo.getTopBanners(12);
+      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
       this._userPreferencesState.rawgSearchResults.set([]);
     } finally {

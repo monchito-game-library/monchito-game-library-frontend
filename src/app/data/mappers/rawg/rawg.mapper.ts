@@ -1,5 +1,19 @@
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
-import { RawgGameDto, RawgGameDetailDto } from '@/dtos/rawg/rawg-game.dto';
+import { RawgBannerItemDto, RawgGameDto, RawgGameDetailDto } from '@/dtos/rawg/rawg-game.dto';
+import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
+
+/**
+ * Maps a minimal RAWG list item to BannerSuggestionModel.
+ * Skips all metadata — only image and title are needed by the banner picker.
+ *
+ * @param {RawgBannerItemDto} dto
+ */
+export function mapRawgBanner(dto: RawgBannerItemDto): BannerSuggestionModel {
+  return {
+    imageUrl: dto.background_image ?? '',
+    title: dto.name
+  };
+}
 
 /**
  * Maps a basic RAWG search result to a GameCatalogDto.
