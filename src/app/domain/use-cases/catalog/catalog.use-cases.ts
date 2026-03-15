@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
 import { CatalogUseCasesContract } from './catalog.use-cases.contract';
 
@@ -56,5 +57,24 @@ export class CatalogUseCasesImpl implements CatalogUseCasesContract {
     }
 
     return all;
+  }
+
+  /**
+   * Returns top-rated games as minimal banner suggestions.
+   *
+   * @param {number} [pageSize=12] - Number of results
+   */
+  async getTopBanners(pageSize: number = 12): Promise<BannerSuggestionModel[]> {
+    return this._rawgRepo.getTopBanners(pageSize);
+  }
+
+  /**
+   * Searches games by title and returns minimal banner suggestions.
+   *
+   * @param {string} query - Search term
+   * @param {number} [pageSize=12] - Results per page
+   */
+  async searchBanners(query: string, pageSize: number = 12): Promise<BannerSuggestionModel[]> {
+    return this._rawgRepo.searchBanners(query, pageSize);
   }
 }
