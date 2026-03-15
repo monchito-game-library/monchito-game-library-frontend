@@ -5,6 +5,7 @@ export interface UserPreferencesDto {
   language: 'es' | 'en';
   avatar_url: string | null;
   banner_url?: string | null;
+  role: string;
   created_at?: string;
   updated_at?: string;
 }

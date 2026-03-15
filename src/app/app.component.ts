@@ -61,6 +61,9 @@ export class AppComponent implements OnInit {
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
 
+  /** Whether the current user has the admin role. */
+  readonly isAdmin = this._userPreferencesState.isAdmin;
+
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
 
@@ -178,6 +181,7 @@ export class AppComponent implements OnInit {
       this._userPreferencesState.bannerImageUrl.set(prefs.bannerUrl);
     }
 
+    this._userPreferencesState.role.set(prefs.role);
     this.preferencesLoaded.set(true);
   }
 
