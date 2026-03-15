@@ -38,7 +38,7 @@ export class UserPreferencesUseCasesImpl implements UserPreferencesUseCasesContr
    * @param {'es' | 'en'} language - Selected language
    */
   async savePreferences(userId: string, theme: 'light' | 'dark', language: 'es' | 'en'): Promise<void> {
-    await this._repo.savePreferences({ userId, theme, language });
+    await this._repo.savePreferences({ userId, theme, language, role: 'user' });
   }
 
   /**
