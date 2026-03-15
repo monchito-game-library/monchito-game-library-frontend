@@ -10,15 +10,15 @@ export interface StoreRepositoryContract {
   getAll(): Promise<StoreModel[]>;
 
   /**
-   * Creates a new custom store entry.
+   * Creates a new store entry linked to the given user.
    *
    * @param {Omit<StoreModel, 'id'>} store
+   * @param {string} createdBy - UUID of the user creating the store
    */
-  create(store: Omit<StoreModel, 'id'>): Promise<StoreModel>;
+  create(store: Omit<StoreModel, 'id'>, createdBy: string): Promise<StoreModel>;
 
   /**
    * Updates label and/or formatHint of an existing store.
-   * System stores can have their formatHint updated.
    *
    * @param {string} id - Store UUID
    * @param {{ label?: string; formatHint?: GameFormatType | null }} patch
@@ -26,7 +26,7 @@ export interface StoreRepositoryContract {
   update(id: string, patch: { label?: string; formatHint?: GameFormatType | null }): Promise<StoreModel>;
 
   /**
-   * Deletes a custom store by UUID.
+   * Deletes a store by UUID.
    *
    * @param {string} id - Store UUID
    */

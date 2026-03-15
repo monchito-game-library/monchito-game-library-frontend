@@ -13,8 +13,8 @@ export interface GameModel {
   title: string;
   /** Purchase price. Null if unknown. */
   price: number | null;
-  /** Store code where the game was purchased (system or custom). */
-  store: string;
+  /** UUID of the store where the game was purchased. Null if unknown. */
+  store: string | null;
   /** Physical condition of the game copy. */
   condition: GameConditionType;
   /** Whether the user has earned the platinum trophy. */

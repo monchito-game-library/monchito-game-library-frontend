@@ -1,6 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
-import { GameModel } from '@/models/game/game.model';
+import { GameListModel } from '@/models/game/game-list.model';
 
 /**
  * Presentation service that holds reactive user preferences state.
@@ -32,6 +32,6 @@ export class UserPreferencesService {
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = signal(false);
 
-  /** Cached full game collection — set by AppComponent on startup to avoid duplicate fetches. */
-  readonly allGames: WritableSignal<GameModel[]> = signal([]);
+  /** Cached game collection for the list view — set on first load to avoid duplicate fetches. */
+  readonly allGames: WritableSignal<GameListModel[]> = signal([]);
 }

@@ -10,11 +10,12 @@ export interface StoreUseCasesContract {
   getAllStores(): Promise<StoreModel[]>;
 
   /**
-   * Creates a new custom store entry.
+   * Creates a new store entry linked to the given user.
    *
    * @param {Omit<StoreModel, 'id'>} store
+   * @param {string} createdBy - UUID of the user creating the store
    */
-  addStore(store: Omit<StoreModel, 'id'>): Promise<StoreModel>;
+  addStore(store: Omit<StoreModel, 'id'>, createdBy: string): Promise<StoreModel>;
 
   /**
    * Updates label and/or formatHint of an existing store.
@@ -25,7 +26,7 @@ export interface StoreUseCasesContract {
   updateStore(id: string, patch: { label?: string; formatHint?: GameFormatType | null }): Promise<StoreModel>;
 
   /**
-   * Deletes a custom store by UUID.
+   * Deletes a store by UUID.
    *
    * @param {string} id - Store UUID
    */

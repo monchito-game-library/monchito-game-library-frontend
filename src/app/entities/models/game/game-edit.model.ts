@@ -13,8 +13,8 @@ export interface GameEditModel {
   title: string;
   /** Purchase price. */
   price: number | null;
-  /** Store code where the game was purchased. */
-  store: string;
+  /** UUID of the store where the game was purchased. Null if unknown. */
+  store: string | null;
   /** Platform the game belongs to. */
   platform: PlatformType | null;
   /** Physical condition of the game copy. */

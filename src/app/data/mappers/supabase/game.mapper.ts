@@ -1,5 +1,6 @@
-import { UserGameEditDto, UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
+import { UserGameEditDto, UserGameFullDto, UserGameInsertDto, UserGameListDto } from '@/dtos/supabase/game-catalog.dto';
 import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { GameConditionType } from '@/types/game-condition.type';
 import { GameFormatType } from '@/types/game-format.type';
@@ -18,7 +19,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     uuid: dto.id,
     title: dto.title,
     price: dto.price,
-    store: dto.store ?? 'none',
+    store: dto.store ?? null,
     condition: (dto.condition ?? 'new') as GameConditionType,
     platinum: dto.platinum ?? false,
     description: dto.user_notes || dto.description || '',
@@ -45,7 +46,7 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
     title: dto.title,
     price: dto.price,
-    store: dto.store ?? 'none',
+    store: dto.store ?? null,
     platform: (dto.user_platform ?? null) as PlatformType | null,
     condition: (dto.condition ?? 'new') as GameConditionType,
     platinum: dto.platinum ?? false,
@@ -58,6 +59,29 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     imageUrl: dto.image_url,
     rawgId: dto.rawg_id,
     rawgSlug: dto.slug ?? null
+  };
+}
+
+/**
+ * Maps a UserGameListDto (partial view row) to the GameListModel used by the list and card.
+ *
+ * @param {UserGameListDto} dto
+ */
+export function mapGameList(dto: UserGameListDto): GameListModel {
+  return {
+    id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
+    uuid: dto.id,
+    title: dto.title,
+    price: dto.price,
+    store: dto.store ?? null,
+    platform: (dto.user_platform ?? null) as PlatformType | null,
+    platinum: dto.platinum ?? false,
+    description: dto.user_notes || dto.description || '',
+    imageUrl: dto.image_url ?? undefined,
+    status: (dto.status ?? 'backlog') as GameStatus,
+    personalRating: dto.personal_rating ?? null,
+    edition: dto.edition ?? null,
+    isFavorite: dto.is_favorite ?? false
   };
 }
 

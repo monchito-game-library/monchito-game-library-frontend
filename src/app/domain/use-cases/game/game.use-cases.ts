@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 
 import { GAME_REPOSITORY, GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
 import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -18,6 +19,16 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    */
   async getAllGames(userId: string): Promise<GameModel[]> {
     return this._repo.getAllGamesForUser(userId);
+  }
+
+  /**
+   * Returns all games in the user's collection with only the fields needed
+   * for the list view and game cards.
+   *
+   * @param {string} userId
+   */
+  async getAllGamesForList(userId: string): Promise<GameListModel[]> {
+    return this._repo.getAllGamesForList(userId);
   }
 
   /**
