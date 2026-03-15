@@ -31,23 +31,23 @@ export interface GameRepositoryContract {
   addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
-   * Deletes a game by ID if it belongs to the user.
+   * Deletes a game by UUID if it belongs to the user.
    *
    * @param {string} userId
-   * @param {number} id
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  deleteById(userId: string, id: number): Promise<void>;
+  deleteById(userId: string, uuid: string): Promise<void>;
 
   /**
    * Updates an existing game if it belongs to the user.
    * If a catalog entry is provided the catalog link will also be updated.
+   * The game model must include the uuid field.
    *
    * @param {string} userId
-   * @param {number} id
-   * @param {GameModel} game
+   * @param {GameModel} game - Must include uuid
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  updateGameForUser(userId: string, id: number, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
+  updateGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
 
   /**
    * Deletes all games for a user.
@@ -57,12 +57,12 @@ export interface GameRepositoryContract {
   clearAllForUser(userId: string): Promise<void>;
 
   /**
-   * Returns a single game by ID if it belongs to the user.
+   * Returns a single game by UUID if it belongs to the user.
    *
    * @param {string} userId
-   * @param {number} id
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  getById(userId: string, id: number): Promise<GameModel | undefined>;
+  getById(userId: string, uuid: string): Promise<GameModel | undefined>;
 }
 
 /** InjectionToken for GameRepositoryContract. */

@@ -54,7 +54,9 @@
     "cancel": "Cancel",
     "save": "Save",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "cropDialog": {
     "hint": "Drag to reposition · Pinch or use the scroll wheel to zoom"
@@ -95,7 +97,13 @@
       "edition": "Edition",
       "editionPlaceholder": "Deluxe Edition, GOTY...",
       "rating": "My Rating (0-10)",
-      "ratingPlaceholder": "8.5"
+      "ratingPlaceholder": "8.5",
+      "format": "Format",
+      "formatNone": "Not specified"
+    },
+    "formats": {
+      "digital": "Digital",
+      "physical": "Physical"
     },
     "conditions": {
       "new": "New",
@@ -254,7 +262,8 @@
       "userMenu": "Menu for {{ name }}",
       "openUserMenu": "Open user menu",
       "bottomNav": "Navigation"
-    }
+    },
+    "management": "Management"
   },
   "selectUser": {
     "title": "Select User"
@@ -307,6 +316,27 @@
       "emailInvalid": "Invalid email",
       "submit": "Send Reset Link",
       "backToLogin": "Back to Sign In"
+    }
+  },
+  "management": {
+    "stores": {
+      "title": "Stores",
+      "addBtn": "New store",
+      "editTitle": "Edit store",
+      "addTitle": "New store",
+      "nameLabel": "Name",
+      "codeLabel": "Code",
+      "namePlaceholder": "e.g. Fnac",
+      "codePlaceholder": "e.g. fnac",
+      "deleteConfirm": "Delete store «{{ name }}»? Games linked to this store will have no store assigned.",
+      "emptyCustom": "You haven't added any custom stores yet.",
+      "systemLabel": "System",
+      "customLabel": "Custom",
+      "formatHintLabel": "Suggested format",
+      "formatHintNone": "Both",
+      "formatHintDigital": "Digital",
+      "formatHintPhysical": "Physical",
+      "loadError": "Failed to load stores."
     }
   }
 }

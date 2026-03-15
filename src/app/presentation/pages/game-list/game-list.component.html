@@ -135,7 +135,7 @@
     [style.--grid-cols]="columnCount()">
     <div *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex" class="game-list__row">
       @for (game of row; track game.id) {
-        <app-game-card [game]="game" (gameDeleted)="onGameDeleted($event)" />
+        <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
       }
     </div>
   </cdk-virtual-scroll-viewport>

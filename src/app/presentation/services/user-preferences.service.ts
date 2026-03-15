@@ -1,5 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { GameModel } from '@/models/game/game.model';
 
 /**
  * Presentation service that holds reactive user preferences state.
@@ -16,9 +17,6 @@ export class UserPreferencesService {
   /** Whether a banner upload is in progress. */
   readonly uploadingBanner: WritableSignal<boolean> = signal(false);
 
-  /** List of game cover URLs available for use as panel banner. */
-  readonly gameImageUrls: WritableSignal<string[]> = signal([]);
-
   /** URL of the cover currently used as the profile panel banner. */
   readonly bannerImageUrl: WritableSignal<string | null> = signal(null);
 
@@ -34,6 +32,6 @@ export class UserPreferencesService {
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = signal(false);
 
-  /** Whether the game image URLs have been loaded from Supabase at least once. */
-  readonly gamesLoaded: WritableSignal<boolean> = signal(false);
+  /** Cached full game collection — set by AppComponent on startup to avoid duplicate fetches. */
+  readonly allGames: WritableSignal<GameModel[]> = signal([]);
 }

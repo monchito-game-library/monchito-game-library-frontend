@@ -91,56 +91,35 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
-   * Deletes a game by its numeric ID if it belongs to the given user.
+   * Deletes a game by UUID if it belongs to the given user.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  async deleteById(userId: string, gameId: number): Promise<void> {
-    const games = await this.getAllGamesForUser(userId);
-    const game = games.find((g) => g.id === gameId);
-    if (!game) throw new Error('Game not found');
-
-    const { data: viewRecord } = await this._supabase
-      .from(this._viewName)
-      .select('id')
-      .eq('user_id', userId)
-      .eq('title', game.title)
-      .single();
-
-    if (!viewRecord) throw new Error('Game record not found');
-
-    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('id', viewRecord.id);
+  async deleteById(userId: string, uuid: string): Promise<void> {
+    const { error } = await this._supabase.from(this._userGamesTable).delete().eq('id', uuid).eq('user_id', userId);
     if (error) throw new Error(`Failed to delete game: ${error.message}`);
   }
 
   /**
    * Updates an existing game. If a RAWG catalog entry is provided the catalog
-   * link will also be updated.
+   * link will also be updated. The model must include the uuid field.
    *
    * @param {string} userId
-   * @param {number} gameId
-   * @param {GameModel} updated
+   * @param {GameModel} updated - Must include uuid
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
-  async updateGameForUser(
-    userId: string,
-    gameId: number,
-    updated: GameModel,
-    catalogEntry?: GameCatalog | null
-  ): Promise<void> {
-    const games = await this.getAllGamesForUser(userId);
-    const game = games.find((g) => g.id === gameId);
-    if (!game) throw new Error('Game not found');
+  async updateGameForUser(userId: string, updated: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
+    if (!updated.uuid) throw new Error('Cannot update game: uuid is missing from model');
 
-    const { data: viewRecord } = await this._supabase
+    const { data: viewRecord, error: fetchError } = await this._supabase
       .from(this._viewName)
       .select('id, game_catalog_id')
       .eq('user_id', userId)
-      .eq('title', game.title)
+      .eq('id', updated.uuid)
       .single();
 
-    if (!viewRecord) throw new Error('Game record not found');
+    if (fetchError || !viewRecord) throw new Error('Game record not found');
 
     let gameCatalogId = viewRecord.game_catalog_id;
     if (catalogEntry) {
@@ -152,7 +131,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       ...mapGameToInsertDto(updated)
     };
 
-    const { error } = await this._supabase.from(this._userGamesTable).update(userGameRecord).eq('id', viewRecord.id);
+    const { error } = await this._supabase.from(this._userGamesTable).update(userGameRecord).eq('id', updated.uuid);
     if (error) throw new Error(`Failed to update game: ${error.message}`);
   }
 
@@ -167,14 +146,21 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
-   * Returns a single game by numeric ID if it belongs to the given user.
+   * Returns a single game by UUID if it belongs to the given user.
    *
    * @param {string} userId
-   * @param {number} gameId
+   * @param {string} uuid - Supabase UUID of the user_games row
    */
-  async getById(userId: string, gameId: number): Promise<GameModel | undefined> {
-    const games = await this.getAllGamesForUser(userId);
-    return games.find((g) => g.id === gameId);
+  async getById(userId: string, uuid: string): Promise<GameModel | undefined> {
+    const { data, error } = await this._supabase
+      .from(this._viewName)
+      .select('*')
+      .eq('user_id', userId)
+      .eq('id', uuid)
+      .single();
+
+    if (error || !data) return undefined;
+    return mapGame(data as UserGameFullDto);
   }
 
   /**

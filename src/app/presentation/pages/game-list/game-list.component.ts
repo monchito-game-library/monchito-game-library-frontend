@@ -27,7 +27,6 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
-import { StoreType } from '@/types/stores.type';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
@@ -35,6 +34,7 @@ import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences.service';
 import { GameCardComponent } from '@/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
@@ -69,6 +69,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
+  private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private _routerSubscription?: Subscription;
@@ -99,7 +100,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   readonly selectedConsole: WritableSignal<'' | PlatformType> = signal<PlatformType | ''>('');
 
   /** Currently selected store filter, or empty string for no filter. */
-  readonly selectedStore: WritableSignal<'' | StoreType> = signal<StoreType | ''>('');
+  readonly selectedStore: WritableSignal<string> = signal('');
 
   /** Currently selected status filter, or empty string for no filter. */
   readonly selectedStatus: WritableSignal<string> = signal('');
@@ -170,13 +171,13 @@ export class GameListComponent implements OnInit, OnDestroy {
   });
 
   async ngOnInit(): Promise<void> {
-    await this._loadGames();
+    await this._loadGames(false);
 
     this._routerSubscription = this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         if (event.url === '/list' || event.url.startsWith('/list')) {
-          void this._loadGames();
+          void this._loadGames(true);
         }
       });
 
@@ -238,26 +239,16 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Handles a game-deleted event from the card component and reloads the list.
-   *
-   * @param {number} id - ID of the deleted game
+   * Handles a game-deleted event from the card component.
+   * The card has already performed the delete — this only reloads the list and shows a snack.
    */
-  async onGameDeleted(id: number): Promise<void> {
-    try {
-      await this._gameUseCases.deleteGame(this._userId, id);
-      await this._loadGames();
-      this._snackBar.open(
-        this._transloco.translate('gameList.snack.deleted'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('gameList.snack.deleteError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-    }
+  async onGameDeleted(): Promise<void> {
+    await this._loadGames(true);
+    this._snackBar.open(
+      this._transloco.translate('gameList.snack.deleted'),
+      this._transloco.translate('common.close'),
+      { duration: 2000 }
+    );
   }
 
   /**
@@ -287,13 +278,24 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Fetches the user's full game collection from the repository.
+   * Loads the user's game collection, using the shared cache on first load.
+   * Pass forceRefresh=true to always fetch from Supabase (after edits or deletions).
+   *
+   * @param {boolean} forceRefresh - Whether to bypass the shared cache
    */
-  private async _loadGames(): Promise<void> {
+  private async _loadGames(forceRefresh: boolean): Promise<void> {
+    const cached = this._userPreferencesState.allGames();
+    if (!forceRefresh && cached.length > 0) {
+      this.allGames.set(cached);
+      this.loading.set(false);
+      return;
+    }
+
     this.loading.set(true);
     try {
       const data: GameModel[] = await this._gameUseCases.getAllGames(this._userId);
       this.allGames.set(data);
+      this._userPreferencesState.allGames.set(data);
     } catch {
       this._snackBar.open(
         this._transloco.translate('gameList.snack.loadError'),
