@@ -3,7 +3,16 @@
     <!-- CARA DELANTERA -->
     <div class="game-card__front">
       <div class="game-card__image-wrapper">
-        <img class="game-card__image" [ngSrc]="defaultImage()" fill alt="Game cover" />
+        @if (!imageLoaded()) {
+          <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
+        }
+        <img
+          class="game-card__image"
+          [class.game-card__image--loaded]="imageLoaded()"
+          [ngSrc]="defaultImage()"
+          (load)="imageLoaded.set(true)"
+          fill
+          alt="Game cover" />
 
         <!-- Badge de estado — top left -->
         @if (gameStatus()) {

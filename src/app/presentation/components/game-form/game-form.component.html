@@ -25,8 +25,8 @@
       <!-- Columna izquierda: portada y búsqueda -->
       <aside class="game-cover-panel">
         <div class="game-cover-panel__cover">
-          @if (selectedGame()?.image_url) {
-            <img [src]="selectedGame()!.image_url!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
+          @if (selectedImageUrl()) {
+            <img [src]="selectedImageUrl()!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
             <button
               mat-icon-button
               type="button"
@@ -42,6 +42,26 @@
             </div>
           }
         </div>
+
+        @if (screenshotsLoading()) {
+          <div class="game-cover-panel__thumbnails">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <app-skeleton width="72px" height="48px" borderRadius="6px" class="game-cover-panel__thumb-skeleton" />
+            }
+          </div>
+        } @else if (coverImages().length > 1) {
+          <div class="game-cover-panel__thumbnails">
+            @for (img of coverImages(); track img) {
+              <button
+                type="button"
+                class="game-cover-panel__thumb"
+                [class.game-cover-panel__thumb--active]="selectedImageUrl() === img"
+                (click)="onSelectImage(img)">
+                <img [src]="img" alt="" />
+              </button>
+            }
+          </div>
+        }
 
         <button mat-flat-button type="button" (click)="openSearchMode()" class="game-cover-panel__search-btn">
           <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
@@ -118,8 +138,8 @@
           <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
           <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
           <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
-            @for (store of filteredStores(); track store.code) {
-              <mat-option [value]="store.code">{{ store.labelKey | transloco }}</mat-option>
+            @for (store of filteredStores(); track store.id) {
+              <mat-option [value]="store.id">{{ store.label }}</mat-option>
             }
           </mat-autocomplete>
           @if (form.controls.store.value) {
@@ -191,6 +211,23 @@
 
         <div class="game-form__footer">
           <div class="game-form__toggles">
+            <div class="game-form__toggle-row">
+              <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
+              <mat-button-toggle-group
+                [value]="formatValue()"
+                (change)="onFormatChange($event.value)"
+                hideSingleSelectionIndicator
+                class="game-form__format-toggle">
+                <mat-button-toggle value="physical">
+                  <mat-icon>album</mat-icon>
+                  {{ 'gameForm.formats.physical' | transloco }}
+                </mat-button-toggle>
+                <mat-button-toggle value="digital">
+                  <mat-icon>cloud</mat-icon>
+                  {{ 'gameForm.formats.digital' | transloco }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.platinum' | transloco }}</span>
               <app-toggle-switch formControlName="platinum" icon="emoji_events" iconChecked="emoji_events" />

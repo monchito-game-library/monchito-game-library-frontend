@@ -45,7 +45,12 @@ export interface RawgGameDto {
   stores: RawgStoreInfoDto[];
   tags: RawgTagDto[];
   esrb_rating: RawgEsrbRatingDto | null;
-  short_screenshots: RawgScreenshotDto[];
+  /**
+   * Undocumented field — not present in the official RAWG spec.
+   * Returns up to 6 images. The `/games/{id}/screenshots` endpoint also returns
+   * the same 6 via the public API (RAWG limits this for non-internal consumers).
+   */
+  short_screenshots?: RawgScreenshotDto[];
 }
 
 /** Full game detail returned by the RAWG /games/{id} endpoint. */
@@ -78,6 +83,15 @@ export interface RawgGameDetailDto extends RawgGameDto {
   publishers: RawgPublisherDto[];
   reactions?: Record<string, number>;
   alternative_names?: string[];
+}
+
+/**
+ * Minimal projection of a RAWG game list result.
+ * Only the two fields the banner picker needs — avoids deserialising platforms, tags, genres, etc.
+ */
+export interface RawgBannerItemDto {
+  name: string;
+  background_image: string | null;
 }
 
 /** Response from the RAWG /games search endpoint. */
@@ -141,6 +155,7 @@ export interface GameCatalog {
   rating: number;
   platforms: string[];
   genres: string[];
+  screenshots?: string[];
   description?: string;
   created_at?: string;
   updated_at?: string;
