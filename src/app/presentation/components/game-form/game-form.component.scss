@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1rem 0 0;
+  padding: 1rem 0;
   box-sizing: border-box;
   overflow: hidden;
 
@@ -296,11 +296,11 @@
 // ────────────────────────── Responsive: ≤ 1024px ──────────────────────────
 @media (max-width: 1024px) {
   .game-form-page {
-    height: auto;
-    overflow: auto;
+    overflow-y: auto;
 
     &--search-mode {
       overflow: hidden;
+      padding-bottom: 0;
     }
 
     .game-form-page__content {
@@ -320,6 +320,7 @@
   .game-form {
     min-width: 0;
     width: 100%;
+    height: auto;
     grid-template-columns: repeat(2, 1fr);
     overflow-y: visible;
   }
@@ -334,6 +335,12 @@
 
     .game-form-page__content {
       padding-inline: 1rem;
+    }
+  }
+
+  .game-form {
+    .game-form__footer {
+      margin-bottom: calc(60px + 1rem);
     }
   }
 

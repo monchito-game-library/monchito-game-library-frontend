@@ -168,7 +168,7 @@
 } @else if (filteredGames().length > 0) {
   <cdk-virtual-scroll-viewport
     class="game-list__viewport"
-    [itemSize]="ROW_ITEM_SIZE"
+    [itemSize]="rowItemSize()"
     [style.--grid-cols]="columnCount()">
     <div *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex" class="game-list__row">
       @for (game of row; track game.id) {

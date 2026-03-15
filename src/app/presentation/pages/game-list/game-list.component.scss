@@ -112,6 +112,10 @@
 .game-list__viewport {
   flex: 1;
   min-height: 0;
+
+  ::ng-deep .cdk-virtual-scroll-content-wrapper {
+    padding-bottom: 1rem;
+  }
 }
 
 .game-list__row {
@@ -180,7 +184,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .game-list__header {
-    padding: 0.5rem 0.75rem;
+    padding: 1rem 0.75rem;
   }
 
   .game-list__filters {
@@ -198,6 +202,11 @@
 
   .game-list__mobile-filter-btn {
     display: flex;
+  }
+
+  :host {
+    padding-bottom: 60px;
+    box-sizing: border-box;
   }
 
   .game-list__row {
