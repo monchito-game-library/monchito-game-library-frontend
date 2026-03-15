@@ -81,6 +81,7 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
     status: (dto.status ?? 'backlog') as GameStatus,
     personalRating: dto.personal_rating ?? null,
     edition: dto.edition ?? null,
+    format: (dto.format ?? null) as GameFormatType | null,
     isFavorite: dto.is_favorite ?? false
   };
 }
