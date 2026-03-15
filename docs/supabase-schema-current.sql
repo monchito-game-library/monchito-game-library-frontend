@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-03-13
+-- Última revisión: 2026-03-15
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -91,7 +91,46 @@ CREATE INDEX IF NOT EXISTS idx_game_catalog_developers   ON game_catalog USING g
 
 
 -- ============================================================
--- 2. TABLA: user_games
+-- 2. TABLA: stores
+--    Tiendas disponibles para la colección de cada usuario.
+--    Gestionadas desde el panel de administración.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS stores (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  label      TEXT NOT NULL,
+  format_hint TEXT CHECK (format_hint IN ('physical', 'digital')),  -- sugiere el formato por defecto
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Índices
+CREATE INDEX IF NOT EXISTS idx_stores_created_by ON stores(created_by);
+
+-- RLS
+ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read stores"
+  ON stores FOR SELECT USING (TRUE);
+
+CREATE POLICY "Admins can insert stores"
+  ON stores FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admins can update stores"
+  ON stores FOR UPDATE USING (auth.uid() IS NOT NULL);
+
+CREATE POLICY "Admins can delete stores"
+  ON stores FOR DELETE USING (auth.uid() IS NOT NULL);
+
+DROP TRIGGER IF EXISTS trg_stores_updated_at ON stores;
+CREATE TRIGGER trg_stores_updated_at
+  BEFORE UPDATE ON stores
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+
+-- ============================================================
+-- 3. TABLA: user_games
 --    Entradas de la colección personal de cada usuario.
 --    Un usuario puede tener el mismo juego del catálogo
 --    en múltiples formatos/plataformas.
@@ -104,10 +143,11 @@ CREATE TABLE IF NOT EXISTS user_games (
 
   -- Datos de compra
   price          NUMERIC(10,2),
-  store          TEXT,
+  store          UUID REFERENCES stores(id) ON DELETE SET NULL,
   platform       TEXT,
   condition      TEXT CHECK (condition IN ('new', 'used')),
   purchased_date DATE,
+  format         TEXT CHECK (format IN ('physical', 'digital')),
 
   -- Estado y progreso
   platinum BOOLEAN DEFAULT FALSE,
@@ -144,15 +184,16 @@ CREATE INDEX IF NOT EXISTS idx_user_games_user_id        ON user_games(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_games_catalog_id     ON user_games(game_catalog_id);
 CREATE INDEX IF NOT EXISTS idx_user_games_platform       ON user_games(platform);
 CREATE INDEX IF NOT EXISTS idx_user_games_store          ON user_games(store);
+CREATE INDEX IF NOT EXISTS idx_user_games_format         ON user_games(format);
 CREATE INDEX IF NOT EXISTS idx_user_games_status         ON user_games(status);
 CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_platinum       ON user_games(platinum)     WHERE platinum = TRUE;
 
 
 -- ============================================================
--- 3. TABLA: user_preferences
+-- 4. TABLA: user_preferences
 --    Configuración personal de cada usuario autenticado:
---    tema, idioma, avatar y banner.
+--    tema, idioma, avatar, banner y rol.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS user_preferences (
@@ -161,13 +202,17 @@ CREATE TABLE IF NOT EXISTS user_preferences (
   language   TEXT DEFAULT 'es'    CHECK (language IN ('es', 'en')),
   avatar_url TEXT,               -- URL pública del bucket 'avatars'
   banner_url TEXT,               -- URL del banner (bucket 'banners' o URL externa RAWG)
+  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Nota: el campo `role` solo debe modificarse via service role (SQL directo).
+-- El cliente nunca envía `role` en el payload de upsert.
+
 
 -- ============================================================
--- 4. TABLA: user_wishlist  (definida, pendiente de uso en UI)
+-- 5. TABLA: user_wishlist  (definida, pendiente de uso en UI)
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS user_wishlist (
@@ -188,7 +233,7 @@ CREATE INDEX IF NOT EXISTS idx_user_wishlist_priority ON user_wishlist(priority)
 
 
 -- ============================================================
--- 5. ROW LEVEL SECURITY (RLS)
+-- 6. ROW LEVEL SECURITY (RLS)
 -- ============================================================
 
 -- game_catalog: lectura pública, escritura autenticada
@@ -230,7 +275,7 @@ CREATE POLICY "Users can upsert their own preferences"
 CREATE POLICY "Users can update their own preferences"
   ON user_preferences FOR UPDATE USING (auth.uid() = user_id);
 
--- user_wishlist: solo el propio usuario
+-- user_wishlist: solo el propio usuario (stores RLS ya definido arriba junto a su tabla)
 ALTER TABLE user_wishlist ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own wishlist"
@@ -247,7 +292,7 @@ CREATE POLICY "Users can delete from their wishlist"
 
 
 -- ============================================================
--- 6. TRIGGERS — updated_at automático
+-- 7. TRIGGERS — updated_at automático
 -- ============================================================
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -305,9 +350,9 @@ CREATE TRIGGER trg_decrement_users_on_delete
 
 
 -- ============================================================
--- 7. VISTA: user_games_full
---    Join de user_games + game_catalog. Es la vista principal
---    que usa el frontend para leer la colección.
+-- 8. VISTA: user_games_full
+--    Join de user_games + game_catalog + stores.
+--    Es la vista principal que usa el frontend para leer la colección.
 -- ============================================================
 
 CREATE OR REPLACE VIEW user_games_full AS
@@ -337,9 +382,11 @@ SELECT
   -- Datos personales del usuario
   ug.price,
   ug.store,
+  s.label            AS store_label,
   ug.platform        AS user_platform,
   ug.condition,
   ug.purchased_date,
+  ug.format,
   ug.status,
   ug.platinum,
   ug.personal_rating,
@@ -353,11 +400,12 @@ SELECT
   ug.created_at,
   ug.updated_at
 FROM user_games ug
-INNER JOIN game_catalog gc ON ug.game_catalog_id = gc.id;
+INNER JOIN game_catalog gc ON ug.game_catalog_id = gc.id
+LEFT JOIN stores s ON ug.store = s.id;
 
 
 -- ============================================================
--- 8. VISTA: game_catalog_stats  (uso futuro / analítica)
+-- 9. VISTA: game_catalog_stats  (uso futuro / analítica)
 -- ============================================================
 
 CREATE OR REPLACE VIEW game_catalog_stats AS

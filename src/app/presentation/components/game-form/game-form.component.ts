@@ -10,19 +10,17 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
+import { DatePipe } from '@angular/common';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -34,6 +32,7 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
+import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { StoreModel } from '@/models/store/store.model';
@@ -73,10 +72,8 @@ import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
   imports: [
     ReactiveFormsModule,
     DatePipe,
-    DecimalPipe,
     MatFormField,
     MatLabel,
-    MatPrefix,
     MatError,
     MatInput,
     MatSelect,
@@ -85,14 +82,13 @@ import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
     MatButton,
     MatIcon,
     MatIconButton,
-    MatButtonToggleGroup,
-    MatButtonToggle,
     MatProgressSpinner,
     TranslocoPipe,
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatSuffix,
-    SkeletonComponent
+    SkeletonComponent,
+    GameSearchPanelComponent
   ]
 })
 export class GameFormComponent implements OnInit {
@@ -107,7 +103,6 @@ export class GameFormComponent implements OnInit {
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
 
-  private readonly _searchSubject: Subject<string> = new Subject<string>();
   /** Raw store models loaded from Supabase. */
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal([]);
   /** Increments on every form value change to trigger hasChanges recomputation. */
@@ -233,15 +228,6 @@ export class GameFormComponent implements OnInit {
   /** Whether the component is in catalogue search mode (true) or form mode (false). */
   readonly searchMode: WritableSignal<boolean> = signal(false);
 
-  /** Whether a catalogue search request is in progress. */
-  readonly searchLoading: WritableSignal<boolean> = signal(false);
-
-  /** Current catalogue search results. */
-  readonly searchResults: WritableSignal<GameCatalogDto[]> = signal([]);
-
-  /** Current search query string. */
-  readonly searchQuery: WritableSignal<string> = signal('');
-
   /** Whether the game data is being loaded in edit mode. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
@@ -271,10 +257,6 @@ export class GameFormComponent implements OnInit {
   isEditMode: boolean = false;
 
   constructor() {
-    this._searchSubject
-      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe((query: string) => void this._performSearch(query));
-
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
 
     this.form.controls.store.valueChanges
@@ -406,23 +388,10 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Deactivates search mode and returns to the form, clearing the search state.
+   * Deactivates search mode and returns to the form.
    */
   closeSearchMode(): void {
     this.searchMode.set(false);
-    this.searchResults.set([]);
-    this.searchQuery.set('');
-  }
-
-  /**
-   * Handles the search input event and pushes the value to the debounce subject.
-   *
-   * @param {Event} event - Input event from the search field
-   */
-  onSearchInput(event: Event): void {
-    const query: string = (event.target as HTMLInputElement).value;
-    this.searchQuery.set(query);
-    this._searchSubject.next(query);
   }
 
   /**
@@ -547,8 +516,7 @@ export class GameFormComponent implements OnInit {
    * Auto-suggests a format value when the user selects a store that has a format hint.
    * Only applies when the format field has not already been set by the user.
    *
-   * @param {string | null} code - Selected store code
-   * @param id
+   * @param {string | null} id - Selected store ID
    */
   private _onStoreChange(id: string | null): void {
     if (this._loadingEditData) return;
@@ -577,29 +545,6 @@ export class GameFormComponent implements OnInit {
       // silently ignore — thumbnails just won't show
     } finally {
       this.screenshotsLoading.set(false);
-    }
-  }
-
-  /**
-   * Executes a RAWG catalogue search and updates the results signal.
-   * Triggered automatically by the debounced subject.
-   *
-   * @param {string} query - Search term
-   */
-  private async _performSearch(query: string): Promise<void> {
-    if (!query.trim()) {
-      this.searchResults.set([]);
-      return;
-    }
-
-    this.searchLoading.set(true);
-    try {
-      const results: GameCatalogDto[] = await this._catalogUseCases.searchGames(query, 1, 20);
-      this.searchResults.set(results);
-    } catch {
-      this.searchResults.set([]);
-    } finally {
-      this.searchLoading.set(false);
     }
   }
 

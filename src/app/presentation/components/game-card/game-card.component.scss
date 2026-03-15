@@ -7,7 +7,7 @@
   height: 100%;
   padding: 0;
   cursor: default;
-  // perspective necesaria para el efecto 3D — no puede tener overflow:hidden
+  // perspective required for the 3D effect — cannot have overflow:hidden
   perspective: 1200px;
   transition:
     transform 0.2s ease,
@@ -26,7 +26,7 @@
     }
   }
 
-  // Elemento interno que rota — define el espacio 3D
+  // Inner element that rotates — defines the 3D space
   .game-card__inner {
     position: relative;
     width: 100%;
@@ -39,7 +39,7 @@
     }
   }
 
-  // Cara delantera — layout normal
+  // Front face — normal layout
   .game-card__front {
     display: flex;
     flex-direction: column;
@@ -52,7 +52,7 @@
     -webkit-backface-visibility: hidden;
   }
 
-  // Cara trasera — pre-rotada 180deg, aparece al voltear
+  // Back face — pre-rotated 180deg, shown on flip
   .game-card__back {
     position: absolute;
     inset: 0;
@@ -66,7 +66,7 @@
     background-position: center;
   }
 
-  // Capa semitransparente sobre la imagen de fondo
+  // Semi-transparent layer over the background image
   .game-card__back-overlay {
     position: absolute;
     inset: 0;
@@ -154,7 +154,7 @@
     }
   }
 
-  // Badge de estado — top left
+  // Status badge — top left
   .game-card__status-badge {
     position: absolute;
     top: 10px;
@@ -176,7 +176,7 @@
     }
   }
 
-  // Favorito — top right
+  // Favourite — top right
   .game-card__favorite {
     position: absolute;
     top: 10px;
@@ -210,7 +210,7 @@
     }
   }
 
-  // Overlay degradado inferior con título y plataforma
+  // Bottom gradient overlay with title and platform
   .game-card__overlay {
     position: absolute;
     bottom: 0;
@@ -279,7 +279,7 @@
     text-overflow: ellipsis;
   }
 
-  // Botones de acción — aparecen al hover
+  // Action buttons — visible on hover
   .game-card__actions {
     position: absolute;
     top: 0;
@@ -359,6 +359,28 @@
       mat-icon {
         color: #ffc107;
       }
+    }
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .game-card {
+    .game-card__footer {
+      padding: 0.35rem 0.65rem;
+      min-height: 36px;
+    }
+
+    .game-card__price {
+      font-size: 0.82rem;
+    }
+
+    .game-card__overlay {
+      padding: 2.5rem 0.65rem 0.65rem;
+    }
+
+    .game-card__title {
+      font-size: 0.82rem;
     }
   }
 }

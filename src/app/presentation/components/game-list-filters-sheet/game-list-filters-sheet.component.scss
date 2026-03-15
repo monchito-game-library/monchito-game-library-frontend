@@ -1,0 +1,80 @@
+.filters-sheet {
+  display: flex;
+  flex-direction: column;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.filters-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.5rem 0.625rem 1.25rem;
+}
+
+.filters-sheet__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.filters-sheet__body {
+  padding: 1rem 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filters-sheet__field {
+  width: 100%;
+}
+
+// ─── Sort row ─────────────────────────────────────────────────────────────────
+
+.filters-sheet__sort-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filters-sheet__field--sort {
+  flex: 1;
+}
+
+// ─── Favourites toggle ────────────────────────────────────────────────────────
+
+.filters-sheet__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0;
+}
+
+.filters-sheet__toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--mat-sys-on-surface);
+
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.filters-sheet__fav-icon--active {
+  color: var(--mat-sys-error) !important;
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+
+.filters-sheet__footer {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}

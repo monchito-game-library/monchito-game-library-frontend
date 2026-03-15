@@ -21,7 +21,7 @@
     pointer-events: none;
     z-index: 0;
     transition: opacity 400ms ease;
-    // Modo claro: multiply hace los colores visibles sobre fondos blancos
+    // Light mode: multiply blends colours over white backgrounds
     opacity: 0.22;
     mix-blend-mode: multiply;
   }
@@ -135,7 +135,7 @@
   }
 }
 
-// Área de contenido principal
+// Main content area
 .app-main {
   flex: 1;
   display: flex;
@@ -144,7 +144,7 @@
   min-width: 0;
 }
 
-// Topbar móvil (oculto en desktop)
+// Mobile topbar (hidden on desktop)
 .app-topbar {
   display: none;
   align-items: center;
@@ -183,7 +183,7 @@
   }
 }
 
-// Área de contenido
+// Content area
 .app-content {
   flex: 1;
   overflow: hidden;
@@ -192,7 +192,7 @@
   min-height: 0;
 }
 
-// Bottom navigation (oculto en desktop)
+// Bottom navigation (hidden on desktop)
 .bottom-nav {
   display: none;
   background-color: var(--mat-sys-surface-container);
@@ -222,9 +222,9 @@
   }
 }
 
-// ─── Menú de perfil ──────────────────────────────────────────────────────────
+// ─── Profile menu ────────────────────────────────────────────────────────────
 
-// El wrapper de Material no tiene _ngcontent, se sobreescribe con ::ng-deep
+// The Material wrapper has no _ngcontent — overridden with ::ng-deep
 ::ng-deep .mat-mdc-menu-panel {
   min-width: 280px !important;
   max-width: 280px !important;
@@ -237,7 +237,7 @@
   padding: 0 !important;
 }
 
-// Los elementos custom sí tienen _ngcontent → estilos sin ::ng-deep
+// Custom elements do have _ngcontent → styles without ::ng-deep
 
 .profile-menu__panel {
   background-color: var(--mat-sys-surface-container-high);
@@ -341,13 +341,13 @@
   }
 }
 
-// Modo oscuro: blend normal a baja opacidad (el fondo oscuro ya da el contraste)
+// Dark mode: normal blend at low opacity (dark background provides enough contrast)
 ::ng-deep .dark-mode .app-shell::before {
   opacity: 0.08;
   mix-blend-mode: normal;
 }
 
-// ─── Animaciones de avatar ────────────────────────────────────────────────────
+// ─── Avatar animations ────────────────────────────────────────────────────────
 
 @keyframes avatar-fade-in {
   from {
@@ -370,5 +370,10 @@
 
   .bottom-nav {
     display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
   }
 }

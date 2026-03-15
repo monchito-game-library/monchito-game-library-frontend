@@ -22,7 +22,7 @@
   margin: 0 0 0.25rem;
 }
 
-// ─── Sección Perfil ───────────────────────────────────────────────────────────
+// ─── Profile section ──────────────────────────────────────────────────────────
 
 .settings__avatar-section {
   display: flex;
@@ -125,7 +125,7 @@
 .settings__avatar-hint {
   font-size: 0.75rem;
   color: var(--mat-sys-on-surface-variant);
-  opacity: 0.7;
+  opacity: 0.85;
   margin-top: 4px;
 }
 
@@ -214,28 +214,30 @@
   }
 }
 
-// mat-card tiene overflow: hidden por defecto — lo sobreescribimos para
-// permitir el scroll horizontal del grid de portadas
+// mat-card has overflow: hidden by default — overridden here to
+// allow horizontal scroll on the cover grid
 ::ng-deep .settings__card {
   overflow: visible !important;
 }
 
-// ─── Subtítulos de sección ────────────────────────────────────────────────────
+// ─── Section subtitles ────────────────────────────────────────────────────────
 
 .settings__section-subtitle {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--mat-sys-on-surface-variant);
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-primary);
   margin: 0.75rem 0 0.75rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--mat-sys-primary);
 }
 
 .settings__section-divider {
   margin: 1.25rem 0 1rem;
 }
 
-// ─── Sección Banner ───────────────────────────────────────────────────────────
+// ─── Banner section ───────────────────────────────────────────────────────────
 
 .settings__banner-skeleton {
   margin-top: 0.75rem;
@@ -418,7 +420,7 @@
   margin: 0;
 }
 
-// ─── Sección Apariencia ───────────────────────────────────────────────────────
+// ─── Appearance section ───────────────────────────────────────────────────────
 
 .settings__row {
   display: flex;
@@ -486,6 +488,6 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .settings {
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 1rem calc(60px + 1rem);
   }
 }

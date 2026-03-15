@@ -193,7 +193,8 @@
       "allStores": "All",
       "status": "Status",
       "allStatuses": "All",
-      "sortBy": "Sort by"
+      "sortBy": "Sort by",
+      "filters": "Filters"
     },
     "sort": {
       "recent": "Most Recent",
@@ -254,6 +255,10 @@
       "uploadImage": "Error uploading image",
       "uploadBanner": "Error uploading banner",
       "updateName": "Error updating display name"
+    },
+    "session": {
+      "title": "Session",
+      "logoutDescription": "Sign out from your account"
     }
   },
   "nav": {
@@ -341,6 +346,10 @@
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Physical",
       "loadError": "Failed to load stores."
+    },
+    "title": "Management",
+    "nav": {
+      "stores": "Stores"
     }
   }
 }

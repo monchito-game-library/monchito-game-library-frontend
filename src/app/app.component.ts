@@ -43,14 +43,19 @@ export class AppComponent implements OnInit {
 
   readonly userContext: UserContextService = inject(UserContextService);
 
-  /** Main navigation items. */
+  /** Navigation items shared by desktop rail and mobile bottom nav. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
     { icon: 'add_circle', label: 'nav.add', route: '/add' }
   ];
 
+  /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
+  readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
+
   /** Management navigation items. */
-  readonly managementNavItems: NavItemInterface[] = [{ icon: 'tune', label: 'nav.management', route: '/management' }];
+  readonly managementNavItems: NavItemInterface[] = [
+    { icon: 'admin_panel_settings', label: 'nav.management', route: '/management' }
+  ];
 
   /** Reactive signal with the current avatar URL. */
   readonly avatarUrl = this._userPreferencesState.avatarUrl;
@@ -60,6 +65,9 @@ export class AppComponent implements OnInit {
 
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
+
+  /** Whether the current user has the admin role. */
+  readonly isAdmin = this._userPreferencesState.isAdmin;
 
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
@@ -117,6 +125,18 @@ export class AppComponent implements OnInit {
       return current.startsWith('/add') || current.startsWith('/update/');
     }
     return current.startsWith(route);
+  }
+
+  /**
+   * Returns the transloco key for the current page title, used in the mobile topbar.
+   * Falls back to an empty string for routes not matched by any nav item.
+   */
+  getPageTitle(): string {
+    const route = this.currentRoute();
+    if (route.startsWith('/update/')) return 'nav.add';
+    const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
+    const match = allItems.find((item) => route.startsWith(item.route));
+    return match?.label ?? '';
   }
 
   /**
@@ -178,6 +198,7 @@ export class AppComponent implements OnInit {
       this._userPreferencesState.bannerImageUrl.set(prefs.bannerUrl);
     }
 
+    this._userPreferencesState.role.set(prefs.role);
     this.preferencesLoaded.set(true);
   }
 

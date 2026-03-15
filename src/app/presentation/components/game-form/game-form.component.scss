@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   box-sizing: border-box;
   overflow: hidden;
 
@@ -19,6 +19,7 @@
     gap: 0.75rem;
     margin-bottom: 0;
     flex-shrink: 0;
+    padding: 0 2rem;
   }
 
   .game-form-page__title {
@@ -34,11 +35,11 @@
     gap: 2rem;
     flex: 1;
     min-height: 0;
-    padding-top: 1.5rem;
+    padding: 1.5rem 2rem 0;
   }
 }
 
-// ─── Panel izquierdo: portada ───────────────────────────────────────────────
+// ─── Left panel: cover ───────────────────────────────────────────────────────
 
 .game-cover-panel {
   display: flex;
@@ -199,7 +200,7 @@
   justify-content: center;
 }
 
-// ─── Formulario derecho ──────────────────────────────────────────────────────
+// ─── Right panel: form ───────────────────────────────────────────────────────────
 
 .game-form {
   display: grid;
@@ -220,7 +221,7 @@
       display: flex;
       flex-direction: column;
 
-      // Propaga el estiramiento por toda la cadena de wrappers de Material via flexbox
+      // Propagates stretch through the entire Material wrapper chain via flexbox
       ::ng-deep .mat-mdc-text-field-wrapper {
         flex: 1;
         display: flex;
@@ -258,7 +259,7 @@
     grid-column: 1 / -1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1.5rem;
     padding-top: 1rem;
     border-top: 1px solid var(--mat-sys-outline-variant);
     margin-top: auto;
@@ -266,7 +267,8 @@
 
   .game-form__toggles {
     display: flex;
-    gap: 1.5rem;
+    flex: 1;
+    justify-content: space-between;
   }
 
   .game-form__toggle-row {
@@ -280,20 +282,6 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .game-form__format-toggle {
-    .mat-button-toggle {
-      font-size: 0.8rem;
-
-      mat-icon {
-        font-size: 1rem;
-        width: 1rem;
-        height: 1rem;
-        vertical-align: middle;
-        margin-right: 0.25rem;
-      }
-    }
-  }
-
   .game-form__submit-btn {
     min-width: 140px;
   }
@@ -305,198 +293,15 @@
   }
 }
 
-// ─── Panel de búsqueda inline ────────────────────────────────────────────────
-
-.game-search-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  padding-top: 1rem;
-
-  .game-search-panel__input-wrapper {
-    flex-shrink: 0;
-    padding-bottom: 0.5rem;
-  }
-
-  .game-search-panel__field {
-    width: 100%;
-  }
-
-  .game-search-panel__results {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-right: 0.25rem;
-  }
-
-  .game-search-panel__placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    flex: 1;
-    color: var(--mat-sys-on-surface-variant);
-    padding: 3rem 0;
-
-    mat-icon {
-      font-size: 3rem;
-      width: 3rem;
-      height: 3rem;
-      opacity: 0.4;
-    }
-
-    p {
-      margin: 0;
-      font-size: 0.95rem;
-    }
-  }
-}
-
-// ─── Card horizontal de resultado ───────────────────────────────────────────
-
-.search-result-card {
-  display: flex;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
-  cursor: pointer;
-  transition:
-    background 120ms ease,
-    border-color 120ms ease,
-    transform 120ms ease;
-  flex-shrink: 0;
-
-  &:hover {
-    background: var(--mat-sys-surface-container);
-    border-color: var(--mat-sys-primary);
-    transform: translateX(3px);
-  }
-
-  .search-result-card__cover {
-    width: 72px;
-    flex-shrink: 0;
-    aspect-ratio: 3 / 4;
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--mat-sys-surface-variant);
-  }
-
-  .search-result-card__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .search-result-card__cover-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--mat-sys-on-surface-variant);
-
-    mat-icon {
-      font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
-      opacity: 0.5;
-    }
-  }
-
-  .search-result-card__info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .search-result-card__title {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--mat-sys-on-surface);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .search-result-card__meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.8rem;
-    color: var(--mat-sys-on-surface-variant);
-  }
-
-  .search-result-card__year {
-    font-weight: 500;
-  }
-
-  .search-result-card__metacritic {
-    background: #6ab04c;
-    color: #fff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 4px;
-    letter-spacing: 0.02em;
-  }
-
-  .search-result-card__rating {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-
-    mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-      color: #f4c23e;
-    }
-  }
-
-  .search-result-card__platforms {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-  }
-
-  .search-result-card__badge {
-    font-size: 0.7rem;
-    padding: 1px 7px;
-    border-radius: 4px;
-    background: var(--mat-sys-surface-variant);
-    color: var(--mat-sys-on-surface-variant);
-    border: 1px solid var(--mat-sys-outline-variant);
-    white-space: nowrap;
-
-    &--more {
-      background: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
-      border-color: transparent;
-    }
-  }
-
-  .search-result-card__genres {
-    margin: 0;
-    font-size: 0.75rem;
-    color: var(--mat-sys-on-surface-variant);
-    opacity: 0.8;
-  }
-}
-
 // ────────────────────────── Responsive: ≤ 1024px ──────────────────────────
 @media (max-width: 1024px) {
   .game-form-page {
-    height: auto;
-    overflow: auto;
+    overflow-y: auto;
+
+    &--search-mode {
+      overflow: hidden;
+      padding-bottom: 0;
+    }
 
     .game-form-page__content {
       grid-template-columns: 1fr;
@@ -504,13 +309,63 @@
   }
 
   .game-cover-panel {
+    min-width: 0;
+    width: 100%;
+
     .game-cover-panel__cover {
       aspect-ratio: 16 / 6;
     }
   }
 
   .game-form {
+    min-width: 0;
+    width: 100%;
+    height: auto;
     grid-template-columns: repeat(2, 1fr);
     overflow-y: visible;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .game-form-page {
+    .game-form-page__header {
+      padding-inline: 1rem;
+    }
+
+    .game-form-page__content {
+      padding-inline: 1rem;
+    }
+  }
+
+  .game-form {
+    .game-form__footer {
+      margin-bottom: calc(60px + 1rem);
+    }
+  }
+
+  .game-form {
+    grid-template-columns: 1fr;
+
+    .game-form__footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .game-form__toggles {
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+    }
+
+    .game-form__submit-btn {
+      width: 100%;
+    }
+
+    .game-form__field--description {
+      ::ng-deep textarea {
+        min-height: 100px;
+      }
+    }
   }
 }

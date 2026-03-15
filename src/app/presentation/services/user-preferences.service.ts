@@ -1,6 +1,7 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { GameListModel } from '@/models/game/game-list.model';
+import { UserRoleType } from '@/types/user-role.type';
 
 /**
  * Presentation service that holds reactive user preferences state.
@@ -34,4 +35,10 @@ export class UserPreferencesService {
 
   /** Cached game collection for the list view — set on first load to avoid duplicate fetches. */
   readonly allGames: WritableSignal<GameListModel[]> = signal([]);
+
+  /** Current user role, defaulting to 'user' until preferences are loaded. */
+  readonly role: WritableSignal<UserRoleType> = signal<UserRoleType>('user');
+
+  /** Whether the current user has the admin role. */
+  readonly isAdmin: Signal<boolean> = computed((): boolean => this.role() === 'admin');
 }
