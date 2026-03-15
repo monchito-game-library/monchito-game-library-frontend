@@ -83,11 +83,7 @@
       </div>
 
       <!-- Bottom Navigation — mobile only -->
-      <nav
-        class="bottom-nav"
-        [class.bottom-nav--hidden]="navHidden()"
-        role="navigation"
-        [attr.aria-label]="'nav.aria.bottomNav' | transloco">
+      <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
         @for (item of navItems; track item.route) {
           <a
             class="bottom-nav__item"
