@@ -1,4 +1,4 @@
-<div class="game-form-page">
+<div class="game-form-page" [class.game-form-page--search-mode]="searchMode()">
   <header class="game-form-page__header">
     @if (searchMode()) {
       <button
