@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { canActivateUser } from '@/guards/user.guard';
+import { canActivateAdmin } from '@/guards/admin.guard';
 
 export const routes: Routes = [
   // Public routes (no authentication required)
@@ -65,7 +66,7 @@ export const routes: Routes = [
     loadComponent: (): Promise<
       typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
     > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent),
-    canActivate: [canActivateUser]
+    canActivate: [canActivateUser, canActivateAdmin]
   },
 
   // Default and fallback routes
