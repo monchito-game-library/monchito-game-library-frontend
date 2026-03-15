@@ -1,0 +1,22 @@
+<div class="management">
+  <!-- Sidebar (desktop) / Tab bar (mobile) -->
+  <nav class="management__nav" role="navigation" [attr.aria-label]="'management.title' | transloco">
+    <p class="management__nav-title">{{ 'management.title' | transloco }}</p>
+
+    @for (section of sections; track section.route) {
+      <a
+        class="management__nav-item"
+        [routerLink]="section.route"
+        routerLinkActive="management__nav-item--active"
+        [attr.aria-label]="section.label | transloco">
+        <mat-icon>{{ section.icon }}</mat-icon>
+        <span>{{ section.label | transloco }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- Active dictionary content -->
+  <div class="management__content">
+    <router-outlet />
+  </div>
+</div>
