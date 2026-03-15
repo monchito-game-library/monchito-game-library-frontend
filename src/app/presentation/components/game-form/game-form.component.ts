@@ -516,8 +516,7 @@ export class GameFormComponent implements OnInit {
    * Auto-suggests a format value when the user selects a store that has a format hint.
    * Only applies when the format field has not already been set by the user.
    *
-   * @param {string | null} code - Selected store code
-   * @param id
+   * @param {string | null} id - Selected store ID
    */
   private _onStoreChange(id: string | null): void {
     if (this._loadingEditData) return;

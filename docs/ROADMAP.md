@@ -6,8 +6,12 @@
 
 ## UI / UX
 
-### Versión responsive para móvil
-Actualmente la app está optimizada para escritorio. Adaptar todos los layouts (game-list, game-form, settings, management) para que funcionen correctamente en pantallas de móvil y tablet.
+### Posicionamiento de imagen en cards
+Al añadir o editar un juego, permitir ajustar el punto focal de la portada que se muestra en la card. Funcionaría igual que el crop de avatar/banner:
+- Al subir o seleccionar una imagen, mostrar un panel de ajuste (drag) donde el usuario puede desplazar la imagen dentro de su marco (3:4).
+- Guardar los valores `object-position` (X e Y en porcentaje) junto al juego en base de datos.
+- La card aplica esos valores con `object-position: X% Y%` en la imagen, de modo que siempre se muestre la parte que el usuario eligió.
+- Si no se ha configurado posición, usar el valor por defecto `center`.
 
 ---
 
@@ -49,7 +53,3 @@ Nueva sección en el nav-bar para gestionar pedidos de cajas de plástico duro (
 
 ---
 
-## Roles y permisos
-
-### Usuarios admin
-Introducir un sistema de roles (admin / usuario estándar) para restringir el acceso a las secciones de gestión (`/management`) solo a administradores. Esto también habilitaría la edición de la base de datos maestra de juegos.

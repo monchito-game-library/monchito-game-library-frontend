@@ -53,7 +53,9 @@ export class AppComponent implements OnInit {
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
   /** Management navigation items. */
-  readonly managementNavItems: NavItemInterface[] = [{ icon: 'tune', label: 'nav.management', route: '/management' }];
+  readonly managementNavItems: NavItemInterface[] = [
+    { icon: 'admin_panel_settings', label: 'nav.management', route: '/management' }
+  ];
 
   /** Reactive signal with the current avatar URL. */
   readonly avatarUrl = this._userPreferencesState.avatarUrl;
