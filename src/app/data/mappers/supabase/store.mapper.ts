@@ -10,23 +10,21 @@ import { GameFormatType } from '@/types/game-format.type';
 export function mapStore(dto: StoreDto): StoreModel {
   return {
     id: dto.id,
-    code: dto.code,
     label: dto.label,
-    formatHint: (dto.format_hint as GameFormatType) ?? null,
-    isSystem: dto.is_system
+    formatHint: (dto.format_hint as GameFormatType) ?? null
   };
 }
 
 /**
- * Maps a StoreModel to a StoreInsertDto for Supabase inserts/updates.
+ * Maps a StoreModel and creator UUID to a StoreInsertDto for Supabase inserts.
  *
  * @param {Omit<StoreModel, 'id'>} model
+ * @param {string} createdBy - UUID of the user creating the store
  */
-export function mapStoreToInsertDto(model: Omit<StoreModel, 'id'>): StoreInsertDto {
+export function mapStoreToInsertDto(model: Omit<StoreModel, 'id'>, createdBy: string): StoreInsertDto {
   return {
-    code: model.code,
     label: model.label,
     format_hint: model.formatHint,
-    is_system: model.isSystem
+    created_by: createdBy
   };
 }

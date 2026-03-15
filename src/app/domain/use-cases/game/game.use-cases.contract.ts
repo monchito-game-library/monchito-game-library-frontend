@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -12,6 +13,14 @@ export interface GameUseCasesContract {
    * @param {string} userId
    */
   getAllGames(userId: string): Promise<GameModel[]>;
+
+  /**
+   * Returns all games in the user's collection with only the fields needed
+   * for the list view and game cards.
+   *
+   * @param {string} userId
+   */
+  getAllGamesForList(userId: string): Promise<GameListModel[]>;
 
   /**
    * Returns a single game by UUID, or undefined if not found.
