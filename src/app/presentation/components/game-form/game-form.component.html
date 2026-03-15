@@ -138,8 +138,8 @@
           <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
           <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
           <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
-            @for (store of filteredStores(); track store.code) {
-              <mat-option [value]="store.code">{{ store.labelKey }}</mat-option>
+            @for (store of filteredStores(); track store.id) {
+              <mat-option [value]="store.id">{{ store.label }}</mat-option>
             }
           </mat-autocomplete>
           @if (form.controls.store.value) {

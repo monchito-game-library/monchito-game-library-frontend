@@ -121,6 +121,26 @@ export interface UserGameEditDto {
   is_favorite: boolean;
 }
 
+/**
+ * Subset of user_games_full returned by the list select.
+ * Only the columns needed to render game cards and apply filters.
+ */
+export interface UserGameListDto {
+  id: string;
+  title: string;
+  price: number | null;
+  store: string | null;
+  user_platform: string | null;
+  platinum: boolean;
+  description: string | null | undefined;
+  user_notes: string | null;
+  status: string;
+  personal_rating: number | null;
+  edition: string | null;
+  is_favorite: boolean;
+  image_url: string | null;
+}
+
 /** Payload for inserting or updating a row in game_catalog. */
 export type GameCatalogInsertDto = Partial<GameCatalogDto>;
 

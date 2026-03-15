@@ -24,12 +24,17 @@ export class SupabaseStoreRepository implements StoreRepositoryContract {
   }
 
   /**
-   * Creates a new custom store entry.
+   * Creates a new store entry linked to the given user.
    *
    * @param {Omit<StoreModel, 'id'>} store
+   * @param {string} createdBy - UUID of the user creating the store
    */
-  async create(store: Omit<StoreModel, 'id'>): Promise<StoreModel> {
-    const { data, error } = await this._supabase.from(this._table).insert(mapStoreToInsertDto(store)).select().single();
+  async create(store: Omit<StoreModel, 'id'>, createdBy: string): Promise<StoreModel> {
+    const { data, error } = await this._supabase
+      .from(this._table)
+      .insert(mapStoreToInsertDto(store, createdBy))
+      .select()
+      .single();
     if (error) throw new Error(`Failed to create store: ${error.message}`);
     return mapStore(data as StoreDto);
   }

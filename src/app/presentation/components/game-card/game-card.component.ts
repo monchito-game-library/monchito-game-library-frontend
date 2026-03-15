@@ -25,17 +25,9 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
-import { GameModel } from '@/models/game/game.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { PlatformType } from '@/types/platform.type';
-import { GameConditionType } from '@/types/game-condition.type';
-import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
-import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
-import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
-import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
-import { availableConditions } from '@/constants/available-conditions.constant';
-import { availableStoresConstant } from '@/constants/available-stores.constant';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 
 @Component({
@@ -47,9 +39,6 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe, SkeletonComponent]
 })
 export class GameCardComponent {
-  private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
-  private readonly _conditions: AvailableConditionInterface[] = availableConditions;
-  private readonly _stores: AvailableStoresInterface[] = availableStoresConstant;
   private readonly _statuses: GameStatusOption[] = availableGameStatuses;
 
   private readonly _router: Router = inject(Router);
@@ -59,7 +48,7 @@ export class GameCardComponent {
   private readonly _userContext: UserContextService = inject(UserContextService);
 
   /** Game to display (required). */
-  readonly game: InputSignal<GameModel> = input.required<GameModel>();
+  readonly game: InputSignal<GameListModel> = input.required<GameListModel>();
 
   /** Cover image URL, falls back to the default cover. */
   readonly defaultImage: Signal<string> = computed((): string => this.game().imageUrl || defaultGameCover);
@@ -119,7 +108,7 @@ export class GameCardComponent {
    * Opens a confirmation dialog and deletes the game if confirmed.
    */
   deleteGame = (): void => {
-    const game: GameModel = this.game();
+    const game: GameListModel = this.game();
     if (!game.uuid) return;
 
     const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
@@ -135,39 +124,6 @@ export class GameCardComponent {
         this.gameDeleted.emit(game.id);
       }
     });
-  };
-
-  /**
-   * Returns the translated store label for a given store code.
-   *
-   * @param {string | null} code
-   */
-  displayStoreLabel = (code: string | null): string => {
-    if (!code) return '';
-    const store = this._stores.find((s: AvailableStoresInterface): boolean => s.code === code);
-    return store ? this._transloco.translate(store.labelKey) : code;
-  };
-
-  /**
-   * Returns the translated platform label for a given platform code.
-   *
-   * @param {PlatformType | null} code
-   */
-  displayPlatformLabel = (code: PlatformType | null): string => {
-    if (!code) return '';
-    const platform = this._platforms.find((p: AvailablePlatformInterface): boolean => p.code === code);
-    return platform ? this._transloco.translate(platform.labelKey) : code;
-  };
-
-  /**
-   * Returns the translated condition label for a given condition code.
-   *
-   * @param {GameConditionType | null} code
-   */
-  displayConditionLabel = (code: GameConditionType | null): string => {
-    if (!code) return '';
-    const condition = this._conditions.find((c: AvailableConditionInterface): boolean => c.code === code);
-    return condition ? this._transloco.translate(condition.labelKey) : code;
   };
 
   /**

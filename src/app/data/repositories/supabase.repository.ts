@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
+import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
@@ -10,10 +12,10 @@ import {
   GameCatalogInsertDto,
   UserGameEditDto,
   UserGameFullDto,
-  UserGameInsertDto
+  UserGameInsertDto,
+  UserGameListDto
 } from '@/dtos/supabase/game-catalog.dto';
-import { mapGame, mapGameEdit, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
-import { GameEditModel } from '@/models/game/game-edit.model';
+import { mapGame, mapGameEdit, mapGameList, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
 
 /**
  * Game repository backed by Supabase.
@@ -55,6 +57,38 @@ export class SupabaseRepository implements GameRepositoryContract {
     }
 
     return all.map(mapGame);
+  }
+
+  /**
+   * Returns all games for a user with only the columns needed for the list view and game cards.
+   * Excludes condition, format, rawg_id, rawg_slug to reduce payload size.
+   *
+   * @param {string} userId
+   */
+  async getAllGamesForList(userId: string): Promise<GameListModel[]> {
+    const PAGE_SIZE = 1000;
+    let all: UserGameListDto[] = [];
+    let from = 0;
+
+    while (true) {
+      const { data, error } = await this._supabase
+        .from(this._viewName)
+        .select(
+          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,is_favorite,image_url'
+        )
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
+      if (!data || data.length === 0) break;
+
+      all = all.concat(data as UserGameListDto[]);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+
+    return all.map(mapGameList);
   }
 
   /**

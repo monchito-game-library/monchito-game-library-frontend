@@ -61,8 +61,8 @@
       <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
       <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
         <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
-        @for (s of stores; track s.code) {
-          <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
+        @for (s of stores(); track s.id) {
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

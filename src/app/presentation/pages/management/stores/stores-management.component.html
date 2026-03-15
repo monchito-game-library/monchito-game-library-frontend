@@ -11,57 +11,35 @@
     <div class="stores-page__loading">
       <mat-spinner diameter="40" />
     </div>
+  } @else if (stores().length === 0) {
+    <p class="stores-page__empty">{{ 'management.stores.empty' | transloco }}</p>
   } @else {
-    <!-- Tiendas personalizadas -->
-    <section class="stores-section">
-      <h2 class="stores-section__label">{{ 'management.stores.customLabel' | transloco }}</h2>
-
-      @if (customStores().length === 0) {
-        <p class="stores-section__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
-      } @else {
-        <div class="stores-grid">
-          @for (store of customStores(); track store.id) {
-            <div class="store-card">
-              <mat-icon class="store-card__icon">storefront</mat-icon>
-              <div class="store-card__info">
-                <span class="store-card__name">{{ store.label }}</span>
-                <span class="store-card__code">{{ store.code }}</span>
-                <span class="store-card__format-hint">{{ getFormatHintLabel(store.formatHint) }}</span>
+    <div class="stores-grid">
+      @for (store of stores(); track store.id) {
+        <div class="store-card">
+          <mat-icon class="store-card__icon">storefront</mat-icon>
+          <div class="store-card__info">
+            <span class="store-card__name">{{ store.label }}</span>
+            @if (store.formatHint) {
+              <div class="store-card__chips">
+                <span class="store-card__chip">{{ getFormatHintLabel(store.formatHint) }}</span>
               </div>
-              <div class="store-card__actions">
-                <button mat-icon-button (click)="onEditStore(store)" [attr.aria-label]="'common.edit' | transloco">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  (click)="onDeleteStore(store)"
-                  [attr.aria-label]="'common.delete' | transloco"
-                  class="store-card__delete-btn">
-                  <mat-icon>delete_outline</mat-icon>
-                </button>
-              </div>
-            </div>
-          }
+            }
+          </div>
+          <div class="store-card__actions">
+            <button mat-icon-button (click)="onEditStore(store)" [attr.aria-label]="'common.edit' | transloco">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="onDeleteStore(store)"
+              [attr.aria-label]="'common.delete' | transloco"
+              class="store-card__delete-btn">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
         </div>
       }
-    </section>
-
-    <!-- Tiendas del sistema -->
-    <section class="stores-section">
-      <h2 class="stores-section__label">{{ 'management.stores.systemLabel' | transloco }}</h2>
-      <div class="stores-grid">
-        @for (store of systemStores(); track store.id) {
-          <div class="store-card store-card--system">
-            <mat-icon class="store-card__icon">storefront</mat-icon>
-            <div class="store-card__info">
-              <span class="store-card__name">{{ store.label }}</span>
-              <span class="store-card__code">{{ store.code }}</span>
-              <span class="store-card__format-hint">{{ getFormatHintLabel(store.formatHint) }}</span>
-            </div>
-            <span class="store-card__system-badge">{{ 'management.stores.systemLabel' | transloco }}</span>
-          </div>
-        }
-      </div>
-    </section>
+    </div>
   }
 </div>

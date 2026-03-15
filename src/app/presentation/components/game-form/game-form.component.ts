@@ -51,7 +51,6 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { selectOneValidator } from '@/shared/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
-import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 
@@ -123,10 +122,8 @@ export class GameFormComponent implements OnInit {
   /** Available game conditions. */
   readonly conditions: AvailableConditionInterface[] = availableConditions;
 
-  /** Available stores derived from the loaded store models. */
-  readonly stores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] =>
-    this._storeModels().map((s): AvailableStoresInterface => ({ code: s.code, labelKey: s.label }))
-  );
+  /** Available stores loaded from Supabase. */
+  readonly stores: Signal<StoreModel[]> = computed((): StoreModel[] => this._storeModels());
 
   /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
@@ -135,7 +132,7 @@ export class GameFormComponent implements OnInit {
   readonly form = this._fb.group({
     title: ['', Validators.required],
     price: [null as number | null],
-    store: ['none' as string],
+    store: [null as string | null],
     platform: [
       null as PlatformType | null,
       [
@@ -192,7 +189,7 @@ export class GameFormComponent implements OnInit {
   });
 
   readonly storeInput = toSignal(this.form.controls.store.valueChanges, {
-    initialValue: this.form.controls.store.value ?? 'none'
+    initialValue: this.form.controls.store.value ?? null
   });
 
   /** Reactive signal for the format control value — needed for OnPush compatibility with mat-button-toggle-group. */
@@ -201,12 +198,9 @@ export class GameFormComponent implements OnInit {
   });
 
   /** Stores filtered by the current autocomplete input value. */
-  readonly filteredStores: Signal<AvailableStoresInterface[]> = computed((): AvailableStoresInterface[] => {
+  readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
     const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
-    return this.stores().filter(
-      (store: AvailableStoresInterface): boolean =>
-        store.code.toLowerCase().includes(input) || store.labelKey.toLowerCase().includes(input)
-    );
+    return this.stores().filter((store: StoreModel): boolean => store.label.toLowerCase().includes(input));
   });
 
   /** Game selected from the RAWG catalogue. */
@@ -368,7 +362,7 @@ export class GameFormComponent implements OnInit {
         uuid: this._gameUuid,
         title: raw.title ?? '',
         price: raw.price ?? null,
-        store: raw.store ?? 'none',
+        store: raw.store ?? null,
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
@@ -483,17 +477,15 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Returns the store label for a given store code.
-   * Falls back to the raw code if the store is not found in the loaded list.
+   * Returns the store label for a given store UUID.
+   * Falls back to the raw id if the store is not found in the loaded list.
    *
-   * @param {string | null} code - Store code to resolve
+   * @param {string | null} id - Store UUID to resolve
    */
-  displayStoreLabel = (code: string | null): string => {
-    if (!code) return '';
-    const store: AvailableStoresInterface | undefined = this.stores().find(
-      (s: AvailableStoresInterface): boolean => s.code === code
-    );
-    return store ? store.labelKey : code;
+  displayStoreLabel = (id: string | null): string => {
+    if (!id) return '';
+    const store: StoreModel | undefined = this.stores().find((s: StoreModel): boolean => s.id === id);
+    return store ? store.label : id;
   };
 
   /**
@@ -536,10 +528,11 @@ export class GameFormComponent implements OnInit {
    * Only applies when the format field has not already been set by the user.
    *
    * @param {string | null} code - Selected store code
+   * @param id
    */
-  private _onStoreChange(code: string | null): void {
-    if (!code || this.form.controls.format.value) return;
-    const storeModel: StoreModel | undefined = this._storeModels().find((s: StoreModel) => s.code === code);
+  private _onStoreChange(id: string | null): void {
+    if (!id || this.form.controls.format.value) return;
+    const storeModel: StoreModel | undefined = this._storeModels().find((s: StoreModel) => s.id === id);
     if (storeModel?.formatHint) {
       this.form.controls.format.setValue(storeModel.formatHint);
     }

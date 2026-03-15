@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -21,6 +12,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angu
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { UserContextService } from '@/services/user-context.service';
 import { StoreModel } from '@/models/store/store.model';
 import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
@@ -28,7 +20,6 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 
 /** Shape returned by the store form dialog. */
 interface StoreFormResult {
-  code: string;
   label: string;
   formatHint: GameFormatType | null;
 }
@@ -64,17 +55,6 @@ interface StoreFormResult {
           }
         </mat-form-field>
         <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.stores.codeLabel' | transloco }}</mat-label>
-          <input
-            matInput
-            formControlName="code"
-            [placeholder]="'management.stores.codePlaceholder' | transloco"
-            [readonly]="!!data.store" />
-          @if (form.controls.code.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-          }
-        </mat-form-field>
-        <mat-form-field appearance="outline">
           <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>
           <mat-select formControlName="formatHint">
             <mat-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</mat-option>
@@ -104,13 +84,13 @@ interface StoreFormResult {
   ]
 })
 export class StoreFormDialogComponent {
-  readonly data: { store: StoreModel | null } = inject(MAT_DIALOG_DATA);
   private readonly _dialogRef: MatDialogRef<StoreFormDialogComponent, StoreFormResult> = inject(MatDialogRef);
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
+  readonly data: { store: StoreModel | null } = inject(MAT_DIALOG_DATA);
+
   readonly form = this._fb.group({
     name: [this.data.store ? this.data.store.label : '', Validators.required],
-    code: [this.data.store?.code ?? '', Validators.required],
     formatHint: [this.data.store?.formatHint ?? (null as GameFormatType | null)]
   });
 
@@ -121,14 +101,13 @@ export class StoreFormDialogComponent {
     if (this.form.invalid) return;
     const raw = this.form.getRawValue();
     this._dialogRef.close({
-      code: raw.code as string,
       label: raw.name as string,
       formatHint: raw.formatHint as GameFormatType | null
     });
   }
 }
 
-/** Page for managing the list of stores available in the game form. */
+/** Page for managing the shared store catalog. */
 @Component({
   selector: 'app-stores-management',
   templateUrl: './stores-management.component.html',
@@ -141,22 +120,13 @@ export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-
-  /** All stores loaded from Supabase. */
-  private readonly _allStores: WritableSignal<StoreModel[]> = signal([]);
+  private readonly _userContext: UserContextService = inject(UserContextService);
 
   /** Whether the store list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
-  /** System (built-in) stores. */
-  readonly systemStores: Signal<StoreModel[]> = computed((): StoreModel[] =>
-    this._allStores().filter((s: StoreModel) => s.isSystem)
-  );
-
-  /** User-defined custom stores. */
-  readonly customStores: Signal<StoreModel[]> = computed((): StoreModel[] =>
-    this._allStores().filter((s: StoreModel) => !s.isSystem)
-  );
+  /** All stores loaded from Supabase. */
+  readonly stores: WritableSignal<StoreModel[]> = signal([]);
 
   async ngOnInit(): Promise<void> {
     await this._loadStores();
@@ -169,18 +139,13 @@ export class StoresManagementComponent implements OnInit {
     const ref = this._dialog.open(StoreFormDialogComponent, { data: { store: null } });
     ref.afterClosed().subscribe(async (result?: StoreFormResult) => {
       if (!result) return;
-      await this._storeUseCases.addStore({
-        code: result.code,
-        label: result.label,
-        formatHint: result.formatHint,
-        isSystem: false
-      });
+      await this._storeUseCases.addStore({ label: result.label, formatHint: result.formatHint }, this._userId);
       await this._loadStores();
     });
   }
 
   /**
-   * Opens the edit dialog for a custom store and updates the entry in Supabase.
+   * Opens the edit dialog for a store and updates the entry in Supabase.
    *
    * @param {StoreModel} store - The store entry to edit
    */
@@ -223,13 +188,22 @@ export class StoresManagementComponent implements OnInit {
   }
 
   /**
+   * Returns the current user ID or throws if no user is authenticated.
+   */
+  private get _userId(): string {
+    const id: string | null = this._userContext.userId();
+    if (!id) throw new Error('No user authenticated');
+    return id;
+  }
+
+  /**
    * Loads all stores from Supabase and updates the stores signal.
    */
   private async _loadStores(): Promise<void> {
     this.loading.set(true);
     try {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
-      this._allStores.set(stores);
+      this.stores.set(stores);
     } finally {
       this.loading.set(false);
     }

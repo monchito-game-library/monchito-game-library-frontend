@@ -17,12 +17,13 @@ export class StoreUseCasesImpl implements StoreUseCasesContract {
   }
 
   /**
-   * Creates a new custom store entry.
+   * Creates a new store entry linked to the given user.
    *
    * @param {Omit<StoreModel, 'id'>} store
+   * @param {string} createdBy - UUID of the user creating the store
    */
-  async addStore(store: Omit<StoreModel, 'id'>): Promise<StoreModel> {
-    return this._repo.create(store);
+  async addStore(store: Omit<StoreModel, 'id'>, createdBy: string): Promise<StoreModel> {
+    return this._repo.create(store, createdBy);
   }
 
   /**

@@ -1,14 +1,12 @@
 /** Row from the stores table in Supabase. */
 export interface StoreDto {
   id: string;
-  /** Short unique code (e.g. 'psn', 'amz'). */
-  code: string;
   /** Human-readable store name. */
   label: string;
   /** Suggested format for games bought at this store. Null if the store sells both. */
   format_hint: 'digital' | 'physical' | null;
-  /** Whether this is a built-in system store. */
-  is_system: boolean;
+  /** UUID of the user who created this store. Used for traceability and future RLS. */
+  created_by: string | null;
   created_at?: string;
   updated_at?: string;
 }
