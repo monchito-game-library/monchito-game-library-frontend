@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { firstValueFrom, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -45,6 +46,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatButton,
     MatCard,
     MatCardContent,
     MatCardHeader,
@@ -317,6 +319,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
    */
   getUserEmail(): string | null {
     return this._userContext.getUserEmail();
+  }
+
+  /**
+   * Signs out the current user.
+   */
+  logout(): void {
+    this._userContext.clearUser();
   }
 
   /**

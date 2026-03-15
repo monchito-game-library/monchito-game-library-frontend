@@ -206,4 +206,22 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  <!-- Section: Session -->
+  <mat-card class="settings__card">
+    <mat-card-header>
+      <mat-card-title>{{ 'settings.session.title' | transloco }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="settings__row">
+        <span class="settings__row-label">
+          <mat-icon>logout</mat-icon>
+          {{ 'settings.session.logoutDescription' | transloco }}
+        </span>
+        <button mat-stroked-button color="warn" (click)="logout()">
+          {{ 'nav.logout' | transloco }}
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

@@ -193,7 +193,8 @@
       "allStores": "Todas",
       "status": "Estado",
       "allStatuses": "Todos",
-      "sortBy": "Ordenar por"
+      "sortBy": "Ordenar por",
+      "filters": "Filtros"
     },
     "sort": {
       "recent": "Más recientes",
@@ -254,6 +255,10 @@
       "uploadImage": "Error al subir la imagen",
       "uploadBanner": "Error al subir el banner",
       "updateName": "Error al actualizar el nombre"
+    },
+    "session": {
+      "title": "Sesión",
+      "logoutDescription": "Cerrar sesión en tu cuenta"
     }
   },
   "nav": {

@@ -3,6 +3,8 @@ import {
   Component,
   effect,
   inject,
+  NgZone,
+  OnDestroy,
   OnInit,
   QueryList,
   signal,
@@ -33,20 +35,24 @@ import { NavItemInterface } from '@/interfaces/nav-item.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent, TranslocoPipe]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
+  private readonly _ngZone: NgZone = inject(NgZone);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
+  private _lastScrollY = 0;
+  private _scrollCleanup?: () => void;
 
   readonly userContext: UserContextService = inject(UserContextService);
 
   /** Main navigation items. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
-    { icon: 'add_circle', label: 'nav.add', route: '/add' }
+    { icon: 'add_circle', label: 'nav.add', route: '/add' },
+    { icon: 'settings', label: 'nav.settings', route: '/settings' }
   ];
 
   /** Management navigation items. */
@@ -67,6 +73,9 @@ export class AppComponent implements OnInit {
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
 
+  /** Whether the bottom nav is hidden (slid out of view on scroll-down). */
+  readonly navHidden: WritableSignal<boolean> = signal(false);
+
   /** References to the profile menu triggers (rail + topbar). */
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
@@ -86,9 +95,16 @@ export class AppComponent implements OnInit {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentRoute.set(event.urlAfterRedirects);
+        this.navHidden.set(false);
+        this._lastScrollY = 0;
       });
 
     this.currentRoute.set(this._router.url);
+    this._registerScrollListener();
+  }
+
+  ngOnDestroy(): void {
+    this._scrollCleanup?.();
   }
 
   /**
@@ -123,6 +139,18 @@ export class AppComponent implements OnInit {
   }
 
   /**
+   * Returns the transloco key for the current page title, used in the mobile topbar.
+   * Falls back to an empty string for routes not matched by any nav item.
+   */
+  getPageTitle(): string {
+    const route = this.currentRoute();
+    if (route.startsWith('/update/')) return 'nav.add';
+    const allItems = [...this.navItems, ...this.managementNavItems];
+    const match = allItems.find((item) => route.startsWith(item.route));
+    return match?.label ?? '';
+  }
+
+  /**
    * Returns the authenticated user's display name.
    */
   getDisplayName(): string {
@@ -149,6 +177,32 @@ export class AppComponent implements OnInit {
    */
   logout(): void {
     this.userContext.clearUser();
+  }
+
+  /**
+   * Registers a capture-phase scroll listener on the document to hide the bottom
+   * nav when scrolling down and reveal it when scrolling up.
+   * Runs outside Angular zone to avoid triggering change detection on every scroll tick.
+   */
+  private _registerScrollListener(): void {
+    this._ngZone.runOutsideAngular(() => {
+      const handler = (e: Event): void => {
+        const el = e.target as HTMLElement;
+        const y = el.scrollTop ?? 0;
+        const delta = y - this._lastScrollY;
+        this._lastScrollY = y;
+
+        if (delta > 5 && y > 60 && !this.navHidden()) {
+          this._ngZone.run(() => this.navHidden.set(true));
+        } else if ((delta < -5 || y <= 10) && this.navHidden()) {
+          this._ngZone.run(() => this.navHidden.set(false));
+        }
+      };
+
+      document.addEventListener('scroll', handler, { passive: true, capture: true });
+      this._scrollCleanup = (): void =>
+        document.removeEventListener('scroll', handler, { capture: true } as EventListenerOptions);
+    });
   }
 
   /**
