@@ -59,12 +59,12 @@
       <!-- Topbar — mobile only -->
       <header class="app-topbar" role="banner">
         <mat-icon class="app-topbar__brand">videogame_asset</mat-icon>
-        <span class="app-topbar__title">{{ getDisplayName() }}</span>
+        <span class="app-topbar__title">{{ getPageTitle() | transloco }}</span>
         <div
           class="app-topbar__user"
-          [matMenuTriggerFor]="profileMenu"
           role="button"
-          [attr.aria-label]="'nav.aria.openUserMenu' | transloco">
+          (click)="onNavigateToSettings()"
+          [attr.aria-label]="'nav.settings' | transloco">
           @if (preferencesLoaded()) {
             <img
               class="app-topbar__avatar app-topbar__avatar--loaded"
@@ -81,22 +81,14 @@
       <div class="app-content">
         <router-outlet />
       </div>
-    </main>
 
-    <!-- Bottom Navigation — mobile only -->
-    <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
-      @for (item of navItems; track item.route) {
-        <a
-          class="bottom-nav__item"
-          [class.bottom-nav__item--active]="isNavActive(item.route)"
-          [routerLink]="item.route"
-          [attr.aria-label]="item.label | transloco">
-          <mat-icon>{{ item.icon }}</mat-icon>
-          <span class="bottom-nav__label">{{ item.label | transloco }}</span>
-        </a>
-      }
-      @if (isAdmin()) {
-        @for (item of managementNavItems; track item.route) {
+      <!-- Bottom Navigation — mobile only -->
+      <nav
+        class="bottom-nav"
+        [class.bottom-nav--hidden]="navHidden()"
+        role="navigation"
+        [attr.aria-label]="'nav.aria.bottomNav' | transloco">
+        @for (item of navItems; track item.route) {
           <a
             class="bottom-nav__item"
             [class.bottom-nav__item--active]="isNavActive(item.route)"
@@ -106,8 +98,20 @@
             <span class="bottom-nav__label">{{ item.label | transloco }}</span>
           </a>
         }
-      }
-    </nav>
+        @if (isAdmin()) {
+          @for (item of managementNavItems; track item.route) {
+            <a
+              class="bottom-nav__item"
+              [class.bottom-nav__item--active]="isNavActive(item.route)"
+              [routerLink]="item.route"
+              [attr.aria-label]="item.label | transloco">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span class="bottom-nav__label">{{ item.label | transloco }}</span>
+            </a>
+          }
+        }
+      </nav>
+    </main>
   </div>
 } @else {
   <router-outlet />

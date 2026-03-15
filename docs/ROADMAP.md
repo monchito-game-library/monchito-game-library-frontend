@@ -11,6 +11,13 @@ Actualmente la app está optimizada para escritorio. Adaptar todos los layouts (
 
 ---
 
+## Arquitectura / Rendimiento
+
+### Migrar a Angular zoneless puro
+Reemplazar `provideAnimations()` por `provideExperimentalZonelessChangeDetection()` y eliminar `zone.js` de los polyfills. El proyecto ya usa `OnPush` + signals en todo, por lo que la migración es sencilla. Beneficios: ~13 KB menos de bundle, simplificación del código async (sin `NgZone`). Riesgo principal: verificar compatibilidad de `ngx-image-cropper` con el flujo de crop de avatar/banner.
+
+---
+
 ## Gestión (`/management`)
 
 ### Base de datos maestra de juegos

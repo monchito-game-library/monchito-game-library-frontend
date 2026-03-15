@@ -362,3 +362,25 @@
     }
   }
 }
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .game-card {
+    .game-card__footer {
+      padding: 0.35rem 0.65rem;
+      min-height: 36px;
+    }
+
+    .game-card__price {
+      font-size: 0.82rem;
+    }
+
+    .game-card__overlay {
+      padding: 2.5rem 0.65rem 0.65rem;
+    }
+
+    .game-card__title {
+      font-size: 0.82rem;
+    }
+  }
+}

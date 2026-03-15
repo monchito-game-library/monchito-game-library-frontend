@@ -368,7 +368,23 @@
     display: flex;
   }
 
+  // Reserve space at the bottom so content is never hidden behind the fixed nav
+  .app-content {
+    padding-bottom: 60px;
+  }
+
   .bottom-nav {
     display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    transform: translateY(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &--hidden {
+      transform: translateY(100%);
+    }
   }
 }
