@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 
+import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -19,6 +20,14 @@ export interface GameUseCasesContract {
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   getById(userId: string, uuid: string): Promise<GameModel | undefined>;
+
+  /**
+   * Returns only the fields needed by the edit form for a single game.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined>;
 
   /**
    * Returns all games for a given platform.

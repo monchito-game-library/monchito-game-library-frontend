@@ -6,8 +6,14 @@ import { PlatformType } from '@/types/platform.type';
 import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
 import { getSupabaseClient } from '@/data/config/supabase.config';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
-import { GameCatalogInsertDto, UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
-import { mapGame, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
+import {
+  GameCatalogInsertDto,
+  UserGameEditDto,
+  UserGameFullDto,
+  UserGameInsertDto
+} from '@/dtos/supabase/game-catalog.dto';
+import { mapGame, mapGameEdit, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
+import { GameEditModel } from '@/models/game/game-edit.model';
 
 /**
  * Game repository backed by Supabase.
@@ -161,6 +167,27 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     if (error || !data) return undefined;
     return mapGame(data as UserGameFullDto);
+  }
+
+  /**
+   * Returns only the columns needed by the edit form for a single game.
+   * Uses an explicit column list instead of select('*') to avoid fetching unused catalog metadata.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  async getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined> {
+    const { data, error } = await this._supabase
+      .from(this._viewName)
+      .select(
+        'id,game_catalog_id,title,slug,image_url,rawg_id,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite'
+      )
+      .eq('user_id', userId)
+      .eq('id', uuid)
+      .single();
+
+    if (error || !data) return undefined;
+    return mapGameEdit(data as UserGameEditDto);
   }
 
   /**

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { GAME_REPOSITORY, GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
+import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -27,6 +28,16 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    */
   async getById(userId: string, uuid: string): Promise<GameModel | undefined> {
     return this._repo.getById(userId, uuid);
+  }
+
+  /**
+   * Returns only the fields needed by the edit form for a single game.
+   *
+   * @param {string} userId
+   * @param {string} uuid - Supabase UUID of the user_games row
+   */
+  async getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined> {
+    return this._repo.getGameForEdit(userId, uuid);
   }
 
   /**
