@@ -29,7 +29,7 @@ import {
   USER_PREFERENCES_USE_CASES,
   UserPreferencesUseCasesContract
 } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
-import { RAWG_REPOSITORY, RawgRepositoryContract } from '@/domain/repositories/rawg.repository.contract';
+import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { AUTH_USE_CASES, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
@@ -67,7 +67,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
-  private readonly _rawgRepo: RawgRepositoryContract = inject(RAWG_REPOSITORY);
+  private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
@@ -341,7 +341,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
     this._userPreferencesState.rawgSearchLoading.set(true);
     try {
-      const results: BannerSuggestionModel[] = await this._rawgRepo.searchBanners(query, 12);
+      const results: BannerSuggestionModel[] = await this._catalogUseCases.searchBanners(query, 12);
       this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
       this._userPreferencesState.rawgSearchResults.set([]);
@@ -356,7 +356,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private async _loadInitialBanners(): Promise<void> {
     this._userPreferencesState.rawgSearchLoading.set(true);
     try {
-      const results: BannerSuggestionModel[] = await this._rawgRepo.getTopBanners(12);
+      const results: BannerSuggestionModel[] = await this._catalogUseCases.getTopBanners(12);
       this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
       this._userPreferencesState.rawgSearchResults.set([]);
