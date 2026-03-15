@@ -189,3 +189,12 @@
     opacity: 0.8;
   }
 }
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .search-result-card {
+    &:hover {
+      transform: none;
+    }
+  }
+}

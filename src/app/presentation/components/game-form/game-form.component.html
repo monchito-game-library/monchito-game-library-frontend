@@ -213,20 +213,11 @@
           <div class="game-form__toggles">
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
-              <mat-button-toggle-group
-                [value]="formatValue()"
-                (change)="onFormatChange($event.value)"
-                hideSingleSelectionIndicator
-                class="game-form__format-toggle">
-                <mat-button-toggle value="physical">
-                  <mat-icon>album</mat-icon>
-                  {{ 'gameForm.formats.physical' | transloco }}
-                </mat-button-toggle>
-                <mat-button-toggle value="digital">
-                  <mat-icon>cloud</mat-icon>
-                  {{ 'gameForm.formats.digital' | transloco }}
-                </mat-button-toggle>
-              </mat-button-toggle-group>
+              <app-toggle-switch
+                [checked]="formatValue() === 'digital'"
+                (changed)="onFormatChange($event ? 'digital' : 'physical')"
+                icon="album"
+                iconChecked="cloud" />
             </div>
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.platinum' | transloco }}</span>

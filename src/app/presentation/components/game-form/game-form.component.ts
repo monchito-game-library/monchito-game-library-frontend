@@ -21,7 +21,6 @@ import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -83,8 +82,6 @@ import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
     MatButton,
     MatIcon,
     MatIconButton,
-    MatButtonToggleGroup,
-    MatButtonToggle,
     MatProgressSpinner,
     TranslocoPipe,
     MatAutocompleteTrigger,
