@@ -34,6 +34,7 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
+import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
@@ -292,7 +293,7 @@ export class GameFormComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      const game: GameModel | undefined = await this._gameUseCases.getById(this._userId, this._gameUuid);
+      const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, this._gameUuid);
       if (game) {
         this._gameId = game.id;
         this.form.patchValue({
