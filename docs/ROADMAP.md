@@ -20,6 +20,9 @@ Al añadir o editar un juego, permitir ajustar el punto focal de la portada que 
 ### Migrar a Angular zoneless puro
 Reemplazar `provideAnimations()` por `provideExperimentalZonelessChangeDetection()` y eliminar `zone.js` de los polyfills. El proyecto ya usa `OnPush` + signals en todo, por lo que la migración es sencilla. Beneficios: ~13 KB menos de bundle, simplificación del código async (sin `NgZone`). Riesgo principal: verificar compatibilidad de `ngx-image-cropper` con el flujo de crop de avatar/banner.
 
+### Optimizar carga de imágenes con el CDN de RAWG
+Ya existe la utilidad `src/app/presentation/shared/image-url.utils.ts` (`optimizeImageUrl`) que transforma URLs de RAWG para usar su endpoint de redimensionado (`/media/resize/{width}/-/`). Integrarla en las cards y en cualquier lugar donde se muestren portadas de RAWG para reducir el tamaño de descarga (las imágenes originales pueden pesar varios MB; redimensionadas al ancho real de la card son ~10–30 KB).
+
 ---
 
 ## Gestión (`/management`)
