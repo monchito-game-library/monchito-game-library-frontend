@@ -22,7 +22,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   async getPreferences(userId: string): Promise<UserPreferencesModel | null> {
     const { data, error } = await this._supabase
       .from(this._table)
-      .select('theme, language, avatar_url, banner_url')
+      .select('theme, language, avatar_url, banner_url, role')
       .eq('user_id', userId)
       .single();
 
