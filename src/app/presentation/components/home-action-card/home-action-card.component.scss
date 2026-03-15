@@ -16,7 +16,7 @@
     transform 0.2s ease;
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
 
-  // Breakpoint para móviles (≤ 600px)
+  // Mobile breakpoint (≤ 600px)
   @media (max-width: 37.5rem) {
     width: 100%;
     max-width: 20rem;
@@ -53,7 +53,7 @@
     word-break: break-word;
     margin-top: auto;
 
-    // Breakpoint para móviles (≤ 600px)
+    // Mobile breakpoint (≤ 600px)
     @media (max-width: 37.5rem) {
       font-size: 0.9rem;
     }

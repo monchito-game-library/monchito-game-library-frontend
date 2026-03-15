@@ -1,18 +1,27 @@
 /**
- * ARCHIVO DE EJEMPLO - NO EDITAR
- * Copia este archivo a environment.ts y reemplaza con tus credenciales reales
+ * EXAMPLE FILE
+ * Copy this file to environment.ts and fill in your real credentials.
+ * Do NOT use this file directly — the compiler reads environment.ts.
  *
- * Para obtener tus credenciales:
- * 1. Ve a https://supabase.com
- * 2. Crea un nuevo proyecto (gratis)
- * 3. Ve a Settings > API
- * 4. Copia la URL y la anon/public key
+ * Required credentials:
+ *
+ * SUPABASE
+ *   1. Go to https://supabase.com and open your project
+ *   2. Settings > API
+ *   3. Copy the "Project URL" and "anon / public key"
+ *
+ * RAWG (game catalogue)
+ *   1. Go to https://rawg.io/apidocs
+ *   2. Sign up and get your free API key
  */
 export const environment = {
   production: false,
   supabase: {
     url: 'https://xxxxxxxxxxxxx.supabase.co',
-    anonKey:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4eHh4eHh4eHh4eHgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYxNjI4OTAyMiwiZXhwIjoxOTMxODY1MDIyfQ.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    anonKey: 'TU_SUPABASE_ANON_KEY'
+  },
+  rawg: {
+    apiUrl: 'https://api.rawg.io/api',
+    apiKey: 'TU_RAWG_API_KEY'
   }
 };

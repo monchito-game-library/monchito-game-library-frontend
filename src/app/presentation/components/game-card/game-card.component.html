@@ -1,6 +1,6 @@
 <mat-card class="game-card">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
-    <!-- CARA DELANTERA -->
+    <!-- FRONT FACE -->
     <div class="game-card__front">
       <div class="game-card__image-wrapper">
         @if (!imageLoaded()) {
@@ -14,21 +14,21 @@
           fill
           alt="Game cover" />
 
-        <!-- Badge de estado — top left -->
+        <!-- Status badge — top left -->
         @if (gameStatus()) {
           <div class="game-card__status-badge" [style.background-color]="gameStatus()!.color">
             <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
           </div>
         }
 
-        <!-- Favorito — top right -->
+        <!-- Favourite — top right -->
         @if (isFavorite()) {
           <div class="game-card__favorite">
             <mat-icon>favorite</mat-icon>
           </div>
         }
 
-        <!-- Overlay degradado con título, plataforma y platino -->
+        <!-- Gradient overlay with title, platform and platinum -->
         <div class="game-card__overlay">
           <div class="game-card__platform-row">
             @if (game().platform) {
@@ -46,7 +46,7 @@
           }
         </div>
 
-        <!-- Acciones — visibles al hover -->
+        <!-- Actions — visible on hover -->
         <div class="game-card__actions">
           <button
             mat-icon-button
@@ -87,7 +87,7 @@
       </div>
     </div>
 
-    <!-- CARA TRASERA -->
+    <!-- BACK FACE -->
     <div class="game-card__back" [style.background-image]="'url(' + defaultImage() + ')'">
       <div class="game-card__back-overlay">
         <div class="game-card__back-content">
