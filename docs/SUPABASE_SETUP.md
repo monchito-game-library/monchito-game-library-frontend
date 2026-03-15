@@ -1,6 +1,6 @@
 # Monchito Game Library — Estado del Backend (Supabase)
 
-> Última actualización: 2026-03-13
+> Última actualización: 2026-03-15
 > Para recrear la base de datos desde cero ejecuta `docs/supabase-schema-current.sql`.
 
 ---
@@ -60,9 +60,10 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 | `user_id` | UUID FK auth.users | ON DELETE CASCADE |
 | `game_catalog_id` | UUID FK game_catalog | ON DELETE CASCADE |
 | `price` | NUMERIC(10,2) | Precio de compra |
-| `store` | TEXT | Tienda donde se compró |
+| `store` | UUID FK stores | NULL si desconocida |
 | `platform` | TEXT | Plataforma del usuario |
 | `condition` | TEXT | `'new'` \| `'used'` |
+| `format` | TEXT | `'physical'` \| `'digital'` \| NULL |
 | `purchased_date` | DATE | |
 | `platinum` | BOOLEAN | Default FALSE |
 | `status` | TEXT | `wishlist` / `backlog` / `playing` / `completed` / `platinum` / `abandoned` / `owned` |
@@ -79,6 +80,22 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 | `updated_at` | TIMESTAMP TZ | Trigger automático |
 
 **RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+---
+
+### `stores`
+
+Catálogo compartido de tiendas. Cualquier usuario puede añadir tiendas que quedan disponibles para todos.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `label` | TEXT NOT NULL | Nombre visible de la tienda |
+| `format_hint` | TEXT | `'physical'` \| `'digital'` \| NULL — sugerencia de formato al seleccionar la tienda |
+| `created_by` | UUID FK auth.users | NULL si la creó el sistema. ON DELETE SET NULL |
+| `created_at` | TIMESTAMP TZ | |
+
+**RLS:** Lectura pública. Escritura solo para usuarios autenticados.
 
 ---
 
