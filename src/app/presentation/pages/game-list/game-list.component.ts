@@ -15,6 +15,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
@@ -38,6 +39,11 @@ import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import { GameCardComponent } from '@/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import {
+  GameListFiltersSheetComponent,
+  GameListFiltersSheetData,
+  GameListSortField
+} from '@/components/game-list-filters-sheet/game-list-filters-sheet.component';
 
 @Component({
   selector: 'app-game-list',
@@ -74,11 +80,30 @@ export class GameListComponent implements OnInit, OnDestroy {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
   private _routerSubscription?: Subscription;
   private _bpSubscription?: Subscription;
 
-  /** Row height (card + vertical padding) in px — used by virtual scroll. */
-  readonly ROW_ITEM_SIZE = 380;
+  /**
+   * Row height in px computed from the current viewport width and column count.
+   * Recalculates whenever columnCount or isMobile change, keeping CDK virtual
+   * scroll in sync with the actual rendered row height and eliminating blank
+   * space at the bottom of the list on all screen sizes.
+   */
+  readonly rowItemSize: Signal<number> = computed((): number => {
+    const cols = this.columnCount();
+    const isMobile = this.isMobile();
+    const screenWidth = window.innerWidth;
+    const gapPx = isMobile ? 12 : 20; // 0.75rem vs 1.25rem
+    const paddingPx = isMobile ? 12 : 24; // 0.75rem vs 1.5rem each side
+    const rowVerticalPx = 20; // 0.625rem top + 0.625rem bottom
+    const footerPx = isMobile ? 36 : 44; // game-card__footer min-height
+    const navRailWidth = isMobile ? 0 : 88; // nav rail hidden on mobile
+    const availableWidth = screenWidth - navRailWidth - 2 * paddingPx - (cols - 1) * gapPx;
+    const cardWidth = availableWidth / cols;
+    const imageHeight = cardWidth * (4 / 3); // aspect-ratio: 3 / 4
+    return Math.ceil(imageHeight + footerPx + rowVerticalPx);
+  });
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -122,13 +147,27 @@ export class GameListComponent implements OnInit, OnDestroy {
   });
 
   /** Field used to sort the game list. */
-  readonly sortBy: WritableSignal<'title' | 'price' | 'personalRating' | 'id'> = signal('title');
+  readonly sortBy: WritableSignal<GameListSortField> = signal('title');
 
   /** Sort direction applied to the current sort field. */
   readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('asc');
 
   /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
   readonly columnCount: WritableSignal<number> = signal(4);
+
+  /** Whether the viewport is in mobile range (≤ 768px). */
+  readonly isMobile: WritableSignal<boolean> = signal(false);
+
+  /** Number of non-search filters currently active, shown as a badge on the mobile filter button. */
+  readonly activeFilterCount: Signal<number> = computed((): number => {
+    let count = 0;
+    if (this.selectedConsole()) count++;
+    if (this.selectedStore()) count++;
+    if (this.selectedStatus()) count++;
+    if (this.selectedFormat()) count++;
+    if (this.onlyFavorites()) count++;
+    return count;
+  });
 
   /** Filtered and sorted game list. */
   readonly filteredGames: Signal<GameListModel[]> = computed((): GameListModel[] => {
@@ -160,10 +199,10 @@ export class GameListComponent implements OnInit, OnDestroy {
         case 'price':
           comparison = (a.price || 0) - (b.price || 0);
           break;
-        case 'personalRating':
+        case 'personal_rating':
           comparison = (a.personalRating || 0) - (b.personalRating || 0);
           break;
-        case 'id':
+        case 'created_at':
         default:
           comparison = (b.id || 0) - (a.id || 0);
           break;
@@ -198,8 +237,15 @@ export class GameListComponent implements OnInit, OnDestroy {
       });
 
     this._bpSubscription = this._breakpointObserver
-      .observe(['(max-width: 600px)', '(max-width: 900px)', '(max-width: 1200px)', '(max-width: 1600px)'])
+      .observe([
+        '(max-width: 600px)',
+        '(max-width: 768px)',
+        '(max-width: 900px)',
+        '(max-width: 1200px)',
+        '(max-width: 1600px)'
+      ])
       .subscribe((state) => {
+        this.isMobile.set(!!state.breakpoints['(max-width: 768px)']);
         if (state.breakpoints['(max-width: 600px)']) this.columnCount.set(2);
         else if (state.breakpoints['(max-width: 900px)']) this.columnCount.set(3);
         else if (state.breakpoints['(max-width: 1200px)']) this.columnCount.set(4);
@@ -283,6 +329,25 @@ export class GameListComponent implements OnInit, OnDestroy {
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
     if (target) this.searchTerm.set(target.value);
+  }
+
+  /**
+   * Opens the filters bottom sheet on mobile, passing the active filter signals as shared state.
+   * Changes made inside the sheet are reflected immediately in the list.
+   */
+  openFiltersSheet(): void {
+    const data: GameListFiltersSheetData = {
+      selectedConsole: this.selectedConsole,
+      selectedStore: this.selectedStore,
+      selectedStatus: this.selectedStatus,
+      selectedFormat: this.selectedFormat,
+      onlyFavorites: this.onlyFavorites,
+      sortBy: this.sortBy,
+      sortDirection: this.sortDirection,
+      stores: this.stores,
+      clearAllFilters: () => this.clearAllFilters()
+    };
+    this._bottomSheet.open(GameListFiltersSheetComponent, { data });
   }
 
   /**

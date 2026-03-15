@@ -39,116 +39,136 @@
     </div>
   </div>
 
-  <!-- Filtros -->
+  <!-- Filters -->
   <div class="game-list__filters">
+    <!-- Search: always visible on all breakpoints -->
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter game-list__filter--search">
       <mat-label>{{ 'gameList.filters.title' | transloco }}</mat-label>
       <mat-icon matPrefix>search</mat-icon>
       <input matInput [value]="searchTerm()" (input)="onSearchInput($event)" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
-      <mat-select [value]="selectedConsole()" (selectionChange)="selectedConsole.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</mat-option>
-        @for (c of consoles; track c.code) {
-          <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <!-- Desktop-only: inline filter selects -->
+    <div class="game-list__desktop-filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+        <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
+        <mat-select [value]="selectedConsole()" (selectionChange)="selectedConsole.set($event.value)">
+          <mat-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</mat-option>
+          @for (c of consoles; track c.code) {
+            <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
-      <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
-        @for (s of stores(); track s.id) {
-          <mat-option [value]="s.id">{{ s.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+        <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
+        <mat-select [value]="selectedStore()" (selectionChange)="selectedStore.set($event.value)">
+          <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
+          @for (s of stores(); track s.id) {
+            <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
-      <mat-select [value]="selectedFormat()" (selectionChange)="selectedFormat.set($event.value)">
-        <mat-option [value]="''">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
-        <mat-option value="physical">
-          <mat-icon>album</mat-icon>
-          {{ 'gameList.filters.physical' | transloco }}
-        </mat-option>
-        <mat-option value="digital">
-          <mat-icon>cloud</mat-icon>
-          {{ 'gameList.filters.digital' | transloco }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
-      <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
-        @for (status of gameStatuses; track status.code) {
-          <mat-option [value]="status.code">
-            <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
-            {{ status.labelKey | transloco }}
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+        <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
+        <mat-select [value]="selectedFormat()" (selectionChange)="selectedFormat.set($event.value)">
+          <mat-option [value]="''">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
+          <mat-option value="physical">
+            <mat-icon>album</mat-icon>
+            {{ 'gameList.filters.physical' | transloco }}
           </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+          <mat-option value="digital">
+            <mat-icon>cloud</mat-icon>
+            {{ 'gameList.filters.digital' | transloco }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
-      <mat-label>{{ 'gameList.filters.sortBy' | transloco }}</mat-label>
-      <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value)">
-        <mat-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</mat-option>
-        <mat-option value="title">{{ 'gameList.sort.title' | transloco }}</mat-option>
-        <mat-option value="price">{{ 'gameList.sort.price' | transloco }}</mat-option>
-        <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+        <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
+        <mat-select [value]="selectedStatus()" (selectionChange)="selectedStatus.set($event.value)">
+          <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
+          @for (status of gameStatuses; track status.code) {
+            <mat-option [value]="status.code">
+              <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+              {{ status.labelKey | transloco }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Acciones de filtro -->
-    <div class="game-list__filter-actions">
-      <button
-        mat-icon-button
-        (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
-        [attr.aria-label]="'Ordenación ' + sortDirection()">
-        <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
-      </button>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter">
+        <mat-label>{{ 'gameList.filters.sortBy' | transloco }}</mat-label>
+        <mat-select [value]="sortBy()" (selectionChange)="sortBy.set($event.value)">
+          <mat-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</mat-option>
+          <mat-option value="title">{{ 'gameList.sort.title' | transloco }}</mat-option>
+          <mat-option value="price">{{ 'gameList.sort.price' | transloco }}</mat-option>
+          <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <button
-        mat-icon-button
-        [class.game-list__fav-btn--active]="onlyFavorites()"
-        (click)="onlyFavorites.set(!onlyFavorites())"
-        [attr.aria-label]="'gameList.aria.onlyFavorites' | transloco">
-        <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
-      </button>
-
-      @if (
-        searchTerm() || selectedConsole() || selectedStore() || selectedFormat() || selectedStatus() || onlyFavorites()
-      ) {
+      <div class="game-list__filter-actions">
         <button
           mat-icon-button
-          color="warn"
-          (click)="clearAllFilters()"
-          [attr.aria-label]="'gameList.aria.clearFilters' | transloco">
-          <mat-icon>filter_alt_off</mat-icon>
+          (click)="sortDirection.set(sortDirection() === 'asc' ? 'desc' : 'asc')"
+          [attr.aria-label]="'Sort direction: ' + sortDirection()">
+          <mat-icon>{{ sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
         </button>
-      }
+
+        <button
+          mat-icon-button
+          [class.game-list__fav-btn--active]="onlyFavorites()"
+          (click)="onlyFavorites.set(!onlyFavorites())"
+          [attr.aria-label]="'gameList.aria.onlyFavorites' | transloco">
+          <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
+        </button>
+
+        @if (
+          searchTerm() ||
+          selectedConsole() ||
+          selectedStore() ||
+          selectedFormat() ||
+          selectedStatus() ||
+          onlyFavorites()
+        ) {
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="clearAllFilters()"
+            [attr.aria-label]="'gameList.aria.clearFilters' | transloco">
+            <mat-icon>filter_alt_off</mat-icon>
+          </button>
+        }
+      </div>
     </div>
+
+    <!-- Mobile-only: filter button with active count badge -->
+    <button
+      class="game-list__mobile-filter-btn"
+      mat-icon-button
+      (click)="openFiltersSheet()"
+      [attr.aria-label]="'gameList.filters.filters' | transloco">
+      <mat-icon>tune</mat-icon>
+      @if (activeFilterCount() > 0) {
+        <span class="game-list__filter-badge">{{ activeFilterCount() }}</span>
+      }
+    </button>
   </div>
 </div>
 
-<!-- Estado: cargando -->
+<!-- State: loading -->
 @if (loading()) {
   <div class="game-list__loading">
     <mat-spinner diameter="48" />
     <p class="game-list__loading-text">{{ 'gameList.loading' | transloco }}</p>
   </div>
 
-  <!-- Estado: con juegos -->
+  <!-- State: with games -->
 } @else if (filteredGames().length > 0) {
   <cdk-virtual-scroll-viewport
     class="game-list__viewport"
-    [itemSize]="ROW_ITEM_SIZE"
+    [itemSize]="rowItemSize()"
     [style.--grid-cols]="columnCount()">
     <div *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex" class="game-list__row">
       @for (game of row; track game.id) {
@@ -157,7 +177,7 @@
     </div>
   </cdk-virtual-scroll-viewport>
 
-  <!-- Estado: sin resultados de filtros -->
+  <!-- State: no filter results -->
 } @else if (allGames().length > 0) {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">search_off</mat-icon>
@@ -169,7 +189,7 @@
     </button>
   </div>
 
-  <!-- Estado: colección vacía -->
+  <!-- State: empty collection -->
 } @else {
   <div class="game-list__empty">
     <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>

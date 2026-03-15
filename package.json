@@ -20,10 +20,10 @@
     "clean:install": "rm -rf node_modules && rm package-lock.json && npm i",
     "lint": "eslint . --ext .ts,.html",
     "lint:fix": "eslint . --ext .ts,.html --fix",
+    "lint:boundaries": "eslint src --ext .ts | grep \"clean-arch/boundaries\" -B2",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
     "husky": "husky",
-    "migrate:legacy": "node scripts/migrate-legacy.mjs",
     "vercel-build": "node scripts/set-env.js && ng build --configuration production"
   },
   "dependencies": {
