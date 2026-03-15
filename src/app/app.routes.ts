@@ -55,6 +55,18 @@ export const routes: Routes = [
       import('@/pages/settings/settings.component').then((m) => m.SettingsComponent),
     canActivate: [canActivateUser]
   },
+  {
+    path: 'management',
+    redirectTo: 'management/stores',
+    pathMatch: 'full'
+  },
+  {
+    path: 'management/stores',
+    loadComponent: (): Promise<
+      typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
+    > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent),
+    canActivate: [canActivateUser]
+  },
 
   // Default and fallback routes
   {

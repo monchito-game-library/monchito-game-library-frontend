@@ -1,9 +1,9 @@
 import { UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
 import { GameModel } from '@/models/game/game.model';
 import { GameConditionType } from '@/types/game-condition.type';
+import { GameFormatType } from '@/types/game-format.type';
 import { GameStatus } from '@/types/game-status.type';
 import { PlatformType } from '@/types/platform.type';
-import { StoreType } from '@/types/stores.type';
 
 /**
  * Maps a user_games_full view row to the GameModel domain model.
@@ -14,17 +14,21 @@ import { StoreType } from '@/types/stores.type';
 export function mapGame(dto: UserGameFullDto): GameModel {
   return {
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
+    uuid: dto.id,
     title: dto.title,
     price: dto.price,
-    store: (dto.store ?? 'none') as StoreType,
+    store: dto.store ?? 'none',
     condition: (dto.condition ?? 'new') as GameConditionType,
     platinum: dto.platinum ?? false,
     description: dto.user_notes || dto.description || '',
     platform: (dto.user_platform || dto.platform) as PlatformType | null,
     imageUrl: dto.image_url ?? undefined,
+    rawgId: dto.rawg_id ?? null,
+    rawgSlug: dto.slug ?? null,
     status: (dto.status ?? 'backlog') as GameStatus,
     personalRating: dto.personal_rating ?? null,
     edition: dto.edition ?? null,
+    format: (dto.format ?? null) as GameFormatType | null,
     isFavorite: dto.is_favorite ?? false
   };
 }
@@ -46,6 +50,7 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
     status: model.status,
     personal_rating: model.personalRating,
     edition: model.edition,
+    format: model.format,
     is_favorite: model.isFavorite
   };
 }

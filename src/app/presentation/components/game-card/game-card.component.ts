@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
@@ -27,7 +28,6 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { GameModel } from '@/models/game/game.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { StoreType } from '@/types/stores.type';
 import { PlatformType } from '@/types/platform.type';
 import { GameConditionType } from '@/types/game-condition.type';
 import { AvailableStoresInterface } from '@/interfaces/available-stores.interface';
@@ -44,7 +44,7 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   styleUrl: './game-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe]
+  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe, SkeletonComponent]
 })
 export class GameCardComponent {
   private readonly _platforms: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -63,6 +63,9 @@ export class GameCardComponent {
 
   /** Cover image URL, falls back to the default cover. */
   readonly defaultImage: Signal<string> = computed((): string => this.game().imageUrl || defaultGameCover);
+
+  /** Whether the cover image has finished loading. */
+  readonly imageLoaded: WritableSignal<boolean> = signal(false);
 
   /** Platinum or hidden-trophy icon depending on platinum status. */
   readonly platinumIcon: Signal<string> = computed((): string =>
@@ -106,10 +109,10 @@ export class GameCardComponent {
   };
 
   /**
-   * Navigates to the edit form for this game.
+   * Navigates to the edit form for this game using the UUID as the route param.
    */
   editGame = (): void => {
-    void this._router.navigate(['/update', this.game().id]);
+    void this._router.navigate(['/update', this.game().uuid]);
   };
 
   /**
@@ -117,7 +120,7 @@ export class GameCardComponent {
    */
   deleteGame = (): void => {
     const game: GameModel = this.game();
-    if (!game.id) return;
+    if (!game.uuid) return;
 
     const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
       data: {
@@ -127,8 +130,8 @@ export class GameCardComponent {
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (confirmed && game.id !== undefined) {
-        await this._gameUseCases.deleteGame(this._userId, game.id);
+      if (confirmed && game.uuid) {
+        await this._gameUseCases.deleteGame(this._userId, game.uuid);
         this.gameDeleted.emit(game.id);
       }
     });
@@ -137,9 +140,9 @@ export class GameCardComponent {
   /**
    * Returns the translated store label for a given store code.
    *
-   * @param {StoreType | null} code
+   * @param {string | null} code
    */
-  displayStoreLabel = (code: StoreType | null): string => {
+  displayStoreLabel = (code: string | null): string => {
     if (!code) return '';
     const store = this._stores.find((s: AvailableStoresInterface): boolean => s.code === code);
     return store ? this._transloco.translate(store.labelKey) : code;

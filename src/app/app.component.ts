@@ -22,9 +22,7 @@ import {
   USER_PREFERENCES_USE_CASES,
   UserPreferencesUseCasesContract
 } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
-import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
-import { GameModel } from '@/models/game/game.model';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 
 @Component({
@@ -41,8 +39,6 @@ export class AppComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
-  private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-
   private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
 
   readonly userContext: UserContextService = inject(UserContextService);
@@ -52,6 +48,9 @@ export class AppComponent implements OnInit {
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
     { icon: 'add_circle', label: 'nav.add', route: '/add' }
   ];
+
+  /** Management navigation items. */
+  readonly managementNavItems: NavItemInterface[] = [{ icon: 'tune', label: 'nav.management', route: '/management' }];
 
   /** Reactive signal with the current avatar URL. */
   readonly avatarUrl = this._userPreferencesState.avatarUrl;
@@ -73,7 +72,6 @@ export class AppComponent implements OnInit {
       const userId: string | null = this.userContext.userId();
       if (userId) {
         void this._loadPreferences(userId);
-        void this._loadGameImages(userId);
       }
     });
   }
@@ -181,34 +179,6 @@ export class AppComponent implements OnInit {
     }
 
     this.preferencesLoaded.set(true);
-  }
-
-  /**
-   * Loads cover image URLs from the user's collection and picks one at random as the panel background.
-   * The list is shuffled and capped at 24 so the Settings grid stays manageable;
-   * each session shows a different subset, adding visual variety.
-   *
-   * @param {string} userId - Authenticated user ID
-   */
-  private async _loadGameImages(userId: string): Promise<void> {
-    const games: GameModel[] = await this._gameUseCases.getAllGames(userId);
-    const urls: string[] = games.map((game: GameModel) => game.imageUrl).filter((url): url is string => !!url);
-
-    const shuffled = [...urls].sort(() => Math.random() - 0.5).slice(0, 24);
-    this._userPreferencesState.gameImageUrls.set(shuffled);
-    this._userPreferencesState.gamesLoaded.set(true);
-    this._pickRandomBanner();
-  }
-
-  /**
-   * Picks a random cover URL from the available list and sets it as the banner,
-   * only if the user does not already have a saved banner.
-   */
-  private _pickRandomBanner(): void {
-    if (this._userPreferencesState.bannerImageUrl()) return;
-    const urls: string[] = this._userPreferencesState.gameImageUrls();
-    if (!urls.length) return;
-    this._userPreferencesState.bannerImageUrl.set(urls[Math.floor(Math.random() * urls.length)]);
   }
 
   /**
