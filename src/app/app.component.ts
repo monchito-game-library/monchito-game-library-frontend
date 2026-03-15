@@ -43,12 +43,14 @@ export class AppComponent implements OnInit {
 
   readonly userContext: UserContextService = inject(UserContextService);
 
-  /** Main navigation items. */
+  /** Navigation items shared by desktop rail and mobile bottom nav. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
-    { icon: 'add_circle', label: 'nav.add', route: '/add' },
-    { icon: 'settings', label: 'nav.settings', route: '/settings' }
+    { icon: 'add_circle', label: 'nav.add', route: '/add' }
   ];
+
+  /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
+  readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
   /** Management navigation items. */
   readonly managementNavItems: NavItemInterface[] = [{ icon: 'tune', label: 'nav.management', route: '/management' }];
@@ -130,7 +132,7 @@ export class AppComponent implements OnInit {
   getPageTitle(): string {
     const route = this.currentRoute();
     if (route.startsWith('/update/')) return 'nav.add';
-    const allItems = [...this.navItems, ...this.managementNavItems];
+    const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
     const match = allItems.find((item) => route.startsWith(item.route));
     return match?.label ?? '';
   }

@@ -18,19 +18,17 @@
           </a>
         }
 
-        @if (isAdmin()) {
-          <div class="nav-rail__divider"></div>
+        <div class="nav-rail__divider"></div>
 
-          @for (item of managementNavItems; track item.route) {
-            <a
-              class="nav-rail__item"
-              [class.nav-rail__item--active]="isNavActive(item.route)"
-              [routerLink]="item.route"
-              [attr.aria-label]="item.label | transloco">
-              <mat-icon>{{ item.icon }}</mat-icon>
-              <span class="nav-rail__label">{{ item.label | transloco }}</span>
-            </a>
-          }
+        @for (item of managementNavItems; track item.route) {
+          <a
+            class="nav-rail__item"
+            [class.nav-rail__item--active]="isNavActive(item.route)"
+            [routerLink]="item.route"
+            [attr.aria-label]="item.label | transloco">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span class="nav-rail__label">{{ item.label | transloco }}</span>
+          </a>
         }
       </div>
 
@@ -94,6 +92,14 @@
             <span class="bottom-nav__label">{{ item.label | transloco }}</span>
           </a>
         }
+        <a
+          class="bottom-nav__item"
+          [class.bottom-nav__item--active]="isNavActive(settingsNavItem.route)"
+          [routerLink]="settingsNavItem.route"
+          [attr.aria-label]="settingsNavItem.label | transloco">
+          <mat-icon>{{ settingsNavItem.icon }}</mat-icon>
+          <span class="bottom-nav__label">{{ settingsNavItem.label | transloco }}</span>
+        </a>
         @if (isAdmin()) {
           @for (item of managementNavItems; track item.route) {
             <a
