@@ -1,4 +1,5 @@
-import { UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
+import { UserGameEditDto, UserGameFullDto, UserGameInsertDto } from '@/dtos/supabase/game-catalog.dto';
+import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { GameConditionType } from '@/types/game-condition.type';
 import { GameFormatType } from '@/types/game-format.type';
@@ -30,6 +31,33 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     edition: dto.edition ?? null,
     format: (dto.format ?? null) as GameFormatType | null,
     isFavorite: dto.is_favorite ?? false
+  };
+}
+
+/**
+ * Maps a UserGameEditDto (partial view row) to the GameEditModel used by the edit form.
+ *
+ * @param {UserGameEditDto} dto
+ */
+export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
+  return {
+    uuid: dto.id,
+    id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
+    title: dto.title,
+    price: dto.price,
+    store: dto.store ?? 'none',
+    platform: (dto.user_platform ?? null) as PlatformType | null,
+    condition: (dto.condition ?? 'new') as GameConditionType,
+    platinum: dto.platinum ?? false,
+    description: dto.user_notes || dto.description || '',
+    status: (dto.status ?? 'backlog') as GameStatus,
+    personalRating: dto.personal_rating ?? null,
+    edition: dto.edition ?? null,
+    format: (dto.format ?? null) as GameFormatType | null,
+    isFavorite: dto.is_favorite ?? false,
+    imageUrl: dto.image_url,
+    rawgId: dto.rawg_id,
+    rawgSlug: dto.slug ?? null
   };
 }
 

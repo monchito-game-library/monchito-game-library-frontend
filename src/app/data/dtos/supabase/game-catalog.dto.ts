@@ -95,6 +95,32 @@ export interface UserGameFullDto extends UserGameDto {
   source: 'rawg' | 'manual';
 }
 
+/**
+ * Subset of user_games_full returned by the edit-form select.
+ * Only the columns the form actually needs — avoids fetching catalog metadata.
+ */
+export interface UserGameEditDto {
+  id: string;
+  user_id: string;
+  game_catalog_id: string;
+  title: string;
+  slug: string;
+  image_url: string | null;
+  rawg_id: number | null;
+  price: number | null;
+  store: string | null;
+  user_platform: string | null;
+  condition: 'new' | 'used' | null;
+  platinum: boolean;
+  user_notes: string | null;
+  description: string | null | undefined;
+  status: string;
+  personal_rating: number | null;
+  edition: string | null;
+  format: 'digital' | 'physical' | null;
+  is_favorite: boolean;
+}
+
 /** Payload for inserting or updating a row in game_catalog. */
 export type GameCatalogInsertDto = Partial<GameCatalogDto>;
 
