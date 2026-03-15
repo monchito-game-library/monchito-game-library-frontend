@@ -4,6 +4,7 @@ const parser = require('@typescript-eslint/parser');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const prettier = require('eslint-config-prettier');
 const jsdoc = require('eslint-plugin-jsdoc');
+const cleanArchRule = require('./eslint-rules/clean-architecture-boundaries/index.js');
 
 // Angular lifecycle hooks that are exempt from the JSDoc requirement.
 const LIFECYCLE_HOOKS = [
@@ -32,7 +33,8 @@ module.exports = [
     plugins: {
       '@angular-eslint': angular,
       '@typescript-eslint': tseslint,
-      jsdoc
+      jsdoc,
+      'clean-arch': { rules: { boundaries: cleanArchRule } }
     },
     rules: {
       '@angular-eslint/directive-selector': [
@@ -156,6 +158,14 @@ module.exports = [
 
       // No duplicate block tags (e.g. two @returns).
       'jsdoc/no-multi-asterisks': ['warn', { allowWhitespace: true }],
+
+      // ── Clean architecture boundaries ────────────────────────────────────────
+
+      // Prevents imports across forbidden layer boundaries.
+      // presentation → domain/entities/di only (never data directly)
+      // data → entities only (uses domain contracts via .contract exception)
+      // domain → entities only
+      'clean-arch/boundaries': 'error',
 
       ...prettier.rules
     }
