@@ -215,7 +215,7 @@
               <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
               <mat-button-toggle-group
                 [value]="formatValue()"
-                (change)="form.controls.format.setValue($event.value)"
+                (change)="onFormatChange($event.value)"
                 hideSingleSelectionIndicator
                 class="game-form__format-toggle">
                 <mat-button-toggle value="physical">
