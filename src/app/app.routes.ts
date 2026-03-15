@@ -58,15 +58,18 @@ export const routes: Routes = [
   },
   {
     path: 'management',
-    redirectTo: 'management/stores',
-    pathMatch: 'full'
-  },
-  {
-    path: 'management/stores',
-    loadComponent: (): Promise<
-      typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
-    > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent),
-    canActivate: [canActivateUser, canActivateAdmin]
+    loadComponent: (): Promise<typeof import('@/pages/management/management.component').ManagementComponent> =>
+      import('@/pages/management/management.component').then((m) => m.ManagementComponent),
+    canActivate: [canActivateUser, canActivateAdmin],
+    children: [
+      { path: '', redirectTo: 'stores', pathMatch: 'full' },
+      {
+        path: 'stores',
+        loadComponent: (): Promise<
+          typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
+        > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent)
+      }
+    ]
   },
 
   // Default and fallback routes

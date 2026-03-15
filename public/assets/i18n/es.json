@@ -346,6 +346,10 @@
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Físico",
       "loadError": "No se pudieron cargar las tiendas."
+    },
+    "title": "Gestión",
+    "nav": {
+      "stores": "Tiendas"
     }
   }
 }

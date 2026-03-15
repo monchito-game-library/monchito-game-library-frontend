@@ -346,6 +346,10 @@
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Physical",
       "loadError": "Failed to load stores."
+    },
+    "title": "Management",
+    "nav": {
+      "stores": "Stores"
     }
   }
 }
