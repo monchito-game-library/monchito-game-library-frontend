@@ -125,7 +125,7 @@
 .settings__avatar-hint {
   font-size: 0.75rem;
   color: var(--mat-sys-on-surface-variant);
-  opacity: 0.7;
+  opacity: 0.85;
   margin-top: 4px;
 }
 
@@ -223,12 +223,14 @@
 // ─── Section subtitles ────────────────────────────────────────────────────────
 
 .settings__section-subtitle {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--mat-sys-on-surface-variant);
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-primary);
   margin: 0.75rem 0 0.75rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--mat-sys-primary);
 }
 
 .settings__section-divider {
