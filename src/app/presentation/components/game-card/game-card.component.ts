@@ -75,6 +75,9 @@ export class GameCardComponent {
   /** Whether the game is marked as favourite. */
   readonly isFavorite: Signal<boolean> = computed(() => this.game().isFavorite);
 
+  /** Whether the game is a digital copy. */
+  readonly isDigital: Signal<boolean> = computed(() => this.game().format === 'digital');
+
   /**
    * Star array for the rating display (0–5 stars mapped from the 0–10 rating).
    */
