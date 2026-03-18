@@ -94,6 +94,7 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
  */
 export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
   return {
+    title: model.title,
     price: model.price,
     store: model.store,
     platform: model.platform,
