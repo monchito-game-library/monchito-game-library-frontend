@@ -154,7 +154,7 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     const { data: viewRecord, error: fetchError } = await this._supabase
       .from(this._viewName)
-      .select('id, game_catalog_id')
+      .select('id, game_catalog_id, rawg_id')
       .eq('user_id', userId)
       .eq('id', updated.uuid)
       .single();
@@ -164,6 +164,8 @@ export class SupabaseRepository implements GameRepositoryContract {
     let gameCatalogId = viewRecord.game_catalog_id;
     if (catalogEntry) {
       gameCatalogId = await this._getOrCreateGameCatalog(updated.title, catalogEntry);
+    } else if (!viewRecord.rawg_id) {
+      await this._supabase.from(this._catalogTable).update({ title: updated.title }).eq('id', gameCatalogId);
     }
 
     const userGameRecord: UserGameInsertDto = {
