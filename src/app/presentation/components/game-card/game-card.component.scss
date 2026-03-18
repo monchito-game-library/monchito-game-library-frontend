@@ -52,6 +52,29 @@
     -webkit-backface-visibility: hidden;
   }
 
+  // Digital copy — coloured stripe at the top of the card
+  .game-card__front--digital {
+    position: relative;
+
+    &::before {
+      content: 'DIGITAL';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2.5rem;
+      background: linear-gradient(90deg, #002d6e, #0050c8);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
   // Back face — pre-rotated 180deg, shown on flip
   .game-card__back {
     position: absolute;

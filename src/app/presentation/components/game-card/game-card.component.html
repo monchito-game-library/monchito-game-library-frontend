@@ -1,7 +1,7 @@
 <mat-card class="game-card">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
     <!-- FRONT FACE -->
-    <div class="game-card__front">
+    <div class="game-card__front" [class.game-card__front--digital]="isDigital()">
       <div class="game-card__image-wrapper">
         @if (!imageLoaded()) {
           <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
