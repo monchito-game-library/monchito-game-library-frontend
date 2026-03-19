@@ -1,8 +1,8 @@
-import { ApplicationConfig, isDevMode, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
@@ -28,8 +28,8 @@ registerLocaleData(localeEs);
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: LOCALE_ID, useValue: 'es' },
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideAnimations(),
+    provideZonelessChangeDetection(),
+    provideAnimationsAsync(),
     provideRouter(routes),
     provideHttpClient(),
     provideTransloco({
