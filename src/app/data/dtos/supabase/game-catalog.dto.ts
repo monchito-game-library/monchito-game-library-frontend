@@ -119,6 +119,9 @@ export interface UserGameEditDto {
   edition: string | null;
   format: 'digital' | 'physical' | null;
   is_favorite: boolean;
+  released_date: string | null;
+  rawg_rating: number;
+  genres: string[];
 }
 
 /**

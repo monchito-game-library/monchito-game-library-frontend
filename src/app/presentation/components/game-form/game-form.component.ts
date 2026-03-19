@@ -312,10 +312,10 @@ export class GameFormComponent implements OnInit {
             image_url: game.imageUrl,
             rawg_id: game.rawgId ?? 0,
             slug,
-            released_date: null,
-            rating: 0,
+            released_date: game.releasedDate,
+            rating: game.rawgRating,
             platforms: [],
-            genres: []
+            genres: game.genres
           } as GameCatalog);
           this.selectedImageUrl.set(game.imageUrl);
 

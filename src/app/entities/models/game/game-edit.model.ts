@@ -39,4 +39,10 @@ export interface GameEditModel {
   rawgId: number | null;
   /** RAWG slug — preferred identifier for screenshot fetching. */
   rawgSlug: string | null;
+  /** Release date from RAWG. */
+  releasedDate: string | null;
+  /** RAWG community rating. */
+  rawgRating: number;
+  /** Game genres from RAWG. */
+  genres: string[];
 }
