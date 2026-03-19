@@ -367,7 +367,7 @@ export class GameListComponent implements OnInit, OnDestroy {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this.stores.set(stores);
     } catch {
-      // silently ignore — filter will show no store options
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. El filtro simplemente no mostrará opciones de tienda
     }
   }
 
