@@ -15,7 +15,7 @@ export interface GameStatusOption {
 /** All available game statuses with their UI metadata, used in form selectors and status badges. */
 export const availableGameStatuses: GameStatusOption[] = [
   { code: 'wishlist', labelKey: 'gameStatus.wishlist', icon: 'bookmark', color: '#9C27B0' },
-  { code: 'backlog', labelKey: 'gameStatus.backlog', icon: 'inbox', color: '#9E9E9E' },
+  { code: 'backlog', labelKey: 'gameStatus.backlog', icon: 'inventory_2', color: '#9E9E9E' },
   { code: 'playing', labelKey: 'gameStatus.playing', icon: 'sports_esports', color: '#2196F3' },
   { code: 'completed', labelKey: 'gameStatus.completed', icon: 'check_circle', color: '#4CAF50' },
   { code: 'platinum', labelKey: 'gameStatus.platinum', icon: 'emoji_events', color: '#FFD700' },

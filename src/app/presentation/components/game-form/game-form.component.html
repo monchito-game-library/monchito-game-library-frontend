@@ -123,6 +123,7 @@
               class="game-form__clear-btn"
               mat-icon-button
               matSuffix
+              type="button"
               (click)="form.controls.platform.setValue(null)">
               <mat-icon>close</mat-icon>
             </button>
@@ -143,7 +144,12 @@
             }
           </mat-autocomplete>
           @if (form.controls.store.value) {
-            <button class="game-form__clear-btn" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
+            <button
+              class="game-form__clear-btn"
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="form.controls.store.setValue(null)">
               <mat-icon>close</mat-icon>
             </button>
           }
@@ -229,21 +235,34 @@
             </div>
           </div>
 
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="form.invalid || saving() || !hasChanges()"
-            class="game-form__submit-btn">
-            <span class="game-form__submit-content">
-              @if (saving()) {
-                <mat-spinner diameter="18" />
-              } @else {
-                <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-              }
-              {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
-            </span>
-          </button>
+          <div class="game-form__footer-actions">
+            @if (isEditMode) {
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="onDelete()"
+                [disabled]="saving()"
+                class="game-form__delete-btn">
+                <mat-icon>delete</mat-icon>
+                {{ 'gameForm.buttons.delete' | transloco }}
+              </button>
+            }
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="form.invalid || saving() || !hasChanges()"
+              class="game-form__submit-btn">
+              <span class="game-form__submit-content">
+                @if (saving()) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+                }
+                {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+              </span>
+            </button>
+          </div>
         </div>
       </form>
     </div>
