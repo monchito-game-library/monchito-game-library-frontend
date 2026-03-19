@@ -361,7 +361,8 @@ export class GameFormComponent implements OnInit {
         personalRating: raw.personal_rating ?? null,
         edition: raw.edition ?? null,
         format: raw.format ?? null,
-        isFavorite: raw.is_favorite ?? false
+        isFavorite: raw.is_favorite ?? false,
+        imageUrl: this.selectedImageUrl() ?? undefined
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
@@ -377,6 +378,29 @@ export class GameFormComponent implements OnInit {
 
       this._userPreferencesState.allGames.set([]);
       void this._router.navigate(['/list']);
+    });
+  }
+
+  /**
+   * Abre un diálogo de confirmación y elimina el juego si se confirma.
+   * Solo disponible en modo edición.
+   */
+  async onDelete(): Promise<void> {
+    if (!this._gameUuid) return;
+
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._transloco.translate('gameCard.dialog.delete.title'),
+        message: this._transloco.translate('gameCard.dialog.delete.message')
+      } satisfies ConfirmDialogInterface
+    });
+
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed && this._gameUuid) {
+        await this._gameUseCases.deleteGame(this._userId, this._gameUuid);
+        this._userPreferencesState.allGames.set([]);
+        void this._router.navigate(['/list']);
+      }
     });
   }
 
@@ -436,13 +460,16 @@ export class GameFormComponent implements OnInit {
 
   /**
    * Clears the selected catalogue game and re-enables the title field.
+   * In edit mode only clears the image association, keeping the existing title.
    */
   clearSelectedGame(): void {
     this.selectedGame.set(null);
     this.selectedImageUrl.set(null);
     this.gamePlatforms.set([]);
     this.form.controls.title.enable();
-    this.form.controls.title.setValue('');
+    if (!this.isEditMode) {
+      this.form.controls.title.setValue('');
+    }
   }
 
   /**

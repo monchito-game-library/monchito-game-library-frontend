@@ -282,6 +282,16 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
+  .game-form__footer-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .game-form__delete-btn {
+    color: var(--mat-sys-error) !important;
+    border-color: var(--mat-sys-error) !important;
+  }
+
   .game-form__submit-btn {
     min-width: 140px;
   }
@@ -358,6 +368,12 @@
       gap: 0.5rem 1.25rem;
     }
 
+    .game-form__footer-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .game-form__delete-btn,
     .game-form__submit-btn {
       width: 100%;
     }

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   EventEmitter,
   inject,
   input,
@@ -50,11 +51,24 @@ export class GameCardComponent {
   /** Game to display (required). */
   readonly game: InputSignal<GameListModel> = input.required<GameListModel>();
 
-  /** Cover image URL, falls back to the default cover. */
-  readonly defaultImage: Signal<string> = computed((): string => this.game().imageUrl || defaultGameCover);
+  /** Whether the cover image failed to load (e.g. network/VPN issue). */
+  readonly imageError: WritableSignal<boolean> = signal(false);
+
+  /** Cover image URL, falls back to the default cover on error or when absent. */
+  readonly defaultImage: Signal<string> = computed((): string =>
+    this.imageError() || !this.game().imageUrl ? defaultGameCover : this.game().imageUrl!
+  );
 
   /** Whether the cover image has finished loading. */
   readonly imageLoaded: WritableSignal<boolean> = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.game();
+      this.imageError.set(false);
+      this.imageLoaded.set(false);
+    });
+  }
 
   /** Platinum or hidden-trophy icon depending on platinum status. */
   readonly platinumIcon: Signal<string> = computed((): string =>
@@ -102,8 +116,10 @@ export class GameCardComponent {
 
   /**
    * Navigates to the edit form for this game using the UUID as the route param.
+   * Does nothing when the card is showing its back face.
    */
   editGame = (): void => {
+    if (this.isFlipped()) return;
     void this._router.navigate(['/update', this.game().uuid]);
   };
 

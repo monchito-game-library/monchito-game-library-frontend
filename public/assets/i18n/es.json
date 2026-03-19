@@ -111,7 +111,8 @@
     },
     "buttons": {
       "update": "Actualizar",
-      "add": "Añadir"
+      "add": "Añadir",
+      "delete": "Eliminar"
     },
     "dialog": {
       "confirm": {
