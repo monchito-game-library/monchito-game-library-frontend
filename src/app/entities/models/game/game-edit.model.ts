@@ -45,4 +45,6 @@ export interface GameEditModel {
   rawgRating: number;
   /** Game genres from RAWG. */
   genres: string[];
+  /** CSS object-position value for the cover image (e.g. "50% 30%"). Null uses browser default. */
+  coverPosition: string | null;
 }

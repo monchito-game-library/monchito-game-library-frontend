@@ -12,6 +12,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angu
 import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import {
+  AUDIT_LOG_USE_CASES,
+  AuditLogUseCasesContract
+} from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { StoreModel } from '@/models/store/store.model';
 import { GameFormatType } from '@/types/game-format.type';
@@ -120,6 +124,7 @@ export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
+  private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
   /** Whether the store list is being loaded. */
@@ -140,6 +145,12 @@ export class StoresManagementComponent implements OnInit {
     ref.afterClosed().subscribe(async (result?: StoreFormResult) => {
       if (!result) return;
       await this._storeUseCases.addStore({ label: result.label, formatHint: result.formatHint }, this._userId);
+      void this._auditLogUseCases.log({
+        action: 'store.create',
+        entityType: 'store',
+        entityId: null,
+        description: result.label
+      });
       await this._loadStores();
     });
   }
@@ -154,6 +165,12 @@ export class StoresManagementComponent implements OnInit {
     ref.afterClosed().subscribe(async (result?: StoreFormResult) => {
       if (!result) return;
       await this._storeUseCases.updateStore(store.id, { label: result.label, formatHint: result.formatHint });
+      void this._auditLogUseCases.log({
+        action: 'store.update',
+        entityType: 'store',
+        entityId: String(store.id),
+        description: result.label
+      });
       await this._loadStores();
     });
   }
@@ -173,6 +190,12 @@ export class StoresManagementComponent implements OnInit {
     ref.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
       await this._storeUseCases.deleteStore(store.id);
+      void this._auditLogUseCases.log({
+        action: 'store.delete',
+        entityType: 'store',
+        entityId: String(store.id),
+        description: store.label
+      });
       await this._loadStores();
     });
   }

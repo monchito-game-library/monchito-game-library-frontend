@@ -26,7 +26,20 @@
       <aside class="game-cover-panel">
         <div class="game-cover-panel__cover">
           @if (selectedImageUrl()) {
-            <img [src]="selectedImageUrl()!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
+            <img
+              [src]="selectedImageUrl()!"
+              [alt]="selectedGame()?.title ?? ''"
+              [style.object-position]="coverObjectPosition()"
+              [style.transform]="coverTransform()"
+              class="game-cover-panel__image" />
+            <button
+              mat-icon-button
+              type="button"
+              (click)="openCoverPositionDialog()"
+              class="game-cover-panel__reposition-btn"
+              [attr.aria-label]="'gameForm.cover.repositionTooltip' | transloco">
+              <mat-icon>open_with</mat-icon>
+            </button>
             <button
               mat-icon-button
               type="button"

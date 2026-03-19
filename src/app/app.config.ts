@@ -18,6 +18,10 @@ import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
 import { catalogUseCasesProvider } from '@/di/use-cases/catalog.use-cases.provider';
 import { storeRepositoryProvider } from '@/di/repositories/store.repository.provider';
 import { storeUseCasesProvider } from '@/di/use-cases/store.use-cases.provider';
+import { userAdminRepositoryProvider } from '@/di/repositories/user-admin.repository.provider';
+import { userAdminUseCasesProvider } from '@/di/use-cases/user-admin.use-cases.provider';
+import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.repository.provider';
+import { auditLogUseCasesProvider } from '@/di/use-cases/audit-log.use-cases.provider';
 
 registerLocaleData(localeEs);
 
@@ -46,6 +50,10 @@ export const appConfig: ApplicationConfig = {
     authUseCasesProvider,
     catalogUseCasesProvider,
     storeRepositoryProvider,
-    storeUseCasesProvider
+    storeUseCasesProvider,
+    userAdminRepositoryProvider,
+    userAdminUseCasesProvider,
+    auditLogRepositoryProvider,
+    auditLogUseCasesProvider
   ]
 };

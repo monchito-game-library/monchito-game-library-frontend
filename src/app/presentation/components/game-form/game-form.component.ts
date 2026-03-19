@@ -25,6 +25,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
@@ -47,6 +48,8 @@ import { availablePlatformsConstant } from '@/constants/available-platforms.cons
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
+import { GameCoverPositionDialogComponent } from '@/components/game-cover-position-dialog/game-cover-position-dialog.component';
+import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -108,6 +111,8 @@ export class GameFormComponent implements OnInit {
 
   /** Raw store models loaded from Supabase. */
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal([]);
+  /** CSS object-position chosen by the user for the cover image (e.g. "50% 30%"). */
+  private readonly _coverPosition: WritableSignal<string | null> = signal<string | null>(null);
   /** Increments on every form value change to trigger hasChanges recomputation. */
   private readonly _formVersion: WritableSignal<number> = signal(0);
   private _gameId?: number;
@@ -207,6 +212,22 @@ export class GameFormComponent implements OnInit {
     return this.stores().filter((store: StoreModel): boolean => store.label.toLowerCase().includes(input));
   });
 
+  /** CSS object-position part of the cover position (x% y%). */
+  readonly coverObjectPosition: Signal<string> = computed((): string => {
+    const pos: string | null = this._coverPosition();
+    if (!pos) return '50% 50%';
+    const parts: string[] = pos.split(' ');
+    return `${parts[0] ?? '50%'} ${parts[1] ?? '50%'}`;
+  });
+
+  /** CSS transform scale part of the cover position. */
+  readonly coverTransform: Signal<string> = computed((): string => {
+    const pos: string | null = this._coverPosition();
+    if (!pos) return 'scale(1)';
+    const parts: string[] = pos.split(' ');
+    return `scale(${parts.length >= 3 ? parseFloat(parts[2]) : 1})`;
+  });
+
   /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
@@ -251,7 +272,8 @@ export class GameFormComponent implements OnInit {
     const current = JSON.stringify({
       ...this.form.getRawValue(),
       _rawgId: this.selectedGame()?.rawg_id ?? null,
-      _imageUrl: this.selectedImageUrl()
+      _imageUrl: this.selectedImageUrl(),
+      _coverPosition: this._coverPosition()
     });
     return current !== this._initialSnapshot;
   });
@@ -305,6 +327,8 @@ export class GameFormComponent implements OnInit {
         });
         this._loadingEditData = false;
 
+        this._coverPosition.set(game.coverPosition ?? null);
+
         if (game.imageUrl) {
           const slug = game.rawgSlug ?? '';
           this.selectedGame.set({
@@ -327,7 +351,8 @@ export class GameFormComponent implements OnInit {
         this._initialSnapshot = JSON.stringify({
           ...this.form.getRawValue(),
           _rawgId: this.selectedGame()?.rawg_id ?? null,
-          _imageUrl: this.selectedImageUrl()
+          _imageUrl: this.selectedImageUrl(),
+          _coverPosition: this._coverPosition()
         });
       }
     } finally {
@@ -360,19 +385,20 @@ export class GameFormComponent implements OnInit {
       const game: GameModel = {
         id: this._gameId,
         uuid: this._gameUuid,
-        title: raw.title ?? '',
+        title: (raw.title ?? '').trim(),
         price: raw.price ?? null,
         store: raw.store ?? null,
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
-        description: raw.description ?? '',
+        description: (raw.description ?? '').trim(),
         status: raw.status ?? 'backlog',
         personalRating: raw.personal_rating ?? null,
-        edition: raw.edition ?? null,
+        edition: raw.edition?.trim() || null,
         format: raw.format ?? null,
         isFavorite: raw.is_favorite ?? false,
-        imageUrl: this.selectedImageUrl() ?? undefined
+        imageUrl: this.selectedImageUrl() ?? undefined,
+        coverPosition: this._coverPosition()
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
@@ -427,6 +453,31 @@ export class GameFormComponent implements OnInit {
         void this._router.navigate(['/list']);
       }
     });
+  }
+
+  /**
+   * Opens the cover repositioning dialog for the current image.
+   * Updates the cover position signal if the user confirms.
+   */
+  async openCoverPositionDialog(): Promise<void> {
+    const imageUrl: string | null = this.selectedImageUrl();
+    if (!imageUrl) return;
+
+    const dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
+      GameCoverPositionDialogComponent,
+      {
+        data: {
+          imageUrl,
+          title: this._transloco.translate('gameForm.cover.repositionTitle'),
+          initialPosition: this._coverPosition()
+        } satisfies CoverPositionDialogDataInterface,
+        width: '340px',
+        maxWidth: '95vw'
+      }
+    );
+
+    const result: string | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    if (result) this._coverPosition.set(result);
   }
 
   /**
@@ -490,6 +541,7 @@ export class GameFormComponent implements OnInit {
   clearSelectedGame(): void {
     this.selectedGame.set(null);
     this.selectedImageUrl.set(null);
+    this._coverPosition.set(null);
     this.gamePlatforms.set([]);
     this.form.controls.title.enable();
     if (!this.isEditMode) {
