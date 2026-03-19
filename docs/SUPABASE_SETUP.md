@@ -1,6 +1,6 @@
 # Monchito Game Library — Estado del Backend (Supabase)
 
-> Última actualización: 2026-03-15
+> Última actualización: 2026-03-19
 > Para recrear la base de datos desde cero ejecuta `docs/supabase-schema-current.sql`.
 
 ---
@@ -76,6 +76,7 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 | `description` | TEXT | Notas personales |
 | `tags_personal` | TEXT[] | |
 | `is_favorite` | BOOLEAN | Default FALSE |
+| `cover_position` | NUMERIC | Posición vertical del recorte de portada |
 | `created_at` | TIMESTAMP TZ | |
 | `updated_at` | TIMESTAMP TZ | Trigger automático |
 
@@ -94,6 +95,7 @@ Catálogo compartido de tiendas. Cualquier usuario puede añadir tiendas que que
 | `format_hint` | TEXT | `'physical'` \| `'digital'` \| NULL — sugerencia de formato al seleccionar la tienda |
 | `created_by` | UUID FK auth.users | NULL si la creó el sistema. ON DELETE SET NULL |
 | `created_at` | TIMESTAMP TZ | |
+| `updated_at` | TIMESTAMP TZ | Trigger automático |
 
 **RLS:** Lectura pública. Escritura solo para usuarios autenticados.
 
@@ -110,6 +112,7 @@ Configuración personal de cada usuario.
 | `language` | TEXT | `'es'` \| `'en'` |
 | `avatar_url` | TEXT | URL pública del bucket `avatars` |
 | `banner_url` | TEXT | URL pública del bucket `banners` o URL RAWG |
+| `role` | TEXT | `'user'` \| `'admin'` — solo modificable via service role |
 | `created_at` | TIMESTAMP TZ | |
 | `updated_at` | TIMESTAMP TZ | Trigger automático |
 
@@ -117,7 +120,9 @@ Configuración personal de cada usuario.
 
 ---
 
-### `user_wishlist` *(pendiente de uso en UI)*
+### `user_wishlist`
+
+Lista de deseos personal de cada usuario. Pendiente de uso en UI.
 
 | Columna | Tipo | Notas |
 |---|---|---|
@@ -129,23 +134,35 @@ Configuración personal de cada usuario.
 | `notes` | TEXT | |
 | `notify_on_sale` | BOOLEAN | |
 | `created_at` | TIMESTAMP TZ | |
-| `updated_at` | TIMESTAMP TZ | |
+| `updated_at` | TIMESTAMP TZ | Trigger automático |
+
+**RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
 
 ---
 
 ## Vistas
 
+Todas las vistas con datos de usuario usan `WITH (security_invoker = on)` para que el RLS se aplique correctamente.
+
 ### `user_games_full`
 
-Join de `user_games` + `game_catalog`. Es la vista principal que usa el frontend para leer la colección completa de un usuario. Incluye todos los campos personales del usuario más los datos del catálogo.
+Join de `user_games` + `game_catalog`. Vista principal del frontend para leer la colección completa de un usuario.
+
+Columnas destacadas: todos los campos de `user_games` (incluido `cover_position`) + datos básicos del catálogo (`title`, `slug`, `image_url`, `rating`, `metacritic_score`, `platforms`, `genres`, `tags`, `developers`, `publishers`, `source`).
 
 ```sql
 SELECT * FROM user_games_full WHERE user_id = $1 ORDER BY created_at DESC;
 ```
 
-### `game_catalog_stats` *(uso futuro / analítica)*
+### `user_wishlist_full`
 
-Extiende `game_catalog` con contadores calculados: `actual_users_count`, `avg_personal_rating`, `platinum_count`, `favorite_count`.
+Join de `user_wishlist` + `game_catalog`. Vista para leer la lista de deseos de un usuario con los datos del juego incluidos.
+
+Columnas: `id`, `user_id`, `game_catalog_id`, `desired_price`, `priority`, `notes`, `created_at` + `title`, `slug`, `image_url`, `released_date`, `rating`, `metacritic_score`, `platforms`, `genres`.
+
+```sql
+SELECT * FROM user_wishlist_full WHERE user_id = $1 ORDER BY priority ASC;
+```
 
 ---
 
