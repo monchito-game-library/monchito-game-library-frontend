@@ -58,7 +58,10 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     isFavorite: dto.is_favorite ?? false,
     imageUrl: dto.image_url,
     rawgId: dto.rawg_id,
-    rawgSlug: dto.slug ?? null
+    rawgSlug: dto.slug ?? null,
+    releasedDate: dto.released_date ?? null,
+    rawgRating: dto.rawg_rating ?? 0,
+    genres: dto.genres ?? []
   };
 }
 

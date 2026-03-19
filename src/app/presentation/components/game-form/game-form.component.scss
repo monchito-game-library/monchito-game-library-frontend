@@ -179,15 +179,22 @@
 
     span {
       display: flex;
-      align-items: center;
       gap: 0.2rem;
 
       mat-icon {
         font-size: 14px;
         width: 14px;
         height: 14px;
+        line-height: 1;
       }
     }
+  }
+
+  .game-cover-panel__info-genres {
+    margin: 0.4rem 0 0;
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+    opacity: 0.8;
   }
 }
 
