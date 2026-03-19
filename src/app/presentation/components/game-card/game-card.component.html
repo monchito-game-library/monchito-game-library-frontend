@@ -1,8 +1,11 @@
 <mat-card class="game-card">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
     <!-- FRONT FACE -->
-    <div class="game-card__front" [class.game-card__front--digital]="isDigital()">
-      <div class="game-card__image-wrapper">
+    <div
+      class="game-card__front"
+      [class.game-card__front--digital]="isDigital()"
+      [class.game-card__front--flipped]="isFlipped()">
+      <div class="game-card__image-wrapper" (click)="editGame()">
         @if (!imageLoaded()) {
           <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
         }
@@ -10,7 +13,10 @@
           class="game-card__image"
           [class.game-card__image--loaded]="imageLoaded()"
           [ngSrc]="defaultImage()"
+          [style.object-position]="coverObjectPosition()"
+          [style.transform]="coverTransform()"
           (load)="imageLoaded.set(true)"
+          (error)="imageError.set(true)"
           fill
           alt="Game cover" />
 
@@ -28,7 +34,7 @@
           </div>
         }
 
-        <!-- Gradient overlay with title, platform and platinum -->
+        <!-- Gradient overlay with title, platform, platinum, price and flip -->
         <div class="game-card__overlay">
           <div class="game-card__platform-row">
             @if (game().platform) {
@@ -44,44 +50,22 @@
           @if (edition()) {
             <p class="game-card__edition">{{ edition() }}</p>
           }
-        </div>
-
-        <!-- Actions — visible on hover -->
-        <div class="game-card__actions">
-          <button
-            mat-icon-button
-            class="game-card__action-btn"
-            (click)="editGame()"
-            [attr.aria-label]="'gameCard.aria.edit' | transloco">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            class="game-card__action-btn game-card__action-btn--danger"
-            (click)="deleteGame()"
-            [attr.aria-label]="'gameCard.aria.delete' | transloco">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="game-card__footer">
-        <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
-        <div class="game-card__stats">
+          <div class="game-card__footer">
+            <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
+            @if (personalRating() !== null) {
+              <span class="game-card__stat game-card__stat--rating">
+                <mat-icon>star</mat-icon>{{ personalRating() }}/10
+              </span>
+            }
+          </div>
           @if (game().description) {
             <button
               mat-icon-button
               class="game-card__flip-btn"
-              (click)="onFlip()"
+              (click)="onFlip(); $event.stopPropagation()"
               [attr.aria-label]="'gameCard.aria.viewDescription' | transloco">
               <mat-icon>flip_to_back</mat-icon>
             </button>
-          }
-          @if (personalRating() !== null) {
-            <span class="game-card__stat game-card__stat--rating">
-              <mat-icon>star</mat-icon>{{ personalRating() }}/10
-            </span>
           }
         </div>
       </div>
@@ -89,7 +73,7 @@
 
     <!-- BACK FACE -->
     <div class="game-card__back" [style.background-image]="'url(' + defaultImage() + ')'">
-      <div class="game-card__back-overlay">
+      <div class="game-card__back-overlay" (click)="onFlip()">
         <div class="game-card__back-content">
           <p class="game-card__back-title">{{ game().title }}</p>
           @if (edition()) {
@@ -100,7 +84,7 @@
         <button
           mat-icon-button
           class="game-card__flip-btn game-card__flip-btn--back"
-          (click)="onFlip()"
+          (click)="onFlip(); $event.stopPropagation()"
           [attr.aria-label]="'gameCard.aria.back' | transloco">
           <mat-icon>flip_to_front</mat-icon>
         </button>

@@ -26,7 +26,20 @@
       <aside class="game-cover-panel">
         <div class="game-cover-panel__cover">
           @if (selectedImageUrl()) {
-            <img [src]="selectedImageUrl()!" [alt]="selectedGame()!.title" class="game-cover-panel__image" />
+            <img
+              [src]="selectedImageUrl()!"
+              [alt]="selectedGame()?.title ?? ''"
+              [style.object-position]="coverObjectPosition()"
+              [style.transform]="coverTransform()"
+              class="game-cover-panel__image" />
+            <button
+              mat-icon-button
+              type="button"
+              (click)="openCoverPositionDialog()"
+              class="game-cover-panel__reposition-btn"
+              [attr.aria-label]="'gameForm.cover.repositionTooltip' | transloco">
+              <mat-icon>open_with</mat-icon>
+            </button>
             <button
               mat-icon-button
               type="button"
@@ -87,6 +100,9 @@
                 </span>
               }
             </div>
+            @if (selectedGame()!.genres.length) {
+              <p class="game-cover-panel__info-genres">{{ selectedGame()!.genres.slice(0, 3).join(' · ') }}</p>
+            }
           </div>
         }
       </aside>
@@ -123,6 +139,7 @@
               class="game-form__clear-btn"
               mat-icon-button
               matSuffix
+              type="button"
               (click)="form.controls.platform.setValue(null)">
               <mat-icon>close</mat-icon>
             </button>
@@ -143,7 +160,12 @@
             }
           </mat-autocomplete>
           @if (form.controls.store.value) {
-            <button class="game-form__clear-btn" mat-icon-button matSuffix (click)="form.controls.store.setValue(null)">
+            <button
+              class="game-form__clear-btn"
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="form.controls.store.setValue(null)">
               <mat-icon>close</mat-icon>
             </button>
           }
@@ -229,27 +251,43 @@
             </div>
           </div>
 
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="form.invalid || saving() || !hasChanges()"
-            class="game-form__submit-btn">
-            <span class="game-form__submit-content">
-              @if (saving()) {
-                <mat-spinner diameter="18" />
-              } @else {
-                <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-              }
-              {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
-            </span>
-          </button>
+          <div class="game-form__footer-actions">
+            @if (isEditMode) {
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="onDelete()"
+                [disabled]="saving()"
+                class="game-form__delete-btn">
+                <mat-icon>delete</mat-icon>
+                {{ 'gameForm.buttons.delete' | transloco }}
+              </button>
+            }
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="form.invalid || saving() || !hasChanges()"
+              class="game-form__submit-btn">
+              <span class="game-form__submit-content">
+                @if (saving()) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+                }
+                {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
+              </span>
+            </button>
+          </div>
         </div>
       </form>
     </div>
   }
 
   @if (searchMode()) {
-    <app-game-search-panel @fadeSlide (gameSelected)="selectGameFromSearch($event)" />
+    <app-game-search-panel
+      @fadeSlide
+      [initialQuery]="selectedGame() ? (form.controls.title.value ?? '') : ''"
+      (gameSelected)="selectGameFromSearch($event)" />
   }
 </div>

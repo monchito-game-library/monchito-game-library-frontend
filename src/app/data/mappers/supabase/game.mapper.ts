@@ -58,7 +58,11 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     isFavorite: dto.is_favorite ?? false,
     imageUrl: dto.image_url,
     rawgId: dto.rawg_id,
-    rawgSlug: dto.slug ?? null
+    rawgSlug: dto.slug ?? null,
+    releasedDate: dto.released_date ?? null,
+    rawgRating: dto.rawg_rating ?? 0,
+    genres: dto.genres ?? [],
+    coverPosition: dto.cover_position ?? null
   };
 }
 
@@ -82,7 +86,8 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
     personalRating: dto.personal_rating ?? null,
     edition: dto.edition ?? null,
     format: (dto.format ?? null) as GameFormatType | null,
-    isFavorite: dto.is_favorite ?? false
+    isFavorite: dto.is_favorite ?? false,
+    coverPosition: dto.cover_position ?? null
   };
 }
 
@@ -104,6 +109,7 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
     personal_rating: model.personalRating,
     edition: model.edition,
     format: model.format,
-    is_favorite: model.isFavorite
+    is_favorite: model.isFavorite,
+    cover_position: model.coverPosition ?? null
   };
 }

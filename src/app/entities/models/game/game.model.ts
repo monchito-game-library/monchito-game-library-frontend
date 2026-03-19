@@ -39,4 +39,6 @@ export interface GameModel {
   format: GameFormatType | null;
   /** Whether the game is marked as a favourite. */
   isFavorite: boolean;
+  /** CSS object-position value for the cover image (e.g. "50% 30%"). Null uses browser default. */
+  coverPosition?: string | null;
 }

@@ -328,7 +328,7 @@ export class GameListComponent implements OnInit, OnDestroy {
    */
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
-    if (target) this.searchTerm.set(target.value);
+    if (target) this.searchTerm.set(target.value.trim());
   }
 
   /**
@@ -367,7 +367,7 @@ export class GameListComponent implements OnInit, OnDestroy {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this.stores.set(stores);
     } catch {
-      // silently ignore — filter will show no store options
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. El filtro simplemente no mostrará opciones de tienda
     }
   }
 

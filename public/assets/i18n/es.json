@@ -111,7 +111,8 @@
     },
     "buttons": {
       "update": "Actualizar",
-      "add": "Añadir"
+      "add": "Añadir",
+      "delete": "Eliminar"
     },
     "dialog": {
       "confirm": {
@@ -129,7 +130,9 @@
       "required": "Este campo es obligatorio",
       "invalidOption": "Selecciona una opción válida de la lista",
       "ratingMin": "La valoración mínima es 0",
-      "ratingMax": "La valoración máxima es 10"
+      "ratingMax": "La valoración máxima es 10",
+      "duplicate": "Ya tienes este juego con la misma plataforma, formato y edición",
+      "saveFailed": "Error al guardar el juego. Inténtalo de nuevo"
     },
     "search": {
       "title": "Buscar en catálogo",
@@ -141,7 +144,10 @@
     "cover": {
       "noCover": "Sin portada",
       "changeGame": "Cambiar juego",
-      "searchCatalogue": "Buscar en catálogo"
+      "searchCatalogue": "Buscar en catálogo",
+      "repositionTooltip": "Reposicionar imagen",
+      "repositionTitle": "Reposicionar portada",
+      "repositionHint": "Arrastra para ajustar la posición de la imagen"
     },
     "aria": {
       "backToForm": "Volver al formulario",
@@ -349,7 +355,30 @@
     },
     "title": "Gestión",
     "nav": {
-      "stores": "Tiendas"
+      "stores": "Tiendas",
+      "users": "Usuarios",
+      "auditLog": "Registro"
+    },
+    "auditLog": {
+      "title": "Registro de actividad",
+      "loadError": "No se pudo cargar el registro de actividad.",
+      "empty": "No hay actividad registrada aún.",
+      "actions": {
+        "store_create": "Tienda creada",
+        "store_update": "Tienda editada",
+        "store_delete": "Tienda eliminada",
+        "user_role_change": "Rol de usuario cambiado"
+      }
+    },
+    "users": {
+      "title": "Usuarios",
+      "loadError": "No se pudieron cargar los usuarios.",
+      "roleLabel": "Rol",
+      "roleUser": "Usuario",
+      "roleAdmin": "Administrador",
+      "changeRoleConfirm": "¿Cambiar el rol de «{{ name }}» a {{ role }}?",
+      "changeRoleSuccess": "Rol actualizado correctamente.",
+      "changeRoleError": "No se pudo actualizar el rol."
     }
   }
 }
