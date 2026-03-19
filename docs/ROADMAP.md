@@ -4,6 +4,22 @@
 
 ---
 
+## Índice
+
+| Mejora | Prioridad |
+|---|---|
+| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
+| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
+| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
+| [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | — |
+| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | — |
+| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
+| [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
+| [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
+
+---
+
 ## Social *(prioridad muy baja)*
 
 ### Perfiles públicos, amigos e interacción
