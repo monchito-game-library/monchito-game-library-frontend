@@ -328,7 +328,7 @@ export class GameListComponent implements OnInit, OnDestroy {
    */
   onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement | null;
-    if (target) this.searchTerm.set(target.value);
+    if (target) this.searchTerm.set(target.value.trim());
   }
 
   /**

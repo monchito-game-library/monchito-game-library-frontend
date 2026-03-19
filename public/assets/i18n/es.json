@@ -130,7 +130,9 @@
       "required": "Este campo es obligatorio",
       "invalidOption": "Selecciona una opción válida de la lista",
       "ratingMin": "La valoración mínima es 0",
-      "ratingMax": "La valoración máxima es 10"
+      "ratingMax": "La valoración máxima es 10",
+      "duplicate": "Ya tienes este juego con la misma plataforma, formato y edición",
+      "saveFailed": "Error al guardar el juego. Inténtalo de nuevo"
     },
     "search": {
       "title": "Buscar en catálogo",

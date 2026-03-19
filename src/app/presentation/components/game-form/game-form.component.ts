@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   OnInit,
   Signal,
@@ -23,6 +24,7 @@ import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
@@ -97,6 +99,7 @@ export class GameFormComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -262,6 +265,13 @@ export class GameFormComponent implements OnInit {
     this.form.controls.store.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((code: string | null) => this._onStoreChange(code));
+
+    effect(() => {
+      if (this.stores().length === 0) return;
+      const current = this.form.controls.store.value;
+      if (!current) return;
+      this.form.controls.store.setValue(current, { emitEvent: false });
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -370,14 +380,29 @@ export class GameFormComponent implements OnInit {
         ? { ...baseEntry, image_url: this.selectedImageUrl() ?? baseEntry.image_url }
         : null;
 
-      if (this.isEditMode && this._gameUuid) {
-        await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
-      } else {
-        await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+      try {
+        if (this.isEditMode && this._gameUuid) {
+          await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
+        } else {
+          await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+        }
+        this._userPreferencesState.allGames.set([]);
+        void this._router.navigate(['/list']);
+      } catch (err: unknown) {
+        const isDuplicate =
+          err instanceof Error && (err.message.includes('23505') || err.message.toLowerCase().includes('duplicate'));
+        const msg = isDuplicate
+          ? this._transloco.translate('gameForm.errors.duplicate')
+          : this._transloco.translate('gameForm.errors.saveFailed');
+        this._snackBar.open(msg, this._transloco.translate('common.close'), {
+          duration: 4000,
+          verticalPosition: 'bottom',
+          horizontalPosition: 'center',
+          panelClass: ['snack-mobile']
+        });
+        this.saving.set(false);
+        this.form.enable();
       }
-
-      this._userPreferencesState.allGames.set([]);
-      void this._router.navigate(['/list']);
     });
   }
 
@@ -490,7 +515,7 @@ export class GameFormComponent implements OnInit {
   displayStoreLabel = (id: string | null): string => {
     if (!id) return '';
     const store: StoreModel | undefined = this.stores().find((s: StoreModel): boolean => s.id === id);
-    return store ? store.label : id;
+    return store?.label ?? '';
   };
 
   /**

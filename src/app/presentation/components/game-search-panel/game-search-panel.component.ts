@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
+  InputSignal,
+  OnInit,
   output,
   OutputEmitterRef,
-  Signal,
   signal,
   WritableSignal
 } from '@angular/core';
@@ -39,7 +41,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     TranslocoPipe
   ]
 })
-export class GameSearchPanelComponent {
+export class GameSearchPanelComponent implements OnInit {
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
@@ -53,6 +55,9 @@ export class GameSearchPanelComponent {
   /** Current search query string. */
   readonly searchQuery: WritableSignal<string> = signal('');
 
+  /** Pre-fills the search input and triggers a search when the panel opens. */
+  readonly initialQuery: InputSignal<string> = input<string>('');
+
   /** Emitted when the user selects a game from the search results. */
   readonly gameSelected: OutputEmitterRef<GameCatalogDto> = output<GameCatalogDto>();
 
@@ -62,13 +67,21 @@ export class GameSearchPanelComponent {
       .subscribe((query: string) => void this._performSearch(query));
   }
 
+  ngOnInit(): void {
+    const query = this.initialQuery().trim();
+    if (query) {
+      this.searchQuery.set(query);
+      void this._performSearch(query);
+    }
+  }
+
   /**
    * Handles the search input event and pushes the value to the debounce subject.
    *
    * @param {Event} event - Input event from the search field
    */
   onSearchInput(event: Event): void {
-    const query: string = (event.target as HTMLInputElement).value;
+    const query: string = (event.target as HTMLInputElement).value.trim();
     this.searchQuery.set(query);
     this._searchSubject.next(query);
   }
