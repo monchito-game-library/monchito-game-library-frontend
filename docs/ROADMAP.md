@@ -12,8 +12,8 @@
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
-| [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | — |
-| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | — |
+| [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | Alta |
+| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Media-alta |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
 | [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
 | [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
@@ -127,7 +127,7 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 
 ---
 
-### Página de detalle de juego (`/games/:id`) *(prioridad media)*
+### Página de detalle de juego (`/games/:id`)
 
 Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
 
@@ -169,7 +169,7 @@ Actualmente pulsar en una card abre directamente el formulario de edición. Con 
 
 ---
 
-### Recomendaciones de juegos *(prioridad media)*
+### Recomendaciones de juegos
 
 Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
 
@@ -204,7 +204,7 @@ Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar lo
 
 ## Integraciones / Automatización
 
-### Sincronización automática de metadatos RAWG *(prioridad baja)*
+### Sincronización automática de metadatos RAWG
 
 Los juegos guardados en `game_catalog` tienen los datos de RAWG del momento en que se añadieron. Con el tiempo RAWG actualiza esa información — nuevas plataformas, ports, remasters, cambios en rating o metacritic. Esta feature mantendría esos datos al día automáticamente sin intervención del usuario.
 
@@ -246,7 +246,7 @@ Ya existe la utilidad `src/app/presentation/shared/image-url.utils.ts` (`optimiz
 
 ## Nuevas secciones
 
-### Dashboard de estadísticas (`/stats`) — v.2 *(prioridad media)*
+### Dashboard de estadísticas (`/stats`) — v.2
 
 Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
 
@@ -278,7 +278,7 @@ Nueva sección en el nav que sustituye las estadísticas actuales de la colecci�
 
 ---
 
-### Wishlist (`/wishlist`) — migración v.2 *(prioridad alta)*
+### Wishlist (`/wishlist`) — migración v.2
 
 Actualmente los juegos deseados se gestionan usando `status = 'wishlist'` dentro de `user_games`, mezclados con el resto de la colección. La v.2 los separa en su propia sección con campos específicos.
 
@@ -334,7 +334,7 @@ Actualmente los juegos deseados se gestionan usando `status = 'wishlist'` dentro
 
 ---
 
-### Pedidos (`/orders`) *(prioridad media-baja)*
+### Pedidos (`/orders`)
 
 Sección para gestionar pedidos grupales de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora entre amigos para coordinar pedidos conjuntos y repartir gastos de envío.
 
