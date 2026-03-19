@@ -1,6 +1,6 @@
 # Monchito Game Library — Roadmap de mejoras futuras
 
-> Ideas y funcionalidades pendientes de implementar. Sin orden de prioridad.
+> Ideas y funcionalidades pendientes de implementar. Ordenadas por prioridad de mayor a menor.
 
 ---
 
@@ -8,15 +8,16 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
-| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
-| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
-| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
+| [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
 | [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | Alta |
 | [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Media-alta |
+| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
+| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
-| [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
+| [Links de búsqueda en tiendas desde la wishlist](#links-de-búsqueda-en-tiendas-desde-la-wishlist) | Media |
 | [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
+| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
+| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 
 ---
 
@@ -331,6 +332,27 @@ Actualmente los juegos deseados se gestionan usando `status = 'wishlist'` dentro
 - La wishlist muestra los juegos que quieres comprar, ordenados por prioridad.
 - Al pulsar "Tengo este juego" se abre el formulario de añadir juego con los datos del catálogo ya cargados y se elimina el item de la wishlist.
 - Los juegos de la wishlist no aparecen en la colección principal ni cuentan en las estadísticas.
+
+---
+
+### Links de búsqueda en tiendas desde la wishlist
+
+Desde cada item de la wishlist, mostrar links directos a la búsqueda del juego en tiendas online. Sin API ni scraping — simplemente se construye la URL de búsqueda con el título del juego.
+
+#### Tiendas soportadas
+
+| Tienda | URL generada |
+|---|---|
+| Amazon | `https://www.amazon.es/s?k={título}` |
+| Game | `https://www.game.es/buscador?q={título}` |
+| CEX | `https://es.webuy.com/search?stext={título}` |
+
+#### Implementación
+
+- El título se codifica con `encodeURIComponent()` para que funcione con títulos que contienen espacios y caracteres especiales.
+- Los links se abren en pestaña nueva (`target="_blank"`).
+- Se muestran como iconos o botones pequeños dentro de la wishlist card, sin ocupar demasiado espacio.
+- No se guarda nada en base de datos — los links se generan en el template en tiempo real.
 
 ---
 
