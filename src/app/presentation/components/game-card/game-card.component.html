@@ -13,6 +13,8 @@
           class="game-card__image"
           [class.game-card__image--loaded]="imageLoaded()"
           [ngSrc]="defaultImage()"
+          [style.object-position]="coverObjectPosition()"
+          [style.transform]="coverTransform()"
           (load)="imageLoaded.set(true)"
           (error)="imageError.set(true)"
           fill

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 interface ManagementSection {
@@ -15,12 +16,16 @@ interface ManagementSection {
   styleUrls: ['./management.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIcon, TranslocoPipe]
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIcon, MatTooltip, TranslocoPipe]
 })
 export class ManagementComponent {
   /**
    * Available management sections.
    * Add a new entry here whenever a new dictionary is implemented.
    */
-  readonly sections: ManagementSection[] = [{ icon: 'storefront', label: 'management.nav.stores', route: 'stores' }];
+  readonly sections: ManagementSection[] = [
+    { icon: 'storefront', label: 'management.nav.stores', route: 'stores' },
+    { icon: 'manage_accounts', label: 'management.nav.users', route: 'users' },
+    { icon: 'manage_history', label: 'management.nav.auditLog', route: 'audit-log' }
+  ];
 }

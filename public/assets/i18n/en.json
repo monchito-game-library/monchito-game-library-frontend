@@ -144,7 +144,10 @@
     "cover": {
       "noCover": "No cover",
       "changeGame": "Change game",
-      "searchCatalogue": "Search catalogue"
+      "searchCatalogue": "Search catalogue",
+      "repositionTooltip": "Reposition image",
+      "repositionTitle": "Reposition cover",
+      "repositionHint": "Drag to adjust the image position"
     },
     "aria": {
       "backToForm": "Back to form",
@@ -352,7 +355,30 @@
     },
     "title": "Management",
     "nav": {
-      "stores": "Stores"
+      "stores": "Stores",
+      "users": "Users",
+      "auditLog": "Activity log"
+    },
+    "auditLog": {
+      "title": "Activity log",
+      "loadError": "Failed to load activity log.",
+      "empty": "No activity recorded yet.",
+      "actions": {
+        "store_create": "Store created",
+        "store_update": "Store updated",
+        "store_delete": "Store deleted",
+        "user_role_change": "User role changed"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "loadError": "Failed to load users.",
+      "roleLabel": "Role",
+      "roleUser": "User",
+      "roleAdmin": "Administrator",
+      "changeRoleConfirm": "Change the role of «{{ name }}» to {{ role }}?",
+      "changeRoleSuccess": "Role updated successfully.",
+      "changeRoleError": "Failed to update role."
     }
   }
 }

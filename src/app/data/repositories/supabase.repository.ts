@@ -74,7 +74,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       const { data, error } = await this._supabase
         .from(this._viewName)
         .select(
-          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url'
+          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position'
         )
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
@@ -223,7 +223,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     const { data, error } = await this._supabase
       .from(this._viewName)
       .select(
-        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite'
+        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position'
       )
       .eq('user_id', userId)
       .eq('id', uuid)
