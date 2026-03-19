@@ -130,7 +130,9 @@
       "required": "This field is required",
       "invalidOption": "Select a valid option from the list",
       "ratingMin": "Minimum rating is 0",
-      "ratingMax": "Maximum rating is 10"
+      "ratingMax": "Maximum rating is 10",
+      "duplicate": "You already have this game with the same platform, format and edition",
+      "saveFailed": "Error saving the game. Please try again"
     },
     "search": {
       "title": "Search catalogue",

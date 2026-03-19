@@ -164,6 +164,10 @@ export class SupabaseRepository implements GameRepositoryContract {
     let gameCatalogId = viewRecord.game_catalog_id;
     if (catalogEntry) {
       gameCatalogId = await this._getOrCreateGameCatalog(updated.title, catalogEntry);
+      await this._supabase
+        .from(this._catalogTable)
+        .update({ image_url: updated.imageUrl ?? catalogEntry.image_url ?? null })
+        .eq('id', gameCatalogId);
     } else {
       const catalogUpdate: Record<string, unknown> = {};
       if (!viewRecord.rawg_id) catalogUpdate['title'] = updated.title;
