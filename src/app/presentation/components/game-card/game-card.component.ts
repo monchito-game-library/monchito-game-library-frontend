@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   EventEmitter,
   inject,
   input,
@@ -39,19 +40,35 @@ import { availableGameStatuses, GameStatusOption } from '@/constants/game-status
   imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe, SkeletonComponent]
 })
 export class GameCardComponent {
-  private readonly _statuses: GameStatusOption[] = availableGameStatuses;
-
   private readonly _router: Router = inject(Router);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
+  private readonly _statuses: GameStatusOption[] = availableGameStatuses;
+
+  /** Parsed cover position parts: [x%, y%, scale]. */
+  private readonly _coverParts: Signal<[string, string, number]> = computed((): [string, string, number] => {
+    const pos: string | null | undefined = this.game().coverPosition;
+    if (!pos) return ['50%', '50%', 1];
+    const parts: string[] = pos.split(' ');
+    const x: string = parts[0] ?? '50%';
+    const y: string = parts[1] ?? '50%';
+    const scale: number = parts.length >= 3 ? parseFloat(parts[2]) : 1;
+    return [x, y, scale];
+  });
+
   /** Game to display (required). */
   readonly game: InputSignal<GameListModel> = input.required<GameListModel>();
 
-  /** Cover image URL, falls back to the default cover. */
-  readonly defaultImage: Signal<string> = computed((): string => this.game().imageUrl || defaultGameCover);
+  /** Whether the cover image failed to load (e.g. network/VPN issue). */
+  readonly imageError: WritableSignal<boolean> = signal(false);
+
+  /** Cover image URL, falls back to the default cover on error or when absent. */
+  readonly defaultImage: Signal<string> = computed((): string =>
+    this.imageError() || !this.game().imageUrl ? defaultGameCover : this.game().imageUrl!
+  );
 
   /** Whether the cover image has finished loading. */
   readonly imageLoaded: WritableSignal<boolean> = signal(false);
@@ -78,6 +95,15 @@ export class GameCardComponent {
   /** Whether the game is a digital copy. */
   readonly isDigital: Signal<boolean> = computed(() => this.game().format === 'digital');
 
+  /** CSS object-position for the cover image. */
+  readonly coverObjectPosition: Signal<string> = computed((): string => {
+    const [x, y] = this._coverParts();
+    return `${x} ${y}`;
+  });
+
+  /** CSS transform scale for the cover image. */
+  readonly coverTransform: Signal<string> = computed((): string => `scale(${this._coverParts()[2]})`);
+
   /**
    * Star array for the rating display (0–5 stars mapped from the 0–10 rating).
    */
@@ -93,6 +119,14 @@ export class GameCardComponent {
   /** Emitted when the game has been successfully deleted. */
   @Output() gameDeleted: EventEmitter<number> = new EventEmitter<number>();
 
+  constructor() {
+    effect(() => {
+      this.game();
+      this.imageError.set(false);
+      this.imageLoaded.set(false);
+    });
+  }
+
   /**
    * Toggles the card flip to show/hide the description on the back face.
    */
@@ -102,8 +136,10 @@ export class GameCardComponent {
 
   /**
    * Navigates to the edit form for this game using the UUID as the route param.
+   * Does nothing when the card is showing its back face.
    */
   editGame = (): void => {
+    if (this.isFlipped()) return;
     void this._router.navigate(['/update', this.game().uuid]);
   };
 

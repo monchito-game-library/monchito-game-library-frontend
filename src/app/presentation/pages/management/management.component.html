@@ -8,9 +8,12 @@
         class="management__nav-item"
         [routerLink]="section.route"
         routerLinkActive="management__nav-item--active"
-        [attr.aria-label]="section.label | transloco">
+        [attr.aria-label]="section.label | transloco"
+        [matTooltip]="section.label | transloco"
+        matTooltipPosition="right"
+        matTooltipClass="management__nav-tooltip">
         <mat-icon>{{ section.icon }}</mat-icon>
-        <span>{{ section.label | transloco }}</span>
+        <span class="management__nav-item-label">{{ section.label | transloco }}</span>
       </a>
     }
   </nav>

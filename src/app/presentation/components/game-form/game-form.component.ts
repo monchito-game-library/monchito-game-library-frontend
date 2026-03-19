@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   OnInit,
   Signal,
@@ -23,6 +24,8 @@ import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
@@ -45,6 +48,8 @@ import { availablePlatformsConstant } from '@/constants/available-platforms.cons
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
+import { GameCoverPositionDialogComponent } from '@/components/game-cover-position-dialog/game-cover-position-dialog.component';
+import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -97,6 +102,7 @@ export class GameFormComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -105,6 +111,8 @@ export class GameFormComponent implements OnInit {
 
   /** Raw store models loaded from Supabase. */
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal([]);
+  /** CSS object-position chosen by the user for the cover image (e.g. "50% 30%"). */
+  private readonly _coverPosition: WritableSignal<string | null> = signal<string | null>(null);
   /** Increments on every form value change to trigger hasChanges recomputation. */
   private readonly _formVersion: WritableSignal<number> = signal(0);
   private _gameId?: number;
@@ -204,6 +212,22 @@ export class GameFormComponent implements OnInit {
     return this.stores().filter((store: StoreModel): boolean => store.label.toLowerCase().includes(input));
   });
 
+  /** CSS object-position part of the cover position (x% y%). */
+  readonly coverObjectPosition: Signal<string> = computed((): string => {
+    const pos: string | null = this._coverPosition();
+    if (!pos) return '50% 50%';
+    const parts: string[] = pos.split(' ');
+    return `${parts[0] ?? '50%'} ${parts[1] ?? '50%'}`;
+  });
+
+  /** CSS transform scale part of the cover position. */
+  readonly coverTransform: Signal<string> = computed((): string => {
+    const pos: string | null = this._coverPosition();
+    if (!pos) return 'scale(1)';
+    const parts: string[] = pos.split(' ');
+    return `scale(${parts.length >= 3 ? parseFloat(parts[2]) : 1})`;
+  });
+
   /** Game selected from the RAWG catalogue. */
   readonly selectedGame: WritableSignal<GameCatalog | null> = signal(null);
 
@@ -248,7 +272,8 @@ export class GameFormComponent implements OnInit {
     const current = JSON.stringify({
       ...this.form.getRawValue(),
       _rawgId: this.selectedGame()?.rawg_id ?? null,
-      _imageUrl: this.selectedImageUrl()
+      _imageUrl: this.selectedImageUrl(),
+      _coverPosition: this._coverPosition()
     });
     return current !== this._initialSnapshot;
   });
@@ -262,6 +287,13 @@ export class GameFormComponent implements OnInit {
     this.form.controls.store.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((code: string | null) => this._onStoreChange(code));
+
+    effect(() => {
+      if (this.stores().length === 0) return;
+      const current = this.form.controls.store.value;
+      if (!current) return;
+      this.form.controls.store.setValue(current, { emitEvent: false });
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -295,6 +327,8 @@ export class GameFormComponent implements OnInit {
         });
         this._loadingEditData = false;
 
+        this._coverPosition.set(game.coverPosition ?? null);
+
         if (game.imageUrl) {
           const slug = game.rawgSlug ?? '';
           this.selectedGame.set({
@@ -302,10 +336,10 @@ export class GameFormComponent implements OnInit {
             image_url: game.imageUrl,
             rawg_id: game.rawgId ?? 0,
             slug,
-            released_date: null,
-            rating: 0,
+            released_date: game.releasedDate,
+            rating: game.rawgRating,
             platforms: [],
-            genres: []
+            genres: game.genres
           } as GameCatalog);
           this.selectedImageUrl.set(game.imageUrl);
 
@@ -317,7 +351,8 @@ export class GameFormComponent implements OnInit {
         this._initialSnapshot = JSON.stringify({
           ...this.form.getRawValue(),
           _rawgId: this.selectedGame()?.rawg_id ?? null,
-          _imageUrl: this.selectedImageUrl()
+          _imageUrl: this.selectedImageUrl(),
+          _coverPosition: this._coverPosition()
         });
       }
     } finally {
@@ -350,18 +385,20 @@ export class GameFormComponent implements OnInit {
       const game: GameModel = {
         id: this._gameId,
         uuid: this._gameUuid,
-        title: raw.title ?? '',
+        title: (raw.title ?? '').trim(),
         price: raw.price ?? null,
         store: raw.store ?? null,
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
         platinum: raw.platinum ?? false,
-        description: raw.description ?? '',
+        description: (raw.description ?? '').trim(),
         status: raw.status ?? 'backlog',
         personalRating: raw.personal_rating ?? null,
-        edition: raw.edition ?? null,
+        edition: raw.edition?.trim() || null,
         format: raw.format ?? null,
-        isFavorite: raw.is_favorite ?? false
+        isFavorite: raw.is_favorite ?? false,
+        imageUrl: this.selectedImageUrl() ?? undefined,
+        coverPosition: this._coverPosition()
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
@@ -369,15 +406,78 @@ export class GameFormComponent implements OnInit {
         ? { ...baseEntry, image_url: this.selectedImageUrl() ?? baseEntry.image_url }
         : null;
 
-      if (this.isEditMode && this._gameUuid) {
-        await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
-      } else {
-        await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+      try {
+        if (this.isEditMode && this._gameUuid) {
+          await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
+        } else {
+          await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+        }
+        this._userPreferencesState.allGames.set([]);
+        void this._router.navigate(['/list']);
+      } catch (err: unknown) {
+        const isDuplicate =
+          err instanceof Error && (err.message.includes('23505') || err.message.toLowerCase().includes('duplicate'));
+        const msg = isDuplicate
+          ? this._transloco.translate('gameForm.errors.duplicate')
+          : this._transloco.translate('gameForm.errors.saveFailed');
+        this._snackBar.open(msg, this._transloco.translate('common.close'), {
+          duration: 4000,
+          verticalPosition: 'bottom',
+          horizontalPosition: 'center',
+          panelClass: ['snack-mobile']
+        });
+        this.saving.set(false);
+        this.form.enable();
       }
-
-      this._userPreferencesState.allGames.set([]);
-      void this._router.navigate(['/list']);
     });
+  }
+
+  /**
+   * Abre un diálogo de confirmación y elimina el juego si se confirma.
+   * Solo disponible en modo edición.
+   */
+  async onDelete(): Promise<void> {
+    if (!this._gameUuid) return;
+
+    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._transloco.translate('gameCard.dialog.delete.title'),
+        message: this._transloco.translate('gameCard.dialog.delete.message')
+      } satisfies ConfirmDialogInterface
+    });
+
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed && this._gameUuid) {
+        await this._gameUseCases.deleteGame(this._userId, this._gameUuid);
+        this._userPreferencesState.allGames.set([]);
+        void this._router.navigate(['/list']);
+      }
+    });
+  }
+
+  /**
+   * Opens the cover repositioning dialog for the current image.
+   * Updates the cover position signal if the user confirms.
+   */
+  async openCoverPositionDialog(): Promise<void> {
+    const imageUrl: string | null = this.selectedImageUrl();
+    if (!imageUrl) return;
+
+    const dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
+      GameCoverPositionDialogComponent,
+      {
+        data: {
+          imageUrl,
+          title: this._transloco.translate('gameForm.cover.repositionTitle'),
+          initialPosition: this._coverPosition()
+        } satisfies CoverPositionDialogDataInterface,
+        width: '340px',
+        maxWidth: '95vw'
+      }
+    );
+
+    const result: string | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    if (result) this._coverPosition.set(result);
   }
 
   /**
@@ -436,13 +536,17 @@ export class GameFormComponent implements OnInit {
 
   /**
    * Clears the selected catalogue game and re-enables the title field.
+   * In edit mode only clears the image association, keeping the existing title.
    */
   clearSelectedGame(): void {
     this.selectedGame.set(null);
     this.selectedImageUrl.set(null);
+    this._coverPosition.set(null);
     this.gamePlatforms.set([]);
     this.form.controls.title.enable();
-    this.form.controls.title.setValue('');
+    if (!this.isEditMode) {
+      this.form.controls.title.setValue('');
+    }
   }
 
   /**
@@ -463,7 +567,7 @@ export class GameFormComponent implements OnInit {
   displayStoreLabel = (id: string | null): string => {
     if (!id) return '';
     const store: StoreModel | undefined = this.stores().find((s: StoreModel): boolean => s.id === id);
-    return store ? store.label : id;
+    return store?.label ?? '';
   };
 
   /**
@@ -508,7 +612,7 @@ export class GameFormComponent implements OnInit {
       const models: StoreModel[] = await this._storeUseCases.getAllStores();
       this._storeModels.set(models);
     } catch {
-      // silently ignore — static fallback is an empty list; stores from DB are best-effort
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. El fallback estático ya es una lista vacía; las tiendas de BD son best-effort
     }
   }
 
@@ -542,7 +646,7 @@ export class GameFormComponent implements OnInit {
       const screenshots = allScreenshots.filter((url: string) => url !== currentImageUrl);
       this.selectedGame.update((game) => (game ? { ...game, screenshots } : game));
     } catch {
-      // silently ignore — thumbnails just won't show
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. Los thumbnails simplemente no se mostrarán
     } finally {
       this.screenshotsLoading.set(false);
     }

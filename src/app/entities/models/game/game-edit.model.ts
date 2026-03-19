@@ -39,4 +39,12 @@ export interface GameEditModel {
   rawgId: number | null;
   /** RAWG slug — preferred identifier for screenshot fetching. */
   rawgSlug: string | null;
+  /** Release date from RAWG. */
+  releasedDate: string | null;
+  /** RAWG community rating. */
+  rawgRating: number;
+  /** Game genres from RAWG. */
+  genres: string[];
+  /** CSS object-position value for the cover image (e.g. "50% 30%"). Null uses browser default. */
+  coverPosition: string | null;
 }

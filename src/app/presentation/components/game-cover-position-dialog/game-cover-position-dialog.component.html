@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ 'gameForm.cover.repositionTitle' | transloco }}</h2>
+
+<mat-dialog-content>
+  <div
+    class="cover-pos-dialog__preview"
+    [class.cover-pos-dialog__preview--grabbing]="isDragging()"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp()"
+    (pointercancel)="onPointerUp()"
+    (wheel)="onWheel($event)"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)">
+    <img
+      class="cover-pos-dialog__image"
+      [src]="config.imageUrl"
+      [style.object-position]="positionCss()"
+      [style.transform]="transformCss()"
+      (load)="onImageLoad($event)"
+      alt="" />
+  </div>
+  <p class="cover-pos-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
+  <button mat-flat-button color="primary" type="button" [disabled]="!imageLoaded()" (click)="onConfirm()">
+    {{ 'common.confirm' | transloco }}
+  </button>
+</mat-dialog-actions>

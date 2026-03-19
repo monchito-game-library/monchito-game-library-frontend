@@ -68,6 +68,7 @@ export interface UserGameDto {
   description: string | null | undefined;
   tags_personal?: string[];
   is_favorite: boolean;
+  cover_position: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -119,6 +120,10 @@ export interface UserGameEditDto {
   edition: string | null;
   format: 'digital' | 'physical' | null;
   is_favorite: boolean;
+  released_date: string | null;
+  rawg_rating: number;
+  genres: string[];
+  cover_position: string | null;
 }
 
 /**
@@ -140,6 +145,7 @@ export interface UserGameListDto {
   format: string | null;
   is_favorite: boolean;
   image_url: string | null;
+  cover_position: string | null;
 }
 
 /** Payload for inserting or updating a row in game_catalog. */

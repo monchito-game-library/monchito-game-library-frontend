@@ -68,6 +68,21 @@ export const routes: Routes = [
         loadComponent: (): Promise<
           typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
         > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent)
+      },
+      {
+        path: 'users',
+        loadComponent: (): Promise<
+          typeof import('@/pages/management/users/users-management.component').UsersManagementComponent
+        > => import('@/pages/management/users/users-management.component').then((m) => m.UsersManagementComponent)
+      },
+      {
+        path: 'audit-log',
+        loadComponent: (): Promise<
+          typeof import('@/pages/management/audit-log/audit-log-management.component').AuditLogManagementComponent
+        > =>
+          import('@/pages/management/audit-log/audit-log-management.component').then(
+            (m) => m.AuditLogManagementComponent
+          )
       }
     ]
   },

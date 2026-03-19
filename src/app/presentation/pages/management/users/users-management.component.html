@@ -1,0 +1,49 @@
+<div class="users-page">
+  <header class="users-page__header">
+    <h1 class="users-page__title">{{ 'management.users.title' | transloco }}</h1>
+  </header>
+
+  @if (loading()) {
+    <div class="users-page__loading">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <div class="users-list">
+      @for (user of users(); track user.userId) {
+        <div class="user-card" [class.user-card--current]="isCurrentUser(user.userId)">
+          <div class="user-card__avatar">
+            @if (user.avatarUrl) {
+              <img [ngSrc]="user.avatarUrl" width="36" height="36" alt="" class="user-card__avatar-img" />
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+
+          <div class="user-card__info">
+            <span class="user-card__email">{{ user.email }}</span>
+            @if (isCurrentUser(user.userId)) {
+              <span class="user-card__you-badge">tú</span>
+            }
+          </div>
+
+          <div class="user-card__role">
+            @if (updatingUserId() === user.userId) {
+              <mat-spinner diameter="20" />
+            } @else {
+              <mat-select
+                [value]="user.role"
+                [disabled]="isCurrentUser(user.userId)"
+                class="user-card__role-select"
+                [class.user-card__role-select--admin]="user.role === 'admin'"
+                (selectionChange)="onRoleChange(user, $event.value)">
+                @for (role of roles; track role) {
+                  <mat-option [value]="role">{{ getRoleLabel(role) }}</mat-option>
+                }
+              </mat-select>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
