@@ -106,7 +106,7 @@ export class GameCoverPositionDialogComponent {
    * @param {PointerEvent} event
    */
   onPointerDown(event: PointerEvent): void {
-    if (event.pointerType === 'touch') return; // handled by touch events
+    if (event.pointerType === 'touch') return;
     this.isDragging.set(true);
     this._lastPointerX = event.clientX;
     this._lastPointerY = event.clientY;

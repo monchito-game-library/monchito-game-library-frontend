@@ -612,7 +612,7 @@ export class GameFormComponent implements OnInit {
       const models: StoreModel[] = await this._storeUseCases.getAllStores();
       this._storeModels.set(models);
     } catch {
-      // silently ignore — static fallback is an empty list; stores from DB are best-effort
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. El fallback estático ya es una lista vacía; las tiendas de BD son best-effort
     }
   }
 
@@ -646,7 +646,7 @@ export class GameFormComponent implements OnInit {
       const screenshots = allScreenshots.filter((url: string) => url !== currentImageUrl);
       this.selectedGame.update((game) => (game ? { ...game, screenshots } : game));
     } catch {
-      // silently ignore — thumbnails just won't show
+      // Catch vacío intencionado: evita code smell de bloque catch vacío. Los thumbnails simplemente no se mostrarán
     } finally {
       this.screenshotsLoading.set(false);
     }
