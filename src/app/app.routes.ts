@@ -1,106 +1,25 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from '@/guards/user.guard';
-import { canActivateAdmin } from '@/guards/admin.guard';
 
 export const routes: Routes = [
-  // Public routes (no authentication required)
-  {
-    path: 'login',
-    loadComponent: (): Promise<typeof import('@/pages/login/login.component').LoginComponent> =>
-      import('@/pages/login/login.component').then((m) => m.LoginComponent)
-  },
-  {
-    path: 'register',
-    loadComponent: (): Promise<typeof import('@/pages/register/register.component').RegisterComponent> =>
-      import('@/pages/register/register.component').then((m) => m.RegisterComponent)
-  },
-  {
-    path: 'forgot-password',
-    loadComponent: (): Promise<
-      typeof import('@/pages/forgot-password/forgot-password.component').ForgotPasswordComponent
-    > => import('@/pages/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent)
-  },
-
-  // Protected routes (authentication required)
-  {
-    path: 'home',
-    redirectTo: 'list',
-    pathMatch: 'full'
-  },
+  { path: 'auth', loadChildren: () => import('@/pages/auth/auth.routes').then((m) => m.authRoutes) },
+  { path: 'home', redirectTo: 'list', pathMatch: 'full' },
+  { path: 'list', loadChildren: () => import('@/pages/game-list/game-list.routes').then((m) => m.gameListRoutes) },
   {
     path: 'add',
-    loadComponent: (): Promise<
-      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
-    > =>
-      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
-    canActivate: [canActivateUser]
-  },
-  {
-    path: 'list',
-    loadComponent: (): Promise<typeof import('@/pages/game-list/game-list.component').GameListComponent> =>
-      import('@/pages/game-list/game-list.component').then((m) => m.GameListComponent),
-    canActivate: [canActivateUser]
+    loadChildren: () =>
+      import('@/pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
   },
   {
     path: 'update/:id',
-    loadComponent: (): Promise<
-      typeof import('@/pages/create-update-game/create-and-update-game.component').CreateAndUpdateGameComponent
-    > =>
-      import('@/pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
-    canActivate: [canActivateUser]
+    loadChildren: () =>
+      import('@/pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
   },
-
-  {
-    path: 'wishlist',
-    loadComponent: (): Promise<typeof import('@/pages/wishlist/wishlist.component').WishlistComponent> =>
-      import('@/pages/wishlist/wishlist.component').then((m) => m.WishlistComponent),
-    canActivate: [canActivateUser]
-  },
-  {
-    path: 'settings',
-    loadComponent: (): Promise<typeof import('@/pages/settings/settings.component').SettingsComponent> =>
-      import('@/pages/settings/settings.component').then((m) => m.SettingsComponent),
-    canActivate: [canActivateUser]
-  },
+  { path: 'wishlist', loadChildren: () => import('@/pages/wishlist/wishlist.routes').then((m) => m.wishlistRoutes) },
+  { path: 'settings', loadChildren: () => import('@/pages/settings/settings.routes').then((m) => m.settingsRoutes) },
   {
     path: 'management',
-    loadComponent: (): Promise<typeof import('@/pages/management/management.component').ManagementComponent> =>
-      import('@/pages/management/management.component').then((m) => m.ManagementComponent),
-    canActivate: [canActivateUser, canActivateAdmin],
-    children: [
-      { path: '', redirectTo: 'stores', pathMatch: 'full' },
-      {
-        path: 'stores',
-        loadComponent: (): Promise<
-          typeof import('@/pages/management/stores/stores-management.component').StoresManagementComponent
-        > => import('@/pages/management/stores/stores-management.component').then((m) => m.StoresManagementComponent)
-      },
-      {
-        path: 'users',
-        loadComponent: (): Promise<
-          typeof import('@/pages/management/users/users-management.component').UsersManagementComponent
-        > => import('@/pages/management/users/users-management.component').then((m) => m.UsersManagementComponent)
-      },
-      {
-        path: 'audit-log',
-        loadComponent: (): Promise<
-          typeof import('@/pages/management/audit-log/audit-log-management.component').AuditLogManagementComponent
-        > =>
-          import('@/pages/management/audit-log/audit-log-management.component').then(
-            (m) => m.AuditLogManagementComponent
-          )
-      }
-    ]
+    loadChildren: () => import('@/pages/management/management.routes').then((m) => m.managementRoutes)
   },
-
-  // Default and fallback routes
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },
-  {
-    path: '**',
-    redirectTo: 'login'
-  }
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'auth/login' }
 ];

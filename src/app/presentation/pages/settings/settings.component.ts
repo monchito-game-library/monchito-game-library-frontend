@@ -35,7 +35,7 @@ import { AUTH_USE_CASES, AuthUseCasesContract } from '@/domain/use-cases/auth/au
 import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
-import { AvatarCropDialogComponent } from '@/components/avatar-crop-dialog/avatar-crop-dialog.component';
+import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 

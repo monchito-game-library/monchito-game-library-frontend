@@ -29,7 +29,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
-import { WishlistCardComponent } from '@/components/wishlist-card/wishlist-card.component';
+import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
@@ -37,7 +37,7 @@ import {
   WishlistItemDialogComponent,
   WishlistItemDialogData,
   WishlistItemDialogResult
-} from '@/components/wishlist-item-dialog/wishlist-item-dialog.component';
+} from '@/pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component';
 
 const PRIORITY_OPTIONS = [1, 2, 3, 4, 5];
 const MOBILE_BREAKPOINT = '(max-width: 768px)';

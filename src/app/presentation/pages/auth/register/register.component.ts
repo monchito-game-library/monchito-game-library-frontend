@@ -98,7 +98,7 @@ export class RegisterComponent {
 
     if (result.success) {
       this.successMessage.set('Registration successful! Please check your email to verify your account.');
-      setTimeout(() => void this._router.navigate(['/login']), 3000);
+      setTimeout(() => void this._router.navigate(['/auth/login']), 3000);
     } else {
       this.errorMessage.set(result.error ?? 'Registration failed');
     }

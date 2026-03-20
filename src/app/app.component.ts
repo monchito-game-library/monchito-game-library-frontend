@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
-  private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
+  private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
   readonly userContext: UserContextService = inject(UserContextService);
 
