@@ -54,7 +54,7 @@
 
     <!-- Store search links -->
     <div class="wishlist-card__store-links">
-      @for (link of getStoreLinks(); track link.label) {
+      @for (link of storeLinks(); track link.label) {
         <a
           class="wishlist-card__store-link"
           [href]="link.url"

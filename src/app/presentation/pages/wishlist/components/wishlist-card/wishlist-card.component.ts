@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  InputSignal,
+  output,
+  OutputEmitterRef,
+  Signal
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -6,8 +15,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@ngneat/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
+import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 
-const PRIORITY_RANGE = [1, 2, 3, 4, 5];
+const PRIORITY_RANGE = WISHLIST_PRIORITY_OPTIONS;
 
 @Component({
   selector: 'app-wishlist-card',
@@ -33,6 +43,20 @@ export class WishlistCardComponent {
   /** Priority star range used to render the star icons. */
   readonly priorityRange: number[] = PRIORITY_RANGE;
 
+  /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
+  readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {
+    const platform = this.item().platform;
+    const searchTerm = platform ? `${this.item().title} ${platform}` : this.item().title;
+    const q = encodeURIComponent(searchTerm);
+    const qPlus = searchTerm.replace(/ /g, '+');
+    return [
+      { label: 'Amazon', url: `https://www.amazon.es/s?k=${qPlus}` },
+      { label: 'GAME', url: `https://www.game.es/buscar/${q}` },
+      { label: 'CEX', url: `https://es.webuy.com/search/?stext=${qPlus}` },
+      { label: 'Xtralife', url: `https://www.xtralife.com/buscar/${q}/` }
+    ];
+  });
+
   /**
    * Emits the edit event for the current item.
    */
@@ -52,23 +76,5 @@ export class WishlistCardComponent {
    */
   onOwn(): void {
     this.ownClicked.emit(this.item());
-  }
-
-  /**
-   * Returns the list of store search links for the current item's title and platform.
-   * If the item has a platform set, it is appended to the search query.
-   * URLs are built with encodeURIComponent so special characters are handled correctly.
-   */
-  getStoreLinks(): { label: string; url: string }[] {
-    const platform = this.item().platform;
-    const searchTerm = platform ? `${this.item().title} ${platform}` : this.item().title;
-    const q = encodeURIComponent(searchTerm);
-    const qPlus = searchTerm.replace(/ /g, '+');
-    return [
-      { label: 'Amazon', url: `https://www.amazon.es/s?k=${qPlus}` },
-      { label: 'GAME', url: `https://www.game.es/buscar/${q}` },
-      { label: 'CEX', url: `https://es.webuy.com/search/?stext=${qPlus}` },
-      { label: 'Xtralife', url: `https://www.xtralife.com/buscar/${q}/` }
-    ];
   }
 }
