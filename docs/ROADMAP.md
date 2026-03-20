@@ -10,7 +10,8 @@
 |---|---|
 | [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
 | [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | Alta |
-| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Media-alta |
+| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Descartada |
+| [Recarga de página al cambiar idioma para respetar el locale de Angular](#recarga-de-página-al-cambiar-idioma-para-respetar-el-locale-de-angular) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
@@ -236,6 +237,14 @@ La función haría lo siguiente:
 ---
 
 ## Arquitectura / Rendimiento
+
+### Recarga de página al cambiar idioma para respetar el locale de Angular
+
+Actualmente el cambio de idioma se aplica en caliente con Transloco pero `LOCALE_ID` se resuelve una sola vez al arrancar. Esto significa que los pipes de Angular (`CurrencyPipe`, `DatePipe`, `DecimalPipe`) siempre formatean con locale `es` independientemente del idioma seleccionado. Para usuarios en inglés el formato de números y monedas es incorrecto.
+
+**Solución:** al cambiar de idioma, guardar la preferencia en `user_preferences` (ya se hace) y recargar la página. Al arrancar, leer el idioma guardado antes de inicializar Angular para que `LOCALE_ID` se resuelva con el valor correcto. Crear un provider `LOCALE_ID` en `di/` que lea el idioma del localStorage al arrancar.
+
+---
 
 ### Migrar a Angular zoneless puro
 Reemplazar `provideAnimations()` por `provideExperimentalZonelessChangeDetection()` y eliminar `zone.js` de los polyfills. El proyecto ya usa `OnPush` + signals en todo, por lo que la migración es sencilla. Beneficios: ~13 KB menos de bundle, simplificación del código async (sin `NgZone`). Riesgo principal: verificar compatibilidad de `ngx-image-cropper` con el flujo de crop de avatar/banner.
