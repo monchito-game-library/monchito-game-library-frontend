@@ -20,7 +20,7 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -61,6 +61,7 @@ import {
     MatSelect,
     MatOption,
     MatButton,
+    MatFabButton,
     MatIconButton,
     MatIcon,
     MatProgressSpinner,
@@ -260,17 +261,10 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the number of filtered games that are owned (any status except wishlist).
+   * Returns the total number of filtered games in the collection.
    */
   getOwnedCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status !== 'wishlist').length;
-  }
-
-  /**
-   * Returns the number of filtered games with wishlist status.
-   */
-  getWishlistCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status === 'wishlist').length;
+    return this.filteredGames().length;
   }
 
   /**
@@ -281,12 +275,10 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the sum of prices for owned filtered games (excludes wishlist entries).
+   * Returns the sum of prices for all filtered games.
    */
   getTotalPrice(): number {
-    return this.filteredGames()
-      .filter((g: GameListModel) => g.status !== 'wishlist')
-      .reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0);
+    return this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0);
   }
 
   /**

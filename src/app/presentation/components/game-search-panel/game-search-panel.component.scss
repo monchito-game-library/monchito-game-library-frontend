@@ -14,7 +14,7 @@
 
   .game-search-panel__input-wrapper {
     flex-shrink: 0;
-    padding: 0 2rem 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   .game-search-panel__field {
@@ -27,7 +27,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0 2rem;
   }
 
   .game-search-panel__placeholder {
@@ -193,12 +192,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .game-search-panel {
-    .game-search-panel__input-wrapper {
-      padding-inline: 1rem;
-    }
-
     .game-search-panel__results {
-      padding-inline: 1rem;
       padding-bottom: calc(60px + 1rem);
     }
   }

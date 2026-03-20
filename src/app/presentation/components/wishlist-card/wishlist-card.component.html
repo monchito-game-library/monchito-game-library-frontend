@@ -1,0 +1,99 @@
+<article class="wishlist-card">
+  <!-- Cover -->
+  <div class="wishlist-card__cover-wrapper">
+    @if (item().imageUrl) {
+      <img class="wishlist-card__cover" [src]="item().imageUrl" [alt]="item().title" loading="lazy" />
+    } @else {
+      <div class="wishlist-card__cover wishlist-card__cover--placeholder">
+        <mat-icon>image_not_supported</mat-icon>
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="wishlist-card__content">
+    <div class="wishlist-card__header">
+      <h3 class="wishlist-card__title">{{ item().title }}</h3>
+
+      <!-- Priority stars -->
+      <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
+        @for (level of priorityRange; track level) {
+          <mat-icon class="wishlist-card__star" [class.wishlist-card__star--filled]="level <= item().priority">
+            {{ level <= item().priority ? 'star' : 'star_border' }}
+          </mat-icon>
+        }
+      </div>
+    </div>
+
+    <!-- Platform badge -->
+    @if (item().platform) {
+      <span class="wishlist-card__platform-badge">{{ item().platform }}</span>
+    }
+
+    <!-- Price -->
+    @if (item().desiredPrice !== null) {
+      <p class="wishlist-card__price">
+        <mat-icon class="wishlist-card__price-icon">sell</mat-icon>
+        {{ item().desiredPrice | number: '1.2-2' }} €
+      </p>
+    }
+
+    <!-- Genres -->
+    @if (item().genres.length > 0) {
+      <div class="wishlist-card__genres">
+        @for (genre of item().genres.slice(0, 3); track genre) {
+          <span class="wishlist-card__genre-chip">{{ genre }}</span>
+        }
+      </div>
+    }
+
+    <!-- Notes -->
+    @if (item().notes) {
+      <p class="wishlist-card__notes">{{ item().notes }}</p>
+    }
+
+    <!-- Store search links -->
+    <div class="wishlist-card__store-links">
+      @for (link of getStoreLinks(); track link.label) {
+        <a
+          class="wishlist-card__store-link"
+          [href]="link.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          [matTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
+          {{ link.label }}
+        </a>
+      }
+    </div>
+
+    <!-- Actions -->
+    <div class="wishlist-card__actions">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="onOwn()"
+        [matTooltip]="'wishlist.card.ownTooltip' | transloco"
+        class="wishlist-card__own-btn"
+        [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
+        <mat-icon>shopping_bag</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="onEdit()"
+        [matTooltip]="'common.edit' | transloco"
+        [attr.aria-label]="'common.edit' | transloco">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="onDelete()"
+        [matTooltip]="'common.delete' | transloco"
+        class="wishlist-card__delete-btn"
+        [attr.aria-label]="'common.delete' | transloco">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+</article>

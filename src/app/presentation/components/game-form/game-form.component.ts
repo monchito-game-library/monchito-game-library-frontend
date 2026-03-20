@@ -34,6 +34,7 @@ import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -108,6 +109,7 @@ export class GameFormComponent implements OnInit {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
+  private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
 
   /** Raw store models loaded from Supabase. */
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal([]);
@@ -118,6 +120,10 @@ export class GameFormComponent implements OnInit {
   private _gameId?: number;
   /** Supabase UUID of the user_games row — set in edit mode for direct DB updates. */
   private _gameUuid?: string;
+  /** Catalog entry passed from the wishlist "I have this game" action via router state. */
+  private _pendingCatalogEntry: GameCatalogDto | null = null;
+  /** Wishlist item ID to delete after a successful save (from "I have this game" flow). */
+  private _pendingWishlistItemId: string | null = null;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
   /** True while edit data is being loaded — prevents store valueChanges from triggering format auto-suggestion. */
@@ -282,6 +288,17 @@ export class GameFormComponent implements OnInit {
   isEditMode: boolean = false;
 
   constructor() {
+    // Read catalog entry pre-loaded from the wishlist "I have this game" action
+    const navState = this._router.getCurrentNavigation()?.extras.state as
+      | { catalogEntry?: GameCatalogDto; wishlistItemId?: string }
+      | undefined;
+    if (navState?.catalogEntry) {
+      this._pendingCatalogEntry = navState.catalogEntry;
+    }
+    if (navState?.wishlistItemId) {
+      this._pendingWishlistItemId = navState.wishlistItemId;
+    }
+
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
 
     this.form.controls.store.valueChanges
@@ -300,7 +317,13 @@ export class GameFormComponent implements OnInit {
     void this._loadStores();
 
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
-    if (!idParam) return;
+    if (!idParam) {
+      // Create mode — pre-load catalog entry from wishlist if available
+      if (this._pendingCatalogEntry) {
+        this.selectGameFromSearch(this._pendingCatalogEntry);
+      }
+      return;
+    }
 
     this.isEditMode = true;
     this._gameUuid = idParam;
@@ -411,6 +434,13 @@ export class GameFormComponent implements OnInit {
           await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
         } else {
           await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+          if (this._pendingWishlistItemId) {
+            try {
+              await this._wishlistUseCases.deleteItem(this._userId, this._pendingWishlistItemId);
+            } catch {
+              // El juego ya se guardó; si falla el borrado de wishlist el usuario puede borrarlo manualmente
+            }
+          }
         }
         this._userPreferencesState.allGames.set([]);
         void this._router.navigate(['/list']);

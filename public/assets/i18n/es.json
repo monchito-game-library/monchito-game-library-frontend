@@ -91,6 +91,7 @@
       "condition": "Condición",
       "description": "Descripción",
       "platform": "Plataforma",
+      "priority": "Prioridad",
       "status": "Estado",
       "platinum": "Platino",
       "is_favorite": "Favorito",
@@ -179,7 +180,6 @@
     }
   },
   "gameStatus": {
-    "wishlist": "Deseado",
     "backlog": "Sin empezar",
     "playing": "Jugando",
     "completed": "Completado",
@@ -267,8 +267,51 @@
       "logoutDescription": "Cerrar sesión en tu cuenta"
     }
   },
+  "wishlist": {
+    "addBtn": "Añadir juego",
+    "loading": "Cargando wishlist...",
+    "fields": {
+      "platform": "Plataforma",
+      "platformRequired": "La plataforma es obligatoria",
+      "priority": "Prioridad",
+      "desiredPrice": "Precio deseado",
+      "desiredPricePlaceholder": "ej. 19.99",
+      "desiredPriceRequired": "El precio es obligatorio",
+      "notes": "Notas",
+      "notesPlaceholder": "Por qué lo quieres, dónde buscarlo..."
+    },
+    "dialog": {
+      "addTitle": "Añadir a la wishlist",
+      "editTitle": "Editar item",
+      "searchHint": "Busca el juego que quieres añadir a tu wishlist.",
+      "changeGame": "Cambiar juego",
+      "deleteTitle": "Eliminar de la wishlist",
+      "deleteMessage": "¿Eliminar «{{ title }}» de tu wishlist?",
+      "ownTitle": "Tengo este juego",
+      "ownMessage": "Se eliminará «{{ title }}» de tu wishlist y se abrirá el formulario para añadirlo a tu colección."
+    },
+    "card": {
+      "priority": "Prioridad",
+      "ownTooltip": "Tengo este juego",
+      "searchIn": "Buscar en {{ label }}"
+    },
+    "snack": {
+      "added": "Juego añadido a la wishlist",
+      "addError": "Error al añadir a la wishlist",
+      "updated": "Wishlist actualizada",
+      "updateError": "Error al actualizar el item",
+      "deleted": "Eliminado de la wishlist",
+      "deleteError": "Error al eliminar de la wishlist",
+      "loadError": "Error al cargar la wishlist"
+    },
+    "empty": {
+      "title": "Tu wishlist está vacía",
+      "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí"
+    }
+  },
   "nav": {
     "collection": "Colección",
+    "wishlist": "Wishlist",
     "add": "Añadir",
     "settings": "Ajustes",
     "logout": "Salir",
