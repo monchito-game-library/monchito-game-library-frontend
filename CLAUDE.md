@@ -14,6 +14,20 @@
 
 - **Nunca hacer commit ni push** a menos que el usuario lo pida explícitamente.
 
+## Dependencias npm
+
+- Usar **siempre versiones exactas** en `package.json`. Nunca usar rangos con `^` o `~`.
+- Al instalar con `npm install`, verificar que la versión quedó fija y corregirla manualmente si npm añadió un rango.
+- Razón: Vercel no acepta `--legacy-peer-deps` y los rangos abiertos causan fallos de build por desajustes de peer deps entre entornos.
+
+```json
+// ✅ Correcto
+"@angular/service-worker": "21.2.3"
+
+// ❌ Incorrecto
+"@angular/service-worker": "^21.2.3"
+```
+
 ## Imports
 
 - Usar **siempre** los path aliases definidos en `tsconfig.json`. **Nunca** usar rutas relativas con `../` o `../../`.
