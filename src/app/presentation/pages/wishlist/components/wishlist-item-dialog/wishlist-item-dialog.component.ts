@@ -14,7 +14,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { SlicePipe } from '@angular/common';
 
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';

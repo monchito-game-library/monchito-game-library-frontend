@@ -13,7 +13,7 @@ import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ThemeService } from '@/services/theme.service';
