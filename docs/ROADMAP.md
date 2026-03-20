@@ -9,7 +9,7 @@
 | Mejora | Prioridad |
 |---|---|
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
-| [PWA (Progressive Web App)](#pwa-progressive-web-app) | Media |
+| [PWA (Progressive Web App)](#pwa-progressive-web-app) | Alta |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -23,7 +23,7 @@
 
 ---
 
-## PWA *(prioridad media)*
+## PWA *(prioridad alta)*
 
 ### PWA (Progressive Web App)
 
