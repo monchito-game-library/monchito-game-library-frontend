@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
