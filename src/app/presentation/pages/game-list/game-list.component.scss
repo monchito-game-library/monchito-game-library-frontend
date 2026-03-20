@@ -24,6 +24,11 @@
   gap: 0.75rem;
 }
 
+.game-list__add-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .game-list__stat {
   display: flex;
   align-items: center;
@@ -187,6 +192,10 @@
     padding: 1rem 0.75rem;
   }
 
+  .game-list__add-btn {
+    display: none;
+  }
+
   .game-list__filters {
     flex-wrap: nowrap;
   }
@@ -217,4 +226,16 @@
       padding-top: 0.75rem;
     }
   }
+
+  .game-list__fab {
+    display: flex !important;
+    position: fixed;
+    bottom: calc(60px + 16px);
+    right: 16px;
+    z-index: 10;
+  }
+}
+
+.game-list__fab {
+  display: none;
 }

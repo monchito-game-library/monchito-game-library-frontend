@@ -39,14 +39,14 @@ export class AppComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
-  private readonly _publicRoutes: string[] = ['/login', '/register', '/forgot-password'];
+  private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
   readonly userContext: UserContextService = inject(UserContextService);
 
   /** Navigation items shared by desktop rail and mobile bottom nav. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
-    { icon: 'add_circle', label: 'nav.add', route: '/add' }
+    { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' }
   ];
 
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
