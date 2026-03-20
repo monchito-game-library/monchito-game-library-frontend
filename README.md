@@ -6,7 +6,7 @@ Aplicación Angular para gestionar tu colección personal de videojuegos. Permit
 
 ## Demo
 
-Desplegada en Vercel. Ver `docs/VERCEL_DEPLOY.md` para detalles de configuración.
+Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de configuración.
 
 ---
 
@@ -35,7 +35,6 @@ Desplegada en Vercel. Ver `docs/VERCEL_DEPLOY.md` para detalles de configuració
 - Angular CDK Virtual Scroll
 - Supabase (PostgreSQL + Auth + RLS)
 - Dexie (IndexedDB — caché local)
-- ngx-image-cropper (recorte de imágenes)
 - Transloco (i18n)
 - SCSS con design tokens de Material
 
@@ -91,7 +90,7 @@ export const environment = {
 };
 ```
 
-4. Ejecuta el schema de base de datos en el SQL Editor de Supabase (`docs/supabase-schema-current.sql`).
+4. Ejecuta el schema de base de datos en el SQL Editor de Supabase (`docs/backend/supabase-schema-current.sql`).
 
 5. Inicia el servidor de desarrollo:
 
