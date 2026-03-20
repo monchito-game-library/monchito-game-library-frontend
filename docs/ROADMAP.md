@@ -9,6 +9,7 @@
 | Mejora | Prioridad |
 |---|---|
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
+| [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
@@ -18,6 +19,59 @@
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
+
+---
+
+## Testing *(prioridad media)*
+
+### Testing (unit + integración)
+
+El proyecto está en un punto de estabilidad suficiente para introducir tests. La base está preparada: arquitectura de capas limpia, uso de signals, repositorios con contratos inyectables y componentes standalone.
+
+#### Qué testear y con qué herramienta
+
+**Unit tests — Jest (o Vitest)**
+
+- **Use cases / dominio**: los casos de uso son funciones puras que dependen de un repositorio inyectado. Son el target más valioso — se mockea el repositorio y se verifica la lógica de negocio.
+  - Ejemplo: `WishlistUseCases.addItem()` — verificar que llama al repositorio con los datos correctos y lanza error si el usuario no está autenticado.
+- **Mappers**: transformaciones de DTO → modelo y viceversa. Totalmente deterministas, sin dependencias externas.
+  - Ejemplo: `WishlistMapper.toModel()` — verificar que todos los campos se mapean correctamente.
+- **Validators y utils**: `selectOneValidator`, `optimizeImageUrl`, `getStoreLinks`, etc.
+- **Computed signals en componentes**: testar que los `computed` devuelven el valor correcto al cambiar las signals de las que dependen.
+  - Ejemplo: `ownedCount` en `GameListComponent` — setear `allGames` con un array y verificar que `ownedCount()` refleja el filtrado.
+
+**Integración — Angular Testing Library o TestBed**
+
+- **Componentes de presentación críticos**: `WishlistCardComponent`, `GameCardComponent`, `ConfirmDialogComponent`.
+  - Verificar que los outputs (`editClicked`, `deleteClicked`, `ownClicked`) se emiten al hacer clic en los botones.
+  - Verificar que el template renderiza correctamente según el estado del input.
+- **Guards**: `canActivateUser` — verificar que redirige a `/auth/login` si no hay sesión y deja pasar si la hay.
+- **Formularios reactivos**: `WishlistItemDialogComponent`, `LoginComponent` — verificar validaciones y comportamiento del botón de confirmar.
+
+**E2E — Playwright**
+
+- Flujos críticos de usuario de extremo a extremo contra un entorno de Supabase de test:
+  - Login → ver colección → añadir juego → editar → eliminar.
+  - Añadir a wishlist → "Tengo este juego" → verificar que aparece en la colección.
+  - Login fallido → mensaje de error visible.
+
+#### Setup recomendado
+
+```
+Jest (unit) + Angular Testing Library (integración de componentes) + Playwright (E2E)
+```
+
+- **Jest**: integración directa con Angular mediante `jest-preset-angular`. Más rápido que Karma/Jasmine, sin browser headless para unit tests.
+- **Angular Testing Library**: wrapper sobre TestBed que fuerza tests orientados al comportamiento del usuario, no a detalles de implementación.
+- **Playwright**: para E2E necesita una instancia de Supabase. Usar el proyecto de Supabase en modo test con datos semilla (`seed.sql`).
+
+#### Prioridad de implementación
+
+1. Mappers y validators (más fácil, mayor ROI inmediato).
+2. Use cases con repositorios mockeados.
+3. Componentes críticos con Angular Testing Library.
+4. Guards y servicios de autenticación.
+5. E2E de los flujos principales (requiere más setup).
 
 ---
 
