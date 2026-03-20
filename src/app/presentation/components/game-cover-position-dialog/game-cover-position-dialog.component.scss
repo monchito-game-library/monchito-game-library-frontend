@@ -6,6 +6,7 @@
   margin: 0 auto;
   cursor: grab;
   user-select: none;
+  touch-action: none;
   display: block;
   border: 2px solid var(--mat-sys-outline-variant);
 
