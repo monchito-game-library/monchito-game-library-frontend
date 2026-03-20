@@ -24,6 +24,7 @@ import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.reposito
 import { auditLogUseCasesProvider } from '@/di/use-cases/audit-log.use-cases.provider';
 import { wishlistRepositoryProvider } from '@/di/repositories/wishlist.repository.provider';
 import { wishlistUseCasesProvider } from '@/di/use-cases/wishlist.use-cases.provider';
+import { provideServiceWorker } from '@angular/service-worker';
 
 registerLocaleData(localeEs);
 
@@ -57,6 +58,10 @@ export const appConfig: ApplicationConfig = {
     auditLogRepositoryProvider,
     auditLogUseCasesProvider,
     wishlistRepositoryProvider,
-    wishlistUseCasesProvider
+    wishlistUseCasesProvider,
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ]
 };

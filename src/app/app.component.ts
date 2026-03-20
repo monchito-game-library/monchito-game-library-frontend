@@ -24,6 +24,7 @@ import {
 } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
 import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
+import { PwaUpdateService } from '@/services/pwa-update.service';
 
 @Component({
   selector: 'app-root',
@@ -39,6 +40,7 @@ export class AppComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
+  private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
   readonly userContext: UserContextService = inject(UserContextService);
@@ -86,6 +88,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this._themeService.initTheme();
+    this._pwaUpdate.init();
 
     this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
