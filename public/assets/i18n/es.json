@@ -269,7 +269,7 @@
   },
   "wishlist": {
     "addBtn": "Añadir juego",
-    "loading": "Cargando wishlist...",
+    "loading": "Cargando deseados...",
     "fields": {
       "platform": "Plataforma",
       "platformRequired": "La plataforma es obligatoria",
@@ -281,14 +281,14 @@
       "notesPlaceholder": "Por qué lo quieres, dónde buscarlo..."
     },
     "dialog": {
-      "addTitle": "Añadir a la wishlist",
-      "editTitle": "Editar item",
-      "searchHint": "Busca el juego que quieres añadir a tu wishlist.",
+      "addTitle": "Añadir a deseados",
+      "editTitle": "Editar juego deseado",
+      "searchHint": "Busca el juego que quieres añadir a tus deseados.",
       "changeGame": "Cambiar juego",
-      "deleteTitle": "Eliminar de la wishlist",
-      "deleteMessage": "¿Eliminar «{{ title }}» de tu wishlist?",
+      "deleteTitle": "Eliminar de deseados",
+      "deleteMessage": "¿Eliminar «{{ title }}» de tus deseados?",
       "ownTitle": "Tengo este juego",
-      "ownMessage": "Se eliminará «{{ title }}» de tu wishlist y se abrirá el formulario para añadirlo a tu colección."
+      "ownMessage": "Se eliminará «{{ title }}» de tus deseados y se abrirá el formulario para añadirlo a tu colección."
     },
     "card": {
       "priority": "Prioridad",
@@ -296,22 +296,22 @@
       "searchIn": "Buscar en {{ label }}"
     },
     "snack": {
-      "added": "Juego añadido a la wishlist",
-      "addError": "Error al añadir a la wishlist",
-      "updated": "Wishlist actualizada",
-      "updateError": "Error al actualizar el item",
-      "deleted": "Eliminado de la wishlist",
-      "deleteError": "Error al eliminar de la wishlist",
-      "loadError": "Error al cargar la wishlist"
+      "added": "Juego añadido a deseados",
+      "addError": "Error al añadir a deseados",
+      "updated": "Deseados actualizados",
+      "updateError": "Error al actualizar el juego deseado",
+      "deleted": "Eliminado de deseados",
+      "deleteError": "Error al eliminar de deseados",
+      "loadError": "Error al cargar los deseados"
     },
     "empty": {
-      "title": "Tu wishlist está vacía",
+      "title": "Tu lista de deseados está vacía",
       "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí"
     }
   },
   "nav": {
     "collection": "Colección",
-    "wishlist": "Wishlist",
+    "wishlist": "Deseados",
     "add": "Añadir",
     "settings": "Ajustes",
     "logout": "Salir",
