@@ -21,6 +21,7 @@ import { GameSearchPanelComponent } from '@/components/game-search-panel/game-se
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
+import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 
 /** Data passed to the wishlist item dialog. */
 export interface WishlistItemDialogData {
@@ -35,8 +36,6 @@ export interface WishlistItemDialogResult {
   catalogEntry?: GameCatalogDto;
   formValue: WishlistItemFormValue;
 }
-
-const PRIORITY_OPTIONS = [1, 2, 3, 4, 5];
 
 @Component({
   selector: 'app-wishlist-item-dialog',
@@ -73,7 +72,7 @@ export class WishlistItemDialogComponent {
   readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(MAT_DIALOG_DATA);
 
   /** Available priority levels (1–5). */
-  readonly priorityOptions: number[] = PRIORITY_OPTIONS;
+  readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** In add mode: tracks whether the user has selected a game from search. */
   readonly selectedCatalogEntry: WritableSignal<GameCatalogDto | null> = signal<GameCatalogDto | null>(null);

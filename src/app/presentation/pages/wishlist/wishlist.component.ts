@@ -8,6 +8,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe, SlicePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -29,6 +30,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
+import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -39,7 +41,6 @@ import {
   WishlistItemDialogResult
 } from '@/pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component';
 
-const PRIORITY_OPTIONS = [1, 2, 3, 4, 5];
 const MOBILE_BREAKPOINT = '(max-width: 768px)';
 
 @Component({
@@ -104,7 +105,7 @@ export class WishlistComponent implements OnInit {
   readonly pendingCatalogEntry: WritableSignal<GameCatalogDto | null> = signal<GameCatalogDto | null>(null);
 
   /** Available priority levels (1–5). */
-  readonly priorityOptions: number[] = PRIORITY_OPTIONS;
+  readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** Reactive form used in mobile inline form mode. */
   readonly mobileForm: FormGroup<WishlistItemForm> = this._fb.group<WishlistItemForm>({
@@ -115,6 +116,21 @@ export class WishlistComponent implements OnInit {
     platform: this._fb.control<string | null>(null, [Validators.required]),
     desiredPrice: this._fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
     notes: this._fb.control<string | null>(null)
+  });
+
+  /**
+   * Whether the mobile confirm button should be enabled.
+   * Reacts to form status changes and pending state signals.
+   */
+  readonly mobileCanConfirm: Signal<boolean> = computed(() => {
+    this._mobileFormStatus();
+    if (!this.mobileForm.valid) return false;
+    if (!this._editingItem && !this.pendingCatalogEntry()) return false;
+    return true;
+  });
+
+  private readonly _mobileFormStatus = toSignal(this.mobileForm.statusChanges, {
+    initialValue: this.mobileForm.status
   });
 
   async ngOnInit(): Promise<void> {
@@ -279,15 +295,6 @@ export class WishlistComponent implements OnInit {
     this.pendingCatalogEntry.set(game);
     this.mobileForm.controls.platform.setValue(null);
     this.viewMode.set('form');
-  }
-
-  /**
-   * Returns true when the mobile confirm button should be enabled.
-   */
-  mobileCanConfirm(): boolean {
-    if (!this.mobileForm.valid) return false;
-    if (!this._editingItem && !this.pendingCatalogEntry()) return false;
-    return true;
   }
 
   /**
