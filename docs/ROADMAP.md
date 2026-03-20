@@ -9,6 +9,7 @@
 | Mejora | Prioridad |
 |---|---|
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
+| [PWA (Progressive Web App)](#pwa-progressive-web-app) | Media |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -19,6 +20,66 @@
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
+
+---
+
+## PWA *(prioridad media)*
+
+### PWA (Progressive Web App)
+
+Convertir Monchito en una PWA para que pueda instalarse en móvil y escritorio como una app nativa, con soporte offline básico y actualizaciones automáticas al desplegar una nueva versión.
+
+#### Instalación
+
+```bash
+ng add @angular/pwa
+```
+
+Esto genera automáticamente:
+- `manifest.webmanifest` — nombre, colores y configuración de la app instalada
+- `ngsw-config.json` — configuración del service worker (qué cachear y cómo)
+- Iconos en múltiples tamaños en `public/icons/`
+- Registro del service worker en `app.config.ts` mediante `provideServiceWorker()`
+
+Tras ejecutarlo, personalizar:
+- `manifest.webmanifest`: ajustar `name`, `short_name`, `theme_color`, `background_color` e iconos con el logo de Monchito.
+- `ngsw-config.json`: revisar la estrategia de caché — por defecto cachea todos los assets y rutas de la app (suficiente para el caso de uso actual).
+
+#### Actualización automática al desplegar
+
+El service worker detecta automáticamente que hay una nueva versión disponible comparando el `ngsw-hash.json` del servidor con el que tiene cacheado. Sin embargo, **no aplica la actualización solo** — el usuario seguiría viendo la versión antigua hasta cerrar y reabrir la app.
+
+La solución es usar `SwUpdate` para mostrar un aviso y recargar:
+
+```typescript
+// En AppComponent o un servicio dedicado
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
+
+const swUpdate = inject(SwUpdate);
+
+if (swUpdate.isEnabled) {
+  swUpdate.versionUpdates
+    .pipe(filter((e): e is VersionReadyEvent => e.type === 'VERSION_READY'))
+    .subscribe(() => {
+      // Mostrar snackbar: "Nueva versión disponible"
+      // Al confirmar → document.location.reload()
+    });
+}
+```
+
+El flujo completo al desplegar:
+1. Se sube la nueva versión al servidor.
+2. El service worker detecta el cambio en el siguiente inicio de la app o en la comprobación periódica (cada 6 horas por defecto, configurable).
+3. El snackbar aparece: **"Nueva versión disponible → Actualizar"**.
+4. El usuario pulsa Actualizar → `document.location.reload()` → la nueva versión se activa.
+
+Si el usuario no pulsa nada, seguirá con la versión actual hasta la próxima vez que abra la app.
+
+#### Consideraciones
+
+- El service worker **solo se activa en producción** (`ng serve` no lo usa). Probar con `ng build` + `npx http-server dist/`.
+- Supabase y las llamadas a la API RAWG no se cachean (son datos dinámicos) — solo se cachean los assets de la app (HTML, JS, CSS, imágenes estáticas).
+- Los iconos deben generarse en los tamaños estándar: 72, 96, 128, 144, 152, 192, 384, 512px.
 
 ---
 
