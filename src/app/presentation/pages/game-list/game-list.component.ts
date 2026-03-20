@@ -225,6 +225,19 @@ export class GameListComponent implements OnInit, OnDestroy {
     return rows;
   });
 
+  /** Total number of games in the filtered list. */
+  readonly ownedCount: Signal<number> = computed((): number => this.filteredGames().length);
+
+  /** Number of filtered games with platinum status. */
+  readonly platinumCount: Signal<number> = computed(
+    (): number => this.filteredGames().filter((g: GameListModel): boolean => g.status === 'platinum').length
+  );
+
+  /** Sum of prices for all filtered games. */
+  readonly totalPrice: Signal<number> = computed((): number =>
+    this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0)
+  );
+
   async ngOnInit(): Promise<void> {
     void this._loadStores();
     await this._loadGames(false);
@@ -258,27 +271,6 @@ export class GameListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._routerSubscription?.unsubscribe();
     this._bpSubscription?.unsubscribe();
-  }
-
-  /**
-   * Returns the total number of filtered games in the collection.
-   */
-  getOwnedCount(): number {
-    return this.filteredGames().length;
-  }
-
-  /**
-   * Returns the number of filtered games with platinum status.
-   */
-  getPlatinumCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status === 'platinum').length;
-  }
-
-  /**
-   * Returns the sum of prices for all filtered games.
-   */
-  getTotalPrice(): number {
-    return this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0);
   }
 
   /**

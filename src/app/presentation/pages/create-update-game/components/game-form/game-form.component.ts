@@ -14,6 +14,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -76,6 +77,7 @@ import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
   ],
   imports: [
     ReactiveFormsModule,
+    DatePipe,
     MatFormField,
     MatLabel,
     MatError,
