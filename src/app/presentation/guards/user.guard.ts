@@ -17,7 +17,7 @@ export const canActivateUser: CanActivateFn = () => {
 
   const redirectIfUnauthenticated = (): boolean => {
     if (!authState.isAuthenticated()) {
-      void router.navigateByUrl('/login');
+      void router.navigateByUrl('/auth/login');
       return false;
     }
     return true;

@@ -37,13 +37,13 @@ import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/ga
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
-import { GameCardComponent } from '@/components/game-card/game-card.component';
+import { GameCardComponent } from '@/pages/game-list/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import {
   GameListFiltersSheetComponent,
   GameListFiltersSheetData,
   GameListSortField
-} from '@/components/game-list-filters-sheet/game-list-filters-sheet.component';
+} from '@/pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component';
 
 @Component({
   selector: 'app-game-list',

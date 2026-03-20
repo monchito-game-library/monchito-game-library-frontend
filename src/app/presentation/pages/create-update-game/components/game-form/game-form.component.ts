@@ -49,7 +49,7 @@ import { availablePlatformsConstant } from '@/constants/available-platforms.cons
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
-import { GameCoverPositionDialogComponent } from '@/components/game-cover-position-dialog/game-cover-position-dialog.component';
+import { GameCoverPositionDialogComponent } from '@/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';

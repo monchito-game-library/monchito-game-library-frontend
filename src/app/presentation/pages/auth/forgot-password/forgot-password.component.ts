@@ -70,7 +70,7 @@ export class ForgotPasswordComponent {
 
     if (result.success) {
       this.successMessage.set('Password reset email sent! Please check your inbox.');
-      setTimeout(() => void this._router.navigate(['/login']), 3000);
+      setTimeout(() => void this._router.navigate(['/auth/login']), 3000);
     } else {
       this.errorMessage.set(result.error ?? 'Failed to send reset email');
     }
