@@ -8,7 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [PWA (Progressive Web App)](#pwa-progressive-web-app) | Alta |
+| ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -23,7 +23,7 @@
 
 ---
 
-## PWA *(prioridad alta)*
+## ~~PWA~~ ✅ Hecho
 
 ### PWA (Progressive Web App)
 
