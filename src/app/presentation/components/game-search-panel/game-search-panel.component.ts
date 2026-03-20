@@ -18,7 +18,7 @@ import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { TranslocoPipe } from '@ngneat/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';

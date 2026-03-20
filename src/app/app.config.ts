@@ -7,7 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@ngneat/transloco';
+import { provideTransloco } from '@jsverse/transloco';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
 import { userPreferencesRepositoryProvider } from '@/di/repositories/user-preferences.repository.provider';
 import { authRepositoryProvider } from '@/di/repositories/auth.repository.provider';

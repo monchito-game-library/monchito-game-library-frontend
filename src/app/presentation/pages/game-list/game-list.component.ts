@@ -24,7 +24,7 @@ import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoPipe, TranslocoService } from '@ngneat/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameListModel } from '@/models/game/game-list.model';
 import { StoreModel } from '@/models/store/store.model';
