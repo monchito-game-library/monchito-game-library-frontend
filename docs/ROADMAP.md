@@ -58,10 +58,10 @@ El proyecto está en un punto de estabilidad suficiente para introducir tests. L
 #### Setup recomendado
 
 ```
-Jest (unit) + Angular Testing Library (integración de componentes) + Playwright (E2E)
+Vitest (unit + integración) + Angular Testing Library + Playwright (E2E)
 ```
 
-- **Jest**: integración directa con Angular mediante `jest-preset-angular`. Más rápido que Karma/Jasmine, sin browser headless para unit tests.
+- **Vitest**: sustituto oficial de Karma/Jasmine en Angular (adoptado desde Angular 17+). Corre en Node.js sin browser headless, API compatible con Jest. Se integra mediante el builder oficial de Angular (`@angular/build:vitest`) o `@analogjs/vitest-angular`. Más rápido que Karma y más alineado con el roadmap del ecosistema Angular.
 - **Angular Testing Library**: wrapper sobre TestBed que fuerza tests orientados al comportamiento del usuario, no a detalles de implementación.
 - **Playwright**: para E2E necesita una instancia de Supabase. Usar el proyecto de Supabase en modo test con datos semilla (`seed.sql`).
 
