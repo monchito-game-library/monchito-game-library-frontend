@@ -7,7 +7,7 @@
       @if (loading()) {
         <app-skeleton width="24px" height="12px" />
       } @else {
-        <span>{{ getOwnedCount() }}</span>
+        <span>{{ ownedCount() }}</span>
       }
     </div>
     <div class="game-list__stat-divider"></div>
@@ -16,7 +16,7 @@
       @if (loading()) {
         <app-skeleton width="24px" height="12px" />
       } @else {
-        <span>{{ getPlatinumCount() }}</span>
+        <span>{{ platinumCount() }}</span>
       }
     </div>
     <div class="game-list__stat-divider"></div>
@@ -25,7 +25,7 @@
       @if (loading()) {
         <app-skeleton width="40px" height="12px" />
       } @else {
-        <span>{{ getTotalPrice() | number: '1.0-0' }}</span>
+        <span>{{ totalPrice() | number: '1.0-0' }}</span>
       }
     </div>
   </div>
