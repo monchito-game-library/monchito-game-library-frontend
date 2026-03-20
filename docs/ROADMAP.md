@@ -9,8 +9,8 @@
 | Mejora | Prioridad |
 |---|---|
 | [Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2) | Alta |
-| [Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro) | Alta |
-| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Media-alta |
+| ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
+| [Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg) | Descartada |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
@@ -237,8 +237,8 @@ La función haría lo siguiente:
 
 ## Arquitectura / Rendimiento
 
-### Migrar a Angular zoneless puro
-Reemplazar `provideAnimations()` por `provideExperimentalZonelessChangeDetection()` y eliminar `zone.js` de los polyfills. El proyecto ya usa `OnPush` + signals en todo, por lo que la migración es sencilla. Beneficios: ~13 KB menos de bundle, simplificación del código async (sin `NgZone`). Riesgo principal: verificar compatibilidad de `ngx-image-cropper` con el flujo de crop de avatar/banner.
+### ~~Migrar a Angular zoneless puro~~ ✅ Hecho
+Completado. `provideZonelessChangeDetection()`, `provideAnimationsAsync()`, `zone.js` eliminado. `ngx-image-cropper` sustituido por implementación propia con drag+zoom+canvas crop.
 
 ### Optimizar carga de imágenes con el CDN de RAWG
 Ya existe la utilidad `src/app/presentation/shared/image-url.utils.ts` (`optimizeImageUrl`) que transforma URLs de RAWG para usar su endpoint de redimensionado (`/media/resize/{width}/-/`). Integrarla en las cards y en cualquier lugar donde se muestren portadas de RAWG para reducir el tamaño de descarga (las imágenes originales pueden pesar varios MB; redimensionadas al ancho real de la card son ~10–30 KB).

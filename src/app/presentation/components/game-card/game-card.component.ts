@@ -3,11 +3,11 @@ import {
   Component,
   computed,
   effect,
-  EventEmitter,
   inject,
   input,
   InputSignal,
-  Output,
+  output,
+  OutputEmitterRef,
   Signal,
   signal,
   WritableSignal
@@ -117,7 +117,7 @@ export class GameCardComponent {
   readonly isFlipped: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Emitted when the game has been successfully deleted. */
-  @Output() gameDeleted: EventEmitter<number> = new EventEmitter<number>();
+  readonly gameDeleted: OutputEmitterRef<number> = output<number>();
 
   constructor() {
     effect(() => {
@@ -158,7 +158,7 @@ export class GameCardComponent {
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (confirmed && game.uuid) {
+      if (confirmed && game.uuid && game.id !== undefined) {
         await this._gameUseCases.deleteGame(this._userId, game.uuid);
         this.gameDeleted.emit(game.id);
       }
