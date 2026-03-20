@@ -1,5 +1,11 @@
 # Monchito Game Library — Convenciones del proyecto
 
+## Al iniciar cada conversación
+
+1. Leer `docs/BUGS.md`.
+2. Si hay bugs pendientes (no marcados como resueltos), mencionarlos brevemente al usuario.
+3. Si no hay ningún bug pendiente, leer `docs/ROADMAP.md` y sugerir la siguiente mejora pendiente según prioridad.
+
 ## Idioma de comunicación
 
 - Responder siempre en **español**.
@@ -28,6 +34,7 @@
   @/services/*     → src/app/presentation/services/*
   @/guards/*       → src/app/presentation/guards/*
   @/shared/*       → src/app/presentation/shared/*
+  @/abstract/*     → src/app/presentation/abstract/*
   @/models/*       → src/app/entities/models/*
   @/mappers/*      → src/app/data/mappers/*
   @/env            → src/environments/environment
