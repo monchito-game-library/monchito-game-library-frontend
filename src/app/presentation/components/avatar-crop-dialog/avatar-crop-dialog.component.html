@@ -1,34 +1,43 @@
 <h2 mat-dialog-title>{{ config.title }}</h2>
 
 <mat-dialog-content>
-  <div class="crop-dialog__container">
+  <div class="crop-dialog__wrap">
     @if (!imageLoaded()) {
       <div class="crop-dialog__loading">
         <mat-spinner diameter="40" />
       </div>
     }
-    <image-cropper
-      [imageFile]="config.file"
-      [aspectRatio]="config.aspectRatio"
-      [roundCropper]="config.roundCropper"
-      [maintainAspectRatio]="true"
-      [resizeToWidth]="config.resizeToWidth"
-      [imageQuality]="92"
-      [allowMoveImage]="true"
-      [hideResizeSquares]="true"
-      [hidden]="!imageLoaded()"
-      output="blob"
-      format="jpeg"
-      alignImage="center"
-      (imageCropped)="onImageCropped($event)"
-      (imageLoaded)="onImageLoaded()" />
+    <div
+      class="crop-dialog__preview"
+      [class.crop-dialog__preview--round]="config.roundCropper"
+      [class.crop-dialog__preview--grabbing]="isDragging()"
+      [style.width.px]="cropW"
+      [style.height.px]="cropH"
+      [style.visibility]="imageLoaded() ? 'visible' : 'hidden'"
+      (pointerdown)="onPointerDown($event)"
+      (pointermove)="onPointerMove($event)"
+      (pointerup)="onPointerUp()"
+      (pointercancel)="onPointerUp()"
+      (wheel)="onWheel($event)"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd($event)">
+      <img
+        class="crop-dialog__image"
+        [src]="imageUrl"
+        [style.object-position]="positionCss()"
+        [style.transform]="transformCss()"
+        [style.transform-origin]="positionCss()"
+        (load)="onImageLoad($event)"
+        alt="" />
+    </div>
   </div>
   <p class="crop-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
 </mat-dialog-content>
 
 @if (imageLoaded()) {
   <mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
-    <button mat-flat-button (click)="onConfirm()">{{ 'common.save' | transloco }}</button>
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
+    <button mat-flat-button type="button" (click)="onConfirm()">{{ 'common.save' | transloco }}</button>
   </mat-dialog-actions>
 }
