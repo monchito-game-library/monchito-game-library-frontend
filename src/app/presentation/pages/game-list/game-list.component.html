@@ -12,15 +12,6 @@
     </div>
     <div class="game-list__stat-divider"></div>
     <div class="game-list__stat">
-      <mat-icon>bookmark</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
-      } @else {
-        <span>{{ getWishlistCount() }}</span>
-      }
-    </div>
-    <div class="game-list__stat-divider"></div>
-    <div class="game-list__stat">
       <mat-icon>emoji_events</mat-icon>
       @if (loading()) {
         <app-skeleton width="24px" height="12px" />
@@ -39,7 +30,7 @@
     </div>
   </div>
 
-  <!-- Filters -->
+  <!-- Filters + add button -->
   <div class="game-list__filters">
     <!-- Search: always visible on all breakpoints -->
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="game-list__filter game-list__filter--search">
@@ -154,6 +145,12 @@
         <span class="game-list__filter-badge">{{ activeFilterCount() }}</span>
       }
     </button>
+
+    <!-- Desktop-only: add button -->
+    <button mat-flat-button color="primary" routerLink="/add" class="game-list__add-btn">
+      <mat-icon>add</mat-icon>
+      {{ 'nav.add' | transloco }}
+    </button>
   </div>
 </div>
 
@@ -201,3 +198,8 @@
     </button>
   </div>
 }
+
+<!-- FAB: solo visible en mobile -->
+<button mat-fab type="button" class="game-list__fab" routerLink="/add" [attr.aria-label]="'nav.add' | transloco">
+  <mat-icon>add</mat-icon>
+</button>

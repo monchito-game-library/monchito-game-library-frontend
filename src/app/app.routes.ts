@@ -51,6 +51,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'wishlist',
+    loadComponent: (): Promise<typeof import('@/pages/wishlist/wishlist.component').WishlistComponent> =>
+      import('@/pages/wishlist/wishlist.component').then((m) => m.WishlistComponent),
+    canActivate: [canActivateUser]
+  },
+  {
     path: 'settings',
     loadComponent: (): Promise<typeof import('@/pages/settings/settings.component').SettingsComponent> =>
       import('@/pages/settings/settings.component').then((m) => m.SettingsComponent),
