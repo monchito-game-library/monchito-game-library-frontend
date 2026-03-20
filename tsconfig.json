@@ -33,6 +33,7 @@
       "@/services/*": ["src/app/presentation/services/*"],
       "@/guards/*": ["src/app/presentation/guards/*"],
       "@/shared/*": ["src/app/presentation/shared/*"],
+      "@/abstract/*": ["src/app/presentation/abstract/*"],
       "@/models/*": ["src/app/entities/models/*"],
       "@/mappers/*": ["src/app/data/mappers/*"],
       "@/env": ["src/environments/environment"]

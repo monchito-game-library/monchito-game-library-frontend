@@ -10,12 +10,14 @@
     (pointercancel)="onPointerUp()"
     (wheel)="onWheel($event)"
     (touchstart)="onTouchStart($event)"
-    (touchmove)="onTouchMove($event)">
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)">
     <img
       class="cover-pos-dialog__image"
       [src]="config.imageUrl"
       [style.object-position]="positionCss()"
       [style.transform]="transformCss()"
+      [style.transform-origin]="positionCss()"
       (load)="onImageLoad($event)"
       alt="" />
   </div>
