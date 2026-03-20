@@ -8,78 +8,18 @@
 
 | Mejora | Prioridad |
 |---|---|
-| ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
-| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats--v2) | Media |
+| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
 | ~~[Links de búsqueda en tiendas desde la wishlist](#links-de-búsqueda-en-tiendas-desde-la-wishlist)~~ | ✅ Hecho |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
-
----
-
-## ~~PWA~~ ✅ Hecho
-
-### PWA (Progressive Web App)
-
-Convertir Monchito en una PWA para que pueda instalarse en móvil y escritorio como una app nativa, con soporte offline básico y actualizaciones automáticas al desplegar una nueva versión.
-
-#### Instalación
-
-```bash
-ng add @angular/pwa
-```
-
-Esto genera automáticamente:
-- `manifest.webmanifest` — nombre, colores y configuración de la app instalada
-- `ngsw-config.json` — configuración del service worker (qué cachear y cómo)
-- Iconos en múltiples tamaños en `public/icons/`
-- Registro del service worker en `app.config.ts` mediante `provideServiceWorker()`
-
-Tras ejecutarlo, personalizar:
-- `manifest.webmanifest`: ajustar `name`, `short_name`, `theme_color`, `background_color` e iconos con el logo de Monchito.
-- `ngsw-config.json`: revisar la estrategia de caché — por defecto cachea todos los assets y rutas de la app (suficiente para el caso de uso actual).
-
-#### Actualización automática al desplegar
-
-El service worker detecta automáticamente que hay una nueva versión disponible comparando el `ngsw-hash.json` del servidor con el que tiene cacheado. Sin embargo, **no aplica la actualización solo** — el usuario seguiría viendo la versión antigua hasta cerrar y reabrir la app.
-
-La solución es usar `SwUpdate` para mostrar un aviso y recargar:
-
-```typescript
-// En AppComponent o un servicio dedicado
-import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-
-const swUpdate = inject(SwUpdate);
-
-if (swUpdate.isEnabled) {
-  swUpdate.versionUpdates
-    .pipe(filter((e): e is VersionReadyEvent => e.type === 'VERSION_READY'))
-    .subscribe(() => {
-      // Mostrar snackbar: "Nueva versión disponible"
-      // Al confirmar → document.location.reload()
-    });
-}
-```
-
-El flujo completo al desplegar:
-1. Se sube la nueva versión al servidor.
-2. El service worker detecta el cambio en el siguiente inicio de la app o en la comprobación periódica (cada 6 horas por defecto, configurable).
-3. El snackbar aparece: **"Nueva versión disponible → Actualizar"**.
-4. El usuario pulsa Actualizar → `document.location.reload()` → la nueva versión se activa.
-
-Si el usuario no pulsa nada, seguirá con la versión actual hasta la próxima vez que abra la app.
-
-#### Consideraciones
-
-- El service worker **solo se activa en producción** (`ng serve` no lo usa). Probar con `ng build` + `npx http-server dist/`.
-- Supabase y las llamadas a la API RAWG no se cachean (son datos dinámicos) — solo se cachean los assets de la app (HTML, JS, CSS, imágenes estáticas).
-- Los iconos deben generarse en los tamaños estándar: 72, 96, 128, 144, 152, 192, 384, 512px.
 
 ---
 
@@ -91,13 +31,13 @@ El proyecto está en un punto de estabilidad suficiente para introducir tests. L
 
 #### Qué testear y con qué herramienta
 
-**Unit tests — Jest (o Vitest)**
+**Unit tests — Vitest**
 
 - **Use cases / dominio**: los casos de uso son funciones puras que dependen de un repositorio inyectado. Son el target más valioso — se mockea el repositorio y se verifica la lógica de negocio.
   - Ejemplo: `WishlistUseCases.addItem()` — verificar que llama al repositorio con los datos correctos y lanza error si el usuario no está autenticado.
 - **Mappers**: transformaciones de DTO → modelo y viceversa. Totalmente deterministas, sin dependencias externas.
   - Ejemplo: `WishlistMapper.toModel()` — verificar que todos los campos se mapean correctamente.
-- **Validators y utils**: `selectOneValidator`, `optimizeImageUrl`, `getStoreLinks`, etc.
+- **Validators y utils**: `selectOneValidator`, `optimizeImageUrl`, etc.
 - **Computed signals en componentes**: testar que los `computed` devuelven el valor correcto al cambiar las signals de las que dependen.
   - Ejemplo: `ownedCount` en `GameListComponent` — setear `allGames` con un array y verificar que `ownedCount()` refleja el filtrado.
 
@@ -133,6 +73,206 @@ Vitest (unit + integración) + Angular Testing Library + Playwright (E2E)
 3. Componentes críticos con Angular Testing Library.
 4. Guards y servicios de autenticación.
 5. E2E de los flujos principales (requiere más setup).
+
+---
+
+## Nuevas secciones
+
+### Página de detalle de juego (`/games/:id`)
+
+Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
+
+#### Estructura de la página
+
+**Sección personal (datos de `user_games`)**
+- Estado, plataforma, formato, condición, edición
+- Precio pagado, tienda, fecha de compra
+- Valoración personal y reseña
+- Fechas de inicio, completado y platino
+- Notas personales
+- Botones: **Editar** (abre el formulario actual) y **Eliminar**
+
+**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
+- Descripción completa
+- Rating RAWG, puntuación Metacritic, clasificación ESRB
+- Plataformas disponibles, géneros, desarrolladores, publishers
+- Screenshots (carrusel)
+- Tiendas donde comprarlo con links directos
+- DLCs disponibles
+- Juegos de la misma saga
+
+#### Navegación
+
+- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
+- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
+- El botón volver regresa a la colección manteniendo los filtros activos.
+
+#### Implementación
+
+- Nueva ruta `/games/:id` con `GameDetailPage`.
+- Los datos personales se leen de `user_games_full` (ya disponible).
+- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
+  - `/games/{id}` — descripción completa, tiendas, ESRB
+  - `/games/{id}/screenshots` — capturas
+  - `/games/{id}/additions` — DLCs
+- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
+- Cachear las respuestas de RAWG en memoria durante la sesión.
+
+---
+
+### Recomendaciones de juegos
+
+Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
+
+#### Lógica de cálculo
+
+**Base:** los juegos candidatos son aquellos donde el usuario tiene `platinum = true` O `is_favorite = true`. Son los que mejor reflejan sus gustos reales.
+
+**Paso 1 — Juegos similares individuales:**
+Para cada juego candidato, llamar al endpoint de RAWG `/games/{rawg_id}/suggested` que devuelve juegos similares. Filtrar los resultados eliminando los que el usuario ya tiene en `user_games` (comparando por `rawg_id`).
+
+**Paso 2 — Detección de patrones por género:**
+Si entre todos los juegos sugeridos hay géneros que se repiten con frecuencia, priorizar esos géneros en las recomendaciones. Ejemplo: si 8 de tus platinos son de acción-aventura, las recomendaciones de ese género suben arriba.
+
+**Paso 3 — Deduplicación:**
+Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar los que aparecen más veces — son los que más se parecen al perfil del usuario.
+
+#### UI
+
+- Panel sutil al final de la lista de juegos: "Puede que también te guste..." con un scroll horizontal de cards.
+- Cada card muestra portada, título, géneros y rating de RAWG.
+- Botón rápido para añadir el juego directamente a la colección o a la wishlist.
+- Si el usuario no tiene platinos ni favoritos suficientes, no se muestra el panel.
+
+#### Implementación
+
+- Las llamadas a RAWG se hacen desde el frontend (no Edge Function) ya que dependen de la sesión del usuario.
+- Cachear los resultados en memoria durante la sesión para no repetir llamadas a RAWG al navegar.
+- No guardar las recomendaciones en Supabase — se calculan en tiempo real cada vez.
+- RAWG puede no tener el endpoint `/suggested` para todos los juegos (juegos manuales o con poco dato). Ignorar silenciosamente los que fallen.
+
+---
+
+### Dashboard de estadísticas (`/stats`)
+
+Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
+
+#### Estadísticas de colección
+
+- Distribución por plataforma (cuántos juegos tienes en cada consola)
+- Distribución por género
+- Distribución por estado (`backlog`, `playing`, `completed`, `platinum`, `abandoned`, `owned`)
+- Ratio completados vs backlog
+- Gasto total por tienda
+- Gasto total por año de compra
+- Evolución de la colección en el tiempo (juegos añadidos por mes/año)
+- Valoración media personal
+- Juegos con platino / favoritos
+
+#### Estadísticas de wishlist
+
+- Total de juegos en la wishlist
+- Gasto estimado (suma de `desired_price` de los items que lo tienen)
+- Distribución por prioridad
+
+#### Implementación
+
+- Todos los cálculos se hacen en SQL directamente sobre `user_games` y `user_wishlist` — no hace falta ninguna tabla nueva.
+- Crear vistas o queries específicas en Supabase para cada agrupación (o calcularlas en el repositorio con `.select()` y agregaciones).
+- El tipo de gráfica (barras, tarta, líneas) se decide en el momento de implementar el frontend.
+- Nueva ruta `/stats` y entrada en nav-rail (desktop) y bottom-nav (móvil).
+- Componentes de tarjeta de estadística reutilizables para los valores simples (totales, medias).
+
+---
+
+### Pedidos (`/orders`)
+
+Sección para gestionar pedidos grupales de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora entre amigos para coordinar pedidos conjuntos y repartir gastos de envío.
+
+#### Modelo de datos
+
+Un pedido tiene **cabecera** (el pedido en sí) y **líneas** (los productos que incluye), ya que un mismo pedido puede contener varios tipos de cajas.
+
+**Tabla `orders`:**
+```sql
+CREATE TABLE orders (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title         TEXT,                          -- referencia libre, ej: "Pedido marzo 2026"
+  placed_by     TEXT,                          -- nombre de quien hizo el pedido (puede ser un amigo)
+  status        TEXT NOT NULL DEFAULT 'draft'
+                  CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
+  order_date    DATE,
+  received_date DATE,
+  shipping_cost NUMERIC(10,2),
+  notes         TEXT,
+  created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Tabla `order_items`:**
+```sql
+CREATE TABLE order_items (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_type     TEXT NOT NULL,   -- ej: 'PS4', 'PS3', 'PS1', 'PS2', 'PS5', 'Xbox', 'Xbox 360', 'N64', 'Funko Pop', 'Consola PS4'...
+  product_name     TEXT,            -- descripción libre del producto exacto
+  quantity         INTEGER NOT NULL DEFAULT 1,
+  unit_price       NUMERIC(10,2),
+  for_user         TEXT,            -- nombre del amigo al que van destinadas estas cajas
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**RLS:** solo el propio usuario puede ver y gestionar sus pedidos.
+
+#### Comportamiento
+
+- Un pedido puede tener múltiples líneas: ej. 54× PS4, 64× PS3, 10× Funko Pop.
+- El campo `for_user` en cada línea indica a qué amigo van destinadas esas cajas, facilitando el reparto de costes.
+- El coste de envío se registra en la cabecera y se puede repartir manualmente entre los participantes.
+- Estados: `draft` (preparando), `ordered` (pedido hecho), `shipped` (enviado), `received` (recibido).
+- El seguimiento en tiempo real del envío se evalúa al implementar — depende de si boxprotectors.nl proporciona número de tracking integrable con alguna API de mensajería.
+
+#### Presentación
+
+- Nueva ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil).
+- Lista de pedidos con estado visual y totales.
+- Vista de detalle de pedido con todas las líneas y desglose por amigo.
+- Formulario para crear/editar pedido y añadir líneas dinámicamente.
+
+---
+
+## Integraciones / Automatización
+
+### Sincronización automática de metadatos RAWG
+
+Los juegos guardados en `game_catalog` tienen los datos de RAWG del momento en que se añadieron. Con el tiempo RAWG actualiza esa información — nuevas plataformas, ports, remasters, cambios en rating o metacritic. Esta feature mantendría esos datos al día automáticamente sin intervención del usuario.
+
+#### Cómo funciona
+
+Una **Supabase Edge Function** (código TypeScript ejecutado en los servidores de Supabase, no en el navegador) se programaría para ejecutarse periódicamente (por ejemplo cada semana) mediante un **Supabase Cron Job**.
+
+La función haría lo siguiente:
+1. Consultar `game_catalog` filtrando por `source = 'rawg'` y `rawg_id IS NOT NULL`.
+2. Para cada juego, llamar al endpoint de RAWG `/games/{rawg_id}`.
+3. Actualizar en `game_catalog` los campos que pueden cambiar con el tiempo:
+   - `platforms`, `parent_platforms`
+   - `rating`, `rating_top`, `ratings_count`, `reviews_count`
+   - `metacritic_score`, `metacritic_url`
+   - `genres`, `tags`, `developers`, `publishers`
+   - `screenshots`
+   - `tba` (puede pasar de true a false cuando se anuncia fecha)
+   - `released_date` (puede concretarse si era TBA)
+4. Actualizar `last_synced_at` en cada registro procesado.
+
+#### Consideraciones
+
+- **Rate limit de RAWG:** la API gratuita tiene límite de peticiones. Procesar en lotes con delay entre llamadas o usar `last_synced_at` para priorizar los que llevan más tiempo sin actualizar.
+- **Juegos manuales:** los registros con `source = 'manual'` no se tocan — no tienen `rawg_id`.
+- **RAWG API key:** debe estar configurada como variable de entorno en Supabase (no en el frontend).
+- La función vive en `supabase/functions/sync-rawg-metadata/index.ts` (directorio estándar de Edge Functions).
 
 ---
 
@@ -243,293 +383,32 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 
 ---
 
-### Página de detalle de juego (`/games/:id`)
+## Completado
 
-Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
+### ~~PWA (Progressive Web App)~~ ✅ Hecho
 
-#### Estructura de la página
-
-**Sección personal (datos de `user_games`)**
-- Estado, plataforma, formato, condición, edición
-- Precio pagado, tienda, fecha de compra
-- Valoración personal y reseña
-- Fechas de inicio, completado y platino
-- Notas personales
-- Botones: **Editar** (abre el formulario actual) y **Eliminar**
-
-**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
-- Descripción completa
-- Rating RAWG, puntuación Metacritic, clasificación ESRB
-- Plataformas disponibles, géneros, desarrolladores, publishers
-- Screenshots (carrusel)
-- Tiendas donde comprarlo con links directos
-- DLCs disponibles
-- Juegos de la misma saga
-
-#### Navegación
-
-- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
-- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
-- El botón volver regresa a la colección manteniendo los filtros activos.
-
-#### Implementación
-
-- Nueva ruta `/games/:id` con `GameDetailPage`.
-- Los datos personales se leen de `user_games_full` (ya disponible).
-- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
-  - `/games/{id}` — descripción completa, tiendas, ESRB
-  - `/games/{id}/screenshots` — capturas
-  - `/games/{id}/additions` — DLCs
-- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
-- Cachear las respuestas de RAWG en memoria durante la sesión.
-
----
-
-### Recomendaciones de juegos
-
-Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
-
-#### Lógica de cálculo
-
-**Base:** los juegos candidatos son aquellos donde el usuario tiene `platinum = true` O `is_favorite = true`. Son los que mejor reflejan sus gustos reales.
-
-**Paso 1 — Juegos similares individuales:**
-Para cada juego candidato, llamar al endpoint de RAWG `/games/{rawg_id}/suggested` que devuelve juegos similares. Filtrar los resultados eliminando los que el usuario ya tiene en `user_games` (comparando por `rawg_id`).
-
-**Paso 2 — Detección de patrones por género:**
-Si entre todos los juegos sugeridos hay géneros que se repiten con frecuencia, priorizar esos géneros en las recomendaciones. Ejemplo: si 8 de tus platinos son de acción-aventura, las recomendaciones de ese género suben arriba.
-
-**Paso 3 — Deduplicación:**
-Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar los que aparecen más veces — son los que más se parecen al perfil del usuario.
-
-#### UI
-
-- Panel sutil al final de la lista de juegos: "Puede que también te guste..." con un scroll horizontal de cards.
-- Cada card muestra portada, título, géneros y rating de RAWG.
-- Botón rápido para añadir el juego directamente a la colección o a la wishlist.
-- Si el usuario no tiene platinos ni favoritos suficientes, no se muestra el panel.
-
-#### Implementación
-
-- Las llamadas a RAWG se hacen desde el frontend (no Edge Function) ya que dependen de la sesión del usuario.
-- Cachear los resultados en memoria durante la sesión para no repetir llamadas a RAWG al navegar.
-- No guardar las recomendaciones en Supabase — se calculan en tiempo real cada vez.
-- RAWG puede no tener el endpoint `/suggested` para todos los juegos (juegos manuales o con poco dato). Ignorar silenciosamente los que fallen.
-
----
-
-## Integraciones / Automatización
-
-### Sincronización automática de metadatos RAWG
-
-Los juegos guardados en `game_catalog` tienen los datos de RAWG del momento en que se añadieron. Con el tiempo RAWG actualiza esa información — nuevas plataformas, ports, remasters, cambios en rating o metacritic. Esta feature mantendría esos datos al día automáticamente sin intervención del usuario.
-
-#### Cómo funciona
-
-Una **Supabase Edge Function** (código TypeScript ejecutado en los servidores de Supabase, no en el navegador) se programaría para ejecutarse periódicamente (por ejemplo cada semana) mediante un **Supabase Cron Job**.
-
-La función haría lo siguiente:
-1. Consultar `game_catalog` filtrando por `source = 'rawg'` y `rawg_id IS NOT NULL`.
-2. Para cada juego, llamar al endpoint de RAWG `/games/{rawg_id}`.
-3. Actualizar en `game_catalog` los campos que pueden cambiar con el tiempo:
-   - `platforms`, `parent_platforms`
-   - `rating`, `rating_top`, `ratings_count`, `reviews_count`
-   - `metacritic_score`, `metacritic_url`
-   - `genres`, `tags`, `developers`, `publishers`
-   - `screenshots`
-   - `tba` (puede pasar de true a false cuando se anuncia fecha)
-   - `released_date` (puede concretarse si era TBA)
-4. Actualizar `last_synced_at` en cada registro procesado.
-
-#### Consideraciones
-
-- **Rate limit de RAWG:** la API gratuita tiene límite de peticiones. Procesar en lotes con delay entre llamadas o usar `last_synced_at` para priorizar los que llevan más tiempo sin actualizar.
-- **Juegos manuales:** los registros con `source = 'manual'` no se tocan — no tienen `rawg_id`.
-- **RAWG API key:** debe estar configurada como variable de entorno en Supabase (no en el frontend).
-- La función vive en `supabase/functions/sync-rawg-metadata/index.ts` (directorio estándar de Edge Functions).
-
----
-
-## Arquitectura / Rendimiento
-
-### ~~Wishlist (`/wishlist`) — migración v.2~~ ✅ Hecho
-Completado. Nueva sección `/wishlist` separada de la colección. Tabla `user_wishlist` con `desired_price`, `priority` (1–5) y `notes`. Vista `user_wishlist_full` actualizada para incluir `rawg_id`. Dominio completo (contract, use cases, Supabase repository, DTO, mapper, modelo, form interface). Página `WishlistPage` con lista, stats (total items y gasto estimado), empty state, add/edit dialog con búsqueda RAWG y formulario, `WishlistCardComponent` con estrellas de prioridad, precio, notas y acción "Tengo este juego" (elimina de wishlist y navega a /add pre-cargando el juego). `status = 'wishlist'` eliminado de `GameStatus` y del CHECK de `user_games`. Nav rail y bottom nav actualizados.
-
-### ~~Migrar a Angular zoneless puro~~ ✅ Hecho
-Completado. `provideZonelessChangeDetection()`, `provideAnimationsAsync()`, `zone.js` eliminado. `ngx-image-cropper` sustituido por implementación propia con drag+zoom+canvas crop.
-
-### Optimizar carga de imágenes con el CDN de RAWG
-Ya existe la utilidad `src/app/presentation/shared/image-url.utils.ts` (`optimizeImageUrl`) que transforma URLs de RAWG para usar su endpoint de redimensionado (`/media/resize/{width}/-/`). Integrarla en las cards y en cualquier lugar donde se muestren portadas de RAWG para reducir el tamaño de descarga (las imágenes originales pueden pesar varios MB; redimensionadas al ancho real de la card son ~10–30 KB).
-
----
-
-## Nuevas secciones
-
-### Dashboard de estadísticas (`/stats`) — v.2
-
-Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
-
-#### Estadísticas de colección
-
-- Distribución por plataforma (cuántos juegos tienes en cada consola)
-- Distribución por género
-- Distribución por estado (`backlog`, `playing`, `completed`, `platinum`, `abandoned`, `owned`)
-- Ratio completados vs backlog
-- Gasto total por tienda
-- Gasto total por año de compra
-- Evolución de la colección en el tiempo (juegos añadidos por mes/año)
-- Valoración media personal
-- Juegos con platino / favoritos
-
-#### Estadísticas de wishlist
-
-- Total de juegos en la wishlist
-- Gasto estimado (suma de `desired_price` de los items que lo tienen)
-- Distribución por prioridad
-
-#### Implementación
-
-- Todos los cálculos se hacen en SQL directamente sobre `user_games` y `user_wishlist` — no hace falta ninguna tabla nueva.
-- Crear vistas o queries específicas en Supabase para cada agrupación (o calcularlas en el repositorio con `.select()` y agregaciones).
-- El tipo de gráfica (barras, tarta, líneas) se decide en el momento de implementar el frontend.
-- Nueva ruta `/stats` y entrada en nav-rail (desktop) y bottom-nav (móvil).
-- Componentes de tarjeta de estadística reutilizables para los valores simples (totales, medias).
+`@angular/pwa` instalado. Service worker configurado con `ngsw-config.json` (prefetch del app shell, lazy de assets). `manifest.webmanifest` personalizado con nombre "Monchito Game Library", short_name "Monchito" y theme/background color `#1e1e2e`. `provideServiceWorker` registrado en `app.config.ts` (solo en producción). `PwaUpdateService` implementado: detecta `VERSION_READY` y muestra un snackbar "Nueva versión disponible / Actualizar" que recarga la página al confirmar.
 
 ---
 
 ### ~~Wishlist (`/wishlist`) — migración v.2~~ ✅ Hecho
 
-Actualmente los juegos deseados se gestionan usando `status = 'wishlist'` dentro de `user_games`, mezclados con el resto de la colección. La v.2 los separa en su propia sección con campos específicos.
-
-#### Qué hay que hacer
-
-**Base de datos**
-- La tabla `user_wishlist` ya existe con los campos necesarios: `desired_price`, `priority` (1–5), `notes`, `notify_on_sale`.
-- Eliminar `'wishlist'` del CHECK de `status` en `user_games`:
-  ```sql
-  ALTER TABLE user_games DROP CONSTRAINT user_games_status_check;
-  ALTER TABLE user_games ADD CONSTRAINT user_games_status_check
-    CHECK (status IN ('backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'));
-  ```
-- Migrar los registros existentes con `status = 'wishlist'` a `user_wishlist` antes de aplicar el cambio anterior:
-  ```sql
-  INSERT INTO user_wishlist (user_id, game_catalog_id, created_at)
-  SELECT user_id, game_catalog_id, created_at
-  FROM user_games
-  WHERE status = 'wishlist'
-  ON CONFLICT (user_id, game_catalog_id) DO NOTHING;
-
-  DELETE FROM user_games WHERE status = 'wishlist';
-  ```
-- Actualizar el schema file (`docs/supabase-schema-current.sql`) y `SUPABASE_SETUP.md` tras aplicar el cambio.
-
-**Dominio y datos**
-- Crear contrato `IWishlistRepository` en `domain/repositories/`.
-- Crear implementación `WishlistRepository` en `data/repositories/` usando la vista `user_wishlist_full`.
-- Crear DTOs en `data/dtos/` para mapear la respuesta de `user_wishlist_full`.
-- Crear mapper `WishlistMapper` en `data/mappers/`.
-- Registrar el provider DI en `di/repositories/`.
-
-**Entidades**
-- Crear modelo `WishlistItem` en `entities/models/`.
-- Crear interfaz de formulario `WishlistItemForm` / `WishlistItemFormValue` en `entities/interfaces/forms/`.
-
-**Presentación**
-- Nueva página `WishlistPage` en `pages/wishlist/`.
-- Añadir la ruta `/wishlist` al router.
-- Añadir entrada en el nav-rail (desktop) y bottom-nav (móvil).
-- Componente `WishlistCardComponent` para mostrar cada juego deseado con su prioridad y precio deseado.
-- Dialog o panel para añadir/editar un item de la wishlist (reutilizar el buscador de RAWG existente).
-- Acción "Tengo este juego" que mueve el item de `user_wishlist` a `user_games` abriendo el formulario de juego prerrellenado.
-
-**Formulario de juego**
-- Eliminar la opción `wishlist` del selector de estado.
-- Revisar cualquier filtro o lógica que haga referencia a `status === 'wishlist'`.
-
-#### Comportamiento esperado
-- La wishlist muestra los juegos que quieres comprar, ordenados por prioridad.
-- Al pulsar "Tengo este juego" se abre el formulario de añadir juego con los datos del catálogo ya cargados y se elimina el item de la wishlist.
-- Los juegos de la wishlist no aparecen en la colección principal ni cuentan en las estadísticas.
+Nueva sección `/wishlist` separada de la colección. Tabla `user_wishlist` con `desired_price`, `priority` (1–5) y `notes`. Vista `user_wishlist_full` actualizada para incluir `rawg_id`. Dominio completo (contract, use cases, Supabase repository, DTO, mapper, modelo, form interface). Página `WishlistPage` con lista, stats (total items y gasto estimado), empty state, add/edit dialog con búsqueda RAWG y formulario, `WishlistCardComponent` con estrellas de prioridad, precio, notas y acción "Tengo este juego" (elimina de wishlist y navega a /add pre-cargando el juego). `status = 'wishlist'` eliminado de `GameStatus` y del CHECK de `user_games`. Nav rail y bottom nav actualizados.
 
 ---
 
 ### ~~Links de búsqueda en tiendas desde la wishlist~~ ✅ Hecho
 
-Desde cada item de la wishlist, mostrar links directos a la búsqueda del juego en tiendas online. Sin API ni scraping — simplemente se construye la URL de búsqueda con el título del juego.
-
-#### Tiendas soportadas
-
-| Tienda | URL generada |
-|---|---|
-| Amazon | `https://www.amazon.es/s?k={título}` |
-| Game | `https://www.game.es/buscador?q={título}` |
-| CEX | `https://es.webuy.com/search?stext={título}` |
-
-#### Implementación
-
-- El título se codifica con `encodeURIComponent()` para que funcione con títulos que contienen espacios y caracteres especiales.
-- Los links se abren en pestaña nueva (`target="_blank"`).
-- Se muestran como iconos o botones pequeños dentro de la wishlist card, sin ocupar demasiado espacio.
-- No se guarda nada en base de datos — los links se generan en el template en tiempo real.
+Links directos generados en tiempo real hacia Amazon, GAME, CEX y Xtralife desde cada card de la wishlist. Sin API ni scraping — URL construida con `encodeURIComponent(título + plataforma)`.
 
 ---
 
-### Pedidos (`/orders`)
+### ~~Migrar a Angular zoneless puro~~ ✅ Hecho
 
-Sección para gestionar pedidos grupales de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora entre amigos para coordinar pedidos conjuntos y repartir gastos de envío.
-
-#### Modelo de datos
-
-Un pedido tiene **cabecera** (el pedido en sí) y **líneas** (los productos que incluye), ya que un mismo pedido puede contener varios tipos de cajas.
-
-**Tabla `orders`:**
-```sql
-CREATE TABLE orders (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  title         TEXT,                          -- referencia libre, ej: "Pedido marzo 2026"
-  placed_by     TEXT,                          -- nombre de quien hizo el pedido (puede ser un amigo)
-  status        TEXT NOT NULL DEFAULT 'draft'
-                  CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
-  order_date    DATE,
-  received_date DATE,
-  shipping_cost NUMERIC(10,2),
-  notes         TEXT,
-  created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Tabla `order_items`:**
-```sql
-CREATE TABLE order_items (
-  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  product_type     TEXT NOT NULL,   -- ej: 'PS4', 'PS3', 'PS1', 'PS2', 'PS5', 'Xbox', 'Xbox 360', 'N64', 'Funko Pop', 'Consola PS4'...
-  product_name     TEXT,            -- descripción libre del producto exacto
-  quantity         INTEGER NOT NULL DEFAULT 1,
-  unit_price       NUMERIC(10,2),
-  for_user         TEXT,            -- nombre del amigo al que van destinadas estas cajas
-  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**RLS:** solo el propio usuario puede ver y gestionar sus pedidos.
-
-#### Comportamiento
-
-- Un pedido puede tener múltiples líneas: ej. 54× PS4, 64× PS3, 10× Funko Pop.
-- El campo `for_user` en cada línea indica a qué amigo van destinadas esas cajas, facilitando el reparto de costes.
-- El coste de envío se registra en la cabecera y se puede repartir manualmente entre los participantes.
-- Estados: `draft` (preparando), `ordered` (pedido hecho), `shipped` (enviado), `received` (recibido).
-- El seguimiento en tiempo real del envío se evalúa al implementar — depende de si boxprotectors.nl proporciona número de tracking integrable con alguna API de mensajería.
-
-#### Presentación
-
-- Nueva ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil).
-- Lista de pedidos con estado visual y totales.
-- Vista de detalle de pedido con todas las líneas y desglose por amigo.
-- Formulario para crear/editar pedido y añadir líneas dinámicamente.
+`provideZonelessChangeDetection()`, `provideAnimationsAsync()`, `zone.js` eliminado. `ngx-image-cropper` sustituido por implementación propia con drag+zoom+canvas crop.
 
 ---
 
+### ~~Optimizar carga de imágenes con el CDN de RAWG~~ ❌ Descartada
+
+Ya existe la utilidad `src/app/presentation/shared/image-url.utils.ts` (`optimizeImageUrl`) que transforma URLs de RAWG para usar su endpoint de redimensionado (`/media/resize/{width}/-/`). Integrarla en las cards y en cualquier lugar donde se muestren portadas de RAWG para reducir el tamaño de descarga (las imágenes originales pueden pesar varios MB; redimensionadas al ancho real de la card son ~10–30 KB).
