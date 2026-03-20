@@ -20,7 +20,7 @@ import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -37,13 +37,13 @@ import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/ga
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
-import { GameCardComponent } from '@/components/game-card/game-card.component';
+import { GameCardComponent } from '@/pages/game-list/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import {
   GameListFiltersSheetComponent,
   GameListFiltersSheetData,
   GameListSortField
-} from '@/components/game-list-filters-sheet/game-list-filters-sheet.component';
+} from '@/pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component';
 
 @Component({
   selector: 'app-game-list',
@@ -61,6 +61,7 @@ import {
     MatSelect,
     MatOption,
     MatButton,
+    MatFabButton,
     MatIconButton,
     MatIcon,
     MatProgressSpinner,
@@ -224,6 +225,19 @@ export class GameListComponent implements OnInit, OnDestroy {
     return rows;
   });
 
+  /** Total number of games in the filtered list. */
+  readonly ownedCount: Signal<number> = computed((): number => this.filteredGames().length);
+
+  /** Number of filtered games with platinum status. */
+  readonly platinumCount: Signal<number> = computed(
+    (): number => this.filteredGames().filter((g: GameListModel): boolean => g.status === 'platinum').length
+  );
+
+  /** Sum of prices for all filtered games. */
+  readonly totalPrice: Signal<number> = computed((): number =>
+    this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0)
+  );
+
   async ngOnInit(): Promise<void> {
     void this._loadStores();
     await this._loadGames(false);
@@ -257,36 +271,6 @@ export class GameListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._routerSubscription?.unsubscribe();
     this._bpSubscription?.unsubscribe();
-  }
-
-  /**
-   * Returns the number of filtered games that are owned (any status except wishlist).
-   */
-  getOwnedCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status !== 'wishlist').length;
-  }
-
-  /**
-   * Returns the number of filtered games with wishlist status.
-   */
-  getWishlistCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status === 'wishlist').length;
-  }
-
-  /**
-   * Returns the number of filtered games with platinum status.
-   */
-  getPlatinumCount(): number {
-    return this.filteredGames().filter((g: GameListModel) => g.status === 'platinum').length;
-  }
-
-  /**
-   * Returns the sum of prices for owned filtered games (excludes wishlist entries).
-   */
-  getTotalPrice(): number {
-    return this.filteredGames()
-      .filter((g: GameListModel) => g.status !== 'wishlist')
-      .reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0);
   }
 
   /**

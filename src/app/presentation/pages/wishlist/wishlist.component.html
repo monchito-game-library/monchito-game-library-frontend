@@ -1,0 +1,194 @@
+<!-- ─── LIST MODE ──────────────────────────────────────────────────────────── -->
+@if (viewMode() === 'list') {
+  <div class="wishlist-page">
+    <header class="wishlist-page__header">
+      <div class="wishlist-page__header-info">
+        <h1 class="wishlist-page__title">{{ 'nav.wishlist' | transloco }}</h1>
+        @if (!loading()) {
+          <div class="wishlist-page__stats">
+            <span class="wishlist-page__stat">
+              <mat-icon class="wishlist-page__stat-icon">bookmark</mat-icon>
+              {{ items().length }}
+            </span>
+            @if (itemsWithPrice() > 0) {
+              <span class="wishlist-page__stat">
+                <mat-icon class="wishlist-page__stat-icon">sell</mat-icon>
+                ~{{ totalEstimatedSpend() | number: '1.2-2' }} €
+              </span>
+            }
+          </div>
+        }
+      </div>
+      @if (!loading() && items().length > 0) {
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="wishlist-page__header-add-btn"
+          (click)="onAddItem()">
+          <mat-icon>add</mat-icon>
+          {{ 'wishlist.addBtn' | transloco }}
+        </button>
+      }
+    </header>
+
+    @if (loading()) {
+      <div class="wishlist-page__loading">
+        <mat-progress-spinner mode="indeterminate" diameter="40" />
+        <p>{{ 'wishlist.loading' | transloco }}</p>
+      </div>
+    } @else if (items().length === 0) {
+      <div class="wishlist-page__empty">
+        <mat-icon class="wishlist-page__empty-icon">bookmark_border</mat-icon>
+        <p class="wishlist-page__empty-title">{{ 'wishlist.empty.title' | transloco }}</p>
+        <p class="wishlist-page__empty-subtitle">{{ 'wishlist.empty.subtitle' | transloco }}</p>
+        <button mat-stroked-button type="button" (click)="onAddItem()">
+          <mat-icon>add</mat-icon>
+          {{ 'wishlist.addBtn' | transloco }}
+        </button>
+      </div>
+    } @else {
+      <div class="wishlist-page__list">
+        @for (item of items(); track item.id) {
+          <app-wishlist-card
+            [item]="item"
+            (editClicked)="onEditItem($event)"
+            (deleteClicked)="onDeleteItem($event)"
+            (ownClicked)="onOwnItem($event)" />
+        }
+      </div>
+    }
+
+    <!-- FAB: solo visible en mobile cuando hay items -->
+    <button
+      mat-fab
+      type="button"
+      class="wishlist-page__fab"
+      (click)="onAddItem()"
+      [attr.aria-label]="'wishlist.addBtn' | transloco">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+}
+
+<!-- ─── MOBILE: SEARCH MODE ───────────────────────────────────────────────── -->
+@if (viewMode() === 'search') {
+  <div class="wishlist-mobile-view">
+    <header class="wishlist-mobile-view__header">
+      <button mat-icon-button type="button" (click)="onMobileCancel()" [attr.aria-label]="'common.cancel' | transloco">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="wishlist-mobile-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
+    </header>
+    <p class="wishlist-mobile-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
+    <app-game-search-panel (gameSelected)="onMobileGameSelected($event)" />
+  </div>
+}
+
+<!-- ─── MOBILE: FORM MODE ─────────────────────────────────────────────────── -->
+@if (viewMode() === 'form') {
+  <div class="wishlist-mobile-view">
+    <header class="wishlist-mobile-view__header">
+      <button
+        mat-icon-button
+        type="button"
+        (click)="pendingCatalogEntry() ? onMobileBackToSearch() : onMobileCancel()"
+        [attr.aria-label]="'common.cancel' | transloco">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="wishlist-mobile-view__title">
+        {{ (pendingCatalogEntry() ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
+      </h1>
+    </header>
+
+    <!-- Selected game preview (add mode only) -->
+    @if (pendingCatalogEntry(); as game) {
+      <div class="wishlist-mobile-view__game-preview">
+        @if (game.image_url) {
+          <img
+            class="wishlist-mobile-view__game-cover"
+            [src]="game.image_url"
+            [alt]="game.title"
+            width="48"
+            height="64" />
+        }
+        <div class="wishlist-mobile-view__game-info">
+          <span class="wishlist-mobile-view__game-title">{{ game.title }}</span>
+          @if (game.released_date) {
+            <span class="wishlist-mobile-view__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
+          }
+        </div>
+      </div>
+    }
+
+    <form [formGroup]="mobileForm" class="wishlist-mobile-view__form">
+      <!-- Priority (optional, default 3) -->
+      <div class="wishlist-mobile-view__priority">
+        <span class="wishlist-mobile-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
+        <div class="wishlist-mobile-view__stars">
+          @for (level of priorityOptions; track level) {
+            <button
+              mat-icon-button
+              type="button"
+              (click)="mobileForm.controls.priority.setValue(level)"
+              [attr.aria-label]="level">
+              <mat-icon>{{ level <= mobileForm.controls.priority.value ? 'star' : 'star_border' }}</mat-icon>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Platform (required in add, static in edit) -->
+      @if (pendingCatalogEntry()) {
+        <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+          <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
+          <mat-select formControlName="platform">
+            @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
+              <mat-option [value]="platform">{{ platform }}</mat-option>
+            }
+          </mat-select>
+          @if (mobileForm.controls.platform.hasError('required')) {
+            <mat-error>{{ 'wishlist.fields.platformRequired' | transloco }}</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      <!-- Desired price (required) -->
+      <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+        <mat-label>{{ 'wishlist.fields.desiredPrice' | transloco }}</mat-label>
+        <input
+          matInput
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="desiredPrice"
+          [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
+        @if (mobileForm.controls.desiredPrice.hasError('required')) {
+          <mat-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Notes (optional) -->
+      <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+        <mat-label>{{ 'wishlist.fields.notes' | transloco }}</mat-label>
+        <textarea
+          matInput
+          formControlName="notes"
+          rows="3"
+          [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
+      </mat-form-field>
+    </form>
+
+    <div class="wishlist-mobile-view__actions">
+      <button mat-stroked-button type="button" (click)="onMobileCancel()">{{ 'common.cancel' | transloco }}</button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="!mobileCanConfirm()"
+        (click)="onMobileConfirm()">
+        {{ 'common.confirm' | transloco }}
+      </button>
+    </div>
+  </div>
+}

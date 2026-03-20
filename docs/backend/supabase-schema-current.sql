@@ -219,13 +219,14 @@ CREATE TABLE IF NOT EXISTS user_wishlist (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   game_catalog_id UUID NOT NULL REFERENCES game_catalog(id) ON DELETE CASCADE,
+  platform        TEXT NOT NULL DEFAULT '',   -- plataforma para la que se busca el juego
   desired_price   NUMERIC(10,2),
   priority        INTEGER DEFAULT 3 CHECK (priority BETWEEN 1 AND 5),
   notes           TEXT,
   notify_on_sale  BOOLEAN DEFAULT FALSE,
   created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, game_catalog_id)
+  UNIQUE(user_id, game_catalog_id, platform)  -- mismo juego en distinta plataforma = item separado
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_wishlist_user_id  ON user_wishlist(user_id);
@@ -413,6 +414,7 @@ SELECT
   uw.id,
   uw.user_id,
   uw.game_catalog_id,
+  uw.platform,
   uw.desired_price,
   uw.priority,
   uw.notes,
@@ -420,6 +422,7 @@ SELECT
   gc.title,
   gc.slug,
   gc.image_url,
+  gc.rawg_id,
   gc.released_date,
   gc.rating,
   gc.metacritic_score,
@@ -427,6 +430,32 @@ SELECT
   gc.genres
 FROM user_wishlist uw
 JOIN game_catalog gc ON uw.game_catalog_id = gc.id;
+
+-- ============================================================
+-- 10. MIGRACIÓN: status 'wishlist' → user_wishlist
+--     Ejecutar antes de aplicar el nuevo CHECK en user_games.
+-- ============================================================
+
+-- Paso 0: añadir columna platform si no existe (para bases de datos ya creadas)
+ALTER TABLE user_wishlist ADD COLUMN IF NOT EXISTS platform TEXT NOT NULL DEFAULT '';
+ALTER TABLE user_wishlist DROP CONSTRAINT IF EXISTS user_wishlist_user_id_game_catalog_id_key;
+ALTER TABLE user_wishlist ADD CONSTRAINT user_wishlist_user_id_game_catalog_id_platform_key
+  UNIQUE(user_id, game_catalog_id, platform);
+
+-- Paso 1: mover registros existentes con status='wishlist' a user_wishlist
+INSERT INTO user_wishlist (user_id, game_catalog_id, created_at)
+SELECT user_id, game_catalog_id, created_at
+FROM user_games
+WHERE status = 'wishlist'
+ON CONFLICT (user_id, game_catalog_id, platform) DO NOTHING;
+
+-- Paso 2: eliminar esos registros de user_games
+DELETE FROM user_games WHERE status = 'wishlist';
+
+-- Paso 3: actualizar el CHECK de status en user_games (eliminar 'wishlist')
+ALTER TABLE user_games DROP CONSTRAINT IF EXISTS user_games_status_check;
+ALTER TABLE user_games ADD CONSTRAINT user_games_status_check
+  CHECK (status IN ('backlog', 'playing', 'completed', 'platinum', 'abandoned'));
 
 
 

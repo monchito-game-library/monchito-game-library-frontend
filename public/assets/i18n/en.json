@@ -179,7 +179,6 @@
     }
   },
   "gameStatus": {
-    "wishlist": "Wishlist",
     "backlog": "Not Started",
     "playing": "Playing",
     "completed": "Completed",
@@ -267,8 +266,51 @@
       "logoutDescription": "Sign out from your account"
     }
   },
+  "wishlist": {
+    "addBtn": "Add game",
+    "loading": "Loading wishlist...",
+    "fields": {
+      "platform": "Platform",
+      "platformRequired": "Platform is required",
+      "priority": "Priority",
+      "desiredPrice": "Desired price",
+      "desiredPricePlaceholder": "e.g. 19.99",
+      "desiredPriceRequired": "Price is required",
+      "notes": "Notes",
+      "notesPlaceholder": "Why you want it, where to find it..."
+    },
+    "dialog": {
+      "addTitle": "Add to wishlist",
+      "editTitle": "Edit item",
+      "searchHint": "Search for the game you want to add to your wishlist.",
+      "changeGame": "Change game",
+      "deleteTitle": "Remove from wishlist",
+      "deleteMessage": "Remove «{{ title }}» from your wishlist?",
+      "ownTitle": "I have this game",
+      "ownMessage": "«{{ title }}» will be removed from your wishlist and the add-game form will open pre-filled."
+    },
+    "card": {
+      "priority": "Priority",
+      "ownTooltip": "I have this game",
+      "searchIn": "Search on {{ label }}"
+    },
+    "snack": {
+      "added": "Game added to wishlist",
+      "addError": "Error adding to wishlist",
+      "updated": "Wishlist updated",
+      "updateError": "Error updating item",
+      "deleted": "Removed from wishlist",
+      "deleteError": "Error removing from wishlist",
+      "loadError": "Error loading wishlist"
+    },
+    "empty": {
+      "title": "Your wishlist is empty",
+      "subtitle": "Add games you want to buy to track them here"
+    }
+  },
   "nav": {
     "collection": "Collection",
+    "wishlist": "Wishlist",
     "add": "Add",
     "settings": "Settings",
     "logout": "Log out",

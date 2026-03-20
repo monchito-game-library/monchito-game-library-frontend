@@ -22,6 +22,8 @@ import { userAdminRepositoryProvider } from '@/di/repositories/user-admin.reposi
 import { userAdminUseCasesProvider } from '@/di/use-cases/user-admin.use-cases.provider';
 import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.repository.provider';
 import { auditLogUseCasesProvider } from '@/di/use-cases/audit-log.use-cases.provider';
+import { wishlistRepositoryProvider } from '@/di/repositories/wishlist.repository.provider';
+import { wishlistUseCasesProvider } from '@/di/use-cases/wishlist.use-cases.provider';
 
 registerLocaleData(localeEs);
 
@@ -53,6 +55,8 @@ export const appConfig: ApplicationConfig = {
     userAdminRepositoryProvider,
     userAdminUseCasesProvider,
     auditLogRepositoryProvider,
-    auditLogUseCasesProvider
+    auditLogUseCasesProvider,
+    wishlistRepositoryProvider,
+    wishlistUseCasesProvider
   ]
 };

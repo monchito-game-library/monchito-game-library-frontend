@@ -74,7 +74,7 @@ export class AuthStateService {
       this._currentUser.set(updatedUser);
 
       if (wasAuthenticated && updatedUser === null) {
-        void this._router.navigate(['/login']);
+        void this._router.navigate(['/auth/login']);
       }
     });
   }
