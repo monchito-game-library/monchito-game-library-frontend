@@ -1,12 +1,12 @@
 # Monchito Game Library
 
-Aplicación Angular para gestionar tu colección personal de videojuegos. Permite registrar cada juego con su consola, precio, tienda, condición, estado de completado, platino, valoración personal y horas jugadas.
+Aplicación Angular para gestionar tu colección personal de videojuegos. Permite registrar cada juego con su consola, precio, tienda, condición, estado de completado, platino y valoración personal.
 
 ---
 
 ## Demo
 
-[https://monchito-game-library.github.io/monchito-game-library-frontend/](https://monchito-game-library.github.io/monchito-game-library-frontend/)
+Desplegada en Vercel. Ver `docs/VERCEL_DEPLOY.md` para detalles de configuración.
 
 ---
 
@@ -15,10 +15,13 @@ Aplicación Angular para gestionar tu colección personal de videojuegos. Permit
 - Autenticación con Supabase (email/contraseña)
 - Catálogo personal con virtual scroll (renderiza solo lo visible, soporta colecciones de cualquier tamaño)
 - Filtros por consola, tienda, estado y favoritos — instantáneos al estar en memoria
-- Ordenación por título, precio, valoración y horas jugadas
-- Estadísticas en tiempo real: juegos, gasto total, horas y valoración media
+- Ordenación por título, precio y valoración
+- Estadísticas en tiempo real: juegos, gasto total y valoración media
 - Búsqueda de juegos del catálogo RAWG para rellenar portada y metadatos
 - Formulario de juego con soporte para entradas manuales y desde catálogo
+- Reposicionamiento de portada por juego (punto focal configurable en la card)
+- Recorte de avatar y banner de perfil
+- Panel de administración (`/management`): gestión de usuarios, tiendas y audit log
 - Tema claro/oscuro con Angular Material 3
 - Navegación Rail (desktop) y Bottom Navigation (móvil)
 - Soporte multilenguaje (ES/EN) con Transloco
@@ -31,6 +34,8 @@ Aplicación Angular para gestionar tu colección personal de videojuegos. Permit
 - Angular Material 3 (MD3)
 - Angular CDK Virtual Scroll
 - Supabase (PostgreSQL + Auth + RLS)
+- Dexie (IndexedDB — caché local)
+- ngx-image-cropper (recorte de imágenes)
 - Transloco (i18n)
 - SCSS con design tokens de Material
 
@@ -46,11 +51,12 @@ npm start
 # Build producción
 npm run build
 
-# Deploy a GitHub Pages (Unix)
+# Deploy a GitHub Pages (Unix / Windows)
 npm run deploy:unix
+npm run deploy:windows
 
-# Migración masiva de datos legacy a Supabase
-npm run migrate:legacy
+# Build para Vercel (genera entornos desde variables de entorno)
+npm run vercel-build
 ```
 
 ---
@@ -70,7 +76,7 @@ cd monchito-game-library-frontend
 npm install
 ```
 
-3. Crea tu proyecto en [Supabase](https://supabase.com) y configura las variables en `src/environments/environment.ts`:
+3. Crea tu proyecto en [Supabase](https://supabase.com) y configura las variables en `src/environments/environment.ts` (ver `src/environments/environment.example.ts`):
 
 ```typescript
 export const environment = {
@@ -80,12 +86,14 @@ export const environment = {
   },
   rawg: {
     apiUrl: 'https://api.rawg.io/api',
-    apiKey: '<tu-rawg-key>'  // opcional
+    apiKey: '<tu-rawg-key>'
   }
 };
 ```
 
-4. Inicia el servidor de desarrollo:
+4. Ejecuta el schema de base de datos en el SQL Editor de Supabase (`docs/supabase-schema-current.sql`).
+
+5. Inicia el servidor de desarrollo:
 
 ```bash
 npm start

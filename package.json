@@ -46,10 +46,9 @@
     "@typescript-eslint/parser": "8.57.0",
     "angular-cli-ghpages": "3.0.2",
     "dexie": "4.0.11",
-    "ngx-image-cropper": "^9.1.6",
+    "ngx-image-cropper": "9.1.6",
     "rxjs": "7.8.0",
-    "tslib": "2.3.0",
-    "zone.js": "0.15.0"
+    "tslib": "2.3.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "21.2.2",

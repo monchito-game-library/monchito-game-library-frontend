@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-03-15
+-- Última revisión: 2026-03-19
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -351,11 +351,12 @@ CREATE TRIGGER trg_decrement_users_on_delete
 
 -- ============================================================
 -- 8. VISTA: user_games_full
---    Join de user_games + game_catalog + stores.
+--    Join de user_games + game_catalog.
 --    Es la vista principal que usa el frontend para leer la colección.
+--    security_invoker = on → respeta el RLS del usuario autenticado.
 -- ============================================================
 
-CREATE OR REPLACE VIEW user_games_full AS
+CREATE OR REPLACE VIEW user_games_full WITH (security_invoker = on) AS
 SELECT
   ug.id,
   ug.user_id,
@@ -382,7 +383,6 @@ SELECT
   -- Datos personales del usuario
   ug.price,
   ug.store,
-  s.label            AS store_label,
   ug.platform        AS user_platform,
   ug.condition,
   ug.purchased_date,
@@ -392,32 +392,43 @@ SELECT
   ug.personal_rating,
   ug.personal_review,
   ug.edition,
-  ug.started_date,
-  ug.completed_date,
   ug.description     AS user_notes,
   ug.is_favorite,
+  ug.cover_position,
 
   ug.created_at,
   ug.updated_at
 FROM user_games ug
-INNER JOIN game_catalog gc ON ug.game_catalog_id = gc.id
-LEFT JOIN stores s ON ug.store = s.id;
+JOIN game_catalog gc ON ug.game_catalog_id = gc.id;
 
 
 -- ============================================================
--- 9. VISTA: game_catalog_stats  (uso futuro / analítica)
+-- 9. VISTA: user_wishlist_full
+--    Join de user_wishlist + game_catalog.
+--    security_invoker = on → respeta el RLS del usuario autenticado.
 -- ============================================================
 
-CREATE OR REPLACE VIEW game_catalog_stats AS
+CREATE OR REPLACE VIEW user_wishlist_full WITH (security_invoker = on) AS
 SELECT
-  gc.*,
-  COUNT(DISTINCT ug.user_id)                                       AS actual_users_count,
-  AVG(ug.personal_rating)                                          AS avg_personal_rating,
-  COUNT(DISTINCT CASE WHEN ug.platinum     = TRUE THEN ug.user_id END) AS platinum_count,
-  COUNT(DISTINCT CASE WHEN ug.is_favorite  = TRUE THEN ug.user_id END) AS favorite_count
-FROM game_catalog gc
-LEFT JOIN user_games ug ON gc.id = ug.game_catalog_id
-GROUP BY gc.id;
+  uw.id,
+  uw.user_id,
+  uw.game_catalog_id,
+  uw.desired_price,
+  uw.priority,
+  uw.notes,
+  uw.created_at,
+  gc.title,
+  gc.slug,
+  gc.image_url,
+  gc.released_date,
+  gc.rating,
+  gc.metacritic_score,
+  gc.platforms,
+  gc.genres
+FROM user_wishlist uw
+JOIN game_catalog gc ON uw.game_catalog_id = gc.id;
+
+
 
 
 -- ============================================================
