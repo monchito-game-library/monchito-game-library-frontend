@@ -46,12 +46,14 @@ export class WishlistCardComponent {
   /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
   readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {
     const platform = this.item().platform;
-    const searchTerm = platform ? `${this.item().title} ${platform}` : this.item().title;
+    const titleOnly = this.item().title;
+    const searchTerm = platform ? `${titleOnly} ${platform}` : titleOnly;
     const q = encodeURIComponent(searchTerm);
     const qPlus = searchTerm.replace(/ /g, '+');
+    const qTitle = encodeURIComponent(titleOnly);
     return [
       { label: 'Amazon', url: `https://www.amazon.es/s?k=${qPlus}` },
-      { label: 'GAME', url: `https://www.game.es/buscar/${q}` },
+      { label: 'GAME', url: `https://www.game.es/buscar/${qTitle}` },
       { label: 'CEX', url: `https://es.webuy.com/search/?stext=${qPlus}` },
       { label: 'Xtralife', url: `https://www.xtralife.com/buscar/${q}/` }
     ];
