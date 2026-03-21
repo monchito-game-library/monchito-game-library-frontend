@@ -11,8 +11,11 @@ export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
   return {
     id: dto.id,
     name: dto.name,
-    unitPrice: dto.unit_price,
-    availablePacks: dto.available_packs ?? [],
+    packs: (dto.packs ?? []).map((p) => ({
+      quantity: p.quantity,
+      price: p.price,
+      url: p.url ?? null
+    })),
     category: dto.category as OrderProductCategory,
     notes: dto.notes,
     isActive: dto.is_active
@@ -27,8 +30,7 @@ export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
 export function mapOrderProductToInsertDto(model: Omit<OrderProductModel, 'id'>): OrderProductInsertDto {
   return {
     name: model.name,
-    unit_price: model.unitPrice,
-    available_packs: model.availablePacks,
+    packs: model.packs,
     category: model.category,
     notes: model.notes,
     is_active: model.isActive

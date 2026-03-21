@@ -1,4 +1,4 @@
-<div class="products-page">
+<div class="products-page" [class.products-page--panel-open]="panelOpen()">
   <header class="products-page__header">
     <h1 class="products-page__title">{{ 'management.products.title' | transloco }}</h1>
     <button mat-flat-button color="primary" (click)="onAddProduct()" [disabled]="loading()">
@@ -7,64 +7,62 @@
     </button>
   </header>
 
-  @if (loading()) {
-    <div class="products-page__loading">
-      <mat-spinner diameter="40" />
-    </div>
-  } @else if (products().length === 0) {
-    <p class="products-page__empty">{{ 'management.products.empty' | transloco }}</p>
-  } @else {
-    <div class="products-grid">
-      @for (product of products(); track product.id) {
-        <div class="product-card" [class.product-card--inactive]="!product.isActive">
-          <div class="product-card__header">
-            <span class="product-card__name">{{ product.name }}</span>
-            <span class="product-card__category-chip product-card__category-chip--{{ product.category }}">
-              {{ getCategoryLabel(product.category) }}
-            </span>
-          </div>
-
-          <div class="product-card__meta">
-            <span class="product-card__price">{{ product.unitPrice | number: '1.2-2' }} € / ud.</span>
-            <div class="product-card__packs">
-              @for (pack of product.availablePacks; track pack) {
-                <span class="product-card__pack-chip">{{ pack }}</span>
-              }
-            </div>
-          </div>
-
-          @if (product.notes) {
-            <p class="product-card__notes">{{ product.notes }}</p>
-          }
-
-          @if (!product.isActive) {
-            <span class="product-card__inactive-badge">{{ 'management.products.inactive' | transloco }}</span>
-          }
-
-          <div class="product-card__actions">
-            <button
-              mat-icon-button
-              (click)="onEditProduct(product)"
-              [attr.aria-label]="'common.edit' | transloco"
-              [matTooltip]="'common.edit' | transloco">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              (click)="onToggleActive(product)"
-              [attr.aria-label]="
-                (product.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn') | transloco
-              "
-              [matTooltip]="
-                (product.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn') | transloco
-              "
-              [class.product-card__activate-btn]="!product.isActive"
-              [class.product-card__deactivate-btn]="product.isActive">
-              <mat-icon>{{ product.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-            </button>
-          </div>
-        </div>
-      }
+  @if (panelOpen()) {
+    <div class="products-edit-panel-wrapper">
+      <app-product-edit-panel
+        [product]="selectedProduct() ?? null"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (toggled)="onToggleActive(selectedProduct()!)" />
     </div>
   }
+
+  <div class="products-grid-wrapper">
+    @if (loading()) {
+      <div class="products-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (products().length === 0) {
+      <p class="products-page__empty">{{ 'management.products.empty' | transloco }}</p>
+    } @else {
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+          <div
+            class="product-card"
+            [class.product-card--inactive]="!product.isActive"
+            [class.product-card--selected]="selectedProduct()?.id === product.id"
+            (click)="onSelectProduct(product)">
+            <div class="product-card__header">
+              <span class="product-card__name">{{ product.name }}</span>
+              <span class="product-card__category-chip product-card__category-chip--{{ product.category }}">
+                {{ getCategoryLabel(product.category) }}
+              </span>
+            </div>
+
+            <div class="product-card__price-hint">
+              {{ 'management.products.fromPrice' | transloco }}
+              <strong>{{ getMinUnitPrice(product) | number: '1.2-4' }} € / ud.</strong>
+            </div>
+
+            <div class="product-card__packs">
+              @for (pack of product.packs; track pack.quantity) {
+                <span class="product-card__pack-chip">
+                  <span class="product-card__pack-qty">x{{ pack.quantity }}</span>
+                  <span class="product-card__pack-price">{{ pack.price | number: '1.2-2' }}€</span>
+                </span>
+              }
+            </div>
+
+            @if (product.notes) {
+              <p class="product-card__notes">{{ product.notes }}</p>
+            }
+
+            @if (!product.isActive) {
+              <span class="product-card__inactive-badge">{{ 'management.products.inactive' | transloco }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>
