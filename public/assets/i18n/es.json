@@ -400,7 +400,34 @@
     "nav": {
       "stores": "Tiendas",
       "users": "Usuarios",
-      "auditLog": "Registro"
+      "auditLog": "Registro",
+      "products": "Productos"
+    },
+    "products": {
+      "title": "Productos del catálogo",
+      "addBtn": "Nuevo producto",
+      "editTitle": "Editar producto",
+      "addTitle": "Nuevo producto",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "ej. Cajas tamaño BluRay",
+      "categoryLabel": "Categoría",
+      "categoryBox": "Caja de juego",
+      "categoryConsole": "Caja de consola",
+      "categoryOther": "Otro",
+      "unitPriceLabel": "Precio por unidad (€)",
+      "unitPriceMin": "El precio debe ser mayor que 0",
+      "availablePacksLabel": "Packs disponibles",
+      "availablePacksPlaceholder": "ej. 1, 10, 25, 50, 100, 250",
+      "availablePacksHint": "Cantidades separadas por comas",
+      "availablePacksError": "Introduce al menos una cantidad válida",
+      "notesLabel": "Notas",
+      "notesPlaceholder": "ej. Solo disponible por encargo",
+      "empty": "No hay productos en el catálogo todavía.",
+      "inactive": "Inactivo",
+      "deactivateBtn": "Desactivar",
+      "activateBtn": "Activar",
+      "deactivateConfirm": "¿Desactivar el producto «{{ name }}»? Dejará de aparecer en nuevos pedidos pero se conservará en los pedidos ya existentes.",
+      "activateConfirm": "¿Volver a activar el producto «{{ name }}»?"
     },
     "auditLog": {
       "title": "Registro de actividad",

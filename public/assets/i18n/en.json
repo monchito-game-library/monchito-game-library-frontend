@@ -399,7 +399,34 @@
     "nav": {
       "stores": "Stores",
       "users": "Users",
-      "auditLog": "Activity log"
+      "auditLog": "Activity log",
+      "products": "Products"
+    },
+    "products": {
+      "title": "Product catalogue",
+      "addBtn": "New product",
+      "editTitle": "Edit product",
+      "addTitle": "New product",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. BluRay size boxes",
+      "categoryLabel": "Category",
+      "categoryBox": "Game box",
+      "categoryConsole": "Console box",
+      "categoryOther": "Other",
+      "unitPriceLabel": "Unit price (€)",
+      "unitPriceMin": "Price must be greater than 0",
+      "availablePacksLabel": "Available packs",
+      "availablePacksPlaceholder": "e.g. 1, 10, 25, 50, 100, 250",
+      "availablePacksHint": "Comma-separated quantities",
+      "availablePacksError": "Enter at least one valid quantity",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "e.g. Available on special order only",
+      "empty": "No products in the catalogue yet.",
+      "inactive": "Inactive",
+      "deactivateBtn": "Deactivate",
+      "activateBtn": "Activate",
+      "deactivateConfirm": "Deactivate «{{ name }}»? It will no longer appear in new orders but will be kept in existing ones.",
+      "activateConfirm": "Re-activate «{{ name }}»?"
     },
     "auditLog": {
       "title": "Activity log",
