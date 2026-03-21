@@ -21,7 +21,6 @@ import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -35,13 +34,6 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
-import {
-  WishlistItemDialogComponent,
-  WishlistItemDialogData,
-  WishlistItemDialogResult
-} from '@/pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component';
-
-const MOBILE_BREAKPOINT = '(max-width: 768px)';
 
 @Component({
   selector: 'app-wishlist',
@@ -73,7 +65,6 @@ export class WishlistComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _breakpoints: BreakpointObserver = inject(BreakpointObserver);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
@@ -138,82 +129,24 @@ export class WishlistComponent implements OnInit {
   }
 
   /**
-   * Opens the add flow. On mobile switches to inline search mode;
-   * on desktop opens the dialog.
+   * Switches to inline search mode to start the add flow.
    */
-  async onAddItem(): Promise<void> {
-    if (this._breakpoints.isMatched(MOBILE_BREAKPOINT)) {
-      this._editingItem = null;
-      this.pendingCatalogEntry.set(null);
-      this._resetMobileForm(null);
-      this.viewMode.set('search');
-      return;
-    }
-
-    const dialogData: WishlistItemDialogData = { mode: 'add' };
-    const ref = this._dialog.open<WishlistItemDialogComponent, WishlistItemDialogData, WishlistItemDialogResult | null>(
-      WishlistItemDialogComponent,
-      { data: dialogData, width: '480px', maxWidth: '96vw' }
-    );
-
-    const result: WishlistItemDialogResult | null | undefined = await firstValueFrom(ref.afterClosed());
-    if (!result || !result.catalogEntry) return;
-
-    try {
-      await this._wishlistUseCases.addItem(this._userId, result.catalogEntry as GameCatalogDto, result.formValue);
-      await this._loadItems();
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.added'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.addError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-    }
+  onAddItem(): void {
+    this._editingItem = null;
+    this.pendingCatalogEntry.set(null);
+    this._resetMobileForm(null);
+    this.viewMode.set('search');
   }
 
   /**
-   * Opens the edit flow. On mobile switches to inline form mode;
-   * on desktop opens the dialog.
+   * Switches to inline form mode pre-filled with the given item's values.
    *
    * @param {WishlistItemModel} item
    */
-  async onEditItem(item: WishlistItemModel): Promise<void> {
-    if (this._breakpoints.isMatched(MOBILE_BREAKPOINT)) {
-      this._editingItem = item;
-      this._resetMobileForm(item);
-      this.viewMode.set('form');
-      return;
-    }
-
-    const dialogData: WishlistItemDialogData = { mode: 'edit', item };
-    const ref = this._dialog.open<WishlistItemDialogComponent, WishlistItemDialogData, WishlistItemDialogResult | null>(
-      WishlistItemDialogComponent,
-      { data: dialogData, width: '480px', maxWidth: '96vw' }
-    );
-
-    const result: WishlistItemDialogResult | null | undefined = await firstValueFrom(ref.afterClosed());
-    if (!result) return;
-
-    try {
-      await this._wishlistUseCases.updateItem(this._userId, item.id, result.formValue);
-      await this._loadItems();
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.updated'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.updateError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-    }
+  onEditItem(item: WishlistItemModel): void {
+    this._editingItem = item;
+    this._resetMobileForm(item);
+    this.viewMode.set('form');
   }
 
   /**

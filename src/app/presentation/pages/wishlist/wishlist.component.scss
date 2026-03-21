@@ -1,7 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .wishlist-page {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding: 24px;
   gap: 24px;
   overflow-y: auto;
@@ -93,6 +101,146 @@
   display: none;
 }
 
+// ────────────────────────── Inline form/search view ─────────────────────────
+
+.wishlist-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 12px;
+}
+
+.wishlist-view__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.wishlist-view__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.wishlist-view__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  flex-shrink: 0;
+}
+
+.wishlist-view__game-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--mat-sys-surface-container);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.wishlist-view__game-cover {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.wishlist-view__game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.wishlist-view__game-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wishlist-view__game-year {
+  font-size: 0.8125rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.wishlist-view__form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wishlist-view__priority {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wishlist-view__label {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+  min-width: 80px;
+}
+
+.wishlist-view__stars {
+  display: flex;
+
+  .mat-icon {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.wishlist-view__field {
+  width: 100%;
+}
+
+.wishlist-view__platform-display {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.wishlist-view__platform-chip {
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.8125rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+
+  &--selected {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+    border-color: var(--mat-sys-primary);
+  }
+}
+
+.wishlist-view__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 8px;
+
+  button {
+    flex: 1;
+  }
+}
+
 // ────────────────────────── Responsive: ≤ 1280x720 ──────────────────────────
 @media (max-width: 1280px) {
   .wishlist-page {
@@ -127,118 +275,12 @@
     right: 16px;
     z-index: 10;
   }
-}
 
-// ────────────────────────── Mobile inline view ───────────────────────────────
-
-.wishlist-mobile-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 12px 16px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  gap: 12px;
-}
-
-.wishlist-mobile-view__header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.wishlist-mobile-view__title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.wishlist-mobile-view__hint {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--mat-sys-on-surface-variant);
-  flex-shrink: 0;
-}
-
-.wishlist-mobile-view__game-preview {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: var(--mat-sys-surface-container);
-  border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.wishlist-mobile-view__game-cover {
-  width: 48px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.wishlist-mobile-view__game-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.wishlist-mobile-view__game-title {
-  font-weight: 600;
-  font-size: 0.9375rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.wishlist-mobile-view__game-year {
-  font-size: 0.8125rem;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.wishlist-mobile-view__form {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-}
-
-.wishlist-mobile-view__priority {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.wishlist-mobile-view__label {
-  font-size: 0.875rem;
-  color: var(--mat-sys-on-surface-variant);
-  min-width: 80px;
-}
-
-.wishlist-mobile-view__stars {
-  display: flex;
-
-  .mat-icon {
-    color: var(--mat-sys-primary);
+  .wishlist-view {
+    padding: 12px 16px;
   }
-}
 
-.wishlist-mobile-view__field {
-  width: 100%;
-}
-
-.wishlist-mobile-view__actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-  padding-bottom: calc(60px + 8px);
-
-  button {
-    flex: 1;
+  .wishlist-view__actions {
+    padding-bottom: calc(60px + 8px);
   }
 }

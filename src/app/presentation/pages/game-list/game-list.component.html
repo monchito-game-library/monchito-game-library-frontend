@@ -21,11 +21,11 @@
     </div>
     <div class="game-list__stat-divider"></div>
     <div class="game-list__stat">
-      <mat-icon>euro</mat-icon>
+      <mat-icon>payments</mat-icon>
       @if (loading()) {
         <app-skeleton width="40px" height="12px" />
       } @else {
-        <span>{{ totalPrice() | number: '1.0-0' }}</span>
+        <span>{{ totalPrice() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
       }
     </div>
   </div>

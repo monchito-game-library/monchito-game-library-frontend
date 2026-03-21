@@ -37,6 +37,14 @@
     min-height: 0;
     padding: 1.5rem 2rem 0;
   }
+
+  .game-form-page__search-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding: 0 2rem;
+  }
 }
 
 // ─── Left panel: cover ───────────────────────────────────────────────────────
@@ -359,6 +367,10 @@
     }
 
     .game-form-page__content {
+      padding-inline: 1rem;
+    }
+
+    .game-form-page__search-container {
       padding-inline: 1rem;
     }
   }

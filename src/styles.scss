@@ -20,6 +20,21 @@ html.dark-mode {
       0 0 0 1px var(--mat-sys-outline-variant),
       0 12px 40px rgba(0, 0, 0, 0.6);
   }
+
+  .mat-mdc-select-panel.mdc-menu-surface {
+    background: var(--mat-sys-surface-container-high) !important;
+    border: 2px solid var(--mat-sys-outline-variant) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55) !important;
+  }
+
+  .cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mat-mdc-select-panel.mdc-menu-surface {
+    margin-top: 0.5rem !important;
+  }
+
+  .cdk-overlay-pane.mat-mdc-select-panel-above .mat-mdc-select-panel.mdc-menu-surface {
+    margin-bottom: 0.5rem !important;
+  }
 }
 
 // Base styles
