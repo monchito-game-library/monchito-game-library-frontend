@@ -72,9 +72,6 @@ interface ProductFormResult {
             <span class="edit-panel__product-name">— {{ product()!.name }}</span>
           }
         </h2>
-        <button mat-icon-button (click)="cancelled.emit()" [matTooltip]="'common.close' | transloco">
-          <mat-icon>close</mat-icon>
-        </button>
       </div>
 
       <form [formGroup]="form" class="edit-panel__form">
@@ -298,6 +295,45 @@ interface ProductFormResult {
       .edit-panel__activate-btn {
         color: var(--mat-sys-primary);
         border-color: var(--mat-sys-primary);
+      }
+
+      @media (max-width: 768px) {
+        .edit-panel__header {
+          padding: 0.75rem 1rem 0.5rem;
+        }
+
+        .edit-panel__product-name {
+          display: none;
+        }
+
+        .edit-panel__form {
+          padding: 0.25rem 1rem 1rem;
+        }
+
+        .edit-panel__fields {
+          grid-template-columns: 1fr;
+        }
+
+        .packs-list {
+          max-height: 160px;
+        }
+
+        .pack-row {
+          grid-template-columns: 80px 1fr 36px;
+
+          .pack-row__qty {
+            grid-area: 1 / 1;
+          }
+          .pack-row__price {
+            grid-area: 1 / 2;
+          }
+          .pack-row__remove {
+            grid-area: 1 / 3;
+          }
+          .pack-row__url {
+            grid-area: 2 / 1 / 3 / 4;
+          }
+        }
       }
     `
   ]
