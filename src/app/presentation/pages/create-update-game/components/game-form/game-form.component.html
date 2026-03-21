@@ -285,9 +285,10 @@
   }
 
   @if (searchMode()) {
-    <app-game-search-panel
-      @fadeSlide
-      [initialQuery]="selectedGame() ? (form.controls.title.value ?? '') : ''"
-      (gameSelected)="selectGameFromSearch($event)" />
+    <div class="game-form-page__search-container" @fadeSlide>
+      <app-game-search-panel
+        [initialQuery]="selectedGame() ? (form.controls.title.value ?? '') : ''"
+        (gameSelected)="selectGameFromSearch($event)" />
+    </div>
   }
 </div>
