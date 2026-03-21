@@ -8,7 +8,6 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada) | Alta |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -16,37 +15,12 @@
 | [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
 | ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
 | ~~[Links de búsqueda en tiendas desde la wishlist](#links-de-búsqueda-en-tiendas-desde-la-wishlist)~~ | ✅ Hecho |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
-
----
-
-## Estrategia de actualización PWA forzada *(prioridad alta)*
-
-### Estrategia de actualización PWA forzada
-
-El comportamiento actual muestra un snackbar opcional ("Nueva versión / Actualizar") que el usuario puede ignorar. Esto es un problema cuando un deploy incluye cambios radicales incompatibles con la versión anterior en cache — el usuario puede quedar en un estado roto sin saberlo.
-
-#### Opciones evaluadas
-
-**A — Reload inmediato silencioso:** al detectar `VERSION_READY`, llamar a `activateUpdate()` + `location.reload()` directamente sin aviso. Riesgo: interrumpe al usuario si está editando un formulario.
-
-**B — Reload en el próximo cambio de ruta:** guardar el flag de "actualización pendiente" y engancharse al router para recargar en la próxima navegación. El usuario termina lo que está haciendo. Pero si no navega, puede no actualizarse en esa sesión.
-
-**C — Snackbar no descartable con countdown:** snackbar sin botón de cerrar con cuenta atrás ("Actualizando en 10s…") y reload automático. Da margen sin opción de ignorarlo.
-
-**D — Overlay bloqueante:** dialog a pantalla completa con un solo botón "Actualizar ahora" sin opción de cancelar. El más explícito.
-
-**E — Combinado B + C (recomendado):** si el usuario está en una ruta segura (lista, wishlist, settings), recargar directamente. Si está en un formulario (`/add`, `/edit`), esperar a que navegue fuera y entonces recargar. Cubre cambios radicales sin romper trabajo en curso.
-
-#### Implementación pendiente
-
-- Decidir entre las opciones anteriores.
-- Modificar `PwaUpdateService` según la opción elegida.
-- Quitar el snackbar opcional actual.
 
 ---
 
@@ -411,6 +385,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Estrategia de actualización PWA forzada~~ ✅ Hecho
+
+`PwaUpdateService` reescrito con estrategia E: en rutas seguras (`/list`, `/wishlist`, `/settings`, etc.) muestra un overlay de pantalla completa con spinner y "Actualizando…" y recarga a los 400ms. En rutas de formulario (`/add`, `/update/:id`) espera a que el usuario navegue fuera y entonces aplica el mismo overlay. El SW se registra con `registerImmediately` (antes `registerWhenStable:30000`) y se comprueba `checkForUpdate()` al arrancar y en cada `visibilitychange` para detectar versiones nuevas lo antes posible.
+
+---
 
 ### ~~PWA (Progressive Web App)~~ ✅ Hecho
 

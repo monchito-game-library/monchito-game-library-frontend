@@ -1,40 +1,44 @@
 import { inject, Injectable } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
+/** Routes where the user may have unsaved work — update is deferred until they leave. */
+const FORM_ROUTES = ['/add', '/update/'];
+
 /**
- * Presentation service that listens for available service worker updates
- * and prompts the user to reload the app when a new version is ready.
+ * Presentation service that enforces PWA updates automatically.
+ *
+ * Strategy:
+ * - Safe route → shows a full-screen loading overlay and reloads after 400ms.
+ * - Form route (/add, /update/:id) → defers until the user navigates away,
+ *   then shows the same overlay and reloads.
  */
 @Injectable({ providedIn: 'root' })
 export class PwaUpdateService {
   private readonly _swUpdate: SwUpdate = inject(SwUpdate);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _router: Router = inject(Router);
+
+  /** True once VERSION_READY has fired and the update is pending activation. */
+  private _updatePending: boolean = false;
 
   /**
    * Starts listening for new service worker versions.
-   * Checks for an update immediately on init and whenever the user
-   * returns to the tab (visibilitychange). When a new version is ready,
-   * shows a snackbar offering the user to reload the page.
+   * Checks immediately on init and on every tab-focus (visibilitychange).
    */
   init(): void {
     if (!this._swUpdate.isEnabled) return;
 
     this._swUpdate.versionUpdates
       .pipe(filter((event): event is VersionReadyEvent => event.type === 'VERSION_READY'))
-      .subscribe(() => {
-        const snack = this._snackBar.open('Nueva versión disponible', 'Actualizar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom'
-        });
+      .subscribe(() => this._handleUpdateReady());
 
-        snack.onAction().subscribe(() => {
-          void this._swUpdate.activateUpdate().then(() => {
-            document.location.reload();
-          });
-        });
+    this._router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        if (this._updatePending && !this._isFormRoute(e.urlAfterRedirects)) {
+          this._showUpdatingAndReload();
+        }
       });
 
     void this._swUpdate.checkForUpdate();
@@ -44,5 +48,64 @@ export class PwaUpdateService {
         void this._swUpdate.checkForUpdate();
       }
     });
+  }
+
+  /**
+   * Called when a new version is ready.
+   * On safe routes shows the updating notice and reloads after a short delay.
+   * On form routes defers until the user navigates away, then does the same.
+   */
+  private _handleUpdateReady(): void {
+    this._updatePending = true;
+
+    if (!this._isFormRoute(this._router.url)) {
+      this._showUpdatingAndReload();
+    }
+  }
+
+  /**
+   * Activates the waiting service worker and reloads the page.
+   */
+  private _applyUpdate(): void {
+    void this._swUpdate.activateUpdate().then(() => document.location.reload());
+  }
+
+  /**
+   * Injects a full-screen loading overlay into the DOM, then reloads after a
+   * short delay so the user sees the transition instead of an abrupt flash.
+   */
+  private _showUpdatingAndReload(): void {
+    const overlay = document.createElement('div');
+    overlay.innerHTML = `
+      <div style="
+        position:fixed;inset:0;z-index:99999;
+        background:var(--mat-sys-surface,#1e1e2e);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:1.5rem;font-family:Roboto,'Helvetica Neue',sans-serif;
+      ">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+          style="animation:pwa-spin 0.9s linear infinite;">
+          <circle cx="24" cy="24" r="20" stroke="var(--mat-sys-primary,#6ee7b7)"
+            stroke-width="4" stroke-linecap="round"
+            stroke-dasharray="100" stroke-dashoffset="60"/>
+        </svg>
+        <span style="color:var(--mat-sys-on-surface,#fff);font-size:1rem;font-weight:500;">
+          Actualizando…
+        </span>
+      </div>
+      <style>@keyframes pwa-spin{to{transform:rotate(360deg)}}</style>
+    `;
+    document.body.appendChild(overlay);
+
+    window.setTimeout(() => this._applyUpdate(), 400);
+  }
+
+  /**
+   * Returns true if the given URL corresponds to a form route with unsaved data risk.
+   *
+   * @param {string} url
+   */
+  private _isFormRoute(url: string): boolean {
+    return FORM_ROUTES.some((route) => url.startsWith(route));
   }
 }
