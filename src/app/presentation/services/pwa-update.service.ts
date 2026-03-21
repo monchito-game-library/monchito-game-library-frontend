@@ -14,8 +14,9 @@ export class PwaUpdateService {
 
   /**
    * Starts listening for new service worker versions.
-   * When a new version is available and activated, shows a snackbar
-   * offering the user to reload the page.
+   * Checks for an update immediately on init and whenever the user
+   * returns to the tab (visibilitychange). When a new version is ready,
+   * shows a snackbar offering the user to reload the page.
    */
   init(): void {
     if (!this._swUpdate.isEnabled) return;
@@ -35,5 +36,13 @@ export class PwaUpdateService {
           });
         });
       });
+
+    void this._swUpdate.checkForUpdate();
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        void this._swUpdate.checkForUpdate();
+      }
+    });
   }
 }
