@@ -8,11 +8,11 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Testing (unit + integración)](#testing-unit--integración) | Media |
+| [Testing (unit + integración)](#testing-unit--integración) | Alta |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
-| [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
+| [Pedidos (`/orders`)](#pedidos-orders) | Media-alta |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
@@ -24,7 +24,7 @@
 
 ---
 
-## Testing *(prioridad media)*
+## Testing *(prioridad alta)*
 
 ### Testing (unit + integración)
 
@@ -186,7 +186,7 @@ Nueva sección en el nav que sustituye las estadísticas actuales de la colecci�
 
 ---
 
-### Pedidos (`/orders`) *(catálogo de protectores ya implementado — ver `/management/protectors`)*
+### Pedidos (`/orders`) *(prioridad media-alta — catálogo de protectores ya implementado — ver `/management/protectors`)*
 
 Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
 
