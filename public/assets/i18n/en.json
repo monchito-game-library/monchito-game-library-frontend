@@ -400,13 +400,13 @@
       "stores": "Stores",
       "users": "Users",
       "auditLog": "Activity log",
-      "products": "Products"
+      "products": "Protectors"
     },
     "products": {
-      "title": "Product catalogue",
-      "addBtn": "New product",
-      "editTitle": "Edit product",
-      "addTitle": "New product",
+      "title": "Protector catalogue",
+      "addBtn": "New protector",
+      "editTitle": "Edit protector",
+      "addTitle": "New protector",
       "nameLabel": "Name",
       "namePlaceholder": "e.g. BluRay size boxes",
       "categoryLabel": "Category",
@@ -426,7 +426,15 @@
       "deactivateBtn": "Deactivate",
       "activateBtn": "Activate",
       "deactivateConfirm": "Deactivate «{{ name }}»? It will no longer appear in new orders but will be kept in existing ones.",
-      "activateConfirm": "Re-activate «{{ name }}»?"
+      "activateConfirm": "Re-activate «{{ name }}»?",
+      "packsTitle": "Available packs",
+      "addPack": "Add pack",
+      "packsEmpty": "Add at least one pack",
+      "packQty": "Quantity",
+      "packPrice": "Total price",
+      "packUrl": "URL (optional)",
+      "fromPrice": "From",
+      "openPackUrl": "View on supplier's website"
     },
     "auditLog": {
       "title": "Activity log",

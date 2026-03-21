@@ -1,9 +1,15 @@
+/** A single purchasable pack option for an order product. */
+export interface OrderProductPackDto {
+  quantity: number;
+  price: number;
+  url: string | null;
+}
+
 /** Row from the order_products table in Supabase. */
 export interface OrderProductDto {
   id: string;
   name: string;
-  unit_price: number;
-  available_packs: number[];
+  packs: OrderProductPackDto[];
   category: string;
   notes: string | null;
   is_active: boolean;

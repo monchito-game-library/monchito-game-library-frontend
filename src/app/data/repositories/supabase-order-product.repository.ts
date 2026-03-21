@@ -52,8 +52,7 @@ export class SupabaseOrderProductRepository implements OrderProductRepositoryCon
   async update(id: string, patch: Partial<Omit<OrderProductModel, 'id'>>): Promise<OrderProductModel> {
     const payload: Partial<OrderProductDto> = {};
     if (patch.name !== undefined) payload.name = patch.name;
-    if (patch.unitPrice !== undefined) payload.unit_price = patch.unitPrice;
-    if (patch.availablePacks !== undefined) payload.available_packs = patch.availablePacks;
+    if (patch.packs !== undefined) payload.packs = patch.packs;
     if (patch.category !== undefined) payload.category = patch.category;
     if ('notes' in patch) payload.notes = patch.notes ?? null;
     if (patch.isActive !== undefined) payload.is_active = patch.isActive;
