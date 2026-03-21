@@ -1,15 +1,15 @@
-/** A single purchasable pack option for an order product. */
-export interface OrderProductPackDto {
+/** A single purchasable pack option for a protector. */
+export interface ProtectorPackDto {
   quantity: number;
   price: number;
   url: string | null;
 }
 
 /** Row from the order_products table in Supabase. */
-export interface OrderProductDto {
+export interface ProtectorDto {
   id: string;
   name: string;
-  packs: OrderProductPackDto[];
+  packs: ProtectorPackDto[];
   category: string;
   notes: string | null;
   is_active: boolean;
@@ -17,4 +17,4 @@ export interface OrderProductDto {
 }
 
 /** Payload for inserting a new row in the order_products table. */
-export type OrderProductInsertDto = Omit<OrderProductDto, 'id' | 'created_at'>;
+export type ProtectorInsertDto = Omit<ProtectorDto, 'id' | 'created_at'>;

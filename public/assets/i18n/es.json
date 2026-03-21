@@ -445,7 +445,10 @@
         "store_create": "Tienda creada",
         "store_update": "Tienda editada",
         "store_delete": "Tienda eliminada",
-        "user_role_change": "Rol de usuario cambiado"
+        "user_role_change": "Rol de usuario cambiado",
+        "protector_create": "Protector creado",
+        "protector_update": "Protector actualizado",
+        "protector_toggle_active": "Protector activado/desactivado"
       }
     },
     "users": {
