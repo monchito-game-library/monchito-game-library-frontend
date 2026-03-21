@@ -400,7 +400,42 @@
     "nav": {
       "stores": "Tiendas",
       "users": "Usuarios",
-      "auditLog": "Registro"
+      "auditLog": "Registro",
+      "products": "Protectores"
+    },
+    "products": {
+      "title": "Catálogo de protectores",
+      "addBtn": "Nuevo protector",
+      "editTitle": "Editar protector",
+      "addTitle": "Nuevo protector",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "ej. Cajas tamaño BluRay",
+      "categoryLabel": "Categoría",
+      "categoryBox": "Caja de juego",
+      "categoryConsole": "Caja de consola",
+      "categoryOther": "Otro",
+      "unitPriceLabel": "Precio por unidad (€)",
+      "unitPriceMin": "El precio debe ser mayor que 0",
+      "availablePacksLabel": "Packs disponibles",
+      "availablePacksPlaceholder": "ej. 1, 10, 25, 50, 100, 250",
+      "availablePacksHint": "Cantidades separadas por comas",
+      "availablePacksError": "Introduce al menos una cantidad válida",
+      "notesLabel": "Notas",
+      "notesPlaceholder": "ej. Solo disponible por encargo",
+      "empty": "No hay productos en el catálogo todavía.",
+      "inactive": "Inactivo",
+      "deactivateBtn": "Desactivar",
+      "activateBtn": "Activar",
+      "deactivateConfirm": "¿Desactivar el producto «{{ name }}»? Dejará de aparecer en nuevos pedidos pero se conservará en los pedidos ya existentes.",
+      "activateConfirm": "¿Volver a activar el producto «{{ name }}»?",
+      "packsTitle": "Packs disponibles",
+      "addPack": "Añadir pack",
+      "packsEmpty": "Añade al menos un pack",
+      "packQty": "Cantidad",
+      "packPrice": "Precio total",
+      "packUrl": "URL (opcional)",
+      "fromPrice": "Desde",
+      "openPackUrl": "Ver en la web del proveedor"
     },
     "auditLog": {
       "title": "Registro de actividad",
@@ -410,7 +445,10 @@
         "store_create": "Tienda creada",
         "store_update": "Tienda editada",
         "store_delete": "Tienda eliminada",
-        "user_role_change": "Rol de usuario cambiado"
+        "user_role_change": "Rol de usuario cambiado",
+        "protector_create": "Protector creado",
+        "protector_update": "Protector actualizado",
+        "protector_toggle_active": "Protector activado/desactivado"
       }
     },
     "users": {

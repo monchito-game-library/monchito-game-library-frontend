@@ -20,6 +20,8 @@
     margin-bottom: 0;
     flex-shrink: 0;
     padding: 0 2rem;
+    position: relative;
+    z-index: 1;
   }
 
   .game-form-page__title {
@@ -44,6 +46,11 @@
     flex: 1;
     min-height: 0;
     padding: 0 2rem;
+    pointer-events: none;
+
+    app-game-search-panel {
+      pointer-events: auto;
+    }
   }
 }
 
