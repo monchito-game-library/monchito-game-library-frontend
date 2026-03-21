@@ -1,0 +1,68 @@
+<div class="protectors-page" [class.protectors-page--panel-open]="panelOpen()">
+  <header class="protectors-page__header">
+    <h1 class="protectors-page__title">{{ 'management.products.title' | transloco }}</h1>
+    <button mat-flat-button color="primary" (click)="onAddProtector()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.products.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (panelOpen()) {
+    <div class="protectors-edit-panel-wrapper">
+      <app-protector-edit-panel
+        [protector]="selectedProtector() ?? null"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (toggled)="onToggleActive(selectedProtector()!)" />
+    </div>
+  }
+
+  <div class="protectors-grid-wrapper">
+    @if (loading()) {
+      <div class="protectors-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (protectors().length === 0) {
+      <p class="protectors-page__empty">{{ 'management.products.empty' | transloco }}</p>
+    } @else {
+      <div class="protectors-grid">
+        @for (protector of protectors(); track protector.id) {
+          <div
+            class="protector-card"
+            [class.protector-card--inactive]="!protector.isActive"
+            [class.protector-card--selected]="selectedProtector()?.id === protector.id"
+            (click)="onSelectProtector(protector)">
+            <div class="protector-card__header">
+              <span class="protector-card__name">{{ protector.name }}</span>
+              <span class="protector-card__category-chip protector-card__category-chip--{{ protector.category }}">
+                {{ getCategoryLabel(protector.category) }}
+              </span>
+            </div>
+
+            <div class="protector-card__price-hint">
+              {{ 'management.products.fromPrice' | transloco }}
+              <strong>{{ getMinUnitPrice(protector) | number: '1.2-4' }} € / ud.</strong>
+            </div>
+
+            <div class="protector-card__packs">
+              @for (pack of protector.packs; track pack.quantity) {
+                <span class="protector-card__pack-chip">
+                  <span class="protector-card__pack-qty">x{{ pack.quantity }}</span>
+                  <span class="protector-card__pack-price">{{ pack.price | number: '1.2-2' }}€</span>
+                </span>
+              }
+            </div>
+
+            @if (protector.notes) {
+              <p class="protector-card__notes">{{ protector.notes }}</p>
+            }
+
+            @if (!protector.isActive) {
+              <span class="protector-card__inactive-badge">{{ 'management.products.inactive' | transloco }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

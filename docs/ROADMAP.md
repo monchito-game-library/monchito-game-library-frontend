@@ -8,7 +8,6 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada) | Alta |
 | [Testing (unit + integración)](#testing-unit--integración) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -16,37 +15,12 @@
 | [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
 | ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
 | ~~[Links de búsqueda en tiendas desde la wishlist](#links-de-búsqueda-en-tiendas-desde-la-wishlist)~~ | ✅ Hecho |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
-
----
-
-## Estrategia de actualización PWA forzada *(prioridad alta)*
-
-### Estrategia de actualización PWA forzada
-
-El comportamiento actual muestra un snackbar opcional ("Nueva versión / Actualizar") que el usuario puede ignorar. Esto es un problema cuando un deploy incluye cambios radicales incompatibles con la versión anterior en cache — el usuario puede quedar en un estado roto sin saberlo.
-
-#### Opciones evaluadas
-
-**A — Reload inmediato silencioso:** al detectar `VERSION_READY`, llamar a `activateUpdate()` + `location.reload()` directamente sin aviso. Riesgo: interrumpe al usuario si está editando un formulario.
-
-**B — Reload en el próximo cambio de ruta:** guardar el flag de "actualización pendiente" y engancharse al router para recargar en la próxima navegación. El usuario termina lo que está haciendo. Pero si no navega, puede no actualizarse en esa sesión.
-
-**C — Snackbar no descartable con countdown:** snackbar sin botón de cerrar con cuenta atrás ("Actualizando en 10s…") y reload automático. Da margen sin opción de ignorarlo.
-
-**D — Overlay bloqueante:** dialog a pantalla completa con un solo botón "Actualizar ahora" sin opción de cancelar. El más explícito.
-
-**E — Combinado B + C (recomendado):** si el usuario está en una ruta segura (lista, wishlist, settings), recargar directamente. Si está en un formulario (`/add`, `/edit`), esperar a que navegue fuera y entonces recargar. Cubre cambios radicales sin romper trabajo en curso.
-
-#### Implementación pendiente
-
-- Decidir entre las opciones anteriores.
-- Modificar `PwaUpdateService` según la opción elegida.
-- Quitar el snackbar opcional actual.
 
 ---
 
@@ -212,62 +186,169 @@ Nueva sección en el nav que sustituye las estadísticas actuales de la colecci�
 
 ---
 
-### Pedidos (`/orders`)
+### Pedidos (`/orders`) *(catálogo de protectores ya implementado — ver `/management/protectors`)*
 
-Sección para gestionar pedidos grupales de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora entre amigos para coordinar pedidos conjuntos y repartir gastos de envío.
+Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
+
+Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuarios de la app). En el caso grupal, el owner invita a sus amigos mediante un enlace/código y cada uno rellena sus cantidades. El sistema calcula automáticamente el pack óptimo a pedir y lo que debe pagar cada participante.
+
+#### Flujo principal
+
+1. El usuario crea un pedido (`draft`) y añade los productos que necesita con sus cantidades.
+2. Opcionalmente genera un **enlace de invitación** y lo comparte (WhatsApp, Telegram…) con amigos que también usen la app.
+3. Los amigos aceptan la invitación y se unen como miembros — cada uno rellena cuánto necesita de cada producto.
+4. La vista de detalle muestra el total del grupo por producto y sugiere qué pack comprar (el más económico que cubra la suma total).
+5. El owner elige el pack definitivo, marca el pedido como `ordered` y el sistema calcula el coste por persona (producto + envío + fee de PayPal, prorrateados; descuento opcional).
+6. El pedido avanza por estados: `draft → ordered → shipped → received`.
+
+#### Distinción cantidad necesitada / cantidad en este pedido
+
+Cada participante puede indicar dos cantidades por producto:
+- **`quantity_needed`**: total de cajas que necesita para su colección (puede ser más de lo que se pide ahora).
+- **`quantity_this_order`**: lo que incluye en este pedido concreto (puede ser menos si se planea repartir en varios pedidos).
+
+Esto permite ver qué queda pendiente para pedidos futuros y planificar mejor.
+
+#### Catálogo de productos
+
+Los productos son reutilizables entre pedidos. Los más habituales son los protectores de caja para cada formato de juego. Cada producto tiene los tamaños de pack disponibles en la web del proveedor.
+
+Categorías habituales:
+- **Cajas de juego**: BluRay, BluRay Extra, DVD, 3DS, DS, PSP, PSVita, Switch, Xbox One…
+- **Cajas de consola**: PS4 Slim, PS5, Xbox 360, Xbox Series X, 3DS XL, DS…
+- **Otros**: inlays de mando, cajas especiales bajo demanda.
 
 #### Modelo de datos
 
-Un pedido tiene **cabecera** (el pedido en sí) y **líneas** (los productos que incluye), ya que un mismo pedido puede contener varios tipos de cajas.
+**Tabla `order_products`** — catálogo global de protectores *(ya creada y poblada)*:
+```sql
+CREATE TABLE order_products (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT NOT NULL,              -- ej: "Cajas tamaño BluRay"
+  packs      JSONB NOT NULL DEFAULT '[]',-- ej: [{"quantity":10,"price":8.99,"url":"..."}]
+  category   TEXT NOT NULL DEFAULT 'box'
+               CHECK (category IN ('box', 'console', 'other')),
+  notes      TEXT,
+  is_active  BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+Gestionada desde `/management/protectors` (sección admin). Datos de seed en `docs/backend/protectors-seed-data.md`.
 
-**Tabla `orders`:**
+**Tabla `orders`** — cabecera del pedido:
 ```sql
 CREATE TABLE orders (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  title         TEXT,                          -- referencia libre, ej: "Pedido marzo 2026"
-  placed_by     TEXT,                          -- nombre de quien hizo el pedido (puede ser un amigo)
-  status        TEXT NOT NULL DEFAULT 'draft'
-                  CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
-  order_date    DATE,
-  received_date DATE,
-  shipping_cost NUMERIC(10,2),
-  notes         TEXT,
-  created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title           TEXT,                        -- ej: "Pedido marzo 2026"
+  status          TEXT NOT NULL DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
+  order_date      DATE,
+  received_date   DATE,
+  shipping_cost   NUMERIC(10,2),               -- coste total de envío (se reparte entre miembros)
+  paypal_fee      NUMERIC(10,2),               -- fee total de PayPal (se reparte entre miembros)
+  discount_amount NUMERIC(10,2),               -- descuento puntual negociado (opcional)
+  notes           TEXT,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
 
-**Tabla `order_items`:**
+**Tabla `order_members`** — participantes del pedido:
 ```sql
-CREATE TABLE order_items (
+CREATE TABLE order_members (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role       TEXT NOT NULL DEFAULT 'member'
+               CHECK (role IN ('owner', 'member')),
+  joined_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(order_id, user_id)
+);
+```
+
+**Tabla `order_invitations`** — enlaces de invitación:
+```sql
+CREATE TABLE order_invitations (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  token      TEXT NOT NULL UNIQUE,             -- token aleatorio para la URL de invitación
+  expires_at TIMESTAMP WITH TIME ZONE,
+  used_by    UUID REFERENCES auth.users(id),   -- quién lo usó (null si aún no se ha usado)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Tabla `order_lines`** — productos incluidos en el pedido:
+```sql
+CREATE TABLE order_lines (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  product_type     TEXT NOT NULL,   -- ej: 'PS4', 'PS3', 'PS1', 'PS2', 'PS5', 'Xbox', 'Xbox 360', 'N64', 'Funko Pop', 'Consola PS4'...
-  product_name     TEXT,            -- descripción libre del producto exacto
-  quantity         INTEGER NOT NULL DEFAULT 1,
-  unit_price       NUMERIC(10,2),
-  for_user         TEXT,            -- nombre del amigo al que van destinadas estas cajas
+  product_id       UUID NOT NULL REFERENCES order_products(id),
+  unit_price       NUMERIC(10,2) NOT NULL,     -- snapshot del precio en el momento del pedido
+  pack_chosen      INTEGER,                    -- pack seleccionado por el owner (ej: 250)
+  quantity_ordered INTEGER,                    -- cantidad total real pedida al proveedor
+  notes            TEXT,
   created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
 
-**RLS:** solo el propio usuario puede ver y gestionar sus pedidos.
+**Tabla `order_line_allocations`** — cantidades por participante y línea:
+```sql
+CREATE TABLE order_line_allocations (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_line_id       UUID NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
+  user_id             UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  quantity_needed     INTEGER NOT NULL DEFAULT 0,     -- total que necesita para su colección
+  quantity_this_order INTEGER NOT NULL DEFAULT 0,     -- lo que incluye en este pedido
+  UNIQUE(order_line_id, user_id)
+);
+```
 
-#### Comportamiento
+**RLS:**
+- `orders`: el owner y los miembros pueden leer; solo el owner puede editar la cabecera.
+- `order_members` / `order_lines` / `order_line_allocations`: legibles por todos los miembros del pedido; cada miembro solo puede editar sus propias allocations.
+- `order_invitations`: solo el owner puede crear/revocar invitaciones.
 
-- Un pedido puede tener múltiples líneas: ej. 54× PS4, 64× PS3, 10× Funko Pop.
-- El campo `for_user` en cada línea indica a qué amigo van destinadas esas cajas, facilitando el reparto de costes.
-- El coste de envío se registra en la cabecera y se puede repartir manualmente entre los participantes.
-- Estados: `draft` (preparando), `ordered` (pedido hecho), `shipped` (enviado), `received` (recibido).
-- El seguimiento en tiempo real del envío se evalúa al implementar — depende de si boxprotectors.nl proporciona número de tracking integrable con alguna API de mensajería.
+#### Lógica de cálculo por persona
+
+Para cada miembro, el coste total se calcula como:
+
+```
+coste_productos   = Σ (quantity_this_order × unit_price) por cada línea
+parte_envio       = shipping_cost / número_de_miembros
+parte_paypal      = paypal_fee / número_de_miembros
+descuento_propo   = discount_amount × (coste_productos / total_productos_pedido)
+total_a_pagar     = coste_productos + parte_envio + parte_paypal - descuento_propo
+```
+
+#### Sugerencia de pack óptimo
+
+Para cada línea el sistema muestra:
+- Suma de `quantity_this_order` de todos los miembros.
+- Qué pack cubre ese total al menor coste unitario posible.
+- Cuántas unidades sobrarían (y a quién asignarlas, si se quiere).
+
+El owner toma la decisión final de qué pack elegir.
 
 #### Presentación
 
 - Nueva ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil).
-- Lista de pedidos con estado visual y totales.
-- Vista de detalle de pedido con todas las líneas y desglose por amigo.
-- Formulario para crear/editar pedido y añadir líneas dinámicamente.
+- **Lista de pedidos**: estado visual, total estimado, número de participantes.
+- **Vista de detalle**: tabla de productos con cantidades por participante, resumen de costes por persona, sugerencia de pack óptimo.
+- **Flujo de invitación**: botón "Invitar" genera un enlace copiable; el destinatario al abrirlo ve el pedido y puede unirse con un clic (requiere estar autenticado).
+- **Permisos visuales**: los miembros solo ven activo el input de sus propias cantidades; el owner ve todo editable.
+
+#### ~~Gestión de protectores (admin)~~ ✅ Implementado
+
+El catálogo de protectores está disponible en `/management/protectors` (pestaña "Protectores" en el panel de administración).
+
+El admin puede:
+- Crear/editar protectores (nombre, categoría, notas, packs con cantidad + precio + URL).
+- Activar/desactivar protectores (los desactivados no aparecen en nuevos pedidos pero se conservan en históricos).
+- Todas las acciones quedan registradas en el audit log.
+
+Al crear o editar un pedido, los protectores se cargarán directamente del catálogo activo.
 
 ---
 
@@ -411,6 +492,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Estrategia de actualización PWA forzada~~ ✅ Hecho
+
+`PwaUpdateService` reescrito con estrategia E: en rutas seguras (`/list`, `/wishlist`, `/settings`, etc.) muestra un overlay de pantalla completa con spinner y "Actualizando…" y recarga a los 400ms. En rutas de formulario (`/add`, `/update/:id`) espera a que el usuario navegue fuera y entonces aplica el mismo overlay. El SW se registra con `registerImmediately` (antes `registerWhenStable:30000`) y se comprueba `checkForUpdate()` al arrancar y en cada `visibilitychange` para detectar versiones nuevas lo antes posible.
+
+---
 
 ### ~~PWA (Progressive Web App)~~ ✅ Hecho
 

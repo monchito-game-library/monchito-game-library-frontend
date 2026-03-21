@@ -1,14 +1,24 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
@@ -22,15 +32,18 @@ import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 
-/** Shape returned by the store form dialog. */
+/** Shape emitted by the edit panel on save. */
 interface StoreFormResult {
   label: string;
   formatHint: GameFormatType | null;
 }
 
-/** Dialog component for adding or editing a store. */
+// ─────────────────────────────────────────────────────────────────────────────
+// Edit panel component (inline, below the page header)
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Component({
-  selector: 'app-store-form-dialog',
+  selector: 'app-store-edit-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -42,74 +55,184 @@ interface StoreFormResult {
     MatSelect,
     MatOption,
     MatButton,
-    MatDialogModule,
+    MatIcon,
     TranslocoPipe
   ],
   template: `
-    <h2 mat-dialog-title>
-      {{ (data.store ? 'management.stores.editTitle' : 'management.stores.addTitle') | transloco }}
-    </h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" class="store-form">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.stores.nameLabel' | transloco }}</mat-label>
-          <input matInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
-          @if (form.controls.name.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+    <div class="edit-panel">
+      <div class="edit-panel__header">
+        <h2 class="edit-panel__title">
+          {{ (store() ? 'management.stores.editTitle' : 'management.stores.addTitle') | transloco }}
+          @if (store()) {
+            <span class="edit-panel__store-name">— {{ store()!.label }}</span>
           }
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>
-          <mat-select formControlName="formatHint">
-            <mat-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</mat-option>
-            <mat-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</mat-option>
-            <mat-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        </h2>
+      </div>
+
+      <form [formGroup]="form" class="edit-panel__form">
+        <div class="edit-panel__fields">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'management.stores.nameLabel' | transloco }}</mat-label>
+            <input matInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
+            @if (form.controls.name.hasError('required')) {
+              <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>
+            <mat-select formControlName="formatHint">
+              <mat-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</mat-option>
+              <mat-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</mat-option>
+              <mat-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="edit-panel__actions">
+          @if (store()) {
+            <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
+              <mat-icon>delete_outline</mat-icon>
+              {{ 'common.delete' | transloco }}
+            </button>
+          }
+          <div class="edit-panel__actions-right">
+            <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+            <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="form.invalid">
+              {{ 'common.save' | transloco }}
+            </button>
+          </div>
+        </div>
       </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
-      <button mat-flat-button color="primary" (click)="onConfirm()" [disabled]="form.invalid">
-        {{ 'common.save' | transloco }}
-      </button>
-    </mat-dialog-actions>
+    </div>
   `,
   styles: [
     `
-      .store-form {
+      .edit-panel {
         display: flex;
         flex-direction: column;
+      }
+
+      .edit-panel__header {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 2rem 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .edit-panel__title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--mat-sys-on-surface);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+      }
+
+      .edit-panel__store-name {
+        font-weight: 400;
+        color: var(--mat-sys-on-surface-variant);
+      }
+
+      .edit-panel__form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.25rem 2rem 1rem;
+      }
+
+      .edit-panel__fields {
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: 0 0.75rem;
+        align-items: start;
+      }
+
+      .edit-panel__actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 0.5rem;
-        padding-top: 0.5rem;
-        min-width: 320px;
+      }
+
+      .edit-panel__actions-right {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: auto;
+      }
+
+      .edit-panel__delete-btn {
+        color: var(--mat-sys-error);
+        border-color: var(--mat-sys-error);
+      }
+
+      @media (max-width: 768px) {
+        .edit-panel__header {
+          padding: 0.75rem 1rem 0.5rem;
+        }
+
+        .edit-panel__store-name {
+          display: none;
+        }
+
+        .edit-panel__form {
+          padding: 0.25rem 1rem 1rem;
+        }
+
+        .edit-panel__fields {
+          grid-template-columns: 1fr;
+        }
       }
     `
   ]
 })
-export class StoreFormDialogComponent {
-  private readonly _dialogRef: MatDialogRef<StoreFormDialogComponent, StoreFormResult> = inject(MatDialogRef);
+export class StoreEditPanelComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
-  readonly data: { store: StoreModel | null } = inject(MAT_DIALOG_DATA);
+  /** The store to edit, or null when creating a new one. */
+  readonly store = input<StoreModel | null>(null);
+
+  /** Emitted when the user confirms the form. */
+  readonly saved = output<StoreFormResult>();
+
+  /** Emitted when the user cancels or closes the panel. */
+  readonly cancelled = output<void>();
+
+  /** Emitted when the user requests deletion of the current store. */
+  readonly deleted = output<void>();
 
   readonly form = this._fb.group({
-    name: [this.data.store ? this.data.store.label : '', Validators.required],
-    formatHint: [this.data.store?.formatHint ?? (null as GameFormatType | null)]
+    name: ['' as string, Validators.required],
+    formatHint: [null as GameFormatType | null]
   });
 
+  constructor() {
+    effect(() => {
+      const s = this.store();
+      this.form.patchValue({ name: s?.label ?? '', formatHint: s?.formatHint ?? null });
+      this.form.markAsPristine();
+      this.form.markAsUntouched();
+    });
+  }
+
   /**
-   * Closes the dialog returning the new or updated store entry.
+   * Validates the form and emits the result to the parent component.
    */
-  onConfirm(): void {
+  onSave(): void {
     if (this.form.invalid) return;
     const raw = this.form.getRawValue();
-    this._dialogRef.close({
+    this.saved.emit({
       label: raw.name as string,
       formatHint: raw.formatHint as GameFormatType | null
     });
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page component
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** Page for managing the shared store catalog. */
 @Component({
@@ -118,7 +241,7 @@ export class StoreFormDialogComponent {
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIconButton, MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [StoreEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe]
 })
 export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
@@ -133,17 +256,58 @@ export class StoresManagementComponent implements OnInit {
   /** All stores loaded from Supabase. */
   readonly stores: WritableSignal<StoreModel[]> = signal([]);
 
+  /** Store open in the edit panel; null when adding new; undefined when panel is closed. */
+  readonly selectedStore: WritableSignal<StoreModel | null | undefined> = signal(undefined);
+
+  /** Whether the edit panel is visible. */
+  readonly panelOpen: WritableSignal<boolean> = signal(false);
+
   async ngOnInit(): Promise<void> {
     await this._loadStores();
   }
 
   /**
-   * Opens the add-store dialog and persists the new entry to Supabase.
+   * Opens the edit panel in "add new store" mode.
    */
   onAddStore(): void {
-    const ref = this._dialog.open(StoreFormDialogComponent, { data: { store: null } });
-    ref.afterClosed().subscribe(async (result?: StoreFormResult) => {
-      if (!result) return;
+    this.selectedStore.set(null);
+    this.panelOpen.set(true);
+  }
+
+  /**
+   * Selects a store and opens the edit panel.
+   *
+   * @param {StoreModel} store - The store to edit
+   */
+  onSelectStore(store: StoreModel): void {
+    this.selectedStore.set(store);
+    this.panelOpen.set(true);
+  }
+
+  /**
+   * Closes the edit panel and clears the selection.
+   */
+  onClosePanel(): void {
+    this.panelOpen.set(false);
+    this.selectedStore.set(undefined);
+  }
+
+  /**
+   * Persists the new or updated store and closes the panel.
+   *
+   * @param {StoreFormResult} result
+   */
+  async onSaved(result: StoreFormResult): Promise<void> {
+    const current = this.selectedStore();
+    if (current) {
+      await this._storeUseCases.updateStore(current.id, { label: result.label, formatHint: result.formatHint });
+      void this._auditLogUseCases.log({
+        action: 'store.update',
+        entityType: 'store',
+        entityId: String(current.id),
+        description: result.label
+      });
+    } else {
       await this._storeUseCases.addStore({ label: result.label, formatHint: result.formatHint }, this._userId);
       void this._auditLogUseCases.log({
         action: 'store.create',
@@ -151,36 +315,17 @@ export class StoresManagementComponent implements OnInit {
         entityId: null,
         description: result.label
       });
-      await this._loadStores();
-    });
+    }
+    await this._loadStores();
+    this.onClosePanel();
   }
 
   /**
-   * Opens the edit dialog for a store and updates the entry in Supabase.
-   *
-   * @param {StoreModel} store - The store entry to edit
+   * Shows a confirmation dialog and removes the selected store on confirm.
    */
-  onEditStore(store: StoreModel): void {
-    const ref = this._dialog.open(StoreFormDialogComponent, { data: { store } });
-    ref.afterClosed().subscribe(async (result?: StoreFormResult) => {
-      if (!result) return;
-      await this._storeUseCases.updateStore(store.id, { label: result.label, formatHint: result.formatHint });
-      void this._auditLogUseCases.log({
-        action: 'store.update',
-        entityType: 'store',
-        entityId: String(store.id),
-        description: result.label
-      });
-      await this._loadStores();
-    });
-  }
-
-  /**
-   * Opens a confirmation dialog and removes the store from Supabase on confirm.
-   *
-   * @param {StoreModel} store - The store entry to delete
-   */
-  onDeleteStore(store: StoreModel): void {
+  onDeleteStore(): void {
+    const store = this.selectedStore();
+    if (!store) return;
     const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('management.stores.deleteConfirm', { name: store.label }),
@@ -197,6 +342,7 @@ export class StoresManagementComponent implements OnInit {
         description: store.label
       });
       await this._loadStores();
+      this.onClosePanel();
     });
   }
 

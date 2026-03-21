@@ -461,6 +461,74 @@ ALTER TABLE user_games ADD CONSTRAINT user_games_status_check
 
 
 -- ============================================================
+-- 11. TABLA: order_products
+--     Catálogo global de productos para pedidos grupales.
+--     Gestionado por admins desde /management/products.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS order_products (
+  id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name            TEXT        NOT NULL,
+  unit_price      NUMERIC(10,4) NOT NULL CHECK (unit_price > 0),
+  available_packs INTEGER[]   NOT NULL DEFAULT '{}',
+  category        TEXT        NOT NULL DEFAULT 'box'
+                              CHECK (category IN ('box', 'console', 'other')),
+  notes           TEXT,
+  is_active       BOOLEAN     NOT NULL DEFAULT TRUE,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_products_active
+  ON order_products (is_active);
+
+DROP TRIGGER IF EXISTS trg_order_products_updated_at ON order_products;
+CREATE TRIGGER trg_order_products_updated_at
+  BEFORE UPDATE ON order_products
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE order_products ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read active products"
+  ON order_products FOR SELECT
+  TO authenticated
+  USING (is_active = TRUE);
+
+CREATE POLICY "Admins can read all products"
+  ON order_products FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_preferences
+      WHERE user_preferences.user_id = auth.uid()
+        AND user_preferences.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can insert products"
+  ON order_products FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_preferences
+      WHERE user_preferences.user_id = auth.uid()
+        AND user_preferences.role = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can update products"
+  ON order_products FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_preferences
+      WHERE user_preferences.user_id = auth.uid()
+        AND user_preferences.role = 'admin'
+    )
+  );
+
+
+-- ============================================================
 -- STORAGE BUCKETS
 -- (configurar en Supabase Dashboard > Storage, no en SQL)
 --
