@@ -1,6 +1,6 @@
-# Order Products — Seed Data
+# Protectores — Seed Data
 
-Datos reales del proveedor para construir la migración de `order_products`.
+Datos reales del proveedor para la tabla `order_products`.
 Cada pack tiene cantidad, precio y URL directa al producto.
 
 ---

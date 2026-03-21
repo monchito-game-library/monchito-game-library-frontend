@@ -12,7 +12,7 @@
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
-| [Pedidos (`/orders`) + gestión de productos](#pedidos-orders) | Media-baja |
+| [Pedidos (`/orders`)](#pedidos-orders) | Media-baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
@@ -186,7 +186,7 @@ Nueva sección en el nav que sustituye las estadísticas actuales de la colecci�
 
 ---
 
-### Pedidos (`/orders`)
+### Pedidos (`/orders`) *(catálogo de protectores ya implementado — ver `/management/protectors`)*
 
 Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
 
@@ -220,19 +220,20 @@ Categorías habituales:
 
 #### Modelo de datos
 
-**Tabla `order_products`** — catálogo global de productos:
+**Tabla `order_products`** — catálogo global de protectores *(ya creada y poblada)*:
 ```sql
 CREATE TABLE order_products (
-  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name             TEXT NOT NULL,              -- ej: "Cajas tamaño BluRay"
-  unit_price       NUMERIC(10,2) NOT NULL,     -- precio por unidad en €
-  available_packs  INTEGER[] NOT NULL,         -- ej: {1,10,25,50,100,250}
-  category         TEXT NOT NULL DEFAULT 'box'
-                     CHECK (category IN ('box', 'console', 'other')),
-  notes            TEXT,
-  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT NOT NULL,              -- ej: "Cajas tamaño BluRay"
+  packs      JSONB NOT NULL DEFAULT '[]',-- ej: [{"quantity":10,"price":8.99,"url":"..."}]
+  category   TEXT NOT NULL DEFAULT 'box'
+               CHECK (category IN ('box', 'console', 'other')),
+  notes      TEXT,
+  is_active  BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+Gestionada desde `/management/protectors` (sección admin). Datos de seed en `docs/backend/protectors-seed-data.md`.
 
 **Tabla `orders`** — cabecera del pedido:
 ```sql
@@ -338,16 +339,16 @@ El owner toma la decisión final de qué pack elegir.
 - **Flujo de invitación**: botón "Invitar" genera un enlace copiable; el destinatario al abrirlo ve el pedido y puede unirse con un clic (requiere estar autenticado).
 - **Permisos visuales**: los miembros solo ven activo el input de sus propias cantidades; el owner ve todo editable.
 
-#### Gestión de productos (admin)
+#### ~~Gestión de protectores (admin)~~ ✅ Implementado
 
-El catálogo de productos se gestiona desde la sección de administración existente (`/management`), añadiendo una nueva pestaña **"Productos"** junto a las de Usuarios y Audit Log.
+El catálogo de protectores está disponible en `/management/protectors` (pestaña "Protectores" en el panel de administración).
 
-Desde ahí el admin puede:
-- Crear productos (nombre, precio unitario, packs disponibles, categoría, notas).
-- Editar el precio cuando cambie en boxprotectors.nl.
-- Activar/desactivar productos (los desactivados no aparecen al crear un pedido pero se conservan en pedidos históricos).
+El admin puede:
+- Crear/editar protectores (nombre, categoría, notas, packs con cantidad + precio + URL).
+- Activar/desactivar protectores (los desactivados no aparecen en nuevos pedidos pero se conservan en históricos).
+- Todas las acciones quedan registradas en el audit log.
 
-Al crear o editar un pedido, los productos se cargan directamente del catálogo activo — el usuario no introduce precios ni packs manualmente.
+Al crear o editar un pedido, los protectores se cargarán directamente del catálogo activo.
 
 ---
 
