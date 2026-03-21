@@ -56,6 +56,14 @@
 
 ## SCSS
 
+### Espaciados
+
+- Usar siempre **`rem`** para `gap`, `margin` y `padding`. Nunca `px`.
+- Los valores deben ser **múltiplos de 0.25rem**: `0.25`, `0.5`, `0.75`, `1`, `1.25`, `1.5`, `1.75`, `2`…
+- Excepción tolerada: micro-espaciados decorativos internos de chips, badges y pills (ej. `padding: 2px 8px`) pueden mantenerse en `px`.
+
+### Clases y modificadores
+
 - Usar **clases completas** dentro de los bloques, nunca `&__elemento`.
 - Los **modificadores** (`--modificador`) sí pueden usar `&--modificador` directamente sobre el elemento al que pertenecen.
 
