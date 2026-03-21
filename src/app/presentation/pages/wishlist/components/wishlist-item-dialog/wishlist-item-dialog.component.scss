@@ -1,5 +1,5 @@
 // Remove lateral padding from the search panel — the dialog already provides its own padding.
-::ng-deep app-game-search-panel {
+:host ::ng-deep app-game-search-panel {
   .game-search-panel__input-wrapper,
   .game-search-panel__results {
     padding-left: 0;
