@@ -349,6 +349,7 @@ export class GameFormComponent implements OnInit {
           is_favorite: game.isFavorite
         });
         this._loadingEditData = false;
+        this._formatTouchedByUser = false;
 
         this._coverPosition.set(game.coverPosition ?? null);
 
@@ -654,8 +655,11 @@ export class GameFormComponent implements OnInit {
    */
   private _onStoreChange(id: string | null): void {
     if (this._loadingEditData) return;
-    this._formatTouchedByUser = false;
-    if (!id) return;
+    if (!id) {
+      this._formatTouchedByUser = false;
+      return;
+    }
+    if (this._formatTouchedByUser) return;
     const storeModel: StoreModel | undefined = this._storeModels().find((s: StoreModel) => s.id === id);
     if (storeModel?.formatHint) {
       this.form.controls.format.setValue(storeModel.formatHint);
