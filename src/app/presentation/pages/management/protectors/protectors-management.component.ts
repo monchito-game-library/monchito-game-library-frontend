@@ -24,19 +24,23 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
-  ORDER_PRODUCT_USE_CASES,
-  OrderProductUseCasesContract
-} from '@/domain/use-cases/order-product/order-product.use-cases.contract';
-import { OrderProductModel, OrderProductPack } from '@/models/order-product/order-product.model';
-import { OrderProductCategory } from '@/types/order-product-category.type';
+  AUDIT_LOG_USE_CASES,
+  AuditLogUseCasesContract
+} from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
+import {
+  PROTECTOR_USE_CASES,
+  ProtectorUseCasesContract
+} from '@/domain/use-cases/protector/protector.use-cases.contract';
+import { ProtectorModel, ProtectorPack } from '@/models/protector/protector.model';
+import { ProtectorCategory } from '@/types/protector-category.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 
 /** Shape emitted by the edit panel on save. */
-interface ProductFormResult {
+interface ProtectorFormResult {
   name: string;
-  packs: OrderProductPack[];
-  category: OrderProductCategory;
+  packs: ProtectorPack[];
+  category: ProtectorCategory;
   notes: string | null;
 }
 
@@ -45,7 +49,7 @@ interface ProductFormResult {
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Component({
-  selector: 'app-product-edit-panel',
+  selector: 'app-protector-edit-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -67,9 +71,9 @@ interface ProductFormResult {
     <div class="edit-panel">
       <div class="edit-panel__header">
         <h2 class="edit-panel__title">
-          {{ (product() ? 'management.products.editTitle' : 'management.products.addTitle') | transloco }}
-          @if (product()) {
-            <span class="edit-panel__product-name">— {{ product()!.name }}</span>
+          {{ (protector() ? 'management.products.editTitle' : 'management.products.addTitle') | transloco }}
+          @if (protector()) {
+            <span class="edit-panel__protector-name">— {{ protector()!.name }}</span>
           }
         </h2>
       </div>
@@ -153,16 +157,16 @@ interface ProductFormResult {
         </div>
 
         <div class="edit-panel__actions">
-          @if (product()) {
+          @if (protector()) {
             <button
               mat-stroked-button
               type="button"
               (click)="toggled.emit()"
-              [class.edit-panel__deactivate-btn]="product()!.isActive"
-              [class.edit-panel__activate-btn]="!product()!.isActive">
-              <mat-icon>{{ product()!.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+              [class.edit-panel__deactivate-btn]="protector()!.isActive"
+              [class.edit-panel__activate-btn]="!protector()!.isActive">
+              <mat-icon>{{ protector()!.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
               {{
-                (product()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
+                (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
                   | transloco
               }}
             </button>
@@ -208,7 +212,7 @@ interface ProductFormResult {
         flex-wrap: wrap;
       }
 
-      .edit-panel__product-name {
+      .edit-panel__protector-name {
         font-weight: 400;
         color: var(--mat-sys-on-surface-variant);
       }
@@ -302,7 +306,7 @@ interface ProductFormResult {
           padding: 0.75rem 1rem 0.5rem;
         }
 
-        .edit-panel__product-name {
+        .edit-panel__protector-name {
           display: none;
         }
 
@@ -338,31 +342,31 @@ interface ProductFormResult {
     `
   ]
 })
-export class ProductEditPanelComponent {
+export class ProtectorEditPanelComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
-  /** The product to edit, or null when creating a new one. */
-  readonly product = input<OrderProductModel | null>(null);
+  /** The protector to edit, or null when creating a new one. */
+  readonly protector = input<ProtectorModel | null>(null);
 
   /** Emitted when the user confirms the form. */
-  readonly saved = output<ProductFormResult>();
+  readonly saved = output<ProtectorFormResult>();
 
   /** Emitted when the user cancels or closes the panel. */
   readonly cancelled = output<void>();
 
-  /** Emitted when the user toggles the active state of the product. */
+  /** Emitted when the user toggles the active state of the protector. */
   readonly toggled = output<void>();
 
   readonly form = this._fb.group({
     name: ['' as string, Validators.required],
-    category: ['box' as OrderProductCategory],
+    category: ['box' as ProtectorCategory],
     notes: [null as string | null],
     packs: this._fb.array([])
   });
 
   constructor() {
     effect(() => {
-      const p = this.product();
+      const p = this.protector();
       this.form.patchValue({ name: p?.name ?? '', category: p?.category ?? 'box', notes: p?.notes ?? null });
       while (this.packsArray.length) {
         this.packsArray.removeAt(0, { emitEvent: false });
@@ -413,7 +417,7 @@ export class ProductEditPanelComponent {
     const raw = this.form.getRawValue();
     this.saved.emit({
       name: raw.name as string,
-      category: raw.category as OrderProductCategory,
+      category: raw.category as ProtectorCategory,
       notes: raw.notes?.trim() || null,
       packs: (raw.packs as { quantity: number; price: number; url: string | null }[]).map((p) => ({
         quantity: Number(p.quantity),
@@ -442,49 +446,50 @@ export class ProductEditPanelComponent {
 // ─────────────────────────────────────────────────────────────────────────────
 
 @Component({
-  selector: 'app-products-management',
-  templateUrl: './products-management.component.html',
-  styleUrl: './products-management.component.scss',
+  selector: 'app-protectors-management',
+  templateUrl: './protectors-management.component.html',
+  styleUrl: './protectors-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProductEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe, DecimalPipe]
+  imports: [ProtectorEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe, DecimalPipe]
 })
-export class ProductsManagementComponent implements OnInit {
+export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-  private readonly _productUseCases: OrderProductUseCasesContract = inject(ORDER_PRODUCT_USE_CASES);
+  private readonly _protectorUseCases: ProtectorUseCasesContract = inject(PROTECTOR_USE_CASES);
+  private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
 
-  /** Whether the product list is being loaded. */
+  /** Whether the protector list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
-  /** All products loaded from Supabase. */
-  readonly products: WritableSignal<OrderProductModel[]> = signal([]);
+  /** All protectors loaded from Supabase. */
+  readonly protectors: WritableSignal<ProtectorModel[]> = signal([]);
 
-  /** Product open in the edit panel; null when adding new; undefined when panel is closed. */
-  readonly selectedProduct: WritableSignal<OrderProductModel | null | undefined> = signal(undefined);
+  /** Protector open in the edit panel; null when adding new; undefined when panel is closed. */
+  readonly selectedProtector: WritableSignal<ProtectorModel | null | undefined> = signal(undefined);
 
   /** Whether the edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal(false);
 
   async ngOnInit(): Promise<void> {
-    await this._loadProducts();
+    await this._loadProtectors();
   }
 
   /**
-   * Opens the edit panel in "add new product" mode.
+   * Opens the edit panel in "add new protector" mode.
    */
-  onAddProduct(): void {
-    this.selectedProduct.set(null);
+  onAddProtector(): void {
+    this.selectedProtector.set(null);
     this.panelOpen.set(true);
   }
 
   /**
-   * Selects a product and opens the edit panel.
+   * Selects a protector and opens the edit panel.
    *
-   * @param {OrderProductModel} product
+   * @param {ProtectorModel} protector
    */
-  onSelectProduct(product: OrderProductModel): void {
-    this.selectedProduct.set(product);
+  onSelectProtector(protector: ProtectorModel): void {
+    this.selectedProtector.set(protector);
     this.panelOpen.set(true);
   }
 
@@ -493,75 +498,93 @@ export class ProductsManagementComponent implements OnInit {
    */
   onClosePanel(): void {
     this.panelOpen.set(false);
-    this.selectedProduct.set(undefined);
+    this.selectedProtector.set(undefined);
   }
 
   /**
-   * Persists the new or updated product and closes the panel.
+   * Persists the new or updated protector and closes the panel.
    *
-   * @param {ProductFormResult} result
+   * @param {ProtectorFormResult} result
    */
-  async onSaved(result: ProductFormResult): Promise<void> {
-    const current = this.selectedProduct();
+  async onSaved(result: ProtectorFormResult): Promise<void> {
+    const current = this.selectedProtector();
     if (current) {
-      await this._productUseCases.updateProduct(current.id, result);
+      await this._protectorUseCases.updateProtector(current.id, result);
+      void this._auditLogUseCases.log({
+        action: 'protector.update',
+        entityType: 'protector',
+        entityId: current.id,
+        description: result.name
+      });
     } else {
-      await this._productUseCases.addProduct({ ...result, isActive: true });
+      await this._protectorUseCases.addProtector({ ...result, isActive: true });
+      void this._auditLogUseCases.log({
+        action: 'protector.create',
+        entityType: 'protector',
+        entityId: null,
+        description: result.name
+      });
     }
-    await this._loadProducts();
+    await this._loadProtectors();
     this.onClosePanel();
   }
 
   /**
-   * Shows a confirmation dialog and toggles the active state of the product.
+   * Shows a confirmation dialog and toggles the active state of the protector.
    *
-   * @param {OrderProductModel} product
+   * @param {ProtectorModel} protector
    */
-  onToggleActive(product: OrderProductModel): void {
-    const nextActive: boolean = !product.isActive;
+  onToggleActive(protector: ProtectorModel): void {
+    const nextActive: boolean = !protector.isActive;
     const key: string = nextActive ? 'management.products.activateConfirm' : 'management.products.deactivateConfirm';
     const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this._transloco.translate(key, { name: product.name }),
+        title: this._transloco.translate(key, { name: protector.name }),
         message: ''
       } satisfies ConfirmDialogInterface
     });
     ref.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
-      await this._productUseCases.toggleProductActive(product.id, nextActive);
-      await this._loadProducts();
+      await this._protectorUseCases.toggleProtectorActive(protector.id, nextActive);
+      void this._auditLogUseCases.log({
+        action: 'protector.toggle_active',
+        entityType: 'protector',
+        entityId: protector.id,
+        description: `${protector.name} → ${nextActive ? 'active' : 'inactive'}`
+      });
+      await this._loadProtectors();
     });
   }
 
   /**
-   * Returns the i18n label for a product category.
+   * Returns the i18n label for a protector category.
    *
-   * @param {OrderProductCategory} category
+   * @param {ProtectorCategory} category
    */
-  getCategoryLabel(category: OrderProductCategory): string {
+  getCategoryLabel(category: ProtectorCategory): string {
     return this._transloco.translate(
       `management.products.category${category.charAt(0).toUpperCase() + category.slice(1)}`
     );
   }
 
   /**
-   * Returns the cheapest unit price across all packs of the product.
+   * Returns the cheapest unit price across all packs of the protector.
    *
-   * @param {OrderProductModel} product
+   * @param {ProtectorModel} protector
    */
-  getMinUnitPrice(product: OrderProductModel): number {
-    if (!product.packs.length) return 0;
-    return Math.min(...product.packs.map((p) => p.price / p.quantity));
+  getMinUnitPrice(protector: ProtectorModel): number {
+    if (!protector.packs.length) return 0;
+    return Math.min(...protector.packs.map((p) => p.price / p.quantity));
   }
 
   /**
-   * Fetches all products from Supabase and updates the products signal.
+   * Fetches all protectors from Supabase and updates the protectors signal.
    */
-  private async _loadProducts(): Promise<void> {
+  private async _loadProtectors(): Promise<void> {
     this.loading.set(true);
     try {
-      const products: OrderProductModel[] = await this._productUseCases.getAllProducts();
-      this.products.set(products);
+      const protectors: ProtectorModel[] = await this._protectorUseCases.getAllProtectors();
+      this.protectors.set(protectors);
     } finally {
       this.loading.set(false);
     }

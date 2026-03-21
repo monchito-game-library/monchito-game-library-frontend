@@ -444,7 +444,10 @@
         "store_create": "Store created",
         "store_update": "Store updated",
         "store_delete": "Store deleted",
-        "user_role_change": "User role changed"
+        "user_role_change": "User role changed",
+        "protector_create": "Protector created",
+        "protector_update": "Protector updated",
+        "protector_toggle_active": "Protector toggled active"
       }
     },
     "users": {
