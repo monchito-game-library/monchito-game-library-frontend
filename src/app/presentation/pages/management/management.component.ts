@@ -26,6 +26,7 @@ export class ManagementComponent {
   readonly sections: ManagementSection[] = [
     { icon: 'storefront', label: 'management.nav.stores', route: 'stores' },
     { icon: 'manage_accounts', label: 'management.nav.users', route: 'users' },
+    { icon: 'inventory_2', label: 'management.nav.products', route: 'protectors' },
     { icon: 'manage_history', label: 'management.nav.auditLog', route: 'audit-log' }
   ];
 }
