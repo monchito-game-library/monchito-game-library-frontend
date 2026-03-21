@@ -9,7 +9,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
@@ -52,6 +52,7 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CurrencyPipe,
     DecimalPipe,
     FormsModule,
     ScrollingModule,
