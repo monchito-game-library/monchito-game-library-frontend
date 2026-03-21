@@ -21,6 +21,11 @@ export const managementRoutes: Routes = [
         path: 'audit-log',
         loadComponent: () =>
           import('./audit-log/audit-log-management.component').then((m) => m.AuditLogManagementComponent)
+      },
+      {
+        path: 'protectors',
+        loadComponent: () =>
+          import('./protectors/protectors-management.component').then((m) => m.ProtectorsManagementComponent)
       }
     ]
   }

@@ -399,7 +399,42 @@
     "nav": {
       "stores": "Stores",
       "users": "Users",
-      "auditLog": "Activity log"
+      "auditLog": "Activity log",
+      "products": "Protectors"
+    },
+    "products": {
+      "title": "Protector catalogue",
+      "addBtn": "New protector",
+      "editTitle": "Edit protector",
+      "addTitle": "New protector",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. BluRay size boxes",
+      "categoryLabel": "Category",
+      "categoryBox": "Game box",
+      "categoryConsole": "Console box",
+      "categoryOther": "Other",
+      "unitPriceLabel": "Unit price (€)",
+      "unitPriceMin": "Price must be greater than 0",
+      "availablePacksLabel": "Available packs",
+      "availablePacksPlaceholder": "e.g. 1, 10, 25, 50, 100, 250",
+      "availablePacksHint": "Comma-separated quantities",
+      "availablePacksError": "Enter at least one valid quantity",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "e.g. Available on special order only",
+      "empty": "No products in the catalogue yet.",
+      "inactive": "Inactive",
+      "deactivateBtn": "Deactivate",
+      "activateBtn": "Activate",
+      "deactivateConfirm": "Deactivate «{{ name }}»? It will no longer appear in new orders but will be kept in existing ones.",
+      "activateConfirm": "Re-activate «{{ name }}»?",
+      "packsTitle": "Available packs",
+      "addPack": "Add pack",
+      "packsEmpty": "Add at least one pack",
+      "packQty": "Quantity",
+      "packPrice": "Total price",
+      "packUrl": "URL (optional)",
+      "fromPrice": "From",
+      "openPackUrl": "View on supplier's website"
     },
     "auditLog": {
       "title": "Activity log",
@@ -409,7 +444,10 @@
         "store_create": "Store created",
         "store_update": "Store updated",
         "store_delete": "Store deleted",
-        "user_role_change": "User role changed"
+        "user_role_change": "User role changed",
+        "protector_create": "Protector created",
+        "protector_update": "Protector updated",
+        "protector_toggle_active": "Protector toggled active"
       }
     },
     "users": {
