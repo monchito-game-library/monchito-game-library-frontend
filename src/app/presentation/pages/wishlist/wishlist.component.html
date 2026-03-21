@@ -71,24 +71,24 @@
   </div>
 }
 
-<!-- ─── MOBILE: SEARCH MODE ───────────────────────────────────────────────── -->
+<!-- ─── SEARCH MODE ───────────────────────────────────────────────────────── -->
 @if (viewMode() === 'search') {
-  <div class="wishlist-mobile-view">
-    <header class="wishlist-mobile-view__header">
+  <div class="wishlist-view">
+    <header class="wishlist-view__header">
       <button mat-icon-button type="button" (click)="onMobileCancel()" [attr.aria-label]="'common.cancel' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1 class="wishlist-mobile-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
+      <h1 class="wishlist-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
     </header>
-    <p class="wishlist-mobile-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
+    <p class="wishlist-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
     <app-game-search-panel (gameSelected)="onMobileGameSelected($event)" />
   </div>
 }
 
-<!-- ─── MOBILE: FORM MODE ─────────────────────────────────────────────────── -->
+<!-- ─── FORM MODE ─────────────────────────────────────────────────────────── -->
 @if (viewMode() === 'form') {
-  <div class="wishlist-mobile-view">
-    <header class="wishlist-mobile-view__header">
+  <div class="wishlist-view">
+    <header class="wishlist-view__header">
       <button
         mat-icon-button
         type="button"
@@ -96,36 +96,31 @@
         [attr.aria-label]="'common.cancel' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1 class="wishlist-mobile-view__title">
+      <h1 class="wishlist-view__title">
         {{ (pendingCatalogEntry() ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
       </h1>
     </header>
 
     <!-- Selected game preview (add mode only) -->
     @if (pendingCatalogEntry(); as game) {
-      <div class="wishlist-mobile-view__game-preview">
+      <div class="wishlist-view__game-preview">
         @if (game.image_url) {
-          <img
-            class="wishlist-mobile-view__game-cover"
-            [src]="game.image_url"
-            [alt]="game.title"
-            width="48"
-            height="64" />
+          <img class="wishlist-view__game-cover" [src]="game.image_url" [alt]="game.title" width="48" height="64" />
         }
-        <div class="wishlist-mobile-view__game-info">
-          <span class="wishlist-mobile-view__game-title">{{ game.title }}</span>
+        <div class="wishlist-view__game-info">
+          <span class="wishlist-view__game-title">{{ game.title }}</span>
           @if (game.released_date) {
-            <span class="wishlist-mobile-view__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
+            <span class="wishlist-view__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
           }
         </div>
       </div>
     }
 
-    <form [formGroup]="mobileForm" class="wishlist-mobile-view__form">
+    <form [formGroup]="mobileForm" class="wishlist-view__form">
       <!-- Priority (optional, default 3) -->
-      <div class="wishlist-mobile-view__priority">
-        <span class="wishlist-mobile-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
-        <div class="wishlist-mobile-view__stars">
+      <div class="wishlist-view__priority">
+        <span class="wishlist-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
+        <div class="wishlist-view__stars">
           @for (level of priorityOptions; track level) {
             <button
               mat-icon-button
@@ -138,9 +133,9 @@
         </div>
       </div>
 
-      <!-- Platform (required in add, static in edit) -->
+      <!-- Platform (required in add, static chip in edit) -->
       @if (pendingCatalogEntry()) {
-        <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+        <mat-form-field appearance="outline" class="wishlist-view__field">
           <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
           <mat-select formControlName="platform">
             @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
@@ -151,10 +146,17 @@
             <mat-error>{{ 'wishlist.fields.platformRequired' | transloco }}</mat-error>
           }
         </mat-form-field>
+      } @else if (mobileForm.controls.platform.value) {
+        <div class="wishlist-view__platform-display">
+          <span class="wishlist-view__label">{{ 'wishlist.fields.platform' | transloco }}</span>
+          <span class="wishlist-view__platform-chip wishlist-view__platform-chip--selected">{{
+            mobileForm.controls.platform.value
+          }}</span>
+        </div>
       }
 
       <!-- Desired price (required) -->
-      <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+      <mat-form-field appearance="outline" class="wishlist-view__field">
         <mat-label>{{ 'wishlist.fields.desiredPrice' | transloco }}</mat-label>
         <input
           matInput
@@ -169,7 +171,7 @@
       </mat-form-field>
 
       <!-- Notes (optional) -->
-      <mat-form-field appearance="outline" class="wishlist-mobile-view__field">
+      <mat-form-field appearance="outline" class="wishlist-view__field">
         <mat-label>{{ 'wishlist.fields.notes' | transloco }}</mat-label>
         <textarea
           matInput
@@ -179,7 +181,7 @@
       </mat-form-field>
     </form>
 
-    <div class="wishlist-mobile-view__actions">
+    <div class="wishlist-view__actions">
       <button mat-stroked-button type="button" (click)="onMobileCancel()">{{ 'common.cancel' | transloco }}</button>
       <button
         mat-flat-button
