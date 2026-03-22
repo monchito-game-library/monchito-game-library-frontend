@@ -58,4 +58,38 @@ describe('AuditLogManagementComponent', () => {
       expect(transloco.translate).toHaveBeenCalledWith('management.auditLog.actions.store_create');
     });
   });
+
+  describe('_loadEntries (vía ngOnInit)', () => {
+    it('carga entradas y pone loading a false', async () => {
+      const auditLogUseCases = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
+      const mockEntries = [
+        {
+          id: '1',
+          action: 'store.create',
+          entityType: 'store',
+          entityId: '1',
+          description: 'Amazon',
+          userId: 'u1',
+          createdAt: new Date()
+        }
+      ];
+      auditLogUseCases.getRecentLogs.mockResolvedValue(mockEntries);
+
+      await component.ngOnInit();
+
+      expect(component.entries()).toEqual(mockEntries);
+      expect(component.loading()).toBe(false);
+    });
+
+    it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
+      const auditLogUseCases = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
+      auditLogUseCases.getRecentLogs.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.ngOnInit();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.loading()).toBe(false);
+    });
+  });
 });

@@ -73,5 +73,57 @@ describe('UsersManagementComponent', () => {
       await component.onRoleChange(user, 'user');
       expect(useCases.setUserRole).not.toHaveBeenCalled();
     });
+
+    it('actualiza el rol del usuario en la lista si la llamada tiene éxito', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.setUserRole.mockResolvedValue(undefined);
+      component.users.set([
+        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+      ]);
+
+      await component.onRoleChange(component.users()[0], 'admin');
+
+      expect(useCases.setUserRole).toHaveBeenCalledWith('user-2', 'admin');
+      expect(component.users()[0].role).toBe('admin');
+      expect(component.updatingUserId()).toBeNull();
+    });
+
+    it('muestra snackbar de error y resetea updatingUserId si setUserRole falla', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.setUserRole.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      component.users.set([
+        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+      ]);
+
+      await component.onRoleChange(component.users()[0], 'admin');
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.updatingUserId()).toBeNull();
+    });
+  });
+
+  describe('_loadUsers (vía ngOnInit)', () => {
+    it('carga usuarios y pone loading a false', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      const mockUsers = [{ userId: 'u1', email: 'a@b.com', role: 'user', avatarUrl: null, displayName: null }];
+      useCases.getAllUsers.mockResolvedValue(mockUsers);
+
+      await component.ngOnInit();
+
+      expect(component.users()).toEqual(mockUsers);
+      expect(component.loading()).toBe(false);
+    });
+
+    it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.getAllUsers.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.ngOnInit();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.loading()).toBe(false);
+    });
   });
 });

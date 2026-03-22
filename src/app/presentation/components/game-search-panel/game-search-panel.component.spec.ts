@@ -58,4 +58,62 @@ describe('GameSearchPanelComponent', () => {
       expect(spy).toHaveBeenCalledWith(mockGame);
     });
   });
+
+  describe('ngOnInit con initialQuery', () => {
+    it('ejecuta _performSearch si initialQuery no está vacío', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.searchGames.mockResolvedValue([mockGame]);
+
+      fixture.componentRef.setInput('initialQuery', 'god of war');
+      await component.ngOnInit();
+
+      expect(catalogUseCases.searchGames).toHaveBeenCalledWith('god of war', 1, 20);
+      expect(component.searchResults()).toEqual([mockGame]);
+      expect(component.searchLoading()).toBe(false);
+    });
+
+    it('no ejecuta _performSearch si initialQuery está vacío', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+
+      fixture.componentRef.setInput('initialQuery', '   ');
+      await component.ngOnInit();
+
+      expect(catalogUseCases.searchGames).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('_performSearch (vía ngOnInit)', () => {
+    it('pone searchResults a [] si la búsqueda falla', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.searchGames.mockRejectedValue(new Error('fail'));
+
+      fixture.componentRef.setInput('initialQuery', 'zelda');
+      await component.ngOnInit();
+
+      expect(component.searchResults()).toEqual([]);
+      expect(component.searchLoading()).toBe(false);
+    });
+
+    it('pone searchResults a [] si la consulta es vacía', async () => {
+      component.searchResults.set([mockGame]);
+      await (component as any)._performSearch('');
+      expect(component.searchResults()).toEqual([]);
+    });
+  });
+
+  describe('debounce subscription — _searchSubject', () => {
+    it('ejecuta _performSearch tras el debounce al emitir _searchSubject', () => {
+      vi.useFakeTimers();
+      try {
+        const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+
+        (component as any)._searchSubject.next('zelda');
+        vi.advanceTimersByTime(500);
+
+        expect(catalogUseCases.searchGames).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
 });

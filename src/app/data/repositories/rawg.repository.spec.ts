@@ -105,6 +105,54 @@ describe('RawgRepository', () => {
       expect(url).toContain('ordering=-rating');
       expect(url).toContain('page_size=6');
     });
+
+    it('lanza error cuando la API devuelve un código de error', async () => {
+      mockFetchFail(503, 'Service Unavailable');
+
+      await expect(repo.getTopGames()).rejects.toThrow('RAWG API error: 503 Service Unavailable');
+    });
+  });
+
+  describe('getTopBanners', () => {
+    it('devuelve sugerencias de banner mapeadas', async () => {
+      mockFetchOk({ results: [{ name: 'God of War', background_image: 'https://img.example.com/gow.jpg' }] });
+
+      const result = await repo.getTopBanners(6);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe('God of War');
+      expect(result[0].imageUrl).toBe('https://img.example.com/gow.jpg');
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).toContain('ordering=-rating');
+      expect(url).toContain('page_size=6');
+    });
+
+    it('lanza error cuando la API devuelve un código de error', async () => {
+      mockFetchFail(500, 'Internal Server Error');
+
+      await expect(repo.getTopBanners()).rejects.toThrow('RAWG API error: 500 Internal Server Error');
+    });
+  });
+
+  describe('searchBanners', () => {
+    it('devuelve sugerencias de banner mapeadas para la búsqueda', async () => {
+      mockFetchOk({ results: [{ name: 'Zelda', background_image: null }] });
+
+      const result = await repo.searchBanners('zelda', 5);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe('Zelda');
+      expect(result[0].imageUrl).toBe('');
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).toContain('search=zelda');
+      expect(url).toContain('page_size=5');
+    });
+
+    it('lanza error cuando la API devuelve un código de error', async () => {
+      mockFetchFail(401, 'Unauthorized');
+
+      await expect(repo.searchBanners('zelda')).rejects.toThrow('RAWG API error: 401 Unauthorized');
+    });
   });
 
   describe('getGameDetails', () => {
@@ -116,6 +164,12 @@ describe('RawgRepository', () => {
       expect(result.title).toBe('God of War');
       const url = mockFetch.mock.calls[0][0] as string;
       expect(url).toContain('/games/58175');
+    });
+
+    it('lanza error cuando la API devuelve un código de error', async () => {
+      mockFetchFail(404, 'Not Found');
+
+      await expect(repo.getGameDetails(9999)).rejects.toThrow('RAWG API error: 404 Not Found');
     });
   });
 
@@ -146,6 +200,12 @@ describe('RawgRepository', () => {
       expect(url).toContain('/games/42/screenshots');
       expect(url).toContain('page=2');
       expect(url).toContain('page_size=20');
+    });
+
+    it('lanza error cuando la API devuelve un código de error', async () => {
+      mockFetchFail(500, 'Internal Server Error');
+
+      await expect(repo.getGameScreenshots('god-of-war')).rejects.toThrow('RAWG API error: 500 Internal Server Error');
     });
   });
 });

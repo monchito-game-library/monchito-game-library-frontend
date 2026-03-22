@@ -56,4 +56,18 @@ describe('ThemeService', () => {
     service.setLightTheme();
     expect(service.isDarkMode()).toBe(false);
   });
+
+  it('el effect añade la clase dark-mode al documentElement cuando isDark es true', () => {
+    service.setDarkTheme();
+    TestBed.flushEffects();
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
+  });
+
+  it('el effect elimina la clase dark-mode del documentElement cuando isDark es false', () => {
+    service.setDarkTheme();
+    TestBed.flushEffects();
+    service.setLightTheme();
+    TestBed.flushEffects();
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(false);
+  });
 });

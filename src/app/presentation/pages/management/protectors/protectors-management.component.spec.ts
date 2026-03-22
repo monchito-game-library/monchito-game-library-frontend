@@ -1,8 +1,9 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { of } from 'rxjs';
 
-import { ProtectorsManagementComponent } from './protectors-management.component';
+import { ProtectorsManagementComponent, ProtectorEditPanelComponent } from './protectors-management.component';
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
@@ -113,6 +114,203 @@ describe('ProtectorsManagementComponent', () => {
       });
       // pack1: 10/1 = 10, pack2: 20/5 = 4 → mínimo = 4
       expect(component.getMinUnitPrice(p)).toBe(4);
+    });
+  });
+
+  describe('onToggleActive', () => {
+    it('no llama a toggleProtectorActive si el dialog se cancela', () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+
+      component.onToggleActive(makeProtector());
+
+      expect(protectorUseCases.toggleProtectorActive).not.toHaveBeenCalled();
+    });
+
+    it('llama a toggleProtectorActive y recarga si el dialog se confirma', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
+      protectorUseCases.getAllProtectors.mockResolvedValue([]);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+
+      component.onToggleActive(makeProtector({ isActive: true }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(protectorUseCases.toggleProtectorActive).toHaveBeenCalledWith('prot-1', false);
+    });
+  });
+
+  describe('_loadProtectors (vía ngOnInit)', () => {
+    it('rellena protectors y pone loading a false', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      const mockProtectors = [makeProtector()];
+      protectorUseCases.getAllProtectors.mockResolvedValue(mockProtectors);
+
+      await component.ngOnInit();
+
+      expect(component.protectors()).toEqual(mockProtectors);
+      expect(component.loading()).toBe(false);
+    });
+  });
+
+  describe('onSaved', () => {
+    it('llama a updateProtector cuando hay un protector seleccionado', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.updateProtector.mockResolvedValue(undefined);
+      protectorUseCases.getAllProtectors.mockResolvedValue([]);
+
+      const p = makeProtector();
+      component.selectedProtector.set(p);
+      component.panelOpen.set(true);
+      await component.onSaved({ name: 'BigBen Updated', category: 'console', notes: null, packs: [] });
+
+      expect(protectorUseCases.updateProtector).toHaveBeenCalledWith('prot-1', {
+        name: 'BigBen Updated',
+        category: 'console',
+        notes: null,
+        packs: []
+      });
+      expect(component.panelOpen()).toBe(false);
+    });
+
+    it('llama a addProtector cuando no hay protector seleccionado (null)', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.addProtector.mockResolvedValue(undefined);
+      protectorUseCases.getAllProtectors.mockResolvedValue([]);
+
+      component.selectedProtector.set(null);
+      await component.onSaved({ name: 'Nuevo Protector', category: 'box', notes: null, packs: [] });
+
+      expect(protectorUseCases.addProtector).toHaveBeenCalledWith({
+        name: 'Nuevo Protector',
+        category: 'box',
+        notes: null,
+        packs: [],
+        isActive: true
+      });
+      expect(component.panelOpen()).toBe(false);
+    });
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('ProtectorEditPanelComponent', () => {
+  let component: ProtectorEditPanelComponent;
+  let fixture: ComponentFixture<ProtectorEditPanelComponent>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    TestBed.configureTestingModule({ imports: [ProtectorEditPanelComponent] });
+    TestBed.overrideComponent(ProtectorEditPanelComponent, { set: { imports: [], template: '' } });
+    fixture = TestBed.createComponent(ProtectorEditPanelComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('se crea correctamente', () => expect(component).toBeTruthy());
+
+  it('form inicial: name vacío, category "box", notes null, packs vacío', () => {
+    expect(component.form.getRawValue()).toMatchObject({ name: '', category: 'box', notes: null });
+    expect(component.packsArray.length).toBe(0);
+  });
+
+  describe('cuando se pasa un protector por input', () => {
+    it('rellena el form y los packs del protector', () => {
+      fixture.componentRef.setInput('protector', {
+        id: 'p1',
+        name: 'BigBen',
+        category: 'console',
+        notes: 'Nota',
+        isActive: true,
+        packs: [{ quantity: 3, price: 12, url: null }]
+      });
+      fixture.detectChanges();
+      expect(component.form.getRawValue()).toMatchObject({ name: 'BigBen', category: 'console', notes: 'Nota' });
+      expect(component.packsArray.length).toBe(1);
+    });
+
+    it('limpia packs existentes al cambiar de protector (while loop)', () => {
+      fixture.componentRef.setInput('protector', {
+        id: 'p1',
+        name: 'A',
+        category: 'box',
+        notes: null,
+        isActive: true,
+        packs: [{ quantity: 1, price: 5, url: null }]
+      });
+      fixture.detectChanges();
+      expect(component.packsArray.length).toBe(1);
+
+      fixture.componentRef.setInput('protector', {
+        id: 'p2',
+        name: 'B',
+        category: 'console',
+        notes: null,
+        isActive: false,
+        packs: []
+      });
+      fixture.detectChanges();
+      expect(component.packsArray.length).toBe(0);
+    });
+  });
+
+  describe('addPack / removePack', () => {
+    it('addPack añade un pack al array', () => {
+      component.addPack();
+      expect(component.packsArray.length).toBe(1);
+    });
+
+    it('removePack elimina el pack en el índice dado', () => {
+      component.addPack();
+      component.addPack();
+      component.removePack(0);
+      expect(component.packsArray.length).toBe(1);
+    });
+  });
+
+  describe('asFormGroup', () => {
+    it('castea correctamente un AbstractControl a FormGroup', () => {
+      component.addPack();
+      const group = component.asFormGroup(component.packsArray.at(0));
+      expect(group.controls['quantity']).toBeDefined();
+    });
+  });
+
+  describe('onSave', () => {
+    it('no emite si no hay packs', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.form.patchValue({ name: 'BigBen', category: 'box' });
+      component.onSave();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('no emite si el form es inválido (name vacío)', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.addPack();
+      component.asFormGroup(component.packsArray.at(0)).patchValue({ quantity: 1, price: 5, url: '' });
+      component.form.patchValue({ name: '', category: 'box' });
+      component.onSave();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('emite el resultado correcto si el form es válido y hay packs', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.form.patchValue({ name: 'BigBen', category: 'console', notes: null });
+      component.addPack();
+      component
+        .asFormGroup(component.packsArray.at(0))
+        .patchValue({ quantity: 5, price: 19.99, url: 'https://example.com' });
+      component.onSave();
+      expect(spy).toHaveBeenCalledWith({
+        name: 'BigBen',
+        category: 'console',
+        notes: null,
+        packs: [{ quantity: 5, price: 19.99, url: 'https://example.com' }]
+      });
     });
   });
 });

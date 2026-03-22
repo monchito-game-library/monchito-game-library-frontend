@@ -109,6 +109,24 @@ describe('SupabaseAuthRepository', () => {
     });
   });
 
+  describe('resetPassword', () => {
+    it('llama a resetPasswordForEmail sin lanzar errores', async () => {
+      mockSupabase.auth.resetPasswordForEmail.mockResolvedValue({ error: null });
+
+      await expect(repo.resetPassword('test@example.com')).resolves.toBeUndefined();
+      expect(mockSupabase.auth.resetPasswordForEmail).toHaveBeenCalledWith(
+        'test@example.com',
+        expect.objectContaining({ redirectTo: expect.stringContaining('/reset-password') })
+      );
+    });
+
+    it('lanza error si resetPasswordForEmail falla', async () => {
+      mockSupabase.auth.resetPasswordForEmail.mockResolvedValue({ error: { message: 'Rate limit exceeded' } });
+
+      await expect(repo.resetPassword('test@example.com')).rejects.toThrow('Rate limit exceeded');
+    });
+  });
+
   describe('onAuthStateChange', () => {
     it('registra el listener en supabase.auth', () => {
       mockSupabase.auth.onAuthStateChange.mockImplementation(() => {});
@@ -131,6 +149,19 @@ describe('SupabaseAuthRepository', () => {
 
       expect(callback).toHaveBeenCalledWith(null);
     });
+
+    it('llama al callback con el usuario mapeado cuando la sesión tiene usuario', () => {
+      let captured: ((event: string, session: any) => void) | null = null;
+      mockSupabase.auth.onAuthStateChange.mockImplementation((cb: any) => {
+        captured = cb;
+      });
+      const callback = vi.fn();
+
+      repo.onAuthStateChange(callback);
+      captured!('SIGNED_IN', { user: fakeUser });
+
+      expect(callback).toHaveBeenCalledWith(expect.objectContaining({ id: 'user-1' }));
+    });
   });
 
   describe('updateDisplayName', () => {
@@ -140,6 +171,12 @@ describe('SupabaseAuthRepository', () => {
       await repo.updateDisplayName('New Name');
 
       expect(mockSupabase.auth.updateUser).toHaveBeenCalledWith({ data: { display_name: 'New Name' } });
+    });
+
+    it('lanza error si updateUser falla', async () => {
+      mockSupabase.auth.updateUser.mockResolvedValue({ error: { message: 'Update failed' } });
+
+      await expect(repo.updateDisplayName('New Name')).rejects.toThrow('Failed to update display name');
     });
   });
 });

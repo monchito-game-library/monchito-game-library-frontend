@@ -88,6 +88,21 @@ describe('SupabaseStoreRepository', () => {
       expect(b.update).toHaveBeenCalled();
       expect(result.label).toBe('Updated');
     });
+
+    it('actualiza formatHint sin label', async () => {
+      const b = makeBuilder({ data: { ...storeDto, format_hint: null }, error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.update('store-1', { formatHint: null });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ format_hint: null }));
+    });
+
+    it('lanza error si el update falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Update failed' } }));
+
+      await expect(repo.update('store-1', { label: 'X' })).rejects.toThrow('Failed to update store');
+    });
   });
 
   describe('delete', () => {
