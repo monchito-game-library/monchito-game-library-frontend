@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { of } from 'rxjs';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -182,6 +183,57 @@ describe('GameCardComponent — computed signals', () => {
 
       component.onFlip();
       expect(component.isFlipped()).toBe(false);
+    });
+  });
+
+  describe('editGame', () => {
+    it('navega a /update/:uuid cuando la tarjeta no está girada', () => {
+      const router = TestBed.inject(Router as any) as any;
+      component.editGame();
+      expect(router.navigate).toHaveBeenCalledWith(['/update', mockGame.uuid]);
+    });
+
+    it('no navega cuando la tarjeta está girada', () => {
+      const router = TestBed.inject(Router as any) as any;
+      component.isFlipped.set(true);
+      component.editGame();
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteGame', () => {
+    it('no abre el dialog si el juego no tiene uuid', () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', { ...mockGame, uuid: undefined });
+      fixture2.detectChanges();
+      fixture2.componentInstance.deleteGame();
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('no elimina si el dialog se cancela', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+
+      component.deleteGame();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(gameUseCases.deleteGame).not.toHaveBeenCalled();
+    });
+
+    it('elimina el juego y emite gameDeleted si el dialog se confirma', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.deleteGame.mockResolvedValue(undefined);
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const spy = vi.spyOn(component.gameDeleted, 'emit');
+
+      component.deleteGame();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(gameUseCases.deleteGame).toHaveBeenCalledWith('user-1', mockGame.uuid);
+      expect(spy).toHaveBeenCalledWith(mockGame.id);
     });
   });
 });

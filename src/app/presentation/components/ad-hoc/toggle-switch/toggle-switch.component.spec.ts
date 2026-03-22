@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -116,6 +116,37 @@ describe('ToggleSwitchComponent', () => {
       component.writeValue(true);
 
       expect(component.getIcon()).toBe('check');
+    });
+  });
+
+  describe('registerOnTouched', () => {
+    it('registra el callback de onTouched', () => {
+      const onTouched = vi.fn();
+      component.registerOnTouched(onTouched);
+      expect((component as any)._onTouched).toBe(onTouched);
+    });
+  });
+
+  describe('ngOnChanges', () => {
+    it('actualiza _value cuando cambia checked y no está en modo CVA', () => {
+      component.ngOnChanges({ checked: new SimpleChange(false, true, false) });
+      expect(component._value()).toBe(true);
+    });
+
+    it('no actualiza _value cuando está en modo CVA', () => {
+      component.registerOnChange(() => {});
+      component.ngOnChanges({ checked: new SimpleChange(false, true, false) });
+      expect(component._value()).toBe(false);
+    });
+
+    it('actualiza _isDisabled cuando cambia disabled', () => {
+      component.ngOnChanges({ disabled: new SimpleChange(false, true, false) });
+      expect(component._isDisabled()).toBe(true);
+    });
+
+    it('usa false como fallback si checked.currentValue es undefined', () => {
+      component.ngOnChanges({ checked: new SimpleChange(true, undefined, false) });
+      expect(component._value()).toBe(false);
     });
   });
 });

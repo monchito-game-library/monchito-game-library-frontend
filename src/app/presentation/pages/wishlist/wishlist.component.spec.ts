@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { of } from 'rxjs';
 
 import { WishlistComponent } from './wishlist.component';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -201,6 +202,118 @@ describe('WishlistComponent', () => {
       component.pendingCatalogEntry.set(mockCatalogEntry);
       component.onMobileCancel();
       expect(component.pendingCatalogEntry()).toBeNull();
+    });
+  });
+
+  describe('ngOnInit / _loadItems', () => {
+    it('carga items y pone loading a false', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      const mockItems = [makeItem()];
+      wishlistUseCases.getAllForUser.mockResolvedValue(mockItems);
+
+      await component.ngOnInit();
+
+      expect(component.items()).toEqual(mockItems);
+      expect(component.loading()).toBe(false);
+    });
+
+    it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.ngOnInit();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.loading()).toBe(false);
+    });
+  });
+
+  describe('onDeleteItem', () => {
+    it('no elimina si el dialog se cancela', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+
+      await component.onDeleteItem(makeItem());
+
+      expect(wishlistUseCases.deleteItem).not.toHaveBeenCalled();
+    });
+
+    it('elimina el item y muestra snackbar si el dialog se confirma', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.deleteItem.mockResolvedValue(undefined);
+      wishlistUseCases.getAllForUser.mockResolvedValue([]);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.onDeleteItem(makeItem());
+
+      expect(wishlistUseCases.deleteItem).toHaveBeenCalledWith('user-1', 'item-1');
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+  });
+
+  describe('onOwnItem', () => {
+    it('no navega si el dialog se cancela', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+      const router = TestBed.inject(Router as any) as any;
+
+      await component.onOwnItem(makeItem());
+
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('navega a /add con el catalog entry si el dialog se confirma', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const router = TestBed.inject(Router as any) as any;
+
+      await component.onOwnItem(makeItem());
+
+      expect(router.navigate).toHaveBeenCalledWith(['/add'], expect.objectContaining({ state: expect.any(Object) }));
+    });
+  });
+
+  describe('onMobileConfirm', () => {
+    it('no hace nada si el formulario no es válido', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      component.mobileForm.controls.platform.setValue(null);
+      component.mobileForm.controls.desiredPrice.setValue(null);
+
+      await component.onMobileConfirm();
+
+      expect(wishlistUseCases.addItem).not.toHaveBeenCalled();
+    });
+
+    it('llama a addItem y vuelve a "list" en modo creación', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.addItem.mockResolvedValue(undefined);
+      wishlistUseCases.getAllForUser.mockResolvedValue([]);
+
+      component.mobileForm.setValue({ priority: 3, platform: 'PS5', desiredPrice: 50, notes: null });
+      component.pendingCatalogEntry.set(mockCatalogEntry);
+
+      await component.onMobileConfirm();
+
+      expect(wishlistUseCases.addItem).toHaveBeenCalled();
+      expect(component.viewMode()).toBe('list');
+    });
+
+    it('llama a updateItem y vuelve a "list" en modo edición', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.updateItem.mockResolvedValue(undefined);
+      wishlistUseCases.getAllForUser.mockResolvedValue([]);
+
+      (component as any)._editingItem = makeItem();
+      component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
+
+      await component.onMobileConfirm();
+
+      expect(wishlistUseCases.updateItem).toHaveBeenCalled();
+      expect(component.viewMode()).toBe('list');
     });
   });
 });

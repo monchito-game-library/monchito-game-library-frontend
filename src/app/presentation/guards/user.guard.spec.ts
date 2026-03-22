@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { firstValueFrom, Observable } from 'rxjs';
 
 import { AuthStateService } from '@/services/auth-state.service';
 import { canActivateUser } from './user.guard';
@@ -42,6 +43,53 @@ describe('canActivateUser', () => {
     const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
 
     expect(result).toBe(false);
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/auth/login');
+  });
+
+  it('devuelve Observable que resuelve true cuando loading cambia a false y usuario está autenticado', async () => {
+    const loadingSignal = signal<boolean>(true);
+    const deferredAuthState: Partial<AuthStateService> = {
+      loading: loadingSignal.asReadonly(),
+      isAuthenticated: vi.fn().mockReturnValue(true)
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthStateService, useValue: deferredAuthState },
+        { provide: Router, useValue: mockRouter }
+      ]
+    });
+
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const promise = firstValueFrom(result as Observable<boolean>);
+
+    loadingSignal.set(false);
+    TestBed.flushEffects();
+
+    expect(await promise).toBe(true);
+  });
+
+  it('devuelve Observable que resuelve false cuando loading cambia a false y usuario no está autenticado', async () => {
+    const loadingSignal = signal<boolean>(true);
+    const deferredAuthState: Partial<AuthStateService> = {
+      loading: loadingSignal.asReadonly(),
+      isAuthenticated: vi.fn().mockReturnValue(false)
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthStateService, useValue: deferredAuthState },
+        { provide: Router, useValue: mockRouter }
+      ]
+    });
+
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const promise = firstValueFrom(result as Observable<boolean>);
+
+    loadingSignal.set(false);
+    TestBed.flushEffects();
+
+    expect(await promise).toBe(false);
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/auth/login');
   });
 });

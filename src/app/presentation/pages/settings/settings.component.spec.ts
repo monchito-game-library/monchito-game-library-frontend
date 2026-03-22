@@ -1,6 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
 import { ThemeService } from '@/services/theme.service';
@@ -101,6 +102,7 @@ describe('SettingsComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
+    TestBed.overrideComponent(SettingsComponent, { set: { imports: [], template: '' } });
 
     fixture = TestBed.createComponent(SettingsComponent);
     component = fixture.componentInstance;
@@ -239,6 +241,259 @@ describe('SettingsComponent', () => {
     it('llama a clearUser en UserContextService', () => {
       component.logout();
       expect(mockUserContext.clearUser).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('ngOnInit / ngOnDestroy', () => {
+    it('ngOnInit llama a _loadInitialBanners', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      component.ngOnInit();
+      await new Promise((r) => setTimeout(r, 0));
+      expect(catalogUseCases.getTopBanners).toHaveBeenCalled();
+    });
+
+    it('ngOnDestroy unsubscribe sin errores', () => {
+      component.ngOnInit();
+      expect(() => component.ngOnDestroy()).not.toThrow();
+    });
+
+    it('selectedLangControl.valueChanges con valor truthy llama a setActiveLang y _savePreferences', () => {
+      const transloco = TestBed.inject(TranslocoService as any) as any;
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      component.ngOnInit();
+
+      component.selectedLangControl.setValue('en');
+
+      expect(transloco.setActiveLang).toHaveBeenCalledWith('en');
+      expect(userPrefsUseCases.savePreferences).toHaveBeenCalled();
+    });
+
+    it('el debounce de búsqueda ejecuta _executeSearch al emitir _searchSubject', () => {
+      vi.useFakeTimers();
+      try {
+        const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+        component.ngOnInit();
+
+        (component as any)._searchSubject.next('zelda');
+        vi.advanceTimersByTime(500);
+
+        expect(catalogUseCases.searchBanners).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
+  describe('onRawgSearch', () => {
+    it('actualiza rawgSearchQuery con el valor del input', () => {
+      const event = { target: { value: 'zelda' } } as unknown as Event;
+      component.onRawgSearch(event);
+      expect(mockUserPreferencesState.rawgSearchQuery()).toBe('zelda');
+    });
+  });
+
+  describe('onSaveName — error path', () => {
+    it('muestra snackbar cuando updateDisplayName lanza un error', async () => {
+      const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      authUseCases.updateDisplayName.mockRejectedValue(new Error('Auth error'));
+      mockUserContext.getDisplayName.mockReturnValue('Old Name');
+      component.nameInputValue.set('New Name');
+
+      await component.onSaveName();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.savingName()).toBe(false);
+    });
+  });
+
+  describe('_loadInitialBanners', () => {
+    it('actualiza rawgSearchResults con los banners filtrados', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.getTopBanners.mockResolvedValue([
+        { title: 'God of War', imageUrl: 'https://img.example.com/gow.jpg' },
+        { title: 'No Image Game', imageUrl: '' }
+      ]);
+
+      await (component as any)._loadInitialBanners();
+
+      expect(mockUserPreferencesState.rawgSearchResults()).toHaveLength(1);
+      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+    });
+
+    it('pone rawgSearchResults a [] cuando falla', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.getTopBanners.mockRejectedValue(new Error('Network error'));
+
+      await (component as any)._loadInitialBanners();
+
+      expect(mockUserPreferencesState.rawgSearchResults()).toEqual([]);
+      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+    });
+  });
+
+  describe('_executeSearch', () => {
+    it('llama a _loadInitialBanners cuando la query es vacía', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+
+      await (component as any)._executeSearch('   ');
+
+      expect(catalogUseCases.getTopBanners).toHaveBeenCalled();
+    });
+
+    it('busca en RAWG y actualiza resultados cuando hay query', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.searchBanners.mockResolvedValue([
+        { title: 'Zelda', imageUrl: 'https://img.example.com/zelda.jpg' }
+      ]);
+
+      await (component as any)._executeSearch('zelda');
+
+      expect(mockUserPreferencesState.rawgSearchResults()).toHaveLength(1);
+      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+    });
+
+    it('pone rawgSearchResults a [] cuando la búsqueda falla', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.searchBanners.mockRejectedValue(new Error('Network error'));
+
+      await (component as any)._executeSearch('zelda');
+
+      expect(mockUserPreferencesState.rawgSearchResults()).toEqual([]);
+    });
+  });
+
+  describe('onAvatarFileSelected', () => {
+    function mockFileEvent(file?: File): Event {
+      const input = { files: file ? [file] : null, value: '' } as unknown as HTMLInputElement;
+      return { target: input } as unknown as Event;
+    }
+
+    it('retorna sin abrir diálogo cuando no hay fichero', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      await component.onAvatarFileSelected(mockFileEvent());
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('retorna sin subir cuando el diálogo se cancela (blob null)', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(null) });
+      const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
+
+      await component.onAvatarFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadAvatar).not.toHaveBeenCalled();
+    });
+
+    it('sube el avatar cuando el diálogo confirma un blob', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadAvatar.mockResolvedValue('https://cdn.example.com/new-avatar.jpg');
+      const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
+
+      await component.onAvatarFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadAvatar).toHaveBeenCalled();
+      expect(mockUserPreferencesState.avatarUrl()).toBe('https://cdn.example.com/new-avatar.jpg');
+      expect(mockUserPreferencesState.uploadingAvatar()).toBe(false);
+    });
+
+    it('muestra snackbar cuando la subida falla', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadAvatar.mockRejectedValue(new Error('Storage error'));
+      const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
+
+      await component.onAvatarFileSelected(mockFileEvent(file));
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(mockUserPreferencesState.uploadingAvatar()).toBe(false);
+    });
+
+    it('retorna sin subir cuando no hay userId', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      mockUserContext.userId.set(null);
+      const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
+
+      await component.onAvatarFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadAvatar).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onBannerFileSelected', () => {
+    function mockFileEvent(file?: File): Event {
+      const input = { files: file ? [file] : null, value: '' } as unknown as HTMLInputElement;
+      return { target: input } as unknown as Event;
+    }
+
+    it('retorna sin abrir diálogo cuando no hay fichero', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      await component.onBannerFileSelected(mockFileEvent());
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('retorna sin subir cuando el diálogo se cancela', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(null) });
+      const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
+
+      await component.onBannerFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadBanner).not.toHaveBeenCalled();
+    });
+
+    it('sube el banner cuando el diálogo confirma un blob', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadBanner.mockResolvedValue('https://cdn.example.com/new-banner.jpg');
+      const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
+
+      await component.onBannerFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadBanner).toHaveBeenCalled();
+      expect(mockUserPreferencesState.bannerImageUrl()).toBe('https://cdn.example.com/new-banner.jpg');
+      expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
+    });
+
+    it('muestra snackbar cuando la subida del banner falla', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadBanner.mockRejectedValue(new Error('Storage error'));
+      const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
+
+      await component.onBannerFileSelected(mockFileEvent(file));
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
+    });
+
+    it('retorna sin subir cuando no hay userId', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      mockUserContext.userId.set(null);
+      const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
+
+      await component.onBannerFileSelected(mockFileEvent(file));
+
+      expect(useCases.uploadBanner).not.toHaveBeenCalled();
     });
   });
 });

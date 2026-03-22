@@ -117,6 +117,38 @@ describe('SupabaseWishlistRepository', () => {
 
       expect(createCatalogBuilder.insert).toHaveBeenCalled();
     });
+
+    it('crea una entrada de catálogo cuando rawg_id es null (entrada manual)', async () => {
+      const manualEntry = { ...catalogEntry, rawg_id: null as any };
+      const createCatalogBuilder = makeBuilder({ data: { id: 'manual-cat-1' }, error: null });
+      const insertBuilder = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValueOnce(createCatalogBuilder).mockReturnValueOnce(insertBuilder);
+
+      const formValue = { platform: 'PS5', desiredPrice: 39.99, priority: 3, notes: null };
+      await repo.addItem('user-1', manualEntry, formValue);
+
+      expect(insertBuilder.insert).toHaveBeenCalled();
+    });
+
+    it('lanza error si el insert del ítem falla', async () => {
+      const catalogBuilder = makeBuilder({ data: { id: 'cat-1' }, error: null });
+      const insertBuilder = makeBuilder({ error: { message: 'Insert failed' } });
+      mockSupabase.from.mockReturnValueOnce(catalogBuilder).mockReturnValueOnce(insertBuilder);
+
+      const formValue = { platform: 'PS5', desiredPrice: 39.99, priority: 3, notes: null };
+      await expect(repo.addItem('user-1', catalogEntry, formValue)).rejects.toThrow('Failed to add wishlist item');
+    });
+
+    it('lanza error si el insert del catálogo falla', async () => {
+      const lookupBuilder = makeBuilder({ data: null, error: { message: 'No rows' } });
+      const createCatalogBuilder = makeBuilder({ data: null, error: { message: 'Catalog insert failed' } });
+      mockSupabase.from.mockReturnValueOnce(lookupBuilder).mockReturnValueOnce(createCatalogBuilder);
+
+      const formValue = { platform: 'PS5', desiredPrice: 39.99, priority: 3, notes: null };
+      await expect(repo.addItem('user-1', catalogEntry, formValue)).rejects.toThrow(
+        'Failed to create game catalog entry'
+      );
+    });
   });
 
   describe('updateItem', () => {
@@ -129,6 +161,21 @@ describe('SupabaseWishlistRepository', () => {
       expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ desired_price: 29.99, priority: 4 }));
       expect(b.eq).toHaveBeenCalledWith('id', 'w-1');
       expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
+    });
+
+    it('actualiza también notes cuando se incluye en el patch', async () => {
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.updateItem('user-1', 'w-1', { notes: 'Esperando rebaja' });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ notes: 'Esperando rebaja' }));
+    });
+
+    it('lanza error si el update falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Update failed' } }));
+
+      await expect(repo.updateItem('user-1', 'w-1', { priority: 5 })).rejects.toThrow('Failed to update wishlist item');
     });
   });
 

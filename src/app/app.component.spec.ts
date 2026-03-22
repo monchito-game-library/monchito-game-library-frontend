@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { AppComponent } from './app.component';
@@ -167,6 +167,100 @@ describe('AppComponent', () => {
     it('llama a clearUser en UserContextService', () => {
       component.logout();
       expect(mockUserContext.clearUser).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('ngOnInit', () => {
+    it('inicializa el tema y el servicio PWA', () => {
+      const themeService = TestBed.inject(ThemeService as any) as any;
+      const pwaUpdate = TestBed.inject(PwaUpdateService as any) as any;
+
+      component.ngOnInit();
+
+      expect(themeService.initTheme).toHaveBeenCalled();
+      expect(pwaUpdate.init).toHaveBeenCalled();
+    });
+
+    it('establece currentRoute con la URL del router', () => {
+      component.ngOnInit();
+      expect(typeof component.currentRoute()).toBe('string');
+    });
+
+    it('actualiza currentRoute al navegar', async () => {
+      component.ngOnInit();
+      const router = TestBed.inject(Router);
+      await router.navigate(['/list']).catch(() => {});
+      expect(typeof component.currentRoute()).toBe('string');
+    });
+  });
+
+  describe('effect — _loadPreferences cuando userId cambia', () => {
+    it('llama a _loadPreferences cuando userId pasa de null a un valor', () => {
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+
+      mockUserContext.userId.set('user-1');
+      TestBed.flushEffects();
+
+      expect(userPrefsUseCases.loadPreferences).toHaveBeenCalled();
+    });
+  });
+
+  describe('_loadPreferences', () => {
+    it('establece preferencesLoaded=true si las preferencias son null', async () => {
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      userPrefsUseCases.loadPreferences.mockResolvedValue(null);
+
+      await (component as any)._loadPreferences('user-1');
+
+      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
+    });
+
+    it('aplica tema oscuro y establece preferencesLoaded=true', async () => {
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      userPrefsUseCases.loadPreferences.mockResolvedValue({
+        theme: 'dark',
+        language: null,
+        avatarUrl: null,
+        bannerUrl: null,
+        role: 'user'
+      });
+      const themeService = TestBed.inject(ThemeService as any) as any;
+
+      await (component as any)._loadPreferences('user-1');
+
+      expect(themeService.setDarkTheme).toHaveBeenCalled();
+      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
+    });
+
+    it('aplica tema claro, idioma y avatar cuando están definidos', async () => {
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      userPrefsUseCases.loadPreferences.mockResolvedValue({
+        theme: 'light',
+        language: 'es',
+        avatarUrl: 'https://cdn.example.com/a.jpg',
+        bannerUrl: 'https://cdn.example.com/b.jpg',
+        role: 'admin'
+      });
+      const themeService = TestBed.inject(ThemeService as any) as any;
+      const transloco = TestBed.inject(TranslocoService as any) as any;
+
+      await (component as any)._loadPreferences('user-1');
+
+      expect(themeService.setLightTheme).toHaveBeenCalled();
+      expect(transloco.setActiveLang).toHaveBeenCalledWith('es');
+      expect(mockUserPrefsState.avatarUrl()).toBe('https://cdn.example.com/a.jpg');
+      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
+    });
+  });
+
+  describe('onNavigateToSettings', () => {
+    it('navega a /settings', () => {
+      const router = TestBed.inject(Router);
+      const spy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.onNavigateToSettings();
+
+      expect(spy).toHaveBeenCalledWith(['/settings']);
     });
   });
 });

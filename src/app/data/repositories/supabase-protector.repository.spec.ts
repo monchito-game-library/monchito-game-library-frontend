@@ -94,6 +94,13 @@ describe('SupabaseProtectorRepository', () => {
       expect(b.insert).toHaveBeenCalled();
       expect(result.name).toBe('BluRay 50');
     });
+
+    it('lanza error si el insert falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Insert failed' } }));
+      const input = { name: 'BluRay 50', packs: [], category: 'box' as const, notes: null, isActive: true };
+
+      await expect(repo.create(input)).rejects.toThrow('Failed to create protector');
+    });
   });
 
   describe('update', () => {
@@ -107,6 +114,29 @@ describe('SupabaseProtectorRepository', () => {
       expect(b.eq).toHaveBeenCalledWith('id', 'p-1');
       expect(result.name).toBe('New Name');
     });
+
+    it('actualiza todos los campos del patch', async () => {
+      const b = makeBuilder({ data: { ...protectorDto, name: 'X', is_active: false }, error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.update('p-1', {
+        name: 'X',
+        packs: [{ quantity: 10, price: 5.99, url: null }],
+        category: 'other' as const,
+        notes: 'test note',
+        isActive: false
+      });
+
+      expect(b.update).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'X', is_active: false, notes: 'test note' })
+      );
+    });
+
+    it('lanza error si el update falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Update failed' } }));
+
+      await expect(repo.update('p-1', { name: 'X' })).rejects.toThrow('Failed to update protector');
+    });
   });
 
   describe('toggleActive', () => {
@@ -118,6 +148,12 @@ describe('SupabaseProtectorRepository', () => {
 
       expect(b.update).toHaveBeenCalledWith({ is_active: false });
       expect(result.isActive).toBe(false);
+    });
+
+    it('lanza error si el toggle falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Toggle failed' } }));
+
+      await expect(repo.toggleActive('p-1', true)).rejects.toThrow('Failed to toggle protector active state');
     });
   });
 });

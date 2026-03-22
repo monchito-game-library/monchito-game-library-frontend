@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NEVER } from 'rxjs';
+import { NEVER, Subject } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GameListComponent } from './game-list.component';
@@ -11,8 +11,8 @@ import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { provideRouter } from '@angular/router';
-import { BreakpointObserver } from '@angular/cdk/layout';
+import { ActivatedRoute, NavigationEnd, provideRouter, Router } from '@angular/router';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
@@ -208,6 +208,35 @@ describe('GameListComponent', () => {
       const prices = component.filteredGames().map((g) => g.price);
       expect(prices).toEqual([30, 20, 10]);
     });
+
+    it('ordena por personal_rating ascendente', () => {
+      component.allGames.set([
+        makeGame({ title: 'A', personalRating: 8 }),
+        makeGame({ title: 'B', personalRating: 5 }),
+        makeGame({ title: 'C', personalRating: 10 })
+      ]);
+      component.sortBy.set('personal_rating');
+      const ratings = component.filteredGames().map((g) => g.personalRating);
+      expect(ratings).toEqual([5, 8, 10]);
+    });
+
+    it('ordena por created_at (id desc) como criterio por defecto', () => {
+      component.allGames.set([
+        makeGame({ id: 1, title: 'A' }),
+        makeGame({ id: 3, title: 'B' }),
+        makeGame({ id: 2, title: 'C' })
+      ]);
+      component.sortBy.set('created_at');
+      const ids = component.filteredGames().map((g) => g.id);
+      expect(ids).toEqual([3, 2, 1]);
+    });
+  });
+
+  describe('trackByRowIndex', () => {
+    it('devuelve el índice de fila recibido', () => {
+      expect(component.trackByRowIndex(0)).toBe(0);
+      expect(component.trackByRowIndex(5)).toBe(5);
+    });
   });
 
   describe('gameRows', () => {
@@ -344,5 +373,211 @@ describe('GameListComponent', () => {
       const event = { target: null } as unknown as Event;
       expect(() => component.onSearchInput(event)).not.toThrow();
     });
+  });
+
+  describe('ngOnInit', () => {
+    it('carga juegos desde Supabase cuando la caché está vacía', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      const mockGames = [makeGame({ title: 'Zelda' })];
+      gameUseCases.getAllGamesForList.mockResolvedValue(mockGames);
+
+      await component.ngOnInit();
+
+      expect(component.allGames()).toEqual(mockGames);
+      expect(component.loading()).toBe(false);
+    });
+
+    it('usa la caché de allGames si ya tiene datos', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      const userPreferences = TestBed.inject(UserPreferencesService as any) as any;
+      const cached = [makeGame({ title: 'Cached' })];
+      userPreferences.allGames.set(cached);
+
+      await component.ngOnInit();
+
+      expect(gameUseCases.getAllGamesForList).not.toHaveBeenCalled();
+      expect(component.allGames()).toEqual(cached);
+    });
+  });
+
+  describe('onGameDeleted', () => {
+    it('recarga la lista y muestra snackbar de confirmación', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.getAllGamesForList.mockResolvedValue([]);
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.onGameDeleted();
+
+      expect(gameUseCases.getAllGamesForList).toHaveBeenCalled();
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+  });
+
+  describe('openFiltersSheet', () => {
+    it('abre la hoja de filtros con el data correcto', () => {
+      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      component.openFiltersSheet();
+      expect(bottomSheet.open).toHaveBeenCalled();
+    });
+
+    it('la función clearAllFilters del data limpia los filtros', () => {
+      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      component.searchTerm.set('zelda');
+      component.selectedConsole.set('PS5');
+      component.openFiltersSheet();
+      const data = bottomSheet.open.mock.calls[0][1].data;
+      data.clearAllFilters();
+      expect(component.searchTerm()).toBe('');
+      expect(component.selectedConsole()).toBe('');
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('se llama sin errores tras ngOnInit', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.getAllGamesForList.mockResolvedValue([]);
+      await component.ngOnInit();
+      expect(() => component.ngOnDestroy()).not.toThrow();
+    });
+  });
+
+  describe('_loadGames con error', () => {
+    it('muestra snackbar si la carga desde Supabase falla', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.getAllGamesForList.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await (component as any)._loadGames(true);
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.loading()).toBe(false);
+    });
+  });
+});
+
+describe('GameListComponent — breakpoint observer', () => {
+  let component: GameListComponent;
+  let bpSubject: Subject<BreakpointState>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    bpSubject = new Subject<BreakpointState>();
+
+    TestBed.configureTestingModule({
+      imports: [GameListComponent],
+      providers: [
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        provideRouter([]),
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(bpSubject.asObservable()) } },
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    const fixture = TestBed.createComponent(GameListComponent);
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+  });
+
+  function emitBp(
+    active600: boolean,
+    active768: boolean,
+    active900: boolean,
+    active1200: boolean,
+    active1600: boolean
+  ): void {
+    bpSubject.next({
+      matches: active768,
+      breakpoints: {
+        '(max-width: 600px)': active600,
+        '(max-width: 768px)': active768,
+        '(max-width: 900px)': active900,
+        '(max-width: 1200px)': active1200,
+        '(max-width: 1600px)': active1600
+      }
+    });
+  }
+
+  it('establece columnCount=2 cuando max-width 600px está activo', () => {
+    emitBp(true, true, true, true, true);
+    expect(component.columnCount()).toBe(2);
+    expect(component.isMobile()).toBe(true);
+  });
+
+  it('establece columnCount=3 cuando max-width 900px activo (sin 600px)', () => {
+    emitBp(false, true, true, true, true);
+    expect(component.columnCount()).toBe(3);
+    expect(component.isMobile()).toBe(true);
+  });
+
+  it('establece columnCount=4 cuando max-width 1200px activo (sin 600/900px)', () => {
+    emitBp(false, false, false, true, true);
+    expect(component.columnCount()).toBe(4);
+    expect(component.isMobile()).toBe(false);
+  });
+
+  it('establece columnCount=5 cuando max-width 1600px activo (sin menores)', () => {
+    emitBp(false, false, false, false, true);
+    expect(component.columnCount()).toBe(5);
+  });
+
+  it('establece columnCount=6 cuando ningún breakpoint está activo', () => {
+    emitBp(false, false, false, false, false);
+    expect(component.columnCount()).toBe(6);
+  });
+});
+
+describe('GameListComponent — router subscription', () => {
+  let component: GameListComponent;
+  let routerEvents$: Subject<any>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    routerEvents$ = new Subject();
+
+    TestBed.configureTestingModule({
+      imports: [GameListComponent],
+      providers: [
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: Router, useValue: { events: routerEvents$.asObservable() } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn() } } } },
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    TestBed.overrideComponent(GameListComponent, { set: { imports: [], template: '' } });
+    const fixture = TestBed.createComponent(GameListComponent);
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+  });
+
+  it('recarga los juegos al navegar a /list', () => {
+    const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+    const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
+
+    routerEvents$.next(new NavigationEnd(1, '/list', '/list'));
+
+    expect(gameUseCases.getAllGamesForList.mock.calls.length).toBeGreaterThan(callsBefore);
+  });
+
+  it('no recarga los juegos si la URL no empieza por /list', () => {
+    const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+    const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
+
+    routerEvents$.next(new NavigationEnd(1, '/wishlist', '/wishlist'));
+
+    expect(gameUseCases.getAllGamesForList.mock.calls.length).toBe(callsBefore);
   });
 });
