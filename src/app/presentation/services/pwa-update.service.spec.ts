@@ -142,4 +142,11 @@ describe('PwaUpdateService', () => {
       expect(document.body.children.length).toBe(bodyChildrenBefore);
     });
   });
+
+  describe('_applyUpdate', () => {
+    it('llama a activateUpdate al aplicar la actualización', () => {
+      (service as any)._applyUpdate();
+      expect(activateUpdateSpy).toHaveBeenCalled();
+    });
+  });
 });

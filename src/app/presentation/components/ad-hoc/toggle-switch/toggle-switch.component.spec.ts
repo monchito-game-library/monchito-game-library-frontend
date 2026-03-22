@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ToggleSwitchComponent } from './toggle-switch.component';
@@ -124,6 +125,14 @@ describe('ToggleSwitchComponent', () => {
       const onTouched = vi.fn();
       component.registerOnTouched(onTouched);
       expect((component as any)._onTouched).toBe(onTouched);
+    });
+  });
+
+  describe('forwardRef (NG_VALUE_ACCESSOR)', () => {
+    it('resuelve el forwardRef al inyectar NG_VALUE_ACCESSOR desde el injector del componente', () => {
+      const fixture = TestBed.createComponent(ToggleSwitchComponent);
+      const accessor = fixture.componentRef.injector.get(NG_VALUE_ACCESSOR);
+      expect(accessor).toBeTruthy();
     });
   });
 

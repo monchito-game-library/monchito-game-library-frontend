@@ -259,6 +259,22 @@ describe('ProtectorEditPanelComponent — template real', () => {
     fixture.detectChanges();
     expect(component.form.getRawValue().name).toBe('CTA');
   });
+
+  it('emite toggled al hacer click en el botón de activar/desactivar', () => {
+    fixture.componentRef.setInput('protector', {
+      id: 'p1',
+      name: 'BigBen',
+      category: 'box',
+      notes: null,
+      isActive: true,
+      packs: []
+    });
+    fixture.detectChanges();
+    const spy = vi.spyOn(component.toggled, 'emit');
+    const toggleBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[mat-stroked-button]');
+    toggleBtn?.click();
+    expect(spy).toHaveBeenCalled();
+  });
 });
 
 describe('ProtectorEditPanelComponent', () => {

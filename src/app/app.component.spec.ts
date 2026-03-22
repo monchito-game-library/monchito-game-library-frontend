@@ -1,6 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, NavigationEnd } from '@angular/router';
+import { Subject } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { AppComponent } from './app.component';
@@ -68,7 +69,12 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('se crea correctamente', () => expect(component).toBeTruthy());
+  it('se crea correctamente', () => {
+    fixture.detectChanges();
+    expect(component).toBeTruthy();
+    // Acceder a menuTriggers para cubrir la propiedad @ViewChildren
+    expect(component.menuTriggers).toBeDefined();
+  });
 
   describe('isAuthenticated', () => {
     it('es false cuando no hay usuario autenticado', () => {
@@ -262,5 +268,63 @@ describe('AppComponent', () => {
 
       expect(spy).toHaveBeenCalledWith(['/settings']);
     });
+  });
+});
+
+describe('AppComponent — router subscription (NavigationEnd)', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let routerEvents$: Subject<any>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    routerEvents$ = new Subject();
+
+    const mockUserContext = {
+      userId: signal<string | null>(null),
+      isUserSelected: vi.fn().mockReturnValue(false),
+      getDisplayName: vi.fn().mockReturnValue(''),
+      getUserEmail: vi.fn().mockReturnValue(''),
+      getAvatarUrl: vi.fn().mockReturnValue(''),
+      clearUser: vi.fn()
+    };
+
+    const mockUserPrefsState = {
+      avatarUrl: signal<string | null>(null),
+      bannerImageUrl: signal<string | null>(null),
+      preferencesLoaded: signal(false),
+      isAdmin: signal(false),
+      role: signal(null)
+    };
+
+    TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [
+        {
+          provide: Router,
+          useValue: {
+            url: '',
+            events: routerEvents$.asObservable(),
+            navigate: vi.fn().mockResolvedValue(true)
+          }
+        },
+        { provide: UserContextService, useValue: mockUserContext },
+        { provide: UserPreferencesService, useValue: mockUserPrefsState },
+        { provide: USER_PREFERENCES_USE_CASES, useValue: { loadPreferences: vi.fn().mockResolvedValue(null) } },
+        { provide: ThemeService, useValue: { initTheme: vi.fn(), setDarkTheme: vi.fn(), setLightTheme: vi.fn() } },
+        { provide: PwaUpdateService, useValue: { init: vi.fn() } },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k), setActiveLang: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(AppComponent, { set: { imports: [], template: '' } });
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('actualiza currentRoute al recibir NavigationEnd', () => {
+    component.ngOnInit();
+    routerEvents$.next(new NavigationEnd(1, '/list', '/list'));
+    expect(component.currentRoute()).toBe('/list');
   });
 });
