@@ -83,13 +83,17 @@
             "include": [
               "src/**/*.spec.ts"
             ],
-            "coverageReporters": ["text", "html", "lcov"],
+            "coverageReporters": ["text", "html", "lcov", "json-summary"],
             "coverageExclude": [
               "**/*.html",
               "**/*.spec.ts",
               "src/main.ts",
               "src/environments/**"
-            ]
+            ],
+            "coverageThresholds": {
+              "statements": 80,
+              "lines": 80
+            }
           },
           "configurations": {
             "coverage": {
