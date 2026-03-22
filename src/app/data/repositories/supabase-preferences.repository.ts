@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
 import { UserPreferencesRepositoryContract } from '@/domain/repositories/user-preferences.repository.contract';
 import { UserPreferencesDto } from '@/dtos/supabase/user-preferences.dto';
@@ -9,7 +9,7 @@ import { mapUserPreferences, mapUserPreferencesToInsertDto } from '@/mappers/sup
 
 @Injectable({ providedIn: 'root' })
 export class SupabasePreferencesRepository implements UserPreferencesRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
   private readonly _table = 'user_preferences';
   private readonly _bucket = 'avatars';
   private readonly _bannerBucket = 'banners';

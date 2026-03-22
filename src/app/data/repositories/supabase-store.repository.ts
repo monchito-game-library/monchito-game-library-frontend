@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { StoreDto } from '@/dtos/supabase/store.dto';
 import { StoreModel } from '@/models/store/store.model';
 import { GameFormatType } from '@/types/game-format.type';
@@ -11,7 +11,7 @@ import { mapStore, mapStoreToInsertDto } from '@/mappers/supabase/store.mapper';
 /** Store repository backed by the Supabase stores table. */
 @Injectable({ providedIn: 'root' })
 export class SupabaseStoreRepository implements StoreRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
   private readonly _table = 'stores';
 
   /**
