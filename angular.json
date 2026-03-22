@@ -82,7 +82,19 @@
             "tsConfig": "tsconfig.spec.json",
             "include": [
               "src/**/*.spec.ts"
+            ],
+            "coverageReporters": ["text", "html", "lcov"],
+            "coverageExclude": [
+              "**/*.html",
+              "**/*.spec.ts",
+              "src/main.ts",
+              "src/environments/**"
             ]
+          },
+          "configurations": {
+            "coverage": {
+              "coverage": true
+            }
           }
         },
         "lint": {
