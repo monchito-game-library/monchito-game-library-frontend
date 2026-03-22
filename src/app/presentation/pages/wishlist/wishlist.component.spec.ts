@@ -253,6 +253,18 @@ describe('WishlistComponent', () => {
       expect(wishlistUseCases.deleteItem).toHaveBeenCalledWith('user-1', 'item-1');
       expect(snackBar.open).toHaveBeenCalled();
     });
+
+    it('muestra snackbar de error si deleteItem lanza', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.deleteItem.mockRejectedValue(new Error('delete error'));
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.onDeleteItem(makeItem());
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
   });
 
   describe('onOwnItem', () => {
@@ -314,6 +326,32 @@ describe('WishlistComponent', () => {
 
       expect(wishlistUseCases.updateItem).toHaveBeenCalled();
       expect(component.viewMode()).toBe('list');
+    });
+
+    it('muestra snackbar de error si updateItem lanza en modo edición', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.updateItem.mockRejectedValue(new Error('update error'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      (component as any)._editingItem = makeItem();
+      component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
+
+      await component.onMobileConfirm();
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+
+    it('muestra snackbar de error si addItem lanza en modo creación', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.addItem.mockRejectedValue(new Error('add error'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      component.mobileForm.setValue({ priority: 3, platform: 'PS5', desiredPrice: 50, notes: null });
+      component.pendingCatalogEntry.set(mockCatalogEntry);
+
+      await component.onMobileConfirm();
+
+      expect(snackBar.open).toHaveBeenCalled();
     });
   });
 });

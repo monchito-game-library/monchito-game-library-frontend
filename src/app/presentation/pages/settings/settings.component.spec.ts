@@ -305,6 +305,64 @@ describe('SettingsComponent', () => {
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.savingName()).toBe(false);
     });
+
+    it('usa el mensaje de transloco cuando el error no es instanceof Error', async () => {
+      const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      authUseCases.updateDisplayName.mockRejectedValue('string error');
+      mockUserContext.getDisplayName.mockReturnValue('Old Name');
+      component.nameInputValue.set('New Name');
+
+      await component.onSaveName();
+
+      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.updateName', expect.any(String), expect.any(Object));
+      expect(component.savingName()).toBe(false);
+    });
+  });
+
+  describe('_savePreferences — sin userId', () => {
+    it('no llama a savePreferences cuando userId es null', () => {
+      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      mockUserContext.userId.set(null);
+      component.ngOnInit();
+
+      component.selectedLangControl.setValue('en');
+
+      expect(userPrefsUseCases.savePreferences).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('selectedLangControl — valor falsy', () => {
+    it('no llama a setActiveLang cuando lang es vacío', () => {
+      const transloco = TestBed.inject(TranslocoService as any) as any;
+      component.ngOnInit();
+
+      component.selectedLangControl.setValue('');
+
+      expect(transloco.setActiveLang).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onAvatarFileSelected — error no-Error', () => {
+    function mockFileEvent(file?: File): Event {
+      const input = { files: file ? [file] : null, value: '' } as unknown as HTMLInputElement;
+      return { target: input } as unknown as Event;
+    }
+
+    it('usa mensaje de transloco cuando el error del avatar no es instanceof Error', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadAvatar.mockRejectedValue('string error');
+      const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
+
+      await component.onAvatarFileSelected(mockFileEvent(file));
+
+      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.uploadImage', expect.any(String), expect.any(Object));
+      expect(mockUserPreferencesState.uploadingAvatar()).toBe(false);
+    });
   });
 
   describe('_loadInitialBanners', () => {
@@ -480,6 +538,25 @@ describe('SettingsComponent', () => {
       await component.onBannerFileSelected(mockFileEvent(file));
 
       expect(snackBar.open).toHaveBeenCalled();
+      expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
+    });
+
+    it('usa mensaje de transloco cuando el error del banner no es instanceof Error', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const blob = new Blob(['data'], { type: 'image/jpeg' });
+      dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
+      useCases.uploadBanner.mockRejectedValue('string error');
+      const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
+
+      await component.onBannerFileSelected(mockFileEvent(file));
+
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'settings.errors.uploadBanner',
+        expect.any(String),
+        expect.any(Object)
+      );
       expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
     });
 

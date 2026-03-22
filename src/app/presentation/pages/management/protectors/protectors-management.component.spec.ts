@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { ProtectorsManagementComponent, ProtectorEditPanelComponent } from './protectors-management.component';
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
@@ -196,6 +197,56 @@ describe('ProtectorsManagementComponent', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+
+describe('ProtectorEditPanelComponent — template real', () => {
+  let component: ProtectorEditPanelComponent;
+  let fixture: ComponentFixture<ProtectorEditPanelComponent>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    TestBed.configureTestingModule({
+      imports: [
+        ProtectorEditPanelComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { en: {} },
+          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
+        })
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    fixture = TestBed.createComponent(ProtectorEditPanelComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('se renderiza con el template real sin errores', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('muestra la sección de packs vacía cuando no hay packs', () => {
+    expect(component.packsArray.length).toBe(0);
+  });
+
+  it('renderiza packs cuando se añaden', () => {
+    component.addPack();
+    fixture.detectChanges();
+    expect(component.packsArray.length).toBe(1);
+  });
+
+  it('renderiza modo edición cuando se pasa un protector por input', () => {
+    fixture.componentRef.setInput('protector', {
+      id: 'p1',
+      name: 'BigBen',
+      category: 'console',
+      notes: null,
+      isActive: true,
+      packs: [{ quantity: 1, price: 5, url: null }]
+    });
+    fixture.detectChanges();
+    expect(component.form.getRawValue().name).toBe('BigBen');
+  });
+});
 
 describe('ProtectorEditPanelComponent', () => {
   let component: ProtectorEditPanelComponent;

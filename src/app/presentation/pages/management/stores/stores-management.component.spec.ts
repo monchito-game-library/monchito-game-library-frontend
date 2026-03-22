@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { StoresManagementComponent, StoreEditPanelComponent } from './stores-management.component';
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
@@ -187,6 +188,39 @@ describe('StoresManagementComponent', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+
+describe('StoreEditPanelComponent — template real', () => {
+  let component: StoreEditPanelComponent;
+  let fixture: ComponentFixture<StoreEditPanelComponent>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    TestBed.configureTestingModule({
+      imports: [
+        StoreEditPanelComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { en: {} },
+          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
+        })
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    fixture = TestBed.createComponent(StoreEditPanelComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('se renderiza con el template real sin errores', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('renderiza modo edición cuando se pasa un store por input', () => {
+    fixture.componentRef.setInput('store', { id: 's1', label: 'Steam', formatHint: 'digital' });
+    fixture.detectChanges();
+    expect(component.form.getRawValue().name).toBe('Steam');
+  });
+});
 
 describe('StoreEditPanelComponent', () => {
   let component: StoreEditPanelComponent;
