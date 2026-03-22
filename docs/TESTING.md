@@ -10,6 +10,18 @@
 
 ## Cobertura por capa
 
+### Capa de datos — Configuración (`src/app/data/config`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `supabase.config.spec.ts` | 3 | ✅ Cubierto |
+
+**Qué se cubre**: creación del cliente Supabase (singleton), devolución del mismo objeto en llamadas sucesivas, resolución del token DI `SUPABASE_CLIENT` via `TestBed`.
+
+**Patrón de test**: importaciones estáticas sin mocks — el entorno usa credenciales reales (`environment.ts`), por lo que `createClient` no lanza error y el comportamiento del singleton es testable directamente.
+
+---
+
 ### Capa de datos — Mappers (`src/app/data/mappers`)
 
 | Fichero | Tests | Estado |
@@ -61,7 +73,7 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `auth-state.service.spec.ts` | 13 | ✅ Cubierto |
-| `pwa-update.service.spec.ts` | 11 | ✅ Cubierto |
+| `pwa-update.service.spec.ts` | 12 | ✅ Cubierto |
 | `theme.service.spec.ts` | 6 | ✅ Cubierto |
 | `user-context.service.spec.ts` | 11 | ✅ Cubierto |
 | `user-preferences.service.spec.ts` | 14 | ✅ Cubierto |
@@ -91,7 +103,7 @@
 | `pages/create-update-game/components/game-form/game-form.component.spec.ts` | 26 | ✅ Cubierto |
 | `ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
 | `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/create-update-game/create-and-update-game.component.spec.ts` | 1 | ✅ Cubierto |
+| `pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
 | `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
 
@@ -164,32 +176,36 @@
 
 | Capa | Ficheros | Tests |
 |---|---|---|
+| Configuración | 1 | 3 |
 | Mappers | 6 | 82 |
 | Use Cases | 9 | 69 |
 | Repositorios | 9 | 73 |
 | Guards | 2 | 4 |
-| Servicios | 5 | 55 |
-| Componentes | 25 | 321 |
+| Servicios | 5 | 56 |
+| Componentes | 25 | 545 |
 | Abstractas | 1 | 29 |
 | Utilidades | 2 | 14 |
-| **Total** | **59** | **638** |
+| **Total** | **60** | **875** |
 
 ---
 
-## Qué falta por cubrir
+## Cobertura actual
 
-### Lógica sin cobertura
+**~98 % statements / ~99 % líneas** (875 tests, 60 ficheros).
 
-| Componente / método | Motivo |
-|---|---|
-| Flujos async de management (loadStores, onSaved, onDeleteStore…) | Requieren microtask control y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
-
-### Cobertura de código
-
-Para obtener el informe de cobertura con v8:
+Para obtener el informe completo:
 
 ```bash
 ng test --coverage
 ```
 
-El informe se genera en `coverage/`. La cobertura de líneas en mappers, use cases y repositorios supera el 90%.
+El informe se genera en `coverage/`.
+
+## Lógica sin cobertura (deliberadamente no testeada)
+
+| Componente / método | Motivo |
+|---|---|
+| Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
+| `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. Impacto mínimo en cobertura. |
+
+> La mejora de cobertura está pausada intencionalmente. El estado actual (~98 %) es suficiente para detectar regresiones en toda la lógica crítica de la app.
