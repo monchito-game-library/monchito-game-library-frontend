@@ -184,6 +184,14 @@ describe('StoresManagementComponent', () => {
       expect(storeUseCases.addStore).toHaveBeenCalledWith({ label: 'Nueva Tienda', formatHint: null }, 'user-1');
       expect(component.panelOpen()).toBe(false);
     });
+
+    it('lanza error cuando userId es null al intentar añadir store', async () => {
+      const mockUserContextLocal = TestBed.inject(UserContextService as any) as any;
+      mockUserContextLocal.userId.set(null);
+
+      component.selectedStore.set(null);
+      await expect(component.onSaved({ label: 'Test', formatHint: null })).rejects.toThrow('No user authenticated');
+    });
   });
 });
 

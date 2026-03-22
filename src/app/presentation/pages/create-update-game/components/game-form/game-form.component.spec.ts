@@ -207,6 +207,12 @@ describe('GameFormComponent', () => {
       expect(component.gamePlatforms()).toEqual([]);
     });
 
+    it('mapea plataforma desconocida a null en gamePlatforms', () => {
+      component.selectGameFromSearch({ ...mockCatalogDto, platforms: ['Unknown Platform'] });
+      const codes = component.gamePlatforms().map((p) => p.code);
+      expect(codes).toContain(null);
+    });
+
     it('llama a _loadScreenshots cuando rawg_id es truthy', () => {
       const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
       component.selectGameFromSearch({ ...mockCatalogDto, rawg_id: 58175 });
@@ -299,6 +305,14 @@ describe('GameFormComponent', () => {
 
     it('devuelve el código como fallback cuando la plataforma no existe', () => {
       expect(component.displayPlatformLabel('UNKNOWN' as any)).toBe('UNKNOWN');
+    });
+  });
+
+  describe('_userId getter', () => {
+    it('lanza Error cuando userId es null', () => {
+      const userContext = TestBed.inject(UserContextService as any) as any;
+      userContext.userId.set(null);
+      expect(() => (component as any)._userId).toThrow('No user selected');
     });
   });
 

@@ -234,7 +234,7 @@ describe('ProtectorEditPanelComponent — template real', () => {
     expect(component.packsArray.length).toBe(1);
   });
 
-  it('renderiza modo edición cuando se pasa un protector por input', () => {
+  it('renderiza modo edición cuando se pasa un protector por input (activo)', () => {
     fixture.componentRef.setInput('protector', {
       id: 'p1',
       name: 'BigBen',
@@ -245,6 +245,19 @@ describe('ProtectorEditPanelComponent — template real', () => {
     });
     fixture.detectChanges();
     expect(component.form.getRawValue().name).toBe('BigBen');
+  });
+
+  it('renderiza modo edición cuando se pasa un protector por input (inactivo)', () => {
+    fixture.componentRef.setInput('protector', {
+      id: 'p2',
+      name: 'CTA',
+      category: 'box',
+      notes: null,
+      isActive: false,
+      packs: []
+    });
+    fixture.detectChanges();
+    expect(component.form.getRawValue().name).toBe('CTA');
   });
 });
 
