@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { ProtectorDto } from '@/dtos/supabase/protector.dto';
 import { ProtectorModel } from '@/models/protector/protector.model';
 import { ProtectorRepositoryContract } from '@/domain/repositories/protector.repository.contract';
@@ -10,7 +10,7 @@ import { mapProtector, mapProtectorToInsertDto } from '@/mappers/supabase/protec
 /** Protector repository backed by the Supabase order_products table. */
 @Injectable({ providedIn: 'root' })
 export class SupabaseProtectorRepository implements ProtectorRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
   private readonly _table = 'order_products';
 
   /**

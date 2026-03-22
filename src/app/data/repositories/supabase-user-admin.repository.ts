@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { UserAdminRepositoryContract } from '@/domain/repositories/user-admin.repository.contract';
 import { UserAdminModel } from '@/models/user-admin/user-admin.model';
 import { UserAdminRpcDto } from '@/dtos/supabase/user-admin.dto';
 import { UserRoleType } from '@/types/user-role.type';
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 
 @Injectable()
 export class SupabaseUserAdminRepository implements UserAdminRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
 
   /**
    * Calls the SECURITY DEFINER function to retrieve all registered users with their roles.
