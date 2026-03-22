@@ -8,7 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Testing (unit + integración)](#testing-unit--integración) | Alta |
+| ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
@@ -24,11 +24,16 @@
 
 ---
 
-## Testing *(prioridad alta)*
+## ~~Testing~~ ✅ Hecho
 
-### Testing (unit + integración)
+### ~~Testing (unit + integración)~~
 
-El proyecto está en un punto de estabilidad suficiente para introducir tests. La base está preparada: arquitectura de capas limpia, uso de signals, repositorios con contratos inyectables y componentes standalone.
+Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **875 tests en 60 ficheros**, con una cobertura de ~98 % de statements y ~99 % de líneas. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
+
+<details>
+<summary>Plan original (referencia)</summary>
+
+El proyecto estaba en un punto de estabilidad suficiente para introducir tests. La base estaba preparada: arquitectura de capas limpia, uso de signals, repositorios con contratos inyectables y componentes standalone.
 
 #### Qué testear y con qué herramienta
 
@@ -74,6 +79,8 @@ Vitest (unit + integración) + Angular Testing Library + Playwright (E2E)
 3. Componentes críticos con Angular Testing Library.
 4. Guards y servicios de autenticación.
 5. E2E de los flujos principales (requiere más setup).
+
+</details>
 
 ---
 
