@@ -67,7 +67,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.875rem 1rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface-container-low);
@@ -110,7 +110,7 @@
   .protector-card__category-chip {
     font-size: 0.68rem;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: 20px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -146,7 +146,7 @@
   .protector-card__packs {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem;
+    gap: 0.25rem;
   }
 
   .protector-card__pack-chip {
@@ -161,13 +161,13 @@
   }
 
   .protector-card__pack-qty {
-    padding: 2px 5px;
+    padding: 2px 0.5rem;
     background: var(--mat-sys-surface-variant);
     color: var(--mat-sys-on-surface-variant);
   }
 
   .protector-card__pack-price {
-    padding: 2px 5px;
+    padding: 2px 0.5rem;
     background: var(--mat-sys-primary-container);
     color: var(--mat-sys-on-primary-container);
     font-weight: 600;
@@ -184,7 +184,7 @@
   .protector-card__inactive-badge {
     font-size: 0.7rem;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: 4px;
     background: var(--mat-sys-error-container);
     color: var(--mat-sys-on-error-container);

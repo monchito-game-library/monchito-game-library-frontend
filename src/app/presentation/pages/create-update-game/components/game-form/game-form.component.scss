@@ -202,7 +202,7 @@
 
     span {
       display: flex;
-      gap: 0.2rem;
+      gap: 0.25rem;
 
       mat-icon {
         font-size: 14px;
@@ -214,7 +214,7 @@
   }
 
   .game-cover-panel__info-genres {
-    margin: 0.4rem 0 0;
+    margin: 0.5rem 0 0;
     font-size: 0.75rem;
     color: var(--mat-sys-on-surface-variant);
     opacity: 0.8;
@@ -329,7 +329,7 @@
   .game-form__submit-content {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 }
 

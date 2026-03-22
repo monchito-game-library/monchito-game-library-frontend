@@ -110,15 +110,15 @@
   .store-card__chips {
     display: flex;
     flex-wrap: nowrap;
-    gap: 0.35rem;
-    margin-top: 0.15rem;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
     overflow: hidden;
   }
 
   .store-card__chip {
     font-size: 0.7rem;
     font-weight: 500;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: 20px;
     background: var(--mat-sys-surface-variant);
     color: var(--mat-sys-on-surface-variant);
