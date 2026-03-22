@@ -137,6 +137,38 @@ describe('AuthStateService', () => {
 
       expect(service.getDisplayName()).toBe('');
     });
+
+    it('getUserEmail devuelve null cuando no hay sesión', async () => {
+      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(null);
+      service = TestBed.inject(AuthStateService);
+      await Promise.resolve();
+
+      expect(service.getUserEmail()).toBeNull();
+    });
+
+    it('getAvatarUrl devuelve null cuando no hay sesión', async () => {
+      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(null);
+      service = TestBed.inject(AuthStateService);
+      await Promise.resolve();
+
+      expect(service.getAvatarUrl()).toBeNull();
+    });
+
+    it('getUserEmail devuelve null cuando el usuario no tiene email', async () => {
+      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue({ ...fakeUser, email: null as unknown as string });
+      service = TestBed.inject(AuthStateService);
+      await Promise.resolve();
+
+      expect(service.getUserEmail()).toBeNull();
+    });
+
+    it('getAvatarUrl devuelve null cuando el usuario no tiene avatarUrl', async () => {
+      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue({ ...fakeUser, avatarUrl: null });
+      service = TestBed.inject(AuthStateService);
+      await Promise.resolve();
+
+      expect(service.getAvatarUrl()).toBeNull();
+    });
   });
 
   describe('onAuthStateChange', () => {

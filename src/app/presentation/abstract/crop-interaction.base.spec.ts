@@ -235,6 +235,17 @@ describe('CropInteractionBase', () => {
     });
   });
 
+  describe('onPointerMove — imagen alta (overflowY)', () => {
+    it('actualiza posY al arrastrar verticalmente sobre imagen alta', () => {
+      // Container 200x200, imagen 200x400 → _overflowY = 200
+      crop.onImageLoad(makeImgEvent(200, 400));
+      crop.onPointerDown(makePointerEvent({ pointerType: 'mouse', clientX: 0, clientY: 0 }));
+      // dy = +20 → posY = 50 - (20/200)*100 = 40
+      crop.onPointerMove(makePointerEvent({ clientX: 0, clientY: 20 }));
+      expect(crop.posY()).toBe(40);
+    });
+  });
+
   describe('onTouchEnd', () => {
     it('actualiza la posición de referencia cuando queda 1 dedo', () => {
       crop.onImageLoad(makeImgEvent(400, 200));

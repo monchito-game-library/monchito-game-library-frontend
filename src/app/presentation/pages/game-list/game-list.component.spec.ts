@@ -432,6 +432,25 @@ describe('GameListComponent', () => {
     });
   });
 
+  describe('rowItemSize', () => {
+    it('devuelve un número positivo para la altura de la fila', () => {
+      const size = component.rowItemSize();
+      expect(size).toBeGreaterThan(0);
+    });
+
+    it('cambia según columnCount e isMobile', () => {
+      component.columnCount.set(2);
+      component.isMobile.set(true);
+      const sizeMobile = component.rowItemSize();
+
+      component.columnCount.set(6);
+      component.isMobile.set(false);
+      const sizeDesktop = component.rowItemSize();
+
+      expect(sizeMobile).toBeGreaterThan(sizeDesktop);
+    });
+  });
+
   describe('ngOnDestroy', () => {
     it('se llama sin errores tras ngOnInit', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
