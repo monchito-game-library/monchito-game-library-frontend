@@ -499,6 +499,50 @@ describe('GameFormComponent', () => {
       expect((component as any)._coverPosition()).toBe('50% 50%');
     });
   });
+
+  describe('filteredPlatforms', () => {
+    it('devuelve plataformas estáticas filtradas cuando gamePlatforms está vacío', () => {
+      component.form.controls.platform.setValue(null);
+      const result = component.filteredPlatforms();
+      expect(result.length).toBeGreaterThan(0);
+    });
+
+    it('filtra plataformas estáticas por el input cuando gamePlatforms está vacío', () => {
+      component.form.controls.platform.setValue('PS5');
+      const result = component.filteredPlatforms();
+      expect(
+        result.every((p) => p.code.toLowerCase().includes('ps5') || p.labelKey.toLowerCase().includes('ps5'))
+      ).toBe(true);
+    });
+
+    it('devuelve plataformas dinámicas cuando gamePlatforms tiene elementos', () => {
+      component.gamePlatforms.set([
+        { name: 'PlayStation 5', code: 'PS5' },
+        { name: 'Xbox Series X', code: 'XBOX-SERIES' }
+      ]);
+      component.form.controls.platform.setValue(null);
+      const result = component.filteredPlatforms();
+      expect(result.length).toBe(2);
+    });
+
+    it('filtra plataformas dinámicas por input cuando gamePlatforms tiene elementos', () => {
+      component.gamePlatforms.set([
+        { name: 'PlayStation 5', code: 'PS5' },
+        { name: 'Xbox Series X', code: 'XBOX-SERIES' }
+      ]);
+      component.form.controls.platform.setValue('XBOX' as any);
+      const result = component.filteredPlatforms();
+      expect(result.every((p) => p.code !== 'PS5')).toBe(true);
+    });
+
+    it('usa plataforma existente de platforms cuando el código coincide', () => {
+      component.gamePlatforms.set([{ name: 'PS5 Custom', code: 'PS5' }]);
+      component.form.controls.platform.setValue(null);
+      const result = component.filteredPlatforms();
+      const ps5 = result.find((p) => p.code === 'PS5');
+      expect(ps5).toBeDefined();
+    });
+  });
 });
 
 describe('GameFormComponent — ngOnInit', () => {
