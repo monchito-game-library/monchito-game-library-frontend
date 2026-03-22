@@ -81,7 +81,7 @@
 }
 
 .wishlist-card__genre-chip {
-  padding: 2px 8px;
+  padding: 2px 0.5rem;
   border-radius: 100px;
   font-size: 0.75rem;
   background: var(--mat-sys-secondary-container);
@@ -116,7 +116,7 @@
 
 .wishlist-card__platform-badge {
   align-self: flex-start;
-  padding: 2px 8px;
+  padding: 2px 0.5rem;
   border-radius: 100px;
   font-size: 0.6875rem;
   font-weight: 600;
@@ -127,12 +127,12 @@
 .wishlist-card__store-links {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .wishlist-card__store-link {
-  padding: 2px 10px;
+  padding: 2px 0.75rem;
   border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 500;
