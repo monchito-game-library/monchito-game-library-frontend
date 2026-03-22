@@ -101,6 +101,19 @@ describe('UsersManagementComponent', () => {
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.updatingUserId()).toBeNull();
     });
+
+    it('no modifica otros usuarios al actualizar el rol', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.setUserRole.mockResolvedValue(undefined);
+      component.users.set([
+        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any,
+        { userId: 'user-3', email: 'c@d.com', role: 'user', avatarUrl: null, displayName: null } as any
+      ]);
+
+      await component.onRoleChange(component.users()[0], 'admin');
+
+      expect(component.users()[1].role).toBe('user');
+    });
   });
 
   describe('_loadUsers (vía ngOnInit)', () => {
