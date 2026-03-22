@@ -9,7 +9,7 @@
 | Bug | Componente | Prioridad |
 |---|---|---|
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
-| [Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025) | Varios | ⏳ Pendiente |
+| ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
 
 ---
 
@@ -196,35 +196,15 @@ Varios ficheros SCSS usan valores de `gap`, `margin` y `padding` que incumplen u
 
 ### Bloque 3 — Micro-espaciados en `px` en chips, badges y pills
 
-> Valores donde la conversión a `rem` no produce un múltiplo limpio de 0.25 (1px, 2px, 3px, 5px, 6px, 7px, 10px, 14px). Son espaciados decorativos internos de elementos pequeños.
+> Solo se toleran valores en `px` estrictamente inferiores a `0.25rem` (< 4px): 1px, 2px y 3px. Son espaciados decorativos internos de elementos pequeños donde el rem no aplica.
 
 | Fichero | Línea | Actual |
 |---------|-------|--------|
 | `toggle-switch.component.scss` | 8 | `padding: 2px` |
-| `game-search-panel.component.scss` | 145 | `padding: 1px 6px` |
 | `game-search-panel.component.scss` | 153 | `gap: 2px` |
-| `game-search-panel.component.scss` | 171 | `padding: 1px 7px` |
-| `settings.component.scss` | 104 | `gap: 6px` |
 | `settings.component.scss` | 139 | `gap: 2px` |
 | `settings.component.scss` | 149 | `padding: 2px` |
-| `settings.component.scss` | 175 | `padding: 2px 6px` |
 | `settings.component.scss` | 188 | `padding: 3px` |
-| `settings.component.scss` | 324 | `gap: 6px` |
-| `settings.component.scss` | 450 | `gap: 6px` |
-| `settings.component.scss` | 454 | `padding: 5px 14px` |
-| `stores-management.component.scss` | 121 | `padding: 2px 8px` |
-| `protectors-management.component.scss` | 113 | `padding: 2px 8px` |
-| `protectors-management.component.scss` | 164 | `padding: 2px 5px` |
-| `protectors-management.component.scss` | 170 | `padding: 2px 5px` |
-| `protectors-management.component.scss` | 187 | `padding: 2px 8px` |
-| `users-management.component.scss` | 120 | `padding: 2px 6px` |
-| `game-card.component.scss` | 264 | `padding: 2px 7px` |
 | `game-card.component.scss` | 324 | `gap: 3px` |
-| `wishlist-card.component.scss` | 84 | `padding: 2px 8px` |
-| `wishlist-card.component.scss` | 119 | `padding: 2px 8px` |
-| `wishlist-card.component.scss` | 130 | `gap: 6px` |
-| `wishlist-card.component.scss` | 135 | `padding: 2px 10px` |
 | `wishlist-item-dialog.component.scss` | 37 | `gap: 2px` |
-| `wishlist-item-dialog.component.scss` | 76 | `padding: 3px 10px` |
 | `wishlist.component.scss` | 158 | `gap: 2px` |
-| `wishlist.component.scss` | 219 | `padding: 3px 10px` |
