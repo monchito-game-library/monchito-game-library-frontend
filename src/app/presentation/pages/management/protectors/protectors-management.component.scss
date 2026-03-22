@@ -110,7 +110,7 @@
   .protector-card__category-chip {
     font-size: 0.68rem;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: 20px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -161,13 +161,13 @@
   }
 
   .protector-card__pack-qty {
-    padding: 2px 5px;
+    padding: 2px 0.5rem;
     background: var(--mat-sys-surface-variant);
     color: var(--mat-sys-on-surface-variant);
   }
 
   .protector-card__pack-price {
-    padding: 2px 5px;
+    padding: 2px 0.5rem;
     background: var(--mat-sys-primary-container);
     color: var(--mat-sys-on-primary-container);
     font-weight: 600;
@@ -184,7 +184,7 @@
   .protector-card__inactive-badge {
     font-size: 0.7rem;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: 4px;
     background: var(--mat-sys-error-container);
     color: var(--mat-sys-on-error-container);
