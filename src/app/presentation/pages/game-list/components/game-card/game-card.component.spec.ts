@@ -172,6 +172,22 @@ describe('GameCardComponent — computed signals', () => {
 
       expect(fixture2.componentInstance.coverTransform()).toBe('scale(1.5)');
     });
+
+    it('usa 50% como fallback para y cuando coverPosition tiene un solo componente', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', { ...mockGame, coverPosition: '30%' });
+      fixture2.detectChanges();
+
+      expect(fixture2.componentInstance.coverObjectPosition()).toBe('30% 50%');
+    });
+  });
+
+  describe('_userId getter', () => {
+    it('lanza Error cuando userId es null', () => {
+      const userContext = TestBed.inject(UserContextService as any) as any;
+      userContext.userId.set(null);
+      expect(() => (component as any)._userId).toThrow('No user selected');
+    });
   });
 
   describe('onFlip', () => {

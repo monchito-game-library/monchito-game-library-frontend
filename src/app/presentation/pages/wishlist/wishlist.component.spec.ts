@@ -287,6 +287,25 @@ describe('WishlistComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/add'], expect.objectContaining({ state: expect.any(Object) }));
     });
+
+    it('establece source como "rawg" cuando rawgId es truthy', async () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const router = TestBed.inject(Router as any) as any;
+
+      await component.onOwnItem(makeItem({ rawgId: 1 }));
+
+      const state = router.navigate.mock.calls[0][1].state;
+      expect(state.catalogEntry.source).toBe('rawg');
+    });
+  });
+
+  describe('_userId getter', () => {
+    it('lanza Error cuando userId es null', () => {
+      const userContext = TestBed.inject(UserContextService as any) as any;
+      userContext.userId.set(null);
+      expect(() => (component as any)._userId).toThrow('No user selected');
+    });
   });
 
   describe('onMobileConfirm', () => {
