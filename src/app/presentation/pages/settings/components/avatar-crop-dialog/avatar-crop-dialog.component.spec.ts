@@ -55,4 +55,29 @@ describe('AvatarCropDialogComponent', () => {
       expect(mockDialogRef.close).toHaveBeenCalledWith(null);
     });
   });
+
+  describe('onConfirm', () => {
+    it('recorta la imagen y cierra el dialog con un Blob', async () => {
+      const mockBlob = new Blob(['fake-image'], { type: 'image/jpeg' });
+      const mockCtx = { drawImage: vi.fn() };
+      const mockCanvas = {
+        width: 0,
+        height: 0,
+        getContext: vi.fn().mockReturnValue(mockCtx),
+        toBlob: vi.fn().mockImplementation((cb: (b: Blob) => void) => cb(mockBlob))
+      };
+      vi.spyOn(document, 'createElement').mockReturnValue(mockCanvas as unknown as HTMLElement);
+
+      // Simula imagen cargada con dimensiones reales
+      const fakeImg = { naturalWidth: 560, naturalHeight: 560 } as HTMLImageElement;
+      (component as any)._imgEl = fakeImg;
+      (component as any)._overflowX = 0;
+      (component as any)._overflowY = 0;
+
+      await component.onConfirm();
+
+      expect(mockCtx.drawImage).toHaveBeenCalled();
+      expect(mockDialogRef.close).toHaveBeenCalledWith(mockBlob);
+    });
+  });
 });

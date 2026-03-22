@@ -169,10 +169,10 @@
 | Repositorios | 9 | 73 |
 | Guards | 2 | 4 |
 | Servicios | 5 | 55 |
-| Componentes | 25 | 320 |
+| Componentes | 25 | 321 |
 | Abstractas | 1 | 29 |
 | Utilidades | 2 | 14 |
-| **Total** | **59** | **637** |
+| **Total** | **59** | **638** |
 
 ---
 
@@ -182,8 +182,7 @@
 
 | Componente / método | Motivo |
 |---|---|
-| `AvatarCropDialogComponent._cropToBlob()` | Requiere canvas + `HTMLImageElement` real con naturalWidth/naturalHeight — no testeable en happy-dom. |
-| Flujos async de todos los management (loadStores, onSaved, onDeleteStore…) | Requieren microtask control y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
+| Flujos async de management (loadStores, onSaved, onDeleteStore…) | Requieren microtask control y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
 
 ### Cobertura de código
 
