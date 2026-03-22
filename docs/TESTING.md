@@ -106,6 +106,16 @@
 - `GameFormComponent`: valores iniciales, señal computada `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`.
 - `SkeletonComponent`: valores por defecto de los tres inputs (`width`, `height`, `borderRadius`).
 - `AuthComponent` / `CreateAndUpdateGameComponent` / `ConfirmDialogComponent` / `ManagementComponent`: existencia y datos inyectados donde aplica.
+- `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
+- `GameSearchPanelComponent`: valores iniciales, `onSearchInput`, `onSelectGame`.
+- `GameCoverPositionDialogComponent`: parseo de `initialPosition` en constructor, `onConfirm()`, `onCancel()`.
+- `AvatarCropDialogComponent`: existencia, `cropW`/`cropH`, `imageUrl`, `onCancel()`.
+- `WishlistItemDialogComponent`: modos add/edit, `canConfirm`, `onGameSelected`, `onChangGame`, `onConfirm`, `onCancel`.
+- `AuditLogManagementComponent`: valores iniciales, `getActionIcon`, `getActionLabel`.
+- `UsersManagementComponent`: valores iniciales, `isCurrentUser`, `getRoleLabel`, `onRoleChange` (skip si mismo rol).
+- `StoresManagementComponent`: valores iniciales, `onAddStore`, `onSelectStore`, `onClosePanel`, `getFormatHintLabel`.
+- `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`.
+- `AppComponent`: existencia, `isAuthenticated`, `isNavActive`, `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`.
 
 ---
 
@@ -159,29 +169,21 @@
 | Repositorios | 9 | 73 |
 | Guards | 2 | 4 |
 | Servicios | 5 | 55 |
-| Componentes | 15 | 215 |
+| Componentes | 25 | 320 |
 | Abstractas | 1 | 29 |
 | Utilidades | 2 | 14 |
-| **Total** | **49** | **532** |
+| **Total** | **59** | **637** |
 
 ---
 
 ## Qué falta por cubrir
 
-### Componentes sin tests
+### Lógica sin cobertura
 
-| Componente | Motivo |
+| Componente / método | Motivo |
 |---|---|
-| `GameCoverPositionDialogComponent` | Extiende `CropInteractionBase` (ya cubierta). Lógica adicional mínima. |
-| `AvatarCropDialogComponent` | `_cropToBlob()` requiere canvas + HTMLImageElement real, no testeable en happy-dom. |
-| `GameSearchPanelComponent` | Lógica de debounce + búsqueda asíncrona. |
-| `GameListFiltersSheetComponent` | Wrapper de filtros con lógica mínima. |
-| `WishlistItemDialogComponent` | Formulario de ítem con búsqueda integrada. |
-| `AuditLogManagementComponent` | Valores iniciales y mapeo de iconos/labels. |
-| `UsersManagementComponent` | CRUD de roles de usuario. |
-| `StoresManagementComponent` | 380 líneas — formulario + CRUD inline. |
-| `ProtectorsManagementComponent` | 592 líneas — formulario + packs array + CRUD inline. |
-| `AppComponent` | Shell principal — requiere mocks de Router events, múltiples servicios. |
+| `AvatarCropDialogComponent._cropToBlob()` | Requiere canvas + `HTMLImageElement` real con naturalWidth/naturalHeight — no testeable en happy-dom. |
+| Flujos async de todos los management (loadStores, onSaved, onDeleteStore…) | Requieren microtask control y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
 
 ### Cobertura de código
 
