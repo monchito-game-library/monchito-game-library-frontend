@@ -132,6 +132,24 @@ describe('SupabaseProtectorRepository', () => {
       );
     });
 
+    it('cubre rama false de name cuando el patch no incluye name', async () => {
+      const b = makeBuilder({ data: protectorDto, error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.update('p-1', { packs: [{ quantity: 10, price: 5.99, url: null }] });
+
+      expect(b.update).toHaveBeenCalledWith(expect.not.objectContaining({ name: expect.anything() }));
+    });
+
+    it('cubre rama ?? null de notes cuando notes es null', async () => {
+      const b = makeBuilder({ data: protectorDto, error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.update('p-1', { notes: null });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ notes: null }));
+    });
+
     it('lanza error si el update falla', async () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Update failed' } }));
 

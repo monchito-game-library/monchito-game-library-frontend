@@ -157,6 +157,23 @@ describe('GameFormComponent', () => {
       expect(images).toContain('https://cdn.example.com/cover.jpg');
       expect(images).toContain('https://cdn.example.com/ss1.jpg');
     });
+
+    it('omite el cover de la lista cuando image_url es null', () => {
+      component.selectedGame.set({
+        rawg_id: 1,
+        title: 'Test',
+        slug: 'test',
+        image_url: null,
+        released_date: null,
+        rating: 4,
+        platforms: [],
+        genres: [],
+        screenshots: ['https://cdn.example.com/ss1.jpg']
+      });
+      const images = component.coverImages();
+      expect(images).toHaveLength(1);
+      expect(images[0]).toBe('https://cdn.example.com/ss1.jpg');
+    });
   });
 
   describe('openSearchMode / closeSearchMode', () => {
@@ -514,6 +531,7 @@ describe('GameFormComponent', () => {
       component.form.controls.status.setValue(null as any);
       component.form.controls.format.setValue(null);
       component.form.controls.is_favorite.setValue(null as any);
+      component.form.controls.description.setValue(null as any);
 
       await component.onSubmit();
       await new Promise((r) => setTimeout(r, 0));
@@ -524,6 +542,7 @@ describe('GameFormComponent', () => {
       expect(call.status).toBe('backlog');
       expect(call.format).toBeNull();
       expect(call.isFavorite).toBe(false);
+      expect(call.description).toBe('');
     });
 
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
@@ -787,6 +806,15 @@ describe('GameFormComponent — ngOnInit', () => {
 
     expect(component.selectedGame()).toBeNull();
     expect(component.selectedImageUrl()).toBeNull();
+  });
+
+  it('modo edición — juego con imageUrl pero sin rawgId no llama a _loadScreenshots', async () => {
+    setup('game-uuid', { ...editGame, rawgId: null });
+    await component.ngOnInit();
+
+    expect(component.selectedGame()?.title).toBe('God of War');
+    const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+    expect((catalogUseCases as any).getAllGameScreenshots).not.toHaveBeenCalled();
   });
 
   it('hasChanges devuelve false en modo edición cuando el formulario no ha cambiado', async () => {
