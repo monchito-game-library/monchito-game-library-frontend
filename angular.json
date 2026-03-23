@@ -77,23 +77,28 @@
           "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": [
-              "@angular/localize/init"
-            ],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
+            "include": [
+              "src/**/*.spec.ts"
             ],
-            "styles": [
-              "src/styles.scss"
+            "coverageReporters": ["text", "html", "lcov", "json-summary"],
+            "coverageExclude": [
+              "**/*.html",
+              "**/*.spec.ts",
+              "src/main.ts",
+              "src/environments/**"
             ],
-            "scripts": []
+            "coverageThresholds": {
+              "statements": 80,
+              "lines": 80
+            }
+          },
+          "configurations": {
+            "coverage": {
+              "coverage": true
+            }
           }
         },
         "lint": {
