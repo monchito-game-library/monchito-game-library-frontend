@@ -10,7 +10,7 @@
 |---|---|
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
 | [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
-| [Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist) | Media |
+| [Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist) | **Alta** |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |

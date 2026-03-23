@@ -8,7 +8,7 @@
 
 | Bug | Componente | Prioridad |
 |---|---|---|
-| [Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile) | `WishlistComponent` | Media |
+| [Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile) | `WishlistComponent` | **Alta** |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
 | ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
 
