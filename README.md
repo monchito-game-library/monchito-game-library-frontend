@@ -14,29 +14,36 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 
 - Autenticación con Supabase (email/contraseña)
 - Catálogo personal con virtual scroll (renderiza solo lo visible, soporta colecciones de cualquier tamaño)
-- Filtros por consola, tienda, estado y favoritos — instantáneos al estar en memoria
+- Filtros por consola, tienda, estado, formato y favoritos — instantáneos al estar en memoria
 - Ordenación por título, precio y valoración
 - Estadísticas en tiempo real: juegos, gasto total y valoración media
+- Wishlist (`/wishlist`) con prioridad, gasto estimado y links directos a tiendas (Amazon, GAME, CEX, Xtralife)
 - Búsqueda de juegos del catálogo RAWG para rellenar portada y metadatos
-- Formulario de juego con soporte para entradas manuales y desde catálogo
+- Formulario de juego con sugerencia automática de formato según tienda
 - Reposicionamiento de portada por juego (punto focal configurable en la card)
-- Recorte de avatar y banner de perfil
-- Panel de administración (`/management`): gestión de usuarios, tiendas y audit log
+- Recorte de avatar y banner de perfil (implementación propia sin dependencias externas)
+- Panel de administración (`/management`): gestión de usuarios, tiendas, protectores y audit log
+- Catálogo de protectores/cajas con packs y precios, base para pedidos grupales
+- PWA instalable con estrategia de actualización automática en segundo plano
 - Tema claro/oscuro con Angular Material 3
 - Navegación Rail (desktop) y Bottom Navigation (móvil)
 - Soporte multilenguaje (ES/EN) con Transloco
+- 875 tests unitarios con Vitest (~98 % de cobertura de statements)
 
 ---
 
 ## Tecnologías
 
-- Angular 21 + Signals + Control Flow (`@for`, `@if`)
+- Angular 21 (zoneless) + Signals + Control Flow (`@for`, `@if`)
 - Angular Material 3 (MD3)
 - Angular CDK Virtual Scroll
-- Supabase (PostgreSQL + Auth + RLS)
+- Angular Service Worker (PWA)
+- Supabase (PostgreSQL + Auth + Storage + RLS)
 - Dexie (IndexedDB — caché local)
 - Transloco (i18n)
 - SCSS con design tokens de Material
+- Vitest 4.1.0 (unit testing)
+- GitHub Actions (CI — bloquea merge si cobertura < 80 %)
 
 ---
 
@@ -47,12 +54,14 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 npm install
 npm start
 
+# Tests unitarios
+npx ng test
+
+# Tests con informe de cobertura
+npx ng test --configuration=coverage
+
 # Build producción
 npm run build
-
-# Deploy a GitHub Pages (Unix / Windows)
-npm run deploy:unix
-npm run deploy:windows
 
 # Build para Vercel (genera entornos desde variables de entorno)
 npm run vercel-build
