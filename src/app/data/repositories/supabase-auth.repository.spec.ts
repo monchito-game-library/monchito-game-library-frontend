@@ -40,6 +40,28 @@ describe('SupabaseAuthRepository', () => {
 
       expect(await repo.getSession()).toBeNull();
     });
+
+    it('mapea email a null y displayName a null cuando el usuario no tiene email ni metadata', async () => {
+      const userWithoutEmail = { id: 'user-2', user_metadata: {} };
+      mockSupabase.auth.getSession.mockResolvedValue({ data: { session: { user: userWithoutEmail } } });
+
+      const result = await repo.getSession();
+
+      expect(result!.email).toBeNull();
+      expect(result!.displayName).toBeNull();
+      expect(result!.avatarUrl).toBeNull();
+    });
+
+    it('usa el prefijo del email como displayName cuando no hay display_name en metadata', async () => {
+      const userWithoutDisplayName = { id: 'user-3', email: 'test@example.com', user_metadata: {} };
+      mockSupabase.auth.getSession.mockResolvedValue({
+        data: { session: { user: userWithoutDisplayName } }
+      });
+
+      const result = await repo.getSession();
+
+      expect(result!.displayName).toBe('test');
+    });
   });
 
   describe('signIn', () => {
@@ -59,6 +81,12 @@ describe('SupabaseAuthRepository', () => {
       });
 
       await expect(repo.signIn('bad@test.com', 'wrong')).rejects.toThrow('Invalid credentials');
+    });
+
+    it('lanza "Login failed" cuando error es null pero user también es null', async () => {
+      mockSupabase.auth.signInWithPassword.mockResolvedValue({ data: { user: null }, error: null });
+
+      await expect(repo.signIn('test@example.com', 'pass')).rejects.toThrow('Login failed');
     });
   });
 
@@ -91,6 +119,12 @@ describe('SupabaseAuthRepository', () => {
       });
 
       await expect(repo.signUp('dup@test.com', 'pass')).rejects.toThrow('Email already registered');
+    });
+
+    it('lanza "Registration failed" cuando error es null pero user también es null', async () => {
+      mockSupabase.auth.signUp.mockResolvedValue({ data: { user: null }, error: null });
+
+      await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow('Registration failed');
     });
   });
 
