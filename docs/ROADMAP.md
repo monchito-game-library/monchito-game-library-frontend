@@ -10,6 +10,7 @@
 |---|---|
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
 | [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
+| [Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist) | Media |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
@@ -58,6 +59,23 @@ Análisis en profundidad del código de producción realizado con cobertura de t
 ---
 
 ## Nuevas secciones
+
+### Rediseño de la card de wishlist
+
+La `WishlistCardComponent` acumula demasiadas acciones clickables en poco espacio (links de tiendas, botón "Tengo este juego", editar, eliminar), lo que provoca que durante el scroll en mobile se registren taps accidentales en elementos interactivos y el scroll se interrumpa o la card parezca cortada.
+
+#### Problemas actuales
+
+- Scroll entrecortado en mobile: la densidad de elementos con eventos táctiles interfiere con el gesto de scroll del navegador.
+- Diseño visualmente cargado: demasiada información y acciones compitiendo en el mismo espacio.
+
+#### Propuesta
+
+- Revisar la jerarquía visual: separar claramente la zona informativa (portada, título, precio, prioridad) de la zona de acciones.
+- Agrupar las acciones secundarias (editar, eliminar) en un menú contextual o un swipe-to-reveal en mobile, reduciendo la superficie táctil activa durante el scroll.
+- Evaluar si los links de tiendas deben estar visibles directamente en la card o accesibles desde un botón de expansión.
+
+---
 
 ### Página de detalle de juego (`/games/:id`)
 
