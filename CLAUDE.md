@@ -14,6 +14,28 @@
 
 - **Nunca hacer commit ni push** a menos que el usuario lo pida explícitamente.
 
+### Flujo de trabajo
+
+1. Crear una rama descriptiva desde `master`: `git checkout -b tipo/descripcion-corta`
+2. Hacer los cambios y commitear.
+3. Hacer push y abrir PR contra `master`.
+4. El CI debe pasar (tests + cobertura ≥ 80%) antes de mergear.
+5. Mergear con **squash merge** (un único commit limpio en master).
+6. La rama se elimina automáticamente tras el merge.
+
+> No existe rama `develop`. Todo va directamente a `master` vía PR.
+
+### Nombrado de ramas
+
+```
+feat/nombre-de-la-feature
+fix/descripcion-del-bug
+chore/tarea-de-mantenimiento
+test/mejora-de-cobertura
+docs/actualizacion-documentacion
+refactor/descripcion
+```
+
 ## Dependencias npm
 
 - Usar **siempre versiones exactas** en `package.json`. Nunca usar rangos con `^` o `~`.
