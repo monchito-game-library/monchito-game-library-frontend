@@ -256,6 +256,32 @@ describe('GameListComponent', () => {
       const ids = component.filteredGames().map((g) => g.id);
       expect(ids[0]).toBe(5);
     });
+
+    it('cubre brazo || 0 de b.price cuando b.price es null', () => {
+      component.allGames.set([makeGame({ title: 'B', price: 10 }), makeGame({ title: 'A', price: null })]);
+      component.sortBy.set('price');
+      component.sortDirection.set('asc');
+      const prices = component.filteredGames().map((g) => g.price);
+      expect(prices).toEqual([null, 10]);
+    });
+
+    it('cubre brazo || 0 de b.personalRating cuando b.personalRating es null', () => {
+      component.allGames.set([
+        makeGame({ title: 'B', personalRating: 7 }),
+        makeGame({ title: 'A', personalRating: null })
+      ]);
+      component.sortBy.set('personal_rating');
+      component.sortDirection.set('asc');
+      const ratings = component.filteredGames().map((g) => g.personalRating);
+      expect(ratings).toEqual([null, 7]);
+    });
+
+    it('cubre brazo || 0 de a.id cuando a.id es undefined en created_at', () => {
+      component.allGames.set([makeGame({ id: 5, title: 'B' }), makeGame({ title: 'A' })]);
+      component.sortBy.set('created_at');
+      const ids = component.filteredGames().map((g) => g.id);
+      expect(ids[0]).toBe(5);
+    });
   });
 
   describe('trackByRowIndex', () => {

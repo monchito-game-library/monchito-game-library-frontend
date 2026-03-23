@@ -502,6 +502,30 @@ describe('GameFormComponent', () => {
       expect(snackBar.open).toHaveBeenCalled();
     });
 
+    it('usa los fallbacks de ?? cuando los campos opcionales son null', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES);
+      const dialog = TestBed.inject(MatDialog);
+      (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
+      (gameUseCases.addGame as any).mockResolvedValue(undefined);
+
+      component.form.patchValue({ title: 'God of War', platform: 'PS5' });
+      component.form.controls.condition.setValue(null as any);
+      component.form.controls.platinum.setValue(null as any);
+      component.form.controls.status.setValue(null as any);
+      component.form.controls.format.setValue(null);
+      component.form.controls.is_favorite.setValue(null as any);
+
+      await component.onSubmit();
+      await new Promise((r) => setTimeout(r, 0));
+
+      const call = (gameUseCases.addGame as any).mock.calls[0][1];
+      expect(call.condition).toBe('new');
+      expect(call.platinum).toBe(false);
+      expect(call.status).toBe('backlog');
+      expect(call.format).toBeNull();
+      expect(call.isFavorite).toBe(false);
+    });
+
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
       const snackBar = TestBed.inject(MatSnackBar);
