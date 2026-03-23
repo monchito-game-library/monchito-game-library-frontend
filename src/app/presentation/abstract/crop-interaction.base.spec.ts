@@ -261,5 +261,28 @@ describe('CropInteractionBase', () => {
       crop.onTouchMove(makeTouchEvent([{ clientX: 70, clientY: 0 }]));
       expect(crop.posX()).toBe(40);
     });
+
+    it('no hace nada cuando no quedan dedos (0 touches)', () => {
+      crop.posX.set(30);
+      crop.onTouchEnd(makeTouchEvent([]));
+      expect(crop.posX()).toBe(30);
+    });
+  });
+
+  describe('onTouchStart — sin dedos relevantes', () => {
+    it('no modifica el estado cuando touches.length es 0', () => {
+      crop.onTouchStart(makeTouchEvent([]));
+      expect((crop as any)._pinchStartDistance).toBe(0);
+      expect(crop.posX()).toBe(50);
+    });
+  });
+
+  describe('onTouchMove — sin dedos relevantes', () => {
+    it('no modifica el estado cuando touches.length es 0', () => {
+      crop.onImageLoad(makeImgEvent(400, 200));
+      crop.onTouchMove(makeTouchEvent([]));
+      expect(crop.posX()).toBe(50);
+      expect(crop.scale()).toBe(1);
+    });
   });
 });

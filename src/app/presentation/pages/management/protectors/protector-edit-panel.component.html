@@ -1,0 +1,117 @@
+<div class="edit-panel">
+  <div class="edit-panel__header">
+    <h2 class="edit-panel__title">
+      {{ (protector() ? 'management.products.editTitle' : 'management.products.addTitle') | transloco }}
+      @if (protector()) {
+        <span class="edit-panel__protector-name">— {{ protector()!.name }}</span>
+      }
+    </h2>
+  </div>
+
+  <form [formGroup]="form" class="edit-panel__form">
+    <div class="edit-panel__fields">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.products.nameLabel' | transloco }}</mat-label>
+        <input matInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.products.categoryLabel' | transloco }}</mat-label>
+        <mat-select formControlName="category">
+          <mat-option value="box">{{ 'management.products.categoryBox' | transloco }}</mat-option>
+          <mat-option value="console">{{ 'management.products.categoryConsole' | transloco }}</mat-option>
+          <mat-option value="other">{{ 'management.products.categoryOther' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.products.notesLabel' | transloco }}</mat-label>
+        <textarea
+          matInput
+          formControlName="notes"
+          rows="1"
+          [placeholder]="'management.products.notesPlaceholder' | transloco"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="packs-section">
+      <div class="packs-section__header">
+        <span class="packs-section__title">{{ 'management.products.packsTitle' | transloco }}</span>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="addPack()"
+          [matTooltip]="'management.products.addPack' | transloco">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      @if (packsArray.length === 0) {
+        <p class="packs-section__empty">{{ 'management.products.packsEmpty' | transloco }}</p>
+      }
+
+      <div class="packs-list">
+        @for (packGroup of packsArray.controls; track $index) {
+          <div class="pack-row" [formGroup]="asFormGroup(packGroup)">
+            <mat-form-field appearance="outline" class="pack-row__qty">
+              <mat-label>{{ 'management.products.packQty' | transloco }}</mat-label>
+              <input matInput formControlName="quantity" type="number" min="1" step="1" />
+              @if (asFormGroup(packGroup).controls['quantity'].hasError('required')) {
+                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="pack-row__price">
+              <mat-label>{{ 'management.products.packPrice' | transloco }}</mat-label>
+              <input matInput formControlName="price" type="number" min="0.01" step="0.01" />
+              <mat-icon matSuffix>euro</mat-icon>
+              @if (asFormGroup(packGroup).controls['price'].hasError('required')) {
+                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="pack-row__url">
+              <mat-label>{{ 'management.products.packUrl' | transloco }}</mat-label>
+              <input matInput formControlName="url" type="url" placeholder="https://..." />
+            </mat-form-field>
+
+            <button mat-icon-button type="button" (click)="removePack($index)" class="pack-row__remove">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="edit-panel__actions">
+      @if (protector()) {
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="toggled.emit()"
+          [class.edit-panel__deactivate-btn]="protector()!.isActive"
+          [class.edit-panel__activate-btn]="!protector()!.isActive">
+          <mat-icon>{{ protector()!.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+          {{
+            (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
+              | transloco
+          }}
+        </button>
+      }
+      <div class="edit-panel__actions-right">
+        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="onSave()"
+          [disabled]="form.invalid || packsArray.length === 0">
+          {{ 'common.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

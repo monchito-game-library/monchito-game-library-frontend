@@ -157,6 +157,23 @@ describe('GameFormComponent', () => {
       expect(images).toContain('https://cdn.example.com/cover.jpg');
       expect(images).toContain('https://cdn.example.com/ss1.jpg');
     });
+
+    it('omite el cover de la lista cuando image_url es null', () => {
+      component.selectedGame.set({
+        rawg_id: 1,
+        title: 'Test',
+        slug: 'test',
+        image_url: null,
+        released_date: null,
+        rating: 4,
+        platforms: [],
+        genres: [],
+        screenshots: ['https://cdn.example.com/ss1.jpg']
+      });
+      const images = component.coverImages();
+      expect(images).toHaveLength(1);
+      expect(images[0]).toBe('https://cdn.example.com/ss1.jpg');
+    });
   });
 
   describe('openSearchMode / closeSearchMode', () => {
@@ -218,6 +235,25 @@ describe('GameFormComponent', () => {
       component.selectGameFromSearch({ ...mockCatalogDto, rawg_id: 58175 });
       expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalled();
     });
+
+    it('usa rawg_id como identificador cuando slug está vacío', () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+      component.selectGameFromSearch({ ...mockCatalogDto, slug: '', rawg_id: 58175 });
+      expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalledWith(58175);
+    });
+
+    it('pasa cadena vacía a _loadScreenshots cuando image_url es null', () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+      component.selectGameFromSearch({ ...mockCatalogDto, rawg_id: 58175, image_url: null });
+      expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalled();
+    });
+
+    it('usa [] cuando screenshots es undefined', () => {
+      const dto = { ...mockCatalogDto };
+      delete (dto as any).screenshots;
+      component.selectGameFromSearch(dto);
+      expect(component.selectedGame()?.screenshots).toEqual([]);
+    });
   });
 
   describe('clearSelectedGame', () => {
@@ -253,6 +289,13 @@ describe('GameFormComponent', () => {
       component.clearSelectedGame();
       expect(component.form.value.title).toBe('');
     });
+
+    it('mantiene el título en modo edición', () => {
+      (component as any).isEditMode = true;
+      component.form.patchValue({ title: 'God of War' });
+      component.clearSelectedGame();
+      expect(component.form.value.title).toBe('God of War');
+    });
   });
 
   describe('filteredStores', () => {
@@ -282,6 +325,18 @@ describe('GameFormComponent', () => {
     });
   });
 
+  describe('_loadScreenshots — selectedGame null', () => {
+    it('no modifica selectedGame cuando ya es null al completar la carga', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.getAllGameScreenshots.mockResolvedValue(['https://cdn.example.com/ss1.jpg']);
+      component.selectedGame.set(null);
+
+      await (component as any)._loadScreenshots('god-of-war', '');
+
+      expect(component.selectedGame()).toBeNull();
+    });
+  });
+
   describe('displayStoreLabel', () => {
     it('devuelve "" cuando id es null', () => {
       expect(component.displayStoreLabel(null)).toBe('');
@@ -305,6 +360,12 @@ describe('GameFormComponent', () => {
 
     it('devuelve el código como fallback cuando la plataforma no existe', () => {
       expect(component.displayPlatformLabel('UNKNOWN' as any)).toBe('UNKNOWN');
+    });
+
+    it('delega en TranslocoService cuando la plataforma existe', () => {
+      const transloco = TestBed.inject(TranslocoService as any) as any;
+      component.displayPlatformLabel('PS5');
+      expect(transloco.translate).toHaveBeenCalled();
     });
   });
 
@@ -389,6 +450,30 @@ describe('GameFormComponent', () => {
       expect(gameUseCases.addGame).toHaveBeenCalled();
     });
 
+    it('incluye catalogEntry cuando selectedGame tiene rawg_id', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES);
+      const dialog = TestBed.inject(MatDialog);
+      (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
+      (gameUseCases.addGame as any).mockResolvedValue(undefined);
+      component.form.patchValue({ title: 'God of War', platform: 'PS5' });
+      component.selectedGame.set({
+        rawg_id: 58175,
+        title: 'God of War',
+        slug: 'god-of-war',
+        image_url: 'https://cdn.example.com/gow.jpg',
+        released_date: null,
+        rating: 4.5,
+        platforms: [],
+        genres: [],
+        screenshots: []
+      });
+
+      await component.onSubmit();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(gameUseCases.addGame).toHaveBeenCalled();
+    });
+
     it('llama a deleteItem después de addGame cuando hay pendingWishlistItemId', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES);
@@ -432,6 +517,32 @@ describe('GameFormComponent', () => {
       await new Promise((r) => setTimeout(r, 0));
 
       expect(snackBar.open).toHaveBeenCalled();
+    });
+
+    it('usa los fallbacks de ?? cuando los campos opcionales son null', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES);
+      const dialog = TestBed.inject(MatDialog);
+      (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
+      (gameUseCases.addGame as any).mockResolvedValue(undefined);
+
+      component.form.patchValue({ title: 'God of War', platform: 'PS5' });
+      component.form.controls.condition.setValue(null as any);
+      component.form.controls.platinum.setValue(null as any);
+      component.form.controls.status.setValue(null as any);
+      component.form.controls.format.setValue(null);
+      component.form.controls.is_favorite.setValue(null as any);
+      component.form.controls.description.setValue(null as any);
+
+      await component.onSubmit();
+      await new Promise((r) => setTimeout(r, 0));
+
+      const call = (gameUseCases.addGame as any).mock.calls[0][1];
+      expect(call.condition).toBe('new');
+      expect(call.platinum).toBe(false);
+      expect(call.status).toBe('backlog');
+      expect(call.format).toBeNull();
+      expect(call.isFavorite).toBe(false);
+      expect(call.description).toBe('');
     });
 
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
@@ -697,6 +808,15 @@ describe('GameFormComponent — ngOnInit', () => {
     expect(component.selectedImageUrl()).toBeNull();
   });
 
+  it('modo edición — juego con imageUrl pero sin rawgId no llama a _loadScreenshots', async () => {
+    setup('game-uuid', { ...editGame, rawgId: null });
+    await component.ngOnInit();
+
+    expect(component.selectedGame()?.title).toBe('God of War');
+    const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+    expect((catalogUseCases as any).getAllGameScreenshots).not.toHaveBeenCalled();
+  });
+
   it('hasChanges devuelve false en modo edición cuando el formulario no ha cambiado', async () => {
     setup('game-uuid', editGame);
     await component.ngOnInit();
@@ -833,5 +953,57 @@ describe('GameFormComponent — constructor effect stores', () => {
     TestBed.flushEffects();
 
     expect(component.form.controls.store.value).toBe('store-uuid');
+  });
+
+  it('no reasigna el store cuando stores carga pero no hay store seleccionado (current es null)', () => {
+    vi.clearAllMocks();
+
+    TestBed.configureTestingModule({
+      imports: [GameFormComponent],
+      providers: [
+        provideRouter([]),
+        provideAnimationsAsync('noop'),
+        {
+          provide: GAME_USE_CASES,
+          useValue: {
+            getAllGamesForList: vi.fn(),
+            getGameForEdit: vi.fn(),
+            addGame: vi.fn(),
+            updateGame: vi.fn(),
+            deleteGame: vi.fn()
+          }
+        },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
+        {
+          provide: CATALOG_USE_CASES,
+          useValue: {
+            getScreenshots: vi.fn().mockResolvedValue([]),
+            searchBanners: vi.fn(),
+            getTopBanners: vi.fn(),
+            getAllGameScreenshots: vi.fn().mockResolvedValue([])
+          }
+        },
+        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
+        {
+          provide: TranslocoService,
+          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
+        },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: MatDialog, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
+
+    const fixture = TestBed.createComponent(GameFormComponent);
+    const component = fixture.componentInstance;
+
+    // store.value es null (modo creación, sin selección previa)
+    (component as any)._storeModels.set([{ id: 'store-uuid', label: 'GameStop', formatHint: null }]);
+    TestBed.flushEffects();
+
+    expect(component.form.controls.store.value).toBeNull();
   });
 });

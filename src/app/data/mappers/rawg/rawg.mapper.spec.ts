@@ -124,6 +124,20 @@ describe('mapRawgGame', () => {
     expect(result.tags).toEqual([]);
   });
 
+  it('mapea parent_platforms y stores undefined a arrays vacíos', () => {
+    const dto = {
+      ...baseRawgDto,
+      parent_platforms: undefined as unknown as RawgGameDto['parent_platforms'],
+      stores: undefined as unknown as RawgGameDto['stores'],
+      short_screenshots: undefined as unknown as RawgGameDto['short_screenshots']
+    };
+    const result = mapRawgGame(dto);
+
+    expect(result.parent_platforms).toEqual([]);
+    expect(result.stores).toEqual([]);
+    expect(result.screenshots).toEqual([]);
+  });
+
   it('mapea metacritic null a null', () => {
     expect(mapRawgGame({ ...baseRawgDto, metacritic: null }).metacritic_score).toBeNull();
   });
@@ -186,6 +200,55 @@ describe('mapRawgGameDetail', () => {
 
     expect(result.metacritic_url).toBe('https://www.metacritic.com/game/god-of-war/');
     expect(result.website).toBe('https://www.playstation.com/es-es/games/god-of-war/');
+  });
+
+  it('usa undefined cuando description y description_raw son vacíos', () => {
+    const result = mapRawgGameDetail({ ...detailDto, description: '', description_raw: '' });
+
+    expect(result.description).toBeUndefined();
+    expect(result.description_raw).toBeUndefined();
+  });
+
+  it('usa undefined cuando website es vacío', () => {
+    expect(mapRawgGameDetail({ ...detailDto, website: '' }).website).toBeUndefined();
+  });
+
+  it('aplica fallbacks ?? cuando los campos opcionales son null/undefined', () => {
+    const dto: RawgGameDetailDto = {
+      ...detailDto,
+      tba: undefined as unknown as boolean,
+      rating_top: undefined as unknown as number,
+      ratings_count: undefined as unknown as number,
+      reviews_count: undefined as unknown as number,
+      metacritic: null,
+      metacritic_url: undefined as unknown as string,
+      esrb_rating: null,
+      platforms: undefined as unknown as RawgGameDetailDto['platforms'],
+      parent_platforms: undefined as unknown as RawgGameDetailDto['parent_platforms'],
+      genres: undefined as unknown as RawgGameDetailDto['genres'],
+      tags: undefined as unknown as RawgGameDetailDto['tags'],
+      developers: undefined as unknown as RawgGameDetailDto['developers'],
+      publishers: undefined as unknown as RawgGameDetailDto['publishers'],
+      stores: undefined as unknown as RawgGameDetailDto['stores'],
+      short_screenshots: undefined as unknown as RawgGameDetailDto['short_screenshots']
+    };
+    const result = mapRawgGameDetail(dto);
+
+    expect(result.tba).toBe(false);
+    expect(result.rating_top).toBe(5);
+    expect(result.ratings_count).toBe(0);
+    expect(result.reviews_count).toBe(0);
+    expect(result.metacritic_score).toBeNull();
+    expect(result.metacritic_url).toBeUndefined();
+    expect(result.esrb_rating).toBeNull();
+    expect(result.platforms).toEqual([]);
+    expect(result.parent_platforms).toEqual([]);
+    expect(result.genres).toEqual([]);
+    expect(result.tags).toEqual([]);
+    expect(result.developers).toEqual([]);
+    expect(result.publishers).toEqual([]);
+    expect(result.stores).toEqual([]);
+    expect(result.screenshots).toEqual([]);
   });
 
   it('limita tags a los 15 primeros en detalle (vs 10 en búsqueda)', () => {

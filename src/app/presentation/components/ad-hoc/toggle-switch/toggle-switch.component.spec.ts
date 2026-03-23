@@ -157,5 +157,16 @@ describe('ToggleSwitchComponent', () => {
       component.ngOnChanges({ checked: new SimpleChange(true, undefined, false) });
       expect(component._value()).toBe(false);
     });
+
+    it('usa false como fallback si disabled.currentValue es undefined', () => {
+      component.ngOnChanges({ disabled: new SimpleChange(true, undefined, false) });
+      expect(component._isDisabled()).toBe(false);
+    });
+
+    it('no actualiza _value cuando el cambio no incluye "checked"', () => {
+      component._value.set(true);
+      component.ngOnChanges({ disabled: new SimpleChange(false, true, false) });
+      expect(component._value()).toBe(true);
+    });
   });
 });
