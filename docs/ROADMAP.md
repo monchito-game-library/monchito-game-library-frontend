@@ -8,80 +8,20 @@
 
 | Mejora | Prioridad |
 |---|---|
-| ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
+| [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
 | [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
-| [Pedidos (`/orders`)](#pedidos-orders) | Media-alta |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
 | ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
 | ~~[Links de búsqueda en tiendas desde la wishlist](#links-de-búsqueda-en-tiendas-desde-la-wishlist)~~ | ✅ Hecho |
 | ~~[Migrar a Angular zoneless puro](#migrar-a-angular-zoneless-puro)~~ | ✅ Hecho |
 | ~~[Optimizar carga de imágenes con el CDN de RAWG](#optimizar-carga-de-imágenes-con-el-cdn-de-rawg)~~ | ❌ Descartada |
-
----
-
-## ~~Testing~~ ✅ Hecho
-
-### ~~Testing (unit + integración)~~
-
-Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **875 tests en 60 ficheros**, con una cobertura de ~98 % de statements y ~99 % de líneas. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
-
-<details>
-<summary>Plan original (referencia)</summary>
-
-El proyecto estaba en un punto de estabilidad suficiente para introducir tests. La base estaba preparada: arquitectura de capas limpia, uso de signals, repositorios con contratos inyectables y componentes standalone.
-
-#### Qué testear y con qué herramienta
-
-**Unit tests — Vitest**
-
-- **Use cases / dominio**: los casos de uso son funciones puras que dependen de un repositorio inyectado. Son el target más valioso — se mockea el repositorio y se verifica la lógica de negocio.
-  - Ejemplo: `WishlistUseCases.addItem()` — verificar que llama al repositorio con los datos correctos y lanza error si el usuario no está autenticado.
-- **Mappers**: transformaciones de DTO → modelo y viceversa. Totalmente deterministas, sin dependencias externas.
-  - Ejemplo: `WishlistMapper.toModel()` — verificar que todos los campos se mapean correctamente.
-- **Validators y utils**: `selectOneValidator`, `optimizeImageUrl`, etc.
-- **Computed signals en componentes**: testar que los `computed` devuelven el valor correcto al cambiar las signals de las que dependen.
-  - Ejemplo: `ownedCount` en `GameListComponent` — setear `allGames` con un array y verificar que `ownedCount()` refleja el filtrado.
-
-**Integración — Angular Testing Library o TestBed**
-
-- **Componentes de presentación críticos**: `WishlistCardComponent`, `GameCardComponent`, `ConfirmDialogComponent`.
-  - Verificar que los outputs (`editClicked`, `deleteClicked`, `ownClicked`) se emiten al hacer clic en los botones.
-  - Verificar que el template renderiza correctamente según el estado del input.
-- **Guards**: `canActivateUser` — verificar que redirige a `/auth/login` si no hay sesión y deja pasar si la hay.
-- **Formularios reactivos**: `WishlistItemDialogComponent`, `LoginComponent` — verificar validaciones y comportamiento del botón de confirmar.
-
-**E2E — Playwright**
-
-- Flujos críticos de usuario de extremo a extremo contra un entorno de Supabase de test:
-  - Login → ver colección → añadir juego → editar → eliminar.
-  - Añadir a wishlist → "Tengo este juego" → verificar que aparece en la colección.
-  - Login fallido → mensaje de error visible.
-
-#### Setup recomendado
-
-```
-Vitest (unit + integración) + Angular Testing Library + Playwright (E2E)
-```
-
-- **Vitest**: sustituto oficial de Karma/Jasmine en Angular (adoptado desde Angular 17+). Corre en Node.js sin browser headless, API compatible con Jest. Se integra mediante el builder oficial de Angular (`@angular/build:vitest`) o `@analogjs/vitest-angular`. Más rápido que Karma y más alineado con el roadmap del ecosistema Angular.
-- **Angular Testing Library**: wrapper sobre TestBed que fuerza tests orientados al comportamiento del usuario, no a detalles de implementación.
-- **Playwright**: para E2E necesita una instancia de Supabase. Usar el proyecto de Supabase en modo test con datos semilla (`seed.sql`).
-
-#### Prioridad de implementación
-
-1. Mappers y validators (más fácil, mayor ROI inmediato).
-2. Use cases con repositorios mockeados.
-3. Componentes críticos con Angular Testing Library.
-4. Guards y servicios de autenticación.
-5. E2E de los flujos principales (requiere más setup).
-
-</details>
 
 ---
 
@@ -532,6 +472,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Testing (unit + integración)~~ ✅ Hecho
+
+Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **940 tests en 62 ficheros**, con una cobertura de ~99 % de statements y ~95 % de branches. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
+
+---
 
 ### ~~Estrategia de actualización PWA forzada~~ ✅ Hecho
 
