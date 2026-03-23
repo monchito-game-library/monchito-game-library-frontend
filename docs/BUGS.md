@@ -8,8 +8,30 @@
 
 | Bug | Componente | Prioridad |
 |---|---|---|
+| [Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile) | `WishlistComponent` | **Alta** |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
 | ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
+
+---
+
+## Scroll de wishlist cortado al llegar al final en mobile
+
+**Componente:** `WishlistComponent`
+**Fichero:** `src/app/presentation/pages/wishlist/wishlist.component.scss`
+
+**Descripción:**
+En mobile, al hacer scroll hasta el final de la lista de wishlist, el contenido aparece cortado — el último item o los últimos items no llegan a verse completamente. El problema no ocurre en escritorio.
+
+**Pasos para reproducir:**
+1. Abrir la wishlist en un dispositivo móvil (o DevTools en viewport móvil).
+2. Tener suficientes items para que la lista haga scroll.
+3. Hacer scroll hasta el final.
+
+**Comportamiento esperado:** todos los items son visibles al llegar al fondo, con el espacio suficiente para que el último no quede tapado por la bottom nav.
+
+**Comportamiento actual:** el último item queda cortado o parcialmente oculto.
+
+**Causa probable:** falta de `padding-bottom` suficiente en el contenedor de la lista para compensar la altura de la bottom navigation bar en mobile.
 
 ---
 

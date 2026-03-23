@@ -8,6 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
+| [Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist) | **Alta** |
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
 | [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
@@ -25,148 +26,28 @@
 
 ---
 
-## Deuda técnica *(prioridad media-alta)*
+## Alta prioridad
 
-### Deuda técnica — análisis de código
+### Rediseño de la card de wishlist
 
-Análisis en profundidad del código de producción realizado con cobertura de tests al 95 %. Las mejoras identificadas no añaden funcionalidad nueva — reducen complejidad, eliminan duplicación y mejoran la mantenibilidad.
+La `WishlistCardComponent` acumula demasiadas acciones clickables en poco espacio (links de tiendas, botón "Tengo este juego", editar, eliminar), lo que provoca que durante el scroll en mobile se registren taps accidentales en elementos interactivos y el scroll se interrumpa o la card parezca cortada.
 
-| # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
-|---|---|---|---|---|
-| 1 | `UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global | `user-preferences.service.ts`, `settings.component.ts` | **Alto** — estado RAWG innecesariamente global; si hubiera dos instancias del banner picker compartirían estado accidentalmente | Medio |
-| 2 | `getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación | `supabase.repository.ts` | Medio — cualquier bug en la paginación hay que arreglarlo en dos sitios | Bajo |
-| 3 | `private get _userId()` duplicado en `GameListComponent` y `GameFormComponent` | `game-list.component.ts`, `game-form.component.ts` | Bajo — duplicación menor pero consistente | Muy bajo |
-| 4 | `_loadingEditData` en `GameFormComponent` es innecesario: puede eliminarse usando `{ emitEvent: false }` en el `patchValue` de carga | `game-form.component.ts` | Medio — simplifica la coordinación de estado interno del componente | Bajo |
-| 5 | `_mapRawgPlatformToCode` vive en un componente de presentación pero es lógica de mapper de datos | `game-form.component.ts`, `rawg.mapper.ts` | Bajo — violación de capas; el mapa es estático y no tiene nada que ver con la UI | Bajo |
-| 6 | `onAvatarFileSelected` y `onBannerFileSelected` son casi idénticos (abrir dialog de crop → obtener blob → subir → manejar error/loading) | `settings.component.ts` | Bajo — duplicación de ~40 líneas en el mismo componente | Bajo |
-| 7 | `SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`) cuando podría usar `takeUntilDestroyed` | `settings.component.ts` | Bajo — puede eliminar `ngOnDestroy` y el campo de suscripción | Muy bajo |
-| 8 | `AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI | `app.component.ts` | **Alto** — el componente raíz no debería contener lógica de inicialización de preferencias | Medio |
-| 9 | `rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript (`gapPx`, `paddingPx`, `footerPx`) que deben mantenerse en sync con el SCSS manualmente | `game-list.component.ts` | Medio — riesgo de bug silencioso si se cambia el CSS sin actualizar el TS | Bajo |
+#### Problemas actuales
 
-#### Orden de abordaje sugerido
+- Scroll entrecortado en mobile: la densidad de elementos con eventos táctiles interfiere con el gesto de scroll del navegador.
+- Diseño visualmente cargado: demasiada información y acciones compitiendo en el mismo espacio.
 
-1. **#3** — eliminar el getter duplicado `_userId` (cambio puntual, riesgo cero)
-2. **#7** — `takeUntilDestroyed` en settings (cambio de 3 líneas)
-3. **#4** — eliminar `_loadingEditData` con `{ emitEvent: false }` (simplifica `GameFormComponent`)
-4. **#6** — extraer `_handleImageUpload` en settings (elimina ~40 líneas duplicadas)
-5. **#5** — mover `_mapRawgPlatformToCode` al mapper de RAWG (cambio de capa, sin lógica nueva)
-6. **#2** — extraer `_paginateView` en el repositorio (elimina el bucle duplicado)
-7. **#9** — documentar o centralizar los valores de layout de `rowItemSize`
-8. **#8** — extraer `_loadPreferences` a un servicio de inicialización (mayor cambio estructural)
-9. **#1** — separar los signals de RAWG search de `UserPreferencesService` (mayor impacto, requiere revisar todos los consumidores)
+#### Propuesta
+
+- Revisar la jerarquía visual: separar claramente la zona informativa (portada, título, precio, prioridad) de la zona de acciones.
+- Agrupar las acciones secundarias (editar, eliminar) en un menú contextual o un swipe-to-reveal en mobile, reduciendo la superficie táctil activa durante el scroll.
+- Evaluar si los links de tiendas deben estar visibles directamente en la card o accesibles desde un botón de expansión.
 
 ---
 
-## Nuevas secciones
+## Media-alta prioridad
 
-### Página de detalle de juego (`/games/:id`)
-
-Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
-
-#### Estructura de la página
-
-**Sección personal (datos de `user_games`)**
-- Estado, plataforma, formato, condición, edición
-- Precio pagado, tienda, fecha de compra
-- Valoración personal y reseña
-- Fechas de inicio, completado y platino
-- Notas personales
-- Botones: **Editar** (abre el formulario actual) y **Eliminar**
-
-**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
-- Descripción completa
-- Rating RAWG, puntuación Metacritic, clasificación ESRB
-- Plataformas disponibles, géneros, desarrolladores, publishers
-- Screenshots (carrusel)
-- Tiendas donde comprarlo con links directos
-- DLCs disponibles
-- Juegos de la misma saga
-
-#### Navegación
-
-- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
-- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
-- El botón volver regresa a la colección manteniendo los filtros activos.
-
-#### Implementación
-
-- Nueva ruta `/games/:id` con `GameDetailPage`.
-- Los datos personales se leen de `user_games_full` (ya disponible).
-- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
-  - `/games/{id}` — descripción completa, tiendas, ESRB
-  - `/games/{id}/screenshots` — capturas
-  - `/games/{id}/additions` — DLCs
-- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
-- Cachear las respuestas de RAWG en memoria durante la sesión.
-
----
-
-### Recomendaciones de juegos
-
-Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
-
-#### Lógica de cálculo
-
-**Base:** los juegos candidatos son aquellos donde el usuario tiene `platinum = true` O `is_favorite = true`. Son los que mejor reflejan sus gustos reales.
-
-**Paso 1 — Juegos similares individuales:**
-Para cada juego candidato, llamar al endpoint de RAWG `/games/{rawg_id}/suggested` que devuelve juegos similares. Filtrar los resultados eliminando los que el usuario ya tiene en `user_games` (comparando por `rawg_id`).
-
-**Paso 2 — Detección de patrones por género:**
-Si entre todos los juegos sugeridos hay géneros que se repiten con frecuencia, priorizar esos géneros en las recomendaciones. Ejemplo: si 8 de tus platinos son de acción-aventura, las recomendaciones de ese género suben arriba.
-
-**Paso 3 — Deduplicación:**
-Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar los que aparecen más veces — son los que más se parecen al perfil del usuario.
-
-#### UI
-
-- Panel sutil al final de la lista de juegos: "Puede que también te guste..." con un scroll horizontal de cards.
-- Cada card muestra portada, título, géneros y rating de RAWG.
-- Botón rápido para añadir el juego directamente a la colección o a la wishlist.
-- Si el usuario no tiene platinos ni favoritos suficientes, no se muestra el panel.
-
-#### Implementación
-
-- Las llamadas a RAWG se hacen desde el frontend (no Edge Function) ya que dependen de la sesión del usuario.
-- Cachear los resultados en memoria durante la sesión para no repetir llamadas a RAWG al navegar.
-- No guardar las recomendaciones en Supabase — se calculan en tiempo real cada vez.
-- RAWG puede no tener el endpoint `/suggested` para todos los juegos (juegos manuales o con poco dato). Ignorar silenciosamente los que fallen.
-
----
-
-### Dashboard de estadísticas (`/stats`)
-
-Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
-
-#### Estadísticas de colección
-
-- Distribución por plataforma (cuántos juegos tienes en cada consola)
-- Distribución por género
-- Distribución por estado (`backlog`, `playing`, `completed`, `platinum`, `abandoned`, `owned`)
-- Ratio completados vs backlog
-- Gasto total por tienda
-- Gasto total por año de compra
-- Evolución de la colección en el tiempo (juegos añadidos por mes/año)
-- Valoración media personal
-- Juegos con platino / favoritos
-
-#### Estadísticas de wishlist
-
-- Total de juegos en la wishlist
-- Gasto estimado (suma de `desired_price` de los items que lo tienen)
-- Distribución por prioridad
-
-#### Implementación
-
-- Todos los cálculos se hacen en SQL directamente sobre `user_games` y `user_wishlist` — no hace falta ninguna tabla nueva.
-- Crear vistas o queries específicas en Supabase para cada agrupación (o calcularlas en el repositorio con `.select()` y agregaciones).
-- El tipo de gráfica (barras, tarta, líneas) se decide en el momento de implementar el frontend.
-- Nueva ruta `/stats` y entrada en nav-rail (desktop) y bottom-nav (móvil).
-- Componentes de tarjeta de estadística reutilizables para los valores simples (totales, medias).
-
----
-
-### Pedidos (`/orders`) *(prioridad media-alta — catálogo de protectores ya implementado — ver `/management/protectors`)*
+### Pedidos (`/orders`)
 
 Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
 
@@ -332,7 +213,146 @@ Al crear o editar un pedido, los protectores se cargarán directamente del catá
 
 ---
 
-## Integraciones / Automatización
+### Deuda técnica — análisis de código
+
+Análisis en profundidad del código de producción realizado con cobertura de tests al 95 %. Las mejoras identificadas no añaden funcionalidad nueva — reducen complejidad, eliminan duplicación y mejoran la mantenibilidad.
+
+| # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
+|---|---|---|---|---|
+| 1 | `UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global | `user-preferences.service.ts`, `settings.component.ts` | **Alto** — estado RAWG innecesariamente global; si hubiera dos instancias del banner picker compartirían estado accidentalmente | Medio |
+| 2 | `getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación | `supabase.repository.ts` | Medio — cualquier bug en la paginación hay que arreglarlo en dos sitios | Bajo |
+| 3 | `private get _userId()` duplicado en `GameListComponent` y `GameFormComponent` | `game-list.component.ts`, `game-form.component.ts` | Bajo — duplicación menor pero consistente | Muy bajo |
+| 4 | `_loadingEditData` en `GameFormComponent` es innecesario: puede eliminarse usando `{ emitEvent: false }` en el `patchValue` de carga | `game-form.component.ts` | Medio — simplifica la coordinación de estado interno del componente | Bajo |
+| 5 | `_mapRawgPlatformToCode` vive en un componente de presentación pero es lógica de mapper de datos | `game-form.component.ts`, `rawg.mapper.ts` | Bajo — violación de capas; el mapa es estático y no tiene nada que ver con la UI | Bajo |
+| 6 | `onAvatarFileSelected` y `onBannerFileSelected` son casi idénticos (abrir dialog de crop → obtener blob → subir → manejar error/loading) | `settings.component.ts` | Bajo — duplicación de ~40 líneas en el mismo componente | Bajo |
+| 7 | `SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`) cuando podría usar `takeUntilDestroyed` | `settings.component.ts` | Bajo — puede eliminar `ngOnDestroy` y el campo de suscripción | Muy bajo |
+| 8 | `AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI | `app.component.ts` | **Alto** — el componente raíz no debería contener lógica de inicialización de preferencias | Medio |
+| 9 | `rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript (`gapPx`, `paddingPx`, `footerPx`) que deben mantenerse en sync con el SCSS manualmente | `game-list.component.ts` | Medio — riesgo de bug silencioso si se cambia el CSS sin actualizar el TS | Bajo |
+
+#### Orden de abordaje sugerido
+
+1. **#3** — eliminar el getter duplicado `_userId` (cambio puntual, riesgo cero)
+2. **#7** — `takeUntilDestroyed` en settings (cambio de 3 líneas)
+3. **#4** — eliminar `_loadingEditData` con `{ emitEvent: false }` (simplifica `GameFormComponent`)
+4. **#6** — extraer `_handleImageUpload` en settings (elimina ~40 líneas duplicadas)
+5. **#5** — mover `_mapRawgPlatformToCode` al mapper de RAWG (cambio de capa, sin lógica nueva)
+6. **#2** — extraer `_paginateView` en el repositorio (elimina el bucle duplicado)
+7. **#9** — documentar o centralizar los valores de layout de `rowItemSize`
+8. **#8** — extraer `_loadPreferences` a un servicio de inicialización (mayor cambio estructural)
+9. **#1** — separar los signals de RAWG search de `UserPreferencesService` (mayor impacto, requiere revisar todos los consumidores)
+
+---
+
+## Media prioridad
+
+### Página de detalle de juego (`/games/:id`)
+
+Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
+
+#### Estructura de la página
+
+**Sección personal (datos de `user_games`)**
+- Estado, plataforma, formato, condición, edición
+- Precio pagado, tienda, fecha de compra
+- Valoración personal y reseña
+- Fechas de inicio, completado y platino
+- Notas personales
+- Botones: **Editar** (abre el formulario actual) y **Eliminar**
+
+**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
+- Descripción completa
+- Rating RAWG, puntuación Metacritic, clasificación ESRB
+- Plataformas disponibles, géneros, desarrolladores, publishers
+- Screenshots (carrusel)
+- Tiendas donde comprarlo con links directos
+- DLCs disponibles
+- Juegos de la misma saga
+
+#### Navegación
+
+- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
+- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
+- El botón volver regresa a la colección manteniendo los filtros activos.
+
+#### Implementación
+
+- Nueva ruta `/games/:id` con `GameDetailPage`.
+- Los datos personales se leen de `user_games_full` (ya disponible).
+- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
+  - `/games/{id}` — descripción completa, tiendas, ESRB
+  - `/games/{id}/screenshots` — capturas
+  - `/games/{id}/additions` — DLCs
+- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
+- Cachear las respuestas de RAWG en memoria durante la sesión.
+
+---
+
+### Recomendaciones de juegos
+
+Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
+
+#### Lógica de cálculo
+
+**Base:** los juegos candidatos son aquellos donde el usuario tiene `platinum = true` O `is_favorite = true`. Son los que mejor reflejan sus gustos reales.
+
+**Paso 1 — Juegos similares individuales:**
+Para cada juego candidato, llamar al endpoint de RAWG `/games/{rawg_id}/suggested` que devuelve juegos similares. Filtrar los resultados eliminando los que el usuario ya tiene en `user_games` (comparando por `rawg_id`).
+
+**Paso 2 — Detección de patrones por género:**
+Si entre todos los juegos sugeridos hay géneros que se repiten con frecuencia, priorizar esos géneros en las recomendaciones. Ejemplo: si 8 de tus platinos son de acción-aventura, las recomendaciones de ese género suben arriba.
+
+**Paso 3 — Deduplicación:**
+Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar los que aparecen más veces — son los que más se parecen al perfil del usuario.
+
+#### UI
+
+- Panel sutil al final de la lista de juegos: "Puede que también te guste..." con un scroll horizontal de cards.
+- Cada card muestra portada, título, géneros y rating de RAWG.
+- Botón rápido para añadir el juego directamente a la colección o a la wishlist.
+- Si el usuario no tiene platinos ni favoritos suficientes, no se muestra el panel.
+
+#### Implementación
+
+- Las llamadas a RAWG se hacen desde el frontend (no Edge Function) ya que dependen de la sesión del usuario.
+- Cachear los resultados en memoria durante la sesión para no repetir llamadas a RAWG al navegar.
+- No guardar las recomendaciones en Supabase — se calculan en tiempo real cada vez.
+- RAWG puede no tener el endpoint `/suggested` para todos los juegos (juegos manuales o con poco dato). Ignorar silenciosamente los que fallen.
+
+---
+
+### Dashboard de estadísticas (`/stats`)
+
+Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
+
+#### Estadísticas de colección
+
+- Distribución por plataforma (cuántos juegos tienes en cada consola)
+- Distribución por género
+- Distribución por estado (`backlog`, `playing`, `completed`, `platinum`, `abandoned`, `owned`)
+- Ratio completados vs backlog
+- Gasto total por tienda
+- Gasto total por año de compra
+- Evolución de la colección en el tiempo (juegos añadidos por mes/año)
+- Valoración media personal
+- Juegos con platino / favoritos
+
+#### Estadísticas de wishlist
+
+- Total de juegos en la wishlist
+- Gasto estimado (suma de `desired_price` de los items que lo tienen)
+- Distribución por prioridad
+
+#### Implementación
+
+- Todos los cálculos se hacen en SQL directamente sobre `user_games` y `user_wishlist` — no hace falta ninguna tabla nueva.
+- Crear vistas o queries específicas en Supabase para cada agrupación (o calcularlas en el repositorio con `.select()` y agregaciones).
+- El tipo de gráfica (barras, tarta, líneas) se decide en el momento de implementar el frontend.
+- Nueva ruta `/stats` y entrada en nav-rail (desktop) y bottom-nav (móvil).
+- Componentes de tarjeta de estadística reutilizables para los valores simples (totales, medias).
+
+---
+
+## Baja prioridad
 
 ### Sincronización automática de metadatos RAWG
 
