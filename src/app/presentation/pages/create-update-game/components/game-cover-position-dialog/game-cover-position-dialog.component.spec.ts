@@ -53,4 +53,20 @@ describe('GameCoverPositionDialogComponent', () => {
       expect(mockDialogRef.close).toHaveBeenCalledWith('40% 60% 2.00');
     });
   });
+
+  describe('con initialPosition de solo 2 partes "30 70"', () => {
+    beforeEach(() => setup('30 70'));
+
+    it('parsea posX', () => expect(component.posX()).toBe(30));
+    it('parsea posY', () => expect(component.posY()).toBe(70));
+    it('mantiene scale por defecto (1) al no haber tercera parte', () => expect(component.scale()).toBe(1));
+  });
+
+  describe('con initialPosition de solo 1 parte "50"', () => {
+    beforeEach(() => setup('50'));
+
+    it('mantiene posX por defecto (50)', () => expect(component.posX()).toBe(50));
+    it('mantiene posY por defecto (50)', () => expect(component.posY()).toBe(50));
+    it('mantiene scale por defecto (1)', () => expect(component.scale()).toBe(1));
+  });
 });
