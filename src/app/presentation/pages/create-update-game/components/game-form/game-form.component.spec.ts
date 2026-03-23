@@ -954,4 +954,56 @@ describe('GameFormComponent — constructor effect stores', () => {
 
     expect(component.form.controls.store.value).toBe('store-uuid');
   });
+
+  it('no reasigna el store cuando stores carga pero no hay store seleccionado (current es null)', () => {
+    vi.clearAllMocks();
+
+    TestBed.configureTestingModule({
+      imports: [GameFormComponent],
+      providers: [
+        provideRouter([]),
+        provideAnimationsAsync('noop'),
+        {
+          provide: GAME_USE_CASES,
+          useValue: {
+            getAllGamesForList: vi.fn(),
+            getGameForEdit: vi.fn(),
+            addGame: vi.fn(),
+            updateGame: vi.fn(),
+            deleteGame: vi.fn()
+          }
+        },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
+        {
+          provide: CATALOG_USE_CASES,
+          useValue: {
+            getScreenshots: vi.fn().mockResolvedValue([]),
+            searchBanners: vi.fn(),
+            getTopBanners: vi.fn(),
+            getAllGameScreenshots: vi.fn().mockResolvedValue([])
+          }
+        },
+        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
+        {
+          provide: TranslocoService,
+          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
+        },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: MatDialog, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
+
+    const fixture = TestBed.createComponent(GameFormComponent);
+    const component = fixture.componentInstance;
+
+    // store.value es null (modo creación, sin selección previa)
+    (component as any)._storeModels.set([{ id: 'store-uuid', label: 'GameStop', formatHint: null }]);
+    TestBed.flushEffects();
+
+    expect(component.form.controls.store.value).toBeNull();
+  });
 });
