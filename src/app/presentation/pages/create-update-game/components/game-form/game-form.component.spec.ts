@@ -218,6 +218,25 @@ describe('GameFormComponent', () => {
       component.selectGameFromSearch({ ...mockCatalogDto, rawg_id: 58175 });
       expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalled();
     });
+
+    it('usa rawg_id como identificador cuando slug está vacío', () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+      component.selectGameFromSearch({ ...mockCatalogDto, slug: '', rawg_id: 58175 });
+      expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalledWith(58175);
+    });
+
+    it('pasa cadena vacía a _loadScreenshots cuando image_url es null', () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);
+      component.selectGameFromSearch({ ...mockCatalogDto, rawg_id: 58175, image_url: null });
+      expect((catalogUseCases as any).getAllGameScreenshots).toHaveBeenCalled();
+    });
+
+    it('usa [] cuando screenshots es undefined', () => {
+      const dto = { ...mockCatalogDto };
+      delete (dto as any).screenshots;
+      component.selectGameFromSearch(dto);
+      expect(component.selectedGame()?.screenshots).toEqual([]);
+    });
   });
 
   describe('clearSelectedGame', () => {
@@ -253,6 +272,13 @@ describe('GameFormComponent', () => {
       component.clearSelectedGame();
       expect(component.form.value.title).toBe('');
     });
+
+    it('mantiene el título en modo edición', () => {
+      (component as any).isEditMode = true;
+      component.form.patchValue({ title: 'God of War' });
+      component.clearSelectedGame();
+      expect(component.form.value.title).toBe('God of War');
+    });
   });
 
   describe('filteredStores', () => {
@@ -282,6 +308,18 @@ describe('GameFormComponent', () => {
     });
   });
 
+  describe('_loadScreenshots — selectedGame null', () => {
+    it('no modifica selectedGame cuando ya es null al completar la carga', async () => {
+      const catalogUseCases = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      catalogUseCases.getAllGameScreenshots.mockResolvedValue(['https://cdn.example.com/ss1.jpg']);
+      component.selectedGame.set(null);
+
+      await (component as any)._loadScreenshots('god-of-war', '');
+
+      expect(component.selectedGame()).toBeNull();
+    });
+  });
+
   describe('displayStoreLabel', () => {
     it('devuelve "" cuando id es null', () => {
       expect(component.displayStoreLabel(null)).toBe('');
@@ -305,6 +343,12 @@ describe('GameFormComponent', () => {
 
     it('devuelve el código como fallback cuando la plataforma no existe', () => {
       expect(component.displayPlatformLabel('UNKNOWN' as any)).toBe('UNKNOWN');
+    });
+
+    it('delega en TranslocoService cuando la plataforma existe', () => {
+      const transloco = TestBed.inject(TranslocoService as any) as any;
+      component.displayPlatformLabel('PS5');
+      expect(transloco.translate).toHaveBeenCalled();
     });
   });
 
@@ -382,6 +426,30 @@ describe('GameFormComponent', () => {
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
+
+      await component.onSubmit();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(gameUseCases.addGame).toHaveBeenCalled();
+    });
+
+    it('incluye catalogEntry cuando selectedGame tiene rawg_id', async () => {
+      const gameUseCases = TestBed.inject(GAME_USE_CASES);
+      const dialog = TestBed.inject(MatDialog);
+      (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
+      (gameUseCases.addGame as any).mockResolvedValue(undefined);
+      component.form.patchValue({ title: 'God of War', platform: 'PS5' });
+      component.selectedGame.set({
+        rawg_id: 58175,
+        title: 'God of War',
+        slug: 'god-of-war',
+        image_url: 'https://cdn.example.com/gow.jpg',
+        released_date: null,
+        rating: 4.5,
+        platforms: [],
+        genres: [],
+        screenshots: []
+      });
 
       await component.onSubmit();
       await new Promise((r) => setTimeout(r, 0));

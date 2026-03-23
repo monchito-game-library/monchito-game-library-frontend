@@ -230,6 +230,32 @@ describe('GameListComponent', () => {
       const ids = component.filteredGames().map((g) => g.id);
       expect(ids).toEqual([3, 2, 1]);
     });
+
+    it('trata null como 0 al ordenar por precio (|| 0)', () => {
+      component.allGames.set([makeGame({ title: 'A', price: null }), makeGame({ title: 'B', price: 10 })]);
+      component.sortBy.set('price');
+      component.sortDirection.set('asc');
+      const prices = component.filteredGames().map((g) => g.price);
+      expect(prices).toEqual([null, 10]);
+    });
+
+    it('trata null como 0 al ordenar por personal_rating (|| 0)', () => {
+      component.allGames.set([
+        makeGame({ title: 'A', personalRating: null }),
+        makeGame({ title: 'B', personalRating: 7 })
+      ]);
+      component.sortBy.set('personal_rating');
+      component.sortDirection.set('asc');
+      const ratings = component.filteredGames().map((g) => g.personalRating);
+      expect(ratings).toEqual([null, 7]);
+    });
+
+    it('trata undefined id como 0 al ordenar por created_at (|| 0)', () => {
+      component.allGames.set([makeGame({ title: 'A' }), makeGame({ id: 5, title: 'B' })]);
+      component.sortBy.set('created_at');
+      const ids = component.filteredGames().map((g) => g.id);
+      expect(ids[0]).toBe(5);
+    });
   });
 
   describe('trackByRowIndex', () => {
@@ -471,6 +497,35 @@ describe('GameListComponent', () => {
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
     });
+  });
+});
+
+describe('GameListComponent — _userId sin usuario autenticado', () => {
+  it('_loadGames muestra snackbar de error si userId es null', async () => {
+    vi.clearAllMocks();
+    TestBed.configureTestingModule({
+      imports: [GameListComponent],
+      providers: [
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn() } },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
+        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        provideRouter([]),
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(GameListComponent, { set: { imports: [], template: '' } });
+    const fixture = TestBed.createComponent(GameListComponent);
+    const component = fixture.componentInstance;
+    const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+    await (component as any)._loadGames(true);
+
+    expect(snackBar.open).toHaveBeenCalled();
   });
 });
 
