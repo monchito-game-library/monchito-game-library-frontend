@@ -8,7 +8,7 @@
 }
 
 .wishlist-item-dialog__hint {
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
   color: var(--mat-sys-on-surface-variant);
   font-size: 0.875rem;
 }
@@ -16,9 +16,9 @@
 .wishlist-item-dialog__game-preview {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  margin-bottom: 16px;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
   background: var(--mat-sys-surface-container);
   border-radius: 8px;
 }
@@ -55,15 +55,15 @@
 .wishlist-item-dialog__form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .wishlist-item-dialog__platform-display {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .wishlist-item-dialog__platforms-label {
@@ -73,7 +73,7 @@
 }
 
 .wishlist-item-dialog__platform-chip {
-  padding: 3px 10px;
+  padding: 3px 0.75rem;
   border-radius: 100px;
   font-size: 0.8125rem;
   border: 1px solid var(--mat-sys-outline-variant);
@@ -90,8 +90,8 @@
 .wishlist-item-dialog__priority {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .wishlist-item-dialog__priority-label {

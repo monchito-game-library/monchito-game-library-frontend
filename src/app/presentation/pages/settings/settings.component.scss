@@ -101,7 +101,7 @@
 .settings__identity {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.5rem;
   min-width: 0;
 }
 
@@ -132,7 +132,7 @@
 .settings__name-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   min-width: 0;
 
   &--editing {
@@ -172,7 +172,7 @@
   background: var(--mat-sys-surface-container-highest);
   border: 1px solid var(--mat-sys-primary);
   border-radius: 6px;
-  padding: 2px 6px;
+  padding: 2px 0.5rem;
   outline: none;
   min-width: 0;
   flex: 1;
@@ -229,7 +229,7 @@
   letter-spacing: 0.08em;
   color: var(--mat-sys-primary);
   margin: 0.75rem 0 0.75rem;
-  padding-left: 0.6rem;
+  padding-left: 0.5rem;
   border-left: 3px solid var(--mat-sys-primary);
 }
 
@@ -321,7 +321,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 0.5rem;
   color: var(--mat-sys-on-surface-variant);
   transition:
     border-color 150ms ease,
@@ -447,11 +447,11 @@
 
 .settings__lang-toggle {
   display: flex;
-  gap: 6px;
+  gap: 0.5rem;
 }
 
 .settings__lang-btn {
-  padding: 5px 14px;
+  padding: 5px 1rem;
   border-radius: 20px;
   border: 1px solid var(--mat-sys-outline-variant);
   background: transparent;
