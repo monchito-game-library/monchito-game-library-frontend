@@ -56,6 +56,13 @@ describe('AvatarCropDialogComponent', () => {
     });
   });
 
+  describe('ngOnDestroy', () => {
+    it('revoca la URL del objeto al destruir el componente', () => {
+      component.ngOnDestroy();
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+    });
+  });
+
   describe('onConfirm', () => {
     it('recorta la imagen y cierra el dialog con un Blob', async () => {
       const mockBlob = new Blob(['fake-image'], { type: 'image/jpeg' });
