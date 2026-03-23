@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { AuditLogRepositoryContract } from '@/domain/repositories/audit-log.repository.contract';
 import { AuditLogModel } from '@/models/audit-log/audit-log.model';
 import { AuditLogInsertDto } from '@/dtos/audit-log/audit-log-insert.dto';
 import { AuditLogInsertRowDto, AuditLogRowDto } from '@/dtos/supabase/audit-log.dto';
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 
 @Injectable()
 export class SupabaseAuditLogRepository implements AuditLogRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
 
   /**
    * Retrieves the most recent audit log entries ordered by descending creation date.

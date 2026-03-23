@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Unit tests + cobertura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Generar environment.ts
+        run: |
+          cat > src/environments/environment.ts << 'EOF'
+          export const environment = {
+            production: false,
+            supabase: {
+              url: '${{ secrets.SUPABASE_URL }}',
+              anonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
+            },
+            rawg: {
+              apiUrl: 'https://api.rawg.io/api',
+              apiKey: '${{ secrets.RAWG_API_KEY }}'
+            }
+          };
+          EOF
+
+      - name: Ejecutar tests con cobertura
+        run: npx ng test --configuration=coverage

@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { WishlistFullDto, WishlistInsertDto, WishlistUpdateDto } from '@/dtos/supabase/wishlist.dto';
 import { GameCatalogDto, GameCatalogInsertDto } from '@/dtos/supabase/game-catalog.dto';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -12,7 +12,7 @@ import { mapWishlistItem, mapWishlistToInsertDto } from '@/mappers/supabase/wish
 /** Wishlist repository backed by Supabase. Reads through user_wishlist_full view. */
 @Injectable({ providedIn: 'root' })
 export class SupabaseWishlistRepository implements WishlistRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
   private readonly _viewName = 'user_wishlist_full';
   private readonly _tableName = 'user_wishlist';
   private readonly _catalogTable = 'game_catalog';

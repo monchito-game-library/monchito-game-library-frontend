@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -6,7 +6,7 @@ import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import {
   GameCatalogInsertDto,
@@ -24,7 +24,7 @@ import { mapGame, mapGameEdit, mapGameList, mapGameToInsertDto } from '@/mappers
  */
 @Injectable({ providedIn: 'root' })
 export class SupabaseRepository implements GameRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
   private readonly _viewName = 'user_games_full';
   private readonly _catalogTable = 'game_catalog';
   private readonly _userGamesTable = 'user_games';

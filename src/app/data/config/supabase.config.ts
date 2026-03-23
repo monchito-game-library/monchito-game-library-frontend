@@ -1,3 +1,4 @@
+import { InjectionToken } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '@/env';
 
@@ -19,3 +20,9 @@ export function getSupabaseClient(): SupabaseClient {
   }
   return supabaseClient;
 }
+
+/** Angular DI token for the Supabase client singleton. */
+export const SUPABASE_CLIENT = new InjectionToken<SupabaseClient>('SUPABASE_CLIENT', {
+  providedIn: 'root',
+  factory: () => getSupabaseClient()
+});

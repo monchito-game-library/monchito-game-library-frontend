@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Session, SupabaseClient, User } from '@supabase/supabase-js';
 
-import { getSupabaseClient } from '@/data/config/supabase.config';
+import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { AuthUserModel } from '@/models/auth/auth-user.model';
 import { AuthRepositoryContract } from '@/domain/repositories/auth.repository.contract';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthRepository implements AuthRepositoryContract {
-  private readonly _supabase: SupabaseClient = getSupabaseClient();
+  private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
 
   /**
    * Returns the authenticated user from the active session, or null if there is none.
