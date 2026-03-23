@@ -22,5 +22,21 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
+      - name: Generar environment.ts
+        run: |
+          cat > src/environments/environment.ts << 'EOF'
+          export const environment = {
+            production: false,
+            supabase: {
+              url: '${{ secrets.SUPABASE_URL }}',
+              anonKey: '${{ secrets.SUPABASE_ANON_KEY }}'
+            },
+            rawg: {
+              apiUrl: 'https://api.rawg.io/api',
+              apiKey: '${{ secrets.RAWG_API_KEY }}'
+            }
+          };
+          EOF
+
       - name: Ejecutar tests con cobertura
         run: npx ng test --configuration=coverage
