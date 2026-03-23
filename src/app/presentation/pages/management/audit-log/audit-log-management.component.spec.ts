@@ -60,6 +60,22 @@ describe('AuditLogManagementComponent', () => {
   });
 
   describe('_loadEntries (vía ngOnInit)', () => {
+    it('pone loading a true durante la carga', async () => {
+      const auditLogUseCases = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
+      let resolve!: (v: any[]) => void;
+      auditLogUseCases.getRecentLogs.mockReturnValue(
+        new Promise<any[]>((r) => {
+          resolve = r;
+        })
+      );
+
+      const loadPromise = component.ngOnInit();
+      expect(component.loading()).toBe(true);
+      resolve([]);
+      await loadPromise;
+      expect(component.loading()).toBe(false);
+    });
+
     it('carga entradas y pone loading a false', async () => {
       const auditLogUseCases = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
       const mockEntries = [

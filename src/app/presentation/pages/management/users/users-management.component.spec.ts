@@ -88,6 +88,19 @@ describe('UsersManagementComponent', () => {
       expect(component.updatingUserId()).toBeNull();
     });
 
+    it('muestra snackbar de éxito al actualizar el rol correctamente', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.setUserRole.mockResolvedValue(undefined);
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      component.users.set([
+        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+      ]);
+
+      await component.onRoleChange(component.users()[0], 'admin');
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+
     it('muestra snackbar de error y resetea updatingUserId si setUserRole falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.setUserRole.mockRejectedValue(new Error('fail'));
@@ -117,6 +130,22 @@ describe('UsersManagementComponent', () => {
   });
 
   describe('_loadUsers (vía ngOnInit)', () => {
+    it('pone loading a true durante la carga', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      let resolve!: (v: any[]) => void;
+      useCases.getAllUsers.mockReturnValue(
+        new Promise<any[]>((r) => {
+          resolve = r;
+        })
+      );
+
+      const loadPromise = component.ngOnInit();
+      expect(component.loading()).toBe(true);
+      resolve([]);
+      await loadPromise;
+      expect(component.loading()).toBe(false);
+    });
+
     it('carga usuarios y pone loading a false', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       const mockUsers = [{ userId: 'u1', email: 'a@b.com', role: 'user', avatarUrl: null, displayName: null }];
