@@ -26,12 +26,12 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `rawg/rawg.mapper.spec.ts` | 18 | ✅ Cubierto |
-| `supabase/game.mapper.spec.ts` | 28 | ✅ Cubierto |
-| `supabase/protector.mapper.spec.ts` | 9 | ✅ Cubierto |
+| `rawg/rawg.mapper.spec.ts` | 19 | ✅ Cubierto |
+| `supabase/game.mapper.spec.ts` | 39 | ✅ Cubierto |
+| `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/store.mapper.spec.ts` | 7 | ✅ Cubierto |
-| `supabase/user-preferences.mapper.spec.ts` | 9 | ✅ Cubierto |
-| `supabase/wishlist.mapper.spec.ts` | 11 | ✅ Cubierto |
+| `supabase/user-preferences.mapper.spec.ts` | 8 | ✅ Cubierto |
+| `supabase/wishlist.mapper.spec.ts` | 8 | ✅ Cubierto |
 
 **Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined.
 
@@ -42,13 +42,13 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `audit-log/audit-log.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `auth/auth.use-cases.spec.ts` | 11 | ✅ Cubierto |
-| `catalog/catalog.use-cases.spec.ts` | 12 | ✅ Cubierto |
+| `auth/auth.use-cases.spec.ts` | 14 | ✅ Cubierto |
+| `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
 | `game/game.use-cases.spec.ts` | 9 | ✅ Cubierto |
 | `protector/protector.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `store/store.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `user-admin/user-admin.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `user-preferences/user-preferences.use-cases.spec.ts` | 14 | ✅ Cubierto |
+| `user-preferences/user-preferences.use-cases.spec.ts` | 13 | ✅ Cubierto |
 | `wishlist/wishlist.use-cases.spec.ts` | 5 | ✅ Cubierto |
 
 **Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots.
@@ -61,8 +61,8 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `admin.guard.spec.ts` | 2 | ✅ Cubierto |
-| `user.guard.spec.ts` | 2 | ✅ Cubierto |
+| `admin.guard.spec.ts` | 4 | ✅ Cubierto |
+| `user.guard.spec.ts` | 4 | ✅ Cubierto |
 
 **Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador.
 
@@ -72,9 +72,9 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `auth-state.service.spec.ts` | 13 | ✅ Cubierto |
+| `auth-state.service.spec.ts` | 19 | ✅ Cubierto |
 | `pwa-update.service.spec.ts` | 12 | ✅ Cubierto |
-| `theme.service.spec.ts` | 6 | ✅ Cubierto |
+| `theme.service.spec.ts` | 8 | ✅ Cubierto |
 | `user-context.service.spec.ts` | 11 | ✅ Cubierto |
 | `user-preferences.service.spec.ts` | 14 | ✅ Cubierto |
 
@@ -91,21 +91,30 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `ad-hoc/toggle-switch/toggle-switch.component.spec.ts` | 12 | ✅ Cubierto |
+| `ad-hoc/toggle-switch/toggle-switch.component.spec.ts` | 21 | ✅ Cubierto |
+| `ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
+| `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
+| `components/game-search-panel/game-search-panel.component.spec.ts` | 10 | ✅ Cubierto |
+| `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
 | `pages/auth/forgot-password/forgot-password.component.spec.ts` | 15 | ✅ Cubierto |
 | `pages/auth/login/login.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/auth/register/register.component.spec.ts` | 20 | ✅ Cubierto |
-| `pages/game-list/components/game-card/game-card.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/game-list/game-list.component.spec.ts` | 43 | ✅ Cubierto |
-| `pages/wishlist/wishlist.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/settings/settings.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/create-update-game/components/game-form/game-form.component.spec.ts` | 26 | ✅ Cubierto |
-| `ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
-| `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
 | `pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
-| `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/create-update-game/components/game-form/game-form.component.spec.ts` | 84 | ✅ Cubierto |
+| `pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
+| `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
+| `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
 | `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/management/audit-log/audit-log-management.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/protectors/protectors-management.component.spec.ts` | 37 | ✅ Cubierto |
+| `pages/management/stores/stores-management.component.spec.ts` | 26 | ✅ Cubierto |
+| `pages/management/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
+| `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
+| `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/wishlist/wishlist.component.spec.ts` | 36 | ✅ Cubierto |
 
 **Qué se cubre**:
 - `ToggleSwitchComponent`: lógica CVA (`writeValue`, `registerOnChange`, `setDisabledState`), `onToggle`, output `changed`, `getIcon`.
@@ -115,7 +124,7 @@
 - `GameListComponent`: señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
 - `WishlistComponent`: señales `totalEstimatedSpend`, `itemsWithPrice`, `mobileCanConfirm`; flujo móvil (`onAddItem`, `onEditItem`, `onMobileGameSelected`, `onMobileBackToSearch`, `onMobileCancel`).
 - `SettingsComponent`: valores iniciales, `getDisplayName`/`getUserEmail`/`getAvatarUrl`, edición de nombre (`onEditName`, `onCancelEditName`, `onSaveName`), `toggleTheme`, `onSelectBanner`, `logout`.
-- `GameFormComponent`: valores iniciales, señal computada `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`.
+- `GameFormComponent`: valores iniciales, señal computada `coverImages` (con y sin `image_url`), `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store (con y sin valor previo seleccionado).
 - `SkeletonComponent`: valores por defecto de los tres inputs (`width`, `height`, `borderRadius`).
 - `AuthComponent` / `CreateAndUpdateGameComponent` / `ConfirmDialogComponent` / `ManagementComponent`: existencia y datos inyectados donde aplica.
 - `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
@@ -147,19 +156,19 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `rawg.repository.spec.ts` | 8 | ✅ Cubierto |
-| `supabase.repository.spec.ts` | 9 | ✅ Cubierto |
-| `supabase-auth.repository.spec.ts` | 11 | ✅ Cubierto |
+| `rawg.repository.spec.ts` | 20 | ✅ Cubierto |
+| `supabase.repository.spec.ts` | 31 | ✅ Cubierto |
+| `supabase-auth.repository.spec.ts` | 20 | ✅ Cubierto |
 | `supabase-audit-log.repository.spec.ts` | 7 | ✅ Cubierto |
-| `supabase-preferences.repository.spec.ts` | 9 | ✅ Cubierto |
-| `supabase-protector.repository.spec.ts` | 8 | ✅ Cubierto |
-| `supabase-store.repository.spec.ts` | 8 | ✅ Cubierto |
+| `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
+| `supabase-protector.repository.spec.ts` | 13 | ✅ Cubierto |
+| `supabase-store.repository.spec.ts` | 9 | ✅ Cubierto |
 | `supabase-user-admin.repository.spec.ts` | 5 | ✅ Cubierto |
-| `supabase-wishlist.repository.spec.ts` | 8 | ✅ Cubierto |
+| `supabase-wishlist.repository.spec.ts` | 12 | ✅ Cubierto |
 
-**Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage.
+**Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada.
 
-**Patrón de test**: `SUPABASE_CLIENT` `InjectionToken` provisto en `TestBed` con `useValue: mockSupabase` (objeto compartido de `supabase-mock.ts`). El cliente mock se inyecta directamente sin `vi.mock`. Builder fluido y thenable (`makeBuilder`). Para RAWG se usa `vi.spyOn(globalThis, 'fetch')`.
+**Patrón de test**: `SUPABASE_CLIENT` `InjectionToken` provisto en `TestBed` con `useValue: mockSupabase` (objeto compartido de `supabase-mock.ts`). El cliente mock se inyecta directamente sin `vi.mock`. Builder fluido y thenable (`makeBuilder`). Para RAWG se usa `vi.spyOn(globalThis, 'fetch')`. Para cubrir ramas de campos privados se usa `(repo as any)._field = value`.
 
 ---
 
@@ -177,29 +186,45 @@
 | Capa | Ficheros | Tests |
 |---|---|---|
 | Configuración | 1 | 3 |
-| Mappers | 6 | 82 |
+| Mappers | 6 | 88 |
 | Use Cases | 9 | 69 |
-| Repositorios | 9 | 73 |
-| Guards | 2 | 4 |
-| Servicios | 5 | 56 |
-| Componentes | 25 | 545 |
-| Abstractas | 1 | 29 |
+| Repositorios | 9 | 130 |
+| Guards | 2 | 8 |
+| Servicios | 5 | 64 |
+| Componentes | 26 | 557 |
+| Abstractas | 1 | 33 |
+| App component | 1 | 27 |
 | Utilidades | 2 | 14 |
-| **Total** | **60** | **875** |
+| **Total** | **62** | **940** |
+
+> El total de 940 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
 
 ---
 
 ## Cobertura actual
 
-**~98 % statements / ~99 % líneas** (875 tests, 60 ficheros).
-
-Para obtener el informe completo:
+| Métrica | Valor |
+|---|---|
+| Statements | ~99.06 % |
+| Branches | ~95.07 % |
+| Functions | ~99.56 % |
+| Lines | ~99.94 % |
 
 ```bash
 ng test --coverage
 ```
 
-El informe se genera en `coverage/`.
+El informe HTML se genera en `coverage/monchito-game-library/`.
+
+## Ramas sin cobertura — estado final
+
+Todas las ramas sin cobertura restantes son **artefactos del compilador V8**, no lógica de negocio:
+
+| Tipo de artefacto | Ejemplo | Por qué no es cubrible |
+|---|---|---|
+| Declaración de clase con `implements` | `export class X implements OnInit {}` | V8 genera una rama implícita para la comprobación de interfaz en tiempo de compilación |
+| Cierre en `providers` de `@Component` | `forwardRef(() => ToggleSwitchComponent)` | El lambda en el array de providers genera una rama fantasma |
+| Guard defensivo inalcanzable | `if (!password \|\| !confirmPassword)` en `_passwordMatchValidator` | Las controls siempre existen porque el mismo componente las crea; la condición nunca puede ser `true` |
 
 ## Lógica sin cobertura (deliberadamente no testeada)
 
@@ -207,5 +232,3 @@ El informe se genera en `coverage/`.
 |---|---|
 | Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
 | `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. Impacto mínimo en cobertura. |
-
-> La mejora de cobertura está pausada intencionalmente. El estado actual (~98 %) es suficiente para detectar regresiones en toda la lógica crítica de la app.

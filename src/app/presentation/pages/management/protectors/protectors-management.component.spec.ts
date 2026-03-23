@@ -141,6 +141,19 @@ describe('ProtectorsManagementComponent', () => {
 
       expect(protectorUseCases.toggleProtectorActive).toHaveBeenCalledWith('prot-1', false);
     });
+
+    it('activa el protector cuando isActive es false', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
+      protectorUseCases.getAllProtectors.mockResolvedValue([]);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+
+      component.onToggleActive(makeProtector({ isActive: false }));
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(protectorUseCases.toggleProtectorActive).toHaveBeenCalledWith('prot-1', true);
+    });
   });
 
   describe('_loadProtectors (vía ngOnInit)', () => {
@@ -391,6 +404,26 @@ describe('ProtectorEditPanelComponent', () => {
         notes: null,
         packs: [{ quantity: 5, price: 19.99, url: 'https://example.com' }]
       });
+    });
+
+    it('convierte url vacía a null al emitir', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.form.patchValue({ name: 'BigBen', category: 'console', notes: null });
+      component.addPack();
+      component.asFormGroup(component.packsArray.at(0)).patchValue({ quantity: 1, price: 5, url: '' });
+      component.onSave();
+      const result = spy.mock.calls[0][0] as any;
+      expect(result.packs[0].url).toBeNull();
+    });
+
+    it('incluye notes cuando tiene valor', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.form.patchValue({ name: 'BigBen', category: 'console', notes: 'Protetor de lujo' });
+      component.addPack();
+      component.asFormGroup(component.packsArray.at(0)).patchValue({ quantity: 1, price: 5, url: '' });
+      component.onSave();
+      const result = spy.mock.calls[0][0] as any;
+      expect(result.notes).toBe('Protetor de lujo');
     });
   });
 });

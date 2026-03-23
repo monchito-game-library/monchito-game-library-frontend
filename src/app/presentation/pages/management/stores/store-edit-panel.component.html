@@ -1,0 +1,46 @@
+<div class="edit-panel">
+  <div class="edit-panel__header">
+    <h2 class="edit-panel__title">
+      {{ (store() ? 'management.stores.editTitle' : 'management.stores.addTitle') | transloco }}
+      @if (store()) {
+        <span class="edit-panel__store-name">— {{ store()!.label }}</span>
+      }
+    </h2>
+  </div>
+
+  <form [formGroup]="form" class="edit-panel__form">
+    <div class="edit-panel__fields">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.stores.nameLabel' | transloco }}</mat-label>
+        <input matInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>
+        <mat-select formControlName="formatHint">
+          <mat-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</mat-option>
+          <mat-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</mat-option>
+          <mat-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="edit-panel__actions">
+      @if (store()) {
+        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
+          <mat-icon>delete_outline</mat-icon>
+          {{ 'common.delete' | transloco }}
+        </button>
+      }
+      <div class="edit-panel__actions-right">
+        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="form.invalid">
+          {{ 'common.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

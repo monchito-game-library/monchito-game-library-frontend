@@ -92,6 +92,19 @@ describe('mapGameList', () => {
   it('mapea image_url null a undefined', () => {
     expect(mapGameList({ ...baseDto, image_url: null }).imageUrl).toBeUndefined();
   });
+
+  it('aplica fallback ?? false cuando platinum es null', () => {
+    expect(mapGameList({ ...baseDto, platinum: null as unknown as boolean }).platinum).toBe(false);
+  });
+
+  it('aplica fallback ?? false cuando is_favorite es null', () => {
+    expect(mapGameList({ ...baseDto, is_favorite: null as unknown as boolean }).isFavorite).toBe(false);
+  });
+
+  it('usa cadena vacía como id cuando dto.id es vacío', () => {
+    const result = mapGameList({ ...baseDto, id: '' });
+    expect(Number.isNaN(result.id)).toBe(true);
+  });
 });
 
 // ─────────────────────────── mapGame ───────────────────────────
@@ -188,6 +201,38 @@ describe('mapGame', () => {
 
     expect(mapGame(dto).status).toBe('backlog');
   });
+
+  it('usa NaN como id cuando dto.id es cadena vacía', () => {
+    const result = mapGame({ ...baseFullDto, id: '' } as unknown as UserGameFullDto);
+    expect(Number.isNaN(result.id)).toBe(true);
+  });
+
+  it('aplica fallbacks ?? cuando los campos opcionales son null', () => {
+    const dto = {
+      ...baseFullDto,
+      condition: null,
+      platinum: null as any,
+      image_url: null,
+      personal_rating: null,
+      format: null,
+      is_favorite: null as any,
+      store: null,
+      slug: null,
+      user_notes: null,
+      description: null
+    } as unknown as UserGameFullDto;
+    const result = mapGame(dto);
+
+    expect(result.condition).toBe('new');
+    expect(result.platinum).toBe(false);
+    expect(result.imageUrl).toBeUndefined();
+    expect(result.personalRating).toBeNull();
+    expect(result.format).toBeNull();
+    expect(result.isFavorite).toBe(false);
+    expect(result.store).toBeNull();
+    expect(result.rawgSlug).toBeNull();
+    expect(result.description).toBe('');
+  });
 });
 
 // ─────────────────────────── mapGameEdit ───────────────────────────
@@ -259,5 +304,65 @@ describe('mapGameEdit', () => {
 
   it('mapea coverPosition null a null', () => {
     expect(mapGameEdit(baseEditDto).coverPosition).toBeNull();
+  });
+
+  it('aplica fallbacks ?? cuando los campos opcionales son null', () => {
+    const dto: UserGameEditDto = {
+      ...baseEditDto,
+      format: null,
+      is_favorite: null as unknown as boolean,
+      slug: null as unknown as string,
+      released_date: null,
+      rawg_rating: null as unknown as number,
+      genres: null as unknown as string[]
+    };
+    const result = mapGameEdit(dto);
+
+    expect(result.format).toBeNull();
+    expect(result.isFavorite).toBe(false);
+    expect(result.rawgSlug).toBeNull();
+    expect(result.releasedDate).toBeNull();
+    expect(result.rawgRating).toBe(0);
+    expect(result.genres).toEqual([]);
+  });
+
+  it('usa description cuando user_notes es null', () => {
+    const dto = { ...baseEditDto, user_notes: null, description: 'catalog desc' } as unknown as UserGameEditDto;
+    expect(mapGameEdit(dto).description).toBe('catalog desc');
+  });
+
+  it('description es cadena vacía cuando user_notes y description son null', () => {
+    const dto = { ...baseEditDto, user_notes: null, description: null } as unknown as UserGameEditDto;
+    expect(mapGameEdit(dto).description).toBe('');
+  });
+
+  it('aplica backlog como status y null como personalRating cuando son null', () => {
+    const dto = {
+      ...baseEditDto,
+      status: null as unknown as 'backlog',
+      personal_rating: null
+    };
+    const result = mapGameEdit(dto);
+    expect(result.status).toBe('backlog');
+    expect(result.personalRating).toBeNull();
+  });
+
+  it('usa NaN como id cuando dto.id es cadena vacía', () => {
+    const result = mapGameEdit({ ...baseEditDto, id: '' } as unknown as UserGameEditDto);
+    expect(Number.isNaN(result.id)).toBe(true);
+  });
+
+  it('aplica fallbacks ?? para condition, platinum y store cuando son null', () => {
+    const dto = {
+      ...baseEditDto,
+      condition: null,
+      platinum: null as any,
+      store: null
+    } as unknown as UserGameEditDto;
+    const result = mapGameEdit(dto);
+
+    expect(result.condition).toBe('new');
+    expect(result.platinum).toBe(false);
+    expect(result.store).toBeNull();
   });
 });
