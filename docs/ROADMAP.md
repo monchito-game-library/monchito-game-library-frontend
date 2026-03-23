@@ -8,13 +8,14 @@
 
 | Mejora | Prioridad |
 |---|---|
-| ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
+| [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
+| [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
-| [Pedidos (`/orders`)](#pedidos-orders) | Media-alta |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
 | ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
 | ~~[Wishlist (`/wishlist`) — migración v.2](#wishlist-wishlist--migración-v2)~~ | ✅ Hecho |
@@ -24,63 +25,35 @@
 
 ---
 
-## ~~Testing~~ ✅ Hecho
+## Deuda técnica *(prioridad media-alta)*
 
-### ~~Testing (unit + integración)~~
+### Deuda técnica — análisis de código
 
-Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **875 tests en 60 ficheros**, con una cobertura de ~98 % de statements y ~99 % de líneas. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
+Análisis en profundidad del código de producción realizado con cobertura de tests al 95 %. Las mejoras identificadas no añaden funcionalidad nueva — reducen complejidad, eliminan duplicación y mejoran la mantenibilidad.
 
-<details>
-<summary>Plan original (referencia)</summary>
+| # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
+|---|---|---|---|---|
+| 1 | `UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global | `user-preferences.service.ts`, `settings.component.ts` | **Alto** — estado RAWG innecesariamente global; si hubiera dos instancias del banner picker compartirían estado accidentalmente | Medio |
+| 2 | `getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación | `supabase.repository.ts` | Medio — cualquier bug en la paginación hay que arreglarlo en dos sitios | Bajo |
+| 3 | `private get _userId()` duplicado en `GameListComponent` y `GameFormComponent` | `game-list.component.ts`, `game-form.component.ts` | Bajo — duplicación menor pero consistente | Muy bajo |
+| 4 | `_loadingEditData` en `GameFormComponent` es innecesario: puede eliminarse usando `{ emitEvent: false }` en el `patchValue` de carga | `game-form.component.ts` | Medio — simplifica la coordinación de estado interno del componente | Bajo |
+| 5 | `_mapRawgPlatformToCode` vive en un componente de presentación pero es lógica de mapper de datos | `game-form.component.ts`, `rawg.mapper.ts` | Bajo — violación de capas; el mapa es estático y no tiene nada que ver con la UI | Bajo |
+| 6 | `onAvatarFileSelected` y `onBannerFileSelected` son casi idénticos (abrir dialog de crop → obtener blob → subir → manejar error/loading) | `settings.component.ts` | Bajo — duplicación de ~40 líneas en el mismo componente | Bajo |
+| 7 | `SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`) cuando podría usar `takeUntilDestroyed` | `settings.component.ts` | Bajo — puede eliminar `ngOnDestroy` y el campo de suscripción | Muy bajo |
+| 8 | `AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI | `app.component.ts` | **Alto** — el componente raíz no debería contener lógica de inicialización de preferencias | Medio |
+| 9 | `rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript (`gapPx`, `paddingPx`, `footerPx`) que deben mantenerse en sync con el SCSS manualmente | `game-list.component.ts` | Medio — riesgo de bug silencioso si se cambia el CSS sin actualizar el TS | Bajo |
 
-El proyecto estaba en un punto de estabilidad suficiente para introducir tests. La base estaba preparada: arquitectura de capas limpia, uso de signals, repositorios con contratos inyectables y componentes standalone.
+#### Orden de abordaje sugerido
 
-#### Qué testear y con qué herramienta
-
-**Unit tests — Vitest**
-
-- **Use cases / dominio**: los casos de uso son funciones puras que dependen de un repositorio inyectado. Son el target más valioso — se mockea el repositorio y se verifica la lógica de negocio.
-  - Ejemplo: `WishlistUseCases.addItem()` — verificar que llama al repositorio con los datos correctos y lanza error si el usuario no está autenticado.
-- **Mappers**: transformaciones de DTO → modelo y viceversa. Totalmente deterministas, sin dependencias externas.
-  - Ejemplo: `WishlistMapper.toModel()` — verificar que todos los campos se mapean correctamente.
-- **Validators y utils**: `selectOneValidator`, `optimizeImageUrl`, etc.
-- **Computed signals en componentes**: testar que los `computed` devuelven el valor correcto al cambiar las signals de las que dependen.
-  - Ejemplo: `ownedCount` en `GameListComponent` — setear `allGames` con un array y verificar que `ownedCount()` refleja el filtrado.
-
-**Integración — Angular Testing Library o TestBed**
-
-- **Componentes de presentación críticos**: `WishlistCardComponent`, `GameCardComponent`, `ConfirmDialogComponent`.
-  - Verificar que los outputs (`editClicked`, `deleteClicked`, `ownClicked`) se emiten al hacer clic en los botones.
-  - Verificar que el template renderiza correctamente según el estado del input.
-- **Guards**: `canActivateUser` — verificar que redirige a `/auth/login` si no hay sesión y deja pasar si la hay.
-- **Formularios reactivos**: `WishlistItemDialogComponent`, `LoginComponent` — verificar validaciones y comportamiento del botón de confirmar.
-
-**E2E — Playwright**
-
-- Flujos críticos de usuario de extremo a extremo contra un entorno de Supabase de test:
-  - Login → ver colección → añadir juego → editar → eliminar.
-  - Añadir a wishlist → "Tengo este juego" → verificar que aparece en la colección.
-  - Login fallido → mensaje de error visible.
-
-#### Setup recomendado
-
-```
-Vitest (unit + integración) + Angular Testing Library + Playwright (E2E)
-```
-
-- **Vitest**: sustituto oficial de Karma/Jasmine en Angular (adoptado desde Angular 17+). Corre en Node.js sin browser headless, API compatible con Jest. Se integra mediante el builder oficial de Angular (`@angular/build:vitest`) o `@analogjs/vitest-angular`. Más rápido que Karma y más alineado con el roadmap del ecosistema Angular.
-- **Angular Testing Library**: wrapper sobre TestBed que fuerza tests orientados al comportamiento del usuario, no a detalles de implementación.
-- **Playwright**: para E2E necesita una instancia de Supabase. Usar el proyecto de Supabase en modo test con datos semilla (`seed.sql`).
-
-#### Prioridad de implementación
-
-1. Mappers y validators (más fácil, mayor ROI inmediato).
-2. Use cases con repositorios mockeados.
-3. Componentes críticos con Angular Testing Library.
-4. Guards y servicios de autenticación.
-5. E2E de los flujos principales (requiere más setup).
-
-</details>
+1. **#3** — eliminar el getter duplicado `_userId` (cambio puntual, riesgo cero)
+2. **#7** — `takeUntilDestroyed` en settings (cambio de 3 líneas)
+3. **#4** — eliminar `_loadingEditData` con `{ emitEvent: false }` (simplifica `GameFormComponent`)
+4. **#6** — extraer `_handleImageUpload` en settings (elimina ~40 líneas duplicadas)
+5. **#5** — mover `_mapRawgPlatformToCode` al mapper de RAWG (cambio de capa, sin lógica nueva)
+6. **#2** — extraer `_paginateView` en el repositorio (elimina el bucle duplicado)
+7. **#9** — documentar o centralizar los valores de layout de `rowItemSize`
+8. **#8** — extraer `_loadPreferences` a un servicio de inicialización (mayor cambio estructural)
+9. **#1** — separar los signals de RAWG search de `UserPreferencesService` (mayor impacto, requiere revisar todos los consumidores)
 
 ---
 
@@ -499,6 +472,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Testing (unit + integración)~~ ✅ Hecho
+
+Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **940 tests en 62 ficheros**, con una cobertura de ~99 % de statements y ~95 % de branches. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
+
+---
 
 ### ~~Estrategia de actualización PWA forzada~~ ✅ Hecho
 

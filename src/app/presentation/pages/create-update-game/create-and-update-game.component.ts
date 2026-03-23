@@ -3,17 +3,8 @@ import { GameFormComponent } from '@/pages/create-update-game/components/game-fo
 
 @Component({
   selector: 'app-update-game',
-  template: `<app-game-form />`,
-  styles: [
-    `
-      :host {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-      }
-    `
-  ],
+  templateUrl: './create-and-update-game.component.html',
+  styleUrl: './create-and-update-game.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [GameFormComponent]

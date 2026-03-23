@@ -208,4 +208,52 @@ describe('RawgRepository', () => {
       await expect(repo.getGameScreenshots('god-of-war')).rejects.toThrow('RAWG API error: 500 Internal Server Error');
     });
   });
+
+  describe('sin API key (rama false de if(this._apiKey))', () => {
+    beforeEach(() => {
+      (repo as any)._apiKey = '';
+    });
+
+    it('searchGames no añade el parámetro key a la URL', async () => {
+      mockFetchOk({ results: [] });
+      await repo.searchGames('zelda');
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+
+    it('getTopGames no añade el parámetro key a la URL', async () => {
+      mockFetchOk({ results: [] });
+      await repo.getTopGames(6);
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+
+    it('getTopBanners no añade el parámetro key a la URL', async () => {
+      mockFetchOk({ results: [] });
+      await repo.getTopBanners(6);
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+
+    it('searchBanners no añade el parámetro key a la URL', async () => {
+      mockFetchOk({ results: [] });
+      await repo.searchBanners('zelda');
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+
+    it('getGameDetails no añade el parámetro key a la URL', async () => {
+      mockFetchOk(rawgDetailGame);
+      await repo.getGameDetails(58175);
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+
+    it('getGameScreenshots no añade el parámetro key a la URL', async () => {
+      mockFetchOk({ count: 0, next: null, results: [] });
+      await repo.getGameScreenshots('god-of-war');
+      const url = mockFetch.mock.calls[0][0] as string;
+      expect(url).not.toContain('key=');
+    });
+  });
 });

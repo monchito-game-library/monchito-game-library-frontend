@@ -248,6 +248,12 @@ describe('SupabaseRepository', () => {
       expect(b.delete).toHaveBeenCalled();
       expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
     });
+
+    it('lanza error cuando Supabase devuelve error', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Delete failed' } }));
+
+      await expect(repo.clearAllForUser('user-1')).rejects.toThrow('Failed to clear games');
+    });
   });
 
   describe('getByConsole', () => {

@@ -88,6 +88,13 @@ describe('AuthUseCasesImpl', () => {
 
       expect(result).toEqual({ success: false, error: 'Email already in use' });
     });
+
+    it('devuelve mensaje genérico cuando el repositorio lanza un valor no Error', async () => {
+      vi.mocked(mockRepo.signUp).mockRejectedValue('unknown error');
+      const result = await useCases.signUp('new@example.com', 'pass');
+
+      expect(result).toEqual({ success: false, error: 'Registration failed' });
+    });
   });
 
   describe('resetPassword', () => {
