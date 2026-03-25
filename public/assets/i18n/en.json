@@ -56,7 +56,8 @@
     "confirm": "Confirm",
     "close": "Close",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "back": "Back"
   },
   "cropDialog": {
     "hint": "Drag to reposition · Pinch or use the scroll wheel to zoom"
@@ -288,6 +289,9 @@
       "deleteMessage": "Remove «{{ title }}» from your wishlist?",
       "ownTitle": "I have this game",
       "ownMessage": "«{{ title }}» will be removed from your wishlist and the add-game form will open pre-filled."
+    },
+    "detail": {
+      "storeLinks": "Search in stores"
     },
     "card": {
       "priority": "Priority",
