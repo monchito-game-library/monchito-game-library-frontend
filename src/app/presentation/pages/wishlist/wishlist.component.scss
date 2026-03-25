@@ -176,7 +176,7 @@
 .wishlist-view__form {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1rem;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -186,7 +186,6 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .wishlist-view__label {
@@ -207,12 +206,19 @@
   width: 100%;
 }
 
+.wishlist-view__platforms-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
 .wishlist-view__platform-display {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 1rem;
 }
 
 .wishlist-view__platform-chip {

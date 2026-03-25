@@ -9,9 +9,11 @@ import {
   WritableSignal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe, SlicePipe } from '@angular/common';
+import { DecimalPipe, Location, SlicePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
@@ -27,6 +29,7 @@ import { firstValueFrom } from 'rxjs';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
+import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
@@ -48,6 +51,7 @@ import { GameSearchPanelComponent } from '@/components/game-search-panel/game-se
     MatButton,
     MatFabButton,
     MatIconButton,
+    MatProgressSpinner,
     MatFormField,
     MatLabel,
     MatError,
@@ -69,9 +73,18 @@ export class WishlistComponent implements OnInit {
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _router: Router = inject(Router);
+  private readonly _location: Location = inject(Location);
+  private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+  private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
 
   /** Item being edited in mobile form mode (null = add mode). */
   private _editingItem: WishlistItemModel | null = null;
+
+  /** Whether the current edit was initiated from the detail page. */
+  private _returnToDetail: boolean = false;
+
+  /** ID of the item whose detail page to return to after edit. */
+  private _returnToDetailId: string | null = null;
 
   /** Whether items are being loaded from Supabase. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
@@ -89,6 +102,12 @@ export class WishlistComponent implements OnInit {
     (): number => this.items().filter((item) => item.desiredPrice !== null).length
   );
 
+  /** Whether the viewport is mobile (≤ 768px). */
+  readonly isMobile: Signal<boolean> = toSignal(
+    this._breakpointObserver.observe('(max-width: 768px)').pipe(map((r) => r.matches)),
+    { initialValue: false }
+  );
+
   /** Mobile view mode: list → search → form. */
   readonly viewMode: WritableSignal<'list' | 'search' | 'form'> = signal<'list' | 'search' | 'form'>('list');
 
@@ -97,6 +116,12 @@ export class WishlistComponent implements OnInit {
 
   /** Available priority levels (1–5). */
   readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;
+
+  /** Fresh platform list fetched from RAWG when editing an item that has a rawgId. */
+  readonly editPlatforms: WritableSignal<string[]> = signal<string[]>([]);
+
+  /** True while fetching fresh platforms from RAWG during edit. */
+  readonly editPlatformsLoading: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Reactive form used in mobile inline form mode. */
   readonly mobileForm: FormGroup<WishlistItemForm> = this._fb.group<WishlistItemForm>({
@@ -107,6 +132,10 @@ export class WishlistComponent implements OnInit {
     platform: this._fb.control<string | null>(null, [Validators.required]),
     desiredPrice: this._fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
     notes: this._fb.control<string | null>(null)
+  });
+
+  private readonly _mobileFormStatus = toSignal(this.mobileForm.statusChanges, {
+    initialValue: this.mobileForm.status
   });
 
   /**
@@ -120,12 +149,24 @@ export class WishlistComponent implements OnInit {
     return true;
   });
 
-  private readonly _mobileFormStatus = toSignal(this.mobileForm.statusChanges, {
-    initialValue: this.mobileForm.status
-  });
-
   async ngOnInit(): Promise<void> {
     await this._loadItems();
+    const state = window.history.state as { editItemId?: string } | null;
+    if (state?.editItemId) {
+      this._returnToDetailId = state.editItemId;
+      this._returnToDetail = true;
+      const item: WishlistItemModel | undefined = this.items().find((i) => i.id === state.editItemId);
+      if (item) this.onEditItem(item);
+    }
+  }
+
+  /**
+   * Navigates to the detail page of the given item, passing it via router state.
+   *
+   * @param {WishlistItemModel} item
+   */
+  onCardClicked(item: WishlistItemModel): void {
+    void this._router.navigate(['/wishlist', item.id], { state: { item } });
   }
 
   /**
@@ -140,13 +181,19 @@ export class WishlistComponent implements OnInit {
 
   /**
    * Switches to inline form mode pre-filled with the given item's values.
+   * If the item has a rawgId, fetches fresh platform data from RAWG in the background.
    *
    * @param {WishlistItemModel} item
    */
   onEditItem(item: WishlistItemModel): void {
     this._editingItem = item;
     this._resetMobileForm(item);
+    this.editPlatforms.set([]);
     this.viewMode.set('form');
+    if (item.rawgId) {
+      this.editPlatformsLoading.set(true);
+      void this._fetchEditPlatforms(item.rawgId);
+    }
   }
 
   /**
@@ -241,12 +288,21 @@ export class WishlistComponent implements OnInit {
       try {
         await this._wishlistUseCases.updateItem(this._userId, this._editingItem.id, formValue);
         await this._loadItems();
-        this.viewMode.set('list');
         this._snackBar.open(
           this._transloco.translate('wishlist.snack.updated'),
           this._transloco.translate('common.close'),
           { duration: 2000 }
         );
+        if (this._returnToDetail && this._returnToDetailId) {
+          const updated: WishlistItemModel | undefined = this.items().find((i) => i.id === this._returnToDetailId);
+          this._returnToDetail = false;
+          this._returnToDetailId = null;
+          if (updated) {
+            void this._router.navigate(['/wishlist', updated.id], { state: { item: updated } });
+            return;
+          }
+        }
+        this.viewMode.set('list');
       } catch {
         this._snackBar.open(
           this._transloco.translate('wishlist.snack.updateError'),
@@ -284,12 +340,36 @@ export class WishlistComponent implements OnInit {
   }
 
   /**
-   * Cancels the mobile flow and returns to list mode.
+   * Cancels the mobile flow and returns to list mode (or to the detail page if the edit
+   * was initiated from there).
    */
   onMobileCancel(): void {
     this._editingItem = null;
     this.pendingCatalogEntry.set(null);
-    this.viewMode.set('list');
+    if (this._returnToDetail) {
+      this._returnToDetail = false;
+      this._returnToDetailId = null;
+      this._location.back();
+    } else {
+      this.viewMode.set('list');
+    }
+  }
+
+  /**
+   * Fetches fresh platform data from RAWG for the given game ID and updates editPlatforms.
+   * Errors are silently ignored — the form falls back to the static platform chip.
+   *
+   * @param {number} rawgId - RAWG game ID
+   */
+  private async _fetchEditPlatforms(rawgId: number): Promise<void> {
+    try {
+      const details: GameCatalogDto = await this._catalogUseCases.getGameDetails(rawgId);
+      this.editPlatforms.set(details.platforms);
+    } catch {
+      // silently ignore — static chip remains as fallback
+    } finally {
+      this.editPlatformsLoading.set(false);
+    }
   }
 
   /**
