@@ -163,6 +163,15 @@ describe('SupabaseWishlistRepository', () => {
       expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
     });
 
+    it('incluye platform en el payload cuando se proporciona', async () => {
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.updateItem('user-1', 'w-1', { platform: 'PC' });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ platform: 'PC' }));
+    });
+
     it('actualiza también notes cuando se incluye en el patch', async () => {
       const b = makeBuilder({ error: null });
       mockSupabase.from.mockReturnValue(b);

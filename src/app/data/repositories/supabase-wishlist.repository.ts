@@ -61,6 +61,7 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
     if (patch.desiredPrice !== undefined) payload.desired_price = patch.desiredPrice;
     if (patch.priority !== undefined) payload.priority = patch.priority;
     if (patch.notes !== undefined) payload.notes = patch.notes;
+    if (patch.platform !== undefined) payload.platform = patch.platform ?? '';
 
     const { error } = await this._supabase.from(this._tableName).update(payload).eq('id', id).eq('user_id', userId);
 

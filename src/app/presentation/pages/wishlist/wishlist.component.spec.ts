@@ -1,13 +1,16 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import { WishlistComponent } from './wishlist.component';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
+import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -73,7 +76,10 @@ describe('WishlistComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn() } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: Router, useValue: { navigate: vi.fn() } }
+        { provide: Router, useValue: { navigate: vi.fn() } },
+        { provide: Location, useValue: { back: vi.fn() } },
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(of({ matches: false })) } },
+        { provide: CATALOG_USE_CASES, useValue: { getGameDetails: vi.fn().mockResolvedValue({ platforms: [] }) } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -164,6 +170,33 @@ describe('WishlistComponent', () => {
       expect(component.mobileForm.value.desiredPrice).toBe(25);
       expect(component.mobileForm.value.notes).toBe('Nota');
     });
+
+    it('activa editPlatformsLoading cuando el item tiene rawgId', () => {
+      component.onEditItem(makeItem({ rawgId: 58175 }));
+      expect(component.editPlatformsLoading()).toBe(true);
+    });
+  });
+
+  describe('_fetchEditPlatforms', () => {
+    it('actualiza editPlatforms y desactiva editPlatformsLoading al tener éxito', async () => {
+      const rawgRepo = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      rawgRepo.getGameDetails.mockResolvedValue({ platforms: ['PC', 'PS5'] });
+
+      await (component as any)._fetchEditPlatforms(58175);
+
+      expect(component.editPlatforms()).toEqual(['PC', 'PS5']);
+      expect(component.editPlatformsLoading()).toBe(false);
+    });
+
+    it('desactiva editPlatformsLoading aunque falle la llamada a RAWG', async () => {
+      const rawgRepo = TestBed.inject(CATALOG_USE_CASES as any) as any;
+      rawgRepo.getGameDetails.mockRejectedValue(new Error('RAWG error'));
+
+      await (component as any)._fetchEditPlatforms(58175);
+
+      expect(component.editPlatforms()).toEqual([]);
+      expect(component.editPlatformsLoading()).toBe(false);
+    });
   });
 
   describe('onMobileGameSelected', () => {
@@ -203,9 +236,23 @@ describe('WishlistComponent', () => {
       component.onMobileCancel();
       expect(component.pendingCatalogEntry()).toBeNull();
     });
+
+    it('llama a Location.back() cuando _returnToDetail es true', () => {
+      (component as any)._returnToDetail = true;
+      (component as any)._returnToDetailId = 'item-1';
+      const location = TestBed.inject(Location as any) as any;
+
+      component.onMobileCancel();
+
+      expect(location.back).toHaveBeenCalled();
+    });
   });
 
   describe('ngOnInit / _loadItems', () => {
+    afterEach(() => {
+      window.history.pushState(null, '');
+    });
+
     it('carga items y pone loading a false', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       const mockItems = [makeItem()];
@@ -226,6 +273,31 @@ describe('WishlistComponent', () => {
 
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
+    });
+
+    it('abre el formulario de edición cuando hay editItemId en el history state', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      const item = makeItem({ id: 'item-edit' });
+      wishlistUseCases.getAllForUser.mockResolvedValue([item]);
+      window.history.pushState({ editItemId: 'item-edit' }, '');
+
+      await component.ngOnInit();
+
+      expect(component.viewMode()).toBe('form');
+    });
+  });
+
+  describe('onCardClicked', () => {
+    it('navega a /wishlist/:id con el item en el state', () => {
+      const router = TestBed.inject(Router as any) as any;
+      const item = makeItem();
+
+      component.onCardClicked(item);
+
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/wishlist', 'item-1'],
+        expect.objectContaining({ state: { item } })
+      );
     });
   });
 
@@ -345,6 +417,26 @@ describe('WishlistComponent', () => {
 
       expect(wishlistUseCases.updateItem).toHaveBeenCalled();
       expect(component.viewMode()).toBe('list');
+    });
+
+    it('navega a la pantalla de detalle tras actualizar si _returnToDetail es true', async () => {
+      const item = makeItem({ id: 'item-1' });
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.updateItem.mockResolvedValue(undefined);
+      wishlistUseCases.getAllForUser.mockResolvedValue([item]);
+      const router = TestBed.inject(Router as any) as any;
+
+      (component as any)._editingItem = item;
+      (component as any)._returnToDetail = true;
+      (component as any)._returnToDetailId = 'item-1';
+      component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
+
+      await component.onMobileConfirm();
+
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/wishlist', 'item-1'],
+        expect.objectContaining({ state: { item } })
+      );
     });
 
     it('muestra snackbar de error si updateItem lanza en modo edición', async () => {

@@ -56,7 +56,8 @@
     "confirm": "Confirmar",
     "close": "Cerrar",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "back": "Volver"
   },
   "cropDialog": {
     "hint": "Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom"
@@ -289,6 +290,9 @@
       "deleteMessage": "¿Eliminar «{{ title }}» de tus deseados?",
       "ownTitle": "Tengo este juego",
       "ownMessage": "Se eliminará «{{ title }}» de tus deseados y se abrirá el formulario para añadirlo a tu colección."
+    },
+    "detail": {
+      "storeLinks": "Buscar en tiendas"
     },
     "card": {
       "priority": "Prioridad",
