@@ -8,14 +8,14 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist) | **Alta** |
+| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
 | [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
-| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist)~~ | ✅ Hecho |
 | ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
 | ~~[PWA (Progressive Web App)](#pwa-progressive-web-app)~~ | ✅ Hecho |
@@ -28,20 +28,45 @@
 
 ## Alta prioridad
 
-### Rediseño de la card de wishlist
+### Página de detalle de juego (`/games/:id`)
 
-La `WishlistCardComponent` acumula demasiadas acciones clickables en poco espacio (links de tiendas, botón "Tengo este juego", editar, eliminar), lo que provoca que durante el scroll en mobile se registren taps accidentales en elementos interactivos y el scroll se interrumpa o la card parezca cortada.
+Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
 
-#### Problemas actuales
+#### Estructura de la página
 
-- Scroll entrecortado en mobile: la densidad de elementos con eventos táctiles interfiere con el gesto de scroll del navegador.
-- Diseño visualmente cargado: demasiada información y acciones compitiendo en el mismo espacio.
+**Sección personal (datos de `user_games`)**
+- Estado, plataforma, formato, condición, edición
+- Precio pagado, tienda, fecha de compra
+- Valoración personal y reseña
+- Fechas de inicio, completado y platino
+- Notas personales
+- Botones: **Editar** (abre el formulario actual) y **Eliminar**
 
-#### Propuesta
+**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
+- Descripción completa
+- Rating RAWG, puntuación Metacritic, clasificación ESRB
+- Plataformas disponibles, géneros, desarrolladores, publishers
+- Screenshots (carrusel)
+- Tiendas donde comprarlo con links directos
+- DLCs disponibles
+- Juegos de la misma saga
 
-- Revisar la jerarquía visual: separar claramente la zona informativa (portada, título, precio, prioridad) de la zona de acciones.
-- Agrupar las acciones secundarias (editar, eliminar) en un menú contextual o un swipe-to-reveal en mobile, reduciendo la superficie táctil activa durante el scroll.
-- Evaluar si los links de tiendas deben estar visibles directamente en la card o accesibles desde un botón de expansión.
+#### Navegación
+
+- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
+- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
+- El botón volver regresa a la colección manteniendo los filtros activos.
+
+#### Implementación
+
+- Nueva ruta `/games/:id` con `GameDetailPage`.
+- Los datos personales se leen de `user_games_full` (ya disponible).
+- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
+  - `/games/{id}` — descripción completa, tiendas, ESRB
+  - `/games/{id}/screenshots` — capturas
+  - `/games/{id}/additions` — DLCs
+- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
+- Cachear las respuestas de RAWG en memoria durante la sesión.
 
 ---
 
@@ -244,48 +269,6 @@ Análisis en profundidad del código de producción realizado con cobertura de t
 ---
 
 ## Media prioridad
-
-### Página de detalle de juego (`/games/:id`)
-
-Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
-
-#### Estructura de la página
-
-**Sección personal (datos de `user_games`)**
-- Estado, plataforma, formato, condición, edición
-- Precio pagado, tienda, fecha de compra
-- Valoración personal y reseña
-- Fechas de inicio, completado y platino
-- Notas personales
-- Botones: **Editar** (abre el formulario actual) y **Eliminar**
-
-**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
-- Descripción completa
-- Rating RAWG, puntuación Metacritic, clasificación ESRB
-- Plataformas disponibles, géneros, desarrolladores, publishers
-- Screenshots (carrusel)
-- Tiendas donde comprarlo con links directos
-- DLCs disponibles
-- Juegos de la misma saga
-
-#### Navegación
-
-- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
-- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
-- El botón volver regresa a la colección manteniendo los filtros activos.
-
-#### Implementación
-
-- Nueva ruta `/games/:id` con `GameDetailPage`.
-- Los datos personales se leen de `user_games_full` (ya disponible).
-- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
-  - `/games/{id}` — descripción completa, tiendas, ESRB
-  - `/games/{id}/screenshots` — capturas
-  - `/games/{id}/additions` — DLCs
-- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
-- Cachear las respuestas de RAWG en memoria durante la sesión.
-
----
 
 ### Recomendaciones de juegos
 
@@ -493,9 +476,15 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 
 ## Completado
 
+### ~~Rediseño de la card de wishlist~~ ✅ Hecho
+
+En mobile (≤768px) las cards de wishlist eran demasiado interactivas — botones de acción y links de tiendas interferían con el scroll. Solución: las cards en mobile son pulsables y navegan a una pantalla de detalle dedicada `/wishlist/:id` donde viven todas las acciones (editar, borrar, "ya lo tengo", links de tiendas). En desktop las cards mantienen el comportamiento anterior. Se corrigieron además dos bugs: el campo `platform` no se persistía al actualizar un ítem, y las plataformas de RAWG no se refrescaban al abrir el formulario de edición.
+
+---
+
 ### ~~Testing (unit + integración)~~ ✅ Hecho
 
-Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **940 tests en 62 ficheros**, con una cobertura de ~99 % de statements y ~95 % de branches. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
+Vitest 4.1.0 configurado con `@angular/build:unit-test` + happy-dom. **973 tests en 61 ficheros**, con una cobertura de ~99 % de statements y ~95 % de branches. Se cubren todas las capas: mappers, use cases, repositorios, guards, servicios, componentes y abstractas. Ver detalles en `docs/TESTING.md`.
 
 ---
 
