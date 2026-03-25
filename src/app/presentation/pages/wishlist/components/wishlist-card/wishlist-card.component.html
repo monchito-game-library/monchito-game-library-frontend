@@ -1,4 +1,4 @@
-<article class="wishlist-card">
+<article class="wishlist-card" [class.wishlist-card--mobile]="mobileMode()" (click)="onCardClick()">
   <!-- Cover -->
   <div class="wishlist-card__cover-wrapper">
     @if (item().imageUrl) {
@@ -52,48 +52,56 @@
       <p class="wishlist-card__notes">{{ item().notes }}</p>
     }
 
-    <!-- Store search links -->
-    <div class="wishlist-card__store-links">
-      @for (link of storeLinks(); track link.label) {
-        <a
-          class="wishlist-card__store-link"
-          [href]="link.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          [matTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
-          {{ link.label }}
-        </a>
-      }
-    </div>
+    @if (!mobileMode()) {
+      <!-- Store search links -->
+      <div class="wishlist-card__store-links">
+        @for (link of storeLinks(); track link.label) {
+          <a
+            class="wishlist-card__store-link"
+            [href]="link.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            [matTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
+            {{ link.label }}
+          </a>
+        }
+      </div>
 
-    <!-- Actions -->
-    <div class="wishlist-card__actions">
-      <button
-        mat-icon-button
-        type="button"
-        (click)="onOwn()"
-        [matTooltip]="'wishlist.card.ownTooltip' | transloco"
-        class="wishlist-card__own-btn"
-        [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
-        <mat-icon>shopping_bag</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        type="button"
-        (click)="onEdit()"
-        [matTooltip]="'common.edit' | transloco"
-        [attr.aria-label]="'common.edit' | transloco">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        type="button"
-        (click)="onDelete()"
-        [matTooltip]="'common.delete' | transloco"
-        class="wishlist-card__delete-btn"
-        [attr.aria-label]="'common.delete' | transloco">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </div>
+      <!-- Actions -->
+      <div class="wishlist-card__actions">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onOwn()"
+          [matTooltip]="'wishlist.card.ownTooltip' | transloco"
+          class="wishlist-card__own-btn"
+          [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
+          <mat-icon>shopping_bag</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onEdit()"
+          [matTooltip]="'common.edit' | transloco"
+          [attr.aria-label]="'common.edit' | transloco">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onDelete()"
+          [matTooltip]="'common.delete' | transloco"
+          class="wishlist-card__delete-btn"
+          [attr.aria-label]="'common.delete' | transloco">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
   </div>
+
+  @if (mobileMode()) {
+    <div class="wishlist-card__mobile-hint">
+      <mat-icon>chevron_right</mat-icon>
+    </div>
+  }
 </article>

@@ -27,6 +27,7 @@ const baseItem: WishlistItemModel = {
 
 describe('WishlistCardComponent', () => {
   let component: WishlistCardComponent;
+  let fixture: ReturnType<typeof TestBed.createComponent<WishlistCardComponent>>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -42,7 +43,7 @@ describe('WishlistCardComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     });
 
-    const fixture = TestBed.createComponent(WishlistCardComponent);
+    fixture = TestBed.createComponent(WishlistCardComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('item', baseItem);
   });
@@ -91,6 +92,29 @@ describe('WishlistCardComponent', () => {
 
       expect(xtralife.url).toContain('xtralife.com');
       expect(xtralife.url).toContain(encodeURIComponent('God of War PS5'));
+    });
+  });
+
+  describe('mobileMode y cardClicked', () => {
+    it('onCardClick emite cardClicked cuando mobileMode es true', () => {
+      fixture.componentRef.setInput('mobileMode', true);
+      const emitted: WishlistItemModel[] = [];
+      component.cardClicked.subscribe((v: WishlistItemModel) => emitted.push(v));
+
+      component.onCardClick();
+
+      expect(emitted).toHaveLength(1);
+      expect(emitted[0].id).toBe('w-1');
+    });
+
+    it('onCardClick no emite cardClicked cuando mobileMode es false', () => {
+      fixture.componentRef.setInput('mobileMode', false);
+      const emitted: WishlistItemModel[] = [];
+      component.cardClicked.subscribe((v: WishlistItemModel) => emitted.push(v));
+
+      component.onCardClick();
+
+      expect(emitted).toHaveLength(0);
     });
   });
 

@@ -31,6 +31,12 @@ export class WishlistCardComponent {
   /** Wishlist item to display. */
   readonly item: InputSignal<WishlistItemModel> = input.required<WishlistItemModel>();
 
+  /** When true, hides action buttons and store links and makes the whole card tappable. */
+  readonly mobileMode: InputSignal<boolean> = input<boolean>(false);
+
+  /** Emitted when the card is tapped in mobile mode. */
+  readonly cardClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
+
   /** Emitted when the user clicks the edit button. */
   readonly editClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
 
@@ -58,6 +64,15 @@ export class WishlistCardComponent {
       { label: 'Xtralife', url: `https://www.xtralife.com/buscar/${q}/` }
     ];
   });
+
+  /**
+   * Emits cardClicked when the card is tapped in mobile mode.
+   */
+  onCardClick(): void {
+    if (this.mobileMode()) {
+      this.cardClicked.emit(this.item());
+    }
+  }
 
   /**
    * Emits the edit event for the current item.
