@@ -7,10 +7,9 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { AppComponent } from './app.component';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
-import { USER_PREFERENCES_USE_CASES } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
+import { UserPreferencesInitService } from '@/services/user-preferences-init.service';
 import { ThemeService } from '@/services/theme.service';
 import { PwaUpdateService } from '@/services/pwa-update.service';
-import { TranslocoService } from '@jsverse/transloco';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -57,10 +56,9 @@ describe('AppComponent', () => {
         provideRouter([]),
         { provide: UserContextService, useValue: mockUserContext },
         { provide: UserPreferencesService, useValue: mockUserPrefsState },
-        { provide: USER_PREFERENCES_USE_CASES, useValue: { loadPreferences: vi.fn().mockResolvedValue(null) } },
+        { provide: UserPreferencesInitService, useValue: { loadPreferences: vi.fn().mockResolvedValue(undefined) } },
         { provide: ThemeService, useValue: { initTheme: vi.fn(), setDarkTheme: vi.fn(), setLightTheme: vi.fn() } },
-        { provide: PwaUpdateService, useValue: { init: vi.fn() } },
-        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k), setActiveLang: vi.fn() } }
+        { provide: PwaUpdateService, useValue: { init: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -200,62 +198,14 @@ describe('AppComponent', () => {
     });
   });
 
-  describe('effect — _loadPreferences cuando userId cambia', () => {
-    it('llama a _loadPreferences cuando userId pasa de null a un valor', () => {
-      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
+  describe('effect — loadPreferences cuando userId cambia', () => {
+    it('delega en UserPreferencesInitService cuando userId pasa de null a un valor', () => {
+      const initService = TestBed.inject(UserPreferencesInitService as any) as any;
 
       mockUserContext.userId.set('user-1');
       TestBed.flushEffects();
 
-      expect(userPrefsUseCases.loadPreferences).toHaveBeenCalled();
-    });
-  });
-
-  describe('_loadPreferences', () => {
-    it('establece preferencesLoaded=true si las preferencias son null', async () => {
-      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      userPrefsUseCases.loadPreferences.mockResolvedValue(null);
-
-      await (component as any)._loadPreferences('user-1');
-
-      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
-    });
-
-    it('aplica tema oscuro y establece preferencesLoaded=true', async () => {
-      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      userPrefsUseCases.loadPreferences.mockResolvedValue({
-        theme: 'dark',
-        language: null,
-        avatarUrl: null,
-        bannerUrl: null,
-        role: 'user'
-      });
-      const themeService = TestBed.inject(ThemeService as any) as any;
-
-      await (component as any)._loadPreferences('user-1');
-
-      expect(themeService.setDarkTheme).toHaveBeenCalled();
-      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
-    });
-
-    it('aplica tema claro, idioma y avatar cuando están definidos', async () => {
-      const userPrefsUseCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      userPrefsUseCases.loadPreferences.mockResolvedValue({
-        theme: 'light',
-        language: 'es',
-        avatarUrl: 'https://cdn.example.com/a.jpg',
-        bannerUrl: 'https://cdn.example.com/b.jpg',
-        role: 'admin'
-      });
-      const themeService = TestBed.inject(ThemeService as any) as any;
-      const transloco = TestBed.inject(TranslocoService as any) as any;
-
-      await (component as any)._loadPreferences('user-1');
-
-      expect(themeService.setLightTheme).toHaveBeenCalled();
-      expect(transloco.setActiveLang).toHaveBeenCalledWith('es');
-      expect(mockUserPrefsState.avatarUrl()).toBe('https://cdn.example.com/a.jpg');
-      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
+      expect(initService.loadPreferences).toHaveBeenCalledWith('user-1');
     });
   });
 
@@ -310,10 +260,9 @@ describe('AppComponent — router subscription (NavigationEnd)', () => {
         },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: UserPreferencesService, useValue: mockUserPrefsState },
-        { provide: USER_PREFERENCES_USE_CASES, useValue: { loadPreferences: vi.fn().mockResolvedValue(null) } },
+        { provide: UserPreferencesInitService, useValue: { loadPreferences: vi.fn().mockResolvedValue(undefined) } },
         { provide: ThemeService, useValue: { initTheme: vi.fn(), setDarkTheme: vi.fn(), setLightTheme: vi.fn() } },
-        { provide: PwaUpdateService, useValue: { init: vi.fn() } },
-        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k), setActiveLang: vi.fn() } }
+        { provide: PwaUpdateService, useValue: { init: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });

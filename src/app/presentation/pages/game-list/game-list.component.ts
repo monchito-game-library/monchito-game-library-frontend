@@ -95,10 +95,10 @@ export class GameListComponent implements OnInit, OnDestroy {
     const cols = this.columnCount();
     const isMobile = this.isMobile();
     const screenWidth = window.innerWidth;
-    const gapPx = isMobile ? 12 : 20; // 0.75rem vs 1.25rem
-    const paddingPx = isMobile ? 12 : 24; // 0.75rem vs 1.5rem each side
-    const rowVerticalPx = 20; // 0.625rem top + 0.625rem bottom
-    const footerPx = isMobile ? 36 : 44; // game-card__footer min-height
+    const gapPx = isMobile ? 12 : 20; // game-list.component.scss: gap 0.75rem / 1.25rem
+    const paddingPx = isMobile ? 12 : 24; // game-list.component.scss: padding 0.75rem / 1.5rem each side
+    const rowVerticalPx = 20; // game-list.component.scss: padding-top + padding-bottom (0.625rem × 2)
+    const footerPx = isMobile ? 36 : 44; // game-card.component.scss: .game-card__footer min-height
     const navRailWidth = isMobile ? 0 : 88; // nav rail hidden on mobile
     const availableWidth = screenWidth - navRailWidth - 2 * paddingPx - (cols - 1) * gapPx;
     const cardWidth = availableWidth / cols;
@@ -335,15 +335,6 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the current user ID or throws if no user is authenticated.
-   */
-  private get _userId(): string {
-    const id: string | null = this._userContext.userId();
-    if (!id) throw new Error('No user selected');
-    return id;
-  }
-
-  /**
    * Loads all stores from Supabase to populate the store filter.
    */
   private async _loadStores(): Promise<void> {
@@ -371,7 +362,7 @@ export class GameListComponent implements OnInit, OnDestroy {
 
     this.loading.set(true);
     try {
-      const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(this._userId);
+      const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(this._userContext.requireUserId());
       this.allGames.set(data);
       this._userPreferencesState.allGames.set(data);
     } catch {

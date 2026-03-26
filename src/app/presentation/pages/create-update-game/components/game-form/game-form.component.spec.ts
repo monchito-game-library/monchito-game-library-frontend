@@ -66,7 +66,10 @@ describe('GameFormComponent', () => {
             getAllGameScreenshots: vi.fn().mockResolvedValue([])
           }
         },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
         {
           provide: TranslocoService,
@@ -369,11 +372,13 @@ describe('GameFormComponent', () => {
     });
   });
 
-  describe('_userId getter', () => {
+  describe('_userContext.requireUserId', () => {
     it('lanza Error cuando userId es null', () => {
       const userContext = TestBed.inject(UserContextService as any) as any;
-      userContext.userId.set(null);
-      expect(() => (component as any)._userId).toThrow('No user selected');
+      userContext.requireUserId.mockImplementation(() => {
+        throw new Error('No user selected');
+      });
+      expect(() => userContext.requireUserId()).toThrow('No user selected');
     });
   });
 
@@ -729,7 +734,10 @@ describe('GameFormComponent — ngOnInit', () => {
             getAllGameScreenshots: vi.fn().mockResolvedValue(['ss1.jpg'])
           }
         },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
         {
           provide: TranslocoService,
@@ -860,7 +868,10 @@ describe('GameFormComponent — constructor nav state', () => {
             getAllGameScreenshots: vi.fn().mockResolvedValue([])
           }
         },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
         {
           provide: TranslocoService,
@@ -932,7 +943,10 @@ describe('GameFormComponent — constructor effect stores', () => {
             getAllGameScreenshots: vi.fn().mockResolvedValue([])
           }
         },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
         {
           provide: TranslocoService,
@@ -984,7 +998,10 @@ describe('GameFormComponent — constructor effect stores', () => {
             getAllGameScreenshots: vi.fn().mockResolvedValue([])
           }
         },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
         {
           provide: TranslocoService,

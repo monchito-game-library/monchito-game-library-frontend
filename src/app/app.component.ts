@@ -13,16 +13,12 @@ import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router
 import { filter } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ThemeService } from '@/services/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
-import {
-  USER_PREFERENCES_USE_CASES,
-  UserPreferencesUseCasesContract
-} from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
-import { UserPreferencesModel } from '@/models/user-preferences/user-preferences.model';
+import { UserPreferencesInitService } from '@/services/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update.service';
 
@@ -37,9 +33,8 @@ import { PwaUpdateService } from '@/services/pwa-update.service';
 export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
-  private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
+  private readonly _userPreferencesInit: UserPreferencesInitService = inject(UserPreferencesInitService);
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
 
@@ -81,7 +76,7 @@ export class AppComponent implements OnInit {
     effect(() => {
       const userId: string | null = this.userContext.userId();
       if (userId) {
-        void this._loadPreferences(userId);
+        void this._userPreferencesInit.loadPreferences(userId);
       }
     });
   }
@@ -169,40 +164,6 @@ export class AppComponent implements OnInit {
    */
   logout(): void {
     this.userContext.clearUser();
-  }
-
-  /**
-   * Loads user preferences from Supabase and applies theme, language and avatar.
-   *
-   * @param {string} userId - Authenticated user ID
-   */
-  private async _loadPreferences(userId: string): Promise<void> {
-    const prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
-    if (!prefs) {
-      this.preferencesLoaded.set(true);
-      return;
-    }
-
-    if (prefs.theme === 'dark') {
-      this._themeService.setDarkTheme();
-    } else {
-      this._themeService.setLightTheme();
-    }
-
-    if (prefs.language) {
-      this._transloco.setActiveLang(prefs.language);
-    }
-
-    if (prefs.avatarUrl) {
-      this._userPreferencesState.avatarUrl.set(prefs.avatarUrl);
-    }
-
-    if (prefs.bannerUrl) {
-      this._userPreferencesState.bannerImageUrl.set(prefs.bannerUrl);
-    }
-
-    this._userPreferencesState.role.set(prefs.role);
-    this.preferencesLoaded.set(true);
   }
 
   /**
