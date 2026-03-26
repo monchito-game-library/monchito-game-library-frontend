@@ -252,9 +252,8 @@ describe('SettingsComponent', () => {
       expect(catalogUseCases.getTopBanners).toHaveBeenCalled();
     });
 
-    it('ngOnDestroy unsubscribe sin errores', () => {
-      component.ngOnInit();
-      expect(() => component.ngOnDestroy()).not.toThrow();
+    it('ngOnDestroy no existe ya que la suscripción se gestiona con takeUntilDestroyed', () => {
+      expect((component as any).ngOnDestroy).toBeUndefined();
     });
 
     it('selectedLangControl.valueChanges con valor truthy llama a setActiveLang y _savePreferences', () => {

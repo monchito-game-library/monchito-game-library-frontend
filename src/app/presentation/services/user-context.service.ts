@@ -16,6 +16,15 @@ export class UserContextService {
   readonly userId: Signal<string | null> = computed((): string | null => this._authState.getUserId());
 
   /**
+   * Returns the authenticated user's ID or throws if no user is authenticated.
+   */
+  requireUserId(): string {
+    const id: string | null = this.userId();
+    if (!id) throw new Error('No user selected');
+    return id;
+  }
+
+  /**
    * Returns true if there is a currently authenticated user.
    */
   isUserSelected(): boolean {

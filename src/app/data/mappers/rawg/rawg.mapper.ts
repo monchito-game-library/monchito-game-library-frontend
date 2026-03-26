@@ -1,7 +1,6 @@
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { RawgBannerItemDto, RawgGameDto, RawgGameDetailDto } from '@/dtos/rawg/rawg-game.dto';
 import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
-
 /**
  * Maps a minimal RAWG list item to BannerSuggestionModel.
  * Skips all metadata — only image and title are needed by the banner picker.
