@@ -26,6 +26,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme.service';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
+import { RawgSearchStateService } from '@/services/rawg-search-state.service';
 import {
   USER_PREFERENCES_USE_CASES,
   UserPreferencesUseCasesContract
@@ -68,6 +69,7 @@ export class SettingsComponent implements OnInit {
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
+  private readonly _rawgSearchState: RawgSearchStateService = inject(RawgSearchStateService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -96,13 +98,13 @@ export class SettingsComponent implements OnInit {
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */
-  readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._userPreferencesState.rawgSearchResults;
+  readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._rawgSearchState.rawgSearchResults;
 
   /** Whether a RAWG search request is in progress. */
-  readonly rawgSearchLoading: WritableSignal<boolean> = this._userPreferencesState.rawgSearchLoading;
+  readonly rawgSearchLoading: WritableSignal<boolean> = this._rawgSearchState.rawgSearchLoading;
 
   /** Last RAWG search term entered, used to show the empty state. */
-  readonly rawgSearchQuery: WritableSignal<string> = this._userPreferencesState.rawgSearchQuery;
+  readonly rawgSearchQuery: WritableSignal<string> = this._rawgSearchState.rawgSearchQuery;
 
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
@@ -164,7 +166,7 @@ export class SettingsComponent implements OnInit {
    */
   onRawgSearch(event: Event): void {
     const query: string = (event.target as HTMLInputElement).value;
-    this._userPreferencesState.rawgSearchQuery.set(query);
+    this._rawgSearchState.rawgSearchQuery.set(query);
     this._searchSubject.next(query);
   }
 
@@ -367,14 +369,14 @@ export class SettingsComponent implements OnInit {
       await this._loadInitialBanners();
       return;
     }
-    this._userPreferencesState.rawgSearchLoading.set(true);
+    this._rawgSearchState.rawgSearchLoading.set(true);
     try {
       const results: BannerSuggestionModel[] = await this._catalogUseCases.searchBanners(query, 12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
+      this._rawgSearchState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
-      this._userPreferencesState.rawgSearchResults.set([]);
+      this._rawgSearchState.rawgSearchResults.set([]);
     } finally {
-      this._userPreferencesState.rawgSearchLoading.set(false);
+      this._rawgSearchState.rawgSearchLoading.set(false);
     }
   }
 
@@ -382,14 +384,14 @@ export class SettingsComponent implements OnInit {
    * Loads the top-rated RAWG games to display as initial banner suggestions.
    */
   private async _loadInitialBanners(): Promise<void> {
-    this._userPreferencesState.rawgSearchLoading.set(true);
+    this._rawgSearchState.rawgSearchLoading.set(true);
     try {
       const results: BannerSuggestionModel[] = await this._catalogUseCases.getTopBanners(12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
+      this._rawgSearchState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
-      this._userPreferencesState.rawgSearchResults.set([]);
+      this._rawgSearchState.rawgSearchResults.set([]);
     } finally {
-      this._userPreferencesState.rawgSearchLoading.set(false);
+      this._rawgSearchState.rawgSearchLoading.set(false);
     }
   }
 

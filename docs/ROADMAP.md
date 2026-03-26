@@ -10,7 +10,7 @@
 |---|---|
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
-| [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** (1 ítem pendiente) |
+| [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | ✅ Completado |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
@@ -244,7 +244,7 @@ Análisis en profundidad del código de producción realizado con cobertura de t
 
 | # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
 |---|---|---|---|---|
-| 1 | `UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global | `user-preferences.service.ts`, `settings.component.ts` | **Alto** — estado RAWG innecesariamente global; si hubiera dos instancias del banner picker compartirían estado accidentalmente | Medio |
+| ~~1~~ | ~~`UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global~~ | — | ✅ Resuelto — extraído a `RawgSearchStateService` | — |
 | ~~2~~ | ~~`AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI~~ | — | ✅ Resuelto — extraído a `UserPreferencesInitService` | — |
 | ~~3~~ | ~~`private get _userId()` duplicado en `GameListComponent` y `GameFormComponent`~~ | — | ✅ Resuelto — `requireUserId()` centralizado en `UserContextService` | — |
 | ~~4~~ | ~~`_loadingEditData` en `GameFormComponent` es innecesario~~ | — | ✅ Resuelto — eliminado usando `{ emitEvent: false }` en `patchValue` | — |
@@ -253,10 +253,6 @@ Análisis en profundidad del código de producción realizado con cobertura de t
 | ~~7~~ | ~~`SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`)~~ | — | ✅ Resuelto — reemplazado por `takeUntilDestroyed` en constructor | — |
 | ~~8~~ | ~~`getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación~~ | — | ✅ Resuelto — extraído helper privado `_paginateView` en el repositorio | — |
 | ~~9~~ | ~~`rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript~~ | — | ✅ Resuelto — comentarios actualizados con referencia al fichero SCSS | — |
-
-#### Pendiente de abordar
-
-1. **#1** — separar los signals de RAWG search de `UserPreferencesService` (mayor impacto, requiere revisar todos los consumidores)
 
 ---
 

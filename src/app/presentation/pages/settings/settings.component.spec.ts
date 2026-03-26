@@ -7,6 +7,7 @@ import { SettingsComponent } from './settings.component';
 import { ThemeService } from '@/services/theme.service';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
+import { RawgSearchStateService } from '@/services/rawg-search-state.service';
 import { USER_PREFERENCES_USE_CASES } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -28,10 +29,12 @@ describe('SettingsComponent', () => {
     uploadingAvatar: ReturnType<typeof signal>;
     uploadingBanner: ReturnType<typeof signal>;
     bannerImageUrl: ReturnType<typeof signal>;
+    preferencesLoaded: ReturnType<typeof signal>;
+  };
+  let mockRawgSearchState: {
     rawgSearchResults: ReturnType<typeof signal>;
     rawgSearchLoading: ReturnType<typeof signal>;
     rawgSearchQuery: ReturnType<typeof signal>;
-    preferencesLoaded: ReturnType<typeof signal>;
   };
   let mockUserContext: {
     userId: ReturnType<typeof signal>;
@@ -55,10 +58,13 @@ describe('SettingsComponent', () => {
       uploadingAvatar: signal(false),
       uploadingBanner: signal(false),
       bannerImageUrl: signal<string | null>(null),
+      preferencesLoaded: signal(false)
+    };
+
+    mockRawgSearchState = {
       rawgSearchResults: signal([]),
       rawgSearchLoading: signal(false),
-      rawgSearchQuery: signal(''),
-      preferencesLoaded: signal(false)
+      rawgSearchQuery: signal('')
     };
 
     mockUserContext = {
@@ -74,6 +80,7 @@ describe('SettingsComponent', () => {
       providers: [
         { provide: ThemeService, useValue: mockThemeService },
         { provide: UserPreferencesService, useValue: mockUserPreferencesState },
+        { provide: RawgSearchStateService, useValue: mockRawgSearchState },
         { provide: UserContextService, useValue: mockUserContext },
         {
           provide: USER_PREFERENCES_USE_CASES,
@@ -287,7 +294,7 @@ describe('SettingsComponent', () => {
     it('actualiza rawgSearchQuery con el valor del input', () => {
       const event = { target: { value: 'zelda' } } as unknown as Event;
       component.onRawgSearch(event);
-      expect(mockUserPreferencesState.rawgSearchQuery()).toBe('zelda');
+      expect(mockRawgSearchState.rawgSearchQuery()).toBe('zelda');
     });
   });
 
@@ -374,8 +381,8 @@ describe('SettingsComponent', () => {
 
       await (component as any)._loadInitialBanners();
 
-      expect(mockUserPreferencesState.rawgSearchResults()).toHaveLength(1);
-      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+      expect(mockRawgSearchState.rawgSearchResults()).toHaveLength(1);
+      expect(mockRawgSearchState.rawgSearchLoading()).toBe(false);
     });
 
     it('pone rawgSearchResults a [] cuando falla', async () => {
@@ -384,8 +391,8 @@ describe('SettingsComponent', () => {
 
       await (component as any)._loadInitialBanners();
 
-      expect(mockUserPreferencesState.rawgSearchResults()).toEqual([]);
-      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+      expect(mockRawgSearchState.rawgSearchResults()).toEqual([]);
+      expect(mockRawgSearchState.rawgSearchLoading()).toBe(false);
     });
   });
 
@@ -406,8 +413,8 @@ describe('SettingsComponent', () => {
 
       await (component as any)._executeSearch('zelda');
 
-      expect(mockUserPreferencesState.rawgSearchResults()).toHaveLength(1);
-      expect(mockUserPreferencesState.rawgSearchLoading()).toBe(false);
+      expect(mockRawgSearchState.rawgSearchResults()).toHaveLength(1);
+      expect(mockRawgSearchState.rawgSearchLoading()).toBe(false);
     });
 
     it('pone rawgSearchResults a [] cuando la búsqueda falla', async () => {
@@ -416,7 +423,7 @@ describe('SettingsComponent', () => {
 
       await (component as any)._executeSearch('zelda');
 
-      expect(mockUserPreferencesState.rawgSearchResults()).toEqual([]);
+      expect(mockRawgSearchState.rawgSearchResults()).toEqual([]);
     });
   });
 

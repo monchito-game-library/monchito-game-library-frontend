@@ -16,9 +16,6 @@ describe('UserPreferencesService', () => {
     it('uploadingAvatar es false', () => expect(service.uploadingAvatar()).toBe(false));
     it('uploadingBanner es false', () => expect(service.uploadingBanner()).toBe(false));
     it('bannerImageUrl es null', () => expect(service.bannerImageUrl()).toBeNull());
-    it('rawgSearchResults es []', () => expect(service.rawgSearchResults()).toEqual([]));
-    it('rawgSearchLoading es false', () => expect(service.rawgSearchLoading()).toBe(false));
-    it('rawgSearchQuery es ""', () => expect(service.rawgSearchQuery()).toBe(''));
     it('preferencesLoaded es false', () => expect(service.preferencesLoaded()).toBe(false));
     it('allGames es []', () => expect(service.allGames()).toEqual([]));
     it('role es "user"', () => expect(service.role()).toBe('user'));
@@ -44,12 +41,10 @@ describe('UserPreferencesService', () => {
   it('los signals WritableSignal se actualizan con set()', () => {
     service.avatarUrl.set('https://cdn.example.com/av.jpg');
     service.uploadingAvatar.set(true);
-    service.rawgSearchQuery.set('god of war');
     service.preferencesLoaded.set(true);
 
     expect(service.avatarUrl()).toBe('https://cdn.example.com/av.jpg');
     expect(service.uploadingAvatar()).toBe(true);
-    expect(service.rawgSearchQuery()).toBe('god of war');
     expect(service.preferencesLoaded()).toBe(true);
   });
 });
