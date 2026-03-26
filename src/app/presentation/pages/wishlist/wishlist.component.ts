@@ -77,6 +77,9 @@ export class WishlistComponent implements OnInit {
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
 
+  /** Reactive form status signal, used to drive mobileCanConfirm. */
+  private readonly _mobileFormStatus: Signal<string>;
+
   /** Item being edited in mobile form mode (null = add mode). */
   private _editingItem: WishlistItemModel | null = null;
 
@@ -124,19 +127,7 @@ export class WishlistComponent implements OnInit {
   readonly editPlatformsLoading: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Reactive form used in mobile inline form mode. */
-  readonly mobileForm: FormGroup<WishlistItemForm> = this._fb.group<WishlistItemForm>({
-    priority: this._fb.control<number>(3, {
-      nonNullable: true,
-      validators: [Validators.required, Validators.min(1), Validators.max(5)]
-    }),
-    platform: this._fb.control<string | null>(null, [Validators.required]),
-    desiredPrice: this._fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
-    notes: this._fb.control<string | null>(null)
-  });
-
-  private readonly _mobileFormStatus = toSignal(this.mobileForm.statusChanges, {
-    initialValue: this.mobileForm.status
-  });
+  readonly mobileForm: FormGroup<WishlistItemForm>;
 
   /**
    * Whether the mobile confirm button should be enabled.
@@ -148,6 +139,21 @@ export class WishlistComponent implements OnInit {
     if (!this._editingItem && !this.pendingCatalogEntry()) return false;
     return true;
   });
+
+  constructor() {
+    this.mobileForm = this._fb.group<WishlistItemForm>({
+      priority: this._fb.control<number>(3, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(1), Validators.max(5)]
+      }),
+      platform: this._fb.control<string | null>(null, [Validators.required]),
+      desiredPrice: this._fb.control<number | null>(null, [Validators.required, Validators.min(0)]),
+      notes: this._fb.control<string | null>(null)
+    });
+    this._mobileFormStatus = toSignal(this.mobileForm.statusChanges, {
+      initialValue: this.mobileForm.status
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     await this._loadItems();

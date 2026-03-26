@@ -22,6 +22,9 @@ const lifecyclePattern = LIFECYCLE_HOOKS.join('|');
 
 module.exports = [
   {
+    ignores: ['coverage/**', '.angular/**', 'dist/**', 'node_modules/**']
+  },
+  {
     files: ['**/*.ts'],
     languageOptions: {
       parser,
