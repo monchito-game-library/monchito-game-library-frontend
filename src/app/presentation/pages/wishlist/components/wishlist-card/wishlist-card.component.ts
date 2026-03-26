@@ -54,9 +54,15 @@ export class WishlistCardComponent {
     const platform = this.item().platform;
     const titleOnly = this.item().title;
     const searchTerm = platform ? `${titleOnly} ${platform}` : titleOnly;
-    const q = encodeURIComponent(searchTerm);
-    const qPlus = searchTerm.replace(/ /g, '+');
-    const qTitle = encodeURIComponent(titleOnly);
+    const sanitize = (s: string): string =>
+      s
+        .replace(/[^\p{L}\p{N}\s]/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    const q = encodeURIComponent(sanitize(searchTerm));
+    const qPlus = sanitize(searchTerm).replace(/ /g, '+');
+    const qTitle = encodeURIComponent(sanitize(titleOnly));
     return [
       { label: 'Amazon', url: `https://www.amazon.es/s?k=${qPlus}` },
       { label: 'GAME', url: `https://www.game.es/buscar/${qTitle}` },

@@ -55,43 +55,54 @@ describe('WishlistCardComponent', () => {
 
     it('incluye la plataforma en el término de búsqueda cuando está definida', () => {
       const links = component.storeLinks();
-      const searchTerm = `God of War PS5`;
 
-      expect(links[0].url).toContain(searchTerm.replace(/ /g, '+'));
+      expect(links[0].url).toContain('god+of+war+ps5');
     });
 
     it('usa solo el título cuando la plataforma está vacía', () => {
-      TestBed.createComponent(WishlistCardComponent);
       const fixture2 = TestBed.createComponent(WishlistCardComponent);
       fixture2.componentRef.setInput('item', { ...baseItem, platform: '' });
       const comp2 = fixture2.componentInstance;
 
-      const links = comp2.storeLinks();
-      const ceXLink = links.find((l) => l.label === 'CEX')!;
+      const ceXLink = comp2.storeLinks().find((l) => l.label === 'CEX')!;
 
-      expect(ceXLink.url).toContain('God+of+War');
-      expect(ceXLink.url).not.toContain('PS5');
+      expect(ceXLink.url).toContain('god+of+war');
+      expect(ceXLink.url).not.toContain('ps5');
     });
 
-    it('genera la URL de Amazon correctamente', () => {
+    it('genera la URL de Amazon en minúsculas y sin caracteres especiales', () => {
       const amazon = component.storeLinks().find((l) => l.label === 'Amazon')!;
 
       expect(amazon.url).toContain('amazon.es');
-      expect(amazon.url).toContain('God+of+War+PS5');
+      expect(amazon.url).toContain('god+of+war+ps5');
     });
 
-    it('genera la URL de GAME con el título codificado', () => {
+    it('genera la URL de GAME con el título en minúsculas y sin caracteres especiales', () => {
       const game = component.storeLinks().find((l) => l.label === 'GAME')!;
 
       expect(game.url).toContain('game.es');
-      expect(game.url).toContain(encodeURIComponent('God of War'));
+      expect(game.url).toContain(encodeURIComponent('god of war'));
     });
 
-    it('genera la URL de Xtralife con el término completo codificado', () => {
+    it('genera la URL de Xtralife en minúsculas y sin caracteres especiales', () => {
       const xtralife = component.storeLinks().find((l) => l.label === 'Xtralife')!;
 
       expect(xtralife.url).toContain('xtralife.com');
-      expect(xtralife.url).toContain(encodeURIComponent('God of War PS5'));
+      expect(xtralife.url).toContain(encodeURIComponent('god of war ps5'));
+    });
+
+    it('elimina el & y colapsa espacios en todos los enlaces', () => {
+      const fixture2 = TestBed.createComponent(WishlistCardComponent);
+      fixture2.componentRef.setInput('item', { ...baseItem, title: 'Yakuza Kiwami 3 & Dark Ties', platform: '' });
+      const comp2 = fixture2.componentInstance;
+
+      const links = comp2.storeLinks();
+      for (const link of links) {
+        expect(link.url).not.toContain('%26');
+        expect(link.url).not.toContain('&amp;');
+      }
+      expect(links.find((l) => l.label === 'GAME')!.url).toContain(encodeURIComponent('yakuza kiwami 3 dark ties'));
+      expect(links.find((l) => l.label === 'Amazon')!.url).toContain('yakuza+kiwami+3+dark+ties');
     });
   });
 
