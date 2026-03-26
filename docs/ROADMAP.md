@@ -78,6 +78,196 @@ Sección para gestionar pedidos de protectores y cajas de coleccionismo (princip
 
 Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuarios de la app). En el caso grupal, el owner invita a sus amigos mediante un enlace/código y cada uno rellena sus cantidades. El sistema calcula automáticamente el pack óptimo a pedir y lo que debe pagar cada participante.
 
+#### Estado actual
+
+- `order_products` ✅ — tabla creada y poblada, gestionada desde `/management/protectors`.
+- `orders`, `order_members`, `order_invitations`, `order_lines`, `order_line_allocations` ❌ — pendiente de crear en Supabase.
+
+#### Decisiones pendientes
+
+- **Flujo de invitación**: ¿el destinatario debe estar registrado en la app para unirse a un pedido grupal, o puede unirse sin cuenta? *(responder antes de implementar la Fase 5)*
+
+#### Plan de implementación por fases
+
+| Fase | Qué se hace | Rama sugerida |
+|---|---|---|
+| 1 | Crear tablas en Supabase + RLS | — (SQL directo en Supabase) |
+| 2 | Dominio Angular: contratos, use cases, DTOs, mappers, modelos | `feat/orders` |
+| 3 | Lista de pedidos (`/orders`) + nav | `feat/orders` |
+| 4 | Detalle de pedido + formulario + cálculo de costes | `feat/orders` |
+| 5 | Flujo de invitación | `feat/orders` |
+
+#### Fase 1 — SQL para Supabase
+
+Ejecutar en el SQL Editor de Supabase en este orden:
+
+```sql
+-- 1. Cabecera del pedido
+CREATE TABLE orders (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title           TEXT,
+  status          TEXT NOT NULL DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
+  order_date      DATE,
+  received_date   DATE,
+  shipping_cost   NUMERIC(10,2),
+  paypal_fee      NUMERIC(10,2),
+  discount_amount NUMERIC(10,2),
+  notes           TEXT,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Participantes del pedido
+CREATE TABLE order_members (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role       TEXT NOT NULL DEFAULT 'member'
+               CHECK (role IN ('owner', 'member')),
+  joined_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(order_id, user_id)
+);
+
+-- 3. Enlaces de invitación
+CREATE TABLE order_invitations (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  token      TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  used_by    UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 4. Líneas del pedido (productos incluidos)
+CREATE TABLE order_lines (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id       UUID NOT NULL REFERENCES order_products(id),
+  unit_price       NUMERIC(10,2) NOT NULL,
+  pack_chosen      INTEGER,
+  quantity_ordered INTEGER,
+  notes            TEXT,
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 5. Cantidades por participante y línea
+CREATE TABLE order_line_allocations (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_line_id       UUID NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
+  user_id             UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  quantity_needed     INTEGER NOT NULL DEFAULT 0,
+  quantity_this_order INTEGER NOT NULL DEFAULT 0,
+  UNIQUE(order_line_id, user_id)
+);
+
+-- RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_invitations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_lines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_line_allocations ENABLE ROW LEVEL SECURITY;
+
+-- orders: legible por owner y miembros; editable solo por owner
+CREATE POLICY "orders_select" ON orders FOR SELECT
+  USING (owner_id = auth.uid() OR EXISTS (
+    SELECT 1 FROM order_members WHERE order_id = orders.id AND user_id = auth.uid()
+  ));
+CREATE POLICY "orders_insert" ON orders FOR INSERT WITH CHECK (owner_id = auth.uid());
+CREATE POLICY "orders_update" ON orders FOR UPDATE USING (owner_id = auth.uid());
+CREATE POLICY "orders_delete" ON orders FOR DELETE USING (owner_id = auth.uid());
+
+-- order_members: legible por miembros del pedido; insert por el propio usuario (al aceptar invitación)
+CREATE POLICY "order_members_select" ON order_members FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_members om WHERE om.order_id = order_members.order_id AND om.user_id = auth.uid()
+  ));
+CREATE POLICY "order_members_insert" ON order_members FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY "order_members_delete" ON order_members FOR DELETE
+  USING (user_id = auth.uid() OR EXISTS (
+    SELECT 1 FROM orders WHERE id = order_members.order_id AND owner_id = auth.uid()
+  ));
+
+-- order_invitations: solo el owner puede crear/revocar
+CREATE POLICY "order_invitations_select" ON order_invitations FOR SELECT
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_invitations_insert" ON order_invitations FOR INSERT
+  WITH CHECK (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_invitations_delete" ON order_invitations FOR DELETE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+
+-- order_lines: legible por miembros; editable por owner
+CREATE POLICY "order_lines_select" ON order_lines FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_members WHERE order_id = order_lines.order_id AND user_id = auth.uid()
+  ));
+CREATE POLICY "order_lines_insert" ON order_lines FOR INSERT
+  WITH CHECK (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_lines_update" ON order_lines FOR UPDATE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_lines_delete" ON order_lines FOR DELETE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+
+-- order_line_allocations: cada miembro solo edita las suyas
+CREATE POLICY "order_line_allocations_select" ON order_line_allocations FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_lines ol
+    JOIN order_members om ON om.order_id = ol.order_id
+    WHERE ol.id = order_line_allocations.order_line_id AND om.user_id = auth.uid()
+  ));
+CREATE POLICY "order_line_allocations_insert" ON order_line_allocations FOR INSERT
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "order_line_allocations_update" ON order_line_allocations FOR UPDATE
+  USING (user_id = auth.uid());
+```
+
+#### Fase 2 — Estructura Angular (dominio y datos)
+
+Siguiendo la arquitectura del proyecto:
+
+```
+domain/
+  repositories/
+    order.repository.contract.ts
+    order-product.repository.contract.ts
+  use-cases/orders/
+    orders.use-cases.contract.ts
+
+data/
+  dtos/supabase/
+    order.dto.ts
+    order-member.dto.ts
+    order-line.dto.ts
+    order-line-allocation.dto.ts
+  mappers/order/
+    order.mapper.ts
+  repositories/
+    order.supabase.repository.ts
+
+entities/
+  models/order/
+    order.model.ts
+    order-line.model.ts
+    order-summary.model.ts
+  interfaces/forms/
+    order-form.interface.ts
+    order-line-form.interface.ts
+
+di/repositories/
+  order-repository.provider.ts
+
+presentation/
+  pages/orders/
+    orders.component.ts / .html / .scss
+    orders.component.spec.ts
+    components/
+      order-card/
+      order-detail/
+      order-form/
+      order-line-form/
+```
+
 #### Flujo principal
 
 1. El usuario crea un pedido (`draft`) y añade los productos que necesita con sus cantidades.
