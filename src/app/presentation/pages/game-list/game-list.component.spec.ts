@@ -44,7 +44,10 @@ describe('GameListComponent', () => {
       providers: [
         { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
         { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -534,7 +537,15 @@ describe('GameListComponent — _userId sin usuario autenticado', () => {
       providers: [
         { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn() } },
         { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
+        {
+          provide: UserContextService,
+          useValue: {
+            userId: signal<string | null>(null),
+            requireUserId: vi.fn(() => {
+              throw new Error('No user selected');
+            })
+          }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -568,7 +579,10 @@ describe('GameListComponent — breakpoint observer', () => {
       providers: [
         { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
         { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -645,7 +659,10 @@ describe('GameListComponent — router subscription', () => {
       providers: [
         { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
         { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },

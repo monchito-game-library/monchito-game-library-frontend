@@ -10,11 +10,11 @@
 |---|---|
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
 | [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
-| [Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código) | **Media-alta** |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código)~~ | ✅ Completado |
 | ~~[Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist)~~ | ✅ Hecho |
 | ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
 | ~~[Estrategia de actualización PWA forzada](#estrategia-de-actualización-pwa-forzada)~~ | ✅ Hecho |
@@ -238,36 +238,6 @@ Al crear o editar un pedido, los protectores se cargarán directamente del catá
 
 ---
 
-### Deuda técnica — análisis de código
-
-Análisis en profundidad del código de producción realizado con cobertura de tests al 95 %. Las mejoras identificadas no añaden funcionalidad nueva — reducen complejidad, eliminan duplicación y mejoran la mantenibilidad.
-
-| # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
-|---|---|---|---|---|
-| 1 | `UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global | `user-preferences.service.ts`, `settings.component.ts` | **Alto** — estado RAWG innecesariamente global; si hubiera dos instancias del banner picker compartirían estado accidentalmente | Medio |
-| 2 | `getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación | `supabase.repository.ts` | Medio — cualquier bug en la paginación hay que arreglarlo en dos sitios | Bajo |
-| 3 | `private get _userId()` duplicado en `GameListComponent` y `GameFormComponent` | `game-list.component.ts`, `game-form.component.ts` | Bajo — duplicación menor pero consistente | Muy bajo |
-| 4 | `_loadingEditData` en `GameFormComponent` es innecesario: puede eliminarse usando `{ emitEvent: false }` en el `patchValue` de carga | `game-form.component.ts` | Medio — simplifica la coordinación de estado interno del componente | Bajo |
-| 5 | `_mapRawgPlatformToCode` vive en un componente de presentación pero es lógica de mapper de datos | `game-form.component.ts`, `rawg.mapper.ts` | Bajo — violación de capas; el mapa es estático y no tiene nada que ver con la UI | Bajo |
-| 6 | `onAvatarFileSelected` y `onBannerFileSelected` son casi idénticos (abrir dialog de crop → obtener blob → subir → manejar error/loading) | `settings.component.ts` | Bajo — duplicación de ~40 líneas en el mismo componente | Bajo |
-| 7 | `SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`) cuando podría usar `takeUntilDestroyed` | `settings.component.ts` | Bajo — puede eliminar `ngOnDestroy` y el campo de suscripción | Muy bajo |
-| 8 | `AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI | `app.component.ts` | **Alto** — el componente raíz no debería contener lógica de inicialización de preferencias | Medio |
-| 9 | `rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript (`gapPx`, `paddingPx`, `footerPx`) que deben mantenerse en sync con el SCSS manualmente | `game-list.component.ts` | Medio — riesgo de bug silencioso si se cambia el CSS sin actualizar el TS | Bajo |
-
-#### Orden de abordaje sugerido
-
-1. **#3** — eliminar el getter duplicado `_userId` (cambio puntual, riesgo cero)
-2. **#7** — `takeUntilDestroyed` en settings (cambio de 3 líneas)
-3. **#4** — eliminar `_loadingEditData` con `{ emitEvent: false }` (simplifica `GameFormComponent`)
-4. **#6** — extraer `_handleImageUpload` en settings (elimina ~40 líneas duplicadas)
-5. **#5** — mover `_mapRawgPlatformToCode` al mapper de RAWG (cambio de capa, sin lógica nueva)
-6. **#2** — extraer `_paginateView` en el repositorio (elimina el bucle duplicado)
-7. **#9** — documentar o centralizar los valores de layout de `rowItemSize`
-8. **#8** — extraer `_loadPreferences` a un servicio de inicialización (mayor cambio estructural)
-9. **#1** — separar los signals de RAWG search de `UserPreferencesService` (mayor impacto, requiere revisar todos los consumidores)
-
----
-
 ## Media prioridad
 
 ### Recomendaciones de juegos
@@ -475,6 +445,24 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Deuda técnica — análisis de código~~ ✅ Completado
+
+Análisis en profundidad del código de producción realizado con cobertura de tests al 95 %. Las mejoras identificadas no añaden funcionalidad nueva — reducen complejidad, eliminan duplicación y mejoran la mantenibilidad.
+
+| # | Problema | Fichero/s afectado/s | Impacto | Esfuerzo |
+|---|---|---|---|---|
+| ~~1~~ | ~~`UserPreferencesService` mezcla estado de perfil, caché de juegos y estado local de búsqueda RAWG en un único servicio global~~ | — | ✅ Resuelto — extraído a `RawgSearchStateService` | — |
+| ~~2~~ | ~~`AppComponent._loadPreferences` aplica tema, idioma, avatar, banner y rol directamente desde el componente raíz — lógica de negocio mezclada con orquestación de UI~~ | — | ✅ Resuelto — extraído a `UserPreferencesInitService` | — |
+| ~~3~~ | ~~`private get _userId()` duplicado en `GameListComponent` y `GameFormComponent`~~ | — | ✅ Resuelto — `requireUserId()` centralizado en `UserContextService` | — |
+| ~~4~~ | ~~`_loadingEditData` en `GameFormComponent` es innecesario~~ | — | ✅ Resuelto — eliminado usando `{ emitEvent: false }` en `patchValue` | — |
+| ~~5~~ | ~~`_mapRawgPlatformToCode` vive en un componente de presentación~~ | — | ✅ Resuelto — movido a `presentation/shared/rawg-platform.utils.ts` | — |
+| ~~6~~ | ~~`onAvatarFileSelected` y `onBannerFileSelected` son casi idénticos~~ | — | ✅ Resuelto — extraído `_handleImageUpload` en `SettingsComponent` | — |
+| ~~7~~ | ~~`SettingsComponent` gestiona suscripción manualmente (`_searchSubscription`)~~ | — | ✅ Resuelto — reemplazado por `takeUntilDestroyed` en constructor | — |
+| ~~8~~ | ~~`getAllGamesForUser` y `getAllGamesForList` duplican el mismo bucle de paginación~~ | — | ✅ Resuelto — extraído helper privado `_paginateView` en el repositorio | — |
+| ~~9~~ | ~~`rowItemSize` en `GameListComponent` tiene valores CSS hardcodeados en TypeScript~~ | — | ✅ Resuelto — comentarios actualizados con referencia al fichero SCSS | — |
+
+---
 
 ### ~~Rediseño de la card de wishlist~~ ✅ Hecho
 

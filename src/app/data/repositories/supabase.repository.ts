@@ -36,26 +36,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * @param {string} userId
    */
   async getAllGamesForUser(userId: string): Promise<GameModel[]> {
-    const PAGE_SIZE = 1000;
-    let all: UserGameFullDto[] = [];
-    let from = 0;
-
-    while (true) {
-      const { data, error } = await this._supabase
-        .from(this._viewName)
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .range(from, from + PAGE_SIZE - 1);
-
-      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
-      if (!data || data.length === 0) break;
-
-      all = all.concat(data);
-      if (data.length < PAGE_SIZE) break;
-      from += PAGE_SIZE;
-    }
-
+    const all = await this._paginateView<UserGameFullDto>(userId, '*');
     return all.map(mapGame);
   }
 
@@ -66,28 +47,10 @@ export class SupabaseRepository implements GameRepositoryContract {
    * @param {string} userId
    */
   async getAllGamesForList(userId: string): Promise<GameListModel[]> {
-    const PAGE_SIZE = 1000;
-    let all: UserGameListDto[] = [];
-    let from = 0;
-
-    while (true) {
-      const { data, error } = await this._supabase
-        .from(this._viewName)
-        .select(
-          'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position'
-        )
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .range(from, from + PAGE_SIZE - 1);
-
-      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
-      if (!data || data.length === 0) break;
-
-      all = all.concat(data as UserGameListDto[]);
-      if (data.length < PAGE_SIZE) break;
-      from += PAGE_SIZE;
-    }
-
+    const all = await this._paginateView<UserGameListDto>(
+      userId,
+      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position'
+    );
     return all.map(mapGameList);
   }
 
@@ -231,6 +194,37 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     if (error || !data) return undefined;
     return mapGameEdit(data as UserGameEditDto);
+  }
+
+  /**
+   * Paginates a query over `_viewName` for a given user, fetching batches of 1000 rows
+   * until the view is exhausted. Works around Supabase's default query limit.
+   *
+   * @param {string} userId
+   * @param {string} select - Column list passed to `.select()`
+   */
+  private async _paginateView<T>(userId: string, select: string): Promise<T[]> {
+    const PAGE_SIZE = 1000;
+    let all: T[] = [];
+    let from = 0;
+
+    while (true) {
+      const { data, error } = await this._supabase
+        .from(this._viewName)
+        .select(select)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
+      if (!data || data.length === 0) break;
+
+      all = all.concat(data as T[]);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+
+    return all;
   }
 
   /**
