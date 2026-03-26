@@ -83,9 +83,9 @@ Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuari
 - `order_products` ✅ — tabla creada y poblada, gestionada desde `/management/protectors`.
 - `orders`, `order_members`, `order_invitations`, `order_lines`, `order_line_allocations` ❌ — pendiente de crear en Supabase.
 
-#### Decisiones pendientes
+#### Decisiones
 
-- **Flujo de invitación**: ¿el destinatario debe estar registrado en la app para unirse a un pedido grupal, o puede unirse sin cuenta? *(responder antes de implementar la Fase 5)*
+- **Flujo de invitación**: el destinatario debe estar **registrado en la app** para unirse a un pedido grupal. Sin cuenta no se puede participar.
 
 #### Plan de implementación por fases
 
