@@ -59,6 +59,7 @@ import { AvailablePlatformInterface } from '@/interfaces/available-platform.inte
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { mapRawgPlatformToCode } from '@/shared/rawg-platform.utils';
 
 @Component({
   selector: 'app-game-form',
@@ -126,8 +127,6 @@ export class GameFormComponent implements OnInit {
   private _pendingWishlistItemId: string | null = null;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
   private _initialSnapshot: string | null = null;
-  /** True while edit data is being loaded — prevents store valueChanges from triggering format auto-suggestion. */
-  private _loadingEditData: boolean = false;
   /** True after the user manually changes the format toggle — prevents store auto-suggestion from overriding it. */
   private _formatTouchedByUser: boolean = false;
 
@@ -330,25 +329,29 @@ export class GameFormComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, this._gameUuid);
+      const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(
+        this._userContext.requireUserId(),
+        this._gameUuid
+      );
       if (game) {
         this._gameId = game.id;
-        this._loadingEditData = true;
-        this.form.patchValue({
-          title: game.title,
-          price: game.price,
-          store: game.store,
-          platform: game.platform,
-          condition: game.condition,
-          platinum: game.platinum,
-          description: game.description,
-          status: game.status,
-          personal_rating: game.personalRating,
-          edition: game.edition,
-          format: game.format,
-          is_favorite: game.isFavorite
-        });
-        this._loadingEditData = false;
+        this.form.patchValue(
+          {
+            title: game.title,
+            price: game.price,
+            store: game.store,
+            platform: game.platform,
+            condition: game.condition,
+            platinum: game.platinum,
+            description: game.description,
+            status: game.status,
+            personal_rating: game.personalRating,
+            edition: game.edition,
+            format: game.format,
+            is_favorite: game.isFavorite
+          },
+          { emitEvent: false }
+        );
         this._formatTouchedByUser = false;
 
         this._coverPosition.set(game.coverPosition ?? null);
@@ -431,13 +434,14 @@ export class GameFormComponent implements OnInit {
         : null;
 
       try {
+        const userId = this._userContext.requireUserId();
         if (this.isEditMode && this._gameUuid) {
-          await this._gameUseCases.updateGame(this._userId, game, catalogEntry);
+          await this._gameUseCases.updateGame(userId, game, catalogEntry);
         } else {
-          await this._gameUseCases.addGame(this._userId, game, catalogEntry);
+          await this._gameUseCases.addGame(userId, game, catalogEntry);
           if (this._pendingWishlistItemId) {
             try {
-              await this._wishlistUseCases.deleteItem(this._userId, this._pendingWishlistItemId);
+              await this._wishlistUseCases.deleteItem(userId, this._pendingWishlistItemId);
             } catch {
               // El juego ya se guardó; si falla el borrado de wishlist el usuario puede borrarlo manualmente
             }
@@ -479,7 +483,7 @@ export class GameFormComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (confirmed && this._gameUuid) {
-        await this._gameUseCases.deleteGame(this._userId, this._gameUuid);
+        await this._gameUseCases.deleteGame(this._userContext.requireUserId(), this._gameUuid);
         this._userPreferencesState.allGames.set([]);
         void this._router.navigate(['/list']);
       }
@@ -550,7 +554,7 @@ export class GameFormComponent implements OnInit {
     if (game.platforms && game.platforms.length > 0) {
       const platformsData = game.platforms.map((rawgName: string) => ({
         name: rawgName,
-        code: this._mapRawgPlatformToCode(rawgName)
+        code: mapRawgPlatformToCode(rawgName)
       }));
       this.gamePlatforms.set(platformsData);
       this.form.patchValue({ platform: null });
@@ -627,15 +631,6 @@ export class GameFormComponent implements OnInit {
   }
 
   /**
-   * Returns the current user ID or throws if no user is authenticated.
-   */
-  private get _userId(): string {
-    const id: string | null = this._userContext.userId();
-    if (!id) throw new Error('No user selected');
-    return id;
-  }
-
-  /**
    * Loads all stores from Supabase and updates the store models signal.
    */
   private async _loadStores(): Promise<void> {
@@ -654,7 +649,6 @@ export class GameFormComponent implements OnInit {
    * @param {string | null} id - Selected store ID
    */
   private _onStoreChange(id: string | null): void {
-    if (this._loadingEditData) return;
     if (!id) {
       this._formatTouchedByUser = false;
       return;
@@ -684,46 +678,5 @@ export class GameFormComponent implements OnInit {
     } finally {
       this.screenshotsLoading.set(false);
     }
-  }
-
-  /**
-   * Maps a RAWG platform name to the corresponding local platform code.
-   *
-   * @param {string} rawgPlatformName - Platform name as returned by the RAWG API
-   */
-  private _mapRawgPlatformToCode(rawgPlatformName: string): PlatformType | null {
-    const platformMap: Record<string, PlatformType> = {
-      'PlayStation 5': 'PS5',
-      PS5: 'PS5',
-      'PlayStation 4': 'PS4',
-      PS4: 'PS4',
-      'PlayStation 3': 'PS3',
-      PS3: 'PS3',
-      'PlayStation 2': 'PS2',
-      PS2: 'PS2',
-      PlayStation: 'PS1',
-      PS1: 'PS1',
-      'PS Vita': 'PS-VITA',
-      'PlayStation Vita': 'PS-VITA',
-      PSP: 'PSP',
-      PC: 'PC',
-      'Nintendo Switch': 'SWITCH',
-      Switch: 'SWITCH',
-      Wii: 'WII',
-      'Wii U': 'WII',
-      GameCube: 'GAME-CUBE',
-      'Nintendo DS': 'DS',
-      'Nintendo 3DS': '3DS',
-      '3DS': '3DS',
-      'Game Boy Color': 'GBC',
-      'Game Boy Advance': 'GBA',
-      'Xbox Series S/X': 'XBOX-SERIES',
-      'Xbox Series X': 'XBOX-SERIES',
-      'Xbox One': 'XBOX-ONE',
-      'Xbox 360': 'XBOX-360',
-      Xbox: 'XBOX'
-    };
-
-    return platformMap[rawgPlatformName] || null;
   }
 }

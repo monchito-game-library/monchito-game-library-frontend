@@ -1,5 +1,4 @@
 import { computed, Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { GameListModel } from '@/models/game/game-list.model';
 import { UserRoleType } from '@/types/user-role.type';
 
@@ -20,15 +19,6 @@ export class UserPreferencesService {
 
   /** URL of the cover currently used as the profile panel banner. */
   readonly bannerImageUrl: WritableSignal<string | null> = signal(null);
-
-  /** RAWG banner suggestions for the settings banner picker. */
-  readonly rawgSearchResults: WritableSignal<BannerSuggestionModel[]> = signal([]);
-
-  /** Whether a RAWG banner search is in progress. */
-  readonly rawgSearchLoading: WritableSignal<boolean> = signal(false);
-
-  /** Current search query in the banner RAWG search input. */
-  readonly rawgSearchQuery: WritableSignal<string> = signal('');
 
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = signal(false);

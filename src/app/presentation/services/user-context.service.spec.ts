@@ -114,6 +114,20 @@ describe('UserContextService', () => {
     });
   });
 
+  describe('requireUserId', () => {
+    it('devuelve el id cuando hay sesión', () => {
+      vi.mocked(mockAuthState.getUserId!).mockReturnValue('user-1');
+
+      expect(service.requireUserId()).toBe('user-1');
+    });
+
+    it('lanza Error cuando no hay sesión', () => {
+      vi.mocked(mockAuthState.getUserId!).mockReturnValue(null);
+
+      expect(() => service.requireUserId()).toThrow('No user selected');
+    });
+  });
+
   describe('clearUser', () => {
     it('delega en authUseCases.signOut', () => {
       vi.mocked(mockAuthUseCases.signOut!).mockResolvedValue();

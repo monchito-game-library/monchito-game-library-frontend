@@ -3,15 +3,15 @@ import {
   Component,
   ElementRef,
   inject,
-  OnDestroy,
   OnInit,
   Signal,
   signal,
   ViewChild,
   WritableSignal
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
-import { firstValueFrom, Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { firstValueFrom, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme.service';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
+import { RawgSearchStateService } from '@/services/rawg-search-state.service';
 import {
   USER_PREFERENCES_USE_CASES,
   UserPreferencesUseCasesContract
@@ -64,10 +65,11 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     TranslocoPipe
   ]
 })
-export class SettingsComponent implements OnInit, OnDestroy {
+export class SettingsComponent implements OnInit {
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
+  private readonly _rawgSearchState: RawgSearchStateService = inject(RawgSearchStateService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -76,7 +78,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
-  private _searchSubscription?: Subscription;
 
   /** Available languages for the language selector. */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
@@ -97,13 +98,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */
-  readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._userPreferencesState.rawgSearchResults;
+  readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._rawgSearchState.rawgSearchResults;
 
   /** Whether a RAWG search request is in progress. */
-  readonly rawgSearchLoading: WritableSignal<boolean> = this._userPreferencesState.rawgSearchLoading;
+  readonly rawgSearchLoading: WritableSignal<boolean> = this._rawgSearchState.rawgSearchLoading;
 
   /** Last RAWG search term entered, used to show the empty state. */
-  readonly rawgSearchQuery: WritableSignal<string> = this._userPreferencesState.rawgSearchQuery;
+  readonly rawgSearchQuery: WritableSignal<string> = this._rawgSearchState.rawgSearchQuery;
 
   /** Whether user preferences have been loaded from Supabase at least once. */
   readonly preferencesLoaded: WritableSignal<boolean> = this._userPreferencesState.preferencesLoaded;
@@ -128,6 +129,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Reference to the name input element, used to focus it when edit mode is activated. */
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
 
+  constructor() {
+    this._searchSubject
+      .pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe((query: string) => void this._executeSearch(query));
+  }
+
   ngOnInit(): void {
     this.selectedLangControl.valueChanges.subscribe((lang: string) => {
       if (!lang) return;
@@ -135,15 +142,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this._savePreferences();
     });
 
-    this._searchSubscription = this._searchSubject
-      .pipe(debounceTime(400), distinctUntilChanged())
-      .subscribe((query: string) => void this._executeSearch(query));
-
     void this._loadInitialBanners();
-  }
-
-  ngOnDestroy(): void {
-    this._searchSubscription?.unsubscribe();
   }
 
   /**
@@ -167,7 +166,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
    */
   onRawgSearch(event: Event): void {
     const query: string = (event.target as HTMLInputElement).value;
-    this._userPreferencesState.rawgSearchQuery.set(query);
+    this._rawgSearchState.rawgSearchQuery.set(query);
     this._searchSubject.next(query);
   }
 
@@ -186,41 +185,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * @param {Event} event - File input event
    */
   async onAvatarFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    if (!file) return;
-
-    const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: {
-        file,
+    await this._handleImageUpload(
+      event,
+      {
         title: this._transloco.translate('settings.cropDialog.avatarTitle'),
         aspectRatio: 1,
         roundCropper: true,
-        resizeToWidth: 300
+        resizeToWidth: 300,
+        dialogWidth: '480px',
+        fileName: 'avatar.jpg'
       },
-      width: '480px',
-      maxWidth: '95vw'
-    });
-
-    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
-    if (!blob) return;
-
-    const userId: string | null = this._userContext.userId();
-    if (!userId) return;
-
-    const croppedFile = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
-
-    this._userPreferencesState.uploadingAvatar.set(true);
-    try {
-      const url: string = await this._userPreferencesUseCases.uploadAvatar(userId, croppedFile);
-      this._userPreferencesState.avatarUrl.set(url);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : this._transloco.translate('settings.errors.uploadImage');
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
-    } finally {
-      this._userPreferencesState.uploadingAvatar.set(false);
-    }
+      this._userPreferencesState.uploadingAvatar,
+      (userId, file) => this._userPreferencesUseCases.uploadAvatar(userId, file),
+      (url) => this._userPreferencesState.avatarUrl.set(url),
+      'settings.errors.uploadImage'
+    );
   }
 
   /**
@@ -230,42 +209,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * @param {Event} event - File input event
    */
   async onBannerFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    if (!file) return;
-
-    const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
-      data: {
-        file,
+    await this._handleImageUpload(
+      event,
+      {
         title: this._transloco.translate('settings.cropDialog.bannerTitle'),
         aspectRatio: 16 / 9,
         roundCropper: false,
-        resizeToWidth: 1280
+        resizeToWidth: 1280,
+        dialogWidth: '640px',
+        fileName: 'banner.jpg'
       },
-      width: '640px',
-      maxWidth: '95vw'
-    });
-
-    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
-    if (!blob) return;
-
-    const userId: string | null = this._userContext.userId();
-    if (!userId) return;
-
-    const croppedFile = new File([blob], 'banner.jpg', { type: 'image/jpeg' });
-
-    this._userPreferencesState.uploadingBanner.set(true);
-    try {
-      const url: string = await this._userPreferencesUseCases.uploadBanner(userId, croppedFile);
-      this._userPreferencesState.bannerImageUrl.set(url);
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : this._transloco.translate('settings.errors.uploadBanner');
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
-    } finally {
-      this._userPreferencesState.uploadingBanner.set(false);
-    }
+      this._userPreferencesState.uploadingBanner,
+      (userId, file) => this._userPreferencesUseCases.uploadBanner(userId, file),
+      (url) => this._userPreferencesState.bannerImageUrl.set(url),
+      'settings.errors.uploadBanner'
+    );
   }
 
   /**
@@ -337,6 +295,69 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Abre el dialog de recorte, sube el blob resultante a Supabase Storage y actualiza el signal de URL.
+   * Extrae la lógica común de onAvatarFileSelected y onBannerFileSelected.
+   *
+   * @param {Event} event - File input event
+   * @param {{ title: string; aspectRatio: number; roundCropper: boolean; resizeToWidth: number; dialogWidth: string; fileName: string }} cropConfig - Opciones del dialog de recorte
+   * @param {WritableSignal<boolean>} loadingSignal - Signal de carga a activar durante la subida
+   * @param {(userId: string, file: File) => Promise<string>} uploadFn - Función de subida del caso de uso
+   * @param {(url: string) => void} setUrl - Callback para actualizar el signal de URL tras la subida
+   * @param {string} errorKey - Clave de traducción para el mensaje de error genérico
+   */
+  private async _handleImageUpload(
+    event: Event,
+    cropConfig: {
+      title: string;
+      aspectRatio: number;
+      roundCropper: boolean;
+      resizeToWidth: number;
+      dialogWidth: string;
+      fileName: string;
+    },
+    loadingSignal: WritableSignal<boolean>,
+    uploadFn: (userId: string, file: File) => Promise<string>,
+    setUrl: (url: string) => void,
+    errorKey: string
+  ): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    const dialogRef = this._dialog.open(AvatarCropDialogComponent, {
+      data: {
+        file,
+        title: cropConfig.title,
+        aspectRatio: cropConfig.aspectRatio,
+        roundCropper: cropConfig.roundCropper,
+        resizeToWidth: cropConfig.resizeToWidth
+      },
+      width: cropConfig.dialogWidth,
+      maxWidth: '95vw'
+    });
+
+    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    if (!blob) return;
+
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
+
+    const croppedFile = new File([blob], cropConfig.fileName, { type: 'image/jpeg' });
+
+    loadingSignal.set(true);
+    try {
+      const url: string = await uploadFn(userId, croppedFile);
+      setUrl(url);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : this._transloco.translate(errorKey);
+      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
+    } finally {
+      loadingSignal.set(false);
+    }
+  }
+
+  /**
    * Calls the RAWG API with the search term and updates the results signal.
    * If the query is empty, reloads the initial popular games.
    * Filters out games without an image to ensure all results are usable as banners.
@@ -348,14 +369,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
       await this._loadInitialBanners();
       return;
     }
-    this._userPreferencesState.rawgSearchLoading.set(true);
+    this._rawgSearchState.rawgSearchLoading.set(true);
     try {
       const results: BannerSuggestionModel[] = await this._catalogUseCases.searchBanners(query, 12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
+      this._rawgSearchState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
-      this._userPreferencesState.rawgSearchResults.set([]);
+      this._rawgSearchState.rawgSearchResults.set([]);
     } finally {
-      this._userPreferencesState.rawgSearchLoading.set(false);
+      this._rawgSearchState.rawgSearchLoading.set(false);
     }
   }
 
@@ -363,14 +384,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * Loads the top-rated RAWG games to display as initial banner suggestions.
    */
   private async _loadInitialBanners(): Promise<void> {
-    this._userPreferencesState.rawgSearchLoading.set(true);
+    this._rawgSearchState.rawgSearchLoading.set(true);
     try {
       const results: BannerSuggestionModel[] = await this._catalogUseCases.getTopBanners(12);
-      this._userPreferencesState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
+      this._rawgSearchState.rawgSearchResults.set(results.filter((b: BannerSuggestionModel) => !!b.imageUrl));
     } catch {
-      this._userPreferencesState.rawgSearchResults.set([]);
+      this._rawgSearchState.rawgSearchResults.set([]);
     } finally {
-      this._userPreferencesState.rawgSearchLoading.set(false);
+      this._rawgSearchState.rawgSearchLoading.set(false);
     }
   }
 
