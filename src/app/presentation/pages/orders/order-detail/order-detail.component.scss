@@ -192,15 +192,15 @@
     .order-detail-page__cost-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.5rem 0;
       font-size: 0.9375rem;
       border-bottom: 1px solid var(--mat-sys-outline-variant);
+      padding-bottom: 0.5rem;
 
       &--total {
         font-weight: 700;
         font-size: 1rem;
         border-bottom: none;
-        padding-top: 0.75rem;
+        padding-bottom: 0;
       }
     }
   }
