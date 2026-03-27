@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { MatFabButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -14,11 +16,12 @@ import { OrderSummaryCardComponent } from '@/pages/orders/components/order-summa
   styleUrl: './orders.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, TranslocoPipe, OrderSummaryCardComponent]
+  imports: [MatIcon, MatFabButton, MatProgressSpinner, TranslocoPipe, OrderSummaryCardComponent]
 })
 export class OrdersComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
+  private readonly _router: Router = inject(Router);
 
   /** List of order summaries for the current user. */
   readonly orders: WritableSignal<OrderSummaryModel[]> = signal<OrderSummaryModel[]>([]);
@@ -31,14 +34,19 @@ export class OrdersComponent implements OnInit {
   }
 
   /**
+   * Navigates to the new order creation page.
+   */
+  onCreateOrder(): void {
+    void this._router.navigate(['/orders', 'new']);
+  }
+
+  /**
    * Navigates to the order detail page.
-   * TODO(Fase 4): implementar ruta /orders/:id
    *
    * @param {string} orderId - UUID of the order to open
    */
   onOpenOrder(orderId: string): void {
-    // Fase 4: void this._router.navigate(['/orders', orderId]);
-    void orderId;
+    void this._router.navigate(['/orders', orderId]);
   }
 
   /**

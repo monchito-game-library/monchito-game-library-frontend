@@ -6,17 +6,20 @@ import { OrderRepositoryContract } from '@/domain/repositories/order.repository.
 import { OrderModel } from '@/models/order/order.model';
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
+import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
 import {
   OrderDetailDto,
   OrderSummaryDto,
   OrderInsertDto,
+  OrderUpdateDto,
   OrderLineInsertDto,
   OrderLineAllocationUpsertDto,
-  OrderInvitationDto
+  OrderInvitationDto,
+  OrderProductDto
 } from '@/dtos/supabase/order.dto';
-import { mapOrder, mapOrderSummary, mapOrderInvitation } from '@/mappers/order/order.mapper';
+import { mapOrder, mapOrderSummary, mapOrderInvitation, mapOrderProduct } from '@/mappers/order/order.mapper';
 
 @Injectable()
 export class SupabaseOrderRepository implements OrderRepositoryContract {
@@ -89,10 +92,21 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * @param {Partial<OrderFormValue>} patch
    */
   async update(orderId: string, patch: Partial<OrderFormValue>): Promise<void> {
-    const { error } = await this._supabase
-      .from('orders')
-      .update({ title: patch.title, notes: patch.notes, updated_at: new Date().toISOString() })
-      .eq('id', orderId);
+    const payload: OrderUpdateDto = {
+      title: patch.title,
+      notes: patch.notes,
+      status: patch.status,
+      order_date: patch.orderDate,
+      received_date: patch.receivedDate,
+      shipping_cost: patch.shippingCost,
+      paypal_fee: patch.paypalFee,
+      discount_amount: patch.discountAmount,
+      updated_at: new Date().toISOString()
+    };
+
+    const cleanPayload = Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined));
+
+    const { error } = await this._supabase.from('orders').update(cleanPayload).eq('id', orderId);
 
     if (error) throw new Error(`Failed to update order: ${error.message}`);
   }
@@ -179,6 +193,19 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
       .upsert(payload, { onConflict: 'order_line_id,user_id' });
 
     if (error) throw new Error(`Failed to upsert allocation: ${error.message}`);
+  }
+
+  /**
+   * Returns all available products from the order_products catalogue, ordered by name.
+   */
+  async getProducts(): Promise<OrderProductModel[]> {
+    const { data, error } = await this._supabase
+      .from('order_products')
+      .select('id, name, category, origin')
+      .order('name', { ascending: true });
+
+    if (error) throw new Error(`Failed to fetch products: ${error.message}`);
+    return ((data as OrderProductDto[]) ?? []).map(mapOrderProduct);
   }
 
   /**

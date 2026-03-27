@@ -1,0 +1,19 @@
+.add-edit-line-dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 400px;
+  padding-top: 0.5rem;
+
+  .add-edit-line-dialog__field {
+    width: 100%;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .add-edit-line-dialog__form {
+    min-width: unset;
+    width: 100%;
+  }
+}

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
+import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { ORDER_REPOSITORY, OrderRepositoryContract } from '@/domain/repositories/order.repository.contract';
@@ -97,6 +98,13 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
    */
   async upsertAllocation(lineId: string, userId: string, formValue: OrderLineAllocationFormValue): Promise<void> {
     return this._repo.upsertAllocation(lineId, userId, formValue);
+  }
+
+  /**
+   * Returns all available products from the order_products catalogue.
+   */
+  async getProducts(): Promise<OrderProductModel[]> {
+    return this._repo.getProducts();
   }
 
   /**

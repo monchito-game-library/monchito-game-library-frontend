@@ -3,6 +3,7 @@ import { InjectionToken } from '@angular/core';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
+import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
 
@@ -76,6 +77,11 @@ export interface OrderRepositoryContract {
    * @param {OrderLineAllocationFormValue} formValue
    */
   upsertAllocation(lineId: string, userId: string, formValue: OrderLineAllocationFormValue): Promise<void>;
+
+  /**
+   * Returns all available products from the order_products catalogue, ordered by name.
+   */
+  getProducts(): Promise<OrderProductModel[]>;
 
   /**
    * Creates a new invitation token for an order and returns the token string.

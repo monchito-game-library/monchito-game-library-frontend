@@ -74,8 +74,26 @@ export interface OrderInsertDto {
   notes: string | null;
 }
 
+/** Row from the order_products table. */
+export interface OrderProductDto {
+  id: string;
+  name: string;
+  category: string;
+  origin: string | null;
+}
+
 /** Payload for updating an existing order. */
-export type OrderUpdateDto = Partial<Omit<OrderInsertDto, 'owner_id'>>;
+export interface OrderUpdateDto {
+  title?: string | null;
+  notes?: string | null;
+  status?: 'draft' | 'ordered' | 'shipped' | 'received';
+  order_date?: string | null;
+  received_date?: string | null;
+  shipping_cost?: number | null;
+  paypal_fee?: number | null;
+  discount_amount?: number | null;
+  updated_at: string;
+}
 
 /** Payload for inserting a new order line. */
 export interface OrderLineInsertDto {

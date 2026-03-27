@@ -4,7 +4,8 @@ import {
   OrderMemberDto,
   OrderLineDto,
   OrderLineAllocationDto,
-  OrderInvitationDto
+  OrderInvitationDto,
+  OrderProductDto
 } from '@/dtos/supabase/order.dto';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
@@ -12,6 +13,7 @@ import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderLineAllocationModel } from '@/models/order/order-line-allocation.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
+import { OrderProductModel } from '@/models/order/order-product.model';
 
 /**
  * Maps an order_line_allocations row to the OrderLineAllocationModel domain model.
@@ -102,6 +104,20 @@ export function mapOrderSummary(dto: OrderSummaryDto): OrderSummaryModel {
     orderDate: dto.order_date,
     memberCount: (dto.order_members ?? []).length,
     createdAt: dto.created_at
+  };
+}
+
+/**
+ * Maps an order_products row to the OrderProductModel domain model.
+ *
+ * @param {OrderProductDto} dto
+ */
+export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
+  return {
+    id: dto.id,
+    name: dto.name,
+    category: dto.category,
+    origin: dto.origin
   };
 }
 

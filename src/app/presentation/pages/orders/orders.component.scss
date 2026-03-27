@@ -49,6 +49,13 @@
     flex-direction: column;
     gap: 1rem;
   }
+
+  .orders-page__fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 10;
+  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────

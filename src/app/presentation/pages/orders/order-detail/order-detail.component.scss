@@ -1,0 +1,204 @@
+.order-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  min-height: 100%;
+
+  .order-detail-page__loading {
+    display: flex;
+    justify-content: center;
+    padding: 4rem 0;
+  }
+
+  .order-detail-page__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .order-detail-page__breadcrumb {
+    align-self: flex-start;
+  }
+
+  .order-detail-page__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .order-detail-page__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .order-detail-page__header-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .order-detail-page__section {
+    background: var(--mat-sys-surface-container);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .order-detail-page__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .order-detail-page__section-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .order-detail-page__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .order-detail-page__status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+    align-self: flex-start;
+
+    &--draft {
+      background: var(--mat-sys-surface-variant);
+      color: var(--mat-sys-on-surface-variant);
+    }
+    &--ordered {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+    }
+    &--shipped {
+      background: var(--mat-sys-tertiary-container);
+      color: var(--mat-sys-on-tertiary-container);
+    }
+    &--received {
+      background: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+  }
+
+  .order-detail-page__info-row {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+  }
+
+  .order-detail-page__info-label {
+    font-weight: 500;
+    min-width: 10rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .order-detail-page__advance {
+    padding-top: 0.5rem;
+  }
+
+  .order-detail-page__edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .order-detail-page__form-field {
+    width: 100%;
+  }
+
+  .order-detail-page__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+  }
+
+  .order-detail-page__empty {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.9375rem;
+    margin: 0;
+    padding: 1rem 0;
+  }
+
+  .order-detail-page__table-wrapper {
+    overflow-x: auto;
+  }
+
+  .order-detail-page__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-weight: 600;
+      color: var(--mat-sys-on-surface-variant);
+      border-bottom: 1px solid var(--mat-sys-outline-variant);
+    }
+
+    td {
+      padding: 0.75rem;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--mat-sys-outline-variant);
+    }
+  }
+
+  .order-detail-page__product-name {
+    font-weight: 500;
+  }
+
+  .order-detail-page__product-category {
+    font-size: 0.8125rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .order-detail-page__line-actions {
+    white-space: nowrap;
+  }
+
+  .order-detail-page__cost-summary {
+    .order-detail-page__cost-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      font-size: 0.9375rem;
+      border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+      &--total {
+        font-weight: 700;
+        font-size: 1rem;
+        border-bottom: none;
+        padding-top: 0.75rem;
+      }
+    }
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .order-detail-page {
+    padding: 1rem;
+
+    .order-detail-page__info-row {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .order-detail-page__info-label {
+      min-width: unset;
+    }
+  }
+}

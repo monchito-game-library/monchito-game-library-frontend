@@ -1,0 +1,223 @@
+<div class="order-detail-page">
+  @if (loading()) {
+    <div class="order-detail-page__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    </div>
+  } @else if (order(); as ord) {
+    <!-- Header / breadcrumb -->
+    <div class="order-detail-page__header">
+      <div class="order-detail-page__breadcrumb">
+        <button mat-button routerLink="/orders">
+          <mat-icon>arrow_back</mat-icon>
+          {{ 'orders.backToList' | transloco }}
+        </button>
+      </div>
+
+      <div class="order-detail-page__title-row">
+        <h1 class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</h1>
+
+        <div class="order-detail-page__header-actions">
+          @if (isOwner() && !editingHeader()) {
+            <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Info section -->
+    <section class="order-detail-page__section">
+      @if (!editingHeader()) {
+        <div class="order-detail-page__info">
+          <span class="order-detail-page__status-badge order-detail-page__status-badge--{{ ord.status }}">
+            {{ 'orders.status.' + ord.status | transloco }}
+          </span>
+
+          @if (ord.orderDate) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.orderDate' | transloco }}</span>
+              <span>{{ ord.orderDate | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          }
+
+          @if (ord.receivedDate) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.receivedDate' | transloco }}</span>
+              <span>{{ ord.receivedDate | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          }
+
+          @if (ord.shippingCost !== null) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.shippingCost' | transloco }}</span>
+              <span>{{ ord.shippingCost | number: '1.2-2' }} €</span>
+            </div>
+          }
+
+          @if (ord.paypalFee !== null) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.paypalFee' | transloco }}</span>
+              <span>{{ ord.paypalFee | number: '1.2-2' }} €</span>
+            </div>
+          }
+
+          @if (ord.discountAmount !== null) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.discountAmount' | transloco }}</span>
+              <span>-{{ ord.discountAmount | number: '1.2-2' }} €</span>
+            </div>
+          }
+
+          @if (ord.notes) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.notes' | transloco }}</span>
+              <span>{{ ord.notes }}</span>
+            </div>
+          }
+
+          @if (ord.members.length > 0) {
+            <div class="order-detail-page__info-row">
+              <span class="order-detail-page__info-label">{{ 'orders.header.members' | transloco }}</span>
+              <span>{{ ord.members.length }}</span>
+            </div>
+          }
+
+          @if (isOwner() && nextStatus()) {
+            <div class="order-detail-page__advance">
+              <button mat-flat-button (click)="onAdvanceStatus()" [disabled]="saving()">
+                <mat-icon>arrow_forward</mat-icon>
+                {{ 'orders.header.advanceStatus' | transloco }}: {{ 'orders.status.' + nextStatus() | transloco }}
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Edit header form -->
+        <form [formGroup]="headerForm" class="order-detail-page__edit-form">
+          <mat-form-field appearance="outline" class="order-detail-page__form-field">
+            <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
+            <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="order-detail-page__form-field">
+            <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
+            <textarea
+              matInput
+              formControlName="notes"
+              [placeholder]="'orders.header.notesPlaceholder' | transloco"
+              rows="3"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="order-detail-page__form-field">
+            <mat-label>{{ 'orders.header.shippingCost' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="shippingCost" min="0" step="0.01" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="order-detail-page__form-field">
+            <mat-label>{{ 'orders.header.paypalFee' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="paypalFee" min="0" step="0.01" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="order-detail-page__form-field">
+            <mat-label>{{ 'orders.header.discountAmount' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="discountAmount" min="0" step="0.01" />
+          </mat-form-field>
+
+          <div class="order-detail-page__form-actions">
+            <button mat-button type="button" (click)="onCancelEdit()">
+              {{ 'orders.header.cancel' | transloco }}
+            </button>
+            <button mat-flat-button type="button" (click)="onSaveHeader()" [disabled]="saving()">
+              {{ 'orders.header.save' | transloco }}
+            </button>
+          </div>
+        </form>
+      }
+    </section>
+
+    <!-- Lines section -->
+    <section class="order-detail-page__section">
+      <div class="order-detail-page__section-header">
+        <h2 class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</h2>
+        @if (isOwner()) {
+          <button mat-flat-button (click)="onAddLine()">
+            <mat-icon>add</mat-icon>
+            {{ 'orders.lines.add' | transloco }}
+          </button>
+        }
+      </div>
+
+      @if (ord.lines.length === 0) {
+        <p class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</p>
+      } @else {
+        <div class="order-detail-page__table-wrapper">
+          <table class="order-detail-page__table">
+            <thead>
+              <tr>
+                <th>{{ 'orders.lines.product' | transloco }}</th>
+                <th>{{ 'orders.lines.unitPrice' | transloco }}</th>
+                <th>{{ 'orders.lines.pack' | transloco }}</th>
+                <th>{{ 'orders.lines.qtyOrdered' | transloco }}</th>
+                <th>{{ 'orders.lines.myQty' | transloco }}</th>
+                <th>{{ 'orders.lines.subtotal' | transloco }}</th>
+                @if (isOwner()) {
+                  <th></th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (line of ord.lines; track line.id) {
+                <tr>
+                  <td>
+                    <div class="order-detail-page__product-name">{{ line.productName }}</div>
+                    <div class="order-detail-page__product-category">{{ line.productCategory }}</div>
+                  </td>
+                  <td>{{ line.unitPrice | number: '1.2-2' }} €</td>
+                  <td>{{ line.packChosen ?? '—' }}</td>
+                  <td>{{ line.quantityOrdered ?? '—' }}</td>
+                  <td>{{ getMyQtyForLine(line) }}</td>
+                  <td>{{ line.unitPrice * (line.quantityOrdered ?? 0) | number: '1.2-2' }} €</td>
+                  @if (isOwner()) {
+                    <td class="order-detail-page__line-actions">
+                      <button mat-icon-button [matTooltip]="'orders.lines.edit' | transloco" (click)="onEditLine(line)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        [matTooltip]="'orders.lines.delete' | transloco"
+                        (click)="onDeleteLine(line.id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <!-- Cost summary section -->
+    <section class="order-detail-page__section order-detail-page__cost-summary">
+      <h2 class="order-detail-page__section-title">{{ 'orders.cost.title' | transloco }}</h2>
+
+      <div class="order-detail-page__cost-row">
+        <span>{{ 'orders.cost.mySubtotal' | transloco }}</span>
+        <span>{{ computeMySubtotal() | number: '1.2-2' }} €</span>
+      </div>
+      <div class="order-detail-page__cost-row">
+        <span>{{ 'orders.cost.extrasShare' | transloco }}</span>
+        <span>{{ computeMyTotal() - computeMySubtotal() | number: '1.2-2' }} €</span>
+      </div>
+      <div class="order-detail-page__cost-row order-detail-page__cost-row--total">
+        <span>{{ 'orders.cost.myTotal' | transloco }}</span>
+        <span>{{ computeMyTotal() | number: '1.2-2' }} €</span>
+      </div>
+    </section>
+  }
+</div>
