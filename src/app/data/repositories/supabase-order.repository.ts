@@ -82,7 +82,15 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
     const { data, error } = await this._supabase.from('orders').insert(payload).select('id').single();
 
     if (error) throw new Error(`Failed to create order: ${error.message}`);
-    return (data as { id: string }).id;
+    const orderId = (data as { id: string }).id;
+
+    // Add the owner as a member so RLS policies based on order_members work correctly.
+    const { error: memberError } = await this._supabase
+      .from('order_members')
+      .insert({ order_id: orderId, user_id: userId, role: 'owner' });
+
+    if (memberError) throw new Error(`Failed to add owner as member: ${memberError.message}`);
+    return orderId;
   }
 
   /**
