@@ -40,6 +40,8 @@ export function mapOrderLine(dto: OrderLineDto): OrderLineModel {
     id: dto.id,
     orderId: dto.order_id,
     productId: dto.product_id,
+    requestedBy: dto.requested_by,
+    quantityNeeded: dto.quantity_needed,
     productName: dto.order_products.name,
     productCategory: dto.order_products.category,
     unitPrice: dto.unit_price,
@@ -61,7 +63,11 @@ export function mapOrderMember(dto: OrderMemberDto): OrderMemberModel {
     id: dto.id,
     orderId: dto.order_id,
     userId: dto.user_id,
+    displayName: dto.display_name,
+    email: dto.email,
+    avatarUrl: dto.avatar_url,
     role: dto.role,
+    isReady: dto.is_ready,
     joinedAt: dto.joined_at
   };
 }
@@ -117,7 +123,8 @@ export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
     id: dto.id,
     name: dto.name,
     category: dto.category,
-    origin: dto.origin
+    notes: dto.notes,
+    packs: (dto.packs ?? []).slice().sort((a, b) => a.quantity - b.quantity)
   };
 }
 
@@ -130,6 +137,10 @@ export function mapOrderInvitation(dto: OrderInvitationDto): OrderInvitationMode
   return {
     id: dto.id,
     orderId: dto.order_id,
+    orderTitle: dto.orders?.title ?? null,
+    orderCreatedAt: dto.orders?.created_at ?? dto.created_at,
+    orderDate: dto.orders?.order_date ?? null,
+    orderMemberCount: dto.orders?.order_members?.length ?? 0,
     token: dto.token,
     expiresAt: dto.expires_at,
     usedBy: dto.used_by,

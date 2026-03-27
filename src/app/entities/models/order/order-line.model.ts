@@ -8,13 +8,17 @@ export interface OrderLineModel {
   orderId: string;
   /** UUID of the linked order_products entry. */
   productId: string;
+  /** UUID of the user who requested this line. Null for legacy lines. */
+  requestedBy: string | null;
+  /** Units requested by this user in draft phase. */
+  quantityNeeded: number | null;
   /** Product name from order_products join. */
   productName: string;
   /** Product category from order_products join. */
   productCategory: string;
-  /** Unit price snapshot at the time of the order. */
+  /** Blended unit price set by the pack optimizer. Zero until the owner advances to ready. */
   unitPrice: number;
-  /** Pack size chosen by the owner (e.g. 250 units). Null until the owner decides. */
+  /** Pack size chosen by the owner. Null until the optimizer runs. */
   packChosen: number | null;
   /** Total quantity actually ordered from the supplier. Null until decided. */
   quantityOrdered: number | null;

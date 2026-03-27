@@ -274,6 +274,8 @@
     "backToList": "Orders",
     "status": {
       "draft": "Draft",
+      "selecting_packs": "Selecting packs",
+      "ready": "Ready to order",
       "ordered": "Ordered",
       "shipped": "Shipped",
       "received": "Received"
@@ -293,14 +295,24 @@
       "save": "Save",
       "cancel": "Cancel",
       "advanceStatus": "Advance status",
+      "nextStep": "Next step",
       "delete": "Delete order",
       "deleteTitle": "Delete order",
       "deleteMessage": "Are you sure you want to delete this order? This action cannot be undone.",
-      "members": "members"
+      "owner": "Owner",
+      "members": "Members",
+      "noMembers": "No invited members yet",
+      "shareInvite": "Share invitation",
+      "waitingMembers": "{{ ready }} of {{ total }} members ready",
+      "pending": "Pending",
+      "markReady": "Mark as ready",
+      "cancelReady": "Cancel ready",
+      "ready": "Ready"
     },
     "lines": {
-      "title": "Order lines",
+      "title": "Order products",
       "add": "Add line",
+      "selectingPacks": "The organiser is selecting the order quantities…",
       "product": "Product",
       "unitPrice": "Unit price",
       "pack": "Pack",
@@ -316,6 +328,9 @@
       "dialogAddTitle": "Add line",
       "dialogEditTitle": "Edit line",
       "productLabel": "Product",
+      "productRequired": "Product is required",
+      "qtyNeededLabel": "How many units do you want?",
+      "qtyNeededRequired": "Enter at least 1 unit",
       "unitPriceLabel": "Unit price (€)",
       "unitPriceRequired": "Price is required",
       "packLabel": "Pack (units)",
@@ -341,7 +356,40 @@
       "lineUpdateError": "Error updating line",
       "lineDeleted": "Line deleted",
       "lineDeleteError": "Error deleting line",
-      "loadError": "Error loading order"
+      "markedReady": "Order marked as ready to order",
+      "loadError": "Error loading order",
+      "inviteCopied": "Invite link copied to clipboard",
+      "inviteError": "Error generating invite link"
+    },
+    "invite": {
+      "title": "Order invitation",
+      "loginRequired": "You need to sign in to join this order.",
+      "loginBtn": "Sign in",
+      "loading": "Validating invitation...",
+      "invalidTitle": "Invalid invitation",
+      "invalid": "This invite link is not valid or has expired.",
+      "alreadyMemberTitle": "Already a member",
+      "alreadyMember": "You are already part of this order.",
+      "goToOrder": "View order",
+      "joinMessage": "You have been invited to join a group order.",
+      "expires": "Expires on",
+      "join": "Join order",
+      "joining": "Joining...",
+      "untitled": "Untitled order",
+      "createdAt": "Date",
+      "members": "members"
+    },
+    "ready": {
+      "step": "Product {{ current }} of {{ total }}",
+      "needed": "Units needed",
+      "units": "units",
+      "extra": "extra",
+      "exact": "Exact",
+      "suggestion": "Suggestion",
+      "noPacks": "This product has no packs available.",
+      "prev": "Previous",
+      "next": "Next",
+      "confirm": "Confirm and mark as ready"
     }
   },
   "wishlist": {

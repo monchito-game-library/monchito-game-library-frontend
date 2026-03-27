@@ -5,7 +5,11 @@ import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
-import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
+import {
+  OrderLineFormValue,
+  OrderLinePatchValue,
+  OrderLineAllocationFormValue
+} from '@/interfaces/forms/order-line-form.interface';
 
 /** Contract for the orders repository. */
 export interface OrderRepositoryContract {
@@ -47,20 +51,21 @@ export interface OrderRepositoryContract {
   delete(orderId: string): Promise<void>;
 
   /**
-   * Adds a product line to an order and returns its UUID.
+   * Adds a product line to an order on behalf of a user and returns its UUID.
    *
    * @param {string} orderId
+   * @param {string} userId
    * @param {OrderLineFormValue} formValue
    */
-  addLine(orderId: string, formValue: OrderLineFormValue): Promise<string>;
+  addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string>;
 
   /**
-   * Updates the fields of an existing order line.
+   * Updates the fields of an existing order line (price, pack, qty, notes).
    *
    * @param {string} lineId
-   * @param {Partial<OrderLineFormValue>} patch
+   * @param {OrderLinePatchValue} patch
    */
-  updateLine(lineId: string, patch: Partial<OrderLineFormValue>): Promise<void>;
+  updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void>;
 
   /**
    * Deletes a product line and its allocations (cascades via FK).
@@ -105,6 +110,33 @@ export interface OrderRepositoryContract {
    * @param {string} userId
    */
   acceptInvitation(token: string, userId: string): Promise<string>;
+
+  /**
+   * Sets the is_ready flag for a member of an order.
+   *
+   * @param {string} orderId
+   * @param {string} userId
+   * @param {boolean} isReady
+   */
+  setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void>;
+
+  /**
+   * Subscribes to real-time changes in the order_members table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever a member row changes
+   */
+  subscribeToOrderMembers(orderId: string, onChanged: () => void): () => void;
+
+  /**
+   * Subscribes to real-time changes in the order_lines table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever a line row changes
+   */
+  subscribeToOrderLines(orderId: string, onChanged: () => void): () => void;
 }
 
 /** InjectionToken for OrderRepositoryContract. */

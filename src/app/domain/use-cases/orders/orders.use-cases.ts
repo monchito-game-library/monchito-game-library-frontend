@@ -5,7 +5,11 @@ import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
-import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
+import {
+  OrderLineFormValue,
+  OrderLinePatchValue,
+  OrderLineAllocationFormValue
+} from '@/interfaces/forms/order-line-form.interface';
 import { ORDER_REPOSITORY, OrderRepositoryContract } from '@/domain/repositories/order.repository.contract';
 import { OrdersUseCasesContract } from './orders.use-cases.contract';
 
@@ -61,22 +65,23 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   }
 
   /**
-   * Adds a product line to an order and returns its UUID.
+   * Adds a product line to an order on behalf of a user and returns its UUID.
    *
    * @param {string} orderId
+   * @param {string} userId
    * @param {OrderLineFormValue} formValue
    */
-  async addLine(orderId: string, formValue: OrderLineFormValue): Promise<string> {
-    return this._repo.addLine(orderId, formValue);
+  async addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string> {
+    return this._repo.addLine(orderId, userId, formValue);
   }
 
   /**
-   * Updates the fields of an existing order line.
+   * Updates the fields of an existing order line (price, pack, qty, notes).
    *
    * @param {string} lineId
-   * @param {Partial<OrderLineFormValue>} patch
+   * @param {OrderLinePatchValue} patch
    */
-  async updateLine(lineId: string, patch: Partial<OrderLineFormValue>): Promise<void> {
+  async updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void> {
     return this._repo.updateLine(lineId, patch);
   }
 
@@ -134,5 +139,38 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
    */
   async acceptInvitation(token: string, userId: string): Promise<string> {
     return this._repo.acceptInvitation(token, userId);
+  }
+
+  /**
+   * Sets the is_ready flag for a member of an order.
+   *
+   * @param {string} orderId
+   * @param {string} userId
+   * @param {boolean} isReady
+   */
+  async setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void> {
+    return this._repo.setMemberReady(orderId, userId, isReady);
+  }
+
+  /**
+   * Subscribes to real-time changes in the order_members table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever a member row changes
+   */
+  subscribeToOrderMembers(orderId: string, onChanged: () => void): () => void {
+    return this._repo.subscribeToOrderMembers(orderId, onChanged);
+  }
+
+  /**
+   * Subscribes to real-time changes in the order_lines table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever a line row changes
+   */
+  subscribeToOrderLines(orderId: string, onChanged: () => void): () => void {
+    return this._repo.subscribeToOrderLines(orderId, onChanged);
   }
 }

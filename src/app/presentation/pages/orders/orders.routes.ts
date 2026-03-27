@@ -13,6 +13,10 @@ export const ordersRoutes: Routes = [
     canActivate: [canActivateUser]
   },
   {
+    path: 'invite/:token',
+    loadComponent: () => import('./order-invite/order-invite.component').then((m) => m.OrderInviteComponent)
+  },
+  {
     path: ':id',
     loadComponent: () => import('./order-detail/order-detail.component').then((m) => m.OrderDetailComponent),
     canActivate: [canActivateUser]

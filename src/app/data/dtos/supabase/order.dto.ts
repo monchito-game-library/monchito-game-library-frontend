@@ -3,7 +3,7 @@ export interface OrderDto {
   id: string;
   owner_id: string;
   title: string | null;
-  status: 'draft' | 'ordered' | 'shipped' | 'received';
+  status: 'draft' | 'selecting_packs' | 'ready' | 'ordered' | 'shipped' | 'received';
   order_date: string | null;
   received_date: string | null;
   shipping_cost: number | null;
@@ -14,13 +14,17 @@ export interface OrderDto {
   updated_at: string;
 }
 
-/** Row from the order_members table. */
+/** Row returned by get_order_members_info RPC (joins auth.users). */
 export interface OrderMemberDto {
   id: string;
   order_id: string;
   user_id: string;
   role: 'owner' | 'member';
   joined_at: string;
+  display_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  is_ready: boolean;
 }
 
 /** Row from the order_line_allocations table. */
@@ -37,6 +41,8 @@ export interface OrderLineDto {
   id: string;
   order_id: string;
   product_id: string;
+  requested_by: string | null;
+  quantity_needed: number | null;
   unit_price: number;
   pack_chosen: number | null;
   quantity_ordered: number | null;
@@ -57,7 +63,7 @@ export interface OrderSummaryDto extends OrderDto {
   order_members: { id: string }[];
 }
 
-/** Row from the order_invitations table. */
+/** Row from the order_invitations table with joined order summary data. */
 export interface OrderInvitationDto {
   id: string;
   order_id: string;
@@ -65,6 +71,12 @@ export interface OrderInvitationDto {
   expires_at: string | null;
   used_by: string | null;
   created_at: string;
+  orders: {
+    title: string | null;
+    created_at: string;
+    order_date: string | null;
+    order_members: { id: string }[];
+  } | null;
 }
 
 /** Payload for inserting a new order. */
@@ -74,19 +86,27 @@ export interface OrderInsertDto {
   notes: string | null;
 }
 
+/** A single pack option within an order_products row. */
+export interface OrderProductPackDto {
+  url: string;
+  price: number;
+  quantity: number;
+}
+
 /** Row from the order_products table. */
 export interface OrderProductDto {
   id: string;
   name: string;
   category: string;
-  origin: string | null;
+  notes: string | null;
+  packs: OrderProductPackDto[];
 }
 
 /** Payload for updating an existing order. */
 export interface OrderUpdateDto {
   title?: string | null;
   notes?: string | null;
-  status?: 'draft' | 'ordered' | 'shipped' | 'received';
+  status?: 'draft' | 'selecting_packs' | 'ready' | 'ordered' | 'shipped' | 'received';
   order_date?: string | null;
   received_date?: string | null;
   shipping_cost?: number | null;
@@ -99,6 +119,8 @@ export interface OrderUpdateDto {
 export interface OrderLineInsertDto {
   order_id: string;
   product_id: string;
+  requested_by: string;
+  quantity_needed: number;
   unit_price: number;
   pack_chosen: number | null;
   quantity_ordered: number | null;

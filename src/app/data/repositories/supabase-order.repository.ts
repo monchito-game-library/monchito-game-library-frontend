@@ -8,10 +8,15 @@ import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderFormValue } from '@/interfaces/forms/order-form.interface';
-import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
+import {
+  OrderLineFormValue,
+  OrderLinePatchValue,
+  OrderLineAllocationFormValue
+} from '@/interfaces/forms/order-line-form.interface';
 import {
   OrderDetailDto,
   OrderSummaryDto,
+  OrderMemberDto,
   OrderInsertDto,
   OrderUpdateDto,
   OrderLineInsertDto,
@@ -46,24 +51,30 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * @param {string} orderId
    */
   async getById(orderId: string): Promise<OrderModel> {
-    const { data, error } = await this._supabase
-      .from('orders')
-      .select(
+    const [{ data: orderData, error: orderError }, { data: membersData, error: membersError }] = await Promise.all([
+      this._supabase
+        .from('orders')
+        .select(
+          `
+          *,
+          order_lines(
+            id, order_id, product_id, requested_by, quantity_needed, unit_price, pack_chosen, quantity_ordered, notes, created_at,
+            order_products(name, category),
+            order_line_allocations(id, order_line_id, user_id, quantity_needed, quantity_this_order)
+          )
         `
-        *,
-        order_members(id, order_id, user_id, role, joined_at),
-        order_lines(
-          id, order_id, product_id, unit_price, pack_chosen, quantity_ordered, notes, created_at,
-          order_products(name, category),
-          order_line_allocations(id, order_line_id, user_id, quantity_needed, quantity_this_order)
         )
-      `
-      )
-      .eq('id', orderId)
-      .single();
+        .eq('id', orderId)
+        .single(),
+      this._supabase.rpc('get_order_members_info', { p_order_id: orderId })
+    ]);
 
-    if (error) throw new Error(`Failed to fetch order: ${error.message}`);
-    return mapOrder(data as OrderDetailDto);
+    if (orderError) throw new Error(`Failed to fetch order: ${orderError.message}`);
+    if (membersError) throw new Error(`Failed to fetch order members: ${membersError.message}`);
+
+    const dto = orderData as OrderDetailDto;
+    dto.order_members = (membersData as OrderMemberDto[]) ?? [];
+    return mapOrder(dto);
   }
 
   /**
@@ -85,9 +96,12 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
     const orderId = (data as { id: string }).id;
 
     // Add the owner as a member so RLS policies based on order_members work correctly.
+    const { data: authData } = await this._supabase.auth.getUser();
+    const displayName: string | null = authData?.user?.user_metadata?.['display_name'] ?? null;
+
     const { error: memberError } = await this._supabase
       .from('order_members')
-      .insert({ order_id: orderId, user_id: userId, role: 'owner' });
+      .insert({ order_id: orderId, user_id: userId, role: 'owner', display_name: displayName });
 
     if (memberError) throw new Error(`Failed to add owner as member: ${memberError.message}`);
     return orderId;
@@ -133,15 +147,18 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * Adds a product line to an order and returns its UUID.
    *
    * @param {string} orderId
+   * @param userId
    * @param {OrderLineFormValue} formValue
    */
-  async addLine(orderId: string, formValue: OrderLineFormValue): Promise<string> {
+  async addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string> {
     const payload: OrderLineInsertDto = {
       order_id: orderId,
       product_id: formValue.productId!,
-      unit_price: formValue.unitPrice!,
-      pack_chosen: formValue.packChosen,
-      quantity_ordered: formValue.quantityOrdered,
+      requested_by: userId,
+      quantity_needed: formValue.quantityNeeded!,
+      unit_price: 0,
+      pack_chosen: null,
+      quantity_ordered: null,
       notes: formValue.notes
     };
 
@@ -152,21 +169,23 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   }
 
   /**
-   * Updates the fields of an existing order line.
+   * Updates the fields of an existing order line (price, pack, qty, notes).
    *
    * @param {string} lineId
-   * @param {Partial<OrderLineFormValue>} patch
+   * @param {OrderLinePatchValue} patch
    */
-  async updateLine(lineId: string, patch: Partial<OrderLineFormValue>): Promise<void> {
-    const { error } = await this._supabase
-      .from('order_lines')
-      .update({
+  async updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void> {
+    const payload = Object.fromEntries(
+      Object.entries({
         unit_price: patch.unitPrice,
         pack_chosen: patch.packChosen,
         quantity_ordered: patch.quantityOrdered,
+        quantity_needed: patch.quantityNeeded,
         notes: patch.notes
-      })
-      .eq('id', lineId);
+      }).filter(([, v]) => v !== undefined)
+    );
+
+    const { error } = await this._supabase.from('order_lines').update(payload).eq('id', lineId);
 
     if (error) throw new Error(`Failed to update order line: ${error.message}`);
   }
@@ -209,7 +228,8 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   async getProducts(): Promise<OrderProductModel[]> {
     const { data, error } = await this._supabase
       .from('order_products')
-      .select('id, name, category, origin')
+      .select('id, name, category, notes, packs')
+      .eq('is_active', true)
       .order('name', { ascending: true });
 
     if (error) throw new Error(`Failed to fetch products: ${error.message}`);
@@ -236,7 +256,11 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * @param {string} token
    */
   async getInvitationByToken(token: string): Promise<OrderInvitationModel | null> {
-    const { data, error } = await this._supabase.from('order_invitations').select('*').eq('token', token).single();
+    const { data, error } = await this._supabase
+      .from('order_invitations')
+      .select('*, orders(title, created_at, order_date, order_members(id))')
+      .eq('token', token)
+      .single();
 
     if (error) return null;
     const dto = data as OrderInvitationDto;
@@ -255,9 +279,12 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
     const invitation = await this.getInvitationByToken(token);
     if (!invitation) throw new Error('Invitation not found or expired');
 
+    const { data: authData } = await this._supabase.auth.getUser();
+    const displayName: string | null = authData?.user?.user_metadata?.['display_name'] ?? null;
+
     const { error: memberError } = await this._supabase
       .from('order_members')
-      .insert({ order_id: invitation.orderId, user_id: userId, role: 'member' });
+      .insert({ order_id: invitation.orderId, user_id: userId, role: 'member', display_name: displayName });
 
     if (memberError && !memberError.message.includes('duplicate')) {
       throw new Error(`Failed to join order: ${memberError.message}`);
@@ -266,5 +293,64 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
     await this._supabase.from('order_invitations').update({ used_by: userId }).eq('token', token);
 
     return invitation.orderId;
+  }
+
+  /**
+   * Sets the is_ready flag for a member of an order.
+   *
+   * @param {string} orderId
+   * @param {string} userId
+   * @param {boolean} isReady
+   */
+  async setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void> {
+    const { error } = await this._supabase.rpc('set_member_ready', {
+      p_order_id: orderId,
+      p_user_id: userId,
+      p_is_ready: isReady
+    });
+
+    if (error) throw new Error(`Failed to update member ready state: ${error.message}`);
+  }
+
+  /**
+   * Subscribes to real-time changes in the orders table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever the order row changes
+   */
+  subscribeToOrderMembers(orderId: string, onChanged: () => void): () => void {
+    const channel = this._supabase
+      .channel(`order-${orderId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` }, () =>
+        onChanged()
+      )
+      .subscribe();
+
+    return () => {
+      void this._supabase.removeChannel(channel);
+    };
+  }
+
+  /**
+   * Subscribes to real-time changes in the order_lines table for a given order.
+   * Returns a cleanup function that removes the subscription when called.
+   *
+   * @param {string} orderId
+   * @param {() => void} onChanged - Callback invoked whenever a line row changes
+   */
+  subscribeToOrderLines(orderId: string, onChanged: () => void): () => void {
+    const channel = this._supabase
+      .channel(`order-lines-${orderId}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'order_lines', filter: `order_id=eq.${orderId}` },
+        () => onChanged()
+      )
+      .subscribe();
+
+    return () => {
+      void this._supabase.removeChannel(channel);
+    };
   }
 }

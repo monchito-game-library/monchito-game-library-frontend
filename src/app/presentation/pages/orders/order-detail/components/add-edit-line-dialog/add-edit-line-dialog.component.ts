@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -9,7 +10,7 @@ import {
 } from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
+import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
 import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -41,13 +42,14 @@ export interface AddEditLineDialogData {
     MatLabel,
     MatError,
     MatInput,
-    MatSelect,
+    MatAutocomplete,
+    MatAutocompleteTrigger,
     MatOption,
     MatButton,
     TranslocoPipe
   ]
 })
-export class AddEditLineDialogComponent {
+export class AddEditLineDialogComponent implements OnInit {
   private readonly _dialogRef: MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
     MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
   );
@@ -59,17 +61,51 @@ export class AddEditLineDialogComponent {
   /** Whether the dialog is in edit mode (line already exists). */
   readonly isEditMode: boolean = !!this.data.line;
 
+  /** Text input control used to search and display the selected product name. */
+  readonly productSearchControl: FormControl<string | null> = this._fb.control<string | null>({
+    value: this.data.line ? (this.data.products.find((p) => p.id === this.data.line!.productId)?.name ?? null) : null,
+    disabled: this.isEditMode
+  });
+
+  /** Filtered list of products based on the current search term. */
+  readonly filteredProducts: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>(this.data.products);
+
   /** Reactive form for adding or editing an order line. */
   readonly form: FormGroup<OrderLineForm> = this._fb.group<OrderLineForm>({
     productId: this._fb.control<string | null>(
       { value: this.data.line?.productId ?? null, disabled: this.isEditMode },
       Validators.required
     ),
-    unitPrice: this._fb.control<number | null>(this.data.line?.unitPrice ?? null, Validators.required),
-    packChosen: this._fb.control<number | null>(this.data.line?.packChosen ?? null),
-    quantityOrdered: this._fb.control<number | null>(this.data.line?.quantityOrdered ?? null),
+    quantityNeeded: this._fb.control<number | null>(this.data.line?.quantityNeeded ?? null, [
+      Validators.required,
+      Validators.min(1)
+    ]),
     notes: this._fb.control<string | null>(this.data.line?.notes ?? null)
   });
+
+  constructor() {
+    this.productSearchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
+      const q = (value ?? '').toLowerCase().trim();
+      this.filteredProducts.set(
+        q.length > 0
+          ? this.data.products.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q))
+          : []
+      );
+    });
+  }
+
+  ngOnInit(): void {}
+
+  /**
+   * Sets the productId form control when the user selects a product from the autocomplete.
+   *
+   * @param {MatAutocompleteSelectedEvent} event - The selection event containing the product id
+   */
+  onProductSelected(event: MatAutocompleteSelectedEvent): void {
+    const product = this.data.products.find((p) => p.id === event.option.value);
+    this.form.controls.productId.setValue(event.option.value);
+    this.productSearchControl.setValue(product?.name ?? null, { emitEvent: false });
+  }
 
   /**
    * Closes the dialog with the form value if valid, otherwise marks all fields as touched.

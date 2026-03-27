@@ -4,6 +4,14 @@ export interface OrderInvitationModel {
   id: string;
   /** UUID of the associated order. */
   orderId: string;
+  /** Title of the associated order, null if untitled. */
+  orderTitle: string | null;
+  /** ISO creation date of the associated order. */
+  orderCreatedAt: string;
+  /** ISO order date of the associated order, null if not set. */
+  orderDate: string | null;
+  /** Number of members already in the order. */
+  orderMemberCount: number;
   /** Random token used to build the invite URL. */
   token: string;
   /** ISO timestamp after which the invitation is no longer valid. Null means no expiry. */
