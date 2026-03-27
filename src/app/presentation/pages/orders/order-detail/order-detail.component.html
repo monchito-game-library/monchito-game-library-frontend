@@ -96,71 +96,41 @@
           <!-- Top: members left, status badge right -->
           <div class="order-detail-page__info-top">
             <div class="order-detail-page__members-sections">
-              <!-- Owner (siempre visible) -->
               <div class="order-detail-page__members-section">
-                <div class="order-detail-page__members-label">{{ 'orders.header.owner' | transloco }}</div>
-                @for (m of ord.members; track m.id) {
-                  @if (m.role === 'owner') {
-                    <div class="order-detail-page__member-row">
-                      @if (m.avatarUrl) {
-                        <img
-                          class="order-detail-page__member-avatar"
-                          [src]="m.avatarUrl"
-                          [alt]="m.email ?? ''"
-                          referrerpolicy="no-referrer" />
-                      } @else {
-                        <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
-                          <mat-icon>person</mat-icon>
-                        </div>
-                      }
-                      <span class="order-detail-page__member-name">{{ m.email ?? m.displayName ?? m.userId }}</span>
-                    </div>
-                  }
-                }
-              </div>
-
-              <!-- Miembros (todos, incluido owner) — solo si hay al menos un invitado -->
-              @if (ord.members.length > 1) {
-                <div class="order-detail-page__members-section">
-                  <div class="order-detail-page__members-label-row">
-                    <span class="order-detail-page__members-label">{{ 'orders.header.members' | transloco }}</span>
-                    @if (ord.status === 'draft' && !allMembersReady(ord.members)) {
-                      <span class="order-detail-page__ready-hint">
-                        {{ 'orders.header.waitingMembers' | transloco: readyCount(ord.members) }}
-                      </span>
-                    }
-                  </div>
-                  @for (m of ord.members; track m.id) {
-                    <div class="order-detail-page__member-row">
-                      @if (m.avatarUrl) {
-                        <img
-                          class="order-detail-page__member-avatar"
-                          [src]="m.avatarUrl"
-                          [alt]="m.email ?? ''"
-                          referrerpolicy="no-referrer" />
-                      } @else {
-                        <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
-                          <mat-icon>person</mat-icon>
-                        </div>
-                      }
-                      <span class="order-detail-page__member-name">{{ m.email ?? m.displayName ?? m.userId }}</span>
-                      @if (m.role === 'owner') {
-                        <span class="order-detail-page__member-owner-badge">{{
-                          'orders.header.owner' | transloco
-                        }}</span>
-                      } @else if (m.isReady) {
-                        <span class="order-detail-page__member-ready-badge">{{
-                          'orders.header.ready' | transloco
-                        }}</span>
-                      } @else if (ord.status === 'draft') {
-                        <span class="order-detail-page__member-pending-badge">{{
-                          'orders.header.pending' | transloco
-                        }}</span>
-                      }
-                    </div>
+                <div class="order-detail-page__members-label-row">
+                  <span class="order-detail-page__members-label">{{ 'orders.header.members' | transloco }}</span>
+                  @if (ord.status === 'draft' && !allMembersReady(ord.members)) {
+                    <span class="order-detail-page__ready-hint">
+                      {{ 'orders.header.waitingMembers' | transloco: readyCount(ord.members) }}
+                    </span>
                   }
                 </div>
-              }
+                @for (m of sortedMembers(ord.members); track m.id) {
+                  <div class="order-detail-page__member-row">
+                    @if (m.avatarUrl) {
+                      <img
+                        class="order-detail-page__member-avatar"
+                        [src]="m.avatarUrl"
+                        [alt]="m.email ?? ''"
+                        referrerpolicy="no-referrer" />
+                    } @else {
+                      <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
+                        <mat-icon>person</mat-icon>
+                      </div>
+                    }
+                    <span class="order-detail-page__member-name">{{ m.email ?? m.displayName ?? m.userId }}</span>
+                    @if (m.role === 'owner') {
+                      <span class="order-detail-page__member-owner-badge">{{ 'orders.header.owner' | transloco }}</span>
+                    } @else if (m.isReady && ord.status === 'draft') {
+                      <span class="order-detail-page__member-ready-badge">{{ 'orders.header.ready' | transloco }}</span>
+                    } @else if (ord.status === 'draft') {
+                      <span class="order-detail-page__member-pending-badge">{{
+                        'orders.header.pending' | transloco
+                      }}</span>
+                    }
+                  </div>
+                }
+              </div>
             </div>
 
             <!-- Status badge -->
@@ -269,6 +239,31 @@
               {{ 'orders.ready.needed' | transloco }}: <strong>{{ step.totalNeeded }}</strong>
               {{ 'orders.ready.units' | transloco }}
             </div>
+
+            @if (step.memberBreakdown.length > 0) {
+              <div class="order-detail-page__stepper-members">
+                @for (m of step.memberBreakdown; track m.userId) {
+                  <div class="order-detail-page__stepper-member-chip">
+                    @if (m.avatarUrl) {
+                      <img
+                        class="order-detail-page__stepper-member-avatar"
+                        [src]="m.avatarUrl"
+                        [alt]="m.email ?? ''"
+                        referrerpolicy="no-referrer" />
+                    } @else {
+                      <div
+                        class="order-detail-page__stepper-member-avatar order-detail-page__stepper-member-avatar--placeholder">
+                        <mat-icon>person</mat-icon>
+                      </div>
+                    }
+                    <span class="order-detail-page__stepper-member-name">{{
+                      m.displayName ?? m.email ?? m.userId
+                    }}</span>
+                    <span class="order-detail-page__stepper-member-qty">{{ m.qty }}</span>
+                  </div>
+                }
+              </div>
+            }
 
             @if (step.suggestions.length === 0) {
               <div class="order-detail-page__stepper-no-packs">{{ 'orders.ready.noPacks' | transloco }}</div>

@@ -330,6 +330,7 @@
       "dialogEditTitle": "Editar línea",
       "productLabel": "Producto",
       "productRequired": "El producto es obligatorio",
+      "productAlreadyExists": "Ya tienes este producto listado",
       "qtyNeededLabel": "¿Cuántas unidades quieres?",
       "qtyNeededRequired": "Indica al menos 1 unidad",
       "unitPriceLabel": "Precio unitario (€)",

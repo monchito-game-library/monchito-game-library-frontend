@@ -25,6 +25,8 @@ export interface AddEditLineDialogData {
   products: OrderProductModel[];
   /** Existing line data for edit mode; undefined for create mode. */
   line?: OrderLineModel;
+  /** Product IDs already added by the current user (create mode only). */
+  takenProductIds?: string[];
 }
 
 @Component({
@@ -105,6 +107,13 @@ export class AddEditLineDialogComponent implements OnInit {
     const product = this.data.products.find((p) => p.id === event.option.value);
     this.form.controls.productId.setValue(event.option.value);
     this.productSearchControl.setValue(product?.name ?? null, { emitEvent: false });
+    if (this.data.takenProductIds?.includes(event.option.value)) {
+      this.form.controls.productId.setErrors({ alreadyExists: true });
+      this.productSearchControl.setErrors({ alreadyExists: true });
+    } else {
+      this.form.controls.productId.setErrors(null);
+      this.productSearchControl.setErrors(null);
+    }
   }
 
   /**

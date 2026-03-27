@@ -29,6 +29,20 @@ import {
 } from './components/add-edit-line-dialog/add-edit-line-dialog.component';
 import { optimizePacks, PackSuggestion } from '@/domain/utils/pack-optimizer.util';
 
+/** Per-member quantity breakdown for a stepper step. */
+interface MemberQty {
+  /** UUID of the user. */
+  userId: string;
+  /** Display name of the user. */
+  displayName: string | null;
+  /** Email address of the user. */
+  email: string | null;
+  /** Avatar URL of the user. */
+  avatarUrl: string | null;
+  /** Units this member has requested for the product in this order. */
+  qty: number;
+}
+
 /** Data for a single step in the pack selection stepper. */
 interface PackStepData {
   /** UUID of the product group. */
@@ -41,6 +55,8 @@ interface PackStepData {
   suggestions: PackSuggestion[];
   /** IDs of all order_lines belonging to this product group. */
   lineIds: string[];
+  /** Per-member quantity breakdown. */
+  memberBreakdown: MemberQty[];
 }
 
 @Component({
@@ -169,6 +185,15 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   readyCount(members: OrderMemberModel[]): { ready: number; total: number } {
     const invited = members.filter((m) => m.role !== 'owner');
     return { ready: invited.filter((m) => m.isReady).length, total: invited.length };
+  }
+
+  /**
+   * Returns the members list sorted so the owner always appears first.
+   *
+   * @param {OrderMemberModel[]} members
+   */
+  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
+    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
   }
 
   /**
@@ -504,12 +529,29 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       const totalNeeded = groupLines.reduce((sum, l) => sum + (l.quantityNeeded ?? 0), 0);
       const product = this.products().find((p) => p.id === productId);
       const suggestions = product && totalNeeded > 0 ? optimizePacks(totalNeeded, product.packs) : [];
+      const qtyByUser = new Map<string, number>();
+      for (const l of groupLines) {
+        if (l.requestedBy !== null && (l.quantityNeeded ?? 0) > 0) {
+          qtyByUser.set(l.requestedBy, (qtyByUser.get(l.requestedBy) ?? 0) + (l.quantityNeeded ?? 0));
+        }
+      }
+      const memberBreakdown: MemberQty[] = Array.from(qtyByUser.entries()).map(([userId, qty]) => {
+        const member = ord.members.find((m) => m.userId === userId);
+        return {
+          userId,
+          displayName: member?.displayName ?? null,
+          email: member?.email ?? null,
+          avatarUrl: member?.avatarUrl ?? null,
+          qty
+        };
+      });
       return {
         productId,
         productName: groupLines[0].productName,
         totalNeeded,
         suggestions,
-        lineIds: groupLines.map((l) => l.id)
+        lineIds: groupLines.map((l) => l.id),
+        memberBreakdown
       };
     });
 
@@ -546,7 +588,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    */
   async onAddLine(): Promise<void> {
     if (this.products().length === 0) await this._loadProducts();
-    const data: AddEditLineDialogData = { products: this.products() };
+    const ord: OrderModel | null = this.order();
+    const userId: string | null = this.userContext.userId();
+    const takenProductIds: string[] =
+      ord && userId ? ord.lines.filter((l) => l.requestedBy === userId).map((l) => l.productId) : [];
+    const data: AddEditLineDialogData = { products: this.products(), takenProductIds };
     const result = await this._dialog
       .open<
         AddEditLineDialogComponent,
@@ -556,10 +602,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       .afterClosed()
       .toPromise();
 
-    if (!result) return;
-
-    const userId: string | null = this.userContext.userId();
-    if (!userId) return;
+    if (!result || !userId) return;
 
     try {
       await this._ordersUseCases.addLine(this._orderId, userId, result);

@@ -362,6 +362,57 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
+  .order-detail-page__stepper-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .order-detail-page__stepper-member-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+    border-radius: 2rem;
+    background: var(--mat-sys-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .order-detail-page__stepper-member-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--mat-sys-outline-variant);
+
+      mat-icon {
+        font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+
+  .order-detail-page__stepper-member-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .order-detail-page__stepper-member-qty {
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+    border-radius: 1rem;
+    padding: 1px 7px;
+  }
+
   .order-detail-page__stepper-options {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

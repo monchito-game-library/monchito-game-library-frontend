@@ -19,6 +19,9 @@
       @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
         <mat-error>{{ 'orders.lines.productRequired' | transloco }}</mat-error>
       }
+      @if (productSearchControl.hasError('alreadyExists')) {
+        <mat-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
