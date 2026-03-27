@@ -267,6 +267,17 @@
       "logoutDescription": "Sign out from your account"
     }
   },
+  "orders": {
+    "title": "Orders",
+    "empty": "No orders yet. Create the first one!",
+    "create": "New order",
+    "status": {
+      "draft": "Draft",
+      "ordered": "Ordered",
+      "shipped": "Shipped",
+      "received": "Received"
+    }
+  },
   "wishlist": {
     "addBtn": "Add game",
     "loading": "Loading wishlist...",
@@ -315,6 +326,7 @@
   "nav": {
     "collection": "Collection",
     "wishlist": "Wishlist",
+    "orders": "Orders",
     "add": "Add",
     "settings": "Settings",
     "logout": "Log out",

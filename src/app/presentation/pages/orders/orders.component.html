@@ -1,0 +1,26 @@
+<div class="orders-page">
+  <div class="orders-page__header">
+    <h1 class="orders-page__title">{{ 'orders.title' | transloco }}</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="orders-page__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="orders-page__empty">
+      <mat-icon class="orders-page__empty-icon">shopping_cart</mat-icon>
+      <p class="orders-page__empty-text">{{ 'orders.empty' | transloco }}</p>
+    </div>
+  } @else {
+    <div class="orders-page__list">
+      @for (order of orders(); track order.id) {
+        <app-order-summary-card [order]="order" (openOrder)="onOpenOrder($event)" />
+      }
+    </div>
+  }
+
+  <button mat-fab class="orders-page__fab" (click)="onCreateOrder()" [attr.aria-label]="'orders.create' | transloco">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

@@ -268,6 +268,17 @@
       "logoutDescription": "Cerrar sesión en tu cuenta"
     }
   },
+  "orders": {
+    "title": "Pedidos",
+    "empty": "Aún no hay pedidos. ¡Crea el primero!",
+    "create": "Nuevo pedido",
+    "status": {
+      "draft": "Borrador",
+      "ordered": "Pedido",
+      "shipped": "Enviado",
+      "received": "Recibido"
+    }
+  },
   "wishlist": {
     "addBtn": "Añadir juego",
     "loading": "Cargando deseados...",
@@ -316,6 +327,7 @@
   "nav": {
     "collection": "Colección",
     "wishlist": "Deseados",
+    "orders": "Pedidos",
     "add": "Añadir",
     "settings": "Ajustes",
     "logout": "Salir",
