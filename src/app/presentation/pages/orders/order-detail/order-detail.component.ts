@@ -92,7 +92,6 @@ export class OrderDetailComponent implements OnInit {
   ngOnInit(): void {
     this._orderId = this._route.snapshot.paramMap.get('id') ?? '';
     void this._loadOrder();
-    void this._loadProducts();
   }
 
   /**
@@ -246,6 +245,7 @@ export class OrderDetailComponent implements OnInit {
    * Opens the add-line dialog and, if confirmed, adds the line to the order.
    */
   async onAddLine(): Promise<void> {
+    if (this.products().length === 0) await this._loadProducts();
     const data: AddEditLineDialogData = { products: this.products() };
     const result = await this._dialog
       .open<
@@ -273,6 +273,7 @@ export class OrderDetailComponent implements OnInit {
    * @param {OrderLineModel} line - The line to edit
    */
   async onEditLine(line: OrderLineModel): Promise<void> {
+    if (this.products().length === 0) await this._loadProducts();
     const data: AddEditLineDialogData = { products: this.products(), line };
     const result = await this._dialog
       .open<
