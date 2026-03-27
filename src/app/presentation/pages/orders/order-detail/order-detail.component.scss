@@ -186,6 +186,9 @@
   }
 
   .order-detail-page__cost-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     .order-detail-page__cost-row {
       display: flex;
       justify-content: space-between;
