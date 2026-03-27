@@ -10,7 +10,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
@@ -56,6 +56,7 @@ export class OrderDetailComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private _orderId: string = '';
 
@@ -114,15 +115,25 @@ export class OrderDetailComponent implements OnInit {
   }
 
   /**
-   * Returns the quantity allocated for the current user on a given line, or '—' if none.
+   * Returns the quantityThisOrder allocated for the current user on a given line, or 0 if none.
    *
    * @param {OrderLineModel} line - The order line to check
    */
-  getMyQtyForLine(line: OrderLineModel): string {
+  getMyAllocationQty(line: OrderLineModel): number {
     const userId: string | null = this.userContext.userId();
-    if (!userId) return '—';
-    const alloc = line.allocations.find((a) => a.userId === userId);
-    return alloc ? String(alloc.quantityThisOrder) : '—';
+    if (!userId) return 0;
+    return line.allocations.find((a) => a.userId === userId)?.quantityThisOrder ?? 0;
+  }
+
+  /**
+   * Returns the quantityNeeded for the current user on a given line, or 0 if none.
+   *
+   * @param {OrderLineModel} line - The order line to check
+   */
+  getMyAllocationNeeded(line: OrderLineModel): number {
+    const userId: string | null = this.userContext.userId();
+    if (!userId) return 0;
+    return line.allocations.find((a) => a.userId === userId)?.quantityNeeded ?? 0;
   }
 
   /**
@@ -195,11 +206,11 @@ export class OrderDetailComponent implements OnInit {
     try {
       const patch: Partial<OrderFormValue> = this.headerForm.getRawValue();
       await this._ordersUseCases.update(this._orderId, patch);
-      this._snackBar.open('orders.snack.updated', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
       this.editingHeader.set(false);
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.updateError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
     } finally {
       this.saving.set(false);
     }
@@ -225,7 +236,7 @@ export class OrderDetailComponent implements OnInit {
       await this._ordersUseCases.update(this._orderId, { status: next });
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.updateError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
     } finally {
       this.saving.set(false);
     }
@@ -249,10 +260,10 @@ export class OrderDetailComponent implements OnInit {
 
     try {
       await this._ordersUseCases.addLine(this._orderId, result);
-      this._snackBar.open('orders.snack.lineAdded', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineAdded'), '', { duration: 3000 });
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.lineAddError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineAddError'), '', { duration: 3000 });
     }
   }
 
@@ -276,10 +287,10 @@ export class OrderDetailComponent implements OnInit {
 
     try {
       await this._ordersUseCases.updateLine(line.id, result);
-      this._snackBar.open('orders.snack.lineUpdated', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdated'), '', { duration: 3000 });
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.lineUpdateError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdateError'), '', { duration: 3000 });
     }
   }
 
@@ -303,10 +314,10 @@ export class OrderDetailComponent implements OnInit {
 
     try {
       await this._ordersUseCases.deleteLine(lineId);
-      this._snackBar.open('orders.snack.lineDeleted', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleted'), '', { duration: 3000 });
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.lineDeleteError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleteError'), '', { duration: 3000 });
     }
   }
 
@@ -329,10 +340,10 @@ export class OrderDetailComponent implements OnInit {
 
     try {
       await this._ordersUseCases.delete(this._orderId);
-      this._snackBar.open('orders.snack.deleted', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.deleted'), '', { duration: 3000 });
       await this._router.navigate(['/orders']);
     } catch {
-      this._snackBar.open('orders.snack.deleteError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.deleteError'), '', { duration: 3000 });
     }
   }
 
@@ -350,7 +361,7 @@ export class OrderDetailComponent implements OnInit {
       await this._ordersUseCases.upsertAllocation(lineId, userId, formValue);
       await this._loadOrder();
     } catch {
-      this._snackBar.open('orders.snack.updateError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
     }
   }
 
@@ -365,7 +376,7 @@ export class OrderDetailComponent implements OnInit {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
     } catch {
-      this._snackBar.open('orders.snack.loadError', '', { duration: 3000 });
+      this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
     } finally {
       this.loading.set(false);
     }

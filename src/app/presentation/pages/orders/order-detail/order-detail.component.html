@@ -179,7 +179,20 @@
                   <td>{{ line.unitPrice | number: '1.2-2' }} €</td>
                   <td>{{ line.packChosen ?? '—' }}</td>
                   <td>{{ line.quantityOrdered ?? '—' }}</td>
-                  <td>{{ getMyQtyForLine(line) }}</td>
+                  <td>
+                    <input
+                      class="order-detail-page__qty-input"
+                      type="number"
+                      min="0"
+                      #qtyInput
+                      [value]="getMyAllocationQty(line)"
+                      (change)="
+                        onUpsertAllocation(line.id, {
+                          quantityThisOrder: +qtyInput.value,
+                          quantityNeeded: getMyAllocationNeeded(line)
+                        })
+                      " />
+                  </td>
                   <td>{{ line.unitPrice * (line.quantityOrdered ?? 0) | number: '1.2-2' }} €</td>
                   @if (isOwner()) {
                     <td class="order-detail-page__line-actions">
