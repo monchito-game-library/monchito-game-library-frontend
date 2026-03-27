@@ -14,7 +14,7 @@
       </div>
 
       <div class="order-detail-page__title-row">
-        <h1 class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</h1>
+        <div class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</div>
 
         <div class="order-detail-page__header-actions">
           @if (isOwner() && !editingHeader()) {
@@ -30,59 +30,59 @@
     </div>
 
     <!-- Info section -->
-    <section class="order-detail-page__section">
+    <div class="order-detail-page__section">
       @if (!editingHeader()) {
         <div class="order-detail-page__info">
-          <span class="order-detail-page__status-badge order-detail-page__status-badge--{{ ord.status }}">
+          <div class="order-detail-page__status-badge order-detail-page__status-badge--{{ ord.status }}">
             {{ 'orders.status.' + ord.status | transloco }}
-          </span>
+          </div>
 
           @if (ord.orderDate) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.orderDate' | transloco }}</span>
-              <span>{{ ord.orderDate | date: 'dd/MM/yyyy' }}</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.orderDate' | transloco }}</div>
+              <div>{{ ord.orderDate | date: 'dd/MM/yyyy' }}</div>
             </div>
           }
 
           @if (ord.receivedDate) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.receivedDate' | transloco }}</span>
-              <span>{{ ord.receivedDate | date: 'dd/MM/yyyy' }}</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.receivedDate' | transloco }}</div>
+              <div>{{ ord.receivedDate | date: 'dd/MM/yyyy' }}</div>
             </div>
           }
 
           @if (ord.shippingCost !== null) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.shippingCost' | transloco }}</span>
-              <span>{{ ord.shippingCost | number: '1.2-2' }} €</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.shippingCost' | transloco }}</div>
+              <div>{{ ord.shippingCost | number: '1.2-2' }} €</div>
             </div>
           }
 
           @if (ord.paypalFee !== null) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.paypalFee' | transloco }}</span>
-              <span>{{ ord.paypalFee | number: '1.2-2' }} €</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.paypalFee' | transloco }}</div>
+              <div>{{ ord.paypalFee | number: '1.2-2' }} €</div>
             </div>
           }
 
           @if (ord.discountAmount !== null) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.discountAmount' | transloco }}</span>
-              <span>-{{ ord.discountAmount | number: '1.2-2' }} €</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.discountAmount' | transloco }}</div>
+              <div>-{{ ord.discountAmount | number: '1.2-2' }} €</div>
             </div>
           }
 
           @if (ord.notes) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.notes' | transloco }}</span>
-              <span>{{ ord.notes }}</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.notes' | transloco }}</div>
+              <div>{{ ord.notes }}</div>
             </div>
           }
 
           @if (ord.members.length > 0) {
             <div class="order-detail-page__info-row">
-              <span class="order-detail-page__info-label">{{ 'orders.header.members' | transloco }}</span>
-              <span>{{ ord.members.length }}</span>
+              <div class="order-detail-page__info-label">{{ 'orders.header.members' | transloco }}</div>
+              <div>{{ ord.members.length }}</div>
             </div>
           }
 
@@ -137,12 +137,12 @@
           </div>
         </form>
       }
-    </section>
+    </div>
 
     <!-- Lines section -->
-    <section class="order-detail-page__section">
+    <div class="order-detail-page__section">
       <div class="order-detail-page__section-header">
-        <h2 class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</h2>
+        <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
         @if (isOwner()) {
           <button mat-flat-button (click)="onAddLine()">
             <mat-icon>add</mat-icon>
@@ -152,7 +152,7 @@
       </div>
 
       @if (ord.lines.length === 0) {
-        <p class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</p>
+        <div class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</div>
       } @else {
         <div class="order-detail-page__table-wrapper">
           <table class="order-detail-page__table">
@@ -213,24 +213,24 @@
           </table>
         </div>
       }
-    </section>
+    </div>
 
     <!-- Cost summary section -->
-    <section class="order-detail-page__section order-detail-page__cost-summary">
-      <h2 class="order-detail-page__section-title">{{ 'orders.cost.title' | transloco }}</h2>
+    <div class="order-detail-page__section order-detail-page__cost-summary">
+      <div class="order-detail-page__section-title">{{ 'orders.cost.title' | transloco }}</div>
 
       <div class="order-detail-page__cost-row">
-        <span>{{ 'orders.cost.mySubtotal' | transloco }}</span>
-        <span>{{ computeMySubtotal() | number: '1.2-2' }} €</span>
+        <div>{{ 'orders.cost.mySubtotal' | transloco }}</div>
+        <div>{{ computeMySubtotal() | number: '1.2-2' }} €</div>
       </div>
       <div class="order-detail-page__cost-row">
-        <span>{{ 'orders.cost.extrasShare' | transloco }}</span>
-        <span>{{ computeMyTotal() - computeMySubtotal() | number: '1.2-2' }} €</span>
+        <div>{{ 'orders.cost.extrasShare' | transloco }}</div>
+        <div>{{ computeMyTotal() - computeMySubtotal() | number: '1.2-2' }} €</div>
       </div>
       <div class="order-detail-page__cost-row order-detail-page__cost-row--total">
-        <span>{{ 'orders.cost.myTotal' | transloco }}</span>
-        <span>{{ computeMyTotal() | number: '1.2-2' }} €</span>
+        <div>{{ 'orders.cost.myTotal' | transloco }}</div>
+        <div>{{ computeMyTotal() | number: '1.2-2' }} €</div>
       </div>
-    </section>
+    </div>
   }
 </div>
