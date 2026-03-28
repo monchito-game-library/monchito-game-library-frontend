@@ -48,6 +48,13 @@
     background: var(--mat-sys-surface-container);
     border-radius: 0.75rem;
     padding: 1.5rem;
+
+    &--editing {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .order-detail-page__section-header {
@@ -55,7 +62,6 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
-    transition: margin-bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--collapsed {
       margin-bottom: 0;
@@ -81,41 +87,30 @@
   .order-detail-page__section-body {
     display: grid;
     grid-template-rows: 1fr;
-    /* expansión: sin delay, rápida */
-    transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--collapsed {
       grid-template-rows: 0fr;
-      /* colapso: espera el fade-out del inner */
-      transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-
-      .order-detail-page__section-body-inner {
-        opacity: 0;
-        /* fade-out inmediato al colapsar */
-        transition: opacity 0.3s ease;
-      }
     }
   }
 
   .order-detail-page__section-body-inner {
     overflow: hidden;
-    opacity: 1;
-    /* fade-in: espera un poco a que el grid empiece a abrirse */
-    transition: opacity 0.25s ease 0.25s;
+    min-height: 0;
   }
 
   .order-detail-page__form-expander {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--expanded {
       grid-template-rows: 1fr;
+      flex: 1;
     }
   }
 
   .order-detail-page__form-expander-inner {
     overflow: hidden;
+    min-height: 0;
   }
 
   .order-detail-page__edit-form {
@@ -351,6 +346,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+    margin-top: auto;
     padding-top: 1rem;
   }
 
@@ -378,6 +374,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  .order-detail-page__section--lines-editing {
+    flex: none;
   }
 
   .order-detail-page__table-wrapper {
@@ -748,16 +748,5 @@
     .order-detail-page__info-label {
       min-width: unset;
     }
-  }
-}
-
-@keyframes form-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-1.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

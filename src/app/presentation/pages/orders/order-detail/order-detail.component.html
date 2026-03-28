@@ -92,7 +92,7 @@
     </div>
 
     <!-- Info section -->
-    <div class="order-detail-page__section">
+    <div class="order-detail-page__section" [class.order-detail-page__section--editing]="editingHeader()">
       <!-- Info (siempre visible, deshabilitada cuando se edita) -->
       <div class="order-detail-page__info" [class.order-detail-page__info--disabled]="editingHeader()">
         <!-- Top: members left, status badge right -->
@@ -262,24 +262,28 @@
                 </mat-form-field>
               </div>
             </div>
-
-            <div class="order-detail-page__form-actions">
-              <button mat-button type="button" (click)="onCancelEdit()">
-                {{ 'orders.header.cancel' | transloco }}
-              </button>
-              <button mat-flat-button type="button" (click)="onSaveHeader()" [disabled]="saving()">
-                {{ 'orders.header.save' | transloco }}
-              </button>
-            </div>
           </form>
         </div>
       </div>
+
+      @if (editingHeader()) {
+        <div class="order-detail-page__form-actions">
+          <button mat-button type="button" (click)="onCancelEdit()">
+            {{ 'orders.header.cancel' | transloco }}
+          </button>
+          <button mat-flat-button type="button" (click)="onSaveHeader()" [disabled]="saving()">
+            {{ 'orders.header.save' | transloco }}
+          </button>
+        </div>
+      }
     </div>
 
     <!-- Lines section o stepper -->
     @if (selectingPacks() && isOwner()) {
       <!-- Pack selection stepper -->
-      <div class="order-detail-page__section order-detail-page__section--lines order-detail-page__stepper">
+      <div
+        class="order-detail-page__section order-detail-page__section--lines order-detail-page__stepper"
+        [class.order-detail-page__section--lines-editing]="editingHeader()">
         <div
           class="order-detail-page__stepper-topbar"
           [class.order-detail-page__section-header--collapsed]="editingHeader()">
@@ -390,7 +394,9 @@
       </div>
     } @else {
       <!-- Lines section -->
-      <div class="order-detail-page__section order-detail-page__section--lines">
+      <div
+        class="order-detail-page__section order-detail-page__section--lines"
+        [class.order-detail-page__section--lines-editing]="editingHeader()">
         <div
           class="order-detail-page__section-header"
           [class.order-detail-page__section-header--collapsed]="editingHeader()">
