@@ -92,7 +92,7 @@
     </div>
 
     <!-- Info section -->
-    <div class="order-detail-page__section" [class.order-detail-page__section--editing]="editingHeader()">
+    <div class="order-detail-page__section" [class.order-detail-page__section--editing]="editingLayout()">
       <!-- Info (siempre visible, deshabilitada cuando se edita) -->
       <div class="order-detail-page__info" [class.order-detail-page__info--disabled]="editingHeader()">
         <!-- Top: members left, status badge right -->
@@ -283,7 +283,7 @@
       <!-- Pack selection stepper -->
       <div
         class="order-detail-page__section order-detail-page__section--lines order-detail-page__stepper"
-        [class.order-detail-page__section--lines-editing]="editingHeader()">
+        [class.order-detail-page__section--lines-editing]="editingLayout()">
         <div
           class="order-detail-page__stepper-topbar"
           [class.order-detail-page__section-header--collapsed]="editingHeader()">
@@ -396,7 +396,7 @@
       <!-- Lines section -->
       <div
         class="order-detail-page__section order-detail-page__section--lines"
-        [class.order-detail-page__section--lines-editing]="editingHeader()">
+        [class.order-detail-page__section--lines-editing]="editingLayout()">
         <div
           class="order-detail-page__section-header"
           [class.order-detail-page__section-header--collapsed]="editingHeader()">
