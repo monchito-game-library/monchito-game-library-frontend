@@ -68,6 +68,33 @@ export class OrderCostSummaryComponent {
   }
 
   /**
+   * Computes the current user's proportional share of the shipping cost.
+   * Proportional to their products subtotal relative to the order total.
+   */
+  computeMyShippingShare(): number {
+    const mySubtotal: number = this.computeMySubtotal();
+    const total: number = this.computeTotalSubtotal();
+    return total > 0 ? (mySubtotal / total) * (this.order().shippingCost ?? 0) : 0;
+  }
+
+  /**
+   * Computes the current user's proportional share of the PayPal fee.
+   * Proportional to their products subtotal relative to the order total.
+   */
+  computeMyPaypalShare(): number {
+    const mySubtotal: number = this.computeMySubtotal();
+    const total: number = this.computeTotalSubtotal();
+    return total > 0 ? (mySubtotal / total) * (this.order().paypalFee ?? 0) : 0;
+  }
+
+  /**
+   * Computes the current user's total (products + proportional shipping + proportional PayPal).
+   */
+  computeMyTotal(): number {
+    return this.computeMySubtotal() + this.computeMyShippingShare() + this.computeMyPaypalShare();
+  }
+
+  /**
    * Computes the total extras (shipping + PayPal fee − discount).
    * When discountType is 'percentage', the discount is a percentage of the products subtotal.
    */
@@ -81,34 +108,20 @@ export class OrderCostSummaryComponent {
   }
 
   /**
-   * Computes the current user's proportional share of the extras.
-   */
-  computeMyExtrasShare(): number {
-    const mySubtotal: number = this.computeMySubtotal();
-    const total: number = this.computeTotalSubtotal();
-    return total > 0 ? (mySubtotal / total) * this.computeExtras() : 0;
-  }
-
-  /**
-   * Computes the current user's total (subtotal + proportional extras share).
-   */
-  computeMyTotal(): number {
-    return this.computeMySubtotal() + this.computeMyExtrasShare();
-  }
-
-  /**
    * Computes the cost breakdown for every member of the order, sorted by role (owner first).
+   * Shipping and PayPal are split proportionally to each member's products subtotal.
    */
   computeMemberCosts(): MemberCost[] {
     const ord: OrderModel = this.order();
     const totalSubtotal: number = this.computeTotalSubtotal();
-    const extras: number = this.computeExtras();
+    const shipping: number = ord.shippingCost ?? 0;
+    const paypal: number = ord.paypalFee ?? 0;
 
     return this.sortedMembers(ord.members).map((member) => {
       const subtotal = ord.lines
         .filter((l) => l.requestedBy === member.userId)
         .reduce((sum, l) => sum + l.unitPrice * (l.quantityOrdered ?? 0), 0);
-      const extrasShare = totalSubtotal > 0 ? (subtotal / totalSubtotal) * extras : 0;
+      const extrasShare = totalSubtotal > 0 ? (subtotal / totalSubtotal) * (shipping + paypal) : 0;
       return {
         userId: member.userId,
         displayName: member.displayName,

@@ -342,7 +342,8 @@
     "cost": {
       "mySubtotal": "Mi parte",
       "myProductsCost": "Productos",
-      "extrasShare": "Extras",
+      "myShipping": "Envío",
+      "myPaypal": "Comisión PayPal",
       "orderTotal": "Total pedido"
     },
     "snack": {

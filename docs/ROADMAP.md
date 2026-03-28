@@ -9,7 +9,7 @@
 | Mejora | Prioridad |
 |---|---|
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
-| [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
+| ~~[Pedidos (`/orders`)](#pedidos-orders)~~ | ✅ Implementado |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
@@ -70,18 +70,18 @@ Actualmente pulsar en una card abre directamente el formulario de edición. Con 
 
 ---
 
-## Media-alta prioridad
+## ~~Media-alta prioridad~~
 
-### Pedidos (`/orders`)
+### ~~Pedidos (`/orders`)~~ ✅ Implementado
 
 Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
 
 Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuarios de la app). En el caso grupal, el owner invita a sus amigos mediante un enlace/código y cada uno rellena sus cantidades. El sistema calcula automáticamente el pack óptimo a pedir y lo que debe pagar cada participante.
 
-#### Estado actual
+#### Estado actual ✅ Todo implementado
 
-- `order_products` ✅ — tabla creada y poblada, gestionada desde `/management/protectors`.
-- `orders`, `order_members`, `order_invitations`, `order_lines`, `order_line_allocations` ❌ — pendiente de crear en Supabase.
+- Todas las tablas creadas y operativas en Supabase.
+- Las 5 fases del plan completadas. Ver arquitectura de sub-componentes en `docs/frontend/ORDER_DETAIL.md`.
 
 #### Decisiones
 
@@ -89,13 +89,13 @@ Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuari
 
 #### Plan de implementación por fases
 
-| Fase | Qué se hace | Rama sugerida |
+| Fase | Qué se hace | Estado |
 |---|---|---|
-| 1 | Crear tablas en Supabase + RLS | — (SQL directo en Supabase) |
-| 2 | Dominio Angular: contratos, use cases, DTOs, mappers, modelos | `feat/orders` |
-| 3 | Lista de pedidos (`/orders`) + nav | `feat/orders` |
-| 4 | Detalle de pedido + formulario + cálculo de costes | `feat/orders` |
-| 5 | Flujo de invitación | `feat/orders` |
+| 1 | Crear tablas en Supabase + RLS | ✅ |
+| 2 | Dominio Angular: contratos, use cases, DTOs, mappers, modelos | ✅ |
+| 3 | Lista de pedidos (`/orders`) + nav | ✅ |
+| 4 | Detalle de pedido + formulario + cálculo de costes | ✅ |
+| 5 | Flujo de invitación | ✅ |
 
 #### Fase 1 — SQL para Supabase
 
@@ -275,7 +275,7 @@ presentation/
 3. Los amigos aceptan la invitación y se unen como miembros — cada uno rellena cuánto necesita de cada producto.
 4. La vista de detalle muestra el total del grupo por producto y sugiere qué pack comprar (el más económico que cubra la suma total).
 5. El owner elige el pack definitivo, marca el pedido como `ordered` y el sistema calcula el coste por persona (producto + envío + fee de PayPal, prorrateados; descuento opcional).
-6. El pedido avanza por estados: `draft → ordered → shipped → received`.
+6. El pedido avanza por estados: `draft → selecting_packs → ready → ordered → shipped → received`.
 
 #### Distinción cantidad necesitada / cantidad en este pedido
 
@@ -391,12 +391,14 @@ CREATE TABLE order_line_allocations (
 Para cada miembro, el coste total se calcula como:
 
 ```
-coste_productos   = Σ (quantity_this_order × unit_price) por cada línea
-parte_envio       = shipping_cost / número_de_miembros
-parte_paypal      = paypal_fee / número_de_miembros
-descuento_propo   = discount_amount × (coste_productos / total_productos_pedido)
-total_a_pagar     = coste_productos + parte_envio + parte_paypal - descuento_propo
+coste_productos   = Σ (quantity_this_order × unit_price) por cada línea del miembro
+proporcion        = coste_productos / total_productos_pedido
+parte_envio       = shipping_cost × proporcion   (proporcional a lo pedido, no igual entre miembros)
+parte_paypal      = paypal_fee × proporcion       (ídem)
+total_a_pagar     = coste_productos + parte_envio + parte_paypal
 ```
+
+> **Nota:** el descuento (`discount_amount`) está modelado en la BD pero no se aplica actualmente en el desglose de "Mi parte". El envío y la comisión de PayPal se reparten de forma **proporcional** al valor de lo que ha pedido cada miembro (quien pide más, paga más de los gastos comunes).
 
 #### Sugerencia de pack óptimo
 
@@ -407,13 +409,18 @@ Para cada línea el sistema muestra:
 
 El owner toma la decisión final de qué pack elegir.
 
-#### Presentación
+#### Presentación ✅ Implementado
 
-- Nueva ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil).
-- **Lista de pedidos**: estado visual, total estimado, número de participantes.
-- **Vista de detalle**: tabla de productos con cantidades por participante, resumen de costes por persona, sugerencia de pack óptimo.
-- **Flujo de invitación**: botón "Invitar" genera un enlace copiable; el destinatario al abrirlo ve el pedido y puede unirse con un clic (requiere estar autenticado).
-- **Permisos visuales**: los miembros solo ven activo el input de sus propias cantidades; el owner ve todo editable.
+- Ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil). ✅
+- **Lista de pedidos**: badge de estado, número de participantes, fecha del pedido. ✅
+- **Vista de detalle** descompuesta en 4 sub-componentes independientes (ver `docs/frontend/ORDER_DETAIL.md`):
+  - `OrderInfoSectionComponent` — cabecera editable (título, estado, fechas, costes, miembros).
+  - `OrderProductListComponent` — tabla de líneas con scroll, agrupación por producto en estados no-draft, link directo al proveedor por línea.
+  - `OrderStepperComponent` — stepper paso a paso para que el owner elija el pack óptimo de cada producto (estado `selecting_packs`).
+  - `OrderCostSummaryComponent` — desglose de costes: "Mi parte" (productos + envío proporcional + PayPal proporcional) y total del pedido por miembro.
+- **Flujo de invitación**: botón genera token + copia URL al portapapeles; el destinatario acepta con un clic (requiere cuenta). ✅
+- **Permisos visuales**: en `draft` cada miembro solo ve sus propias líneas; el owner ve todas. ✅
+- **Avance/retroceso de estado**: el owner puede avanzar o retroceder el estado con los botones de flecha en la cabecera. ✅
 
 #### ~~Gestión de protectores (admin)~~ ✅ Implementado
 

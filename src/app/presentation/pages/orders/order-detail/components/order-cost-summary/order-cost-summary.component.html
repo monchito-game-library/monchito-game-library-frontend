@@ -17,10 +17,18 @@
         <span>{{ 'orders.cost.myProductsCost' | transloco }}</span>
         <span>{{ computeMySubtotal() | number: '1.2-2' }} €</span>
       </div>
-      <div class="order-detail-page__cost-detail-row">
-        <span>{{ 'orders.cost.extrasShare' | transloco }}</span>
-        <span>{{ computeMyExtrasShare() | number: '1.2-2' }} €</span>
-      </div>
+      @if ((order().shippingCost ?? 0) > 0) {
+        <div class="order-detail-page__cost-detail-row">
+          <span>{{ 'orders.cost.myShipping' | transloco }}</span>
+          <span>{{ computeMyShippingShare() | number: '1.2-2' }} €</span>
+        </div>
+      }
+      @if ((order().paypalFee ?? 0) > 0) {
+        <div class="order-detail-page__cost-detail-row">
+          <span>{{ 'orders.cost.myPaypal' | transloco }}</span>
+          <span>{{ computeMyPaypalShare() | number: '1.2-2' }} €</span>
+        </div>
+      }
     </div>
   </div>
 </div>

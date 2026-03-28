@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   OnDestroy,
   OnInit,
-  Signal,
   signal,
   ViewChild,
   WritableSignal
@@ -33,41 +31,12 @@ import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/f
 import { OrderInfoSectionComponent } from './components/order-info-section/order-info-section.component';
 import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
 import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
+import { MemberQty, OrderStepperComponent, PackStepData } from './components/order-stepper/order-stepper.component';
 import {
   AddEditLineDialogComponent,
   AddEditLineDialogData
 } from './components/add-edit-line-dialog/add-edit-line-dialog.component';
-import { optimizePacks, PackSuggestion } from '@/domain/utils/pack-optimizer.util';
-
-/** Per-member quantity breakdown for a stepper step. */
-interface MemberQty {
-  /** UUID of the user. */
-  userId: string;
-  /** Display name of the user. */
-  displayName: string | null;
-  /** Email address of the user. */
-  email: string | null;
-  /** Avatar URL of the user. */
-  avatarUrl: string | null;
-  /** Units this member has requested for the product in this order. */
-  qty: number;
-}
-
-/** Data for a single step in the pack selection stepper. */
-interface PackStepData {
-  /** UUID of the product group. */
-  productId: string;
-  /** Display name of the product. */
-  productName: string;
-  /** Total units needed across all member lines for this product. */
-  totalNeeded: number;
-  /** Suggestions ordered by cost: [exact, ...rounded]. */
-  suggestions: PackSuggestion[];
-  /** IDs of all order_lines belonging to this product group. */
-  lineIds: string[];
-  /** Per-member quantity breakdown. */
-  memberBreakdown: MemberQty[];
-}
+import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
 
 @Component({
   selector: 'app-order-detail',
@@ -86,7 +55,8 @@ interface PackStepData {
     TranslocoPipe,
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,
-    OrderProductListComponent
+    OrderProductListComponent,
+    OrderStepperComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
@@ -131,24 +101,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Steps for the pack selection stepper, one per product group. */
   readonly packSteps: WritableSignal<PackStepData[]> = signal<PackStepData[]>([]);
 
-  /** Index of the current step in the stepper. */
-  readonly currentStep: WritableSignal<number> = signal<number>(0);
-
-  /** Map of productId → selected suggestion index (0 = exact, 1-2 = rounded). */
-  readonly stepSelections: WritableSignal<Map<string, number>> = signal<Map<string, number>>(new Map());
-
-  /** Set of productIds that have been explicitly clicked by the owner in the stepper. */
-  private readonly _confirmedSelections: WritableSignal<Set<string>> = signal<Set<string>>(new Set());
-
-  /**
-   * True when the owner has explicitly clicked an option for every product step that has suggestions.
-   * Steps with no suggestions (no packs configured) are excluded from the requirement.
-   */
-  readonly allPacksSelected: Signal<boolean> = computed(() => {
-    const confirmed = this._confirmedSelections();
-    const steps = this.packSteps().filter((s) => s.suggestions.length > 0);
-    return steps.length > 0 && steps.every((s) => confirmed.has(s.productId));
-  });
+  /** Whether all pack steps have been confirmed by the owner. Updated via stepper output. */
+  readonly allPacksSelected: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Status progression order. */
   readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
@@ -305,78 +259,13 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       await this._ordersUseCases.update(this._orderId, { status: prev });
       this.packSteps.set([]);
-      this.stepSelections.set(new Map());
-      this.currentStep.set(0);
-      this._confirmedSelections.set(new Set());
+      this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
     } finally {
       this.saving.set(false);
     }
-  }
-
-  /**
-   * Returns the suggestion index currently selected for a given product in the stepper.
-   *
-   * @param {string} productId - UUID of the product group
-   */
-  getStepSelection(productId: string): number {
-    return this.stepSelections().get(productId) ?? 0;
-  }
-
-  /**
-   * Returns the per-member quantity breakdown for a step, adjusted proportionally
-   * to the currently selected suggestion's totalUnits. Falls back to requested
-   * quantities if no selection has been confirmed yet.
-   *
-   * @param {PackStepData} step - The current stepper step
-   */
-  getMemberAllocations(step: PackStepData): MemberQty[] {
-    const confirmed = this._confirmedSelections().has(step.productId);
-    if (!confirmed || step.suggestions.length === 0) return step.memberBreakdown;
-
-    const idx = this.getStepSelection(step.productId);
-    const suggestion = step.suggestions[idx];
-    if (!suggestion) return step.memberBreakdown;
-
-    const quantities = step.memberBreakdown.map((m) => m.qty);
-    const allocated = this._distributeProportionally(quantities, suggestion.totalUnits);
-    return step.memberBreakdown.map((m, i) => ({ ...m, qty: allocated[i] }));
-  }
-
-  /**
-   * Updates the selected suggestion index for the given product and saves it to the DB immediately.
-   *
-   * @param {string} productId - UUID of the product group
-   * @param {number} idx - Index of the chosen suggestion
-   */
-  onSelectPackOption(productId: string, idx: number): void {
-    const map = new Map(this.stepSelections());
-    map.set(productId, idx);
-    this.stepSelections.set(map);
-
-    const confirmed = new Set(this._confirmedSelections());
-    confirmed.add(productId);
-    this._confirmedSelections.set(confirmed);
-
-    void this._savePackSelection(productId, idx);
-  }
-
-  /**
-   * Moves to the previous step in the pack selection stepper and auto-confirms it.
-   */
-  onPrevStep(): void {
-    this.currentStep.update((s) => Math.max(0, s - 1));
-    this._autoConfirmCurrentStep();
-  }
-
-  /**
-   * Moves to the next step in the pack selection stepper and auto-confirms it.
-   */
-  onNextStep(): void {
-    this.currentStep.update((s) => Math.min(this.packSteps().length - 1, s + 1));
-    this._autoConfirmCurrentStep();
   }
 
   /**
@@ -387,8 +276,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       await this._ordersUseCases.update(this._orderId, { status: 'draft' });
       this.packSteps.set([]);
-      this.stepSelections.set(new Map());
-      this.currentStep.set(0);
       await this._loadOrderSilent();
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
@@ -405,9 +292,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       await this._ordersUseCases.update(this._orderId, { status: 'ready' });
       this.packSteps.set([]);
-      this.stepSelections.set(new Map());
-      this.currentStep.set(0);
-      this._confirmedSelections.set(new Set());
+      this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
@@ -432,75 +317,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     } finally {
       this.saving.set(false);
     }
-  }
-
-  /**
-   * Saves the pack selection for a product group to the DB immediately.
-   * Called on each option click so members see the update in real-time.
-   *
-   * @param {string} productId - UUID of the product group
-   * @param {number} idx - Index of the chosen suggestion
-   */
-  private async _savePackSelection(productId: string, idx: number): Promise<void> {
-    const step = this.packSteps().find((s) => s.productId === productId);
-    const ord: OrderModel | null = this.order();
-    if (!step || !ord) return;
-    const suggestion = step.suggestions[idx];
-    if (!suggestion) return;
-
-    const linesToUpdate = ord.lines.filter((l) => step.lineIds.includes(l.id));
-    const quantities = linesToUpdate.map((l) => l.quantityNeeded ?? 0);
-    const allocated = this._distributeProportionally(quantities, suggestion.totalUnits);
-
-    try {
-      await Promise.all(
-        linesToUpdate.map((line, i) =>
-          this._ordersUseCases.updateLine(line.id, {
-            unitPrice: suggestion.unitPrice,
-            quantityOrdered: allocated[i]
-          })
-        )
-      );
-    } catch {
-      // Non-critical: will retry on confirm
-    }
-  }
-
-  /**
-   * Marks the current step as confirmed if it has suggestions.
-   * Called automatically when navigating between steps.
-   */
-  private _autoConfirmCurrentStep(): void {
-    const step = this.packSteps()[this.currentStep()];
-    if (!step || step.suggestions.length === 0) return;
-    const confirmed = new Set(this._confirmedSelections());
-    confirmed.add(step.productId);
-    this._confirmedSelections.set(confirmed);
-  }
-
-  /**
-   * Distributes `total` units among members proportionally to their `quantities`
-   * using the Largest Remainder method to ensure the sum equals exactly `total`.
-   *
-   * @param {number[]} quantities - Each member's requested quantity
-   * @param {number} total - Total units to distribute
-   */
-  private _distributeProportionally(quantities: number[], total: number): number[] {
-    const sum = quantities.reduce((a, b) => a + b, 0);
-    if (sum === 0) return quantities.map(() => 0);
-
-    const exact = quantities.map((q) => (q / sum) * total);
-    const floored = exact.map((v) => Math.floor(v));
-    const remainder = total - floored.reduce((a, b) => a + b, 0);
-
-    const fractions = exact.map((v, i) => ({ i, frac: v - floored[i] }));
-    fractions.sort((a, b) => b.frac - a.frac);
-
-    const result = [...floored];
-    for (let i = 0; i < remainder; i++) {
-      result[fractions[i].i]++;
-    }
-    return result;
   }
 
   /**
@@ -549,22 +365,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     });
 
     this.packSteps.set(steps);
-    this.stepSelections.set(new Map(steps.map((s) => [s.productId, 0])));
-    this.currentStep.set(0);
-    const initialConfirmed = new Set<string>();
-    if (steps.length > 0 && steps[0].suggestions.length > 0) {
-      initialConfirmed.add(steps[0].productId);
-    }
-    this._confirmedSelections.set(initialConfirmed);
-  }
-
-  /**
-   * Returns the human-readable breakdown of a pack suggestion.
-   *
-   * @param {PackSuggestion} suggestion - The suggestion to format
-   */
-  formatBreakdown(suggestion: PackSuggestion): string {
-    return suggestion.breakdown.map((b) => `${b.count}× Pack ${b.pack.quantity}`).join(' + ');
   }
 
   /**

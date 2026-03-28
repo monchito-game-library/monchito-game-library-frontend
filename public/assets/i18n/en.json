@@ -341,7 +341,8 @@
     "cost": {
       "mySubtotal": "My part",
       "myProductsCost": "Products",
-      "extrasShare": "Extras",
+      "myShipping": "Shipping",
+      "myPaypal": "PayPal fee",
       "orderTotal": "Order total"
     },
     "snack": {
