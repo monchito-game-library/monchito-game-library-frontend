@@ -289,7 +289,7 @@
       "notesPlaceholder": "Notas del pedido...",
       "shippingCost": "Envío (€)",
       "paypalFee": "Comisión PayPal (€)",
-      "discountAmount": "Descuento (€)",
+      "discountAmount": "Descuento",
       "orderDate": "Fecha pedido",
       "receivedDate": "Fecha recibido",
       "edit": "Editar cabecera",
@@ -340,10 +340,10 @@
       "notesLabel": "Notas"
     },
     "cost": {
-      "title": "Resumen de costes",
-      "mySubtotal": "Mi subtotal",
-      "extrasShare": "Mi parte de extras",
-      "myTotal": "Mi total"
+      "mySubtotal": "Mi parte",
+      "myProductsCost": "Productos",
+      "extrasShare": "Extras",
+      "orderTotal": "Total pedido"
     },
     "snack": {
       "created": "Pedido creado",

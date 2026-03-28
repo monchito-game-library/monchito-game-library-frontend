@@ -45,7 +45,7 @@ export function optimizePacks(needed: number, packs: OrderProductPackModel[]): P
 
   // Options 2-3: rounded suggestions avoiding pack-1 as filler
   const rounded: PackSuggestion[] =
-    significantPacks.length === 0 ? _roundedSuggestions(needed, sorted[0], 5, 2) : _runDP(needed, significantPacks, 2);
+    significantPacks.length === 0 ? _roundedSuggestions(needed, sorted[0], 5, 3) : _runDP(needed, significantPacks, 3);
 
   // Combine and deduplicate by breakdown key
   const seen = new Set<string>();
@@ -57,7 +57,7 @@ export function optimizePacks(needed: number, packs: OrderProductPackModel[]): P
     seen.add(key);
     results.push(s);
   }
-  return results;
+  return results.slice(0, 3);
 }
 
 /**

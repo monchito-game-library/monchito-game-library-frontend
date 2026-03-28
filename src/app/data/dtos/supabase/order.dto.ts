@@ -9,6 +9,7 @@ export interface OrderDto {
   shipping_cost: number | null;
   paypal_fee: number | null;
   discount_amount: number | null;
+  discount_type: 'percentage' | 'amount';
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -112,6 +113,7 @@ export interface OrderUpdateDto {
   shipping_cost?: number | null;
   paypal_fee?: number | null;
   discount_amount?: number | null;
+  discount_type?: 'percentage' | 'amount';
   updated_at: string;
 }
 

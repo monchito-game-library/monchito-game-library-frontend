@@ -123,6 +123,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
       shipping_cost: patch.shippingCost,
       paypal_fee: patch.paypalFee,
       discount_amount: patch.discountAmount,
+      discount_type: patch.discountType,
       updated_at: new Date().toISOString()
     };
 

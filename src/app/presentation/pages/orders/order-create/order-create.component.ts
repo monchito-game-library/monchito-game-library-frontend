@@ -10,6 +10,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
+import { DiscountType } from '@/types/discount-type.type';
 
 @Component({
   selector: 'app-order-create',
@@ -44,7 +45,8 @@ export class OrderCreateComponent {
     notes: this._fb.control<string | null>(null),
     shippingCost: this._fb.control<number | null>(null),
     paypalFee: this._fb.control<number | null>(null),
-    discountAmount: this._fb.control<number | null>(null)
+    discountAmount: this._fb.control<number | null>(null),
+    discountType: this._fb.control<DiscountType>('amount', { nonNullable: true })
   });
 
   /**

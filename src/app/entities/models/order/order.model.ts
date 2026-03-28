@@ -1,4 +1,5 @@
 import { OrderStatusType } from '@/types/order-status.type';
+import { DiscountType } from '@/types/discount-type.type';
 import { OrderMemberModel } from './order-member.model';
 import { OrderLineModel } from './order-line.model';
 
@@ -22,6 +23,8 @@ export interface OrderModel {
   paypalFee: number | null;
   /** Optional discount negotiated with the supplier. */
   discountAmount: number | null;
+  /** Whether the discount is a fixed amount (€) or a percentage. */
+  discountType: DiscountType;
   /** Optional general notes. */
   notes: string | null;
   /** ISO timestamp of creation. */

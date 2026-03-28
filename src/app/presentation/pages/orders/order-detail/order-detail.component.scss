@@ -37,6 +37,11 @@
   .order-detail-page__header-actions {
     display: flex;
     gap: 0.25rem;
+
+    &--disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
   }
 
   .order-detail-page__section {
@@ -50,6 +55,11 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
+    transition: margin-bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &--collapsed {
+      margin-bottom: 0;
+    }
   }
 
   .order-detail-page__section-title {
@@ -60,7 +70,61 @@
   .order-detail-page__info {
     display: flex;
     flex-direction: column;
+
+    &--disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  .order-detail-page__section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    /* expansión: sin delay, rápida */
+    transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &--collapsed {
+      grid-template-rows: 0fr;
+      /* colapso: espera el fade-out del inner */
+      transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+
+      .order-detail-page__section-body-inner {
+        opacity: 0;
+        /* fade-out inmediato al colapsar */
+        transition: opacity 0.3s ease;
+      }
+    }
+  }
+
+  .order-detail-page__section-body-inner {
+    overflow: hidden;
+    opacity: 1;
+    /* fade-in: espera un poco a que el grid empiece a abrirse */
+    transition: opacity 0.25s ease 0.25s;
+  }
+
+  .order-detail-page__form-expander {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &--expanded {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  .order-detail-page__form-expander-inner {
+    overflow: hidden;
+  }
+
+  .order-detail-page__edit-form {
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--mat-sys-outline-variant);
   }
 
   .order-detail-page__info-top {
@@ -103,6 +167,13 @@
       background: var(--mat-sys-secondary-container);
       color: var(--mat-sys-on-secondary-container);
     }
+  }
+
+  .order-detail-page__info-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 2rem;
   }
 
   .order-detail-page__info-row {
@@ -213,21 +284,74 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .order-detail-page__edit-form {
+  .order-detail-page__form-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .order-detail-page__form-col {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
   }
 
+  .order-detail-page__form-costs-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .order-detail-page__form-field--full-height {
+    textarea {
+      resize: none;
+    }
+  }
+
   .order-detail-page__form-field {
     width: 100%;
+
+    &--grow {
+      flex: 1;
+    }
+  }
+
+  .order-detail-page__discount-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .order-detail-page__discount-type-toggle {
+    height: 2.75rem;
+    flex-shrink: 0;
+
+    ::ng-deep .mat-button-toggle {
+      font-size: 1.125rem;
+      font-weight: 500;
+    }
+
+    ::ng-deep .mat-button-toggle-button {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    ::ng-deep .mat-button-toggle-label-content {
+      line-height: normal;
+      display: flex;
+      align-items: center;
+    }
   }
 
   .order-detail-page__form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    padding-top: 0.25rem;
+    padding-top: 1rem;
   }
 
   .order-detail-page__empty {
@@ -499,24 +623,115 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
 
-    .order-detail-page__section-title {
-      margin-bottom: 1rem;
+  .order-detail-page__cost-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .order-detail-page__cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .order-detail-page__cost-divider {
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  .order-detail-page__cost-order-total {
+    font-weight: 700;
+  }
+
+  .order-detail-page__cost-detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--mat-sys-on-surface-variant);
+    padding-left: 0.5rem;
+
+    &:first-child {
+      margin-top: 1rem;
     }
-    .order-detail-page__cost-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9375rem;
-      border-bottom: 1px solid var(--mat-sys-outline-variant);
-      padding-bottom: 0.5rem;
+  }
 
-      &--total {
-        font-weight: 700;
+  .order-detail-page__cost-total-label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .order-detail-page__cost-chevron {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .order-detail-page__cost-member-list {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+
+    &--expanded {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  .order-detail-page__cost-member-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .order-detail-page__cost-member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--mat-sys-on-surface-variant);
+    padding-left: 0.5rem;
+
+    &:first-child {
+      margin-top: 1rem;
+    }
+  }
+
+  .order-detail-page__cost-member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .order-detail-page__cost-member-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--mat-sys-surface-variant);
+      color: var(--mat-sys-on-surface-variant);
+
+      mat-icon {
         font-size: 1rem;
-        border-bottom: none;
-        padding-bottom: 0;
+        width: 1rem;
+        height: 1rem;
       }
     }
+  }
+
+  .order-detail-page__cost-member-total {
+    font-weight: 600;
   }
 }
 
@@ -533,5 +748,16 @@
     .order-detail-page__info-label {
       min-width: unset;
     }
+  }
+}
+
+@keyframes form-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

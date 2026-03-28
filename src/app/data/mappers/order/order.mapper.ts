@@ -88,6 +88,7 @@ export function mapOrder(dto: OrderDetailDto): OrderModel {
     shippingCost: dto.shipping_cost,
     paypalFee: dto.paypal_fee,
     discountAmount: dto.discount_amount,
+    discountType: dto.discount_type,
     notes: dto.notes,
     createdAt: dto.created_at,
     updatedAt: dto.updated_at,

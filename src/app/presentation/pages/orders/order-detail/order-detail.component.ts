@@ -1,10 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -22,6 +33,7 @@ import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderStatusType } from '@/types/order-status.type';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
+import { DiscountType } from '@/types/discount-type.type';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
 import {
   AddEditLineDialogComponent,
@@ -72,6 +84,8 @@ interface PackStepData {
     DecimalPipe,
     MatButton,
     MatIconButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatIcon,
     MatFormField,
     MatLabel,
@@ -108,6 +122,12 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Whether the header is in edit mode. */
   readonly editingHeader: WritableSignal<boolean> = signal<boolean>(false);
 
+  /** Whether the cost detail breakdown per member is expanded. */
+  readonly costDetailExpanded: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the current user's cost breakdown is expanded. */
+  readonly myPartExpanded: WritableSignal<boolean> = signal<boolean>(false);
+
   /** List of available products for order lines. */
   readonly products: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>([]);
 
@@ -128,6 +148,16 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Set of productIds that have been explicitly clicked by the owner in the stepper. */
   private readonly _confirmedSelections: WritableSignal<Set<string>> = signal<Set<string>>(new Set());
 
+  /**
+   * True when the owner has explicitly clicked an option for every product step that has suggestions.
+   * Steps with no suggestions (no packs configured) are excluded from the requirement.
+   */
+  readonly allPacksSelected: Signal<boolean> = computed(() => {
+    const confirmed = this._confirmedSelections();
+    const steps = this.packSteps().filter((s) => s.suggestions.length > 0);
+    return steps.length > 0 && steps.every((s) => confirmed.has(s.productId));
+  });
+
   /** Status progression order. */
   readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
 
@@ -137,7 +167,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     notes: this._fb.control<string | null>(null),
     shippingCost: this._fb.control<number | null>(null),
     paypalFee: this._fb.control<number | null>(null),
-    discountAmount: this._fb.control<number | null>(null)
+    discountAmount: this._fb.control<number | null>(null),
+    discountType: this._fb.control<DiscountType>('amount', { nonNullable: true })
   });
 
   ngOnInit(): void {
@@ -167,14 +198,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   allMembersReady(members: OrderMemberModel[]): boolean {
     const invited = members.filter((m) => m.role !== 'owner');
     return invited.length === 0 || invited.every((m) => m.isReady);
-  }
-
-  /**
-   * Returns true when the owner has explicitly clicked an option for every product step.
-   */
-  allPacksSelected(): boolean {
-    const confirmed = this._confirmedSelections();
-    return this.packSteps().length > 0 && this.packSteps().every((s) => confirmed.has(s.productId));
   }
 
   /**
@@ -258,37 +281,99 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Computes the current user's subtotal based on their allocations.
+   * Computes the current user's subtotal based on their lines (requestedBy) and quantityOrdered.
    */
   computeMySubtotal(): number {
     const ord: OrderModel | null = this.order();
     const userId: string | null = this.userContext.userId();
     if (!ord || !userId) return 0;
 
-    return ord.lines.reduce((sum, line) => {
-      const alloc = line.allocations.find((a) => a.userId === userId);
-      return sum + line.unitPrice * (alloc?.quantityThisOrder ?? 0);
-    }, 0);
+    return ord.lines
+      .filter((line) => line.requestedBy === userId)
+      .reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0);
   }
 
   /**
    * Computes the total extras (shipping + paypal - discount).
+   * If discountType is 'percentage', the discount is applied as a percentage of the products subtotal.
    */
   computeExtras(): number {
     const ord: OrderModel | null = this.order();
     if (!ord) return 0;
-    return (ord.shippingCost ?? 0) + (ord.paypalFee ?? 0) - (ord.discountAmount ?? 0);
+
+    const base: number = (ord.shippingCost ?? 0) + (ord.paypalFee ?? 0);
+    const discountAmount: number = ord.discountAmount ?? 0;
+    const discount: number =
+      ord.discountType === 'percentage' ? this.computeTotalSubtotal() * (discountAmount / 100) : discountAmount;
+
+    return base - discount;
+  }
+
+  /**
+   * Computes the current user's extras share (proportional to their subtotal).
+   */
+  computeMyExtrasShare(): number {
+    const mySubtotal: number = this.computeMySubtotal();
+    const total: number = this.computeTotalSubtotal();
+    const extras: number = this.computeExtras();
+    return total > 0 ? (mySubtotal / total) * extras : 0;
   }
 
   /**
    * Computes the current user's total (mySubtotal + proportional share of extras).
    */
   computeMyTotal(): number {
-    const mySubtotal: number = this.computeMySubtotal();
-    const total: number = this.computeTotalSubtotal();
+    return this.computeMySubtotal() + this.computeMyExtrasShare();
+  }
+
+  /**
+   * Computes the cost breakdown for every member of the order.
+   * Each entry contains the member's subtotal, extras share and total.
+   */
+  computeMemberCosts(): {
+    userId: string;
+    displayName: string | null;
+    email: string | null;
+    avatarUrl: string | null;
+    subtotal: number;
+    extrasShare: number;
+    total: number;
+  }[] {
+    const ord: OrderModel | null = this.order();
+    if (!ord) return [];
+
+    const totalSubtotal: number = this.computeTotalSubtotal();
     const extras: number = this.computeExtras();
-    const extrasShare: number = total > 0 ? (mySubtotal / total) * extras : 0;
-    return mySubtotal + extrasShare;
+
+    return this.sortedMembers(ord.members).map((member) => {
+      const subtotal = ord.lines
+        .filter((l) => l.requestedBy === member.userId)
+        .reduce((sum, l) => sum + l.unitPrice * (l.quantityOrdered ?? 0), 0);
+      const extrasShare = totalSubtotal > 0 ? (subtotal / totalSubtotal) * extras : 0;
+      return {
+        userId: member.userId,
+        displayName: member.displayName,
+        email: member.email,
+        avatarUrl: member.avatarUrl,
+        subtotal,
+        extrasShare,
+        total: subtotal + extrasShare
+      };
+    });
+  }
+
+  /**
+   * Toggles the cost detail breakdown visibility.
+   */
+  onToggleCostDetail(): void {
+    this.costDetailExpanded.update((v) => !v);
+  }
+
+  /**
+   * Toggles the current user's cost breakdown visibility.
+   */
+  onToggleMyPart(): void {
+    this.myPartExpanded.update((v) => !v);
   }
 
   /**
@@ -303,7 +388,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       notes: ord.notes,
       shippingCost: ord.shippingCost,
       paypalFee: ord.paypalFee,
-      discountAmount: ord.discountAmount
+      discountAmount: ord.discountAmount,
+      discountType: ord.discountType
     });
     this.editingHeader.set(true);
   }
@@ -394,6 +480,26 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Returns the per-member quantity breakdown for a step, adjusted proportionally
+   * to the currently selected suggestion's totalUnits. Falls back to requested
+   * quantities if no selection has been confirmed yet.
+   *
+   * @param {PackStepData} step - The current stepper step
+   */
+  getMemberAllocations(step: PackStepData): MemberQty[] {
+    const confirmed = this._confirmedSelections().has(step.productId);
+    if (!confirmed || step.suggestions.length === 0) return step.memberBreakdown;
+
+    const idx = this.getStepSelection(step.productId);
+    const suggestion = step.suggestions[idx];
+    if (!suggestion) return step.memberBreakdown;
+
+    const quantities = step.memberBreakdown.map((m) => m.qty);
+    const allocated = this._distributeProportionally(quantities, suggestion.totalUnits);
+    return step.memberBreakdown.map((m, i) => ({ ...m, qty: allocated[i] }));
+  }
+
+  /**
    * Updates the selected suggestion index for the given product and saves it to the DB immediately.
    *
    * @param {string} productId - UUID of the product group
@@ -412,17 +518,19 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Moves to the previous step in the pack selection stepper.
+   * Moves to the previous step in the pack selection stepper and auto-confirms it.
    */
   onPrevStep(): void {
     this.currentStep.update((s) => Math.max(0, s - 1));
+    this._autoConfirmCurrentStep();
   }
 
   /**
-   * Moves to the next step in the pack selection stepper.
+   * Moves to the next step in the pack selection stepper and auto-confirms it.
    */
   onNextStep(): void {
     this.currentStep.update((s) => Math.min(this.packSteps().length - 1, s + 1));
+    this._autoConfirmCurrentStep();
   }
 
   /**
@@ -450,7 +558,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     this.saving.set(true);
     try {
       await this._ordersUseCases.update(this._orderId, { status: 'ready' });
-      this._snackBar.open(this._transloco.translate('orders.snack.markedReady'), '', { duration: 3000 });
       this.packSteps.set([]);
       this.stepSelections.set(new Map());
       this.currentStep.set(0);
@@ -496,18 +603,58 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     if (!suggestion) return;
 
     const linesToUpdate = ord.lines.filter((l) => step.lineIds.includes(l.id));
+    const quantities = linesToUpdate.map((l) => l.quantityNeeded ?? 0);
+    const allocated = this._distributeProportionally(quantities, suggestion.totalUnits);
+
     try {
       await Promise.all(
-        linesToUpdate.map((line) =>
+        linesToUpdate.map((line, i) =>
           this._ordersUseCases.updateLine(line.id, {
             unitPrice: suggestion.unitPrice,
-            quantityOrdered: line.quantityNeeded ?? 0
+            quantityOrdered: allocated[i]
           })
         )
       );
     } catch {
       // Non-critical: will retry on confirm
     }
+  }
+
+  /**
+   * Marks the current step as confirmed if it has suggestions.
+   * Called automatically when navigating between steps.
+   */
+  private _autoConfirmCurrentStep(): void {
+    const step = this.packSteps()[this.currentStep()];
+    if (!step || step.suggestions.length === 0) return;
+    const confirmed = new Set(this._confirmedSelections());
+    confirmed.add(step.productId);
+    this._confirmedSelections.set(confirmed);
+  }
+
+  /**
+   * Distributes `total` units among members proportionally to their `quantities`
+   * using the Largest Remainder method to ensure the sum equals exactly `total`.
+   *
+   * @param {number[]} quantities - Each member's requested quantity
+   * @param {number} total - Total units to distribute
+   */
+  private _distributeProportionally(quantities: number[], total: number): number[] {
+    const sum = quantities.reduce((a, b) => a + b, 0);
+    if (sum === 0) return quantities.map(() => 0);
+
+    const exact = quantities.map((q) => (q / sum) * total);
+    const floored = exact.map((v) => Math.floor(v));
+    const remainder = total - floored.reduce((a, b) => a + b, 0);
+
+    const fractions = exact.map((v, i) => ({ i, frac: v - floored[i] }));
+    fractions.sort((a, b) => b.frac - a.frac);
+
+    const result = [...floored];
+    for (let i = 0; i < remainder; i++) {
+      result[fractions[i].i]++;
+    }
+    return result;
   }
 
   /**
@@ -558,7 +705,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     this.packSteps.set(steps);
     this.stepSelections.set(new Map(steps.map((s) => [s.productId, 0])));
     this.currentStep.set(0);
-    this._confirmedSelections.set(new Set());
+    const initialConfirmed = new Set<string>();
+    if (steps.length > 0 && steps[0].suggestions.length > 0) {
+      initialConfirmed.add(steps[0].productId);
+    }
+    this._confirmedSelections.set(initialConfirmed);
   }
 
   /**

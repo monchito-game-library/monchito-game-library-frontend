@@ -288,7 +288,7 @@
       "notesPlaceholder": "Order notes...",
       "shippingCost": "Shipping (€)",
       "paypalFee": "PayPal fee (€)",
-      "discountAmount": "Discount (€)",
+      "discountAmount": "Discount",
       "orderDate": "Order date",
       "receivedDate": "Received date",
       "edit": "Edit header",
@@ -339,10 +339,10 @@
       "notesLabel": "Notes"
     },
     "cost": {
-      "title": "Cost summary",
-      "mySubtotal": "My subtotal",
-      "extrasShare": "My share of extras",
-      "myTotal": "My total"
+      "mySubtotal": "My part",
+      "myProductsCost": "Products",
+      "extrasShare": "Extras",
+      "orderTotal": "Order total"
     },
     "snack": {
       "created": "Order created",

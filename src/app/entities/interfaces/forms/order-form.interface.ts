@@ -1,6 +1,7 @@
 import { FormControl } from '@angular/forms';
 
 import { OrderStatusType } from '@/types/order-status.type';
+import { DiscountType } from '@/types/discount-type.type';
 
 /** Reactive form shape for creating or editing an order header. */
 export interface OrderForm {
@@ -9,6 +10,7 @@ export interface OrderForm {
   shippingCost: FormControl<number | null>;
   paypalFee: FormControl<number | null>;
   discountAmount: FormControl<number | null>;
+  discountType: FormControl<DiscountType>;
 }
 
 /** Plain value extracted from OrderForm via getRawValue(). */
@@ -18,6 +20,7 @@ export interface OrderFormValue {
   shippingCost?: number | null;
   paypalFee?: number | null;
   discountAmount?: number | null;
+  discountType?: DiscountType;
   status?: OrderStatusType;
   orderDate?: string | null;
   receivedDate?: string | null;
