@@ -44,6 +44,7 @@ export function mapOrderLine(dto: OrderLineDto): OrderLineModel {
     quantityNeeded: dto.quantity_needed,
     productName: dto.order_products.name,
     productCategory: dto.order_products.category,
+    productUrl: dto.order_products.packs?.[0]?.url ?? null,
     unitPrice: dto.unit_price,
     packChosen: dto.pack_chosen,
     quantityOrdered: dto.quantity_ordered,

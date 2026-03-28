@@ -59,7 +59,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
           *,
           order_lines(
             id, order_id, product_id, requested_by, quantity_needed, unit_price, pack_chosen, quantity_ordered, notes, created_at,
-            order_products(name, category),
+            order_products(name, category, packs),
             order_line_allocations(id, order_line_id, user_id, quantity_needed, quantity_this_order)
           )
         `

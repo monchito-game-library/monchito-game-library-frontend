@@ -16,6 +16,8 @@ export interface OrderLineModel {
   productName: string;
   /** Product category from order_products join. */
   productCategory: string;
+  /** URL of the first available pack for this product. Null if no packs are configured. */
+  productUrl: string | null;
   /** Blended unit price set by the pack optimizer. Zero until the owner advances to ready. */
   unitPrice: number;
   /** Pack size chosen by the owner. Null until the optimizer runs. */

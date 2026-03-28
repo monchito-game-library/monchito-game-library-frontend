@@ -1,0 +1,119 @@
+<div class="order-detail-page__section-header" [class.order-detail-page__section-header--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
+  @if (order().status === 'draft' && !editingHeader()) {
+    <button mat-flat-button (click)="lineAdd.emit()">
+      <mat-icon>add</mat-icon>
+      {{ 'orders.lines.add' | transloco }}
+    </button>
+  }
+</div>
+
+<div class="order-detail-page__section-body" [class.order-detail-page__section-body--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-body-inner">
+    @if (!isOwner() && order().status === 'selecting_packs') {
+      <div class="order-detail-page__selecting-banner">
+        <mat-icon>schedule</mat-icon>
+        {{ 'orders.lines.selectingPacks' | transloco }}
+      </div>
+    }
+
+    @if (order().status === 'draft') {
+      @if (visibleLines(order().lines).length === 0) {
+        <div class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</div>
+      } @else {
+        <div class="order-detail-page__table-wrapper">
+          <table class="order-detail-page__table">
+            <thead>
+              <tr>
+                <th>{{ 'orders.lines.product' | transloco }}</th>
+                <th>{{ 'orders.lines.qtyNeededLabel' | transloco }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (line of visibleLines(order().lines); track line.id) {
+                <tr>
+                  <td>
+                    <div class="order-detail-page__product-name">{{ line.productName }}</div>
+                    <div class="order-detail-page__product-meta">
+                      <span class="order-detail-page__product-category">{{ line.productCategory }}</span>
+                      @if (line.productUrl) {
+                        <a
+                          class="order-detail-page__product-link"
+                          [href]="line.productUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          [attr.aria-label]="line.productName">
+                          <mat-icon>open_in_new</mat-icon>
+                        </a>
+                      }
+                    </div>
+                  </td>
+                  <td>{{ line.quantityNeeded ?? '—' }}</td>
+                  <td class="order-detail-page__line-actions">
+                    <button
+                      mat-icon-button
+                      [matTooltip]="'orders.lines.edit' | transloco"
+                      (click)="lineEdit.emit(line)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      [matTooltip]="'orders.lines.delete' | transloco"
+                      (click)="lineDelete.emit(line.id)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    } @else {
+      @if (groupedLines().length === 0) {
+        <div class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</div>
+      } @else {
+        <div class="order-detail-page__table-wrapper">
+          <table class="order-detail-page__table">
+            <thead>
+              <tr>
+                <th>{{ 'orders.lines.product' | transloco }}</th>
+                <th>{{ 'orders.lines.unitPrice' | transloco }}</th>
+                <th>{{ 'orders.lines.qtyOrdered' | transloco }}</th>
+                <th>{{ 'orders.lines.subtotal' | transloco }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (line of groupedLines(); track line.productId) {
+                <tr>
+                  <td>
+                    <div class="order-detail-page__product-name">{{ line.productName }}</div>
+                    <div class="order-detail-page__product-meta">
+                      <span class="order-detail-page__product-category">{{ line.productCategory }}</span>
+                      @if (line.productUrl) {
+                        <a
+                          class="order-detail-page__product-link"
+                          [href]="line.productUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          [attr.aria-label]="line.productName">
+                          <mat-icon>open_in_new</mat-icon>
+                        </a>
+                      }
+                    </div>
+                  </td>
+                  <td>{{ line.unitPrice | number: '1.2-2' }} €</td>
+                  <td>{{ line.quantityOrdered }}</td>
+                  <td>{{ line.unitPrice * line.quantityOrdered | number: '1.2-2' }} €</td>
+                  <td></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</div>

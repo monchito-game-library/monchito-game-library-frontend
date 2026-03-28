@@ -7,18 +7,15 @@ import {
   OnInit,
   Signal,
   signal,
+  ViewChild,
   WritableSignal
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -32,9 +29,10 @@ import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderStatusType } from '@/types/order-status.type';
-import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
-import { DiscountType } from '@/types/discount-type.type';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
+import { OrderInfoSectionComponent } from './components/order-info-section/order-info-section.component';
+import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
+import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
 import {
   AddEditLineDialogComponent,
   AddEditLineDialogData
@@ -78,30 +76,27 @@ interface PackStepData {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
     RouterLink,
-    DatePipe,
     DecimalPipe,
     MatButton,
     MatIconButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatIcon,
-    MatFormField,
-    MatLabel,
-    MatInput,
     MatProgressSpinner,
     MatTooltip,
-    TranslocoPipe
+    TranslocoPipe,
+    OrderInfoSectionComponent,
+    OrderCostSummaryComponent,
+    OrderProductListComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
+  @ViewChild(OrderInfoSectionComponent) private readonly _infoSection!: OrderInfoSectionComponent;
+
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
-  private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private _orderId: string = '';
@@ -124,15 +119,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   /** Whether the flex layout has been shifted: info grows to flex:1, lines collapses to flex:none. */
   readonly editingLayout: WritableSignal<boolean> = signal<boolean>(false);
-
-  /** Whether the form actions are in the process of fading out (kept in DOM until animation completes). */
-  readonly hidingActions: WritableSignal<boolean> = signal<boolean>(false);
-
-  /** Whether the cost detail breakdown per member is expanded. */
-  readonly costDetailExpanded: WritableSignal<boolean> = signal<boolean>(false);
-
-  /** Whether the current user's cost breakdown is expanded. */
-  readonly myPartExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
   /** List of available products for order lines. */
   readonly products: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>([]);
@@ -167,16 +153,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Status progression order. */
   readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
 
-  /** Reactive form for editing the order header. */
-  readonly headerForm: FormGroup<OrderForm> = this._fb.group<OrderForm>({
-    title: this._fb.control<string | null>(null),
-    notes: this._fb.control<string | null>(null),
-    shippingCost: this._fb.control<number | null>(null),
-    paypalFee: this._fb.control<number | null>(null),
-    discountAmount: this._fb.control<number | null>(null),
-    discountType: this._fb.control<DiscountType>('amount', { nonNullable: true })
-  });
-
   ngOnInit(): void {
     this._orderId = this._route.snapshot.paramMap.get('id') ?? '';
     void this._loadOrder();
@@ -204,25 +180,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   allMembersReady(members: OrderMemberModel[]): boolean {
     const invited = members.filter((m) => m.role !== 'owner');
     return invited.length === 0 || invited.every((m) => m.isReady);
-  }
-
-  /**
-   * Returns the count of non-owner members who have marked ready out of the total invited.
-   *
-   * @param {OrderMemberModel[]} members
-   */
-  readyCount(members: OrderMemberModel[]): { ready: number; total: number } {
-    const invited = members.filter((m) => m.role !== 'owner');
-    return { ready: invited.filter((m) => m.isReady).length, total: invited.length };
-  }
-
-  /**
-   * Returns the members list sorted so the owner always appears first.
-   *
-   * @param {OrderMemberModel[]} members
-   */
-  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
-    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
   }
 
   /**
@@ -278,160 +235,36 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Computes the total subtotal of all lines (unitPrice * quantityOrdered).
-   */
-  computeTotalSubtotal(): number {
-    const ord: OrderModel | null = this.order();
-    if (!ord) return 0;
-    return ord.lines.reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0);
-  }
-
-  /**
-   * Computes the current user's subtotal based on their lines (requestedBy) and quantityOrdered.
-   */
-  computeMySubtotal(): number {
-    const ord: OrderModel | null = this.order();
-    const userId: string | null = this.userContext.userId();
-    if (!ord || !userId) return 0;
-
-    return ord.lines
-      .filter((line) => line.requestedBy === userId)
-      .reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0);
-  }
-
-  /**
-   * Computes the total extras (shipping + paypal - discount).
-   * If discountType is 'percentage', the discount is applied as a percentage of the products subtotal.
-   */
-  computeExtras(): number {
-    const ord: OrderModel | null = this.order();
-    if (!ord) return 0;
-
-    const base: number = (ord.shippingCost ?? 0) + (ord.paypalFee ?? 0);
-    const discountAmount: number = ord.discountAmount ?? 0;
-    const discount: number =
-      ord.discountType === 'percentage' ? this.computeTotalSubtotal() * (discountAmount / 100) : discountAmount;
-
-    return base - discount;
-  }
-
-  /**
-   * Computes the current user's extras share (proportional to their subtotal).
-   */
-  computeMyExtrasShare(): number {
-    const mySubtotal: number = this.computeMySubtotal();
-    const total: number = this.computeTotalSubtotal();
-    const extras: number = this.computeExtras();
-    return total > 0 ? (mySubtotal / total) * extras : 0;
-  }
-
-  /**
-   * Computes the current user's total (mySubtotal + proportional share of extras).
-   */
-  computeMyTotal(): number {
-    return this.computeMySubtotal() + this.computeMyExtrasShare();
-  }
-
-  /**
-   * Computes the cost breakdown for every member of the order.
-   * Each entry contains the member's subtotal, extras share and total.
-   */
-  computeMemberCosts(): {
-    userId: string;
-    displayName: string | null;
-    email: string | null;
-    avatarUrl: string | null;
-    subtotal: number;
-    extrasShare: number;
-    total: number;
-  }[] {
-    const ord: OrderModel | null = this.order();
-    if (!ord) return [];
-
-    const totalSubtotal: number = this.computeTotalSubtotal();
-    const extras: number = this.computeExtras();
-
-    return this.sortedMembers(ord.members).map((member) => {
-      const subtotal = ord.lines
-        .filter((l) => l.requestedBy === member.userId)
-        .reduce((sum, l) => sum + l.unitPrice * (l.quantityOrdered ?? 0), 0);
-      const extrasShare = totalSubtotal > 0 ? (subtotal / totalSubtotal) * extras : 0;
-      return {
-        userId: member.userId,
-        displayName: member.displayName,
-        email: member.email,
-        avatarUrl: member.avatarUrl,
-        subtotal,
-        extrasShare,
-        total: subtotal + extrasShare
-      };
-    });
-  }
-
-  /**
-   * Toggles the cost detail breakdown visibility.
-   */
-  onToggleCostDetail(): void {
-    this.costDetailExpanded.update((v) => !v);
-  }
-
-  /**
-   * Toggles the current user's cost breakdown visibility.
-   */
-  onToggleMyPart(): void {
-    this.myPartExpanded.update((v) => !v);
-  }
-
-  /**
-   * Activates edit mode for the order header and patches the form with current values.
+   * Opens the info section in edit mode via ViewChild.
    */
   onEditHeader(): void {
-    const ord: OrderModel | null = this.order();
-    if (!ord) return;
+    this._infoSection.startEditing();
+  }
 
-    this.headerForm.patchValue({
-      title: ord.title,
-      notes: ord.notes,
-      shippingCost: ord.shippingCost,
-      paypalFee: ord.paypalFee,
-      discountAmount: ord.discountAmount,
-      discountType: ord.discountType
-    });
+  /**
+   * Called when the info section emits editingStarted.
+   * Sets editingHeader immediately (collapses lines) and editingLayout after a delay (grows info section).
+   */
+  onInfoEditingStarted(): void {
     this.editingHeader.set(true);
-    this.editingLayout.set(true);
+    setTimeout(() => this.editingLayout.set(true), 300);
   }
 
   /**
-   * Saves the order header changes and reloads the order.
+   * Called when the info section emits editingEnded (cancel or save).
+   * Resets layout and header signals.
    */
-  async onSaveHeader(): Promise<void> {
-    if (this.saving()) return;
-
-    this.saving.set(true);
-    try {
-      const patch: Partial<OrderFormValue> = this.headerForm.getRawValue();
-      await this._ordersUseCases.update(this._orderId, patch);
-      this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
-      this.hidingActions.set(true);
-      setTimeout(() => this.hidingActions.set(false), 700);
-      this.editingLayout.set(false);
-      this.editingHeader.set(false);
-      await this._loadOrder();
-    } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
-    } finally {
-      this.saving.set(false);
-    }
-  }
-
-  /**
-   * Cancels header editing without saving.
-   */
-  onCancelEdit(): void {
-    this.hidingActions.set(true);
+  onInfoEditingEnded(): void {
     this.editingLayout.set(false);
     this.editingHeader.set(false);
-    setTimeout(() => this.hidingActions.set(false), 350);
+  }
+
+  /**
+   * Called when the info section emits headerSaved.
+   * Silently reloads the order to reflect the updated header fields.
+   */
+  async onInfoHeaderSaved(): Promise<void> {
+    await this._loadOrderSilent();
   }
 
   /**
@@ -732,19 +565,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    */
   formatBreakdown(suggestion: PackSuggestion): string {
     return suggestion.breakdown.map((b) => `${b.count}× Pack ${b.pack.quantity}`).join(' + ');
-  }
-
-  /**
-   * Returns the lines visible to the current user depending on order status.
-   * In draft: only the current user's lines. In other statuses: all lines.
-   *
-   * @param {OrderLineModel[]} lines - All lines of the order
-   */
-  visibleLines(lines: OrderLineModel[]): OrderLineModel[] {
-    const ord: OrderModel | null = this.order();
-    if (!ord || ord.status !== 'draft') return lines;
-    const userId: string | null = this.userContext.userId();
-    return lines.filter((l) => l.requestedBy === userId || l.requestedBy === null);
   }
 
   /**

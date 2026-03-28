@@ -49,7 +49,7 @@ export interface OrderLineDto {
   quantity_ordered: number | null;
   notes: string | null;
   created_at: string;
-  order_products: { name: string; category: string };
+  order_products: { name: string; category: string; packs: { url: string; price: number; quantity: number }[] };
   order_line_allocations: OrderLineAllocationDto[];
 }
 
