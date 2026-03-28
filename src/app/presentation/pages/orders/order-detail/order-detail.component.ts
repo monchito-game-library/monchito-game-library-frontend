@@ -122,8 +122,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Whether the header is in edit mode. */
   readonly editingHeader: WritableSignal<boolean> = signal<boolean>(false);
 
-  /** Whether the flex layout shift (info grows, lines shrinks) has been applied. Delayed on enter to avoid jarring reposition. */
+  /** Whether the flex layout has been shifted: info grows to flex:1, lines collapses to flex:none. */
   readonly editingLayout: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the form actions are in the process of fading out (kept in DOM until animation completes). */
+  readonly hidingActions: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Whether the cost detail breakdown per member is expanded. */
   readonly costDetailExpanded: WritableSignal<boolean> = signal<boolean>(false);
@@ -395,7 +398,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       discountType: ord.discountType
     });
     this.editingHeader.set(true);
-    setTimeout(() => this.editingLayout.set(true), 300);
+    this.editingLayout.set(true);
   }
 
   /**
@@ -409,6 +412,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       const patch: Partial<OrderFormValue> = this.headerForm.getRawValue();
       await this._ordersUseCases.update(this._orderId, patch);
       this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
+      this.hidingActions.set(true);
+      setTimeout(() => this.hidingActions.set(false), 700);
       this.editingLayout.set(false);
       this.editingHeader.set(false);
       await this._loadOrder();
@@ -423,8 +428,10 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Cancels header editing without saving.
    */
   onCancelEdit(): void {
+    this.hidingActions.set(true);
     this.editingLayout.set(false);
     this.editingHeader.set(false);
+    setTimeout(() => this.hidingActions.set(false), 350);
   }
 
   /**

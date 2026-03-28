@@ -63,12 +63,11 @@
     justify-content: space-between;
     margin-bottom: 1rem;
     /* expand: recupera margen después de que el body se abra */
-    transition: margin-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+    transition: margin-bottom 0.3s ease 0.3s;
 
     &--collapsed {
       margin-bottom: 0;
-      /* collapse: colapsa margen junto con el body */
-      transition: margin-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: margin-bottom 0.3s ease;
     }
   }
 
@@ -93,16 +92,16 @@
     display: grid;
     grid-template-rows: 1fr;
     /* expand: abre después del fade-in del inner */
-    transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+    transition: grid-template-rows 0.45s ease 0.3s;
 
     &--collapsed {
       grid-template-rows: 0fr;
       /* collapse: arranca a la vez que el form */
-      transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: grid-template-rows 0.45s ease;
 
       .order-detail-page__section-body-inner {
         opacity: 0;
-        transition: opacity 0.4s ease;
+        transition: opacity 0.3s ease;
       }
     }
   }
@@ -112,22 +111,22 @@
     min-height: 0;
     opacity: 1;
     /* fade-in: espera a que el grid esté abierto */
-    transition: opacity 0.3s ease 0.45s;
+    transition: opacity 0.25s ease 0.3s;
   }
 
   .order-detail-page__form-expander {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: grid-template-rows 0.45s ease;
 
     &--expanded {
       grid-template-rows: 1fr;
       flex: 1;
-      transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: grid-template-rows 0.45s ease;
 
       .order-detail-page__form-expander-inner {
         opacity: 1;
-        transition: opacity 0.35s ease 0.2s;
+        transition: opacity 0.3s ease 0.2s;
       }
     }
   }
@@ -139,13 +138,16 @@
     transition: opacity 0.2s ease;
   }
 
+  .order-detail-page__edit-divider {
+    border-top: 1px solid var(--mat-sys-outline-variant);
+    margin: 1.5rem 1.5rem 0;
+  }
+
   .order-detail-page__edit-form {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--mat-sys-outline-variant);
+    padding: 1.5rem;
   }
 
   .order-detail-page__info-top {
@@ -374,7 +376,11 @@
     gap: 0.5rem;
     margin-top: auto;
     padding-top: 1rem;
-    animation: fade-in-actions 0.35s ease 0.35s both;
+    animation: fade-in-actions 0.3s ease 0.5s both;
+
+    &--hiding {
+      animation: fade-out-actions 0.3s ease forwards;
+    }
   }
 
   .order-detail-page__empty {
@@ -786,5 +792,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fade-out-actions {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem);
   }
 }

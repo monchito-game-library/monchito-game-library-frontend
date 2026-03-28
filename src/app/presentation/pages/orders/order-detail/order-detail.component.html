@@ -200,6 +200,7 @@
         class="order-detail-page__form-expander"
         [class.order-detail-page__form-expander--expanded]="editingHeader()">
         <div class="order-detail-page__form-expander-inner">
+          <div class="order-detail-page__edit-divider"></div>
           <form [formGroup]="headerForm" class="order-detail-page__edit-form">
             <div class="order-detail-page__form-columns">
               <!-- Left column -->
@@ -266,8 +267,8 @@
         </div>
       </div>
 
-      @if (editingHeader()) {
-        <div class="order-detail-page__form-actions">
+      @if (editingHeader() || hidingActions()) {
+        <div class="order-detail-page__form-actions" [class.order-detail-page__form-actions--hiding]="hidingActions()">
           <button mat-button type="button" (click)="onCancelEdit()">
             {{ 'orders.header.cancel' | transloco }}
           </button>
