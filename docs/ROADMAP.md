@@ -9,6 +9,9 @@
 | Mejora | Prioridad |
 |---|---|
 | [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
+| [Pedidos (`/orders`)](#pedidos-orders) | **Media-alta** |
+| [Préstamos de juegos](#préstamos-de-juegos) | Media |
+| [Juegos a la venta](#juegos-a-la-venta) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
@@ -71,6 +74,107 @@ Actualmente pulsar en una card abre directamente el formulario de edición. Con 
 ---
 
 ## Media prioridad
+
+### Préstamos de juegos
+
+Marcar un juego físico de la colección como prestado a un amigo para que quede registrado que no está en la estantería. Solo aplica a juegos con `format = 'physical'`.
+
+#### Comportamiento
+
+- Desde la card o la futura página de detalle del juego, el usuario pulsa **"Prestar"**.
+- En desktop se abre un `MatDialog`; en mobile (≤768px) un `MatBottomSheet` (patrón ya establecido en el proyecto).
+- El formulario tiene dos campos: **¿A quién?** (texto libre) y **Fecha** (date picker, hoy por defecto).
+- Al guardar, el juego muestra un chip en la card con icono `person` + nombre truncado (~12 chars): _"Prestado · Juan G."_.
+- Para recuperarlo: botón **"Marcar como devuelto"** en el mismo dialog/sheet, que rellena `returned_at` con la fecha actual.
+
+#### v1 / v2
+
+- **v1:** el receptor del préstamo es texto libre (nombre escrito a mano).
+- **v2 (cuando exista sección social):** el campo de texto se convierte en un selector híbrido — primero muestra los contactos de la lista de amigos y, si no está, permite escribir texto libre igualmente.
+
+#### UI en la card
+
+- Chip compacto en la zona overlay de la card (misma fila que la plataforma), visible tanto en desktop como en mobile.
+- En mobile de 2 columnas (≤600px), el chip muestra solo el icono + nombre muy corto para no desbordar.
+- Si el juego está prestado **y** a la venta a la vez, ambos indicadores conviven: el chip de préstamo con texto y el icono de venta sin texto (ver _Juegos a la venta_).
+- Filtro **"Prestados"** en la colección para ver todos los juegos actualmente fuera de la estantería.
+
+#### Historial
+
+El historial completo de préstamos (quién lo tuvo y cuándo) se mostrará en la **página de detalle del juego** (feature de alta prioridad, prerequisito). No existe vista de historial hasta que esa página esté implementada.
+
+#### Modelo de datos
+
+Nueva tabla `game_loans`:
+
+```sql
+CREATE TABLE game_loans (
+  id           UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_game_id UUID  NOT NULL REFERENCES user_games(id) ON DELETE CASCADE,
+  loaned_to    TEXT  NOT NULL,         -- v1: texto libre; v2: puede coexistir con friend_id
+  loaned_at    DATE  NOT NULL DEFAULT CURRENT_DATE,
+  returned_at  DATE,                  -- NULL mientras siga prestado
+  created_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+El préstamo activo es la fila con `returned_at IS NULL`. Si hay más de una fila es el historial.
+
+RLS: solo el propietario del `user_game` puede leer y escribir sus préstamos.
+
+---
+
+### Juegos a la venta
+
+Marcar juegos físicos de la colección que ya no interesan y se quieren vender. Independiente del estado del juego — se puede tener un juego `completed`, `platinum` o `backlog` y querer venderlo igualmente.
+
+#### Comportamiento
+
+- Toggle **"Poner a la venta"** en el formulario de edición del juego, solo visible cuando `format = 'physical'`.
+- Al activarlo aparece un campo opcional **Precio de venta deseado** (€).
+- El juego muestra en la card un icono `sell` (o `local_offer`) sin texto — el significado es autoevidente y ocupa mínimo espacio.
+- Filtro **"En venta"** en la colección para ver todos los juegos marcados.
+
+#### Registro de venta
+
+Cuando finalmente se vende el juego, el usuario puede registrar la venta desde el formulario de edición:
+- **Precio de venta final** (puede diferir del deseado).
+- **Fecha de venta**.
+- Al guardar, el juego desaparece de la colección activa pero permanece en el **historial de ventas**.
+
+#### Historial de ventas
+
+- Accesible desde un filtro en la colección que navega a una página nueva (`/games/sold` o similar).
+- Cards estilo lista (no grid), más compactas, orientadas a la información:
+  - Portada pequeña + título + plataforma.
+  - Precio pagado originalmente → precio de venta final (y la diferencia si se quiere mostrar).
+  - Fecha de venta.
+- Sin acciones — es solo consulta. Útil para no repetir juegos ya vendidos o para recordar a cuánto se vendió si se quiere recomprar.
+
+#### Filtros desktop — "Más filtros"
+
+Con la incorporación de _Prestados_, _En venta_ y futuros filtros, la barra de filtros desktop empieza a tener demasiados elementos inline. Junto a esta feature se añadirá un botón **"Más filtros"** en desktop que agrupa los menos frecuentes, dejando visibles solo los más usados:
+
+- **Siempre visibles:** Búsqueda, Estado, Plataforma, Favoritos, Prestados, En venta.
+- **Bajo "Más filtros":** Tienda, Formato, Condición, Ordenar por.
+
+En mobile ya existe el bottom sheet que los agrupa todos — no hay cambio ahí.
+
+#### Modelo de datos
+
+Nuevas columnas en `user_games`:
+
+```sql
+ALTER TABLE user_games
+  ADD COLUMN for_sale          BOOLEAN       NOT NULL DEFAULT FALSE,
+  ADD COLUMN sale_price        NUMERIC(10,2),          -- precio deseado
+  ADD COLUMN sold_at           DATE,                   -- fecha de venta real
+  ADD COLUMN sold_price_final  NUMERIC(10,2);          -- precio final obtenido
+```
+
+Un juego está "activo" en la colección si `sold_at IS NULL`. Un juego está "a la venta" si `for_sale = TRUE AND sold_at IS NULL`.
+
+---
 
 ### Recomendaciones de juegos
 
