@@ -276,9 +276,8 @@
     "status": {
       "draft": "Borrador",
       "selecting_packs": "Seleccionando packs",
-      "ready": "Listo para pedir",
-      "ordered": "Pedido",
-      "shipped": "Enviado",
+      "ordering": "Realizando el pedido",
+      "ordered": "Pedido realizado",
       "received": "Recibido"
     },
     "header": {
@@ -392,7 +391,10 @@
       "noPacks": "Este producto no tiene packs disponibles.",
       "prev": "Anterior",
       "next": "Siguiente",
-      "confirm": "Confirmar y marcar como listo"
+      "confirm": "Confirmar selección de packs"
+    },
+    "placing": {
+      "noBreakdown": "Sin desglose disponible"
     }
   },
   "wishlist": {

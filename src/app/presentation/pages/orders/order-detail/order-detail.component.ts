@@ -31,6 +31,7 @@ import { OrderInfoSectionComponent } from './components/order-info-section/order
 import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
 import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
 import { MemberQty, OrderStepperComponent, PackStepData } from './components/order-stepper/order-stepper.component';
+import { OrderPlacingComponent } from './components/order-placing/order-placing.component';
 import {
   AddEditLineDialogComponent,
   AddEditLineDialogData
@@ -54,7 +55,8 @@ import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,
     OrderProductListComponent,
-    OrderStepperComponent
+    OrderStepperComponent,
+    OrderPlacingComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
@@ -98,11 +100,16 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   readonly allPacksSelected: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Status progression order. */
-  readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
+  readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ordering', 'ordered', 'received'];
 
   /** Whether the pack selection stepper is active (derived from order status). */
   selectingPacks(): boolean {
     return this.order()?.status === 'selecting_packs';
+  }
+
+  /** Whether the placing-order view is active (derived from order status). */
+  placingOrder(): boolean {
+    return this.order()?.status === 'ordering';
   }
 
   ngOnInit(): void {
@@ -283,12 +290,12 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Advances the order to 'ready'. Lines are already saved per-step; only the status changes.
+   * Advances the order to 'ordering'. Lines are already saved per-step; only the status changes.
    */
   async onConfirmPacks(): Promise<void> {
     this.saving.set(true);
     try {
-      await this._ordersUseCases.update(this._orderId, { status: 'ready' });
+      await this._ordersUseCases.update(this._orderId, { status: 'ordering' });
       this.packSteps.set([]);
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
@@ -547,6 +554,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /**
    * Loads the order by ID from the route parameter and updates the order signal.
    * If the order is in 'selecting_packs' and the user is the owner, initialises the stepper.
+   * If the order is in 'ordering' and the user is the owner, pre-loads the products catalogue.
    */
   private async _loadOrder(): Promise<void> {
     if (!this._orderId) return;
@@ -555,12 +563,12 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      if (
-        result.status === 'selecting_packs' &&
-        result.ownerId === this.userContext.userId() &&
-        this.packSteps().length === 0
-      ) {
+      const isOwner = result.ownerId === this.userContext.userId();
+      if (result.status === 'selecting_packs' && isOwner && this.packSteps().length === 0) {
         await this._initStepper(result);
+      }
+      if (result.status === 'ordering' && isOwner && this.products().length === 0) {
+        await this._loadProducts();
       }
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
@@ -578,12 +586,12 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      if (
-        result.status === 'selecting_packs' &&
-        result.ownerId === this.userContext.userId() &&
-        this.packSteps().length === 0
-      ) {
+      const isOwner = result.ownerId === this.userContext.userId();
+      if (result.status === 'selecting_packs' && isOwner && this.packSteps().length === 0) {
         await this._initStepper(result);
+      }
+      if (result.status === 'ordering' && isOwner && this.products().length === 0) {
+        await this._loadProducts();
       }
     } catch {
       // Silently ignore realtime reload errors

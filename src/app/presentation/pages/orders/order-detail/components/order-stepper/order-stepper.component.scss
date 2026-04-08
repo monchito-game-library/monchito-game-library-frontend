@@ -73,6 +73,12 @@
   overflow-y: auto;
 }
 
+.order-detail-page__stepper-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .order-detail-page__stepper-product-name {
   font-size: 1.25rem;
   font-weight: 600;
@@ -81,6 +87,7 @@
 .order-detail-page__stepper-needed {
   font-size: 0.9375rem;
   color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
 }
 
 .order-detail-page__stepper-members {
@@ -221,4 +228,30 @@
   gap: 0.25rem;
   justify-content: flex-end;
   flex-shrink: 0;
+  margin-top: 0.75rem;
+}
+
+// ────────────────────────── Responsive: < 1920x1080 ──────────────────────────
+@media (max-width: 1919px) {
+  .order-detail-page__stepper-header {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .order-detail-page__stepper-options {
+    grid-template-columns: 1fr;
+  }
+
+  .order-detail-page__stepper-nav {
+    justify-content: space-between;
+  }
+
+  .order-detail-page__stepper-product-name {
+    font-size: 1.125rem;
+  }
 }

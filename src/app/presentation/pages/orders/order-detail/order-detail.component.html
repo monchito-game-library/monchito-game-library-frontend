@@ -14,7 +14,7 @@
       <div
         class="order-detail-page__header-actions"
         [class.order-detail-page__header-actions--disabled]="editingHeader()">
-        @if (!selectingPacks()) {
+        @if (!selectingPacks() && !placingOrder()) {
           @if (!isOwner() && ord.status === 'draft') {
             @for (m of ord.members; track m.id) {
               @if (m.userId === userContext.userId()) {
@@ -42,9 +42,11 @@
                 <mat-icon>link</mat-icon>
               </button>
             }
-            <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
-              <mat-icon>edit</mat-icon>
-            </button>
+            @if (ord.status === 'draft') {
+              <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
             <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
               <mat-icon>delete</mat-icon>
             </button>
@@ -88,6 +90,28 @@
             <mat-icon>arrow_forward</mat-icon>
           </button>
         }
+        @if (placingOrder() && isOwner()) {
+          <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [matTooltip]="'orders.status.' + prevStatus() | transloco"
+            (click)="onRegressStatus()"
+            [disabled]="saving()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [matTooltip]="'orders.header.nextStep' | transloco"
+            (click)="onAdvanceStatus()"
+            [disabled]="saving()">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        }
       </div>
     </div>
 
@@ -100,7 +124,7 @@
       (headerSaved)="onInfoHeaderSaved()">
     </app-order-info-section>
 
-    <!-- Lines section o stepper -->
+    <!-- Lines section, stepper o placing -->
     @if (selectingPacks() && isOwner()) {
       <!-- Pack selection stepper -->
       <app-order-stepper
@@ -109,6 +133,9 @@
         [editingHeader]="editingHeader()"
         (allPacksSelectedChange)="allPacksSelected.set($event)">
       </app-order-stepper>
+    } @else if (placingOrder() && isOwner()) {
+      <!-- Placing order view: pack breakdown with URLs -->
+      <app-order-placing [order]="ord" [products]="products()" [editingHeader]="editingHeader()"> </app-order-placing>
     } @else {
       <!-- Lines section -->
       <app-order-product-list
@@ -120,8 +147,8 @@
       </app-order-product-list>
     }
 
-    <!-- Cost summary section: only meaningful once packs have been calculated -->
-    @if (ord.status !== 'draft' && ord.status !== 'selecting_packs') {
+    <!-- Cost summary: solo desde 'ordered' en adelante -->
+    @if (ord.status === 'ordered' || ord.status === 'received') {
       <app-order-cost-summary [order]="ord" [userId]="userContext.userId()" />
     }
   }

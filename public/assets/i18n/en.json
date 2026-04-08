@@ -275,9 +275,8 @@
     "status": {
       "draft": "Draft",
       "selecting_packs": "Selecting packs",
-      "ready": "Ready to order",
-      "ordered": "Ordered",
-      "shipped": "Shipped",
+      "ordering": "Placing order",
+      "ordered": "Order placed",
       "received": "Received"
     },
     "header": {
@@ -391,7 +390,10 @@
       "noPacks": "This product has no packs available.",
       "prev": "Previous",
       "next": "Next",
-      "confirm": "Confirm and mark as ready"
+      "confirm": "Confirm pack selection"
+    },
+    "placing": {
+      "noBreakdown": "No breakdown available"
     }
   },
   "wishlist": {
