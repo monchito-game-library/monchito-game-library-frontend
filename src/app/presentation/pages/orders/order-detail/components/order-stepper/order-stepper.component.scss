@@ -222,18 +222,3 @@
   justify-content: flex-end;
   flex-shrink: 0;
 }
-
-// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
-@media (max-width: 768px) {
-  .order-detail-page__stepper-options {
-    grid-template-columns: 1fr;
-  }
-
-  .order-detail-page__stepper-nav {
-    justify-content: space-between;
-  }
-
-  .order-detail-page__stepper-product-name {
-    font-size: 1.125rem;
-  }
-}
