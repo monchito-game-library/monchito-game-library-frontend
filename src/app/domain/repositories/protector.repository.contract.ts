@@ -22,7 +22,7 @@ export interface ProtectorRepositoryContract {
    * Updates fields of an existing protector.
    *
    * @param {string} id - Protector UUID
-   * @param {Partial<Omit<ProtectorModel, 'id'>>} patch
+   * @param {Partial<Omit<ProtectorModel, 'id'>>} patch - Campos a actualizar
    */
   update(id: string, patch: Partial<Omit<ProtectorModel, 'id'>>): Promise<ProtectorModel>;
 
@@ -30,7 +30,7 @@ export interface ProtectorRepositoryContract {
    * Toggles the active state of a protector (soft enable/disable).
    *
    * @param {string} id - Protector UUID
-   * @param {boolean} isActive
+   * @param {boolean} isActive - Si el protector está activo
    */
   toggleActive(id: string, isActive: boolean): Promise<ProtectorModel>;
 }

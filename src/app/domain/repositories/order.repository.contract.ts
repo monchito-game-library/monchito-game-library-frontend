@@ -16,70 +16,70 @@ export interface OrderRepositoryContract {
   /**
    * Returns all orders the user is involved in (as owner or member), ordered by creation date desc.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllForUser(userId: string): Promise<OrderSummaryModel[]>;
 
   /**
    * Returns the full detail of a single order including members, lines and allocations.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   getById(orderId: string): Promise<OrderModel>;
 
   /**
    * Creates a new order owned by the given user and returns its UUID.
    *
-   * @param {string} userId
-   * @param {OrderFormValue} formValue
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderFormValue} formValue - Valores del formulario
    */
   create(userId: string, formValue: OrderFormValue): Promise<string>;
 
   /**
    * Updates the header fields of an existing order.
    *
-   * @param {string} orderId
-   * @param {Partial<OrderFormValue>} patch
+   * @param {string} orderId - UUID del pedido
+   * @param {Partial<OrderFormValue>} patch - Campos a actualizar
    */
   update(orderId: string, patch: Partial<OrderFormValue>): Promise<void>;
 
   /**
    * Deletes an order and all its related rows (cascades via FK).
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   delete(orderId: string): Promise<void>;
 
   /**
    * Adds a product line to an order on behalf of a user and returns its UUID.
    *
-   * @param {string} orderId
-   * @param {string} userId
-   * @param {OrderLineFormValue} formValue
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineFormValue} formValue - Valores del formulario de la línea
    */
   addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string>;
 
   /**
    * Updates the fields of an existing order line (price, pack, qty, notes).
    *
-   * @param {string} lineId
-   * @param {OrderLinePatchValue} patch
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {OrderLinePatchValue} patch - Campos a actualizar en la línea
    */
   updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void>;
 
   /**
    * Deletes a product line and its allocations (cascades via FK).
    *
-   * @param {string} lineId
+   * @param {string} lineId - UUID de la línea de pedido
    */
   deleteLine(lineId: string): Promise<void>;
 
   /**
    * Inserts or updates a participant's quantity allocation for a line.
    *
-   * @param {string} lineId
-   * @param {string} userId
-   * @param {OrderLineAllocationFormValue} formValue
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineAllocationFormValue} formValue - Valores de allocación del formulario
    */
   upsertAllocation(lineId: string, userId: string, formValue: OrderLineAllocationFormValue): Promise<void>;
 
@@ -91,14 +91,14 @@ export interface OrderRepositoryContract {
   /**
    * Creates a new invitation token for an order and returns the token string.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   createInvitation(orderId: string): Promise<string>;
 
   /**
    * Returns the invitation for the given token, or null if it does not exist or has expired.
    *
-   * @param {string} token
+   * @param {string} token - Token de invitación
    */
   getInvitationByToken(token: string): Promise<OrderInvitationModel | null>;
 
@@ -106,17 +106,17 @@ export interface OrderRepositoryContract {
    * Adds the user as a member of the order linked to the token and marks the token as used.
    * Returns the order UUID.
    *
-   * @param {string} token
-   * @param {string} userId
+   * @param {string} token - Token de invitación
+   * @param {string} userId - UUID del usuario autenticado
    */
   acceptInvitation(token: string, userId: string): Promise<string>;
 
   /**
    * Sets the is_ready flag for a member of an order.
    *
-   * @param {string} orderId
-   * @param {string} userId
-   * @param {boolean} isReady
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {boolean} isReady - Si el miembro se marca como listo
    */
   setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void>;
 

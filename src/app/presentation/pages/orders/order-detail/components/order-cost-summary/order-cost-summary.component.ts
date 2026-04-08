@@ -43,7 +43,7 @@ export class OrderCostSummaryComponent {
   /**
    * Returns the members list sorted so the owner always appears first.
    *
-   * @param {OrderMemberModel[]} members
+   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
    */
   sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
     return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));

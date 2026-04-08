@@ -27,8 +27,8 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
   /**
    * Signs in with email and password.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    */
   async signIn(email: string, password: string): Promise<AuthResult> {
     try {
@@ -42,8 +42,8 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
   /**
    * Creates a new user account.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
    */
   async signUp(email: string, password: string, displayName?: string): Promise<AuthResult> {
@@ -65,7 +65,7 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
   /**
    * Sends a password-reset email to the given address.
    *
-   * @param {string} email
+   * @param {string} email - Dirección de email del usuario
    */
   async resetPassword(email: string): Promise<AuthResult> {
     try {
