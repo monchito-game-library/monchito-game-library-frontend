@@ -139,5 +139,34 @@
 @media (max-width: 768px) {
   .order-detail-page {
     padding: 1rem;
+    gap: 1rem;
+
+    .order-detail-page__title-row {
+      flex-wrap: nowrap;
+      gap: 0.25rem;
+    }
+
+    .order-detail-page__title {
+      font-size: 1.125rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .order-detail-page__header-actions {
+      overflow-x: auto;
+      flex-shrink: 0;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .order-detail-page__section {
+      padding: 1rem;
+    }
   }
 }
