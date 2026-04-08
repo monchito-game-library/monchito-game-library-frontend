@@ -64,6 +64,9 @@ export class OrderInfoSectionComponent {
   /** Emitted after a successful header save, so the parent can reload the order. */
   readonly headerSaved: OutputEmitterRef<void> = output<void>();
 
+  /** Whether the info section is expanded (open by default). */
+  readonly sectionExpanded: WritableSignal<boolean> = signal<boolean>(true);
+
   /** Whether the header is currently in edit mode. */
   readonly editingHeader: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -113,10 +116,18 @@ export class OrderInfoSectionComponent {
   }
 
   /**
+   * Toggles the visibility of the info section body.
+   */
+  onToggleSection(): void {
+    this.sectionExpanded.update((v) => !v);
+  }
+
+  /**
    * Opens edit mode: patches the form with current order values and emits editingStarted.
    * Called by the parent via ViewChild.
    */
   startEditing(): void {
+    this.sectionExpanded.set(true);
     const ord: OrderModel = this.order();
     this.headerForm.patchValue({
       title: ord.title,
