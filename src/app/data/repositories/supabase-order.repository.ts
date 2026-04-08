@@ -33,7 +33,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Returns all orders the user is involved in (as owner or member), ordered by creation date desc.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllForUser(userId: string): Promise<OrderSummaryModel[]> {
     const { data, error } = await this._supabase
@@ -48,7 +48,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Returns the full detail of a single order including members, lines and allocations.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async getById(orderId: string): Promise<OrderModel> {
     const [{ data: orderData, error: orderError }, { data: membersData, error: membersError }] = await Promise.all([
@@ -80,8 +80,8 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Creates a new order owned by the given user and returns its UUID.
    *
-   * @param {string} userId
-   * @param {OrderFormValue} formValue
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderFormValue} formValue - Valores del formulario
    */
   async create(userId: string, formValue: OrderFormValue): Promise<string> {
     const payload: OrderInsertDto = {
@@ -110,8 +110,8 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Updates the header fields of an existing order.
    *
-   * @param {string} orderId
-   * @param {Partial<OrderFormValue>} patch
+   * @param {string} orderId - UUID del pedido
+   * @param {Partial<OrderFormValue>} patch - Campos a actualizar
    */
   async update(orderId: string, patch: Partial<OrderFormValue>): Promise<void> {
     const payload: OrderUpdateDto = {
@@ -137,7 +137,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Deletes an order and all its related rows (cascades via FK).
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async delete(orderId: string): Promise<void> {
     const { error } = await this._supabase.from('orders').delete().eq('id', orderId);
@@ -147,9 +147,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Adds a product line to an order and returns its UUID.
    *
-   * @param {string} orderId
-   * @param userId
-   * @param {OrderLineFormValue} formValue
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineFormValue} formValue - Valores del formulario
    */
   async addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string> {
     const payload: OrderLineInsertDto = {
@@ -172,8 +172,8 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Updates the fields of an existing order line (price, pack, qty, notes).
    *
-   * @param {string} lineId
-   * @param {OrderLinePatchValue} patch
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {OrderLinePatchValue} patch - Campos a actualizar
    */
   async updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void> {
     const payload = Object.fromEntries(
@@ -194,7 +194,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Deletes a product line and its allocations (cascades via FK).
    *
-   * @param {string} lineId
+   * @param {string} lineId - UUID de la línea de pedido
    */
   async deleteLine(lineId: string): Promise<void> {
     const { error } = await this._supabase.from('order_lines').delete().eq('id', lineId);
@@ -204,9 +204,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Inserts or updates a participant's quantity allocation for a line.
    *
-   * @param {string} lineId
-   * @param {string} userId
-   * @param {OrderLineAllocationFormValue} formValue
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineAllocationFormValue} formValue - Valores de allocación del formulario
    */
   async upsertAllocation(lineId: string, userId: string, formValue: OrderLineAllocationFormValue): Promise<void> {
     const payload: OrderLineAllocationUpsertDto = {
@@ -240,7 +240,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Creates a new invitation token for an order and returns the token string.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async createInvitation(orderId: string): Promise<string> {
     const token = crypto.randomUUID();
@@ -254,7 +254,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Returns the invitation for the given token, or null if it does not exist or has expired.
    *
-   * @param {string} token
+   * @param {string} token - Token de invitación
    */
   async getInvitationByToken(token: string): Promise<OrderInvitationModel | null> {
     const { data, error } = await this._supabase
@@ -273,8 +273,8 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * Adds the user as a member of the order linked to the token and marks the token as used.
    * Returns the order UUID.
    *
-   * @param {string} token
-   * @param {string} userId
+   * @param {string} token - Token de invitación
+   * @param {string} userId - UUID del usuario autenticado
    */
   async acceptInvitation(token: string, userId: string): Promise<string> {
     const invitation = await this.getInvitationByToken(token);
@@ -299,9 +299,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Sets the is_ready flag for a member of an order.
    *
-   * @param {string} orderId
-   * @param {string} userId
-   * @param {boolean} isReady
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {boolean} isReady - Si el miembro se marca como listo
    */
   async setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void> {
     const { error } = await this._supabase.rpc('set_member_ready', {
@@ -317,7 +317,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * Subscribes to real-time changes in the orders table for a given order.
    * Returns a cleanup function that removes the subscription when called.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    * @param {() => void} onChanged - Callback invoked whenever the order row changes
    */
   subscribeToOrderMembers(orderId: string, onChanged: () => void): () => void {
@@ -337,7 +337,7 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * Subscribes to real-time changes in the order_lines table for a given order.
    * Returns a cleanup function that removes the subscription when called.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    * @param {() => void} onChanged - Callback invoked whenever a line row changes
    */
   subscribeToOrderLines(orderId: string, onChanged: () => void): () => void {

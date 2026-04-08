@@ -22,8 +22,8 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   /**
    * Signs in with email and password. Throws if the credentials are invalid.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    */
   async signIn(email: string, password: string): Promise<AuthUserModel> {
     const { data, error } = await this._supabase.auth.signInWithPassword({ email, password });
@@ -34,8 +34,8 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   /**
    * Creates a new user account.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName] - Falls back to the email local part if not provided.
    */
   async signUp(email: string, password: string, displayName?: string): Promise<AuthUserModel> {
@@ -66,7 +66,7 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   /**
    * Sends a password-reset email with a redirect URL.
    *
-   * @param {string} email
+   * @param {string} email - Dirección de email del usuario
    */
   async resetPassword(email: string): Promise<void> {
     const { error } = await this._supabase.auth.resetPasswordForEmail(email, {
@@ -103,7 +103,7 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   /**
    * Maps a Supabase User object to the domain AuthUserModel.
    *
-   * @param {User} user
+   * @param {User} user - Objeto usuario de Supabase Auth
    */
   private _mapUser(user: User): AuthUserModel {
     return {

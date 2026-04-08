@@ -15,7 +15,7 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   /**
    * Returns all games in the user's collection.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllGames(userId: string): Promise<GameModel[]> {
     return this._repo.getAllGamesForUser(userId);
@@ -25,7 +25,7 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    * Returns all games in the user's collection with only the fields needed
    * for the list view and game cards.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllGamesForList(userId: string): Promise<GameListModel[]> {
     return this._repo.getAllGamesForList(userId);
@@ -54,8 +54,8 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   /**
    * Returns all games for a given platform.
    *
-   * @param {string} userId
-   * @param {PlatformType} platform
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {PlatformType} platform - Plataforma a filtrar
    */
   async getByPlatform(userId: string, platform: PlatformType): Promise<GameModel[]> {
     return this._repo.getByConsole(userId, platform);
@@ -65,8 +65,8 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    * Adds a new game to the user's collection.
    * Passes the catalog entry to the repository so it can be linked to the record.
    *
-   * @param {string} userId
-   * @param {GameModel} game
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry]
    */
   async addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
@@ -98,7 +98,7 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   /**
    * Deletes all games in the user's collection.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async clearAll(userId: string): Promise<void> {
     return this._repo.clearAllForUser(userId);

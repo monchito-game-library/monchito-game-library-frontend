@@ -10,7 +10,7 @@ export interface GameUseCasesContract {
   /**
    * Returns all games in the user's collection.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllGames(userId: string): Promise<GameModel[]>;
 
@@ -18,7 +18,7 @@ export interface GameUseCasesContract {
    * Returns all games in the user's collection with only the fields needed
    * for the list view and game cards.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllGamesForList(userId: string): Promise<GameListModel[]>;
 
@@ -41,8 +41,8 @@ export interface GameUseCasesContract {
   /**
    * Returns all games for a given platform.
    *
-   * @param {string} userId
-   * @param {PlatformType} platform
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {PlatformType} platform - Plataforma a filtrar
    */
   getByPlatform(userId: string, platform: PlatformType): Promise<GameModel[]>;
 
@@ -50,8 +50,8 @@ export interface GameUseCasesContract {
    * Adds a new game to the user's collection.
    * Pass a catalog entry to link it to the RAWG catalog.
    *
-   * @param {string} userId
-   * @param {GameModel} game
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry]
    */
   addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
@@ -77,7 +77,7 @@ export interface GameUseCasesContract {
   /**
    * Deletes all games in the user's collection.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   clearAll(userId: string): Promise<void>;
 }

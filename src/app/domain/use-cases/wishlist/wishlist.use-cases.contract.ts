@@ -8,32 +8,32 @@ export interface WishlistUseCasesContract {
   /**
    * Returns all wishlist items for the given user, ordered by priority (high→low).
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllForUser(userId: string): Promise<WishlistItemModel[]>;
 
   /**
    * Adds a game to the user's wishlist.
    *
-   * @param {string} userId
-   * @param {GameCatalogDto} catalogEntry
-   * @param {WishlistItemFormValue} formValue
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {GameCatalogDto} catalogEntry - Entrada del catálogo de juegos
+   * @param {WishlistItemFormValue} formValue - Valores del formulario de wishlist
    */
   addItem(userId: string, catalogEntry: GameCatalogDto, formValue: WishlistItemFormValue): Promise<void>;
 
   /**
    * Updates the wishlist-specific fields of an existing item.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} id - Supabase UUID of the user_wishlist row
-   * @param {Partial<WishlistItemFormValue>} patch
+   * @param {Partial<WishlistItemFormValue>} patch - Campos a actualizar en el item
    */
   updateItem(userId: string, id: string, patch: Partial<WishlistItemFormValue>): Promise<void>;
 
   /**
    * Deletes a wishlist item by UUID.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} id - Supabase UUID of the user_wishlist row
    */
   deleteItem(userId: string, id: string): Promise<void>;

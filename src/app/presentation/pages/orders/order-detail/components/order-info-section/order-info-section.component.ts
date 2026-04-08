@@ -86,7 +86,7 @@ export class OrderInfoSectionComponent {
   /**
    * Returns the members list sorted so the owner always appears first.
    *
-   * @param {OrderMemberModel[]} members
+   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
    */
   sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
     return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
@@ -95,7 +95,7 @@ export class OrderInfoSectionComponent {
   /**
    * Returns the count of non-owner members who have marked ready out of the total invited.
    *
-   * @param {OrderMemberModel[]} members
+   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
    */
   readyCount(members: OrderMemberModel[]): { ready: number; total: number } {
     const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');
@@ -105,7 +105,7 @@ export class OrderInfoSectionComponent {
   /**
    * Returns true when all non-owner members have marked their selection as ready.
    *
-   * @param {OrderMemberModel[]} members
+   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
    */
   allMembersReady(members: OrderMemberModel[]): boolean {
     const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');

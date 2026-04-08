@@ -75,7 +75,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   /**
    * Called by Angular Forms to push a new value into the component.
    *
-   * @param {boolean} value
+   * @param {boolean} value - Nuevo valor del toggle
    */
   writeValue(value: boolean): void {
     this._value.set(value ?? false);
@@ -103,7 +103,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   /**
    * Called by Angular Forms when the disabled state of the control changes.
    *
-   * @param {boolean} isDisabled
+   * @param {boolean} isDisabled - Si el componente debe deshabilitarse
    */
   setDisabledState(isDisabled: boolean): void {
     this._isDisabled.set(isDisabled);

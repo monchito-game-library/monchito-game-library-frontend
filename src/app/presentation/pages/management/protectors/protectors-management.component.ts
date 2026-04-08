@@ -131,7 +131,7 @@ export class ProtectorEditPanelComponent {
   /**
    * Removes the pack at the given index.
    *
-   * @param {number} index
+   * @param {number} index - Índice del elemento en la lista
    */
   removePack(index: number): void {
     this.packsArray.removeAt(index);
@@ -214,7 +214,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Selects a protector and opens the edit panel.
    *
-   * @param {ProtectorModel} protector
+   * @param {ProtectorModel} protector - Protector al que pertenece la acción
    */
   onSelectProtector(protector: ProtectorModel): void {
     this.selectedProtector.set(protector);
@@ -232,7 +232,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Persists the new or updated protector and closes the panel.
    *
-   * @param {ProtectorFormResult} result
+   * @param {ProtectorFormResult} result - Resultado del formulario de protector
    */
   async onSaved(result: ProtectorFormResult): Promise<void> {
     const current = this.selectedProtector();
@@ -260,7 +260,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Shows a confirmation dialog and toggles the active state of the protector.
    *
-   * @param {ProtectorModel} protector
+   * @param {ProtectorModel} protector - Protector al que pertenece la acción
    */
   onToggleActive(protector: ProtectorModel): void {
     const nextActive: boolean = !protector.isActive;
@@ -287,7 +287,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Returns the i18n label for a protector category.
    *
-   * @param {ProtectorCategory} category
+   * @param {ProtectorCategory} category - Categoría del protector
    */
   getCategoryLabel(category: ProtectorCategory): string {
     return this._transloco.translate(
@@ -298,7 +298,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Returns the cheapest unit price across all packs of the protector.
    *
-   * @param {ProtectorModel} protector
+   * @param {ProtectorModel} protector - Protector al que pertenece la acción
    */
   getMinUnitPrice(protector: ProtectorModel): number {
     if (!protector.packs.length) return 0;
