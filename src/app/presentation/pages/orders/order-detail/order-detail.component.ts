@@ -9,7 +9,6 @@ import {
   WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DecimalPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -46,7 +45,6 @@ import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    DecimalPipe,
     MatButton,
     MatIconButton,
     MatIcon,

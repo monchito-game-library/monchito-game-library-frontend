@@ -15,7 +15,6 @@ import {
 import { DecimalPipe } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -63,7 +62,7 @@ export interface PackStepData {
     class: 'order-detail-page__section order-detail-page__section--lines order-detail-page__stepper',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, MatButton, MatIcon, MatTooltip, TranslocoPipe]
+  imports: [DecimalPipe, MatButton, MatIcon, TranslocoPipe]
 })
 export class OrderStepperComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
