@@ -69,6 +69,16 @@ export class OrderStepperComponent {
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
+  /** Set of productIds that have been explicitly clicked or auto-confirmed by the owner. */
+  private readonly _confirmedSelections: WritableSignal<Set<string>> = signal<Set<string>>(new Set());
+
+  /** True when every step that has suggestions has been explicitly confirmed. */
+  private readonly _allPacksSelected: Signal<boolean> = computed(() => {
+    const confirmed = this._confirmedSelections();
+    const steps = this.packSteps().filter((s) => s.suggestions.length > 0);
+    return steps.length > 0 && steps.every((s) => confirmed.has(s.productId));
+  });
+
   /** The order being processed in the stepper. */
   readonly order: InputSignal<OrderModel> = input.required<OrderModel>();
 
@@ -86,16 +96,6 @@ export class OrderStepperComponent {
 
   /** Map of productId → selected suggestion index (0 = exact, 1–2 = rounded). */
   readonly stepSelections: WritableSignal<Map<string, number>> = signal<Map<string, number>>(new Map());
-
-  /** Set of productIds that have been explicitly clicked or auto-confirmed by the owner. */
-  private readonly _confirmedSelections: WritableSignal<Set<string>> = signal<Set<string>>(new Set());
-
-  /** True when every step that has suggestions has been explicitly confirmed. */
-  private readonly _allPacksSelected: Signal<boolean> = computed(() => {
-    const confirmed = this._confirmedSelections();
-    const steps = this.packSteps().filter((s) => s.suggestions.length > 0);
-    return steps.length > 0 && steps.every((s) => confirmed.has(s.productId));
-  });
 
   constructor() {
     // Re-initialise internal state whenever the steps input changes (e.g. on first load).

@@ -18,7 +18,7 @@ import { OrderProductModel } from '@/models/order/order-product.model';
 /**
  * Maps an order_line_allocations row to the OrderLineAllocationModel domain model.
  *
- * @param {OrderLineAllocationDto} dto
+ * @param {OrderLineAllocationDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderLineAllocation(dto: OrderLineAllocationDto): OrderLineAllocationModel {
   return {
@@ -33,7 +33,7 @@ export function mapOrderLineAllocation(dto: OrderLineAllocationDto): OrderLineAl
 /**
  * Maps an order_lines row (with joined order_products and allocations) to OrderLineModel.
  *
- * @param {OrderLineDto} dto
+ * @param {OrderLineDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderLine(dto: OrderLineDto): OrderLineModel {
   return {
@@ -57,7 +57,7 @@ export function mapOrderLine(dto: OrderLineDto): OrderLineModel {
 /**
  * Maps an order_members row to the OrderMemberModel domain model.
  *
- * @param {OrderMemberDto} dto
+ * @param {OrderMemberDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderMember(dto: OrderMemberDto): OrderMemberModel {
   return {
@@ -76,7 +76,7 @@ export function mapOrderMember(dto: OrderMemberDto): OrderMemberModel {
 /**
  * Maps a full orders row (with members and lines joined) to the OrderModel domain model.
  *
- * @param {OrderDetailDto} dto
+ * @param {OrderDetailDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrder(dto: OrderDetailDto): OrderModel {
   return {
@@ -101,7 +101,7 @@ export function mapOrder(dto: OrderDetailDto): OrderModel {
 /**
  * Maps a lightweight orders row (with member count) to the OrderSummaryModel domain model.
  *
- * @param {OrderSummaryDto} dto
+ * @param {OrderSummaryDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderSummary(dto: OrderSummaryDto): OrderSummaryModel {
   return {
@@ -118,7 +118,7 @@ export function mapOrderSummary(dto: OrderSummaryDto): OrderSummaryModel {
 /**
  * Maps an order_products row to the OrderProductModel domain model.
  *
- * @param {OrderProductDto} dto
+ * @param {OrderProductDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
   return {
@@ -133,7 +133,7 @@ export function mapOrderProduct(dto: OrderProductDto): OrderProductModel {
 /**
  * Maps an order_invitations row to the OrderInvitationModel domain model.
  *
- * @param {OrderInvitationDto} dto
+ * @param {OrderInvitationDto} dto - DTO/modelo recibido para mapear
  */
 export function mapOrderInvitation(dto: OrderInvitationDto): OrderInvitationModel {
   return {

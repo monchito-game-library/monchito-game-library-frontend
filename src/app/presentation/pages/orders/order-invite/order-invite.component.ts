@@ -24,6 +24,8 @@ export class OrderInviteComponent implements OnInit {
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
 
+  private _token: string = '';
+
   readonly authState: AuthStateService = inject(AuthStateService);
   readonly userContext: UserContextService = inject(UserContextService);
 
@@ -41,8 +43,6 @@ export class OrderInviteComponent implements OnInit {
 
   /** Whether the user is already a member of this order. */
   readonly alreadyMember: WritableSignal<boolean> = signal<boolean>(false);
-
-  private _token: string = '';
 
   ngOnInit(): void {
     this._token = this._route.snapshot.paramMap.get('token') ?? '';

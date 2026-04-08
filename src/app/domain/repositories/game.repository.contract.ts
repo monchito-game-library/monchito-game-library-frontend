@@ -10,7 +10,7 @@ export interface GameRepositoryContract {
   /**
    * Returns all games in the user's collection.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllGamesForUser(userId: string): Promise<GameModel[]>;
 
@@ -18,15 +18,15 @@ export interface GameRepositoryContract {
    * Returns all games in the user's collection with only the columns needed
    * for the list view and game cards (excludes condition, format, rawgId, rawgSlug).
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   getAllGamesForList(userId: string): Promise<GameListModel[]>;
 
   /**
    * Returns all games in the user's collection filtered by platform.
    *
-   * @param {string} userId
-   * @param {PlatformType} platform
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {PlatformType} platform - Plataforma a filtrar
    */
   getByConsole(userId: string, platform: PlatformType): Promise<GameModel[]>;
 
@@ -34,8 +34,8 @@ export interface GameRepositoryContract {
    * Adds a new game to the user's collection.
    * If a catalog entry is provided it will be linked to the game record.
    *
-   * @param {string} userId
-   * @param {GameModel} game
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
   addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
@@ -62,7 +62,7 @@ export interface GameRepositoryContract {
   /**
    * Deletes all games for a user.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   clearAllForUser(userId: string): Promise<void>;
 

@@ -5,7 +5,7 @@ import { WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.int
 /**
  * Maps a user_wishlist_full view row to the WishlistItemModel domain model.
  *
- * @param {WishlistFullDto} dto
+ * @param {WishlistFullDto} dto - DTO/modelo recibido para mapear
  */
 export function mapWishlistItem(dto: WishlistFullDto): WishlistItemModel {
   return {
@@ -31,9 +31,9 @@ export function mapWishlistItem(dto: WishlistFullDto): WishlistItemModel {
 /**
  * Maps a user ID, catalog entry UUID and form values to a WishlistInsertDto.
  *
- * @param {string} userId
- * @param {string} gameCatalogId
- * @param {WishlistItemFormValue} formValue
+ * @param {string} userId - UUID del usuario autenticado
+ * @param {string} gameCatalogId - UUID de la entrada del catálogo de juegos
+ * @param {WishlistItemFormValue} formValue - Valores del formulario de wishlist
  */
 export function mapWishlistToInsertDto(
   userId: string,

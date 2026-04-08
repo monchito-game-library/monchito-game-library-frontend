@@ -68,7 +68,7 @@ export abstract class CropInteractionBase {
   /**
    * Starts drag tracking and captures the pointer.
    *
-   * @param {PointerEvent} event
+   * @param {PointerEvent} event - Evento del puntero
    */
   onPointerDown(event: PointerEvent): void {
     if (event.pointerType === 'touch') return;
@@ -82,7 +82,7 @@ export abstract class CropInteractionBase {
   /**
    * Updates position based on pointer delta while dragging.
    *
-   * @param {PointerEvent} event
+   * @param {PointerEvent} event - Evento del puntero
    */
   onPointerMove(event: PointerEvent): void {
     if (!this.isDragging()) return;
@@ -103,7 +103,7 @@ export abstract class CropInteractionBase {
   /**
    * Handles mouse wheel to zoom in or out.
    *
-   * @param {WheelEvent} event
+   * @param {WheelEvent} event - Evento de la rueda
    */
   onWheel(event: WheelEvent): void {
     event.preventDefault();
@@ -113,7 +113,7 @@ export abstract class CropInteractionBase {
   /**
    * Records the initial pinch distance and scale when a two-finger gesture starts.
    *
-   * @param {TouchEvent} event
+   * @param {TouchEvent} event - Evento táctil
    */
   onTouchStart(event: TouchEvent): void {
     if (event.touches.length === 2) {
@@ -129,7 +129,7 @@ export abstract class CropInteractionBase {
   /**
    * Handles single-finger drag and two-finger pinch-to-zoom on touch devices.
    *
-   * @param {TouchEvent} event
+   * @param {TouchEvent} event - Evento táctil
    */
   onTouchMove(event: TouchEvent): void {
     event.preventDefault();
@@ -151,7 +151,7 @@ export abstract class CropInteractionBase {
    * Resets the last touch position when a finger is lifted so single-finger
    * drag starts correctly after a pinch gesture.
    *
-   * @param {TouchEvent} event
+   * @param {TouchEvent} event - Evento táctil
    */
   onTouchEnd(event: TouchEvent): void {
     if (event.touches.length === 1) {
@@ -192,7 +192,7 @@ export abstract class CropInteractionBase {
   /**
    * Returns the Euclidean distance between the two active touch points.
    *
-   * @param {TouchEvent} event
+   * @param {TouchEvent} event - Evento táctil
    */
   private _touchDistance(event: TouchEvent): number {
     const dx: number = event.touches[0].clientX - event.touches[1].clientX;

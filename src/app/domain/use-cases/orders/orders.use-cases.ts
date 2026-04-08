@@ -20,7 +20,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Returns all orders the user is involved in (as owner or member).
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllForUser(userId: string): Promise<OrderSummaryModel[]> {
     return this._repo.getAllForUser(userId);
@@ -29,7 +29,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Returns the full detail of a single order.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async getById(orderId: string): Promise<OrderModel> {
     return this._repo.getById(orderId);
@@ -38,8 +38,8 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Creates a new order and returns its UUID.
    *
-   * @param {string} userId
-   * @param {OrderFormValue} formValue
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderFormValue} formValue - Valores del formulario
    */
   async create(userId: string, formValue: OrderFormValue): Promise<string> {
     return this._repo.create(userId, formValue);
@@ -48,8 +48,8 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Updates the header fields of an existing order.
    *
-   * @param {string} orderId
-   * @param {Partial<OrderFormValue>} patch
+   * @param {string} orderId - UUID del pedido
+   * @param {Partial<OrderFormValue>} patch - Campos a actualizar
    */
   async update(orderId: string, patch: Partial<OrderFormValue>): Promise<void> {
     return this._repo.update(orderId, patch);
@@ -58,7 +58,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Deletes an order and all its related rows.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async delete(orderId: string): Promise<void> {
     return this._repo.delete(orderId);
@@ -67,9 +67,9 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Adds a product line to an order on behalf of a user and returns its UUID.
    *
-   * @param {string} orderId
-   * @param {string} userId
-   * @param {OrderLineFormValue} formValue
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineFormValue} formValue - Valores del formulario de la línea
    */
   async addLine(orderId: string, userId: string, formValue: OrderLineFormValue): Promise<string> {
     return this._repo.addLine(orderId, userId, formValue);
@@ -78,8 +78,8 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Updates the fields of an existing order line (price, pack, qty, notes).
    *
-   * @param {string} lineId
-   * @param {OrderLinePatchValue} patch
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {OrderLinePatchValue} patch - Campos a actualizar en la línea
    */
   async updateLine(lineId: string, patch: OrderLinePatchValue): Promise<void> {
     return this._repo.updateLine(lineId, patch);
@@ -88,7 +88,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Deletes a product line and its allocations.
    *
-   * @param {string} lineId
+   * @param {string} lineId - UUID de la línea de pedido
    */
   async deleteLine(lineId: string): Promise<void> {
     return this._repo.deleteLine(lineId);
@@ -97,9 +97,9 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Inserts or updates a participant's quantity allocation for a line.
    *
-   * @param {string} lineId
-   * @param {string} userId
-   * @param {OrderLineAllocationFormValue} formValue
+   * @param {string} lineId - UUID de la línea de pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {OrderLineAllocationFormValue} formValue - Valores de allocación del formulario
    */
   async upsertAllocation(lineId: string, userId: string, formValue: OrderLineAllocationFormValue): Promise<void> {
     return this._repo.upsertAllocation(lineId, userId, formValue);
@@ -115,7 +115,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Creates a new invitation token for an order and returns the token string.
    *
-   * @param {string} orderId
+   * @param {string} orderId - UUID del pedido
    */
   async createInvitation(orderId: string): Promise<string> {
     return this._repo.createInvitation(orderId);
@@ -124,7 +124,7 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Returns the invitation for the given token, or null if expired or not found.
    *
-   * @param {string} token
+   * @param {string} token - Token de invitación
    */
   async getInvitationByToken(token: string): Promise<OrderInvitationModel | null> {
     return this._repo.getInvitationByToken(token);
@@ -134,8 +134,8 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
    * Adds the user as a member of the order linked to the token.
    * Returns the order UUID.
    *
-   * @param {string} token
-   * @param {string} userId
+   * @param {string} token - Token de invitación
+   * @param {string} userId - UUID del usuario autenticado
    */
   async acceptInvitation(token: string, userId: string): Promise<string> {
     return this._repo.acceptInvitation(token, userId);
@@ -144,9 +144,9 @@ export class OrdersUseCasesImpl implements OrdersUseCasesContract {
   /**
    * Sets the is_ready flag for a member of an order.
    *
-   * @param {string} orderId
-   * @param {string} userId
-   * @param {boolean} isReady
+   * @param {string} orderId - UUID del pedido
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {boolean} isReady - Si el miembro se marca como listo
    */
   async setMemberReady(orderId: string, userId: string, isReady: boolean): Promise<void> {
     return this._repo.setMemberReady(orderId, userId, isReady);

@@ -23,16 +23,16 @@ export interface AuthUseCasesContract {
   /**
    * Signs in with email and password.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    */
   signIn(email: string, password: string): Promise<AuthResult>;
 
   /**
    * Registers a new user.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
    */
   signUp(email: string, password: string, displayName?: string): Promise<AuthResult>;
@@ -45,7 +45,7 @@ export interface AuthUseCasesContract {
   /**
    * Sends a password-reset email.
    *
-   * @param {string} email
+   * @param {string} email - Dirección de email del usuario
    */
   resetPassword(email: string): Promise<AuthResult>;
 

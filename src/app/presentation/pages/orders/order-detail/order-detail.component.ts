@@ -91,11 +91,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** List of available products for order lines. */
   readonly products: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>([]);
 
-  /** Whether the pack selection stepper is active (derived from order status). */
-  selectingPacks(): boolean {
-    return this.order()?.status === 'selecting_packs';
-  }
-
   /** Steps for the pack selection stepper, one per product group. */
   readonly packSteps: WritableSignal<PackStepData[]> = signal<PackStepData[]>([]);
 
@@ -104,6 +99,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   /** Status progression order. */
   readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
+
+  /** Whether the pack selection stepper is active (derived from order status). */
+  selectingPacks(): boolean {
+    return this.order()?.status === 'selecting_packs';
+  }
 
   ngOnInit(): void {
     this._orderId = this._route.snapshot.paramMap.get('id') ?? '';
@@ -127,7 +127,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Returns true when all non-owner members have marked their selection as ready.
    * If there are no invited members, returns true.
    *
-   * @param {OrderMemberModel[]} members
+   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
    */
   allMembersReady(members: OrderMemberModel[]): boolean {
     const invited = members.filter((m) => m.role !== 'owner');
@@ -297,72 +297,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     } finally {
       this.saving.set(false);
     }
-  }
-
-  /**
-   * Sets order status to 'selecting_packs' in the DB and initialises the stepper.
-   */
-  private async _onAdvanceToSelectingPacks(): Promise<void> {
-    this.saving.set(true);
-    try {
-      if (this.products().length === 0) await this._loadProducts();
-      await this._ordersUseCases.update(this._orderId, { status: 'selecting_packs' });
-      const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
-      this.order.set(result);
-      await this._initStepper(result);
-    } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
-    } finally {
-      this.saving.set(false);
-    }
-  }
-
-  /**
-   * Builds the pack selection steps from the order lines and products catalogue.
-   *
-   * @param {OrderModel} ord - The order to build steps for
-   */
-  private async _initStepper(ord: OrderModel): Promise<void> {
-    if (this.products().length === 0) await this._loadProducts();
-
-    const grouped = new Map<string, OrderLineModel[]>();
-    for (const line of ord.lines) {
-      const existing = grouped.get(line.productId) ?? [];
-      existing.push(line);
-      grouped.set(line.productId, existing);
-    }
-
-    const steps: PackStepData[] = Array.from(grouped.entries()).map(([productId, groupLines]) => {
-      const totalNeeded = groupLines.reduce((sum, l) => sum + (l.quantityNeeded ?? 0), 0);
-      const product = this.products().find((p) => p.id === productId);
-      const suggestions = product && totalNeeded > 0 ? optimizePacks(totalNeeded, product.packs) : [];
-      const qtyByUser = new Map<string, number>();
-      for (const l of groupLines) {
-        if (l.requestedBy !== null && (l.quantityNeeded ?? 0) > 0) {
-          qtyByUser.set(l.requestedBy, (qtyByUser.get(l.requestedBy) ?? 0) + (l.quantityNeeded ?? 0));
-        }
-      }
-      const memberBreakdown: MemberQty[] = Array.from(qtyByUser.entries()).map(([userId, qty]) => {
-        const member = ord.members.find((m) => m.userId === userId);
-        return {
-          userId,
-          displayName: member?.displayName ?? null,
-          email: member?.email ?? null,
-          avatarUrl: member?.avatarUrl ?? null,
-          qty
-        };
-      });
-      return {
-        productId,
-        productName: groupLines[0].productName,
-        totalNeeded,
-        suggestions,
-        lineIds: groupLines.map((l) => l.id),
-        memberBreakdown
-      };
-    });
-
-    this.packSteps.set(steps);
   }
 
   /**
@@ -542,6 +476,72 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
     }
+  }
+
+  /**
+   * Sets order status to 'selecting_packs' in the DB and initialises the stepper.
+   */
+  private async _onAdvanceToSelectingPacks(): Promise<void> {
+    this.saving.set(true);
+    try {
+      if (this.products().length === 0) await this._loadProducts();
+      await this._ordersUseCases.update(this._orderId, { status: 'selecting_packs' });
+      const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
+      this.order.set(result);
+      await this._initStepper(result);
+    } catch {
+      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  /**
+   * Builds the pack selection steps from the order lines and products catalogue.
+   *
+   * @param {OrderModel} ord - The order to build steps for
+   */
+  private async _initStepper(ord: OrderModel): Promise<void> {
+    if (this.products().length === 0) await this._loadProducts();
+
+    const grouped = new Map<string, OrderLineModel[]>();
+    for (const line of ord.lines) {
+      const existing = grouped.get(line.productId) ?? [];
+      existing.push(line);
+      grouped.set(line.productId, existing);
+    }
+
+    const steps: PackStepData[] = Array.from(grouped.entries()).map(([productId, groupLines]) => {
+      const totalNeeded = groupLines.reduce((sum, l) => sum + (l.quantityNeeded ?? 0), 0);
+      const product = this.products().find((p) => p.id === productId);
+      const suggestions = product && totalNeeded > 0 ? optimizePacks(totalNeeded, product.packs) : [];
+      const qtyByUser = new Map<string, number>();
+      for (const l of groupLines) {
+        if (l.requestedBy !== null && (l.quantityNeeded ?? 0) > 0) {
+          qtyByUser.set(l.requestedBy, (qtyByUser.get(l.requestedBy) ?? 0) + (l.quantityNeeded ?? 0));
+        }
+      }
+      const memberBreakdown: MemberQty[] = Array.from(qtyByUser.entries()).map(([userId, qty]) => {
+        const member = ord.members.find((m) => m.userId === userId);
+        return {
+          userId,
+          displayName: member?.displayName ?? null,
+          email: member?.email ?? null,
+          avatarUrl: member?.avatarUrl ?? null,
+          qty
+        };
+      });
+      return {
+        productId,
+        productName: groupLines[0].productName,
+        totalNeeded,
+        suggestions,
+        lineIds: groupLines.map((l) => l.id),
+        memberBreakdown
+      };
+    });
+
+    this.packSteps.set(steps);
   }
 
   /**
