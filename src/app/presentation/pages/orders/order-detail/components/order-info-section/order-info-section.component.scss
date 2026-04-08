@@ -1,0 +1,314 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-detail-page__info {
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.3s ease;
+
+  &--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.order-detail-page__info-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.order-detail-page__members-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.order-detail-page__members-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-detail-page__members-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.order-detail-page__members-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.order-detail-page__member-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.order-detail-page__member-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mat-sys-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+}
+
+.order-detail-page__member-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.order-detail-page__member-owner-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  margin-left: auto;
+}
+
+.order-detail-page__member-pending-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  margin-left: auto;
+}
+
+.order-detail-page__member-ready-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
+  margin-left: auto;
+}
+
+.order-detail-page__ready-hint {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.order-detail-page__status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &--draft {
+    background: var(--mat-sys-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
+  }
+  &--ordered {
+    background: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
+  }
+  &--shipped {
+    background: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
+  }
+  &--received {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+}
+
+.order-detail-page__info-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.order-detail-page__info-row {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.order-detail-page__info-label {
+  font-weight: 500;
+  min-width: 10rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.order-detail-page__form-expander {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s ease;
+
+  &--expanded {
+    grid-template-rows: 1fr;
+    flex: 1;
+    transition: grid-template-rows 0.45s ease;
+
+    .order-detail-page__form-expander-inner {
+      opacity: 1;
+      transition: opacity 0.3s ease 0.2s;
+    }
+  }
+}
+
+.order-detail-page__form-expander-inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.order-detail-page__edit-divider {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  margin: 1.5rem 1.5rem 0;
+}
+
+.order-detail-page__edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+
+.order-detail-page__form-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.order-detail-page__form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.order-detail-page__form-costs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.order-detail-page__form-field {
+  width: 100%;
+
+  &--grow {
+    flex: 1;
+  }
+
+  &--full-height {
+    textarea {
+      resize: none;
+    }
+  }
+}
+
+.order-detail-page__discount-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.order-detail-page__discount-type-toggle {
+  height: 2.75rem;
+  flex-shrink: 0;
+
+  ::ng-deep .mat-button-toggle {
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+
+  ::ng-deep .mat-button-toggle-button {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  ::ng-deep .mat-button-toggle-label-content {
+    line-height: normal;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.order-detail-page__form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  animation: fade-in-actions 0.3s ease 0.5s both;
+
+  &--hiding {
+    animation: fade-out-actions 0.3s ease forwards;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .order-detail-page__info-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .order-detail-page__info-label {
+    min-width: unset;
+  }
+}
+
+@keyframes fade-in-actions {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out-actions {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}

@@ -26,6 +26,8 @@ import { wishlistRepositoryProvider } from '@/di/repositories/wishlist.repositor
 import { wishlistUseCasesProvider } from '@/di/use-cases/wishlist.use-cases.provider';
 import { protectorRepositoryProvider } from '@/di/repositories/protector.repository.provider';
 import { protectorUseCasesProvider } from '@/di/use-cases/protector.use-cases.provider';
+import { orderRepositoryProvider } from '@/di/repositories/order.repository.provider';
+import { ordersUseCasesProvider } from '@/di/use-cases/orders.use-cases.provider';
 import { provideServiceWorker } from '@angular/service-worker';
 
 registerLocaleData(localeEs);
@@ -64,6 +66,8 @@ export const appConfig: ApplicationConfig = {
     wishlistUseCasesProvider,
     protectorRepositoryProvider,
     protectorUseCasesProvider,
+    orderRepositoryProvider,
+    ordersUseCasesProvider,
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately'

@@ -1,0 +1,54 @@
+<div mat-dialog-title>{{ 'orders.ready.dialogTitle' | transloco }}</div>
+
+<mat-dialog-content class="ready-dialog__content">
+  <div class="ready-dialog__intro">{{ 'orders.ready.dialogIntro' | transloco }}</div>
+
+  @for (lineData of data.lines; track lineData.line.id) {
+    <div class="ready-dialog__line">
+      <div class="ready-dialog__line-header">
+        <div class="ready-dialog__line-name">{{ lineData.line.productName }}</div>
+        <div class="ready-dialog__line-needed">
+          {{ 'orders.ready.needed' | transloco }}: <strong>{{ lineData.totalNeeded }}</strong>
+        </div>
+      </div>
+
+      @if (lineData.suggestions.length === 0) {
+        <div class="ready-dialog__no-packs">{{ 'orders.ready.noPacks' | transloco }}</div>
+      } @else {
+        <div class="ready-dialog__suggestions">
+          @for (suggestion of lineData.suggestions; track $index) {
+            <div
+              class="ready-dialog__suggestion"
+              [class.ready-dialog__suggestion--selected]="getSelectedIndex(lineData.line.id) === $index"
+              (click)="onSelectSuggestion(lineData.line.id, $index)">
+              <div class="ready-dialog__suggestion-breakdown">{{ formatBreakdown(suggestion) }}</div>
+              <div class="ready-dialog__suggestion-units">
+                {{ suggestion.totalUnits }} {{ 'orders.ready.units' | transloco }}
+                @if (suggestion.totalUnits > lineData.totalNeeded) {
+                  <span class="ready-dialog__suggestion-excess">
+                    (+{{ suggestion.totalUnits - lineData.totalNeeded }} {{ 'orders.ready.extra' | transloco }})
+                  </span>
+                }
+              </div>
+              <div class="ready-dialog__suggestion-cost">
+                {{ suggestion.totalCost | number: '1.2-2' }} €
+                <span class="ready-dialog__suggestion-unit-price">
+                  ({{ suggestion.unitPrice | number: '1.4-4' }} €/ud.)
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">
+    {{ 'orders.header.cancel' | transloco }}
+  </button>
+  <button mat-flat-button type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
+    {{ 'orders.ready.confirm' | transloco }}
+  </button>
+</mat-dialog-actions>

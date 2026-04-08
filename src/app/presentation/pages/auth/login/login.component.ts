@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -37,6 +37,7 @@ export class LoginComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
+  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
 
   /** Whether a login request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -78,7 +79,8 @@ export class LoginComponent {
     this.loading.set(false);
 
     if (result.success) {
-      void this._router.navigate(['/list']);
+      const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/list';
+      void this._router.navigateByUrl(returnUrl);
     } else {
       this.errorMessage.set(result.error ?? 'Login failed');
     }
