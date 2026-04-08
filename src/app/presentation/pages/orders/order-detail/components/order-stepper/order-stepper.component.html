@@ -61,19 +61,21 @@
                   }
                 </div>
                 <div class="order-detail-page__pack-option-breakdown">{{ formatBreakdown(suggestion) }}</div>
-                <div class="order-detail-page__pack-option-units">
-                  {{ suggestion.totalUnits }} {{ 'orders.ready.units' | transloco }}
-                  @if (suggestion.totalUnits > step.totalNeeded) {
-                    <span class="order-detail-page__pack-option-excess">
-                      (+{{ suggestion.totalUnits - step.totalNeeded }} {{ 'orders.ready.extra' | transloco }})
+                <div class="order-detail-page__pack-option-footer">
+                  <div class="order-detail-page__pack-option-units">
+                    {{ suggestion.totalUnits }} {{ 'orders.ready.units' | transloco }}
+                    @if (suggestion.totalUnits > step.totalNeeded) {
+                      <span class="order-detail-page__pack-option-excess">
+                        (+{{ suggestion.totalUnits - step.totalNeeded }} {{ 'orders.ready.extra' | transloco }})
+                      </span>
+                    }
+                  </div>
+                  <div class="order-detail-page__pack-option-cost">
+                    {{ suggestion.totalCost | number: '1.2-2' }} €
+                    <span class="order-detail-page__pack-option-unit-price">
+                      ({{ suggestion.unitPrice | number: '1.2-2' }} €/ud.)
                     </span>
-                  }
-                </div>
-                <div class="order-detail-page__pack-option-cost">
-                  {{ suggestion.totalCost | number: '1.2-2' }} €
-                  <span class="order-detail-page__pack-option-unit-price">
-                    ({{ suggestion.unitPrice | number: '1.2-2' }} €/ud.)
-                  </span>
+                  </div>
                 </div>
               </div>
             }

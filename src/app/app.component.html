@@ -86,6 +86,7 @@
           <a
             class="bottom-nav__item"
             [class.bottom-nav__item--active]="isNavActive(item.route)"
+            [class.bottom-nav__item--tablet-only]="item.route === '/orders'"
             [routerLink]="item.route"
             [attr.aria-label]="item.label | transloco">
             <mat-icon>{{ item.icon }}</mat-icon>
