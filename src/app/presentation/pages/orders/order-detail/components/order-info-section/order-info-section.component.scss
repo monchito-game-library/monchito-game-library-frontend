@@ -289,15 +289,6 @@
   .order-detail-page__info-label {
     min-width: unset;
   }
-
-  .order-detail-page__form-columns {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .order-detail-page__info-top {
-    flex-wrap: wrap;
-  }
 }
 
 @keyframes fade-in-actions {
