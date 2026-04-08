@@ -43,7 +43,8 @@ export class AppComponent implements OnInit {
   /** Navigation items shared by desktop rail and mobile bottom nav. */
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/list' },
-    { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' }
+    { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' },
+    { icon: 'shopping_cart', label: 'nav.orders', route: '/orders' }
   ];
 
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */

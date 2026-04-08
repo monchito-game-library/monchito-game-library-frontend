@@ -16,6 +16,7 @@
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| ~~[Pedidos (`/orders`)](#pedidos-orders)~~ | ✅ Implementado |
 | ~~[Deuda técnica — análisis de código](#deuda-técnica--análisis-de-código)~~ | ✅ Completado |
 | ~~[Rediseño de la card de wishlist](#rediseño-de-la-card-de-wishlist)~~ | ✅ Hecho |
 | ~~[Testing (unit + integración)](#testing-unit--integración)~~ | ✅ Hecho |
@@ -69,174 +70,6 @@ Actualmente pulsar en una card abre directamente el formulario de edición. Con 
   - `/games/{id}/additions` — DLCs
 - Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
 - Cachear las respuestas de RAWG en memoria durante la sesión.
-
----
-
-## Media-alta prioridad
-
-### Pedidos (`/orders`)
-
-Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
-
-Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuarios de la app). En el caso grupal, el owner invita a sus amigos mediante un enlace/código y cada uno rellena sus cantidades. El sistema calcula automáticamente el pack óptimo a pedir y lo que debe pagar cada participante.
-
-#### Flujo principal
-
-1. El usuario crea un pedido (`draft`) y añade los productos que necesita con sus cantidades.
-2. Opcionalmente genera un **enlace de invitación** y lo comparte (WhatsApp, Telegram…) con amigos que también usen la app.
-3. Los amigos aceptan la invitación y se unen como miembros — cada uno rellena cuánto necesita de cada producto.
-4. La vista de detalle muestra el total del grupo por producto y sugiere qué pack comprar (el más económico que cubra la suma total).
-5. El owner elige el pack definitivo, marca el pedido como `ordered` y el sistema calcula el coste por persona (producto + envío + fee de PayPal, prorrateados; descuento opcional).
-6. El pedido avanza por estados: `draft → ordered → shipped → received`.
-
-#### Distinción cantidad necesitada / cantidad en este pedido
-
-Cada participante puede indicar dos cantidades por producto:
-- **`quantity_needed`**: total de cajas que necesita para su colección (puede ser más de lo que se pide ahora).
-- **`quantity_this_order`**: lo que incluye en este pedido concreto (puede ser menos si se planea repartir en varios pedidos).
-
-Esto permite ver qué queda pendiente para pedidos futuros y planificar mejor.
-
-#### Catálogo de productos
-
-Los productos son reutilizables entre pedidos. Los más habituales son los protectores de caja para cada formato de juego. Cada producto tiene los tamaños de pack disponibles en la web del proveedor.
-
-Categorías habituales:
-- **Cajas de juego**: BluRay, BluRay Extra, DVD, 3DS, DS, PSP, PSVita, Switch, Xbox One…
-- **Cajas de consola**: PS4 Slim, PS5, Xbox 360, Xbox Series X, 3DS XL, DS…
-- **Otros**: inlays de mando, cajas especiales bajo demanda.
-
-#### Modelo de datos
-
-**Tabla `order_products`** — catálogo global de protectores *(ya creada y poblada)*:
-```sql
-CREATE TABLE order_products (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name       TEXT NOT NULL,              -- ej: "Cajas tamaño BluRay"
-  packs      JSONB NOT NULL DEFAULT '[]',-- ej: [{"quantity":10,"price":8.99,"url":"..."}]
-  category   TEXT NOT NULL DEFAULT 'box'
-               CHECK (category IN ('box', 'console', 'other')),
-  notes      TEXT,
-  is_active  BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-Gestionada desde `/management/protectors` (sección admin). Datos de seed en `docs/backend/protectors-seed-data.md`.
-
-**Tabla `orders`** — cabecera del pedido:
-```sql
-CREATE TABLE orders (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  owner_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  title           TEXT,                        -- ej: "Pedido marzo 2026"
-  status          TEXT NOT NULL DEFAULT 'draft'
-                    CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
-  order_date      DATE,
-  received_date   DATE,
-  shipping_cost   NUMERIC(10,2),               -- coste total de envío (se reparte entre miembros)
-  paypal_fee      NUMERIC(10,2),               -- fee total de PayPal (se reparte entre miembros)
-  discount_amount NUMERIC(10,2),               -- descuento puntual negociado (opcional)
-  notes           TEXT,
-  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Tabla `order_members`** — participantes del pedido:
-```sql
-CREATE TABLE order_members (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  role       TEXT NOT NULL DEFAULT 'member'
-               CHECK (role IN ('owner', 'member')),
-  joined_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(order_id, user_id)
-);
-```
-
-**Tabla `order_invitations`** — enlaces de invitación:
-```sql
-CREATE TABLE order_invitations (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  token      TEXT NOT NULL UNIQUE,             -- token aleatorio para la URL de invitación
-  expires_at TIMESTAMP WITH TIME ZONE,
-  used_by    UUID REFERENCES auth.users(id),   -- quién lo usó (null si aún no se ha usado)
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Tabla `order_lines`** — productos incluidos en el pedido:
-```sql
-CREATE TABLE order_lines (
-  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-  product_id       UUID NOT NULL REFERENCES order_products(id),
-  unit_price       NUMERIC(10,2) NOT NULL,     -- snapshot del precio en el momento del pedido
-  pack_chosen      INTEGER,                    -- pack seleccionado por el owner (ej: 250)
-  quantity_ordered INTEGER,                    -- cantidad total real pedida al proveedor
-  notes            TEXT,
-  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Tabla `order_line_allocations`** — cantidades por participante y línea:
-```sql
-CREATE TABLE order_line_allocations (
-  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_line_id       UUID NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
-  user_id             UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  quantity_needed     INTEGER NOT NULL DEFAULT 0,     -- total que necesita para su colección
-  quantity_this_order INTEGER NOT NULL DEFAULT 0,     -- lo que incluye en este pedido
-  UNIQUE(order_line_id, user_id)
-);
-```
-
-**RLS:**
-- `orders`: el owner y los miembros pueden leer; solo el owner puede editar la cabecera.
-- `order_members` / `order_lines` / `order_line_allocations`: legibles por todos los miembros del pedido; cada miembro solo puede editar sus propias allocations.
-- `order_invitations`: solo el owner puede crear/revocar invitaciones.
-
-#### Lógica de cálculo por persona
-
-Para cada miembro, el coste total se calcula como:
-
-```
-coste_productos   = Σ (quantity_this_order × unit_price) por cada línea
-parte_envio       = shipping_cost / número_de_miembros
-parte_paypal      = paypal_fee / número_de_miembros
-descuento_propo   = discount_amount × (coste_productos / total_productos_pedido)
-total_a_pagar     = coste_productos + parte_envio + parte_paypal - descuento_propo
-```
-
-#### Sugerencia de pack óptimo
-
-Para cada línea el sistema muestra:
-- Suma de `quantity_this_order` de todos los miembros.
-- Qué pack cubre ese total al menor coste unitario posible.
-- Cuántas unidades sobrarían (y a quién asignarlas, si se quiere).
-
-El owner toma la decisión final de qué pack elegir.
-
-#### Presentación
-
-- Nueva ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil).
-- **Lista de pedidos**: estado visual, total estimado, número de participantes.
-- **Vista de detalle**: tabla de productos con cantidades por participante, resumen de costes por persona, sugerencia de pack óptimo.
-- **Flujo de invitación**: botón "Invitar" genera un enlace copiable; el destinatario al abrirlo ve el pedido y puede unirse con un clic (requiere estar autenticado).
-- **Permisos visuales**: los miembros solo ven activo el input de sus propias cantidades; el owner ve todo editable.
-
-#### ~~Gestión de protectores (admin)~~ ✅ Implementado
-
-El catálogo de protectores está disponible en `/management/protectors` (pestaña "Protectores" en el panel de administración).
-
-El admin puede:
-- Crear/editar protectores (nombre, categoría, notas, packs con cantidad + precio + URL).
-- Activar/desactivar protectores (los desactivados no aparecen en nuevos pedidos pero se conservan en históricos).
-- Todas las acciones quedan registradas en el audit log.
-
-Al crear o editar un pedido, los protectores se cargarán directamente del catálogo activo.
 
 ---
 
@@ -548,6 +381,369 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Pedidos (`/orders`)~~ ✅ Implementado
+
+Sección para gestionar pedidos de protectores y cajas de coleccionismo (principalmente de [boxprotectors.nl](https://www.boxprotectors.nl)). Sustituye el Excel que se usaba hasta ahora para coordinar pedidos conjuntos y repartir gastos.
+
+Un pedido puede ser **individual** (solo el usuario) o **grupal** (varios usuarios de la app). En el caso grupal, el owner invita a sus amigos mediante un enlace/código y cada uno rellena sus cantidades. El sistema calcula automáticamente el pack óptimo a pedir y lo que debe pagar cada participante.
+
+#### Estado actual ✅ Todo implementado
+
+- Todas las tablas creadas y operativas en Supabase.
+- Las 5 fases del plan completadas. Ver arquitectura de sub-componentes en `docs/frontend/ORDER_DETAIL.md`.
+
+#### Decisiones
+
+- **Flujo de invitación**: el destinatario debe estar **registrado en la app** para unirse a un pedido grupal. Sin cuenta no se puede participar.
+
+#### Plan de implementación por fases
+
+| Fase | Qué se hace | Estado |
+|---|---|---|
+| 1 | Crear tablas en Supabase + RLS | ✅ |
+| 2 | Dominio Angular: contratos, use cases, DTOs, mappers, modelos | ✅ |
+| 3 | Lista de pedidos (`/orders`) + nav | ✅ |
+| 4 | Detalle de pedido + formulario + cálculo de costes | ✅ |
+| 5 | Flujo de invitación | ✅ |
+
+#### Fase 1 — SQL para Supabase
+
+Ejecutar en el SQL Editor de Supabase en este orden:
+
+```sql
+-- 1. Cabecera del pedido
+CREATE TABLE orders (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title           TEXT,
+  status          TEXT NOT NULL DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
+  order_date      DATE,
+  received_date   DATE,
+  shipping_cost   NUMERIC(10,2),
+  paypal_fee      NUMERIC(10,2),
+  discount_amount NUMERIC(10,2),
+  notes           TEXT,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Participantes del pedido
+CREATE TABLE order_members (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role       TEXT NOT NULL DEFAULT 'member'
+               CHECK (role IN ('owner', 'member')),
+  joined_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(order_id, user_id)
+);
+
+-- 3. Enlaces de invitación
+CREATE TABLE order_invitations (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  token      TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  used_by    UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 4. Líneas del pedido (productos incluidos)
+CREATE TABLE order_lines (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id       UUID NOT NULL REFERENCES order_products(id),
+  unit_price       NUMERIC(10,2) NOT NULL,
+  pack_chosen      INTEGER,
+  quantity_ordered INTEGER,
+  notes            TEXT,
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 5. Cantidades por participante y línea
+CREATE TABLE order_line_allocations (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_line_id       UUID NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
+  user_id             UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  quantity_needed     INTEGER NOT NULL DEFAULT 0,
+  quantity_this_order INTEGER NOT NULL DEFAULT 0,
+  UNIQUE(order_line_id, user_id)
+);
+
+-- RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_invitations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_lines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_line_allocations ENABLE ROW LEVEL SECURITY;
+
+-- orders: legible por owner y miembros; editable solo por owner
+CREATE POLICY "orders_select" ON orders FOR SELECT
+  USING (owner_id = auth.uid() OR EXISTS (
+    SELECT 1 FROM order_members WHERE order_id = orders.id AND user_id = auth.uid()
+  ));
+CREATE POLICY "orders_insert" ON orders FOR INSERT WITH CHECK (owner_id = auth.uid());
+CREATE POLICY "orders_update" ON orders FOR UPDATE USING (owner_id = auth.uid());
+CREATE POLICY "orders_delete" ON orders FOR DELETE USING (owner_id = auth.uid());
+
+-- order_members: legible por miembros del pedido; insert por el propio usuario (al aceptar invitación)
+CREATE POLICY "order_members_select" ON order_members FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_members om WHERE om.order_id = order_members.order_id AND om.user_id = auth.uid()
+  ));
+CREATE POLICY "order_members_insert" ON order_members FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY "order_members_delete" ON order_members FOR DELETE
+  USING (user_id = auth.uid() OR EXISTS (
+    SELECT 1 FROM orders WHERE id = order_members.order_id AND owner_id = auth.uid()
+  ));
+
+-- order_invitations: solo el owner puede crear/revocar
+CREATE POLICY "order_invitations_select" ON order_invitations FOR SELECT
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_invitations_insert" ON order_invitations FOR INSERT
+  WITH CHECK (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_invitations_delete" ON order_invitations FOR DELETE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_invitations.order_id AND owner_id = auth.uid()));
+
+-- order_lines: legible por miembros; editable por owner
+CREATE POLICY "order_lines_select" ON order_lines FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_members WHERE order_id = order_lines.order_id AND user_id = auth.uid()
+  ));
+CREATE POLICY "order_lines_insert" ON order_lines FOR INSERT
+  WITH CHECK (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_lines_update" ON order_lines FOR UPDATE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+CREATE POLICY "order_lines_delete" ON order_lines FOR DELETE
+  USING (EXISTS (SELECT 1 FROM orders WHERE id = order_lines.order_id AND owner_id = auth.uid()));
+
+-- order_line_allocations: cada miembro solo edita las suyas
+CREATE POLICY "order_line_allocations_select" ON order_line_allocations FOR SELECT
+  USING (EXISTS (
+    SELECT 1 FROM order_lines ol
+    JOIN order_members om ON om.order_id = ol.order_id
+    WHERE ol.id = order_line_allocations.order_line_id AND om.user_id = auth.uid()
+  ));
+CREATE POLICY "order_line_allocations_insert" ON order_line_allocations FOR INSERT
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "order_line_allocations_update" ON order_line_allocations FOR UPDATE
+  USING (user_id = auth.uid());
+```
+
+#### Fase 2 — Estructura Angular (dominio y datos)
+
+Siguiendo la arquitectura del proyecto:
+
+```
+domain/
+  repositories/
+    order.repository.contract.ts
+    order-product.repository.contract.ts
+  use-cases/orders/
+    orders.use-cases.contract.ts
+
+data/
+  dtos/supabase/
+    order.dto.ts
+    order-member.dto.ts
+    order-line.dto.ts
+    order-line-allocation.dto.ts
+  mappers/order/
+    order.mapper.ts
+  repositories/
+    order.supabase.repository.ts
+
+entities/
+  models/order/
+    order.model.ts
+    order-line.model.ts
+    order-summary.model.ts
+  interfaces/forms/
+    order-form.interface.ts
+    order-line-form.interface.ts
+
+di/repositories/
+  order-repository.provider.ts
+
+presentation/
+  pages/orders/
+    orders.component.ts / .html / .scss
+    orders.component.spec.ts
+    components/
+      order-card/
+      order-detail/
+      order-form/
+      order-line-form/
+```
+
+#### Flujo principal
+
+1. El usuario crea un pedido (`draft`) y añade los productos que necesita con sus cantidades.
+2. Opcionalmente genera un **enlace de invitación** y lo comparte (WhatsApp, Telegram…) con amigos que también usen la app.
+3. Los amigos aceptan la invitación y se unen como miembros — cada uno rellena cuánto necesita de cada producto.
+4. La vista de detalle muestra el total del grupo por producto y sugiere qué pack comprar (el más económico que cubra la suma total).
+5. El owner elige el pack definitivo, marca el pedido como `ordered` y el sistema calcula el coste por persona (producto + envío + fee de PayPal, prorrateados; descuento opcional).
+6. El pedido avanza por estados: `draft → selecting_packs → ready → ordered → shipped → received`.
+
+#### Distinción cantidad necesitada / cantidad en este pedido
+
+Cada participante puede indicar dos cantidades por producto:
+- **`quantity_needed`**: total de cajas que necesita para su colección (puede ser más de lo que se pide ahora).
+- **`quantity_this_order`**: lo que incluye en este pedido concreto (puede ser menos si se planea repartir en varios pedidos).
+
+Esto permite ver qué queda pendiente para pedidos futuros y planificar mejor.
+
+#### Catálogo de productos
+
+Los productos son reutilizables entre pedidos. Los más habituales son los protectores de caja para cada formato de juego. Cada producto tiene los tamaños de pack disponibles en la web del proveedor.
+
+Categorías habituales:
+- **Cajas de juego**: BluRay, BluRay Extra, DVD, 3DS, DS, PSP, PSVita, Switch, Xbox One…
+- **Cajas de consola**: PS4 Slim, PS5, Xbox 360, Xbox Series X, 3DS XL, DS…
+- **Otros**: inlays de mando, cajas especiales bajo demanda.
+
+#### Modelo de datos
+
+**Tabla `order_products`** — catálogo global de protectores *(ya creada y poblada)*:
+```sql
+CREATE TABLE order_products (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT NOT NULL,              -- ej: "Cajas tamaño BluRay"
+  packs      JSONB NOT NULL DEFAULT '[]',-- ej: [{"quantity":10,"price":8.99,"url":"..."}]
+  category   TEXT NOT NULL DEFAULT 'box'
+               CHECK (category IN ('box', 'console', 'other')),
+  notes      TEXT,
+  is_active  BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+Gestionada desde `/management/protectors` (sección admin). Datos de seed en `docs/backend/protectors-seed-data.md`.
+
+**Tabla `orders`** — cabecera del pedido:
+```sql
+CREATE TABLE orders (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id        UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title           TEXT,                        -- ej: "Pedido marzo 2026"
+  status          TEXT NOT NULL DEFAULT 'draft'
+                    CHECK (status IN ('draft', 'ordered', 'shipped', 'received')),
+  order_date      DATE,
+  received_date   DATE,
+  shipping_cost   NUMERIC(10,2),               -- coste total de envío (se reparte entre miembros)
+  paypal_fee      NUMERIC(10,2),               -- fee total de PayPal (se reparte entre miembros)
+  discount_amount NUMERIC(10,2),               -- descuento puntual negociado (opcional)
+  notes           TEXT,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Tabla `order_members`** — participantes del pedido:
+```sql
+CREATE TABLE order_members (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role       TEXT NOT NULL DEFAULT 'member'
+               CHECK (role IN ('owner', 'member')),
+  joined_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(order_id, user_id)
+);
+```
+
+**Tabla `order_invitations`** — enlaces de invitación:
+```sql
+CREATE TABLE order_invitations (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  token      TEXT NOT NULL UNIQUE,             -- token aleatorio para la URL de invitación
+  expires_at TIMESTAMP WITH TIME ZONE,
+  used_by    UUID REFERENCES auth.users(id),   -- quién lo usó (null si aún no se ha usado)
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Tabla `order_lines`** — productos incluidos en el pedido:
+```sql
+CREATE TABLE order_lines (
+  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id         UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id       UUID NOT NULL REFERENCES order_products(id),
+  unit_price       NUMERIC(10,2) NOT NULL,     -- snapshot del precio en el momento del pedido
+  pack_chosen      INTEGER,                    -- pack seleccionado por el owner (ej: 250)
+  quantity_ordered INTEGER,                    -- cantidad total real pedida al proveedor
+  notes            TEXT,
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Tabla `order_line_allocations`** — cantidades por participante y línea:
+```sql
+CREATE TABLE order_line_allocations (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_line_id       UUID NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
+  user_id             UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  quantity_needed     INTEGER NOT NULL DEFAULT 0,     -- total que necesita para su colección
+  quantity_this_order INTEGER NOT NULL DEFAULT 0,     -- lo que incluye en este pedido
+  UNIQUE(order_line_id, user_id)
+);
+```
+
+**RLS:**
+- `orders`: el owner y los miembros pueden leer; solo el owner puede editar la cabecera.
+- `order_members` / `order_lines` / `order_line_allocations`: legibles por todos los miembros del pedido; cada miembro solo puede editar sus propias allocations.
+- `order_invitations`: solo el owner puede crear/revocar invitaciones.
+
+#### Lógica de cálculo por persona
+
+Para cada miembro, el coste total se calcula como:
+
+```
+coste_productos   = Σ (quantity_this_order × unit_price) por cada línea del miembro
+proporcion        = coste_productos / total_productos_pedido
+parte_envio       = shipping_cost × proporcion   (proporcional a lo pedido, no igual entre miembros)
+parte_paypal      = paypal_fee × proporcion       (ídem)
+total_a_pagar     = coste_productos + parte_envio + parte_paypal
+```
+
+> **Nota:** el descuento (`discount_amount`) está modelado en la BD pero no se aplica actualmente en el desglose de "Mi parte". El envío y la comisión de PayPal se reparten de forma **proporcional** al valor de lo que ha pedido cada miembro (quien pide más, paga más de los gastos comunes).
+
+#### Sugerencia de pack óptimo
+
+Para cada línea el sistema muestra:
+- Suma de `quantity_this_order` de todos los miembros.
+- Qué pack cubre ese total al menor coste unitario posible.
+- Cuántas unidades sobrarían (y a quién asignarlas, si se quiere).
+
+El owner toma la decisión final de qué pack elegir.
+
+#### Presentación ✅ Implementado
+
+- Ruta `/orders` con entrada en nav-rail (desktop) y bottom-nav (móvil). ✅
+- **Lista de pedidos**: badge de estado, número de participantes, fecha del pedido. ✅
+- **Vista de detalle** descompuesta en 4 sub-componentes independientes (ver `docs/frontend/ORDER_DETAIL.md`):
+  - `OrderInfoSectionComponent` — cabecera editable (título, estado, fechas, costes, miembros).
+  - `OrderProductListComponent` — tabla de líneas con scroll, agrupación por producto en estados no-draft, link directo al proveedor por línea.
+  - `OrderStepperComponent` — stepper paso a paso para que el owner elija el pack óptimo de cada producto (estado `selecting_packs`).
+  - `OrderCostSummaryComponent` — desglose de costes: "Mi parte" (productos + envío proporcional + PayPal proporcional) y total del pedido por miembro.
+- **Flujo de invitación**: botón genera token + copia URL al portapapeles; el destinatario acepta con un clic (requiere cuenta). ✅
+- **Permisos visuales**: en `draft` cada miembro solo ve sus propias líneas; el owner ve todas. ✅
+- **Avance/retroceso de estado**: el owner puede avanzar o retroceder el estado con los botones de flecha en la cabecera. ✅
+
+#### ~~Gestión de protectores (admin)~~ ✅ Implementado
+
+El catálogo de protectores está disponible en `/management/protectors` (pestaña "Protectores" en el panel de administración).
+
+El admin puede:
+- Crear/editar protectores (nombre, categoría, notas, packs con cantidad + precio + URL).
+- Activar/desactivar protectores (los desactivados no aparecen en nuevos pedidos pero se conservan en históricos).
+- Todas las acciones quedan registradas en el audit log.
+
+Al crear o editar un pedido, los protectores se cargarán directamente del catálogo activo.
+
+---
 
 ### ~~Deuda técnica — análisis de código~~ ✅ Completado
 

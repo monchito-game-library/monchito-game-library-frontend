@@ -9,7 +9,7 @@ import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract'
 import { LoginComponent } from './login.component';
 
 const mockAuthUseCases = { signIn: vi.fn() };
-const mockRouter = { navigate: vi.fn() };
+const mockRouter = { navigate: vi.fn(), navigateByUrl: vi.fn() };
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -28,7 +28,7 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AUTH_USE_CASES, useValue: mockAuthUseCases },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: { snapshot: { params: {} } } }
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: vi.fn().mockReturnValue(null) } } } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -105,7 +105,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/list']);
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/list');
     });
 
     it('llama a signIn con el email y password del formulario', async () => {
@@ -133,7 +133,7 @@ describe('LoginComponent', () => {
       await component.onSubmit();
 
       expect(component.errorMessage()).toBe('Credenciales incorrectas');
-      expect(mockRouter.navigate).not.toHaveBeenCalled();
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
     });
 
     it('usa "Login failed" como error por defecto cuando no hay mensaje', async () => {

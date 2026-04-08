@@ -47,6 +47,11 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
       }
     });
     if (error || !data.user) throw new Error(error?.message ?? 'Registration failed');
+
+    await this._supabase
+      .from('user_preferences')
+      .insert({ user_id: data.user.id, theme: 'light', language: 'es', role: 'user' });
+
     return this._mapUser(data.user);
   }
 

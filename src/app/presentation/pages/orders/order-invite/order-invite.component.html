@@ -1,0 +1,66 @@
+<div class="order-invite-page">
+  <div class="order-invite-page__card">
+    @if (!authState.isAuthenticated()) {
+      <mat-icon class="order-invite-page__icon">group_add</mat-icon>
+      <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
+      <div class="order-invite-page__message">{{ 'orders.invite.loginRequired' | transloco }}</div>
+      <button mat-flat-button (click)="onGoToLogin()">
+        <mat-icon>login</mat-icon>
+        {{ 'orders.invite.loginBtn' | transloco }}
+      </button>
+    } @else if (loading()) {
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+      <div class="order-invite-page__message">{{ 'orders.invite.loading' | transloco }}</div>
+    } @else if (invalid()) {
+      <mat-icon class="order-invite-page__icon order-invite-page__icon--error">link_off</mat-icon>
+      <div class="order-invite-page__title">{{ 'orders.invite.invalidTitle' | transloco }}</div>
+      <div class="order-invite-page__message">{{ 'orders.invite.invalid' | transloco }}</div>
+    } @else if (alreadyMember() && invitation()) {
+      <mat-icon class="order-invite-page__icon order-invite-page__icon--success">check_circle</mat-icon>
+      <div class="order-invite-page__title">{{ 'orders.invite.alreadyMemberTitle' | transloco }}</div>
+      <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
+      <button mat-flat-button [routerLink]="['/orders', invitation()!.orderId]">
+        <mat-icon>open_in_new</mat-icon>
+        {{ 'orders.invite.goToOrder' | transloco }}
+      </button>
+    } @else if (invitation()) {
+      <mat-icon class="order-invite-page__icon">group_add</mat-icon>
+      <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
+      <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
+      @if (invitation()!.expiresAt) {
+        <div class="order-invite-page__expiry">
+          {{ 'orders.invite.expires' | transloco }}: {{ invitation()!.expiresAt | date: 'dd/MM/yyyy HH:mm' }}
+        </div>
+      }
+      <button mat-flat-button (click)="onJoin()" [disabled]="joining()">
+        <span class="order-invite-page__btn-content">
+          @if (joining()) {
+            <mat-progress-spinner mode="indeterminate" diameter="20" />
+          } @else {
+            <mat-icon>group_add</mat-icon>
+          }
+          {{ joining() ? ('orders.invite.joining' | transloco) : ('orders.invite.join' | transloco) }}
+        </span>
+      </button>
+    }
+  </div>
+</div>
+
+<ng-template #orderInfo let-inv="inv">
+  <div class="order-invite-page__order-info">
+    <div class="order-invite-page__order-name">{{ inv.orderTitle ?? ('orders.invite.untitled' | transloco) }}</div>
+    <div class="order-invite-page__order-meta">
+      <div class="order-invite-page__order-meta-row">
+        <mat-icon class="order-invite-page__meta-icon">calendar_today</mat-icon>
+        <span>
+          {{ 'orders.invite.createdAt' | transloco }}:
+          {{ inv.orderDate ? (inv.orderDate | date: 'dd/MM/yyyy') : (inv.orderCreatedAt | date: 'dd/MM/yyyy') }}
+        </span>
+      </div>
+      <div class="order-invite-page__order-meta-row">
+        <mat-icon class="order-invite-page__meta-icon">group</mat-icon>
+        <span>{{ inv.orderMemberCount }} {{ 'orders.invite.members' | transloco }}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

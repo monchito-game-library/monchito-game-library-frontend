@@ -1,0 +1,110 @@
+.ready-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 480px;
+  padding-top: 0.5rem;
+}
+
+.ready-dialog__intro {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.875rem;
+}
+
+.ready-dialog__line {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ready-dialog__line-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ready-dialog__line-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.ready-dialog__line-needed {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.ready-dialog__suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ready-dialog__suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--mat-sys-outline-variant);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+
+  &--selected {
+    border-color: var(--mat-sys-primary);
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+  }
+
+  &:hover:not(.ready-dialog__suggestion--selected) {
+    border-color: var(--mat-sys-outline);
+    background-color: var(--mat-sys-surface-variant);
+  }
+}
+
+.ready-dialog__suggestion-breakdown {
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.ready-dialog__suggestion-units {
+  font-size: 0.875rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.ready-dialog__suggestion-excess {
+  color: var(--mat-sys-tertiary);
+  margin-left: 0.25rem;
+}
+
+.ready-dialog__suggestion-cost {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
+.ready-dialog__suggestion-unit-price {
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--mat-sys-on-surface-variant);
+  margin-left: 0.25rem;
+}
+
+.ready-dialog__no-packs {
+  font-size: 0.875rem;
+  color: var(--mat-sys-error);
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .ready-dialog__content {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .ready-dialog__line-header {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

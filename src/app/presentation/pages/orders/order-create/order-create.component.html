@@ -1,0 +1,43 @@
+<div class="order-create-page">
+  <div class="order-create-page__header">
+    <button mat-button routerLink="/orders" class="order-create-page__back-btn">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'orders.backToList' | transloco }}
+    </button>
+    <h1 class="order-create-page__title">{{ 'orders.create' | transloco }}</h1>
+  </div>
+
+  <div class="order-create-page__card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="order-create-page__form">
+      <mat-form-field appearance="outline" class="order-create-page__field">
+        <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
+        <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+        @if (form.controls.title.hasError('required')) {
+          <mat-error>{{ 'orders.header.titleRequired' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="order-create-page__field">
+        <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
+        <textarea
+          matInput
+          formControlName="notes"
+          [placeholder]="'orders.header.notesPlaceholder' | transloco"
+          rows="4"></textarea>
+      </mat-form-field>
+
+      <div class="order-create-page__actions">
+        <button mat-button type="button" routerLink="/orders">
+          {{ 'orders.header.cancel' | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [disabled]="form.invalid || saving()">
+          @if (saving()) {
+            {{ 'orders.header.save' | transloco }}...
+          } @else {
+            {{ 'orders.header.save' | transloco }}
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
