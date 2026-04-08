@@ -1,0 +1,128 @@
+<div class="order-detail-page">
+  @if (loading()) {
+    <div class="order-detail-page__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    </div>
+  } @else if (order(); as ord) {
+    <!-- Header -->
+    <div class="order-detail-page__title-row">
+      <button mat-icon-button routerLink="/orders" [attr.aria-label]="'orders.backToList' | transloco">
+        <mat-icon>close</mat-icon>
+      </button>
+      <div class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</div>
+
+      <div
+        class="order-detail-page__header-actions"
+        [class.order-detail-page__header-actions--disabled]="editingHeader()">
+        @if (!selectingPacks()) {
+          @if (!isOwner() && ord.status === 'draft') {
+            @for (m of ord.members; track m.id) {
+              @if (m.userId === userContext.userId()) {
+                @if (!m.isReady) {
+                  <button mat-flat-button (click)="onToggleMemberReady()" [disabled]="saving()">
+                    <mat-icon>check_circle</mat-icon>
+                    {{ 'orders.header.markReady' | transloco }}
+                  </button>
+                } @else {
+                  <button mat-stroked-button (click)="onToggleMemberReady()" [disabled]="saving()">
+                    <mat-icon>cancel</mat-icon>
+                    {{ 'orders.header.cancelReady' | transloco }}
+                  </button>
+                }
+              }
+            }
+          }
+          @if (isOwner()) {
+            @if (ord.status === 'draft') {
+              <button
+                mat-icon-button
+                [matTooltip]="'orders.header.shareInvite' | transloco"
+                (click)="onShareInvitation()"
+                [disabled]="saving()">
+                <mat-icon>link</mat-icon>
+              </button>
+            }
+            <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [matTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
+              (click)="onRegressStatus()"
+              [disabled]="saving() || !prevStatus()">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [matTooltip]="'orders.header.nextStep' | transloco"
+              (click)="onAdvanceStatus()"
+              [disabled]="
+                saving() || !nextStatus() || (nextStatus() === 'selecting_packs' && !allMembersReady(ord.members))
+              ">
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          }
+        }
+        @if (selectingPacks() && isOwner()) {
+          <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [matTooltip]="'orders.status.' + prevStatus() | transloco"
+            (click)="onRegressStatus()"
+            [disabled]="saving()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [matTooltip]="'orders.header.nextStep' | transloco"
+            (click)="onConfirmPacks()"
+            [disabled]="saving() || !allPacksSelected()">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Info section -->
+    <app-order-info-section
+      [order]="ord"
+      [class.order-detail-page__section--editing]="editingLayout()"
+      (editingStarted)="onInfoEditingStarted()"
+      (editingEnded)="onInfoEditingEnded()"
+      (headerSaved)="onInfoHeaderSaved()">
+    </app-order-info-section>
+
+    <!-- Lines section o stepper -->
+    @if (selectingPacks() && isOwner()) {
+      <!-- Pack selection stepper -->
+      <app-order-stepper
+        [order]="ord"
+        [packSteps]="packSteps()"
+        [editingHeader]="editingHeader()"
+        (allPacksSelectedChange)="allPacksSelected.set($event)">
+      </app-order-stepper>
+    } @else {
+      <!-- Lines section -->
+      <app-order-product-list
+        [order]="ord"
+        [editingHeader]="editingHeader()"
+        (lineAdd)="onAddLine()"
+        (lineEdit)="onEditLine($event)"
+        (lineDelete)="onDeleteLine($event)">
+      </app-order-product-list>
+    }
+
+    <!-- Cost summary section: only meaningful once packs have been calculated -->
+    @if (ord.status !== 'draft' && ord.status !== 'selecting_packs') {
+      <app-order-cost-summary [order]="ord" [userId]="userContext.userId()" />
+    }
+  }
+</div>

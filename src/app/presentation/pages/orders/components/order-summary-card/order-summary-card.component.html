@@ -1,0 +1,21 @@
+<button class="order-card" (click)="onCardClick()">
+  <div class="order-card__header">
+    <span class="order-card__title">{{ order().title }}</span>
+    <span class="order-card__status order-card__status--{{ order().status }}">
+      {{ 'orders.status.' + order().status | transloco }}
+    </span>
+  </div>
+
+  <div class="order-card__meta">
+    @if (order().orderDate) {
+      <span class="order-card__date">
+        <mat-icon>calendar_today</mat-icon>
+        {{ order().orderDate | date: 'dd/MM/yyyy' }}
+      </span>
+    }
+    <span class="order-card__members">
+      <mat-icon>group</mat-icon>
+      {{ order().memberCount }}
+    </span>
+  </div>
+</button>

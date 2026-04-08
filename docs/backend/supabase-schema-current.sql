@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-03-19
+-- Última revisión: 2026-03-28
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -463,20 +463,21 @@ ALTER TABLE user_games ADD CONSTRAINT user_games_status_check
 -- ============================================================
 -- 11. TABLA: order_products
 --     Catálogo global de productos para pedidos grupales.
+--     Cada producto define sus opciones de pack disponibles como
+--     un array JSONB: [{ url, price, quantity }, ...].
 --     Gestionado por admins desde /management/products.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS order_products (
-  id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  name            TEXT        NOT NULL,
-  unit_price      NUMERIC(10,4) NOT NULL CHECK (unit_price > 0),
-  available_packs INTEGER[]   NOT NULL DEFAULT '{}',
-  category        TEXT        NOT NULL DEFAULT 'box'
-                              CHECK (category IN ('box', 'console', 'other')),
-  notes           TEXT,
-  is_active       BOOLEAN     NOT NULL DEFAULT TRUE,
-  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id         UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT    NOT NULL,
+  category   TEXT    NOT NULL DEFAULT 'box'
+                     CHECK (category IN ('box', 'console', 'other')),
+  notes      TEXT,
+  packs      JSONB   NOT NULL DEFAULT '[]',  -- [{url, price, quantity}]
+  is_active  BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_order_products_active
@@ -529,7 +530,370 @@ CREATE POLICY "Admins can update products"
 
 
 -- ============================================================
--- STORAGE BUCKETS
+-- 12. TABLA: orders
+--     Pedido grupal. Tiene un owner que lo gestiona y avanza
+--     su estado a lo largo del ciclo de vida.
+--
+--     Ciclo de vida:
+--       draft → selecting_packs → ready → ordered → shipped → received
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS orders (
+  id              UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_id        UUID    NOT NULL REFERENCES auth.users(id),
+  title           TEXT,
+  status          TEXT    NOT NULL DEFAULT 'draft'
+                          CHECK (status IN ('draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received')),
+  order_date      DATE,
+  received_date   DATE,
+  shipping_cost   NUMERIC(10,2),
+  paypal_fee      NUMERIC(10,2),
+  discount_amount NUMERIC(10,2),
+  discount_type   TEXT    NOT NULL DEFAULT 'amount'
+                          CHECK (discount_type IN ('amount', 'percentage')),
+  notes           TEXT,
+  created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_owner_id ON orders(owner_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status   ON orders(status);
+
+DROP TRIGGER IF EXISTS trg_orders_updated_at ON orders;
+CREATE TRIGGER trg_orders_updated_at
+  BEFORE UPDATE ON orders
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Solo los miembros del pedido pueden verlo
+CREATE POLICY "Order members can read their orders"
+  ON orders FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM order_members
+      WHERE order_members.order_id = orders.id
+        AND order_members.user_id = auth.uid()
+    )
+  );
+
+-- Cualquier usuario autenticado puede crear un pedido
+CREATE POLICY "Authenticated users can create orders"
+  ON orders FOR INSERT
+  TO authenticated
+  WITH CHECK (owner_id = auth.uid());
+
+-- Solo el owner puede actualizar el pedido
+CREATE POLICY "Order owner can update their order"
+  ON orders FOR UPDATE
+  TO authenticated
+  USING (owner_id = auth.uid());
+
+-- Solo el owner puede borrar el pedido
+CREATE POLICY "Order owner can delete their order"
+  ON orders FOR DELETE
+  TO authenticated
+  USING (owner_id = auth.uid());
+
+
+-- ============================================================
+-- 13. TABLA: order_members
+--     Miembros de un pedido (owner + participants).
+--     display_name se denormaliza desde auth.users en el momento
+--     de unirse para no depender de joins con auth.users en RLS.
+--     email y avatar_url se obtienen vía RPC get_order_members_info.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS order_members (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id     UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  user_id      UUID NOT NULL REFERENCES auth.users(id),
+  role         TEXT NOT NULL DEFAULT 'member'
+                    CHECK (role IN ('owner', 'member')),
+  display_name TEXT,
+  is_ready     BOOLEAN NOT NULL DEFAULT FALSE,
+  joined_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE (order_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_members_order_id ON order_members(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_members_user_id  ON order_members(user_id);
+
+ALTER TABLE order_members ENABLE ROW LEVEL SECURITY;
+
+-- Un miembro puede ver los registros del pedido al que pertenece
+CREATE POLICY "Members can view members of their orders"
+  ON order_members FOR SELECT
+  TO authenticated
+  USING (user_id = auth.uid());
+
+-- El sistema inserta el row al crear el pedido o aceptar invitación
+CREATE POLICY "Authenticated users can join as member"
+  ON order_members FOR INSERT
+  TO authenticated
+  WITH CHECK (user_id = auth.uid());
+
+-- Solo el propio miembro puede actualizar su registro (is_ready, display_name)
+CREATE POLICY "Member can update their own membership"
+  ON order_members FOR UPDATE
+  TO authenticated
+  USING (user_id = auth.uid());
+
+-- El owner puede expulsar miembros (o el propio miembro puede salir)
+CREATE POLICY "Owner or self can delete membership"
+  ON order_members FOR DELETE
+  TO authenticated
+  USING (
+    user_id = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM orders
+      WHERE orders.id = order_members.order_id
+        AND orders.owner_id = auth.uid()
+    )
+  );
+
+
+-- ============================================================
+-- 14. TABLA: order_invitations
+--     Tokens de invitación de un solo uso para unirse a un pedido.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS order_invitations (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id   UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  token      TEXT NOT NULL UNIQUE,
+  expires_at TIMESTAMP WITH TIME ZONE,
+  used_by    UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_invitations_order_id ON order_invitations(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_invitations_token    ON order_invitations(token);
+
+ALTER TABLE order_invitations ENABLE ROW LEVEL SECURITY;
+
+-- Cualquier usuario autenticado puede leer una invitación (para unirse)
+CREATE POLICY "Authenticated users can read invitations"
+  ON order_invitations FOR SELECT
+  TO authenticated
+  USING (TRUE);
+
+-- El owner del pedido puede crear invitaciones
+CREATE POLICY "Order owner can create invitations"
+  ON order_invitations FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM orders
+      WHERE orders.id = order_invitations.order_id
+        AND orders.owner_id = auth.uid()
+    )
+  );
+
+-- El sistema puede marcar la invitación como usada
+CREATE POLICY "Authenticated users can mark invitation as used"
+  ON order_invitations FOR UPDATE
+  TO authenticated
+  USING (TRUE);
+
+
+-- ============================================================
+-- 15. TABLA: order_lines
+--     Una línea por producto y miembro. Un miembro puede pedir
+--     varios productos en el mismo pedido (una línea por cada uno).
+--     El owner puede añadir líneas en nombre de cualquier miembro.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS order_lines (
+  id               UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id         UUID         NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id       UUID         NOT NULL REFERENCES order_products(id),
+  requested_by     UUID         REFERENCES auth.users(id),
+  quantity_needed  INTEGER,
+  unit_price       NUMERIC(10,4) NOT NULL DEFAULT 0,
+  pack_chosen      INTEGER,
+  quantity_ordered INTEGER,
+  notes            TEXT,
+  created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_lines_order_id   ON order_lines(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_lines_product_id ON order_lines(product_id);
+CREATE INDEX IF NOT EXISTS idx_order_lines_requested_by ON order_lines(requested_by);
+
+ALTER TABLE order_lines ENABLE ROW LEVEL SECURITY;
+
+-- Cualquier miembro del pedido puede ver todas las líneas
+CREATE POLICY "Order members can read lines"
+  ON order_lines FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM order_members
+      WHERE order_members.order_id = order_lines.order_id
+        AND order_members.user_id = auth.uid()
+    )
+  );
+
+-- Cualquier miembro puede añadir sus propias líneas
+CREATE POLICY "Order members can insert lines"
+  ON order_lines FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM order_members
+      WHERE order_members.order_id = order_lines.order_id
+        AND order_members.user_id = auth.uid()
+    )
+  );
+
+-- El autor de la línea o el owner puede actualizarla
+CREATE POLICY "Author or owner can update lines"
+  ON order_lines FOR UPDATE
+  TO authenticated
+  USING (
+    requested_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM orders
+      WHERE orders.id = order_lines.order_id
+        AND orders.owner_id = auth.uid()
+    )
+  );
+
+-- El autor de la línea o el owner puede borrarla
+CREATE POLICY "Author or owner can delete lines"
+  ON order_lines FOR DELETE
+  TO authenticated
+  USING (
+    requested_by = auth.uid()
+    OR EXISTS (
+      SELECT 1 FROM orders
+      WHERE orders.id = order_lines.order_id
+        AND orders.owner_id = auth.uid()
+    )
+  );
+
+
+-- ============================================================
+-- 16. TABLA: order_line_allocations
+--     Distribución de unidades de una línea entre los miembros.
+--     El stepper usa el método de resto mayor para garantizar que
+--     la suma sea exactamente quantity_ordered.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS order_line_allocations (
+  id                  UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_line_id       UUID    NOT NULL REFERENCES order_lines(id) ON DELETE CASCADE,
+  user_id             UUID    NOT NULL REFERENCES auth.users(id),
+  quantity_needed     INTEGER NOT NULL,
+  quantity_this_order INTEGER NOT NULL,
+  UNIQUE (order_line_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_order_line_allocations_line_id ON order_line_allocations(order_line_id);
+CREATE INDEX IF NOT EXISTS idx_order_line_allocations_user_id ON order_line_allocations(user_id);
+
+ALTER TABLE order_line_allocations ENABLE ROW LEVEL SECURITY;
+
+-- Cualquier miembro del pedido puede leer las allocations de sus líneas
+CREATE POLICY "Order members can read allocations"
+  ON order_line_allocations FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM order_lines ol
+      JOIN order_members om ON om.order_id = ol.order_id
+      WHERE ol.id = order_line_allocations.order_line_id
+        AND om.user_id = auth.uid()
+    )
+  );
+
+-- El owner puede insertar/actualizar allocations (lo hace el stepper)
+CREATE POLICY "Order owner can upsert allocations"
+  ON order_line_allocations FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM order_lines ol
+      JOIN orders o ON o.id = ol.order_id
+      WHERE ol.id = order_line_allocations.order_line_id
+        AND o.owner_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Order owner can update allocations"
+  ON order_line_allocations FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM order_lines ol
+      JOIN orders o ON o.id = ol.order_id
+      WHERE ol.id = order_line_allocations.order_line_id
+        AND o.owner_id = auth.uid()
+    )
+  );
+
+
+-- ============================================================
+-- 17. FUNCIONES RPC
+-- ============================================================
+
+-- Devuelve los miembros de un pedido con datos de auth.users
+-- (email, avatar_url) que no están en la tabla order_members.
+CREATE OR REPLACE FUNCTION get_order_members_info(p_order_id UUID)
+RETURNS TABLE (
+  id           UUID,
+  order_id     UUID,
+  user_id      UUID,
+  role         TEXT,
+  joined_at    TIMESTAMP WITH TIME ZONE,
+  display_name TEXT,
+  email        TEXT,
+  avatar_url   TEXT,
+  is_ready     BOOLEAN
+)
+LANGUAGE sql SECURITY DEFINER
+AS $$
+  SELECT
+    om.id,
+    om.order_id,
+    om.user_id,
+    om.role,
+    om.joined_at,
+    COALESCE(om.display_name, au.raw_user_meta_data->>'display_name') AS display_name,
+    au.email,
+    au.raw_user_meta_data->>'avatar_url'                              AS avatar_url,
+    om.is_ready
+  FROM order_members om
+  JOIN auth.users au ON au.id = om.user_id
+  WHERE om.order_id = p_order_id;
+$$;
+
+-- Actualiza el flag is_ready de un miembro. Solo el propio miembro puede llamarla.
+CREATE OR REPLACE FUNCTION set_member_ready(
+  p_order_id UUID,
+  p_user_id  UUID,
+  p_is_ready BOOLEAN
+)
+RETURNS VOID
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+BEGIN
+  IF p_user_id <> auth.uid() THEN
+    RAISE EXCEPTION 'Only the member themselves can change their ready state';
+  END IF;
+
+  UPDATE order_members
+  SET is_ready = p_is_ready
+  WHERE order_id = p_order_id
+    AND user_id  = p_user_id;
+END;
+$$;
+
+
+-- ============================================================
+-- 18. STORAGE BUCKETS
 -- (configurar en Supabase Dashboard > Storage, no en SQL)
 --
 -- Bucket: avatars

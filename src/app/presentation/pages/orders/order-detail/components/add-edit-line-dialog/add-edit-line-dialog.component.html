@@ -1,0 +1,49 @@
+<div mat-dialog-title>
+  @if (isEditMode) {
+    {{ 'orders.lines.dialogEditTitle' | transloco }}
+  } @else {
+    {{ 'orders.lines.dialogAddTitle' | transloco }}
+  }
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="add-edit-line-dialog__form">
+    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
+      <mat-label>{{ 'orders.lines.productLabel' | transloco }}</mat-label>
+      <input matInput [formControl]="productSearchControl" [matAutocomplete]="productAuto" />
+      <mat-autocomplete #productAuto="matAutocomplete" (optionSelected)="onProductSelected($event)">
+        @for (product of filteredProducts(); track product.id) {
+          <mat-option [value]="product.id">{{ product.name }} ({{ product.category }})</mat-option>
+        }
+      </mat-autocomplete>
+      @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
+        <mat-error>{{ 'orders.lines.productRequired' | transloco }}</mat-error>
+      }
+      @if (productSearchControl.hasError('alreadyExists')) {
+        <mat-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
+      <mat-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</mat-label>
+      <input matInput type="number" formControlName="quantityNeeded" min="1" />
+      @if (form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')) {
+        <mat-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
+      <mat-label>{{ 'orders.lines.notesLabel' | transloco }}</mat-label>
+      <textarea matInput formControlName="notes" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">
+    {{ 'orders.header.cancel' | transloco }}
+  </button>
+  <button mat-flat-button type="button" (click)="onSubmit()">
+    {{ 'orders.header.save' | transloco }}
+  </button>
+</mat-dialog-actions>
