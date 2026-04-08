@@ -103,7 +103,7 @@ export class PwaUpdateService {
   /**
    * Returns true if the given URL corresponds to a form route with unsaved data risk.
    *
-   * @param {string} url
+   * @param {string} url - URL de la actualización de la PWA
    */
   private _isFormRoute(url: string): boolean {
     return FORM_ROUTES.some((route) => url.startsWith(route));

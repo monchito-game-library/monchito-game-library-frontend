@@ -30,7 +30,7 @@ export class ProtectorUseCasesImpl implements ProtectorUseCasesContract {
    * Updates fields of an existing protector.
    *
    * @param {string} id - Protector UUID
-   * @param {Partial<Omit<ProtectorModel, 'id'>>} patch
+   * @param {Partial<Omit<ProtectorModel, 'id'>>} patch - Campos a actualizar
    */
   async updateProtector(id: string, patch: Partial<Omit<ProtectorModel, 'id'>>): Promise<ProtectorModel> {
     return this._repo.update(id, patch);
@@ -40,7 +40,7 @@ export class ProtectorUseCasesImpl implements ProtectorUseCasesContract {
    * Toggles the active state of a protector (soft enable/disable).
    *
    * @param {string} id - Protector UUID
-   * @param {boolean} isActive
+   * @param {boolean} isActive - Si el protector está activo
    */
   async toggleProtectorActive(id: string, isActive: boolean): Promise<ProtectorModel> {
     return this._repo.toggleActive(id, isActive);

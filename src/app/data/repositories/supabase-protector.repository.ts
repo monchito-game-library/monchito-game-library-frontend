@@ -66,7 +66,7 @@ export class SupabaseProtectorRepository implements ProtectorRepositoryContract 
    * Toggles the active state of a protector.
    *
    * @param {string} id - Protector UUID
-   * @param {boolean} isActive
+   * @param {boolean} isActive - Si el protector está activo
    */
   async toggleActive(id: string, isActive: boolean): Promise<ProtectorModel> {
     const { data, error } = await this._supabase

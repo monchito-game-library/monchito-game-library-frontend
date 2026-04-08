@@ -168,7 +168,7 @@ export class StoresManagementComponent implements OnInit {
   /**
    * Persists the new or updated store and closes the panel.
    *
-   * @param {StoreFormResult} result
+   * @param {StoreFormResult} result - Resultado del formulario de tienda
    */
   async onSaved(result: StoreFormResult): Promise<void> {
     const current = this.selectedStore();

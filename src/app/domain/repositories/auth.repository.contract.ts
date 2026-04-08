@@ -11,16 +11,16 @@ export interface AuthRepositoryContract {
   /**
    * Signs in with email and password. Throws if the credentials are invalid.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    */
   signIn(email: string, password: string): Promise<AuthUserModel>;
 
   /**
    * Creates a new user account.
    *
-   * @param {string} email
-   * @param {string} password
+   * @param {string} email - Dirección de email del usuario
+   * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
    */
   signUp(email: string, password: string, displayName?: string): Promise<AuthUserModel>;
@@ -33,7 +33,7 @@ export interface AuthRepositoryContract {
   /**
    * Sends a password-reset email.
    *
-   * @param {string} email
+   * @param {string} email - Dirección de email del usuario
    */
   resetPassword(email: string): Promise<void>;
 

@@ -101,7 +101,7 @@ export class WishlistItemDialogComponent {
    * Called when the user selects a game from the search panel.
    * Transitions from search view to form view and resets the platform selection.
    *
-   * @param {GameCatalogDto} game
+   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
    */
   onGameSelected(game: GameCatalogDto): void {
     this.selectedCatalogEntry.set(game);

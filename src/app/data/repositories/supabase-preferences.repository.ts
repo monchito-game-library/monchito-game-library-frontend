@@ -17,7 +17,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   /**
    * Fetches the stored preferences for a user. Returns null if none exist yet.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getPreferences(userId: string): Promise<UserPreferencesModel | null> {
     const { data, error } = await this._supabase
@@ -34,7 +34,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
   /**
    * Upserts theme and language preferences for a user.
    *
-   * @param {UserPreferencesModel} preferences
+   * @param {UserPreferencesModel} preferences - Preferencias del usuario a guardar
    */
   async savePreferences(preferences: UserPreferencesModel): Promise<void> {
     const { error } = await this._supabase.from(this._table).upsert(mapUserPreferencesToInsertDto(preferences));
@@ -69,8 +69,8 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
    * Uploads an avatar image to the avatars bucket and returns its public URL.
    * Overwrites any existing file for the given user.
    *
-   * @param {string} userId
-   * @param {File} file
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {File} file - Fichero de imagen a subir
    */
   async uploadAvatar(userId: string, file: File): Promise<string> {
     const { error } = await this._supabase.storage.from(this._bucket).upload(userId, file, {
@@ -88,8 +88,8 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
    * Uploads a banner image to the banners bucket and returns its public URL.
    * Overwrites any existing file for the given user.
    *
-   * @param {string} userId
-   * @param {File} file
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {File} file - Fichero de imagen a subir
    */
   async uploadBanner(userId: string, file: File): Promise<string> {
     const { error } = await this._supabase.storage.from(this._bannerBucket).upload(userId, file, {
@@ -107,7 +107,7 @@ export class SupabasePreferencesRepository implements UserPreferencesRepositoryC
    * Deletes the user's banner file from the banners bucket.
    * Silently ignores errors if the file does not exist.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async deleteBanner(userId: string): Promise<void> {
     await this._supabase.storage.from(this._bannerBucket).remove([userId]);

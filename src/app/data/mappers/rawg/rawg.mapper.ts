@@ -5,7 +5,7 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
  * Maps a minimal RAWG list item to BannerSuggestionModel.
  * Skips all metadata — only image and title are needed by the banner picker.
  *
- * @param {RawgBannerItemDto} dto
+ * @param {RawgBannerItemDto} dto - DTO/modelo recibido para mapear
  */
 export function mapRawgBanner(dto: RawgBannerItemDto): BannerSuggestionModel {
   return {

@@ -169,7 +169,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Navigates to the detail page of the given item, passing it via router state.
    *
-   * @param {WishlistItemModel} item
+   * @param {WishlistItemModel} item - Item de la wishlist
    */
   onCardClicked(item: WishlistItemModel): void {
     void this._router.navigate(['/wishlist', item.id], { state: { item } });
@@ -189,7 +189,7 @@ export class WishlistComponent implements OnInit {
    * Switches to inline form mode pre-filled with the given item's values.
    * If the item has a rawgId, fetches fresh platform data from RAWG in the background.
    *
-   * @param {WishlistItemModel} item
+   * @param {WishlistItemModel} item - Item de la wishlist
    */
   onEditItem(item: WishlistItemModel): void {
     this._editingItem = item;
@@ -205,7 +205,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Asks for confirmation and deletes the given wishlist item.
    *
-   * @param {WishlistItemModel} item
+   * @param {WishlistItemModel} item - Item de la wishlist
    */
   async onDeleteItem(item: WishlistItemModel): Promise<void> {
     const dialogData: ConfirmDialogInterface = {
@@ -240,7 +240,7 @@ export class WishlistComponent implements OnInit {
    * Handles "I have this game": deletes from wishlist and navigates to /add
    * with the catalog entry pre-loaded in the router state.
    *
-   * @param {WishlistItemModel} item
+   * @param {WishlistItemModel} item - Item de la wishlist
    */
   async onOwnItem(item: WishlistItemModel): Promise<void> {
     const dialogData: ConfirmDialogInterface = {
@@ -275,7 +275,7 @@ export class WishlistComponent implements OnInit {
    * Called from mobile search panel when the user picks a game.
    * Transitions to inline form mode.
    *
-   * @param {GameCatalogDto} game
+   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
    */
   onMobileGameSelected(game: GameCatalogDto): void {
     this.pendingCatalogEntry.set(game);
@@ -400,7 +400,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Resets the mobile form with values from an existing item (edit) or defaults (add).
    *
-   * @param {WishlistItemModel | null} item
+   * @param {WishlistItemModel | null} item - Item de la wishlist, o null si es nuevo
    */
   private _resetMobileForm(item: WishlistItemModel | null): void {
     this.mobileForm.reset({

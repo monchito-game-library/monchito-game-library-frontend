@@ -33,7 +33,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Returns all games for a user, paginating in batches of 1000 to work around
    * Supabase's default query limit.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllGamesForUser(userId: string): Promise<GameModel[]> {
     const all = await this._paginateView<UserGameFullDto>(userId, '*');
@@ -44,7 +44,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Returns all games for a user with only the columns needed for the list view and game cards.
    * Excludes condition, format, rawg_id, rawg_slug to reduce payload size.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async getAllGamesForList(userId: string): Promise<GameListModel[]> {
     const all = await this._paginateView<UserGameListDto>(
@@ -57,8 +57,8 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Returns all games for a user filtered by platform.
    *
-   * @param {string} userId
-   * @param {PlatformType} platform
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {PlatformType} platform - Plataforma a filtrar
    */
   async getByConsole(userId: string, platform: PlatformType): Promise<GameModel[]> {
     const { data, error } = await this._supabase
@@ -76,8 +76,8 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Adds a new game for a user. If a RAWG catalog entry is provided it will be
    * linked to the record; otherwise the game is created as a manual entry.
    *
-   * @param {string} userId
-   * @param {GameModel} game
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
   async addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
@@ -96,7 +96,7 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Deletes a game by UUID if it belongs to the given user.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   async deleteById(userId: string, uuid: string): Promise<void> {
@@ -108,7 +108,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Updates an existing game. If a RAWG catalog entry is provided the catalog
    * link will also be updated. The model must include the uuid field.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} updated - Must include uuid
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
    */
@@ -150,7 +150,7 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Deletes all games associated with a user.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    */
   async clearAllForUser(userId: string): Promise<void> {
     const { error } = await this._supabase.from(this._userGamesTable).delete().eq('user_id', userId);
@@ -160,7 +160,7 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Returns a single game by UUID if it belongs to the given user.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   async getById(userId: string, uuid: string): Promise<GameModel | undefined> {
@@ -179,7 +179,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Returns only the columns needed by the edit form for a single game.
    * Uses an explicit column list instead of select('*') to avoid fetching unused catalog metadata.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   async getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined> {
@@ -200,7 +200,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Paginates a query over `_viewName` for a given user, fetching batches of 1000 rows
    * until the view is exhausted. Works around Supabase's default query limit.
    *
-   * @param {string} userId
+   * @param {string} userId - UUID del usuario autenticado
    * @param {string} select - Column list passed to `.select()`
    */
   private async _paginateView<T>(userId: string, select: string): Promise<T[]> {
@@ -231,7 +231,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    * Finds an existing game_catalog entry by RAWG ID (or by title for manual entries),
    * creating one if it does not exist yet. Returns the catalog row UUID.
    *
-   * @param {string} title
+   * @param {string} title - Título del juego a buscar
    * @param {GameCatalog | null} [catalogEntry] - Provide when the game comes from RAWG.
    */
   private async _getOrCreateGameCatalog(title: string, catalogEntry?: GameCatalog | null): Promise<string> {
