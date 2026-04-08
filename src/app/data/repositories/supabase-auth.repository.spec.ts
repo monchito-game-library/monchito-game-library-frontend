@@ -91,6 +91,10 @@ describe('SupabaseAuthRepository', () => {
   });
 
   describe('signUp', () => {
+    beforeEach(() => {
+      mockSupabase.from.mockReturnValue({ insert: vi.fn().mockResolvedValue({ error: null }) });
+    });
+
     it('registra con displayName explícito', async () => {
       mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
 

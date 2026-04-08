@@ -209,6 +209,18 @@ describe('OrderStepperComponent', () => {
       const total = result.reduce((sum: number, m: MemberQty) => sum + m.qty, 0);
       expect(total).toBe(30);
     });
+
+    it('devuelve el breakdown sin modificar cuando el índice seleccionado está fuera de rango', () => {
+      // step confirmado, pero selections[p1] = 99 → suggestions[99] = undefined
+      const step = makeStep({ suggestions: [makeSuggestion(20)] });
+      const c = createComponent(makeOrder(), [step]);
+      // Forzamos un índice fuera de rango directamente en el mapa interno
+      const map = new Map(c.stepSelections());
+      map.set('p1', 99);
+      c.stepSelections.set(map);
+      const result = c.getMemberAllocations(step);
+      expect(result).toEqual(step.memberBreakdown);
+    });
   });
 
   // ── _distributeProportionally (testado vía getMemberAllocations) ───────────
@@ -273,6 +285,12 @@ describe('OrderStepperComponent', () => {
       c.onPrevStep();
       expect(c.currentStep()).toBe(0);
     });
+
+    it('no lanza error al navegar cuando packSteps está vacío', () => {
+      const c = createComponent(makeOrder(), []);
+      expect(() => c.onNextStep()).not.toThrow();
+      expect(() => c.onPrevStep()).not.toThrow();
+    });
   });
 
   // ── onSelectPackOption ─────────────────────────────────────────────────────
@@ -299,6 +317,18 @@ describe('OrderStepperComponent', () => {
       // Esperar a que se resuelva la promesa interna
       await new Promise((r) => setTimeout(r, 0));
       expect(mockUseCases.updateLine).toHaveBeenCalled();
+    });
+
+    it('no llama a updateLine cuando el productId no existe en packSteps', async () => {
+      component.onSelectPackOption('producto-inexistente', 0);
+      await new Promise((r) => setTimeout(r, 0));
+      expect(mockUseCases.updateLine).not.toHaveBeenCalled();
+    });
+
+    it('no llama a updateLine cuando el índice de sugerencia está fuera de rango', async () => {
+      component.onSelectPackOption('p1', 99);
+      await new Promise((r) => setTimeout(r, 0));
+      expect(mockUseCases.updateLine).not.toHaveBeenCalled();
     });
   });
 

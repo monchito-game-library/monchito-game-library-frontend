@@ -198,6 +198,13 @@ describe('order.mapper', () => {
 
       expect(model.allocations).toEqual([]);
     });
+
+    it('allocations es [] cuando order_line_allocations es null', () => {
+      const dto = { ...orderLineDto, order_line_allocations: null as never };
+      const model = mapOrderLine(dto);
+
+      expect(model.allocations).toEqual([]);
+    });
   });
 
   describe('mapOrderMember', () => {
@@ -270,6 +277,18 @@ describe('order.mapper', () => {
 
     it('lines es [] cuando order_lines está vacío', () => {
       const dto: OrderDetailDto = { ...orderDetailDto, order_lines: [] };
+      const model = mapOrder(dto);
+      expect(model.lines).toEqual([]);
+    });
+
+    it('members es [] cuando order_members es null', () => {
+      const dto = { ...orderDetailDto, order_members: null as never };
+      const model = mapOrder(dto);
+      expect(model.members).toEqual([]);
+    });
+
+    it('lines es [] cuando order_lines es null', () => {
+      const dto = { ...orderDetailDto, order_lines: null as never };
       const model = mapOrder(dto);
       expect(model.lines).toEqual([]);
     });

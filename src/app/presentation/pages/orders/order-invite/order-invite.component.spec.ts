@@ -196,6 +196,17 @@ describe('OrderInviteComponent', () => {
       expect(mockOrdersUseCases.getInvitationByToken).not.toHaveBeenCalled();
     });
 
+    it('pone invalid a true inmediatamente cuando paramMap.get devuelve null', async () => {
+      mockActivatedRoute.snapshot.paramMap.get.mockReturnValue(null);
+      mockAuthState.isAuthenticated.mockReturnValue(true);
+
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(component.invalid()).toBe(true);
+      expect(mockOrdersUseCases.getInvitationByToken).not.toHaveBeenCalled();
+    });
+
     it('loading termina en false tras la carga exitosa', async () => {
       mockAuthState.isAuthenticated.mockReturnValue(true);
       mockOrdersUseCases.getInvitationByToken.mockResolvedValue(makeInvitation());
@@ -235,6 +246,15 @@ describe('OrderInviteComponent', () => {
   describe('onJoin()', () => {
     it('no hace nada cuando userId es null', async () => {
       mockUserContext.userId.mockReturnValue(null);
+
+      await component.onJoin();
+
+      expect(mockOrdersUseCases.acceptInvitation).not.toHaveBeenCalled();
+    });
+
+    it('no hace nada cuando _token está vacío aunque userId esté definido', async () => {
+      mockUserContext.userId.mockReturnValue('user-1');
+      (component as any)._token = '';
 
       await component.onJoin();
 

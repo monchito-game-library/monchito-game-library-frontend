@@ -115,6 +115,10 @@ describe('ReadyDialogComponent — getSelectedIndex()', () => {
     component.onSelectSuggestion('line-1', 1);
     expect(component.getSelectedIndex('line-1')).toBe(1);
   });
+
+  it('devuelve 0 para un lineId desconocido (rama ?? 0)', () => {
+    expect(component.getSelectedIndex('line-inexistente')).toBe(0);
+  });
 });
 
 // ─── onSelectSuggestion ───────────────────────────────────────────────────────
