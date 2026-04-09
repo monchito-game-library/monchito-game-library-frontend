@@ -38,5 +38,8 @@ jobs:
           };
           EOF
 
+      - name: Ejecutar tests de reglas ESLint
+        run: npm run test:eslint-rules
+
       - name: Ejecutar tests con cobertura
         run: npx ng test --configuration=coverage

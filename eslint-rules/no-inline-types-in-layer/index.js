@@ -5,7 +5,7 @@
  *
  * Forbids inline `interface` and `type` declarations in files that live under
  * one or more configurable paths. The intention is to keep type definitions
- * centralised in the entities layer (e.g. src/app/entities/interfaces/ and
+ * centralized in the entities layer (e.g. src/app/entities/interfaces/ and
  * src/app/entities/types/) and out of presentation components.
  *
  * Options (all optional):
