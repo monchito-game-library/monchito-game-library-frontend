@@ -23,8 +23,6 @@ import { OrderModel } from '@/models/order/order.model';
 import { formatBreakdown } from '@/shared/pack-optimizer.util';
 import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 
-export type { MemberQty, PackStepData };
-
 @Component({
   selector: 'app-order-stepper',
   templateUrl: './order-stepper.component.html',

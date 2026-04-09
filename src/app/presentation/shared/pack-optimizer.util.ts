@@ -1,8 +1,6 @@
 import { OrderProductPackModel } from '@/models/order/order-product.model';
 import { PackCount, PackSuggestion } from '@/interfaces/pack-optimizer.interface';
 
-export type { PackSuggestion };
-
 /**
  * Returns up to 3 pack suggestions for `needed` units:
  *

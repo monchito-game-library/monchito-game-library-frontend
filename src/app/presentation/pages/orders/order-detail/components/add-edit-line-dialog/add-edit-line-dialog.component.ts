@@ -19,8 +19,6 @@ import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderLineForm, OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 
-export type { AddEditLineDialogData };
-
 @Component({
   selector: 'app-add-edit-line-dialog',
   templateUrl: './add-edit-line-dialog.component.html',

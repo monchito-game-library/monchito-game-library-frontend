@@ -5,7 +5,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { AddEditLineDialogComponent, AddEditLineDialogData } from './add-edit-line-dialog.component';
+import { AddEditLineDialogComponent } from './add-edit-line-dialog.component';
+import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
 

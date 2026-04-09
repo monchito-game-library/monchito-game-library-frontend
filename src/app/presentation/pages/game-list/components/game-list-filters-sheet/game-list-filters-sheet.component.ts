@@ -18,8 +18,6 @@ import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-
 import { GameListSortField } from '@/types/game-list-sort-field.type';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 
-export type { GameListSortField, GameListFiltersSheetData };
-
 @Component({
   selector: 'app-game-list-filters-sheet',
   templateUrl: './game-list-filters-sheet.component.html',

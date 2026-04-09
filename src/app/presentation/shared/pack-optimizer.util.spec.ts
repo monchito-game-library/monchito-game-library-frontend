@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatBreakdown, optimizePacks, PackSuggestion } from './pack-optimizer.util';
+import { formatBreakdown, optimizePacks } from './pack-optimizer.util';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
 import { OrderProductPackModel } from '@/models/order/order-product.model';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

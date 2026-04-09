@@ -6,8 +6,9 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { PackSuggestion } from '@/shared/pack-optimizer.util';
-import { OrderStepperComponent, PackStepData, MemberQty } from './order-stepper.component';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
+import { OrderStepperComponent } from './order-stepper.component';
+import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
