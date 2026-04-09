@@ -535,7 +535,7 @@ CREATE POLICY "Admins can update products"
 --     su estado a lo largo del ciclo de vida.
 --
 --     Ciclo de vida:
---       draft → selecting_packs → ready → ordered → shipped → received
+--       draft → selecting_packs → ordering → ordered → received
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -543,7 +543,7 @@ CREATE TABLE IF NOT EXISTS orders (
   owner_id        UUID    NOT NULL REFERENCES auth.users(id),
   title           TEXT,
   status          TEXT    NOT NULL DEFAULT 'draft'
-                          CHECK (status IN ('draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received')),
+                          CHECK (status IN ('draft', 'selecting_packs', 'ordering', 'ordered', 'received')),
   order_date      DATE,
   received_date   DATE,
   shipping_cost   NUMERIC(10,2),

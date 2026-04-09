@@ -1,5 +1,30 @@
 # Monchito Game Library — Convenciones del proyecto
 
+## Índice
+
+- [Al iniciar cada conversación](#al-iniciar-cada-conversación)
+- [Idioma de comunicación](#idioma-de-comunicación)
+- [Git](#git)
+  - [Flujo de trabajo](#flujo-de-trabajo)
+  - [Nombrado de ramas](#nombrado-de-ramas)
+- [Dependencias npm](#dependencias-npm)
+  - [Proceso de actualización de dependencias](#proceso-de-actualización-de-dependencias)
+- [Imports](#imports)
+- [SCSS](#scss)
+  - [Espaciados](#espaciados)
+  - [Clases y modificadores](#clases-y-modificadores)
+  - [Breakpoints responsive](#breakpoints-responsive)
+- [Orden en componentes Angular](#orden-en-componentes-angular)
+- [Convenciones de nombrado](#convenciones-de-nombrado)
+  - [Prefijo `_` en privados](#prefijo-_-en-privados)
+  - [Tipos explícitos](#tipos-explícitos)
+- [JSDoc](#jsdoc)
+- [Formularios reactivos Angular](#formularios-reactivos-angular)
+- [Repositorios](#repositorios)
+- [Arquitectura de capas](#arquitectura-de-capas)
+
+---
+
 ## Al iniciar cada conversación
 
 1. Leer `docs/BUGS.md`.
@@ -49,6 +74,24 @@ refactor/descripcion
 // ❌ Incorrecto
 "@angular/service-worker": "^21.2.3"
 ```
+
+### Proceso de actualización de dependencias
+
+1. **Detectar candidatas**: `npm outdated` — revisar qué tiene actualizaciones disponibles.
+2. **Clasificar por riesgo**:
+   - *Patch/minor seguros*: actualizar sin problema.
+   - *Major*: evaluar breaking changes antes de actualizar.
+   - *Ecosistema Angular*: usar **siempre** `npx ng update` (nunca `npm install` directo), ya que resuelve peer deps de forma atómica.
+3. **Instalar**:
+   - Angular: `npx ng update @angular/core@X @angular/cli@X @angular/material@X ...`
+   - Resto: `npm install paquete@version`
+4. **Corregir rangos**: verificar que npm no añadió `^` o `~` y eliminarlos manualmente si es necesario.
+5. **Sincronizar lock file**: `npm install` sin argumentos para que `package-lock.json` quede consistente.
+6. **Verificar** en este orden:
+   - `npm run build` — el bundle debe compilar sin errores.
+   - `npm test` — todos los tests deben pasar.
+   - `npm run lint` — sin warnings ni errores.
+7. **Commit** solo si los tres pasos anteriores son exitosos.
 
 ## Imports
 

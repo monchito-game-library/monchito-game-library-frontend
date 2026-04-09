@@ -116,7 +116,7 @@ describe('OrderProductListComponent', () => {
 
     it('en estado no draft devuelve todas las líneas', () => {
       const lines = [makeLine({ id: 'l1', requestedBy: 'user-owner' }), makeLine({ id: 'l2', requestedBy: 'user-2' })];
-      const order = makeOrder({ status: 'ready', lines });
+      const order = makeOrder({ status: 'ordered', lines });
       const c = createComponent(order);
       const result = c.visibleLines(lines);
       expect(result).toHaveLength(2);

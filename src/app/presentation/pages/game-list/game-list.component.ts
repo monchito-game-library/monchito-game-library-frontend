@@ -32,18 +32,17 @@ import { PlatformType } from '@/types/platform.type';
 import { GameFormatType } from '@/types/game-format.type';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
-import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { availableGameStatuses } from '@/constants/game-status.constant';
+import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
 import { GameCardComponent } from '@/pages/game-list/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
-import {
-  GameListFiltersSheetComponent,
-  GameListFiltersSheetData,
-  GameListSortField
-} from '@/pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component';
+import { GameListFiltersSheetComponent } from '@/pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component';
+import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
+import { GameListSortField } from '@/types/game-list-sort-field.type';
 
 @Component({
   selector: 'app-game-list',

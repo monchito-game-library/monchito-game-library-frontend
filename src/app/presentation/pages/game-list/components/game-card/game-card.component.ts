@@ -29,7 +29,8 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { GameListModel } from '@/models/game/game-list.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { availableGameStatuses } from '@/constants/game-status.constant';
+import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 
 @Component({
   selector: 'app-game-card',

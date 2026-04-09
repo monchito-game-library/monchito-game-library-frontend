@@ -23,12 +23,6 @@ export interface OrderLinePatchValue {
   notes?: string | null;
 }
 
-/** Reactive form shape for a participant's allocation on a line. */
-export interface OrderLineAllocationForm {
-  quantityNeeded: FormControl<number | null>;
-  quantityThisOrder: FormControl<number | null>;
-}
-
 /** Plain value extracted from OrderLineAllocationForm via getRawValue(). */
 export interface OrderLineAllocationFormValue {
   quantityNeeded: number | null;

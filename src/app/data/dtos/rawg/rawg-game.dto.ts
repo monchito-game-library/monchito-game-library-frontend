@@ -110,37 +110,6 @@ export interface RawgSearchResponseDto {
   nofollow_collections?: string[];
 }
 
-/** Query parameters for the RAWG /games endpoint. */
-export interface RawgSearchParamsDto {
-  search?: string;
-  page?: number;
-  /** Maximum 40 */
-  page_size?: number;
-  search_precise?: boolean;
-  search_exact?: boolean;
-  /** Comma-separated parent platform IDs, e.g. '1,2,3' */
-  parent_platforms?: string;
-  /** Comma-separated platform IDs, e.g. '4,187,1' */
-  platforms?: string;
-  stores?: string;
-  developers?: string;
-  publishers?: string;
-  genres?: string;
-  tags?: string;
-  /** Date range, e.g. '2020-01-01,2020-12-31' */
-  dates?: string;
-  updated?: string;
-  /** e.g. '-added', '-released', '-rating', '-metacritic', 'name' */
-  ordering?: string;
-  /** Metacritic score range, e.g. '80,100' */
-  metacritic?: string;
-  exclude_collection?: number;
-  exclude_additions?: boolean;
-  exclude_parents?: boolean;
-  exclude_game_series?: boolean;
-  exclude_stores?: string;
-}
-
 /**
  * RAWG game entry mapped to the shape needed to insert into our game_catalog table.
  * Used by the repository when staging a RAWG selection before saving.

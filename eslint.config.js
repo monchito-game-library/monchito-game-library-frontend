@@ -5,6 +5,7 @@ const tseslint = require('@typescript-eslint/eslint-plugin');
 const prettier = require('eslint-config-prettier');
 const jsdoc = require('eslint-plugin-jsdoc');
 const cleanArchRule = require('./eslint-rules/clean-architecture-boundaries/index.js');
+const noInlineTypesRule = require('./eslint-rules/no-inline-types-in-layer/index.js');
 
 // Angular lifecycle hooks that are exempt from the JSDoc requirement.
 const LIFECYCLE_HOOKS = [
@@ -37,7 +38,8 @@ module.exports = [
       '@angular-eslint': angular,
       '@typescript-eslint': tseslint,
       jsdoc,
-      'clean-arch': { rules: { boundaries: cleanArchRule } }
+      'clean-arch': { rules: { boundaries: cleanArchRule } },
+      'layer-types': { rules: { 'no-inline': noInlineTypesRule } }
     },
     rules: {
       '@angular-eslint/directive-selector': [
@@ -47,6 +49,22 @@ module.exports = [
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' }
+      ],
+
+      // ── Unused vars / imports ────────────────────────────────────────────────
+
+      // Warn on variables, parameters and imports declared but never used
+      // within the same file. Does NOT catch exported symbols that are never
+      // imported elsewhere — use knip (npm run knip) for cross-file analysis.
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_'
+        }
       ],
 
       // ── Naming convention ────────────────────────────────────────────────────
@@ -169,6 +187,18 @@ module.exports = [
       // data → entities only (uses domain contracts via .contract exception)
       // domain → entities only
       'clean-arch/boundaries': 'error',
+
+      // Forbids inline interface/type declarations inside the presentation layer.
+      // All types and interfaces must live in src/app/entities.
+      // Configurable: restrictedPaths (default: ['src/app/presentation'])
+      //               excludeFilePatterns (default: ['.spec.ts'])
+      'layer-types/no-inline': [
+        'error',
+        {
+          restrictedPaths: ['src/app/presentation'],
+          excludeFilePatterns: ['.spec.ts']
+        }
+      ],
 
       ...prettier.rules
     }

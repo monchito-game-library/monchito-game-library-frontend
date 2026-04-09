@@ -31,12 +31,7 @@ import { StoreModel } from '@/models/store/store.model';
 import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-
-/** Shape emitted by the edit panel on save. */
-interface StoreFormResult {
-  label: string;
-  formatHint: GameFormatType | null;
-}
+import { StoreFormResult } from '@/interfaces/management/store-form-result.interface';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component (inline, below the page header)
