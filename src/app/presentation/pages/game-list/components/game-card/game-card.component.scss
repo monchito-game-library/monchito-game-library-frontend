@@ -282,6 +282,21 @@
     }
   }
 
+  .game-card__for-sale-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+
+    mat-icon {
+      color: #4caf50;
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
   .game-card__title {
     font-size: 0.9rem;
     font-weight: 600;

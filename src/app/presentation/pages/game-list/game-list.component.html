@@ -115,13 +115,22 @@
           <mat-icon>{{ onlyFavorites() ? 'favorite' : 'favorite_border' }}</mat-icon>
         </button>
 
+        <button
+          mat-icon-button
+          [class.game-list__sale-btn--active]="onlyForSale()"
+          (click)="onlyForSale.set(!onlyForSale())"
+          [attr.aria-label]="'gameList.aria.onlyForSale' | transloco">
+          <mat-icon>sell</mat-icon>
+        </button>
+
         @if (
           searchTerm() ||
           selectedConsole() ||
           selectedStore() ||
           selectedFormat() ||
           selectedStatus() ||
-          onlyFavorites()
+          onlyFavorites() ||
+          onlyForSale()
         ) {
           <button
             mat-icon-button
@@ -146,7 +155,10 @@
       }
     </button>
 
-    <!-- Desktop-only: add button -->
+    <!-- Desktop-only: sold history + add button -->
+    <button mat-icon-button routerLink="/sold-games" [attr.aria-label]="'soldGames.title' | transloco">
+      <mat-icon>history</mat-icon>
+    </button>
     <button mat-flat-button color="primary" routerLink="/add" class="game-list__add-btn">
       <mat-icon>add</mat-icon>
       {{ 'nav.add' | transloco }}

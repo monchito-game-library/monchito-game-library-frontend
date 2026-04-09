@@ -96,6 +96,9 @@ export class GameCardComponent {
   /** Whether the game is a digital copy. */
   readonly isDigital: Signal<boolean> = computed(() => this.game().format === 'digital');
 
+  /** Whether the game is currently listed for sale. */
+  readonly isForSale: Signal<boolean> = computed(() => this.game().forSale);
+
   /** CSS object-position for the cover image. */
   readonly coverObjectPosition: Signal<string> = computed((): string => {
     const [x, y] = this._coverParts();

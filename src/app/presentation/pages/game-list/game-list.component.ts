@@ -138,6 +138,9 @@ export class GameListComponent implements OnInit, OnDestroy {
   /** Whether only favourite games are shown. */
   readonly onlyFavorites: WritableSignal<boolean> = signal(false);
 
+  /** Whether only games listed for sale are shown. */
+  readonly onlyForSale: WritableSignal<boolean> = signal(false);
+
   /** Icon shown in the total-games stat, changes based on the active format filter. */
   readonly formatFilterIcon: Signal<string> = computed((): string => {
     const fmt = this.selectedFormat();
@@ -166,6 +169,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     if (this.selectedStatus()) count++;
     if (this.selectedFormat()) count++;
     if (this.onlyFavorites()) count++;
+    if (this.onlyForSale()) count++;
     return count;
   });
 
@@ -177,6 +181,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     const status = this.selectedStatus();
     const format = this.selectedFormat();
     const favorites = this.onlyFavorites();
+    const forSale = this.onlyForSale();
 
     let filtered = this.allGames().filter((game: GameListModel): boolean => {
       const matchesSearch = game.title.toLowerCase().includes(search);
@@ -185,7 +190,16 @@ export class GameListComponent implements OnInit, OnDestroy {
       const matchesStatus = status ? game.status === status : true;
       const matchesFormat = format ? game.format === format : true;
       const matchesFavorites = favorites ? game.isFavorite === true : true;
-      return matchesSearch && matchesPlatform && matchesStore && matchesStatus && matchesFormat && matchesFavorites;
+      const matchesForSale = forSale ? game.forSale === true : true;
+      return (
+        matchesSearch &&
+        matchesPlatform &&
+        matchesStore &&
+        matchesStatus &&
+        matchesFormat &&
+        matchesFavorites &&
+        matchesForSale
+      );
     });
 
     const sortBy = this.sortBy();
@@ -282,6 +296,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     this.selectedStatus.set('');
     this.selectedFormat.set('');
     this.onlyFavorites.set(false);
+    this.onlyForSale.set(false);
   }
 
   /**
@@ -325,6 +340,7 @@ export class GameListComponent implements OnInit, OnDestroy {
       selectedStatus: this.selectedStatus,
       selectedFormat: this.selectedFormat,
       onlyFavorites: this.onlyFavorites,
+      onlyForSale: this.onlyForSale,
       sortBy: this.sortBy,
       sortDirection: this.sortDirection,
       stores: this.stores,

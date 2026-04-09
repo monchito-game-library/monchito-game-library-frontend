@@ -1,0 +1,52 @@
+<div class="sold-games-page">
+  <header class="sold-games-page__header">
+    <button mat-icon-button (click)="goBack()" [attr.aria-label]="'common.back' | transloco">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="sold-games-page__title">{{ 'soldGames.title' | transloco }}</h1>
+  </header>
+
+  @if (loading()) {
+    <div class="sold-games-page__loading">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (soldGames().length === 0) {
+    <div class="sold-games-page__empty">
+      <mat-icon>sell</mat-icon>
+      <p>{{ 'soldGames.empty' | transloco }}</p>
+    </div>
+  } @else {
+    <ul class="sold-games-page__list">
+      @for (game of soldGames(); track game.uuid) {
+        <li class="sold-games-page__item">
+          <img class="sold-games-page__cover" [src]="coverUrl(game)" [alt]="game.title" loading="lazy" />
+          <div class="sold-games-page__info">
+            <p class="sold-games-page__game-title">{{ game.title }}</p>
+            @if (game.platform) {
+              <p class="sold-games-page__platform">{{ game.platform }}</p>
+            }
+            <div class="sold-games-page__prices">
+              @if (game.price !== null) {
+                <span class="sold-games-page__price-paid">
+                  {{ 'soldGames.paid' | transloco }}: {{ game.price | currency: 'EUR' }}
+                </span>
+              }
+              @if (game.soldPriceFinal !== null) {
+                <mat-icon class="sold-games-page__arrow">arrow_forward</mat-icon>
+                <span class="sold-games-page__price-sold">
+                  {{ game.soldPriceFinal | currency: 'EUR' }}
+                </span>
+              }
+            </div>
+            @if (game.soldAt) {
+              <p class="sold-games-page__sold-date">
+                <mat-icon>calendar_today</mat-icon>
+                {{ game.soldAt | date: 'dd/MM/yyyy' }}
+              </p>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

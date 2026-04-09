@@ -249,7 +249,35 @@
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
               <app-toggle-switch formControlName="is_favorite" icon="favorite" iconChecked="favorite" />
             </div>
+            @if (isPhysical()) {
+              <div class="game-form__toggle-row">
+                <span class="game-form__toggle-label">{{ 'gameForm.fields.for_sale' | transloco }}</span>
+                <app-toggle-switch formControlName="for_sale" icon="sell" iconChecked="sell" />
+              </div>
+            }
           </div>
+
+          @if (isPhysical() && forSaleValue()) {
+            <div class="game-form__sale-section">
+              <mat-form-field appearance="outline" class="game-form__field">
+                <mat-label>{{ 'gameForm.fields.sale_price' | transloco }}</mat-label>
+                <input matInput formControlName="sale_price" type="number" placeholder="0" />
+                <mat-icon matSuffix>euro</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="game-form__field">
+                <mat-label>{{ 'gameForm.fields.sold_price_final' | transloco }}</mat-label>
+                <input matInput formControlName="sold_price_final" type="number" placeholder="0" />
+                <mat-icon matSuffix>euro</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="game-form__field">
+                <mat-label>{{ 'gameForm.fields.sold_at' | transloco }}</mat-label>
+                <input matInput formControlName="sold_at" type="date" />
+                <mat-icon matSuffix>calendar_today</mat-icon>
+              </mat-form-field>
+            </div>
+          }
 
           <div class="game-form__footer-actions">
             @if (isEditMode) {

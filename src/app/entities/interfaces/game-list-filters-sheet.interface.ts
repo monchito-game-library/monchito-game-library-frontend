@@ -12,6 +12,7 @@ export interface GameListFiltersSheetData {
   selectedStatus: WritableSignal<string>;
   selectedFormat: WritableSignal<'' | GameFormatType>;
   onlyFavorites: WritableSignal<boolean>;
+  onlyForSale: WritableSignal<boolean>;
   sortBy: WritableSignal<GameListSortField>;
   sortDirection: WritableSignal<'asc' | 'desc'>;
   stores: WritableSignal<StoreModel[]>;

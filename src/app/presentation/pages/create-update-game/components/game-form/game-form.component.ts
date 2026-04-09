@@ -162,7 +162,11 @@ export class GameFormComponent implements OnInit {
     personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
     edition: [null as string | null],
     format: ['physical' as GameFormatType | null],
-    is_favorite: [false]
+    is_favorite: [false],
+    for_sale: [false],
+    sale_price: [null as number | null],
+    sold_at: [null as string | null],
+    sold_price_final: [null as number | null]
   });
 
   readonly platformInput = toSignal(this.form.controls.platform.valueChanges, {
@@ -210,6 +214,14 @@ export class GameFormComponent implements OnInit {
   /** Reactive signal for the format control value — needed for OnPush compatibility with mat-button-toggle-group. */
   readonly formatValue = toSignal(this.form.controls.format.valueChanges, {
     initialValue: this.form.controls.format.value
+  });
+
+  /** Whether the current format is physical (controls visibility of the for-sale section). */
+  readonly isPhysical: Signal<boolean> = computed(() => this.formatValue() === 'physical');
+
+  /** Reactive signal for the for_sale control value. */
+  readonly forSaleValue = toSignal(this.form.controls.for_sale.valueChanges, {
+    initialValue: this.form.controls.for_sale.value
   });
 
   /** Stores filtered by the current autocomplete input value. */
@@ -349,7 +361,11 @@ export class GameFormComponent implements OnInit {
             personal_rating: game.personalRating,
             edition: game.edition,
             format: game.format,
-            is_favorite: game.isFavorite
+            is_favorite: game.isFavorite,
+            for_sale: game.forSale,
+            sale_price: game.salePrice,
+            sold_at: game.soldAt,
+            sold_price_final: game.soldPriceFinal
           },
           { emitEvent: false }
         );
@@ -426,7 +442,11 @@ export class GameFormComponent implements OnInit {
         format: raw.format ?? null,
         isFavorite: raw.is_favorite ?? false,
         imageUrl: this.selectedImageUrl() ?? undefined,
-        coverPosition: this._coverPosition()
+        coverPosition: this._coverPosition(),
+        forSale: raw.for_sale ?? false,
+        salePrice: raw.sale_price ?? null,
+        soldAt: raw.sold_at ?? null,
+        soldPriceFinal: raw.sold_price_final ?? null
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;
@@ -629,6 +649,12 @@ export class GameFormComponent implements OnInit {
   onFormatChange(value: GameFormatType | null): void {
     this._formatTouchedByUser = true;
     this.form.controls.format.setValue(value);
+    if (value !== 'physical') {
+      this.form.controls.for_sale.setValue(false);
+      this.form.controls.sale_price.setValue(null);
+      this.form.controls.sold_at.setValue(null);
+      this.form.controls.sold_price_final.setValue(null);
+    }
   }
 
   /**

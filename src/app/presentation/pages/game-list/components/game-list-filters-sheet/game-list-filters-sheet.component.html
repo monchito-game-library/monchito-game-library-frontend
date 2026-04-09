@@ -89,6 +89,15 @@
       </span>
       <app-toggle-switch [checked]="data.onlyFavorites()" (changed)="data.onlyFavorites.set($event)" />
     </div>
+
+    <!-- For sale toggle -->
+    <div class="filters-sheet__toggle-row">
+      <span class="filters-sheet__toggle-label">
+        <mat-icon [class.filters-sheet__sale-icon--active]="data.onlyForSale()">sell</mat-icon>
+        {{ 'gameList.aria.onlyForSale' | transloco }}
+      </span>
+      <app-toggle-switch [checked]="data.onlyForSale()" (changed)="data.onlyForSale.set($event)" />
+    </div>
   </div>
 
   <mat-divider />

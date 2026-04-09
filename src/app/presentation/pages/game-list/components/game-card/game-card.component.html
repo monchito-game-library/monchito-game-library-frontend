@@ -45,6 +45,11 @@
                 <mat-icon>emoji_events</mat-icon>
               </span>
             }
+            @if (isForSale()) {
+              <span class="game-card__for-sale-chip">
+                <mat-icon>sell</mat-icon>
+              </span>
+            }
           </div>
           <p class="game-card__title">{{ game().title }}</p>
           @if (edition()) {
