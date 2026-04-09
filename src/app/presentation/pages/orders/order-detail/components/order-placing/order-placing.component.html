@@ -9,9 +9,12 @@
         <div class="order-placing__product">
           <div class="order-placing__product-header">
             <span class="order-placing__product-name">{{ row.productName }}</span>
-            <span class="order-placing__product-total"
-              >{{ row.totalOrdered }} {{ 'orders.ready.units' | transloco }}</span
-            >
+            <span class="order-placing__product-total">
+              {{ row.totalOrdered }} {{ 'orders.ready.units' | transloco }}
+              @if (row.totalCost > 0) {
+                <span class="order-placing__product-cost">· {{ row.totalCost | number: '1.2-2' }} €</span>
+              }
+            </span>
           </div>
 
           @if (row.breakdown.length === 0) {

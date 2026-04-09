@@ -21,6 +21,8 @@ export interface PlacingRow {
   productName: string;
   /** Total units to be ordered for this product across all members. */
   totalOrdered: number;
+  /** Total cost of the pack breakdown for this product (sum of count × pack.price). */
+  totalCost: number;
   /** Pack breakdown: how many of each pack size to purchase, each with its URL. */
   breakdown: PlacingPackEntry[];
 }
@@ -72,16 +74,19 @@ export class OrderPlacingComponent {
     return Array.from(map.entries()).map(([productId, data]) => {
       const product = prods.find((p) => p.id === productId);
       if (!product || data.totalOrdered === 0) {
-        return { productName: data.productName, totalOrdered: data.totalOrdered, breakdown: [] };
+        return { productName: data.productName, totalOrdered: data.totalOrdered, totalCost: 0, breakdown: [] };
       }
 
       const suggestions = optimizePacks(data.totalOrdered, product.packs);
       const match = suggestions.find((s) => Math.abs(s.unitPrice - data.unitPrice) < 0.001) ?? suggestions[0];
+      const breakdown = match?.breakdown ?? [];
+      const totalCost = breakdown.reduce((sum, e) => sum + e.count * e.pack.price, 0);
 
       return {
         productName: data.productName,
         totalOrdered: data.totalOrdered,
-        breakdown: match?.breakdown ?? []
+        totalCost,
+        breakdown
       };
     });
   }

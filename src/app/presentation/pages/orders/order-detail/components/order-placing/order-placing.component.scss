@@ -84,6 +84,11 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.order-placing__product-cost {
+  font-weight: 600;
+  color: var(--mat-sys-primary);
+}
+
 .order-placing__no-breakdown {
   font-size: 0.875rem;
   color: var(--mat-sys-on-surface-variant);
