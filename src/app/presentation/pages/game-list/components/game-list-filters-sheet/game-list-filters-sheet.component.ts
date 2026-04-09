@@ -9,28 +9,15 @@ import { MatSelect } from '@angular/material/select';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { PlatformType } from '@/types/platform.type';
-import { GameFormatType } from '@/types/game-format.type';
 import { StoreModel } from '@/models/store/store.model';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { GameListSortField } from '@/types/game-list-sort-field.type';
+import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 
-/** Sort field values used by the game list. */
-export type GameListSortField = 'created_at' | 'title' | 'price' | 'personal_rating';
-
-/** Data contract passed from game-list to the filters bottom sheet. */
-export interface GameListFiltersSheetData {
-  selectedConsole: WritableSignal<'' | PlatformType>;
-  selectedStore: WritableSignal<string>;
-  selectedStatus: WritableSignal<string>;
-  selectedFormat: WritableSignal<'' | GameFormatType>;
-  onlyFavorites: WritableSignal<boolean>;
-  sortBy: WritableSignal<GameListSortField>;
-  sortDirection: WritableSignal<'asc' | 'desc'>;
-  stores: WritableSignal<StoreModel[]>;
-  clearAllFilters: () => void;
-}
+export type { GameListSortField, GameListFiltersSheetData };
 
 @Component({
   selector: 'app-game-list-filters-sheet',

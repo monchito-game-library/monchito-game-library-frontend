@@ -8,7 +8,7 @@ export interface GameStatusOption {
   labelKey: string;
   /** Material icon name displayed alongside the status. */
   icon: string;
-  /** Hex colour used to represent the status visually. */
+  /** Hex color used to represent the status visually. */
   color: string;
 }
 

@@ -1,5 +1,5 @@
 import { OrderLineModel } from '@/models/order/order-line.model';
-import { PackSuggestion } from '@/shared/pack-optimizer.util';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
 
 /** Per-line data passed to the ready dialog. */
 export interface ReadyLineData {

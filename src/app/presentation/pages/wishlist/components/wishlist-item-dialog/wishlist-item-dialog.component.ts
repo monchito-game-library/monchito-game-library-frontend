@@ -18,24 +18,12 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { SlicePipe } from '@angular/common';
 
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
-import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
+import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
 
-/** Data passed to the wishlist item dialog. */
-export interface WishlistItemDialogData {
-  mode: 'add' | 'edit';
-  /** Existing item — provided in edit mode to pre-fill form fields. */
-  item?: WishlistItemModel;
-}
-
-/** Value returned when the dialog is confirmed. */
-export interface WishlistItemDialogResult {
-  /** Only present in add mode — the RAWG catalog entry selected by the user. */
-  catalogEntry?: GameCatalogDto;
-  formValue: WishlistItemFormValue;
-}
+export type { WishlistItemDialogData, WishlistItemDialogResult };
 
 @Component({
   selector: 'app-wishlist-item-dialog',

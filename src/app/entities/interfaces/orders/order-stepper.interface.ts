@@ -1,4 +1,4 @@
-import { PackSuggestion } from '@/shared/pack-optimizer.util';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
 
 /** Per-member quantity breakdown for a stepper step. */
 export interface MemberQty {
