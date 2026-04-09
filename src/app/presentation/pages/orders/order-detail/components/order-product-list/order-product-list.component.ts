@@ -16,19 +16,9 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
+import { GroupedLine } from '@/interfaces/orders/grouped-line.interface';
 
-/** Line aggregated by product for display in non-draft states. */
-export interface GroupedLine {
-  /** UUID of the product, used for tracking. */
-  productId: string;
-  productName: string;
-  productCategory: string;
-  productUrl: string | null;
-  /** Unit price set by the pack optimizer (same for all lines of the same product). */
-  unitPrice: number;
-  /** Total units ordered across all members for this product. */
-  quantityOrdered: number;
-}
+export type { GroupedLine };
 
 @Component({
   selector: 'app-order-product-list',

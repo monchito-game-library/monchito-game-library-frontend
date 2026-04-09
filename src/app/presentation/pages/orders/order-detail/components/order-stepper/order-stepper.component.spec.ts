@@ -6,7 +6,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { PackSuggestion } from '@/domain/utils/pack-optimizer.util';
+import { PackSuggestion } from '@/shared/pack-optimizer.util';
 import { OrderStepperComponent, PackStepData, MemberQty } from './order-stepper.component';
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
@@ -15,7 +15,7 @@ const makeOrder = (overrides: Partial<OrderModel> = {}): OrderModel => ({
   id: 'order-1',
   ownerId: 'user-owner',
   title: 'Test Order',
-  status: 'ready',
+  status: 'selecting_packs',
   orderDate: null,
   receivedDate: null,
   shippingCost: 10,

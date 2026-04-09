@@ -20,37 +20,10 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { PackSuggestion } from '@/domain/utils/pack-optimizer.util';
+import { formatBreakdown } from '@/shared/pack-optimizer.util';
+import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 
-/** Per-member quantity breakdown for a stepper step. */
-export interface MemberQty {
-  /** UUID of the user. */
-  userId: string;
-  /** Display name of the user. */
-  displayName: string | null;
-  /** Email address of the user. */
-  email: string | null;
-  /** Avatar URL of the user. */
-  avatarUrl: string | null;
-  /** Units this member has requested for the product. */
-  qty: number;
-}
-
-/** Data for a single step in the pack selection stepper. */
-export interface PackStepData {
-  /** UUID of the product group. */
-  productId: string;
-  /** Display name of the product. */
-  productName: string;
-  /** Total units needed across all member lines for this product. */
-  totalNeeded: number;
-  /** Suggestions ordered by cost: [exact, ...rounded]. */
-  suggestions: PackSuggestion[];
-  /** IDs of all order_lines belonging to this product group. */
-  lineIds: string[];
-  /** Per-member quantity breakdown. */
-  memberBreakdown: MemberQty[];
-}
+export type { MemberQty, PackStepData };
 
 @Component({
   selector: 'app-order-stepper',
@@ -90,6 +63,9 @@ export class OrderStepperComponent {
 
   /** Emitted whenever the all-packs-selected state changes. */
   readonly allPacksSelectedChange: OutputEmitterRef<boolean> = output<boolean>();
+
+  /** Returns the human-readable breakdown string for a pack suggestion. */
+  readonly formatBreakdown = formatBreakdown;
 
   /** Index of the current step in the stepper. */
   readonly currentStep: WritableSignal<number> = signal<number>(0);
@@ -180,15 +156,6 @@ export class OrderStepperComponent {
   onNextStep(): void {
     this.currentStep.update((s) => Math.min(this.packSteps().length - 1, s + 1));
     this._autoConfirmCurrentStep();
-  }
-
-  /**
-   * Returns the human-readable breakdown string for a pack suggestion.
-   *
-   * @param {PackSuggestion} suggestion - The suggestion to format
-   */
-  formatBreakdown(suggestion: PackSuggestion): string {
-    return suggestion.breakdown.map((b) => `${b.count}× Pack ${b.pack.quantity}`).join(' + ');
   }
 
   /**

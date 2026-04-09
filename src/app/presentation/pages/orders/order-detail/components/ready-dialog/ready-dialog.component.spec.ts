@@ -6,7 +6,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ReadyDialogComponent, ReadyDialogData, ReadyLineData } from './ready-dialog.component';
 import { OrderLineModel } from '@/models/order/order-line.model';
-import { PackSuggestion } from '@/domain/utils/pack-optimizer.util';
+import { PackSuggestion } from '@/shared/pack-optimizer.util';
 
 const mockDialogRef = { close: vi.fn() };
 

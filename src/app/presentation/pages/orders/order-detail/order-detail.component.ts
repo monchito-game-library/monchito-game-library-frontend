@@ -30,13 +30,13 @@ import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/f
 import { OrderInfoSectionComponent } from './components/order-info-section/order-info-section.component';
 import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
 import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
-import { MemberQty, OrderStepperComponent, PackStepData } from './components/order-stepper/order-stepper.component';
+import { OrderStepperComponent } from './components/order-stepper/order-stepper.component';
+import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 import { OrderPlacingComponent } from './components/order-placing/order-placing.component';
-import {
-  AddEditLineDialogComponent,
-  AddEditLineDialogData
-} from './components/add-edit-line-dialog/add-edit-line-dialog.component';
-import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
+import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/add-edit-line-dialog.component';
+import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
+import { optimizePacks } from '@/shared/pack-optimizer.util';
+import { allMembersReady } from '@/shared/order-member.util';
 
 @Component({
   selector: 'app-order-detail',
@@ -102,6 +102,9 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Status progression order. */
   readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ordering', 'ordered', 'received'];
 
+  /** Returns true when all non-owner members have marked their selection as ready. */
+  readonly allMembersReady = allMembersReady;
+
   /** Whether the pack selection stepper is active (derived from order status). */
   selectingPacks(): boolean {
     return this.order()?.status === 'selecting_packs';
@@ -128,17 +131,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeMembers?.();
     this._unsubscribeLines?.();
-  }
-
-  /**
-   * Returns true when all non-owner members have marked their selection as ready.
-   * If there are no invited members, returns true.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  allMembersReady(members: OrderMemberModel[]): boolean {
-    const invited = members.filter((m) => m.role !== 'owner');
-    return invited.length === 0 || invited.every((m) => m.isReady);
   }
 
   /**

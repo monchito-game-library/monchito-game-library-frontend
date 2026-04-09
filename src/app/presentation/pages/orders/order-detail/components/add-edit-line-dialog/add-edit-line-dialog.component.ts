@@ -16,18 +16,10 @@ import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
-import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderLineForm, OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
+import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 
-/** Data injected into the AddEditLineDialog. */
-export interface AddEditLineDialogData {
-  /** List of available products to select from. */
-  products: OrderProductModel[];
-  /** Existing line data for edit mode; undefined for create mode. */
-  line?: OrderLineModel;
-  /** Product IDs already added by the current user (create mode only). */
-  takenProductIds?: string[];
-}
+export type { AddEditLineDialogData };
 
 @Component({
   selector: 'app-add-edit-line-dialog',

@@ -10,37 +10,11 @@ import {
 import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { OrderLineModel } from '@/models/order/order-line.model';
-import { PackSuggestion } from '@/domain/utils/pack-optimizer.util';
+import { formatBreakdown } from '@/shared/pack-optimizer.util';
+import { ReadyDialogData, ReadyLineData, ReadyLineSelection } from '@/interfaces/orders/ready-dialog.interface';
+import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
 
-/** Per-line data passed to the ready dialog. */
-export interface ReadyLineData {
-  /** The order line. */
-  line: OrderLineModel;
-  /** Total units needed across all member allocations. */
-  totalNeeded: number;
-  /** Top pack combinations sorted by total cost ascending. */
-  suggestions: PackSuggestion[];
-}
-
-/** Data injected into the ReadyDialog. */
-export interface ReadyDialogData {
-  /** Lines that have at least one allocation with quantity needed > 0. */
-  lines: ReadyLineData[];
-}
-
-/** The confirmed pack selection for a single line. */
-export interface ReadyLineSelection {
-  /** UUID of the order line. */
-  lineId: string;
-  /** Blended unit price of the chosen combination. */
-  unitPrice: number;
-  /** Total units to order. */
-  quantityOrdered: number;
-}
-
-/** Result returned by the ready dialog on confirmation. */
-export type ReadyDialogResult = ReadyLineSelection[];
+export type { ReadyDialogData, ReadyDialogResult, ReadyLineData, ReadyLineSelection };
 
 @Component({
   selector: 'app-ready-dialog',
@@ -57,6 +31,9 @@ export class ReadyDialogComponent {
 
   /** Data injected by the parent: lines with suggestions. */
   readonly data: ReadyDialogData = inject<ReadyDialogData>(MAT_DIALOG_DATA);
+
+  /** Returns the human-readable breakdown of a suggestion. */
+  readonly formatBreakdown = formatBreakdown;
 
   /**
    * Map of lineId → selected suggestion index (0-based).
@@ -92,15 +69,6 @@ export class ReadyDialogComponent {
     const map = new Map(this.selectedIndex());
     map.set(lineId, idx);
     this.selectedIndex.set(map);
-  }
-
-  /**
-   * Returns the human-readable breakdown of a suggestion (e.g. "2× Pack 50 + 3× Pack 10").
-   *
-   * @param {PackSuggestion} suggestion - The suggestion to format
-   */
-  formatBreakdown(suggestion: PackSuggestion): string {
-    return suggestion.breakdown.map((b) => `${b.count}× Pack ${b.pack.quantity}`).join(' + ');
   }
 
   /**

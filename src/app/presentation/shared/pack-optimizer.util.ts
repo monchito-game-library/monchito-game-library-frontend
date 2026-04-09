@@ -162,3 +162,13 @@ function _reconstruct(q: number, packs: OrderProductPackModel[], from: Int8Array
     .sort((a, b) => b[0] - a[0])
     .map(([i, count]) => ({ pack: packs[i], count }));
 }
+
+/**
+ * Formats a pack suggestion as a human-readable breakdown string.
+ * Example: "1× Pack 50 + 2× Pack 10 + 1× Pack 1"
+ *
+ * @param {PackSuggestion} suggestion - The suggestion to format
+ */
+export function formatBreakdown(suggestion: PackSuggestion): string {
+  return suggestion.breakdown.map((b) => `${b.count}× Pack ${b.pack.quantity}`).join(' + ');
+}

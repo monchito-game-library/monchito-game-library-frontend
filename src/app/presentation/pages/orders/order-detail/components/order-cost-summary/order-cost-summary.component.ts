@@ -13,18 +13,8 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderModel } from '@/models/order/order.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
-
-/** Per-member cost breakdown entry. */
-interface MemberCost {
-  userId: string;
-  displayName: string | null;
-  email: string | null;
-  avatarUrl: string | null;
-  subtotal: number;
-  extrasShare: number;
-  total: number;
-}
+import { MemberCost } from '@/interfaces/orders/member-cost.interface';
+import { sortedMembers } from '@/shared/order-member.util';
 
 @Component({
   selector: 'app-order-cost-summary',
@@ -100,7 +90,7 @@ export class OrderCostSummaryComponent {
     const shipping: number = ord.shippingCost ?? 0;
     const paypal: number = ord.paypalFee ?? 0;
 
-    return this.sortedMembers(ord.members).map((member) => {
+    return sortedMembers(ord.members).map((member) => {
       const subtotal = ord.lines
         .filter((l) => l.requestedBy === member.userId)
         .reduce((sum, l) => sum + l.unitPrice * (l.quantityOrdered ?? 0), 0);
@@ -116,15 +106,6 @@ export class OrderCostSummaryComponent {
       };
     });
   });
-
-  /**
-   * Returns the members list sorted so the owner always appears first.
-   *
-   * @param {OrderMemberModel[]} members - Members of the order
-   */
-  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
-    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
-  }
 
   /**
    * Toggles the per-member order total breakdown.

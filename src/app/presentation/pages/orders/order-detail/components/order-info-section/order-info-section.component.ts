@@ -21,9 +21,9 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { DiscountType } from '@/types/discount-type.type';
+import { sortedMembers, readyCount, allMembersReady } from '@/shared/order-member.util';
 
 @Component({
   selector: 'app-order-info-section',
@@ -67,6 +67,15 @@ export class OrderInfoSectionComponent {
   /** Emitted after a successful header save, so the parent can reload the order. */
   readonly headerSaved: OutputEmitterRef<void> = output<void>();
 
+  /** Returns the members list sorted so the owner always appears first. */
+  readonly sortedMembers = sortedMembers;
+
+  /** Returns the count of non-owner members who have marked ready out of the total invited. */
+  readonly readyCount = readyCount;
+
+  /** Returns true when all non-owner members have marked their selection as ready. */
+  readonly allMembersReady = allMembersReady;
+
   /** Whether the info section is expanded (collapsed by default). */
   readonly sectionExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -88,35 +97,6 @@ export class OrderInfoSectionComponent {
     discountAmount: this._fb.control<number | null>(null),
     discountType: this._fb.control<DiscountType>('amount', { nonNullable: true })
   });
-
-  /**
-   * Returns the members list sorted so the owner always appears first.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
-    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
-  }
-
-  /**
-   * Returns the count of non-owner members who have marked ready out of the total invited.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  readyCount(members: OrderMemberModel[]): { ready: number; total: number } {
-    const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');
-    return { ready: invited.filter((m) => m.isReady).length, total: invited.length };
-  }
-
-  /**
-   * Returns true when all non-owner members have marked their selection as ready.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  allMembersReady(members: OrderMemberModel[]): boolean {
-    const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');
-    return invited.length === 0 || invited.every((m) => m.isReady);
-  }
 
   /**
    * Toggles the visibility of the info section body.
