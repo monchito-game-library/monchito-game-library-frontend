@@ -1,22 +1,20 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  InputSignal,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderModel } from '@/models/order/order.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
-import { OrderLineModel } from '@/models/order/order-line.model';
-
-/** Per-member cost breakdown entry. */
-interface MemberCost {
-  userId: string;
-  displayName: string | null;
-  email: string | null;
-  avatarUrl: string | null;
-  subtotal: number;
-  extrasShare: number;
-  total: number;
-}
+import { MemberCost } from '@/interfaces/orders/member-cost.interface';
+import { sortedMembers } from '@/shared/order-member.util';
 
 @Component({
   selector: 'app-order-cost-summary',
@@ -40,88 +38,63 @@ export class OrderCostSummaryComponent {
   /** Whether the current user's cost breakdown is expanded. */
   readonly myPartExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
-  /**
-   * Returns the members list sorted so the owner always appears first.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
-    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
-  }
+  /** Sum of all lines (unitPrice × quantityOrdered). */
+  readonly totalSubtotal: Signal<number> = computed(() =>
+    this.order().lines.reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0)
+  );
 
-  /**
-   * Computes the sum of all lines (unitPrice × quantityOrdered).
-   */
-  computeTotalSubtotal(): number {
-    return this.order().lines.reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0);
-  }
-
-  /**
-   * Computes the current user's subtotal based on the lines they requested.
-   */
-  computeMySubtotal(): number {
+  /** Current user's subtotal based on the lines they requested. */
+  readonly mySubtotal: Signal<number> = computed(() => {
     const uid: string | null = this.userId();
     if (!uid) return 0;
     return this.order()
-      .lines.filter((line: OrderLineModel) => line.requestedBy === uid)
+      .lines.filter((line) => line.requestedBy === uid)
       .reduce((sum, line) => sum + line.unitPrice * (line.quantityOrdered ?? 0), 0);
-  }
+  });
+
+  /** Current user's proportional share of the shipping cost. */
+  readonly myShippingShare: Signal<number> = computed(() => {
+    const total: number = this.totalSubtotal();
+    return total > 0 ? (this.mySubtotal() / total) * (this.order().shippingCost ?? 0) : 0;
+  });
+
+  /** Current user's proportional share of the PayPal fee. */
+  readonly myPaypalShare: Signal<number> = computed(() => {
+    const total: number = this.totalSubtotal();
+    return total > 0 ? (this.mySubtotal() / total) * (this.order().paypalFee ?? 0) : 0;
+  });
+
+  /** Current user's total (products + proportional shipping + proportional PayPal). */
+  readonly myTotal: Signal<number> = computed(() => this.mySubtotal() + this.myShippingShare() + this.myPaypalShare());
 
   /**
-   * Computes the current user's proportional share of the shipping cost.
-   * Proportional to their products subtotal relative to the order total.
-   */
-  computeMyShippingShare(): number {
-    const mySubtotal: number = this.computeMySubtotal();
-    const total: number = this.computeTotalSubtotal();
-    return total > 0 ? (mySubtotal / total) * (this.order().shippingCost ?? 0) : 0;
-  }
-
-  /**
-   * Computes the current user's proportional share of the PayPal fee.
-   * Proportional to their products subtotal relative to the order total.
-   */
-  computeMyPaypalShare(): number {
-    const mySubtotal: number = this.computeMySubtotal();
-    const total: number = this.computeTotalSubtotal();
-    return total > 0 ? (mySubtotal / total) * (this.order().paypalFee ?? 0) : 0;
-  }
-
-  /**
-   * Computes the current user's total (products + proportional shipping + proportional PayPal).
-   */
-  computeMyTotal(): number {
-    return this.computeMySubtotal() + this.computeMyShippingShare() + this.computeMyPaypalShare();
-  }
-
-  /**
-   * Computes the total extras (shipping + PayPal fee − discount).
+   * Total extras (shipping + PayPal fee − discount).
    * When discountType is 'percentage', the discount is a percentage of the products subtotal.
    */
-  computeExtras(): number {
+  readonly extras: Signal<number> = computed(() => {
     const ord: OrderModel = this.order();
     const base: number = (ord.shippingCost ?? 0) + (ord.paypalFee ?? 0);
     const discountAmount: number = ord.discountAmount ?? 0;
     const discount: number =
-      ord.discountType === 'percentage' ? this.computeTotalSubtotal() * (discountAmount / 100) : discountAmount;
+      ord.discountType === 'percentage' ? this.totalSubtotal() * (discountAmount / 100) : discountAmount;
     return base - discount;
-  }
+  });
 
   /**
-   * Computes the cost breakdown for every member of the order, sorted by role (owner first).
+   * Cost breakdown for every member, sorted by role (owner first).
    * Shipping and PayPal are split proportionally to each member's products subtotal.
    */
-  computeMemberCosts(): MemberCost[] {
+  readonly memberCosts: Signal<MemberCost[]> = computed(() => {
     const ord: OrderModel = this.order();
-    const totalSubtotal: number = this.computeTotalSubtotal();
+    const total: number = this.totalSubtotal();
     const shipping: number = ord.shippingCost ?? 0;
     const paypal: number = ord.paypalFee ?? 0;
 
-    return this.sortedMembers(ord.members).map((member) => {
+    return sortedMembers(ord.members).map((member) => {
       const subtotal = ord.lines
         .filter((l) => l.requestedBy === member.userId)
         .reduce((sum, l) => sum + l.unitPrice * (l.quantityOrdered ?? 0), 0);
-      const extrasShare = totalSubtotal > 0 ? (subtotal / totalSubtotal) * (shipping + paypal) : 0;
+      const extrasShare = total > 0 ? (subtotal / total) * (shipping + paypal) : 0;
       return {
         userId: member.userId,
         displayName: member.displayName,
@@ -132,7 +105,7 @@ export class OrderCostSummaryComponent {
         total: subtotal + extrasShare
       };
     });
-  }
+  });
 
   /**
    * Toggles the per-member order total breakdown.

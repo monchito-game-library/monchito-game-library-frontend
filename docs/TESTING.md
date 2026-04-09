@@ -26,6 +26,7 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
+| `order/order.mapper.spec.ts` | 39 | ✅ Cubierto |
 | `rawg/rawg.mapper.spec.ts` | 19 | ✅ Cubierto |
 | `supabase/game.mapper.spec.ts` | 39 | ✅ Cubierto |
 | `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
@@ -33,7 +34,7 @@
 | `supabase/user-preferences.mapper.spec.ts` | 8 | ✅ Cubierto |
 | `supabase/wishlist.mapper.spec.ts` | 8 | ✅ Cubierto |
 
-**Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined.
+**Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined. El mapper de orders cubre mapeo de líneas, miembros, alocaciones y fechas opcionales.
 
 ---
 
@@ -45,13 +46,14 @@
 | `auth/auth.use-cases.spec.ts` | 14 | ✅ Cubierto |
 | `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
 | `game/game.use-cases.spec.ts` | 9 | ✅ Cubierto |
+| `orders/orders.use-cases.spec.ts` | 28 | ✅ Cubierto |
 | `protector/protector.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `store/store.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `user-admin/user-admin.use-cases.spec.ts` | 4 | ✅ Cubierto |
 | `user-preferences/user-preferences.use-cases.spec.ts` | 13 | ✅ Cubierto |
 | `wishlist/wishlist.use-cases.spec.ts` | 5 | ✅ Cubierto |
 
-**Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots.
+**Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots. Orders cubre `getById`, `getAll`, `create`, `update`, `delete`, `addMember`, `setMemberReady`, `subscribeToOrderMembers`, `addLine`, `updateLine`, `deleteLine`, `setLinePackAndQty`, `getProducts`.
 
 **Patrón de test**: `TestBed.configureTestingModule` + token de repositorio mockeado con `vi.fn()`.
 
@@ -62,9 +64,10 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `admin.guard.spec.ts` | 4 | ✅ Cubierto |
+| `desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
 | `user.guard.spec.ts` | 4 | ✅ Cubierto |
 
-**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador.
+**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px.
 
 ---
 
@@ -110,13 +113,34 @@
 | `pages/management/protectors/protectors-management.component.spec.ts` | 37 | ✅ Cubierto |
 | `pages/management/stores/stores-management.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/management/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
+| `pages/orders/orders.component.spec.ts` | 11 | ✅ Cubierto |
+| `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/orders/order-create/order-create.component.spec.ts` | 13 | ✅ Cubierto |
+| `pages/orders/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 21 | ✅ Cubierto |
+| `pages/orders/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
+| `pages/orders/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/orders/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 13 | ✅ Cubierto |
+| `pages/orders/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/orders/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
+| `pages/orders/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
 | `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
 | `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
 | `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/wishlist/wishlist.component.spec.ts` | 36 | ✅ Cubierto |
+| `pages/wishlist/wishlist-detail/wishlist-detail.component.spec.ts` | — | ✅ Cubierto |
 
 **Qué se cubre**:
+- `OrdersComponent`: valores iniciales, `onCreateOrder`, `onOpenOrder`, estado de `loading` durante la carga.
+- `OrderSummaryCardComponent`: inputs básicos y renderizado.
+- `OrderCreateComponent`: formulario de creación, validación, `onSubmit`, `onCancel`.
+- `OrderInfoSectionComponent`: `onToggleSection` (expand/collapse), `startEditing` (parcheo de form, emit), `onCancelEdit` (hidingActions con fake timers), `onSaveHeader` (guard de `saving`, success, error, hidingActions con fake timers), `sortedMembers`, `readyCount`, `allMembersReady`.
+- `OrderCostSummaryComponent`: cálculo de subtotal por usuario, shipping, paypal fee, descuento (amount/%), total.
+- `OrderProductListComponent`: `visibleLines` (draft vs otros estados), `groupedLines` (agrupación y suma de cantidades).
+- `OrderStepperComponent`: inicialización de steps, `onSuggestionSelected`, `onStepConfirmed`, `onStepBack`, output `allPacksSelectedChange`.
+- `ReadyDialogComponent`: `canConfirm`, `getSelectedIndex`, `onSelectSuggestion`, `formatBreakdown`, `onConfirm` (sugerencia correcta), `onCancel`.
+- `AddEditLineDialogComponent`: modos add/edit, `canConfirm`, `onProductSelected`, `onConfirm`, `onCancel`.
+- `OrderInviteComponent`: carga de orden por token, unión al pedido (`onJoin`), estados de carga y error.
 - `ToggleSwitchComponent`: lógica CVA (`writeValue`, `registerOnChange`, `setDisabledState`), `onToggle`, output `changed`, `getIcon`.
 - `LoginComponent` / `RegisterComponent` / `ForgotPasswordComponent`: validaciones de formulario, estados de `loading`, emisión de errores, integración con use cases.
 - `GameCardComponent`: señales computadas (`ratingStars`, `platinumIcon`, `isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`), método `onFlip`.
@@ -165,6 +189,7 @@
 | `supabase-store.repository.spec.ts` | 9 | ✅ Cubierto |
 | `supabase-user-admin.repository.spec.ts` | 5 | ✅ Cubierto |
 | `supabase-wishlist.repository.spec.ts` | 12 | ✅ Cubierto |
+| `supabase-order.repository.spec.ts` | — | ⏳ Pendiente |
 
 **Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada.
 
@@ -177,7 +202,13 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `image-url.utils.spec.ts` | 8 | ✅ Cubierto |
+| `order-member.util.spec.ts` | 19 | ✅ Cubierto |
+| `pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
 | `validators.spec.ts` | 6 | ✅ Cubierto |
+
+**Qué se cubre**:
+- `pack-optimizer.util`: `optimizePacks` (casos de borde, pack único, múltiples packs, deduplicación, límite de 3 sugerencias, orden del breakdown, redondeo de costes) y `formatBreakdown`.
+- `order-member.util`: `sortedMembers` (owner primero), `readyCount`, `allMembersReady`.
 
 ---
 
@@ -186,18 +217,18 @@
 | Capa | Ficheros | Tests |
 |---|---|---|
 | Configuración | 1 | 3 |
-| Mappers | 6 | 88 |
-| Use Cases | 9 | 69 |
-| Repositorios | 9 | 130 |
-| Guards | 2 | 8 |
+| Mappers | 7 | 127 |
+| Use Cases | 10 | 97 |
+| Repositorios | 9 (+1 pendiente) | 130 |
+| Guards | 3 | 12 |
 | Servicios | 5 | 64 |
-| Componentes | 26 | 557 |
-| Abstractas | 1 | 33 |
+| Componentes | 35 | 706 |
+| Abstractas | 1 | 29 |
 | App component | 1 | 27 |
-| Utilidades | 2 | 14 |
-| **Total** | **62** | **940** |
+| Utilidades | 4 | 57 |
+| **Total** | **79** | **1292** |
 
-> El total de 940 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
+> El total de 1292 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
 
 ---
 
@@ -205,13 +236,13 @@
 
 | Métrica | Valor |
 |---|---|
-| Statements | ~99.06 % |
-| Branches | ~95.07 % |
-| Functions | ~99.56 % |
-| Lines | ~99.94 % |
+| Statements | ~99.16 % |
+| Branches | ~95.05 % |
+| Functions | ~99.51 % |
+| Lines | ~99.95 % |
 
 ```bash
-ng test --coverage
+npm run test:coverage
 ```
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
@@ -231,4 +262,6 @@ Todas las ramas sin cobertura restantes son **artefactos del compilador V8**, no
 | Componente / método | Motivo |
 |---|---|
 | Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
-| `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. Impacto mínimo en cobertura. |
+| `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. |
+| `order-placing.component.ts` | Componente de presentación pura (tabla de resumen de packs con URLs); toda su lógica son signals de input sin transformación. No tiene spec propio. |
+| `supabase-order.repository.ts` | Pendiente de spec. El repositorio se usa vía el contrato DI y los use cases lo mockean en sus tests. |

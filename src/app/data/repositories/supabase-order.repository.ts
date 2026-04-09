@@ -33,9 +33,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
   /**
    * Returns all orders the user is involved in (as owner or member), ordered by creation date desc.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} _userId - UUID del usuario autenticado (la query usa RLS de Supabase)
    */
-  async getAllForUser(userId: string): Promise<OrderSummaryModel[]> {
+  async getAllForUser(_userId: string): Promise<OrderSummaryModel[]> {
     const { data, error } = await this._supabase
       .from('orders')
       .select('id, owner_id, title, status, order_date, created_at, updated_at, order_members(id)')
