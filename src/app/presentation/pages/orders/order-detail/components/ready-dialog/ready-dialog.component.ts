@@ -11,7 +11,7 @@ import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { formatBreakdown } from '@/shared/pack-optimizer.util';
-import { ReadyDialogData, ReadyLineData, ReadyLineSelection } from '@/interfaces/orders/ready-dialog.interface';
+import { ReadyDialogData } from '@/interfaces/orders/ready-dialog.interface';
 import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
 
 @Component({

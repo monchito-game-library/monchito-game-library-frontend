@@ -31,7 +31,7 @@ import {
   PROTECTOR_USE_CASES,
   ProtectorUseCasesContract
 } from '@/domain/use-cases/protector/protector.use-cases.contract';
-import { ProtectorModel, ProtectorPack } from '@/models/protector/protector.model';
+import { ProtectorModel } from '@/models/protector/protector.model';
 import { ProtectorCategory } from '@/types/protector-category.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';

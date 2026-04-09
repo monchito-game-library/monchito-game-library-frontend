@@ -339,7 +339,6 @@ describe('OrderStepperComponent', () => {
     it('emite false inicialmente si sólo el primer step tiene sugerencias', () => {
       // Con un solo step y auto-confirm del constructor, debería emitir true
       // Verificamos el comportamiento con dos steps donde sólo el primero se auto-confirma
-      const emittedValues: boolean[] = [];
       const step1 = makeStep({ productId: 'p1' });
       const step2 = makeStep({ productId: 'p2' });
       const fixture = TestBed.createComponent(OrderStepperComponent);

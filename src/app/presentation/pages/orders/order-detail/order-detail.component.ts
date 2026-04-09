@@ -23,7 +23,6 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderStatusType } from '@/types/order-status.type';
 import { ORDER_STATUS } from '@/constants/order-status.constant';

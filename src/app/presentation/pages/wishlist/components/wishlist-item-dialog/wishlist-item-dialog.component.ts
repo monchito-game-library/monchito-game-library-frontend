@@ -18,7 +18,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { SlicePipe } from '@angular/common';
 
 import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
-import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
+import { WishlistItemForm } from '@/interfaces/forms/wishlist-item-form.interface';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
