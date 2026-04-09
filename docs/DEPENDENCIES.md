@@ -16,6 +16,11 @@
 | `@supabase/supabase-js` | 2.99.1 | 2.103.0 | 2026-04-09 |
 | `sass` | 1.87.0 | 1.99.0 | 2026-04-09 |
 | `tslib` | 2.3.0 | 2.8.1 | 2026-04-09 |
+| `prettier-plugin-package` | 1.4.0 | 2.0.0 | 2026-04-09 |
+| `lint-staged` | 15.5.1 | 16.4.0 | 2026-04-09 |
+| `@types/express` | 4.17.17 | 5.0.6 | 2026-04-09 |
+| `@types/node` | 24.0.0 | 25.2.3 | 2026-04-09 |
+| `eslint-plugin-jsdoc` | 61.7.1 | 62.8.1 | 2026-04-09 |
 
 ---
 
@@ -33,10 +38,5 @@ Ordenadas de **menor a mayor impacto** en el proyecto.
 
 | # | Paquete | De | A | Impacto | Notas |
 |---|---|---|---|---|---|
-| 1 | `prettier-plugin-package` | 1.4.0 | 2.x | Mínimo | Solo ordena `package.json`. Cosmético. |
-| 2 | `lint-staged` | 15.5.1 | 16.x | Bajo | Herramienta de pre-commit. Puede cambiar formato de config. |
-| 3 | `@types/express` | 4.17.17 | 5.x | Bajo | Solo tipos. Usamos pocas APIs de Express (SSR/scripts). |
-| 4 | `@types/node` | 24.0.0 | 25.x | Bajo-medio | Solo tipos. Poco probable que rompa algo. |
-| 5 | `eslint-plugin-jsdoc` | 61.7.1 | 62.x | Medio | Pueden cambiar/añadir/eliminar reglas JSDoc. Posibles nuevos errores de lint. |
-| 6 | `eslint` | 9.39.4 | 10.x | Alto | Puede romper la config de eslint. ESLint 10 consolida flat config y elimina APIs legacy. |
-| 7 | `typescript` | 5.9.3 | 6.x | Muy alto | Puede romper la compilación. Afecta a todo el código. |
+| 1 | `eslint` | 9.39.4 | 10.x | Alto | Puede romper la config de eslint. ESLint 10 consolida flat config y elimina APIs legacy. |
+| 2 | `typescript` | 5.9.3 | 6.x | Muy alto | Puede romper la compilación. Afecta a todo el código. |
