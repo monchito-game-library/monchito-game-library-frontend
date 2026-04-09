@@ -4,6 +4,20 @@ Aplicación Angular para gestionar tu colección personal de videojuegos. Permit
 
 ---
 
+## Índice
+
+- [Demo](#demo)
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Instalación](#instalación)
+- [Scripts](#scripts)
+- [Arquitectura](#arquitectura)
+- [Notas sobre rendimiento](#notas-sobre-rendimiento)
+- [Créditos](#créditos)
+- [Licencia](#licencia)
+
+---
+
 ## Demo
 
 Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de configuración.
@@ -18,6 +32,7 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 - Ordenación por título, precio y valoración
 - Estadísticas en tiempo real: juegos, gasto total y valoración media
 - Wishlist (`/wishlist`) con prioridad, gasto estimado y links directos a tiendas (Amazon, GAME, CEX, Xtralife)
+- Pedidos grupales (`/orders`) con invitación por link, asignación de cantidades y desglose de costes por miembro
 - Búsqueda de juegos del catálogo RAWG para rellenar portada y metadatos
 - Formulario de juego con sugerencia automática de formato según tienda
 - Reposicionamiento de portada por juego (punto focal configurable en la card)
@@ -28,44 +43,22 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 - Tema claro/oscuro con Angular Material 3
 - Navegación Rail (desktop) y Bottom Navigation (móvil)
 - Soporte multilenguaje (ES/EN) con Transloco
-- 875 tests unitarios con Vitest (~98 % de cobertura de statements)
+- +1292 tests unitarios con Vitest (~99 % de cobertura de statements)
 
 ---
 
 ## Tecnologías
 
-- Angular 21 (zoneless) + Signals + Control Flow (`@for`, `@if`)
+- Angular 21 + Signals + Control Flow (`@for`, `@if`)
 - Angular Material 3 (MD3)
 - Angular CDK Virtual Scroll
 - Angular Service Worker (PWA)
 - Supabase (PostgreSQL + Auth + Storage + RLS)
-- Dexie (IndexedDB — caché local)
 - Transloco (i18n)
 - SCSS con design tokens de Material
-- Vitest 4.1.0 (unit testing)
-- GitHub Actions (CI — bloquea merge si cobertura < 80 %)
-
----
-
-## Scripts
-
-```bash
-# Desarrollo
-npm install
-npm start
-
-# Tests unitarios
-npx ng test
-
-# Tests con informe de cobertura
-npx ng test --configuration=coverage
-
-# Build producción
-npm run build
-
-# Build para Vercel (genera entornos desde variables de entorno)
-npm run vercel-build
-```
+- Vitest 4 (unit testing)
+- ESLint 10 + typescript-eslint + angular-eslint
+- GitHub Actions (CI — bloquea merge si cobertura < 80 % o el build falla)
 
 ---
 
@@ -106,6 +99,26 @@ export const environment = {
 ```bash
 npm start
 ```
+
+---
+
+## Scripts
+
+| Script | Descripción |
+|---|---|
+| `npm start` | Inicia el servidor de desarrollo en modo `development` |
+| `npm run build` | Build de producción |
+| `npm test` | Ejecuta todos los tests unitarios una vez |
+| `npm run test:watch` | Ejecuta los tests en modo watch (se relanza al cambiar ficheros) |
+| `npm run test:coverage` | Ejecuta los tests con informe de cobertura (V8) |
+| `npm run test:eslint-rules` | Ejecuta los tests de las reglas ESLint personalizadas |
+| `npm run lint` | Analiza el código con ESLint |
+| `npm run lint:fix` | Analiza y corrige automáticamente los problemas de ESLint |
+| `npm run format` | Formatea todos los ficheros `.ts`, `.html` y `.scss` con Prettier |
+| `npm run format:check` | Comprueba el formato sin modificar ficheros |
+| `npm run check:unused` | Detecta exports, dependencias y ficheros no usados con Knip |
+| `npm run clean:install` | Elimina `node_modules` e instala desde cero |
+| `npm run vercel-build` | Build usado por Vercel en producción (genera `environment.ts` desde variables de entorno) |
 
 ---
 
