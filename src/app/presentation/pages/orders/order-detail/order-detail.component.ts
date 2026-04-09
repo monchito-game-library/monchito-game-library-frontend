@@ -563,13 +563,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      const isOwner = result.ownerId === this.userContext.userId();
-      if (result.status === 'selecting_packs' && isOwner && this.packSteps().length === 0) {
-        await this._initStepper(result);
-      }
-      if (result.status === 'ordering' && isOwner && this.products().length === 0) {
-        await this._loadProducts();
-      }
+      await this._initForStatus(result);
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
     } finally {
@@ -586,15 +580,26 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      const isOwner = result.ownerId === this.userContext.userId();
-      if (result.status === 'selecting_packs' && isOwner && this.packSteps().length === 0) {
-        await this._initStepper(result);
-      }
-      if (result.status === 'ordering' && isOwner && this.products().length === 0) {
-        await this._loadProducts();
-      }
+      await this._initForStatus(result);
     } catch {
       // Silently ignore realtime reload errors
+    }
+  }
+
+  /**
+   * Initialises status-specific state after loading an order.
+   * Starts the pack selection stepper when in 'selecting_packs', and pre-loads
+   * the products catalogue when in 'ordering', both only for the owner.
+   *
+   * @param {OrderModel} result - The freshly loaded order
+   */
+  private async _initForStatus(result: OrderModel): Promise<void> {
+    const isOwner: boolean = result.ownerId === this.userContext.userId();
+    if (result.status === 'selecting_packs' && isOwner && this.packSteps().length === 0) {
+      await this._initStepper(result);
+    }
+    if (result.status === 'ordering' && isOwner && this.products().length === 0) {
+      await this._loadProducts();
     }
   }
 
