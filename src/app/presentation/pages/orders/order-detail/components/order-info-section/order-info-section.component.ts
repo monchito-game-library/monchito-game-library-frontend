@@ -21,9 +21,10 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { DiscountType } from '@/types/discount-type.type';
+import { sortedMembers, readyCount, allMembersReady } from '@/shared/order-member.util';
+import { ORDER_STATUS } from '@/constants/order-status.constant';
 
 @Component({
   selector: 'app-order-info-section',
@@ -48,6 +49,9 @@ import { DiscountType } from '@/types/discount-type.type';
 })
 export class OrderInfoSectionComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
+
+  private readonly _HIDE_ACTIONS_MS: number = 350;
+  private readonly _HIDE_ACTIONS_AFTER_SAVE_MS: number = 700;
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
@@ -63,6 +67,21 @@ export class OrderInfoSectionComponent {
 
   /** Emitted after a successful header save, so the parent can reload the order. */
   readonly headerSaved: OutputEmitterRef<void> = output<void>();
+
+  /** Exposes ORDER_STATUS to the template. */
+  readonly ORDER_STATUS = ORDER_STATUS;
+
+  /** Returns the members list sorted so the owner always appears first. */
+  readonly sortedMembers = sortedMembers;
+
+  /** Returns the count of non-owner members who have marked ready out of the total invited. */
+  readonly readyCount = readyCount;
+
+  /** Returns true when all non-owner members have marked their selection as ready. */
+  readonly allMembersReady = allMembersReady;
+
+  /** Whether the info section is expanded (collapsed by default). */
+  readonly sectionExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Whether the header is currently in edit mode. */
   readonly editingHeader: WritableSignal<boolean> = signal<boolean>(false);
@@ -84,32 +103,10 @@ export class OrderInfoSectionComponent {
   });
 
   /**
-   * Returns the members list sorted so the owner always appears first.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
+   * Toggles the visibility of the info section body.
    */
-  sortedMembers(members: OrderMemberModel[]): OrderMemberModel[] {
-    return [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
-  }
-
-  /**
-   * Returns the count of non-owner members who have marked ready out of the total invited.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  readyCount(members: OrderMemberModel[]): { ready: number; total: number } {
-    const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');
-    return { ready: invited.filter((m) => m.isReady).length, total: invited.length };
-  }
-
-  /**
-   * Returns true when all non-owner members have marked their selection as ready.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  allMembersReady(members: OrderMemberModel[]): boolean {
-    const invited: OrderMemberModel[] = members.filter((m) => m.role !== 'owner');
-    return invited.length === 0 || invited.every((m) => m.isReady);
+  onToggleSection(): void {
+    this.sectionExpanded.update((v) => !v);
   }
 
   /**
@@ -117,6 +114,7 @@ export class OrderInfoSectionComponent {
    * Called by the parent via ViewChild.
    */
   startEditing(): void {
+    this.sectionExpanded.set(true);
     const ord: OrderModel = this.order();
     this.headerForm.patchValue({
       title: ord.title,
@@ -137,7 +135,7 @@ export class OrderInfoSectionComponent {
     this.hidingActions.set(true);
     this.editingHeader.set(false);
     this.editingEnded.emit();
-    setTimeout(() => this.hidingActions.set(false), 350);
+    setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_MS);
   }
 
   /**
@@ -152,7 +150,7 @@ export class OrderInfoSectionComponent {
       await this._ordersUseCases.update(this.order().id, patch);
       this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
       this.hidingActions.set(true);
-      setTimeout(() => this.hidingActions.set(false), 700);
+      setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
       this.editingHeader.set(false);
       this.editingEnded.emit();
       this.headerSaved.emit();

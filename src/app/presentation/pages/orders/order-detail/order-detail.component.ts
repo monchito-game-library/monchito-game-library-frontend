@@ -23,19 +23,20 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
-import { OrderMemberModel } from '@/models/order/order-member.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderStatusType } from '@/types/order-status.type';
+import { ORDER_STATUS } from '@/constants/order-status.constant';
 import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { OrderInfoSectionComponent } from './components/order-info-section/order-info-section.component';
 import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
 import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
-import { MemberQty, OrderStepperComponent, PackStepData } from './components/order-stepper/order-stepper.component';
-import {
-  AddEditLineDialogComponent,
-  AddEditLineDialogData
-} from './components/add-edit-line-dialog/add-edit-line-dialog.component';
-import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
+import { OrderStepperComponent } from './components/order-stepper/order-stepper.component';
+import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
+import { OrderPlacingComponent } from './components/order-placing/order-placing.component';
+import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/add-edit-line-dialog.component';
+import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
+import { optimizePacks } from '@/shared/pack-optimizer.util';
+import { allMembersReady } from '@/shared/order-member.util';
 
 @Component({
   selector: 'app-order-detail',
@@ -54,7 +55,8 @@ import { optimizePacks } from '@/domain/utils/pack-optimizer.util';
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,
     OrderProductListComponent,
-    OrderStepperComponent
+    OrderStepperComponent,
+    OrderPlacingComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
@@ -97,12 +99,29 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /** Whether all pack steps have been confirmed by the owner. Updated via stepper output. */
   readonly allPacksSelected: WritableSignal<boolean> = signal<boolean>(false);
 
+  /** Exposes ORDER_STATUS to the template. */
+  readonly ORDER_STATUS = ORDER_STATUS;
+
   /** Status progression order. */
-  readonly statusOrder: OrderStatusType[] = ['draft', 'selecting_packs', 'ready', 'ordered', 'shipped', 'received'];
+  readonly statusOrder: OrderStatusType[] = [
+    ORDER_STATUS.DRAFT,
+    ORDER_STATUS.SELECTING_PACKS,
+    ORDER_STATUS.ORDERING,
+    ORDER_STATUS.ORDERED,
+    ORDER_STATUS.RECEIVED
+  ];
+
+  /** Returns true when all non-owner members have marked their selection as ready. */
+  readonly allMembersReady = allMembersReady;
 
   /** Whether the pack selection stepper is active (derived from order status). */
   selectingPacks(): boolean {
-    return this.order()?.status === 'selecting_packs';
+    return this.order()?.status === ORDER_STATUS.SELECTING_PACKS;
+  }
+
+  /** Whether the placing-order view is active (derived from order status). */
+  placingOrder(): boolean {
+    return this.order()?.status === ORDER_STATUS.ORDERING;
   }
 
   ngOnInit(): void {
@@ -121,17 +140,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeMembers?.();
     this._unsubscribeLines?.();
-  }
-
-  /**
-   * Returns true when all non-owner members have marked their selection as ready.
-   * If there are no invited members, returns true.
-   *
-   * @param {OrderMemberModel[]} members - Lista de miembros del pedido
-   */
-  allMembersReady(members: OrderMemberModel[]): boolean {
-    const invited = members.filter((m) => m.role !== 'owner');
-    return invited.length === 0 || invited.every((m) => m.isReady);
   }
 
   /**
@@ -228,7 +236,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     const next: OrderStatusType | null = this.nextStatus();
     if (!next) return;
 
-    if (next === 'selecting_packs') {
+    if (next === ORDER_STATUS.SELECTING_PACKS) {
       await this._onAdvanceToSelectingPacks();
       return;
     }
@@ -272,7 +280,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   async onCancelPackSelection(): Promise<void> {
     this.saving.set(true);
     try {
-      await this._ordersUseCases.update(this._orderId, { status: 'draft' });
+      await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.DRAFT });
       this.packSteps.set([]);
       await this._loadOrderSilent();
     } catch {
@@ -283,12 +291,12 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Advances the order to 'ready'. Lines are already saved per-step; only the status changes.
+   * Advances the order to 'ordering'. Lines are already saved per-step; only the status changes.
    */
   async onConfirmPacks(): Promise<void> {
     this.saving.set(true);
     try {
-      await this._ordersUseCases.update(this._orderId, { status: 'ready' });
+      await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.ORDERING });
       this.packSteps.set([]);
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
@@ -485,7 +493,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     this.saving.set(true);
     try {
       if (this.products().length === 0) await this._loadProducts();
-      await this._ordersUseCases.update(this._orderId, { status: 'selecting_packs' });
+      await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.SELECTING_PACKS });
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
       await this._initStepper(result);
@@ -547,6 +555,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   /**
    * Loads the order by ID from the route parameter and updates the order signal.
    * If the order is in 'selecting_packs' and the user is the owner, initialises the stepper.
+   * If the order is in 'ordering' and the user is the owner, pre-loads the products catalogue.
    */
   private async _loadOrder(): Promise<void> {
     if (!this._orderId) return;
@@ -555,13 +564,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      if (
-        result.status === 'selecting_packs' &&
-        result.ownerId === this.userContext.userId() &&
-        this.packSteps().length === 0
-      ) {
-        await this._initStepper(result);
-      }
+      await this._initForStatus(result);
     } catch {
       this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
     } finally {
@@ -578,15 +581,26 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);
-      if (
-        result.status === 'selecting_packs' &&
-        result.ownerId === this.userContext.userId() &&
-        this.packSteps().length === 0
-      ) {
-        await this._initStepper(result);
-      }
+      await this._initForStatus(result);
     } catch {
       // Silently ignore realtime reload errors
+    }
+  }
+
+  /**
+   * Initialises status-specific state after loading an order.
+   * Starts the pack selection stepper when in 'selecting_packs', and pre-loads
+   * the products catalogue when in 'ordering', both only for the owner.
+   *
+   * @param {OrderModel} result - The freshly loaded order
+   */
+  private async _initForStatus(result: OrderModel): Promise<void> {
+    const isOwner: boolean = result.ownerId === this.userContext.userId();
+    if (result.status === ORDER_STATUS.SELECTING_PACKS && isOwner && this.packSteps().length === 0) {
+      await this._initStepper(result);
+    }
+    if (result.status === ORDER_STATUS.ORDERING && isOwner && this.products().length === 0) {
+      await this._loadProducts();
     }
   }
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { optimizePacks, PackSuggestion } from './pack-optimizer.util';
+import { formatBreakdown, optimizePacks } from './pack-optimizer.util';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
 import { OrderProductPackModel } from '@/models/order/order-product.model';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -209,5 +210,54 @@ describe('optimizePacks', () => {
       // La primera sugerencia debe ser 1×pack10 (15€) vs 2×pack5 (20€)
       expect(suggestions[0].totalCost).toBe(15);
     });
+  });
+});
+
+describe('formatBreakdown', () => {
+  it('formatea una sugerencia con un solo pack', () => {
+    const suggestion: PackSuggestion = {
+      totalUnits: 10,
+      totalCost: 5,
+      unitPrice: 0.5,
+      breakdown: [{ pack: pack(10, 5), count: 1 }]
+    };
+    expect(formatBreakdown(suggestion)).toBe('1× Pack 10');
+  });
+
+  it('formatea una sugerencia con múltiples packs separados por " + "', () => {
+    const suggestion: PackSuggestion = {
+      totalUnits: 12,
+      totalCost: 9,
+      unitPrice: 0.75,
+      breakdown: [
+        { pack: pack(10, 7), count: 1 },
+        { pack: pack(1, 0.5), count: 2 }
+      ]
+    };
+    expect(formatBreakdown(suggestion)).toBe('1× Pack 10 + 2× Pack 1');
+  });
+
+  it('formatea correctamente cuando count es mayor que 1', () => {
+    const suggestion: PackSuggestion = {
+      totalUnits: 30,
+      totalCost: 9,
+      unitPrice: 0.3,
+      breakdown: [{ pack: pack(10, 3), count: 3 }]
+    };
+    expect(formatBreakdown(suggestion)).toBe('3× Pack 10');
+  });
+
+  it('formatea correctamente con tres grupos de packs distintos', () => {
+    const suggestion: PackSuggestion = {
+      totalUnits: 61,
+      totalCost: 20,
+      unitPrice: 0.3278,
+      breakdown: [
+        { pack: pack(50, 15), count: 1 },
+        { pack: pack(10, 4), count: 1 },
+        { pack: pack(1, 0.5), count: 1 }
+      ]
+    };
+    expect(formatBreakdown(suggestion)).toBe('1× Pack 50 + 1× Pack 10 + 1× Pack 1');
   });
 });
