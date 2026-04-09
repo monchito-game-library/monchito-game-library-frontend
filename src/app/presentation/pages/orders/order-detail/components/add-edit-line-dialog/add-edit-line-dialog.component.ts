@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -16,18 +16,8 @@ import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
-import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderLineForm, OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
-
-/** Data injected into the AddEditLineDialog. */
-export interface AddEditLineDialogData {
-  /** List of available products to select from. */
-  products: OrderProductModel[];
-  /** Existing line data for edit mode; undefined for create mode. */
-  line?: OrderLineModel;
-  /** Product IDs already added by the current user (create mode only). */
-  takenProductIds?: string[];
-}
+import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 
 @Component({
   selector: 'app-add-edit-line-dialog',
@@ -51,7 +41,7 @@ export interface AddEditLineDialogData {
     TranslocoPipe
   ]
 })
-export class AddEditLineDialogComponent implements OnInit {
+export class AddEditLineDialogComponent {
   private readonly _dialogRef: MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
     MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
   );
@@ -95,8 +85,6 @@ export class AddEditLineDialogComponent implements OnInit {
       );
     });
   }
-
-  ngOnInit(): void {}
 
   /**
    * Sets the productId form control when the user selects a product from the autocomplete.

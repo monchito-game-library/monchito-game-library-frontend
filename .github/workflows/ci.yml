@@ -17,10 +17,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Instalar dependencias
-        run: npm install
+        run: npm install --no-audit --no-fund
 
       - name: Generar environment.ts
         run: |
@@ -37,6 +37,12 @@ jobs:
             }
           };
           EOF
+
+      - name: Build de producción
+        run: npm run build
+
+      - name: Ejecutar tests de reglas ESLint
+        run: npm run test:eslint-rules
 
       - name: Ejecutar tests con cobertura
         run: npx ng test --configuration=coverage

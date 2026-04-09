@@ -7,7 +7,7 @@
         {{ myPartExpanded() ? 'expand_less' : 'expand_more' }}
       </mat-icon>
     </div>
-    <div>{{ computeMyTotal() | number: '1.2-2' }} €</div>
+    <div>{{ myTotal() | number: '1.2-2' }} €</div>
   </div>
   <div
     class="order-detail-page__cost-member-list"
@@ -15,18 +15,18 @@
     <div class="order-detail-page__cost-member-inner">
       <div class="order-detail-page__cost-detail-row">
         <span>{{ 'orders.cost.myProductsCost' | transloco }}</span>
-        <span>{{ computeMySubtotal() | number: '1.2-2' }} €</span>
+        <span>{{ mySubtotal() | number: '1.2-2' }} €</span>
       </div>
       @if ((order().shippingCost ?? 0) > 0) {
         <div class="order-detail-page__cost-detail-row">
           <span>{{ 'orders.cost.myShipping' | transloco }}</span>
-          <span>{{ computeMyShippingShare() | number: '1.2-2' }} €</span>
+          <span>{{ myShippingShare() | number: '1.2-2' }} €</span>
         </div>
       }
       @if ((order().paypalFee ?? 0) > 0) {
         <div class="order-detail-page__cost-detail-row">
           <span>{{ 'orders.cost.myPaypal' | transloco }}</span>
-          <span>{{ computeMyPaypalShare() | number: '1.2-2' }} €</span>
+          <span>{{ myPaypalShare() | number: '1.2-2' }} €</span>
         </div>
       }
     </div>
@@ -44,15 +44,13 @@
         {{ costDetailExpanded() ? 'expand_less' : 'expand_more' }}
       </mat-icon>
     </div>
-    <div class="order-detail-page__cost-order-total">
-      {{ computeTotalSubtotal() + computeExtras() | number: '1.2-2' }} €
-    </div>
+    <div class="order-detail-page__cost-order-total">{{ totalSubtotal() + extras() | number: '1.2-2' }} €</div>
   </div>
   <div
     class="order-detail-page__cost-member-list"
     [class.order-detail-page__cost-member-list--expanded]="costDetailExpanded()">
     <div class="order-detail-page__cost-member-inner">
-      @for (m of computeMemberCosts(); track m.userId) {
+      @for (m of memberCosts(); track m.userId) {
         <div class="order-detail-page__cost-member-row">
           <div class="order-detail-page__cost-member-info">
             @if (m.avatarUrl) {

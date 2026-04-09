@@ -16,19 +16,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context.service';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
-
-/** Line aggregated by product for display in non-draft states. */
-export interface GroupedLine {
-  /** UUID of the product, used for tracking. */
-  productId: string;
-  productName: string;
-  productCategory: string;
-  productUrl: string | null;
-  /** Unit price set by the pack optimizer (same for all lines of the same product). */
-  unitPrice: number;
-  /** Total units ordered across all members for this product. */
-  quantityOrdered: number;
-}
+import { GroupedLine } from '@/interfaces/orders/grouped-line.interface';
+import { ORDER_STATUS } from '@/constants/order-status.constant';
 
 @Component({
   selector: 'app-order-product-list',
@@ -44,6 +33,9 @@ export interface GroupedLine {
 })
 export class OrderProductListComponent {
   private readonly _userContext: UserContextService = inject(UserContextService);
+
+  /** Exposes ORDER_STATUS to the template. */
+  readonly ORDER_STATUS = ORDER_STATUS;
 
   /** The order whose lines are displayed. */
   readonly order: InputSignal<OrderModel> = input.required<OrderModel>();
@@ -75,7 +67,7 @@ export class OrderProductListComponent {
    */
   visibleLines(lines: OrderLineModel[]): OrderLineModel[] {
     const ord: OrderModel = this.order();
-    if (ord.status !== 'draft') return lines;
+    if (ord.status !== ORDER_STATUS.DRAFT) return lines;
     const userId: string | null = this._userContext.userId();
     return lines.filter((l) => l.requestedBy === userId || l.requestedBy === null);
   }

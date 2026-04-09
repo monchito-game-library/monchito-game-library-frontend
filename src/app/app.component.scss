@@ -377,3 +377,10 @@
     z-index: 200;
   }
 }
+
+// ────────────────────────── Responsive: < 768px (móvil) ──────────────────────────
+@media (max-width: 767px) {
+  .bottom-nav .bottom-nav__item--tablet-only {
+    display: none;
+  }
+}
