@@ -64,8 +64,8 @@ export class OrderInfoSectionComponent {
   /** Emitted after a successful header save, so the parent can reload the order. */
   readonly headerSaved: OutputEmitterRef<void> = output<void>();
 
-  /** Whether the info section is expanded (open by default). */
-  readonly sectionExpanded: WritableSignal<boolean> = signal<boolean>(true);
+  /** Whether the info section is expanded (collapsed by default). */
+  readonly sectionExpanded: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Whether the header is currently in edit mode. */
   readonly editingHeader: WritableSignal<boolean> = signal<boolean>(false);

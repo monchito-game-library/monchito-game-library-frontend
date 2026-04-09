@@ -92,8 +92,11 @@
 }
 
 .order-detail-page__info {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 3fr 6fr 1fr;
+  gap: 0 1.5rem;
+  max-height: 230px;
+  overflow: hidden;
   transition: opacity 0.3s ease;
 
   &--disabled {
@@ -103,37 +106,25 @@
   }
 }
 
-.order-detail-page__info-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .order-detail-page__members-sections {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  overflow: hidden;
 }
 
 .order-detail-page__members-section {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.5rem 2rem;
+  overflow: hidden;
 }
 
-.order-detail-page__members-label-row {
+.order-detail-page__info-status {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.order-detail-page__members-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--mat-sys-on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  justify-content: flex-end;
+  align-items: flex-start;
 }
 
 .order-detail-page__member-row {
@@ -240,7 +231,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 2rem;
+  overflow: hidden;
 }
 
 .order-detail-page__info-row {
@@ -367,8 +358,36 @@
   }
 }
 
+// ────────────────────────── Responsive: ≤ 1280px ──────────────────────────
+@media (max-width: 1280px) {
+  .order-detail-page__info {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .order-detail-page__info-status {
+    order: 1;
+    justify-content: flex-start;
+  }
+
+  .order-detail-page__members-sections {
+    order: 2;
+  }
+
+  .order-detail-page__info-details {
+    order: 3;
+  }
+}
+
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
+  .order-detail-page__info {
+    max-height: none;
+    overflow-y: visible;
+  }
+
   .order-detail-page__info-row {
     flex-direction: column;
     gap: 0.25rem;
@@ -381,10 +400,6 @@
   .order-detail-page__form-columns {
     grid-template-columns: 1fr;
     gap: 0;
-  }
-
-  .order-detail-page__info-top {
-    flex-wrap: wrap;
   }
 }
 
