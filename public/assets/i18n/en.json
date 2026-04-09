@@ -312,6 +312,7 @@
       "title": "Order products",
       "add": "Add line",
       "selectingPacks": "The organiser is selecting the order quantities…",
+      "placingOrder": "The organiser is placing the order…",
       "product": "Product",
       "unitPrice": "Unit price",
       "pack": "Pack",

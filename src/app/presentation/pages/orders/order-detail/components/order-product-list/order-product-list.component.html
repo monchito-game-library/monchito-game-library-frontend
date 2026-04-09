@@ -16,6 +16,12 @@
         {{ 'orders.lines.selectingPacks' | transloco }}
       </div>
     }
+    @if (!isOwner() && order().status === 'ordering') {
+      <div class="order-detail-page__selecting-banner">
+        <mat-icon>shopping_cart</mat-icon>
+        {{ 'orders.lines.placingOrder' | transloco }}
+      </div>
+    }
 
     @if (order().status === 'draft') {
       @if (visibleLines(order().lines).length === 0) {

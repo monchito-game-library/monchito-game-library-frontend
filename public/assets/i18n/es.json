@@ -325,6 +325,7 @@
       "deleteMessage": "¿Eliminar esta línea del pedido?",
       "empty": "No hay líneas. Añade la primera.",
       "selectingPacks": "El organizador está seleccionando las cantidades del pedido…",
+      "placingOrder": "El organizador está realizando el pedido…",
       "dialogAddTitle": "Añadir línea",
       "dialogEditTitle": "Editar línea",
       "productLabel": "Producto",
