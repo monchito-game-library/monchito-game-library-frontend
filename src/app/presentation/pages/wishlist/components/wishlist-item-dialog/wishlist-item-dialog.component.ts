@@ -23,8 +23,6 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
 
-export type { WishlistItemDialogData, WishlistItemDialogResult };
-
 @Component({
   selector: 'app-wishlist-item-dialog',
   templateUrl: './wishlist-item-dialog.component.html',

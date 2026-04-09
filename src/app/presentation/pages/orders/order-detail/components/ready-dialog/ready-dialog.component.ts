@@ -14,8 +14,6 @@ import { formatBreakdown } from '@/shared/pack-optimizer.util';
 import { ReadyDialogData, ReadyLineData, ReadyLineSelection } from '@/interfaces/orders/ready-dialog.interface';
 import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
 
-export type { ReadyDialogData, ReadyDialogResult, ReadyLineData, ReadyLineSelection };
-
 @Component({
   selector: 'app-ready-dialog',
   templateUrl: './ready-dialog.component.html',

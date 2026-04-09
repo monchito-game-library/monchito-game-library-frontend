@@ -51,6 +51,22 @@ module.exports = [
         { type: 'element', prefix: 'app', style: 'kebab-case' }
       ],
 
+      // ── Unused vars / imports ────────────────────────────────────────────────
+
+      // Warn on variables, parameters and imports declared but never used
+      // within the same file. Does NOT catch exported symbols that are never
+      // imported elsewhere — use knip (npm run knip) for cross-file analysis.
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_'
+        }
+      ],
+
       // ── Naming convention ────────────────────────────────────────────────────
 
       // Private class members (fields, methods, accessors) must start with _.

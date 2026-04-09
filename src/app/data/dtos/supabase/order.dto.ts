@@ -129,9 +129,6 @@ export interface OrderLineInsertDto {
   notes: string | null;
 }
 
-/** Payload for updating an existing order line. */
-export type OrderLineUpdateDto = Partial<Omit<OrderLineInsertDto, 'order_id' | 'product_id'>>;
-
 /** Payload for upserting a participant's allocation. */
 export interface OrderLineAllocationUpsertDto {
   order_line_id: string;

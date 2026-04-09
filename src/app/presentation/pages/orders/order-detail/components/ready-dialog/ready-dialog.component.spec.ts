@@ -4,7 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { ReadyDialogComponent, ReadyDialogData, ReadyLineData } from './ready-dialog.component';
+import { ReadyDialogComponent } from './ready-dialog.component';
+import { ReadyDialogData, ReadyLineData } from '@/interfaces/orders/ready-dialog.interface';
 import { OrderLineModel } from '@/models/order/order-line.model';
 import { PackSuggestion } from '@/shared/pack-optimizer.util';
 

@@ -18,8 +18,6 @@ import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
 import { GroupedLine } from '@/interfaces/orders/grouped-line.interface';
 
-export type { GroupedLine };
-
 @Component({
   selector: 'app-order-product-list',
   templateUrl: './order-product-list.component.html',
