@@ -20,7 +20,7 @@ jobs:
           node-version: 24
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: Generar environment.ts
         run: |
