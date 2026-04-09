@@ -21,6 +21,7 @@
 | `@types/express` | 4.17.17 | 5.0.6 | 2026-04-09 |
 | `@types/node` | 24.0.0 | 25.2.3 | 2026-04-09 |
 | `eslint-plugin-jsdoc` | 61.7.1 | 62.8.1 | 2026-04-09 |
+| `eslint` | 9.39.4 | 10.2.0 | 2026-04-09 |
 
 ---
 
@@ -29,14 +30,10 @@
 | Paquete | Versión actual | Disponible | Motivo del bloqueo |
 |---|---|---|---|
 | `@angular-eslint/*` + `angular-eslint` | 21.3.0 | 21.3.1 | `angular-eslint@21.3.1` lleva internamente `@angular-eslint/schematics@21.3.0` que fija `eslint-plugin-template` en `21.3.0`. Conflicto de peer deps irresoluble hasta que publiquen una `21.3.2`. |
+| `typescript` | 5.9.3 | 6.0.2 | `@angular-devkit/build-angular@21.2.7` declara `typescript >=5.9 <6.0`. Bloqueado hasta que Angular 21.x actualice sus peer deps o se migre a Angular 22. |
 
 ---
 
 ## Pendientes — Major versions
 
-Ordenadas de **menor a mayor impacto** en el proyecto.
-
-| # | Paquete | De | A | Impacto | Notas |
-|---|---|---|---|---|---|
-| 1 | `eslint` | 9.39.4 | 10.x | Alto | Puede romper la config de eslint. ESLint 10 consolida flat config y elimina APIs legacy. |
-| 2 | `typescript` | 5.9.3 | 6.x | Muy alto | Puede romper la compilación. Afecta a todo el código. |
+*No quedan pendientes de major versions.*
