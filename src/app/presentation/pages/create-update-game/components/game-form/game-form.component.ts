@@ -14,7 +14,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -103,6 +103,7 @@ export class GameFormComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _router: Router = inject(Router);
+  private readonly _location: Location = inject(Location);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -449,7 +450,11 @@ export class GameFormComponent implements OnInit {
           }
         }
         this._userPreferencesState.allGames.set([]);
-        void this._router.navigate(['/list']);
+        if (this._gameUuid) {
+          this._location.back();
+        } else {
+          void this._router.navigate(['/list']);
+        }
       } catch (err: unknown) {
         const isDuplicate =
           err instanceof Error && (err.message.includes('23505') || err.message.toLowerCase().includes('duplicate'));
@@ -472,6 +477,13 @@ export class GameFormComponent implements OnInit {
    * Abre un diálogo de confirmación y elimina el juego si se confirma.
    * Solo disponible en modo edición.
    */
+  /**
+   * Navigates back to the previous page without saving any changes.
+   */
+  onCancel(): void {
+    this._location.back();
+  }
+
   async onDelete(): Promise<void> {
     if (!this._gameUuid) return;
 
