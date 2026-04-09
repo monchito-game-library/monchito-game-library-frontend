@@ -15,7 +15,7 @@
         class="order-detail-page__header-actions"
         [class.order-detail-page__header-actions--disabled]="editingHeader()">
         @if (!selectingPacks() && !placingOrder()) {
-          @if (!isOwner() && ord.status === 'draft') {
+          @if (!isOwner() && ord.status === ORDER_STATUS.DRAFT) {
             @for (m of ord.members; track m.id) {
               @if (m.userId === userContext.userId()) {
                 @if (!m.isReady) {
@@ -33,7 +33,7 @@
             }
           }
           @if (isOwner()) {
-            @if (ord.status === 'draft') {
+            @if (ord.status === ORDER_STATUS.DRAFT) {
               <button
                 mat-icon-button
                 [matTooltip]="'orders.header.shareInvite' | transloco"
@@ -42,7 +42,7 @@
                 <mat-icon>link</mat-icon>
               </button>
             }
-            @if (ord.status === 'draft') {
+            @if (ord.status === ORDER_STATUS.DRAFT) {
               <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -62,7 +62,9 @@
               [matTooltip]="'orders.header.nextStep' | transloco"
               (click)="onAdvanceStatus()"
               [disabled]="
-                saving() || !nextStatus() || (nextStatus() === 'selecting_packs' && !allMembersReady(ord.members))
+                saving() ||
+                !nextStatus() ||
+                (nextStatus() === ORDER_STATUS.SELECTING_PACKS && !allMembersReady(ord.members))
               ">
               <mat-icon>arrow_forward</mat-icon>
             </button>
@@ -148,7 +150,7 @@
     }
 
     <!-- Cost summary: solo desde 'ordered' en adelante -->
-    @if (ord.status === 'ordered' || ord.status === 'received') {
+    @if (ord.status === ORDER_STATUS.ORDERED || ord.status === ORDER_STATUS.RECEIVED) {
       <app-order-cost-summary [order]="ord" [userId]="userContext.userId()" />
     }
   }

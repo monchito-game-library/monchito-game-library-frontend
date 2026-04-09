@@ -1,2 +1,4 @@
+import { ORDER_STATUS } from '@/constants/order-status.constant';
+
 /** Lifecycle status of a group order. */
-export type OrderStatusType = 'draft' | 'selecting_packs' | 'ordering' | 'ordered' | 'received';
+export type OrderStatusType = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];

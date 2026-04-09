@@ -1,9 +1,11 @@
+import { OrderStatusType } from '@/types/order-status.type';
+
 /** Row from the orders table. */
 export interface OrderDto {
   id: string;
   owner_id: string;
   title: string | null;
-  status: 'draft' | 'selecting_packs' | 'ordering' | 'ordered' | 'received';
+  status: OrderStatusType;
   order_date: string | null;
   received_date: string | null;
   shipping_cost: number | null;
@@ -107,7 +109,7 @@ export interface OrderProductDto {
 export interface OrderUpdateDto {
   title?: string | null;
   notes?: string | null;
-  status?: 'draft' | 'selecting_packs' | 'ordering' | 'ordered' | 'received';
+  status?: OrderStatusType;
   order_date?: string | null;
   received_date?: string | null;
   shipping_cost?: number | null;

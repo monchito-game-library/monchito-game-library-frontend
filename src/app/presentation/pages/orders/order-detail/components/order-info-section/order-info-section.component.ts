@@ -24,6 +24,7 @@ import { OrderModel } from '@/models/order/order.model';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { DiscountType } from '@/types/discount-type.type';
 import { sortedMembers, readyCount, allMembersReady } from '@/shared/order-member.util';
+import { ORDER_STATUS } from '@/constants/order-status.constant';
 
 @Component({
   selector: 'app-order-info-section',
@@ -66,6 +67,9 @@ export class OrderInfoSectionComponent {
 
   /** Emitted after a successful header save, so the parent can reload the order. */
   readonly headerSaved: OutputEmitterRef<void> = output<void>();
+
+  /** Exposes ORDER_STATUS to the template. */
+  readonly ORDER_STATUS = ORDER_STATUS;
 
   /** Returns the members list sorted so the owner always appears first. */
   readonly sortedMembers = sortedMembers;

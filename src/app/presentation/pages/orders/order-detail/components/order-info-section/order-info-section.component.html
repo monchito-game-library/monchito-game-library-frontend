@@ -87,7 +87,7 @@
       <!-- Col 2: miembros -->
       <div class="order-detail-page__members-sections">
         <div class="order-detail-page__members-section">
-          @if (order().status === 'draft' && !allMembersReady(order().members)) {
+          @if (order().status === ORDER_STATUS.DRAFT && !allMembersReady(order().members)) {
             <span class="order-detail-page__ready-hint">
               {{ 'orders.header.waitingMembers' | transloco: readyCount(order().members) }}
             </span>
@@ -108,9 +108,9 @@
               <span class="order-detail-page__member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
               @if (m.role === 'owner') {
                 <span class="order-detail-page__member-owner-badge">{{ 'orders.header.owner' | transloco }}</span>
-              } @else if (m.isReady && order().status === 'draft') {
+              } @else if (m.isReady && order().status === ORDER_STATUS.DRAFT) {
                 <span class="order-detail-page__member-ready-badge">{{ 'orders.header.ready' | transloco }}</span>
-              } @else if (order().status === 'draft') {
+              } @else if (order().status === ORDER_STATUS.DRAFT) {
                 <span class="order-detail-page__member-pending-badge">{{ 'orders.header.pending' | transloco }}</span>
               }
             </div>
