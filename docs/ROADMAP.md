@@ -8,17 +8,17 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Alta** |
-| [Préstamos de juegos](#préstamos-de-juegos) | Media |
-| [Juegos a la venta](#juegos-a-la-venta) | Media |
+| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Muy alta** |
+| [Préstamos de juegos](#préstamos-de-juegos) | Alta |
+| [Juegos a la venta](#juegos-a-la-venta) | Alta |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
-| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Media |
+| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
 
 ---
 
-## Alta prioridad
+## Muy alta prioridad
 
 ### Página de detalle de juego (`/games/:id`)
 
@@ -62,7 +62,7 @@ Actualmente pulsar en una card abre directamente el formulario de edición. Con 
 
 ---
 
-## Media prioridad
+## Alta prioridad
 
 ### Préstamos de juegos
 
@@ -165,6 +165,8 @@ Un juego está "activo" en la colección si `sold_at IS NULL`. Un juego está "a
 
 ---
 
+## Media prioridad
+
 ### Recomendaciones de juegos
 
 Sugerir juegos que el usuario no tiene en su colección basándose en sus platinos y favoritos. Se muestra de forma sutil dentro de la lista de juegos, no como sección nueva en el nav.
@@ -198,6 +200,8 @@ Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar lo
 
 ---
 
+## Baja prioridad
+
 ### Dashboard de estadísticas (`/stats`)
 
 Nueva sección en el nav que sustituye las estadísticas actuales de la colección (juegos totales, gasto total, valoración media). Lo que hay ahora es la v.1 — al implementar esto esos datos se mueven aquí y se eliminan del header de la colección.
@@ -229,8 +233,6 @@ Nueva sección en el nav que sustituye las estadísticas actuales de la colecci�
 - Componentes de tarjeta de estadística reutilizables para los valores simples (totales, medias).
 
 ---
-
-## Baja prioridad
 
 ### Sincronización automática de metadatos RAWG
 
