@@ -1,5 +1,5 @@
 {
-  "installCommand": "rm -rf node_modules && npm install",
+  "installCommand": "rm -rf node_modules package-lock.json && npm install",
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist/monchito-game-library/browser",
   "routes": [
