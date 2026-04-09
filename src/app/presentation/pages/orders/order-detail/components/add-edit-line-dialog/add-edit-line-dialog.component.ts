@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -51,7 +51,7 @@ export interface AddEditLineDialogData {
     TranslocoPipe
   ]
 })
-export class AddEditLineDialogComponent implements OnInit {
+export class AddEditLineDialogComponent {
   private readonly _dialogRef: MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
     MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
   );
@@ -95,8 +95,6 @@ export class AddEditLineDialogComponent implements OnInit {
       );
     });
   }
-
-  ngOnInit(): void {}
 
   /**
    * Sets the productId form control when the user selects a product from the autocomplete.

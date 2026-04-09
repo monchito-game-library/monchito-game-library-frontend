@@ -48,6 +48,9 @@ import { DiscountType } from '@/types/discount-type.type';
 })
 export class OrderInfoSectionComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
+
+  private readonly _HIDE_ACTIONS_MS: number = 350;
+  private readonly _HIDE_ACTIONS_AFTER_SAVE_MS: number = 700;
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
@@ -148,7 +151,7 @@ export class OrderInfoSectionComponent {
     this.hidingActions.set(true);
     this.editingHeader.set(false);
     this.editingEnded.emit();
-    setTimeout(() => this.hidingActions.set(false), 350);
+    setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_MS);
   }
 
   /**
@@ -163,7 +166,7 @@ export class OrderInfoSectionComponent {
       await this._ordersUseCases.update(this.order().id, patch);
       this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
       this.hidingActions.set(true);
-      setTimeout(() => this.hidingActions.set(false), 700);
+      setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
       this.editingHeader.set(false);
       this.editingEnded.emit();
       this.headerSaved.emit();
