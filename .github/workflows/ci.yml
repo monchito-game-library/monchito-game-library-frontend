@@ -19,8 +19,11 @@ jobs:
         with:
           node-version: 24
 
+      - name: Actualizar npm
+        run: npm install -g npm@latest
+
       - name: Instalar dependencias
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       - name: Generar environment.ts
         run: |
