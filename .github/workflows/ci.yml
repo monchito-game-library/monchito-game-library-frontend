@@ -38,6 +38,9 @@ jobs:
           };
           EOF
 
+      - name: Build de producción
+        run: npm run build
+
       - name: Ejecutar tests de reglas ESLint
         run: npm run test:eslint-rules
 
