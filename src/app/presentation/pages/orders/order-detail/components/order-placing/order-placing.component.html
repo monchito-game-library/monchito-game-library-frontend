@@ -1,0 +1,43 @@
+<div class="order-detail-page__section-header" [class.order-detail-page__section-header--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
+</div>
+
+<div class="order-detail-page__section-body" [class.order-detail-page__section-body--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-body-inner">
+    <div class="order-placing__list">
+      @for (row of placingRows(); track row.productName) {
+        <div class="order-placing__product">
+          <div class="order-placing__product-header">
+            <span class="order-placing__product-name">{{ row.productName }}</span>
+            <span class="order-placing__product-total">
+              {{ row.totalOrdered }} {{ 'orders.ready.units' | transloco }}
+              @if (row.totalCost > 0) {
+                <span class="order-placing__product-cost">· {{ row.totalCost | number: '1.2-2' }} €</span>
+              }
+            </span>
+          </div>
+
+          @if (row.breakdown.length === 0) {
+            <div class="order-placing__no-breakdown">{{ 'orders.placing.noBreakdown' | transloco }}</div>
+          } @else {
+            <div class="order-placing__pack-list">
+              @for (entry of row.breakdown; track entry.pack.quantity) {
+                <div class="order-placing__pack-row">
+                  <span class="order-placing__pack-count">{{ entry.count }}×</span>
+                  <span class="order-placing__pack-name">Pack {{ entry.pack.quantity }}</span>
+                  <span class="order-placing__pack-subtotal">
+                    {{ entry.count * entry.pack.quantity }} {{ 'orders.ready.units' | transloco }}
+                  </span>
+                  <span class="order-placing__pack-price">{{ entry.pack.price | number: '1.2-2' }} €</span>
+                  <a class="order-placing__pack-link" [href]="entry.pack.url" target="_blank" rel="noopener noreferrer">
+                    <mat-icon>open_in_new</mat-icon>
+                  </a>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

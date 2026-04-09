@@ -4,11 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-interface ManagementSection {
-  icon: string;
-  label: string;
-  route: string;
-}
+import { ManagementSection } from '@/interfaces/management-section.interface';
 
 @Component({
   selector: 'app-management',

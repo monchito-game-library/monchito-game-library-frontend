@@ -125,7 +125,6 @@ describe('OrdersComponent', () => {
       });
       mockOrdersUseCases.getAllForUser.mockReturnValue(loadPromise);
 
-      const loadingDuringCall = component.loading();
       const callPromise = (component as any)._loadOrders();
 
       expect(component.loading()).toBe(true);

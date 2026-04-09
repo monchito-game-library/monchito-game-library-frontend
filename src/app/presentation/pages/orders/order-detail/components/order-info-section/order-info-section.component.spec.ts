@@ -146,6 +146,24 @@ describe('OrderInfoSectionComponent', () => {
     });
   });
 
+  describe('onToggleSection()', () => {
+    it('expande la sección al llamarse cuando está colapsada', () => {
+      expect(component.sectionExpanded()).toBe(false);
+
+      component.onToggleSection();
+
+      expect(component.sectionExpanded()).toBe(true);
+    });
+
+    it('colapsa la sección al llamarse cuando ya está expandida', () => {
+      component.onToggleSection();
+
+      component.onToggleSection();
+
+      expect(component.sectionExpanded()).toBe(false);
+    });
+  });
+
   describe('startEditing()', () => {
     it('pone editingHeader a true', () => {
       component.startEditing();
@@ -205,9 +223,43 @@ describe('OrderInfoSectionComponent', () => {
 
       expect(spy).toHaveBeenCalledOnce();
     });
+
+    it('activa hidingActions inmediatamente y lo desactiva tras el delay', () => {
+      vi.useFakeTimers();
+
+      component.onCancelEdit();
+      expect(component.hidingActions()).toBe(true);
+
+      vi.advanceTimersByTime(350);
+      expect(component.hidingActions()).toBe(false);
+
+      vi.useRealTimers();
+    });
   });
 
   describe('onSaveHeader()', () => {
+    it('no llama a update si saving ya es true', async () => {
+      component.saving.set(true);
+
+      await component.onSaveHeader();
+
+      expect(mockOrdersUseCases.update).not.toHaveBeenCalled();
+    });
+
+    it('activa hidingActions al guardar y lo desactiva tras el delay', async () => {
+      vi.useFakeTimers();
+
+      const savePromise = component.onSaveHeader();
+      await Promise.resolve();
+      await savePromise;
+
+      expect(component.hidingActions()).toBe(true);
+      vi.advanceTimersByTime(700);
+      expect(component.hidingActions()).toBe(false);
+
+      vi.useRealTimers();
+    });
+
     it('llama a ordersUseCases.update con el id del pedido y el valor del formulario', async () => {
       component.startEditing();
 

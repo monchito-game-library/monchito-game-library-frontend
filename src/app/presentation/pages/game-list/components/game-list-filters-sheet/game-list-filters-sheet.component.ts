@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -8,29 +8,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelect } from '@angular/material/select';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { PlatformType } from '@/types/platform.type';
-import { GameFormatType } from '@/types/game-format.type';
-import { StoreModel } from '@/models/store/store.model';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
-import { availableGameStatuses, GameStatusOption } from '@/constants/game-status.constant';
+import { availableGameStatuses } from '@/constants/game-status.constant';
+import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
-
-/** Sort field values used by the game list. */
-export type GameListSortField = 'created_at' | 'title' | 'price' | 'personal_rating';
-
-/** Data contract passed from game-list to the filters bottom sheet. */
-export interface GameListFiltersSheetData {
-  selectedConsole: WritableSignal<'' | PlatformType>;
-  selectedStore: WritableSignal<string>;
-  selectedStatus: WritableSignal<string>;
-  selectedFormat: WritableSignal<'' | GameFormatType>;
-  onlyFavorites: WritableSignal<boolean>;
-  sortBy: WritableSignal<GameListSortField>;
-  sortDirection: WritableSignal<'asc' | 'desc'>;
-  stores: WritableSignal<StoreModel[]>;
-  clearAllFilters: () => void;
-}
+import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 
 @Component({
   selector: 'app-game-list-filters-sheet',

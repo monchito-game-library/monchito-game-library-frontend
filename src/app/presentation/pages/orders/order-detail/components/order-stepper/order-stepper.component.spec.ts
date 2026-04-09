@@ -6,8 +6,9 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { PackSuggestion } from '@/domain/utils/pack-optimizer.util';
-import { OrderStepperComponent, PackStepData, MemberQty } from './order-stepper.component';
+import { PackSuggestion } from '@/interfaces/pack-optimizer.interface';
+import { OrderStepperComponent } from './order-stepper.component';
+import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
@@ -15,7 +16,7 @@ const makeOrder = (overrides: Partial<OrderModel> = {}): OrderModel => ({
   id: 'order-1',
   ownerId: 'user-owner',
   title: 'Test Order',
-  status: 'ready',
+  status: 'selecting_packs',
   orderDate: null,
   receivedDate: null,
   shippingCost: 10,
@@ -338,7 +339,6 @@ describe('OrderStepperComponent', () => {
     it('emite false inicialmente si sólo el primer step tiene sugerencias', () => {
       // Con un solo step y auto-confirm del constructor, debería emitir true
       // Verificamos el comportamiento con dos steps donde sólo el primero se auto-confirma
-      const emittedValues: boolean[] = [];
       const step1 = makeStep({ productId: 'p1' });
       const step2 = makeStep({ productId: 'p2' });
       const fixture = TestBed.createComponent(OrderStepperComponent);
