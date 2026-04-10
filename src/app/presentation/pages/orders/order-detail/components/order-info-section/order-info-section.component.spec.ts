@@ -300,4 +300,21 @@ describe('OrderInfoSectionComponent', () => {
       expect(mockSnackBar.open).toHaveBeenCalledOnce();
     });
   });
+
+  describe('ngOnDestroy()', () => {
+    it('cancela el timer pendiente al destruirse el componente', () => {
+      vi.useFakeTimers();
+
+      component.onCancelEdit();
+      expect(component.hidingActions()).toBe(true);
+
+      component.ngOnDestroy();
+      vi.advanceTimersByTime(350);
+
+      // hidingActions stays true — timer was cancelled before it could fire
+      expect(component.hidingActions()).toBe(true);
+
+      vi.useRealTimers();
+    });
+  });
 });

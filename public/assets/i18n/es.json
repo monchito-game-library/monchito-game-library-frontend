@@ -450,7 +450,8 @@
       "updateError": "Error al actualizar el juego deseado",
       "deleted": "Eliminado de deseados",
       "deleteError": "Error al eliminar de deseados",
-      "loadError": "Error al cargar los deseados"
+      "loadError": "Error al cargar los deseados",
+      "notFound": "El juego deseado no existe o fue eliminado"
     },
     "empty": {
       "title": "Tu lista de deseados está vacía",
