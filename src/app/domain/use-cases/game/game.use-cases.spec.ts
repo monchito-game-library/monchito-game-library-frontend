@@ -13,7 +13,9 @@ const mockRepo: GameRepositoryContract = {
   updateGameForUser: vi.fn(),
   clearAllForUser: vi.fn(),
   getById: vi.fn(),
-  getGameForEdit: vi.fn()
+  getGameForEdit: vi.fn(),
+  getSoldGames: vi.fn(),
+  updateSaleStatus: vi.fn()
 };
 
 describe('GameUseCasesImpl', () => {

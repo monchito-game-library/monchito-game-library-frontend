@@ -69,6 +69,10 @@ export interface UserGameDto {
   tags_personal?: string[];
   is_favorite: boolean;
   cover_position: string | null;
+  for_sale: boolean;
+  sale_price: number | null;
+  sold_at: string | null;
+  sold_price_final: number | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -124,6 +128,10 @@ export interface UserGameEditDto {
   rawg_rating: number;
   genres: string[];
   cover_position: string | null;
+  for_sale: boolean;
+  sale_price: number | null;
+  sold_at: string | null;
+  sold_price_final: number | null;
 }
 
 /**
@@ -146,6 +154,9 @@ export interface UserGameListDto {
   is_favorite: boolean;
   image_url: string | null;
   cover_position: string | null;
+  for_sale: boolean;
+  sold_at: string | null;
+  sold_price_final: number | null;
 }
 
 /** Payload for inserting or updating a row in game_catalog. */

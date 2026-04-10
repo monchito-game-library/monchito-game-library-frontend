@@ -4,6 +4,7 @@ import { GameListModel } from '@/models/game/game-list.model';
 import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 
 /** Contract for the game repository. */
 export interface GameRepositoryContract {
@@ -82,6 +83,22 @@ export interface GameRepositoryContract {
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined>;
+
+  /**
+   * Returns all games that have been sold (sold_at IS NOT NULL) for the given user.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  getSoldGames(userId: string): Promise<GameListModel[]>;
+
+  /**
+   * Updates only the sale-related columns of a game (for_sale, sale_price, sold_at, sold_price_final).
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} uuid - Supabase UUID of the user_games row
+   * @param {GameSaleStatusModel} sale - New sale status values
+   */
+  updateSaleStatus(userId: string, uuid: string, sale: GameSaleStatusModel): Promise<void>;
 }
 
 /** InjectionToken for GameRepositoryContract. */

@@ -27,7 +27,10 @@ const mockGame: GameListModel = {
   edition: null,
   format: 'physical',
   isFavorite: false,
-  coverPosition: null
+  coverPosition: null,
+  forSale: false,
+  soldAt: null,
+  soldPriceFinal: null
 };
 
 describe('GameCardComponent — computed signals', () => {

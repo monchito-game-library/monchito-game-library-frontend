@@ -29,6 +29,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
+import { GameSaleFormComponent } from './components/game-sale-form/game-sale-form.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -36,7 +37,16 @@ import { defaultGameCover } from '@/constants/game-library.constant';
   styleUrl: './game-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, DecimalPipe, MatIcon, MatIconButton, MatButton, MatProgressSpinner, TranslocoPipe]
+  imports: [
+    CurrencyPipe,
+    DecimalPipe,
+    MatIcon,
+    MatIconButton,
+    MatButton,
+    MatProgressSpinner,
+    TranslocoPipe,
+    GameSaleFormComponent
+  ]
 })
 export class GameDetailComponent implements OnInit {
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
@@ -56,6 +66,9 @@ export class GameDetailComponent implements OnInit {
 
   /** Whether the delete action is in progress. */
   readonly deleting: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the sale form view is active. */
+  readonly showSaleForm: WritableSignal<boolean> = signal<boolean>(false);
 
   /** The game being displayed. */
   readonly game: WritableSignal<GameEditModel | null> = signal<GameEditModel | null>(null);
@@ -129,6 +142,31 @@ export class GameDetailComponent implements OnInit {
     const uuid = this.game()?.uuid;
     if (!uuid) return;
     void this._router.navigate(['/games/edit', uuid]);
+  }
+
+  /**
+   * Switches the body to the sale form view.
+   */
+  openSaleView(): void {
+    this.showSaleForm.set(true);
+  }
+
+  /**
+   * Returns to the data view from the sale form.
+   */
+  closeSaleView(): void {
+    this.showSaleForm.set(false);
+  }
+
+  /**
+   * Called when the sale form saves successfully.
+   * Updates the game signal and returns to the data view.
+   *
+   * @param {GameEditModel} updated - Game model with the new sale values applied
+   */
+  onSaleSaved(updated: GameEditModel): void {
+    this.game.set(updated);
+    this.showSaleForm.set(false);
   }
 
   /**

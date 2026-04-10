@@ -12,6 +12,7 @@ function makeBuilder(result: { data?: unknown; error: { message: string } | null
     'select',
     'eq',
     'neq',
+    'is',
     'order',
     'range',
     'ilike',
@@ -60,7 +61,11 @@ const fullDto = {
   esrb_rating: 'Mature',
   available_platforms: ['PS5'],
   genres: ['Action'],
-  source: 'rawg'
+  source: 'rawg',
+  for_sale: false,
+  sale_price: null,
+  sold_at: null,
+  sold_price_final: null
 };
 
 describe('SupabaseRepository', () => {
@@ -90,7 +95,10 @@ describe('SupabaseRepository', () => {
       format: 'physical',
       is_favorite: true,
       image_url: null,
-      cover_position: null
+      cover_position: null,
+      for_sale: false,
+      sold_at: null,
+      sold_price_final: null
     };
 
     it('devuelve los juegos mapeados de una sola página', async () => {
@@ -227,7 +235,11 @@ describe('SupabaseRepository', () => {
         imageUrl: undefined,
         rawgId: 58175,
         rawgSlug: null,
-        coverPosition: null
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
       };
 
       await repo.addGameForUser('user-1', gameModel, catalogEntry);
@@ -305,7 +317,11 @@ describe('SupabaseRepository', () => {
         edition: null,
         format: 'physical',
         is_favorite: true,
-        cover_position: null
+        cover_position: null,
+        for_sale: false,
+        sale_price: null,
+        sold_at: null,
+        sold_price_final: null
       };
       mockSupabase.from.mockReturnValue(makeBuilder({ data: editDto, error: null }));
 
@@ -339,7 +355,11 @@ describe('SupabaseRepository', () => {
       imageUrl: undefined,
       rawgId: null,
       rawgSlug: null,
-      coverPosition: null
+      coverPosition: null,
+      forSale: false,
+      salePrice: null,
+      soldAt: null,
+      soldPriceFinal: null
     };
 
     it('lanza error cuando uuid es undefined', async () => {
@@ -450,7 +470,11 @@ describe('SupabaseRepository', () => {
       imageUrl: undefined,
       rawgId: null,
       rawgSlug: null,
-      coverPosition: null
+      coverPosition: null,
+      forSale: false,
+      salePrice: null,
+      soldAt: null,
+      soldPriceFinal: null
     };
 
     it('crea un nuevo catálogo manual cuando no existe título igual', async () => {
@@ -508,7 +532,11 @@ describe('SupabaseRepository', () => {
       imageUrl: undefined,
       rawgId: 58175,
       rawgSlug: null,
-      coverPosition: null
+      coverPosition: null,
+      forSale: false,
+      salePrice: null,
+      soldAt: null,
+      soldPriceFinal: null
     };
 
     const catalogEntry = {

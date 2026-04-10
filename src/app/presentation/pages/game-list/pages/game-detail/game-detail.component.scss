@@ -1,10 +1,17 @@
-// Scroll container — matches the pattern of other detail pages (e.g. wishlist-detail)
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .game-detail {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: auto; // scrollbar full-width → siempre pegado al borde
 }
 
 .game-detail__loading {
@@ -122,6 +129,26 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
+  }
+}
+
+.game-detail__sale-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.4);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -297,18 +324,19 @@
 @media (orientation: landscape) and (max-height: 500px) {
   .game-detail {
     flex-direction: row;
-    overflow: hidden; // el propio contenedor no scrollea
+    overflow: hidden; // el body es el scroll container en landscape
   }
 
   .game-detail__hero {
     width: 42%;
-    height: 100dvh; // porcentaje no resuelve cuando el padre tiene altura por flex:1
+    height: 100dvh;
     flex-shrink: 0;
   }
 
   .game-detail__body {
     flex: 1;
-    overflow-y: auto; // solo el body scrollea
+    min-height: 0;
+    overflow-y: auto;
     padding: 1rem;
     margin: 0;
     max-width: none;
