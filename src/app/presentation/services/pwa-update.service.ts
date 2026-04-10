@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 /** Routes where the user may have unsaved work — update is deferred until they leave. */
-const FORM_ROUTES = ['/add', '/update/'];
+const FORM_ROUTES = ['/games/add', '/games/edit/'];
 
 /**
  * Presentation service that enforces PWA updates automatically.

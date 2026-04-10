@@ -94,41 +94,41 @@ describe('AppComponent', () => {
 
     it('es true cuando hay usuario y la ruta es privada', () => {
       mockUserContext.isUserSelected.mockReturnValue(true);
-      component.currentRoute.set('/list');
+      component.currentRoute.set('/games');
       expect(component.isAuthenticated()).toBe(true);
     });
   });
 
   describe('isNavActive', () => {
     it('es true cuando la ruta actual comienza con la ruta del item', () => {
-      component.currentRoute.set('/list');
-      expect(component.isNavActive('/list')).toBe(true);
+      component.currentRoute.set('/games');
+      expect(component.isNavActive('/games')).toBe(true);
     });
 
     it('es false cuando la ruta actual no coincide', () => {
       component.currentRoute.set('/wishlist');
-      expect(component.isNavActive('/list')).toBe(false);
+      expect(component.isNavActive('/games')).toBe(false);
     });
 
-    it('/add es activo cuando la ruta actual es /update/:id', () => {
-      component.currentRoute.set('/update/123');
-      expect(component.isNavActive('/add')).toBe(true);
+    it('/games/add es activo cuando la ruta actual es /games/edit/:id', () => {
+      component.currentRoute.set('/games/edit/123');
+      expect(component.isNavActive('/games/add')).toBe(true);
     });
 
-    it('/add es activo cuando la ruta actual es /add', () => {
-      component.currentRoute.set('/add');
-      expect(component.isNavActive('/add')).toBe(true);
+    it('/games/add es activo cuando la ruta actual es /games/add', () => {
+      component.currentRoute.set('/games/add');
+      expect(component.isNavActive('/games/add')).toBe(true);
     });
   });
 
   describe('getPageTitle', () => {
-    it('devuelve "nav.add" para rutas /update/:id', () => {
+    it('devuelve "nav.add" para rutas /update/:id (retrocompatibilidad)', () => {
       component.currentRoute.set('/update/42');
       expect(component.getPageTitle()).toBe('nav.add');
     });
 
-    it('devuelve el label del nav item activo (/list → nav.collection)', () => {
-      component.currentRoute.set('/list');
+    it('devuelve el label del nav item activo (/games → nav.collection)', () => {
+      component.currentRoute.set('/games');
       expect(component.getPageTitle()).toBe('nav.collection');
     });
 

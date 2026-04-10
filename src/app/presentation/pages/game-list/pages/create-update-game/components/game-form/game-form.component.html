@@ -252,17 +252,10 @@
           </div>
 
           <div class="game-form__footer-actions">
-            @if (isEditMode) {
-              <button
-                mat-stroked-button
-                type="button"
-                (click)="onDelete()"
-                [disabled]="saving()"
-                class="game-form__delete-btn">
-                <mat-icon>delete</mat-icon>
-                {{ 'gameForm.buttons.delete' | transloco }}
-              </button>
-            }
+            <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="saving()">
+              <mat-icon>close</mat-icon>
+              {{ 'common.cancel' | transloco }}
+            </button>
             <button
               mat-flat-button
               color="primary"

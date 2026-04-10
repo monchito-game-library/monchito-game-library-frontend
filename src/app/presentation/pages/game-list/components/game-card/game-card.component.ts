@@ -136,12 +136,12 @@ export class GameCardComponent {
   };
 
   /**
-   * Navigates to the edit form for this game using the UUID as the route param.
+   * Navigates to the game detail page using the UUID as the route param.
    * Does nothing when the card is showing its back face.
    */
   editGame = (): void => {
     if (this.isFlipped()) return;
-    void this._router.navigate(['/update', this.game().uuid]);
+    void this._router.navigate(['/games', this.game().uuid]);
   };
 
   /**
