@@ -47,6 +47,18 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+// Oculta los spin buttons nativos de los inputs numéricos en toda la app
+// para que los sufijos de Angular Material (€, unidades, etc.) tengan espacio
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 // ────────────────────────── Snackbar: mobile full-width ──────────────────────────
 @media (max-width: 600px) {
   .snack-mobile {

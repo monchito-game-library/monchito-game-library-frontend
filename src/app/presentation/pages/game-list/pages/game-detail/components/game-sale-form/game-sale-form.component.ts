@@ -102,35 +102,6 @@ export class GameSaleFormComponent implements OnInit {
   }
 
   /**
-   * Restricts a price input to digits and at most 2 decimal places in real time.
-   * Replaces comma with dot for Spanish/European keyboards. Updates the form
-   * control with the parsed numeric value (or null when empty).
-   *
-   * @param {Event} event - Native input event from the price field
-   * @param {'salePrice' | 'soldPriceFinal'} field - Name of the price control to update
-   */
-  onPriceInput(event: Event, field: 'salePrice' | 'soldPriceFinal'): void {
-    const input = event.target as HTMLInputElement;
-    // Normalise comma → dot and strip any non-numeric chars except dot
-    let val = input.value.replace(',', '.').replace(/[^0-9.]/g, '');
-    // Remove extra dots — keep only the first one, max 2 digits after it
-    const dotIdx = val.indexOf('.');
-    if (dotIdx !== -1) {
-      val =
-        val.substring(0, dotIdx + 1) +
-        val
-          .substring(dotIdx + 1)
-          .replace(/\./g, '')
-          .substring(0, 2);
-    }
-    if (input.value !== val) {
-      input.value = val;
-    }
-    const num = val === '' || val === '.' ? null : parseFloat(val);
-    this.form.controls[field].setValue(num !== null && !isNaN(num) ? num : null);
-  }
-
-  /**
    * Navigates back to the data view without saving.
    */
   onCancel(): void {

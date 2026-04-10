@@ -274,41 +274,6 @@ describe('GameSaleFormComponent', () => {
     });
   });
 
-  describe('onPriceInput', () => {
-    function makeInputEvent(value: string): Event {
-      const input = document.createElement('input');
-      input.value = value;
-      const event = new Event('input', { bubbles: true });
-      Object.defineProperty(event, 'target', { value: input, writable: false });
-      return event;
-    }
-
-    it('actualiza el control con el valor numérico cuando la entrada es válida', () => {
-      component.onPriceInput(makeInputEvent('29.99'), 'salePrice');
-      expect(component.form.controls.salePrice.value).toBe(29.99);
-    });
-
-    it('recorta a 2 decimales si se introducen más', () => {
-      component.onPriceInput(makeInputEvent('29.999'), 'salePrice');
-      expect(component.form.controls.salePrice.value).toBe(29.99);
-    });
-
-    it('convierte la coma en punto (teclado español)', () => {
-      component.onPriceInput(makeInputEvent('19,50'), 'soldPriceFinal');
-      expect(component.form.controls.soldPriceFinal.value).toBe(19.5);
-    });
-
-    it('establece null cuando el campo está vacío', () => {
-      component.onPriceInput(makeInputEvent(''), 'salePrice');
-      expect(component.form.controls.salePrice.value).toBeNull();
-    });
-
-    it('elimina caracteres no numéricos', () => {
-      component.onPriceInput(makeInputEvent('abc12.5x'), 'soldPriceFinal');
-      expect(component.form.controls.soldPriceFinal.value).toBe(12.5);
-    });
-  });
-
   describe('onMarkAsSold', () => {
     it('no llama a updateSaleStatus si canMarkAsSold es false', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
