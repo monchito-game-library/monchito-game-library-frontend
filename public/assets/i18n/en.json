@@ -229,6 +229,7 @@
     "aria": {
       "onlyFavorites": "Favourites only",
       "onlyForSale": "For sale only",
+      "onlyLoaned": "Loaned only",
       "clearFilters": "Clear filters"
     }
   },
@@ -521,6 +522,21 @@
       "emailInvalid": "Invalid email",
       "submit": "Send Reset Link",
       "backToLogin": "Back to Sign In"
+    },
+    "resetPassword": {
+      "title": "New Password",
+      "description": "Enter and confirm your new password.",
+      "waitingSession": "Establishing recovery session…",
+      "password": "New password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Repeat your new password",
+      "confirmPasswordRequired": "You must confirm your password",
+      "passwordMismatch": "Passwords do not match",
+      "submit": "Save new password",
+      "backToLogin": "Back to Sign In"
     }
   },
   "management": {
@@ -622,6 +638,24 @@
     "snack": {
       "loadError": "Error loading game",
       "deleteError": "Error deleting game"
+    },
+    "loan": {
+      "manageBtn": "Loan",
+      "loanedBadge": "Loaned to",
+      "title": "Loan",
+      "activeSection": "Active loan",
+      "newSection": "New loan",
+      "loanedTo": "Person",
+      "loanedToPlaceholder": "e.g. John",
+      "loanedAt": "Loan date",
+      "loanBtn": "Loan",
+      "returnBtn": "Returned",
+      "snack": {
+        "loanSuccess": "Loan registered",
+        "loanError": "Error registering the loan",
+        "returnSuccess": "Loan marked as returned",
+        "returnError": "Error registering the return"
+      }
     },
     "sale": {
       "manageBtn": "Sale",

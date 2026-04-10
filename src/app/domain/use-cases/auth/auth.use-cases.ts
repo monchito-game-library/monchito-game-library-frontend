@@ -85,4 +85,27 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
   async updateDisplayName(displayName: string): Promise<void> {
     await this._repo.updateDisplayName(displayName);
   }
+
+  /**
+   * Updates the authenticated user's password. Wraps the error in an AuthResult.
+   *
+   * @param {string} newPassword - New password in plain text
+   */
+  async updatePassword(newPassword: string): Promise<AuthResult> {
+    try {
+      await this._repo.updatePassword(newPassword);
+      return { success: true };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to update password' };
+    }
+  }
+
+  /**
+   * Registers a listener that fires when Supabase detects a PASSWORD_RECOVERY session.
+   *
+   * @param {() => void} callback - Called once the recovery session is established
+   */
+  onPasswordRecovery(callback: () => void): void {
+    this._repo.onPasswordRecovery(callback);
+  }
 }
