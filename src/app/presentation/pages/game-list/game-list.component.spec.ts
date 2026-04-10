@@ -31,6 +31,9 @@ function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
     forSale: false,
     soldAt: null,
     soldPriceFinal: null,
+    activeLoanId: null,
+    activeLoanTo: null,
+    activeLoanAt: null,
     ...overrides
   };
 }
@@ -73,6 +76,7 @@ describe('GameListComponent', () => {
     it('selectedStatus es ""', () => expect(component.selectedStatus()).toBe(''));
     it('selectedFormat es ""', () => expect(component.selectedFormat()).toBe(''));
     it('onlyFavorites es false', () => expect(component.onlyFavorites()).toBe(false));
+    it('onlyLoaned es false', () => expect(component.onlyLoaned()).toBe(false));
     it('sortBy es "title"', () => expect(component.sortBy()).toBe('title'));
     it('sortDirection es "asc"', () => expect(component.sortDirection()).toBe('asc'));
     it('allGames es []', () => expect(component.allGames()).toEqual([]));
@@ -154,6 +158,27 @@ describe('GameListComponent', () => {
       component.onlyFavorites.set(true);
       expect(component.filteredGames()).toHaveLength(1);
       expect(component.filteredGames()[0].title).toBe('A');
+    });
+  });
+
+  describe('filteredGames — filtro por prestados', () => {
+    it('muestra solo prestados cuando onlyLoaned es true', () => {
+      component.allGames.set([
+        makeGame({ title: 'A', activeLoanId: 'loan-1', activeLoanTo: 'Juan', activeLoanAt: '2024-06-01' }),
+        makeGame({ title: 'B', activeLoanId: null })
+      ]);
+      component.onlyLoaned.set(true);
+      expect(component.filteredGames()).toHaveLength(1);
+      expect(component.filteredGames()[0].title).toBe('A');
+    });
+
+    it('muestra todos cuando onlyLoaned es false', () => {
+      component.allGames.set([
+        makeGame({ title: 'A', activeLoanId: 'loan-1', activeLoanTo: 'Juan', activeLoanAt: '2024-06-01' }),
+        makeGame({ title: 'B', activeLoanId: null })
+      ]);
+      component.onlyLoaned.set(false);
+      expect(component.filteredGames()).toHaveLength(2);
     });
   });
 
@@ -376,6 +401,8 @@ describe('GameListComponent', () => {
       expect(component.activeFilterCount()).toBe(4);
       component.onlyFavorites.set(true);
       expect(component.activeFilterCount()).toBe(5);
+      component.onlyLoaned.set(true);
+      expect(component.activeFilterCount()).toBe(6);
     });
 
     it('no cuenta el searchTerm en activeFilterCount', () => {
@@ -408,6 +435,7 @@ describe('GameListComponent', () => {
       component.selectedStatus.set('platinum');
       component.selectedFormat.set('physical');
       component.onlyFavorites.set(true);
+      component.onlyLoaned.set(true);
 
       component.clearAllFilters();
 
@@ -417,6 +445,7 @@ describe('GameListComponent', () => {
       expect(component.selectedStatus()).toBe('');
       expect(component.selectedFormat()).toBe('');
       expect(component.onlyFavorites()).toBe(false);
+      expect(component.onlyLoaned()).toBe(false);
     });
   });
 

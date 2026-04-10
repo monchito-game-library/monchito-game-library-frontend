@@ -55,6 +55,21 @@ export interface AuthUseCasesContract {
    * @param {string} displayName - New display name (may include emojis)
    */
   updateDisplayName(displayName: string): Promise<void>;
+
+  /**
+   * Updates the authenticated user's password.
+   * Must be called while a PASSWORD_RECOVERY session is active.
+   *
+   * @param {string} newPassword - New password in plain text
+   */
+  updatePassword(newPassword: string): Promise<AuthResult>;
+
+  /**
+   * Registers a listener that fires when Supabase detects a PASSWORD_RECOVERY session.
+   *
+   * @param {() => void} callback - Called once the recovery session is ready
+   */
+  onPasswordRecovery(callback: () => void): void;
 }
 
 export const AUTH_USE_CASES = new InjectionToken<AuthUseCasesContract>('AUTH_USE_CASES');

@@ -96,6 +96,15 @@ export class GameCardComponent {
   /** Whether the game is a digital copy. */
   readonly isDigital: Signal<boolean> = computed(() => this.game().format === 'digital');
 
+  /** Whether the game currently has an active loan. */
+  readonly isLoaned: Signal<boolean> = computed(() => this.game().activeLoanId !== null);
+
+  /** Display label for the loan chip (borrower's name, truncated to 12 chars). */
+  readonly loanChipLabel: Signal<string> = computed((): string => {
+    const name = this.game().activeLoanTo ?? '';
+    return name.length > 12 ? `${name.slice(0, 12)}…` : name;
+  });
+
   /** CSS object-position for the cover image. */
   readonly coverObjectPosition: Signal<string> = computed((): string => {
     const [x, y] = this._coverParts();

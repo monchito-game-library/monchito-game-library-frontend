@@ -49,4 +49,10 @@ export interface GameModel {
   soldAt: string | null;
   /** Final price obtained from the sale. Null if not sold yet. */
   soldPriceFinal: number | null;
+  /** UUID of the active loan row. Null if the game is not currently on loan. */
+  activeLoanId: string | null;
+  /** Name of the person the game is loaned to. Null if not on loan. */
+  activeLoanTo: string | null;
+  /** Date the active loan started (ISO string). Null if not on loan. */
+  activeLoanAt: string | null;
 }

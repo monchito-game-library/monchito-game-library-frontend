@@ -67,7 +67,7 @@ export class UsersManagementComponent implements OnInit {
         action: 'user.role_change',
         entityType: 'user',
         entityId: user.userId,
-        description: `${user.email}: ${user.role} → ${newRole}`
+        description: `${user.email}: ${this.getRoleLabel(user.role)} → ${this.getRoleLabel(newRole)}`
       });
       this._snackBar.open(this._transloco.translate('management.users.changeRoleSuccess'), '', {
         duration: 3000,

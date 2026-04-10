@@ -48,9 +48,11 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
     });
     if (error || !data.user) throw new Error(error?.message ?? 'Registration failed');
 
-    await this._supabase
+    const { error: prefsError } = await this._supabase
       .from('user_preferences')
       .insert({ user_id: data.user.id, theme: 'light', language: 'es', role: 'user' });
+    if (prefsError)
+      throw new Error(`Registration succeeded but failed to create user preferences: ${prefsError.message}`);
 
     return this._mapUser(data.user);
   }
@@ -98,6 +100,28 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
       data: { display_name: displayName }
     });
     if (error) throw new Error(`Failed to update display name: ${error.message}`);
+  }
+
+  /**
+   * Updates the authenticated user's password.
+   * Must be called while a PASSWORD_RECOVERY session is active.
+   *
+   * @param {string} newPassword - New password in plain text
+   */
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await this._supabase.auth.updateUser({ password: newPassword });
+    if (error) throw new Error(error.message);
+  }
+
+  /**
+   * Registers a listener that fires once when Supabase detects a PASSWORD_RECOVERY session.
+   *
+   * @param {() => void} callback - Called when the recovery session is established
+   */
+  onPasswordRecovery(callback: () => void): void {
+    this._supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') callback();
+    });
   }
 
   /**

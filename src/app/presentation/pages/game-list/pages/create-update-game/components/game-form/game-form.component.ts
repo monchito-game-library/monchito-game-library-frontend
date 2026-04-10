@@ -445,7 +445,10 @@ export class GameFormComponent implements OnInit {
         forSale: this._saleData.forSale,
         salePrice: this._saleData.salePrice,
         soldAt: this._saleData.soldAt,
-        soldPriceFinal: this._saleData.soldPriceFinal
+        soldPriceFinal: this._saleData.soldPriceFinal,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;

@@ -161,7 +161,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.successMessage()).toContain('Registration successful');
+      expect(component.successMessage()).toBe('auth.register.successMessage');
     });
 
     it('navega a /auth/login 3 segundos después del éxito', async () => {
@@ -195,7 +195,7 @@ describe('RegisterComponent', () => {
       expect(component.successMessage()).toBe('');
     });
 
-    it('usa "Registration failed" como error por defecto', async () => {
+    it('usa la clave de traducción como error por defecto', async () => {
       mockAuthUseCases.signUp.mockResolvedValue({ success: false });
       component.registerForm.setValue({
         displayName: 'Alice',
@@ -206,7 +206,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Registration failed');
+      expect(component.errorMessage()).toBe('auth.register.registrationFailed');
     });
 
     it('loading vuelve a false tras completar', async () => {
