@@ -484,25 +484,6 @@ export class GameFormComponent implements OnInit {
     this._location.back();
   }
 
-  async onDelete(): Promise<void> {
-    if (!this._gameUuid) return;
-
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this._transloco.translate('gameCard.dialog.delete.title'),
-        message: this._transloco.translate('gameCard.dialog.delete.message')
-      } satisfies ConfirmDialogInterface
-    });
-
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (confirmed && this._gameUuid) {
-        await this._gameUseCases.deleteGame(this._userContext.requireUserId(), this._gameUuid);
-        this._userPreferencesState.allGames.set([]);
-        void this._router.navigate(['/list']);
-      }
-    });
-  }
-
   /**
    * Opens the cover repositioning dialog for the current image.
    * Updates the cover position signal if the user confirms.

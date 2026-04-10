@@ -10,10 +10,11 @@ import {
 } from '@angular/core';
 import { CurrencyPipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -62,30 +63,10 @@ export class GameDetailComponent implements OnInit {
   /** All available stores, used to resolve the store UUID to a label. */
   readonly stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
 
-  /** Whether the cover image has finished loading. */
-  readonly imageLoaded: WritableSignal<boolean> = signal<boolean>(false);
-
   /** Cover image URL with fallback to default cover. */
   readonly coverUrl: Signal<string> = computed((): string => {
     const g = this.game();
     return g?.imageUrl ?? defaultGameCover;
-  });
-
-  /** CSS background-size scale derived from coverPosition. */
-  readonly coverBackgroundPosition: Signal<string> = computed((): string => {
-    const pos = this.game()?.coverPosition;
-    if (!pos) return '50% 50%';
-    const parts = pos.split(' ');
-    return `${parts[0] ?? '50%'} ${parts[1] ?? '50%'}`;
-  });
-
-  /** CSS transform scale derived from coverPosition. */
-  readonly coverScale: Signal<string> = computed((): string => {
-    const pos = this.game()?.coverPosition;
-    if (!pos) return 'scale(1)';
-    const parts = pos.split(' ');
-    const scale = parts.length >= 3 ? parseFloat(parts[2]) : 1;
-    return `scale(${scale})`;
   });
 
   /** Status option matching the current game's status. */
@@ -98,6 +79,18 @@ export class GameDetailComponent implements OnInit {
     const storeId = this.game()?.store;
     if (!storeId) return null;
     return this.stores().find((s) => s.id === storeId)?.label ?? null;
+  });
+
+  /** Translation key for the game format label. Null when format is not set. */
+  readonly formatKey: Signal<string | null> = computed(() => {
+    const fmt = this.game()?.format;
+    return fmt ? `gameList.filters.${fmt}` : null;
+  });
+
+  /** Translation key for the game condition label. Null when condition is not set. */
+  readonly conditionKey: Signal<string | null> = computed(() => {
+    const cond = this.game()?.condition;
+    return cond ? `gameDetail.condition.${cond}` : null;
   });
 
   /** Star array for the rating display (0–5 stars from a 0–10 rating). */
@@ -140,31 +133,30 @@ export class GameDetailComponent implements OnInit {
 
   /**
    * Opens a confirmation dialog and deletes the game if confirmed.
-   * Navigates back to the list on success.
+   * Navigates to the list on success.
    */
-  deleteGame(): void {
+  async deleteGame(): Promise<void> {
     const game = this.game();
     if (!game?.uuid) return;
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
+    const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')
       } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
-      if (confirmed && game.uuid) {
-        this.deleting.set(true);
-        try {
-          await this._gameUseCases.deleteGame(this._userId, game.uuid);
-          void this._router.navigate(['/list']);
-        } catch {
-          this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
-          this.deleting.set(false);
-        }
-      }
-    });
+    const confirmed: boolean | undefined = await firstValueFrom(ref.afterClosed());
+    if (!confirmed || !game.uuid) return;
+
+    this.deleting.set(true);
+    try {
+      await this._gameUseCases.deleteGame(this._userId, game.uuid);
+      void this._router.navigate(['/list']);
+    } catch {
+      this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
+      this.deleting.set(false);
+    }
   }
 
   /**
