@@ -148,6 +148,7 @@ Registro de acciones administrativas. Escrito por los use-cases de auditoría tr
 |---|---|---|
 | `id` | UUID PK | `gen_random_uuid()` |
 | `performed_by` | UUID FK auth.users NOT NULL | Usuario que realizó la acción |
+| `performed_by_email` | TEXT | Email del usuario en el momento de la acción (nullable para compatibilidad con filas anteriores) |
 | `action` | TEXT NOT NULL | Código de la acción, ej. `'store.create'` |
 | `entity_type` | TEXT NOT NULL | Tipo de entidad afectada, ej. `'store'` |
 | `entity_id` | TEXT | ID de la entidad afectada (como texto), nullable |
