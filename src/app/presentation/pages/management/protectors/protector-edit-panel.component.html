@@ -100,6 +100,10 @@
               | transloco
           }}
         </button>
+        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
+          <mat-icon>delete</mat-icon>
+          {{ 'management.products.deleteBtn' | transloco }}
+        </button>
       }
       <div class="edit-panel__actions-right">
         <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>

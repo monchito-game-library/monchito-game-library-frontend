@@ -78,6 +78,9 @@ export class ProtectorEditPanelComponent {
   /** Emitted when the user toggles the active state of the protector. */
   readonly toggled = output<void>();
 
+  /** Emitted when the user requests deletion of the protector. */
+  readonly deleted = output<void>();
+
   readonly form = this._fb.group({
     name: ['' as string, Validators.required],
     category: ['box' as ProtectorCategory],
@@ -296,6 +299,32 @@ export class ProtectorsManagementComponent implements OnInit {
   getMinUnitPrice(protector: ProtectorModel): number {
     if (!protector.packs.length) return 0;
     return Math.min(...protector.packs.map((p) => p.price / p.quantity));
+  }
+
+  /**
+   * Shows a confirmation dialog and permanently deletes the protector.
+   *
+   * @param {ProtectorModel} protector - Protector a eliminar
+   */
+  onDeleteProtector(protector: ProtectorModel): void {
+    const ref = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._transloco.translate('management.products.deleteConfirm', { name: protector.name }),
+        message: ''
+      } satisfies ConfirmDialogInterface
+    });
+    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      await this._protectorUseCases.deleteProtector(protector.id);
+      void this._auditLogUseCases.log({
+        action: 'protector.delete',
+        entityType: 'protector',
+        entityId: protector.id,
+        description: protector.name
+      });
+      await this._loadProtectors();
+      this.onClosePanel();
+    });
   }
 
   /**

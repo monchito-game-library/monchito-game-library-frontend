@@ -33,6 +33,13 @@ export interface ProtectorRepositoryContract {
    * @param {boolean} isActive - Si el protector está activo
    */
   toggleActive(id: string, isActive: boolean): Promise<ProtectorModel>;
+
+  /**
+   * Permanently deletes a protector from the catalogue.
+   *
+   * @param {string} id - Protector UUID
+   */
+  delete(id: string): Promise<void>;
 }
 
 export const PROTECTOR_REPOSITORY = new InjectionToken<ProtectorRepositoryContract>('ProtectorRepositoryContract');

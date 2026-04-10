@@ -8,7 +8,8 @@ const mockRepo: ProtectorRepositoryContract = {
   getAll: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
-  toggleActive: vi.fn()
+  toggleActive: vi.fn(),
+  delete: vi.fn()
 };
 
 describe('ProtectorUseCasesImpl', () => {
@@ -72,5 +73,13 @@ describe('ProtectorUseCasesImpl', () => {
     await useCases.toggleProtectorActive('p-1', false);
 
     expect(mockRepo.toggleActive).toHaveBeenCalledWith('p-1', false);
+  });
+
+  it('deleteProtector delega en repo.delete', async () => {
+    vi.mocked(mockRepo.delete).mockResolvedValue();
+
+    await useCases.deleteProtector('p-1');
+
+    expect(mockRepo.delete).toHaveBeenCalledWith('p-1');
   });
 });
