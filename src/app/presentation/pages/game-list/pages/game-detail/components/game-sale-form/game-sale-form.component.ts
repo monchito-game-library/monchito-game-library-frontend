@@ -25,7 +25,7 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
-import { GameSaleForm } from '@/interfaces/forms/game-sale-form.interface';
+import { GameSaleForm, GameSaleFormValue } from '@/interfaces/forms/game-sale-form.interface';
 
 @Component({
   selector: 'app-game-sale-form',
@@ -97,7 +97,7 @@ export class GameSaleFormComponent implements OnInit {
    * Returns true when both soldPriceFinal and soldAt are filled in.
    */
   get canMarkAsSold(): boolean {
-    const { soldPriceFinal, soldAt } = this.form.getRawValue();
+    const { soldPriceFinal, soldAt }: GameSaleFormValue = this.form.getRawValue();
     return soldPriceFinal !== null && soldPriceFinal > 0 && !!soldAt;
   }
 
@@ -114,7 +114,7 @@ export class GameSaleFormComponent implements OnInit {
    */
   async onSave(): Promise<void> {
     const g = this.game();
-    const raw = this.form.getRawValue();
+    const raw: GameSaleFormValue = this.form.getRawValue();
 
     const sale: GameSaleStatusModel = {
       forSale: raw.forSale,
@@ -146,7 +146,7 @@ export class GameSaleFormComponent implements OnInit {
   async onMarkAsSold(): Promise<void> {
     if (!this.canMarkAsSold) return;
     const g = this.game();
-    const raw = this.form.getRawValue();
+    const raw: GameSaleFormValue = this.form.getRawValue();
 
     const sale: GameSaleStatusModel = {
       forSale: false,

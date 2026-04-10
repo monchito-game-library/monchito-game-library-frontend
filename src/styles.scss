@@ -47,8 +47,8 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-// Oculta los spin buttons nativos de los inputs numéricos en toda la app
-// para que los sufijos de Angular Material (€, unidades, etc.) tengan espacio
+// Oculta los spin buttons nativos de inputs numéricos para que matTextSuffix
+// (€, unidades, etc.) tenga espacio y no quede superpuesto al valor del input
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;

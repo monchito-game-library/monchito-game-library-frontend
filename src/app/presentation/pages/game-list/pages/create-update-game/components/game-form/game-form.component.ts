@@ -57,6 +57,7 @@ import { UserPreferencesService } from '@/services/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { selectOneValidator } from '@/shared/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
+import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
@@ -124,11 +125,11 @@ export class GameFormComponent implements OnInit {
   /** Supabase UUID of the user_games row — set in edit mode for direct DB updates. */
   private _gameUuid?: string;
   /** Sale fields preserved from the loaded game — not editable in this form. */
-  private _saleData = {
+  private _saleData: GameSaleStatusModel = {
     forSale: false,
-    salePrice: null as number | null,
-    soldAt: null as string | null,
-    soldPriceFinal: null as number | null
+    salePrice: null,
+    soldAt: null,
+    soldPriceFinal: null
   };
   /** Catalog entry passed from the wishlist "I have this game" action via router state. */
   private _pendingCatalogEntry: GameCatalogDto | null = null;

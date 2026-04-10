@@ -8,57 +8,13 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Página de detalle de juego (`/games/:id`)](#página-de-detalle-de-juego-gamesid) | **Muy alta** |
-| [Préstamos de juegos](#préstamos-de-juegos) | Alta |
-| [Juegos a la venta](#juegos-a-la-venta) | Alta |
+| [Préstamos de juegos](#préstamos-de-juegos) | **Alta** |
+| [Historial de ventas (`/games/sold`)](#historial-de-ventas-gamessold) | Media |
+| [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
-
----
-
-## Muy alta prioridad
-
-### Página de detalle de juego (`/games/:id`)
-
-Actualmente pulsar en una card abre directamente el formulario de edición. Con esta mejora se abre primero una página de detalle completa, con los botones de editar y eliminar dentro. Más limpio y con mucha más información disponible.
-
-#### Estructura de la página
-
-**Sección personal (datos de `user_games`)**
-- Estado, plataforma, formato, condición, edición
-- Precio pagado, tienda, fecha de compra
-- Valoración personal y reseña
-- Fechas de inicio, completado y platino
-- Notas personales
-- Botones: **Editar** (abre el formulario actual) y **Eliminar**
-
-**Sección RAWG (datos de `game_catalog` + llamadas a la API)**
-- Descripción completa
-- Rating RAWG, puntuación Metacritic, clasificación ESRB
-- Plataformas disponibles, géneros, desarrolladores, publishers
-- Screenshots (carrusel)
-- Tiendas donde comprarlo con links directos
-- DLCs disponibles
-- Juegos de la misma saga
-
-#### Navegación
-
-- La card deja de abrir el formulario de edición directamente — ahora navega a `/games/:id`.
-- El botón **Editar** dentro del detalle abre el formulario actual (sin cambios en él).
-- El botón volver regresa a la colección manteniendo los filtros activos.
-
-#### Implementación
-
-- Nueva ruta `/games/:id` con `GameDetailPage`.
-- Los datos personales se leen de `user_games_full` (ya disponible).
-- Los datos de RAWG que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
-  - `/games/{id}` — descripción completa, tiendas, ESRB
-  - `/games/{id}/screenshots` — capturas
-  - `/games/{id}/additions` — DLCs
-- Si el juego es `source = 'manual'` (sin `rawg_id`), mostrar solo los datos personales y ocultar las secciones de RAWG.
-- Cachear las respuestas de RAWG en memoria durante la sesión.
 
 ---
 
@@ -70,7 +26,7 @@ Marcar un juego físico de la colección como prestado a un amigo para que quede
 
 #### Comportamiento
 
-- Desde la card o la futura página de detalle del juego, el usuario pulsa **"Prestar"**.
+- Desde la card o la página de detalle del juego, el usuario pulsa **"Prestar"**.
 - En desktop se abre un `MatDialog`; en mobile (≤768px) un `MatBottomSheet` (patrón ya establecido en el proyecto).
 - El formulario tiene dos campos: **¿A quién?** (texto libre) y **Fecha** (date picker, hoy por defecto).
 - Al guardar, el juego muestra un chip en la card con icono `person` + nombre truncado (~12 chars): _"Prestado · Juan G."_.
@@ -85,12 +41,12 @@ Marcar un juego físico de la colección como prestado a un amigo para que quede
 
 - Chip compacto en la zona overlay de la card (misma fila que la plataforma), visible tanto en desktop como en mobile.
 - En mobile de 2 columnas (≤600px), el chip muestra solo el icono + nombre muy corto para no desbordar.
-- Si el juego está prestado **y** a la venta a la vez, ambos indicadores conviven: el chip de préstamo con texto y el icono de venta sin texto (ver _Juegos a la venta_).
+- Si el juego está prestado **y** a la venta a la vez, ambos indicadores conviven: el chip de préstamo con texto y el icono de venta sin texto.
 - Filtro **"Prestados"** en la colección para ver todos los juegos actualmente fuera de la estantería.
 
 #### Historial
 
-El historial completo de préstamos (quién lo tuvo y cuándo) se mostrará en la **página de detalle del juego** (feature de alta prioridad, prerequisito). No existe vista de historial hasta que esa página esté implementada.
+El historial completo de préstamos (quién lo tuvo y cuándo) se mostrará en la **página de detalle del juego**.
 
 #### Modelo de datos
 
@@ -113,59 +69,47 @@ RLS: solo el propietario del `user_game` puede leer y escribir sus préstamos.
 
 ---
 
-### Juegos a la venta
+## Media prioridad
 
-Marcar juegos físicos de la colección que ya no interesan y se quieren vender. Independiente del estado del juego — se puede tener un juego `completed`, `platinum` o `backlog` y querer venderlo igualmente.
+### Historial de ventas (`/games/sold`)
 
-#### Comportamiento
+Página que muestra los juegos ya vendidos (aquellos con `sold_at IS NOT NULL`). Derivada de la feature de venta, que ya está implementada — los datos existen, solo falta la vista.
 
-- Toggle **"Poner a la venta"** en el formulario de edición del juego, solo visible cuando `format = 'physical'`.
-- Al activarlo aparece un campo opcional **Precio de venta deseado** (€).
-- El juego muestra en la card un icono `sell` (o `local_offer`) sin texto — el significado es autoevidente y ocupa mínimo espacio.
-- Filtro **"En venta"** en la colección para ver todos los juegos marcados.
+#### UI
 
-#### Registro de venta
-
-Cuando finalmente se vende el juego, el usuario puede registrar la venta desde el formulario de edición:
-- **Precio de venta final** (puede diferir del deseado).
-- **Fecha de venta**.
-- Al guardar, el juego desaparece de la colección activa pero permanece en el **historial de ventas**.
-
-#### Historial de ventas
-
-- Accesible desde un filtro en la colección que navega a una página nueva (`/games/sold` o similar).
+- Accesible desde un filtro en la colección o ruta directa `/games/sold`.
 - Cards estilo lista (no grid), más compactas, orientadas a la información:
   - Portada pequeña + título + plataforma.
   - Precio pagado originalmente → precio de venta final (y la diferencia si se quiere mostrar).
   - Fecha de venta.
-- Sin acciones — es solo consulta. Útil para no repetir juegos ya vendidos o para recordar a cuánto se vendió si se quiere recomprar.
-
-#### Filtros desktop — "Más filtros"
-
-Con la incorporación de _Prestados_, _En venta_ y futuros filtros, la barra de filtros desktop empieza a tener demasiados elementos inline. Junto a esta feature se añadirá un botón **"Más filtros"** en desktop que agrupa los menos frecuentes, dejando visibles solo los más usados:
-
-- **Siempre visibles:** Búsqueda, Estado, Plataforma, Favoritos, Prestados, En venta.
-- **Bajo "Más filtros":** Tienda, Formato, Condición, Ordenar por.
-
-En mobile ya existe el bottom sheet que los agrupa todos — no hay cambio ahí.
-
-#### Modelo de datos
-
-Nuevas columnas en `user_games`:
-
-```sql
-ALTER TABLE user_games
-  ADD COLUMN for_sale          BOOLEAN       NOT NULL DEFAULT FALSE,
-  ADD COLUMN sale_price        NUMERIC(10,2),          -- precio deseado
-  ADD COLUMN sold_at           DATE,                   -- fecha de venta real
-  ADD COLUMN sold_price_final  NUMERIC(10,2);          -- precio final obtenido
-```
-
-Un juego está "activo" en la colección si `sold_at IS NULL`. Un juego está "a la venta" si `for_sale = TRUE AND sold_at IS NULL`.
+- Sin acciones — es solo consulta. Útil para no repetir juegos ya vendidos o para recordar a cuánto se vendió.
 
 ---
 
-## Media prioridad
+### Integración RAWG en detalle de juego
+
+La página de detalle ya muestra todos los datos personales de `user_games`. Queda integrar los datos externos de RAWG para juegos con `rawg_id`.
+
+#### Sección RAWG (datos de `game_catalog` + llamadas a la API)
+
+- Descripción completa
+- Rating RAWG, puntuación Metacritic, clasificación ESRB
+- Plataformas disponibles, géneros, desarrolladores, publishers
+- Screenshots (carrusel)
+- Tiendas donde comprarlo con links directos
+- DLCs disponibles
+- Juegos de la misma saga
+
+#### Implementación
+
+- Los datos que no están en `game_catalog` (DLCs, saga, tiendas con links) se piden en paralelo al endpoint de RAWG usando el `rawg_id` del juego:
+  - `/games/{id}` — descripción completa, tiendas, ESRB
+  - `/games/{id}/screenshots` — capturas
+  - `/games/{id}/additions` — DLCs
+- Si el juego es `source = 'manual'` (sin `rawg_id`), ocultar las secciones de RAWG.
+- Cachear las respuestas de RAWG en memoria durante la sesión.
+
+---
 
 ### Recomendaciones de juegos
 
@@ -368,3 +312,23 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 - La fase 2 es prerequisito de las fases 3 y 4.
 - Cada fase es independiente y desplegable por separado.
 - Los campos de valoración personal (`personal_rating`, `personal_review`) son los más sensibles — considerar ocultarlos por defecto en perfiles públicos y que el usuario los active explícitamente.
+
+---
+
+## Completado
+
+### ~~Página de detalle de juego (`/games/:id`) — sección personal~~ ✅
+
+Página con ruta propia `/games/:id`. La card navega a la página de detalle en lugar de abrir directamente el formulario de edición. La página muestra todos los datos personales del juego (estado, plataforma, formato, condición, precio, tienda, valoración, notas, fechas) junto con los botones de editar, eliminar y gestión de venta. La integración RAWG (descripción, screenshots, etc.) queda pendiente — ver [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego).
+
+---
+
+### ~~Juegos a la venta~~ ✅
+
+Toggle **"Gestionar venta"** desde la página de detalle del juego. Permite marcar un juego como disponible para vender con precio de venta deseado, y registrar la venta final con precio obtenido y fecha. Al registrar la venta el juego desaparece de la colección activa. Chip `sell` en la card indicando que el juego está a la venta, con precio si lo tiene. Filtro **"En venta"** en la colección. La vista de historial de ventas queda pendiente — ver [Historial de ventas](#historial-de-ventas-gamessold).
+
+---
+
+### ~~Rediseño mobile de wishlist~~ ✅
+
+Vista de detalle de item en pantalla completa en lugar de bottom sheet para mobile (≤768px portrait). Navegación con back button integrado. Scroll corregido para que el último item sea completamente visible.
