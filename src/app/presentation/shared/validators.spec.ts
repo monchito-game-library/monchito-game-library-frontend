@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { selectOneValidator } from '@/shared/validators';
+import { selectOneValidator, validDateValidator } from '@/shared/validators';
 
 describe('selectOneValidator', () => {
   const allowed = ['PS5', 'PS4', 'SWITCH'] as const;
@@ -33,5 +33,31 @@ describe('selectOneValidator', () => {
   it('funciona con lista vacía (ningún valor es válido)', () => {
     const empty = selectOneValidator([]);
     expect(empty({ value: 'anything' as never })).toEqual({ invalidOption: true });
+  });
+});
+
+describe('validDateValidator', () => {
+  it('devuelve null para una fecha válida', () => {
+    expect(validDateValidator({ value: '2024-06-01' })).toBeNull();
+  });
+
+  it('devuelve null cuando el valor es null', () => {
+    expect(validDateValidator({ value: null })).toBeNull();
+  });
+
+  it('devuelve null cuando el valor es undefined', () => {
+    expect(validDateValidator({ value: undefined })).toBeNull();
+  });
+
+  it('devuelve null cuando el valor es cadena vacía', () => {
+    expect(validDateValidator({ value: '' })).toBeNull();
+  });
+
+  it('devuelve { invalidDate: true } para una cadena que no es fecha', () => {
+    expect(validDateValidator({ value: 'not-a-date' })).toEqual({ invalidDate: true });
+  });
+
+  it('devuelve { invalidDate: true } para una fecha imposible', () => {
+    expect(validDateValidator({ value: '2024-13-99' })).toEqual({ invalidDate: true });
   });
 });

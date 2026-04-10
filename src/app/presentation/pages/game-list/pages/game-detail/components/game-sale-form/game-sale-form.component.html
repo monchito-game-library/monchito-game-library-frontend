@@ -72,6 +72,9 @@
       <mat-form-field appearance="outline" class="game-sale-form__field">
         <mat-label>{{ 'gameDetail.sale.soldAt' | transloco }}</mat-label>
         <input matInput type="date" formControlName="soldAt" />
+        @if (form.controls.soldAt.hasError('invalidDate')) {
+          <mat-error>{{ 'gameDetail.sale.soldAtInvalid' | transloco }}</mat-error>
+        }
       </mat-form-field>
 
       <p class="game-sale-form__warning">

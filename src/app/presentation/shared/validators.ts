@@ -18,3 +18,17 @@ export function selectOneValidator<T>(allowed: readonly T[]): (control: { value:
     return allowed.includes(control.value) ? null : { invalidOption: true };
   };
 }
+
+/**
+ * Validates that the control's value is a valid calendar date (YYYY-MM-DD).
+ * Returns `null` when valid or the value is empty, `{ invalidDate: true }` otherwise.
+ *
+ * @example
+ * new FormControl<string | null>(null, validDateValidator)
+ */
+export function validDateValidator(control: { value: string | null | undefined }): null | { invalidDate: true } {
+  const val = control.value;
+  if (!val) return null;
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? { invalidDate: true } : null;
+}

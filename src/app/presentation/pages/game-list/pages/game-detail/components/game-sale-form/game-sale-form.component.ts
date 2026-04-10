@@ -14,7 +14,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,6 +26,7 @@ import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/ga
 import { UserContextService } from '@/services/user-context.service';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameSaleForm, GameSaleFormValue } from '@/interfaces/forms/game-sale-form.interface';
+import { validDateValidator } from '@/shared/validators';
 
 @Component({
   selector: 'app-game-sale-form',
@@ -38,6 +39,7 @@ import { GameSaleForm, GameSaleFormValue } from '@/interfaces/forms/game-sale-fo
     MatButton,
     MatIconButton,
     MatIcon,
+    MatError,
     MatFormField,
     MatLabel,
     MatSuffix,
@@ -73,7 +75,7 @@ export class GameSaleFormComponent implements OnInit {
     forSale: new FormControl<boolean>(false, { nonNullable: true }),
     salePrice: new FormControl<number | null>(null),
     soldPriceFinal: new FormControl<number | null>(null),
-    soldAt: new FormControl<string | null>(null)
+    soldAt: new FormControl<string | null>(null, validDateValidator)
   });
 
   ngOnInit(): void {
@@ -98,7 +100,9 @@ export class GameSaleFormComponent implements OnInit {
    */
   get canMarkAsSold(): boolean {
     const { soldPriceFinal, soldAt }: GameSaleFormValue = this.form.getRawValue();
-    return soldPriceFinal !== null && soldPriceFinal > 0 && !!soldAt;
+    return (
+      soldPriceFinal !== null && soldPriceFinal > 0 && !!soldAt && !this.form.controls.soldAt.hasError('invalidDate')
+    );
   }
 
   /**
