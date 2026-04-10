@@ -109,7 +109,7 @@ export class GameDetailComponent implements OnInit {
   ngOnInit(): void {
     const uuid = this._route.snapshot.paramMap.get('id');
     if (!uuid) {
-      void this._router.navigate(['/list']);
+      void this._router.navigate(['/games']);
       return;
     }
     void this._loadData(uuid);
@@ -152,7 +152,7 @@ export class GameDetailComponent implements OnInit {
     this.deleting.set(true);
     try {
       await this._gameUseCases.deleteGame(this._userId, game.uuid);
-      void this._router.navigate(['/list']);
+      void this._router.navigate(['/games']);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
       this.deleting.set(false);
@@ -172,7 +172,7 @@ export class GameDetailComponent implements OnInit {
       ]);
 
       if (!game) {
-        void this._router.navigate(['/list']);
+        void this._router.navigate(['/games']);
         return;
       }
 
@@ -180,7 +180,7 @@ export class GameDetailComponent implements OnInit {
       this.stores.set(stores);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
-      void this._router.navigate(['/list']);
+      void this._router.navigate(['/games']);
     } finally {
       this.loading.set(false);
     }
