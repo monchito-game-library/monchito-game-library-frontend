@@ -186,6 +186,10 @@ export class GameDetailComponent implements OnInit {
    * @param {GameEditModel} updated - Game model with the new sale values applied
    */
   onSaleSaved(updated: GameEditModel): void {
+    if (updated.soldAt) {
+      void this._router.navigate(['/games']);
+      return;
+    }
     this.game.set(updated);
     this.showSaleForm.set(false);
   }
