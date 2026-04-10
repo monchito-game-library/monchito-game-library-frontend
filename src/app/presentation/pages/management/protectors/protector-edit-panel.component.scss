@@ -111,6 +111,11 @@
   border-color: var(--mat-sys-primary);
 }
 
+.edit-panel__delete-btn {
+  color: var(--mat-sys-error);
+  border-color: var(--mat-sys-error);
+}
+
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .edit-panel__header {

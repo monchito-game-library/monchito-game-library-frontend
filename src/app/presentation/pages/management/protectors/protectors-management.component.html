@@ -13,7 +13,8 @@
         [protector]="selectedProtector() ?? null"
         (saved)="onSaved($event)"
         (cancelled)="onClosePanel()"
-        (toggled)="onToggleActive(selectedProtector()!)" />
+        (toggled)="onToggleActive(selectedProtector()!)"
+        (deleted)="onDeleteProtector(selectedProtector()!)" />
     </div>
   }
 
