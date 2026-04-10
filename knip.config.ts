@@ -16,8 +16,8 @@ const config: KnipConfig = {
     'angular-cli-ghpages',
     // SCSS compilation handled by Angular builder
     'sass',
-    // Vitest / coverage wired via Angular test builder, not direct imports
-    '@vitest/coverage-v8',
+    // Git hooks runner — invoked via .husky/pre-commit, not imported in source
+    'husky',
     // ESLint toolchain loaded by config dynamically, not explicit imports
     'angular-eslint',
     'typescript-eslint',
