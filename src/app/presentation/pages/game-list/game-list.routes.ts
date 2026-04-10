@@ -9,7 +9,7 @@ export const gameListRoutes: Routes = [
   },
   {
     path: ':id',
-    loadComponent: () => import('./game-detail/game-detail.component').then((m) => m.GameDetailComponent),
+    loadComponent: () => import('./pages/game-detail/game-detail.component').then((m) => m.GameDetailComponent),
     canActivate: [canActivateUser]
   }
 ];
