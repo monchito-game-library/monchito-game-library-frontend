@@ -680,16 +680,16 @@ describe('GameListComponent — router subscription', () => {
     await component.ngOnInit();
   });
 
-  it('recarga los juegos al navegar a /list', () => {
+  it('recarga los juegos al navegar a /games', () => {
     const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
     const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
 
-    routerEvents$.next(new NavigationEnd(1, '/list', '/list'));
+    routerEvents$.next(new NavigationEnd(1, '/games', '/games'));
 
     expect(gameUseCases.getAllGamesForList.mock.calls.length).toBeGreaterThan(callsBefore);
   });
 
-  it('no recarga los juegos si la URL no empieza por /list', () => {
+  it('no recarga los juegos si la URL no empieza por /games', () => {
     const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
     const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
 

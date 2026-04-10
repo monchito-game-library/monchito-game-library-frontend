@@ -36,7 +36,7 @@ describe('canActivateAdmin', () => {
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 
-  it('devuelve false y redirige a /list cuando las preferencias están cargadas y el usuario no es admin', () => {
+  it('devuelve false y redirige a /games cuando las preferencias están cargadas y el usuario no es admin', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: UserPreferencesService, useValue: buildMockPreferences(false, true) },
@@ -47,7 +47,7 @@ describe('canActivateAdmin', () => {
     const result = TestBed.runInInjectionContext(() => canActivateAdmin({} as never, {} as never));
 
     expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/list');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
   });
 
   it('devuelve Observable que resuelve true cuando preferencesLoaded cambia y el usuario es admin', async () => {
@@ -94,6 +94,6 @@ describe('canActivateAdmin', () => {
     TestBed.flushEffects();
 
     expect(await promise).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/list');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
   });
 });

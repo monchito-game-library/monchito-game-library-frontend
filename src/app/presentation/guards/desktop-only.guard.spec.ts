@@ -41,21 +41,21 @@ describe('canActivateDesktopOnly', () => {
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 
-  it('devuelve false y redirige a /list cuando el ancho es menor que el mínimo', () => {
+  it('devuelve false y redirige a /games cuando el ancho es menor que el mínimo', () => {
     setViewportWidth(767);
 
     const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
 
     expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/list');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
   });
 
-  it('devuelve false y redirige a /list en pantallas muy pequeñas (320px)', () => {
+  it('devuelve false y redirige a /games en pantallas muy pequeñas (320px)', () => {
     setViewportWidth(320);
 
     const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
 
     expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/list');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
   });
 });
