@@ -63,18 +63,6 @@
 
 .game-sale-form__field {
   width: 100%;
-
-  // Oculta los botones nativos de incremento/decremento de los inputs numéricos
-  // para que el sufijo (€) no quede cortado
-  input[type='number']::-webkit-inner-spin-button,
-  input[type='number']::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  input[type='number'] {
-    -moz-appearance: textfield;
-  }
 }
 
 .game-sale-form__save-btn,
