@@ -407,6 +407,7 @@
     "title": "Sales history",
     "empty": "You haven't sold any games yet.",
     "paid": "Paid",
+    "sold": "Sold",
     "snack": {
       "loadError": "Error loading sales history"
     }

@@ -1,0 +1,72 @@
+<div class="sold-games-page">
+  <header class="sold-games-page__header">
+    <button mat-icon-button (click)="onBack()" [attr.aria-label]="'common.back' | transloco">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="sold-games-page__title">{{ 'soldGames.title' | transloco }}</h1>
+  </header>
+
+  @if (loading()) {
+    <div class="sold-games-page__loading">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (soldGames().length === 0) {
+    <div class="sold-games-page__empty">
+      <mat-icon class="sold-games-page__empty-icon">sell</mat-icon>
+      <p class="sold-games-page__empty-text">{{ 'soldGames.empty' | transloco }}</p>
+    </div>
+  } @else {
+    <div class="sold-games-list">
+      @for (game of soldGames(); track game.uuid) {
+        <div class="sold-game-card">
+          <div class="sold-game-card__cover-wrap">
+            @if (game.imageUrl) {
+              <img
+                class="sold-game-card__cover"
+                [src]="game.imageUrl"
+                [alt]="game.title"
+                [style.object-position]="game.coverPosition ?? '50% 50%'"
+                width="56"
+                height="80" />
+            } @else {
+              <div class="sold-game-card__cover-placeholder">
+                <mat-icon>sports_esports</mat-icon>
+              </div>
+            }
+          </div>
+
+          <div class="sold-game-card__info">
+            <span class="sold-game-card__title">{{ game.title }}</span>
+            @if (game.platform) {
+              <span class="sold-game-card__platform">{{ getPlatformLabel(game.platform) }}</span>
+            }
+            <div class="sold-game-card__prices">
+              @if (game.price != null) {
+                <span class="sold-game-card__price-paid">
+                  {{ 'soldGames.paid' | transloco }}: {{ game.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              }
+              @if (game.soldPriceFinal != null) {
+                <span class="sold-game-card__price-sold">
+                  {{ 'soldGames.sold' | transloco }}: {{ game.soldPriceFinal | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              }
+              @if (getDiff(game); as diff) {
+                <span
+                  class="sold-game-card__diff"
+                  [class.sold-game-card__diff--positive]="diff >= 0"
+                  [class.sold-game-card__diff--negative]="diff < 0">
+                  {{ diff >= 0 ? '+' : '' }}{{ diff | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="sold-game-card__date">
+            {{ game.soldAt | date: 'dd/MM/yy' }}
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
