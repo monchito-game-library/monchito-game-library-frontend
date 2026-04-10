@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   inject,
+  OnDestroy,
   OnInit,
   Signal,
   signal,
@@ -65,7 +66,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     TranslocoPipe
   ]
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -78,6 +79,7 @@ export class SettingsComponent implements OnInit {
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
+  private _focusTimer: ReturnType<typeof setTimeout> | null = null;
 
   /** Available languages for the language selector. */
   readonly availableLanguages: AvailableLanguageInterface[] = availableLangConstant;
@@ -143,6 +145,10 @@ export class SettingsComponent implements OnInit {
     });
 
     void this._loadInitialBanners();
+  }
+
+  ngOnDestroy(): void {
+    if (this._focusTimer !== null) clearTimeout(this._focusTimer);
   }
 
   /**
@@ -232,7 +238,7 @@ export class SettingsComponent implements OnInit {
   onEditName(): void {
     this.nameInputValue.set(this.getDisplayName());
     this.editingName.set(true);
-    setTimeout(() => this.nameInputRef?.nativeElement.focus(), 0);
+    this._focusTimer = setTimeout(() => this.nameInputRef?.nativeElement.focus(), 0);
   }
 
   /**

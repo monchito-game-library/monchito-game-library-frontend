@@ -72,6 +72,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private _orderId: string = '';
   private _unsubscribeMembers?: () => void;
   private _unsubscribeLines?: () => void;
+  private _editingLayoutTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly userContext: UserContextService = inject(UserContextService);
 
@@ -140,6 +141,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeMembers?.();
     this._unsubscribeLines?.();
+    if (this._editingLayoutTimer !== null) clearTimeout(this._editingLayoutTimer);
   }
 
   /**
@@ -207,7 +209,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    */
   onInfoEditingStarted(): void {
     this.editingHeader.set(true);
-    setTimeout(() => this.editingLayout.set(true), 300);
+    if (this._editingLayoutTimer !== null) clearTimeout(this._editingLayoutTimer);
+    this._editingLayoutTimer = setTimeout(() => this.editingLayout.set(true), 300);
   }
 
   /**
