@@ -31,7 +31,11 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     personalRating: dto.personal_rating ?? null,
     edition: dto.edition ?? null,
     format: (dto.format ?? null) as GameFormatType | null,
-    isFavorite: dto.is_favorite ?? false
+    isFavorite: dto.is_favorite ?? false,
+    forSale: dto.for_sale ?? false,
+    salePrice: dto.sale_price ?? null,
+    soldAt: dto.sold_at ?? null,
+    soldPriceFinal: dto.sold_price_final ?? null
   };
 }
 
@@ -62,7 +66,11 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     releasedDate: dto.released_date ?? null,
     rawgRating: dto.rawg_rating ?? 0,
     genres: dto.genres ?? [],
-    coverPosition: dto.cover_position ?? null
+    coverPosition: dto.cover_position ?? null,
+    forSale: dto.for_sale ?? false,
+    salePrice: dto.sale_price ?? null,
+    soldAt: dto.sold_at ?? null,
+    soldPriceFinal: dto.sold_price_final ?? null
   };
 }
 
@@ -87,7 +95,10 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
     edition: dto.edition ?? null,
     format: (dto.format ?? null) as GameFormatType | null,
     isFavorite: dto.is_favorite ?? false,
-    coverPosition: dto.cover_position ?? null
+    coverPosition: dto.cover_position ?? null,
+    forSale: dto.for_sale ?? false,
+    soldAt: dto.sold_at ?? null,
+    soldPriceFinal: dto.sold_price_final ?? null
   };
 }
 
@@ -110,6 +121,10 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
     edition: model.edition,
     format: model.format,
     is_favorite: model.isFavorite,
-    cover_position: model.coverPosition ?? null
+    cover_position: model.coverPosition ?? null,
+    for_sale: model.forSale ?? false,
+    sale_price: model.salePrice ?? null,
+    sold_at: model.soldAt ?? null,
+    sold_price_final: model.soldPriceFinal ?? null
   };
 }

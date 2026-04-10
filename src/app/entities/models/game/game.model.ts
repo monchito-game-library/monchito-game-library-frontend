@@ -41,4 +41,12 @@ export interface GameModel {
   isFavorite: boolean;
   /** CSS object-position value for the cover image (e.g. "50% 30%"). Null uses browser default. */
   coverPosition?: string | null;
+  /** Whether the game is currently listed for sale. */
+  forSale: boolean;
+  /** Desired selling price. Null if not set. */
+  salePrice: number | null;
+  /** Date the game was sold (ISO string). Null while still active. */
+  soldAt: string | null;
+  /** Final price obtained from the sale. Null if not sold yet. */
+  soldPriceFinal: number | null;
 }

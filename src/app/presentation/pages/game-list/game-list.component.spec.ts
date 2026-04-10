@@ -28,6 +28,9 @@ function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
     edition: null,
     format: null,
     isFavorite: false,
+    forSale: false,
+    soldAt: null,
+    soldPriceFinal: null,
     ...overrides
   };
 }
