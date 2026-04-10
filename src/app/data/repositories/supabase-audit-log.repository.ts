@@ -28,6 +28,7 @@ export class SupabaseAuditLogRepository implements AuditLogRepositoryContract {
     return (data as AuditLogRowDto[]).map((row) => ({
       id: row.id,
       performedBy: row.performed_by,
+      performedByEmail: row.performed_by_email,
       action: row.action,
       entityType: row.entity_type,
       entityId: row.entity_id,
@@ -50,6 +51,7 @@ export class SupabaseAuditLogRepository implements AuditLogRepositoryContract {
 
     const payload: AuditLogInsertRowDto = {
       performed_by: user.id,
+      performed_by_email: user.email ?? null,
       action: entry.action,
       entity_type: entry.entityType ?? null,
       entity_id: entry.entityId ?? null,
