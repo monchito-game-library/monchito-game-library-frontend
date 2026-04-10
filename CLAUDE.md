@@ -22,6 +22,7 @@
 - [Formularios reactivos Angular](#formularios-reactivos-angular)
 - [Repositorios](#repositorios)
 - [Arquitectura de capas](#arquitectura-de-capas)
+- [Estructura de pages y components](#estructura-de-pages-y-components)
 
 ---
 
@@ -269,3 +270,46 @@ presentation  →  domain (repositorios contratos)  →  data (repositorios impl
 
 - La capa `presentation` nunca importa directamente de `data`.
 - Los contratos de repositorio viven en `domain/repositories/`.
+
+## Estructura de pages y components
+
+Dentro de una page, las piezas se organizan en dos carpetas con semántica distinta:
+
+### `pages/` — vistas con ruta propia
+
+- Cada subcarpeta es una **página hija** con su propia URL.
+- **Siempre** lleva un fichero `*.routes.ts` que define `path: ''` y carga el componente.
+- El padre la monta con `loadChildren` apuntando a ese fichero de rutas.
+
+```
+game-list/
+├── pages/
+│   ├── game-detail/
+│   │   ├── game-detail.component.ts
+│   │   └── game-detail.routes.ts     ← path: ''
+│   └── create-update-game/
+│       ├── create-and-update-game.component.ts
+│       └── create-and-update-game.routes.ts  ← path: ''
+└── game-list.routes.ts               ← monta con loadChildren
+```
+
+```typescript
+// game-list.routes.ts
+{
+  path: ':id',
+  loadChildren: () => import('./pages/game-detail/game-detail.routes').then((m) => m.gameDetailRoutes)
+}
+```
+
+### `components/` — piezas reutilizables sin ruta
+
+- No tienen `*.routes.ts`.
+- Se importan directamente en el template del componente padre.
+- Pueden usarse desde cualquier otra page o component.
+
+```
+game-list/
+└── components/
+    ├── game-card/
+    └── game-list-filters-sheet/
+```
