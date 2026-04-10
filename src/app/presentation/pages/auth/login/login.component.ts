@@ -79,7 +79,7 @@ export class LoginComponent {
     this.loading.set(false);
 
     if (result.success) {
-      const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/list';
+      const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/games';
       void this._router.navigateByUrl(returnUrl);
     } else {
       this.errorMessage.set(result.error ?? 'Login failed');

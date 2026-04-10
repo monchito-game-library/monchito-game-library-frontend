@@ -350,14 +350,17 @@ describe('WishlistComponent', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('navega a /add con el catalog entry si el dialog se confirma', async () => {
+    it('navega a /games/add con el catalog entry si el dialog se confirma', async () => {
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
       await component.onOwnItem(makeItem());
 
-      expect(router.navigate).toHaveBeenCalledWith(['/add'], expect.objectContaining({ state: expect.any(Object) }));
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/games/add'],
+        expect.objectContaining({ state: expect.any(Object) })
+      );
     });
 
     it('establece source como "rawg" cuando rawgId es truthy', async () => {

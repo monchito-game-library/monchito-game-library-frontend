@@ -595,5 +595,20 @@
       "changeRoleSuccess": "Role updated successfully.",
       "changeRoleError": "Failed to update role."
     }
+  },
+  "gameDetail": {
+    "myData": "My data",
+    "notes": "Notes",
+    "catalogInfo": "Catalog information",
+    "released": "Released",
+    "communityRating": "Community rating",
+    "condition": {
+      "new": "New",
+      "used": "Pre-owned"
+    },
+    "snack": {
+      "loadError": "Error loading game",
+      "deleteError": "Error deleting game"
+    }
   }
 }

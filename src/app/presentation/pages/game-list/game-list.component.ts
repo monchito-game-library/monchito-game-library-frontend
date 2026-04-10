@@ -244,7 +244,7 @@ export class GameListComponent implements OnInit, OnDestroy {
     this._routerSubscription = this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        if (event.url === '/list' || event.url.startsWith('/list')) {
+        if (event.url === '/games' || event.url.startsWith('/games')) {
           void this._loadGames(true);
         }
       });

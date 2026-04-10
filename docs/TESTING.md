@@ -102,9 +102,10 @@
 | `pages/auth/forgot-password/forgot-password.component.spec.ts` | 15 | ✅ Cubierto |
 | `pages/auth/login/login.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/auth/register/register.component.spec.ts` | 20 | ✅ Cubierto |
-| `pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/create-update-game/components/game-form/game-form.component.spec.ts` | 84 | ✅ Cubierto |
-| `pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/game-list/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
+| `pages/game-list/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 82 | ✅ Cubierto |
+| `pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/game-list/pages/game-detail/game-detail.component.spec.ts` | 36 | ✅ Cubierto |
 | `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
@@ -148,7 +149,8 @@
 - `GameListComponent`: señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
 - `WishlistComponent`: señales `totalEstimatedSpend`, `itemsWithPrice`, `mobileCanConfirm`; flujo móvil (`onAddItem`, `onEditItem`, `onMobileGameSelected`, `onMobileBackToSearch`, `onMobileCancel`).
 - `SettingsComponent`: valores iniciales, `getDisplayName`/`getUserEmail`/`getAvatarUrl`, edición de nombre (`onEditName`, `onCancelEditName`, `onSaveName`), `toggleTheme`, `onSelectBanner`, `logout`.
-- `GameFormComponent`: valores iniciales, señal computada `coverImages` (con y sin `image_url`), `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store (con y sin valor previo seleccionado).
+- `GameFormComponent`: valores iniciales, señal computada `coverImages` (con y sin `image_url`), `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store (con y sin valor previo seleccionado), `onCancel` (`location.back`).
+- `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame` (dialog cancelado/confirmado, error); señales computadas `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`.
 - `SkeletonComponent`: valores por defecto de los tres inputs (`width`, `height`, `borderRadius`).
 - `AuthComponent` / `CreateAndUpdateGameComponent` / `ConfirmDialogComponent` / `ManagementComponent`: existencia y datos inyectados donde aplica.
 - `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
@@ -222,13 +224,13 @@
 | Repositorios | 9 (+1 pendiente) | 130 |
 | Guards | 3 | 12 |
 | Servicios | 5 | 64 |
-| Componentes | 35 | 706 |
+| Componentes | 36 | 740 |
 | Abstractas | 1 | 29 |
 | App component | 1 | 27 |
 | Utilidades | 4 | 57 |
-| **Total** | **79** | **1292** |
+| **Total** | **80** | **1326** |
 
-> El total de 1292 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
+> El total de 1326 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
 
 ---
 
@@ -236,10 +238,10 @@
 
 | Métrica | Valor |
 |---|---|
-| Statements | ~99.16 % |
-| Branches | ~95.05 % |
-| Functions | ~99.51 % |
-| Lines | ~99.95 % |
+| Statements | 99.15 % |
+| Branches | 95.12 % |
+| Functions | 99.52 % |
+| Lines | 99.9 % |
 
 ```bash
 npm run test:coverage
