@@ -102,6 +102,20 @@ export class GameSaleFormComponent implements OnInit {
   }
 
   /**
+   * Rounds the value of a price control to 2 decimal places on blur.
+   * Keeps the field as null when empty.
+   *
+   * @param {keyof Pick<GameSaleForm, 'salePrice' | 'soldPriceFinal'>} field - Name of the price control to format
+   */
+  onPriceBlur(field: 'salePrice' | 'soldPriceFinal'): void {
+    const control = this.form.controls[field];
+    const raw = control.value;
+    if (raw !== null && !isNaN(raw)) {
+      control.setValue(Math.round(raw * 100) / 100);
+    }
+  }
+
+  /**
    * Navigates back to the data view without saving.
    */
   onCancel(): void {

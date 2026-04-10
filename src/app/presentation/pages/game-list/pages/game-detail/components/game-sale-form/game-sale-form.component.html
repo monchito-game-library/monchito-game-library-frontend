@@ -30,7 +30,8 @@
             min="0"
             step="0.01"
             formControlName="salePrice"
-            [placeholder]="'gameDetail.sale.salePricePlaceholder' | transloco" />
+            [placeholder]="'gameDetail.sale.salePricePlaceholder' | transloco"
+            (blur)="onPriceBlur('salePrice')" />
           <span matSuffix>€</span>
         </mat-form-field>
       }
@@ -65,7 +66,8 @@
           min="0"
           step="0.01"
           formControlName="soldPriceFinal"
-          [placeholder]="'gameDetail.sale.soldPricePlaceholder' | transloco" />
+          [placeholder]="'gameDetail.sale.soldPricePlaceholder' | transloco"
+          (blur)="onPriceBlur('soldPriceFinal')" />
         <span matSuffix>€</span>
       </mat-form-field>
 
