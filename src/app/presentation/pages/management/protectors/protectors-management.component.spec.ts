@@ -33,7 +33,8 @@ describe('ProtectorsManagementComponent', () => {
             getAllProtectors: vi.fn().mockResolvedValue([]),
             addProtector: vi.fn(),
             updateProtector: vi.fn(),
-            toggleProtectorActive: vi.fn()
+            toggleProtectorActive: vi.fn(),
+            deleteProtector: vi.fn()
           }
         },
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn() } },
@@ -153,6 +154,34 @@ describe('ProtectorsManagementComponent', () => {
       await new Promise((r) => setTimeout(r, 0));
 
       expect(protectorUseCases.toggleProtectorActive).toHaveBeenCalledWith('prot-1', true);
+    });
+  });
+
+  describe('onDeleteProtector', () => {
+    it('no llama a deleteProtector si el dialog se cancela', () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+
+      component.onDeleteProtector(makeProtector());
+
+      expect(protectorUseCases.deleteProtector).not.toHaveBeenCalled();
+    });
+
+    it('llama a deleteProtector, cierra el panel y recarga si el dialog se confirma', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.deleteProtector.mockResolvedValue(undefined);
+      protectorUseCases.getAllProtectors.mockResolvedValue([]);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+
+      component.panelOpen.set(true);
+      component.selectedProtector.set(makeProtector());
+      component.onDeleteProtector(makeProtector());
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(protectorUseCases.deleteProtector).toHaveBeenCalledWith('prot-1');
+      expect(component.panelOpen()).toBe(false);
     });
   });
 
@@ -286,6 +315,22 @@ describe('ProtectorEditPanelComponent — template real', () => {
     const spy = vi.spyOn(component.toggled, 'emit');
     const toggleBtn: HTMLButtonElement = fixture.nativeElement.querySelector('[mat-stroked-button]');
     toggleBtn?.click();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('emite deleted al hacer click en el botón de eliminar', () => {
+    fixture.componentRef.setInput('protector', {
+      id: 'p1',
+      name: 'BigBen',
+      category: 'box',
+      notes: null,
+      isActive: true,
+      packs: []
+    });
+    fixture.detectChanges();
+    const spy = vi.spyOn(component.deleted, 'emit');
+    const deleteBtn: HTMLButtonElement = fixture.nativeElement.querySelector('.edit-panel__delete-btn');
+    deleteBtn?.click();
     expect(spy).toHaveBeenCalled();
   });
 });

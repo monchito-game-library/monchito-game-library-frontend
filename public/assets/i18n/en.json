@@ -600,6 +600,8 @@
       "activateBtn": "Activate",
       "deactivateConfirm": "Deactivate «{{ name }}»? It will no longer appear in new orders but will be kept in existing ones.",
       "activateConfirm": "Re-activate «{{ name }}»?",
+      "deleteBtn": "Delete",
+      "deleteConfirm": "Delete protector «{{ name }}»? This action is permanent and cannot be undone.",
       "packsTitle": "Available packs",
       "addPack": "Add pack",
       "packsEmpty": "Add at least one pack",

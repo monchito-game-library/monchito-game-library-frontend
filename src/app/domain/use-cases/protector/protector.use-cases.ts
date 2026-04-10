@@ -45,4 +45,13 @@ export class ProtectorUseCasesImpl implements ProtectorUseCasesContract {
   async toggleProtectorActive(id: string, isActive: boolean): Promise<ProtectorModel> {
     return this._repo.toggleActive(id, isActive);
   }
+
+  /**
+   * Permanently deletes a protector from the catalogue.
+   *
+   * @param {string} id - Protector UUID
+   */
+  async deleteProtector(id: string): Promise<void> {
+    return this._repo.delete(id);
+  }
 }
