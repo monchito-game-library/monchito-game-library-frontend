@@ -175,6 +175,11 @@ export class WishlistDetailComponent implements OnInit {
       if (found) {
         this.item.set(found);
       } else {
+        this._snackBar.open(
+          this._transloco.translate('wishlist.snack.notFound'),
+          this._transloco.translate('common.close'),
+          { duration: 3000 }
+        );
         this._location.back();
       }
     } catch {

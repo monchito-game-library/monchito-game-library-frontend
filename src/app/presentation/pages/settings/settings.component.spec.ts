@@ -259,8 +259,16 @@ describe('SettingsComponent', () => {
       expect(catalogUseCases.getTopBanners).toHaveBeenCalled();
     });
 
-    it('ngOnDestroy no existe ya que la suscripción se gestiona con takeUntilDestroyed', () => {
-      expect((component as any).ngOnDestroy).toBeUndefined();
+    it('ngOnDestroy cancela el timer de foco si está pendiente', () => {
+      vi.useFakeTimers();
+
+      component.onEditName();
+      expect((component as any)._focusTimer).not.toBeNull();
+
+      component.ngOnDestroy();
+      expect((component as any)._focusTimer).not.toBeNull(); // timer stored but cancelled
+
+      vi.useRealTimers();
     });
 
     it('selectedLangControl.valueChanges con valor truthy llama a setActiveLang y _savePreferences', () => {

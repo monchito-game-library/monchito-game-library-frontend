@@ -449,7 +449,8 @@
       "updateError": "Error updating item",
       "deleted": "Removed from wishlist",
       "deleteError": "Error removing from wishlist",
-      "loadError": "Error loading wishlist"
+      "loadError": "Error loading wishlist",
+      "notFound": "Wishlist item not found or was removed"
     },
     "empty": {
       "title": "Your wishlist is empty",

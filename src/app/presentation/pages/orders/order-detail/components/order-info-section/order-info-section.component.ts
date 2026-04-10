@@ -4,6 +4,7 @@ import {
   inject,
   input,
   InputSignal,
+  OnDestroy,
   output,
   OutputEmitterRef,
   signal,
@@ -47,14 +48,15 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     TranslocoPipe
   ]
 })
-export class OrderInfoSectionComponent {
+export class OrderInfoSectionComponent implements OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
-
-  private readonly _HIDE_ACTIONS_MS: number = 350;
-  private readonly _HIDE_ACTIONS_AFTER_SAVE_MS: number = 700;
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
+
+  private readonly _HIDE_ACTIONS_MS: number = 350;
+  private readonly _HIDE_ACTIONS_AFTER_SAVE_MS: number = 700;
+  private _hideActionsTimer: ReturnType<typeof setTimeout> | null = null;
 
   /** Order to display and edit. */
   readonly order: InputSignal<OrderModel> = input.required<OrderModel>();
@@ -102,6 +104,10 @@ export class OrderInfoSectionComponent {
     discountType: this._fb.control<DiscountType>('amount', { nonNullable: true })
   });
 
+  ngOnDestroy(): void {
+    if (this._hideActionsTimer !== null) clearTimeout(this._hideActionsTimer);
+  }
+
   /**
    * Toggles the visibility of the info section body.
    */
@@ -135,7 +141,8 @@ export class OrderInfoSectionComponent {
     this.hidingActions.set(true);
     this.editingHeader.set(false);
     this.editingEnded.emit();
-    setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_MS);
+    if (this._hideActionsTimer !== null) clearTimeout(this._hideActionsTimer);
+    this._hideActionsTimer = setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_MS);
   }
 
   /**
@@ -150,7 +157,8 @@ export class OrderInfoSectionComponent {
       await this._ordersUseCases.update(this.order().id, patch);
       this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
       this.hidingActions.set(true);
-      setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
+      if (this._hideActionsTimer !== null) clearTimeout(this._hideActionsTimer);
+      this._hideActionsTimer = setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
       this.editingHeader.set(false);
       this.editingEnded.emit();
       this.headerSaved.emit();
