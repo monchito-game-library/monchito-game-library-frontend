@@ -59,7 +59,6 @@ import { GameSearchPanelComponent } from '@/components/game-search-panel/game-se
     MatSelect,
     MatOption,
     MatIcon,
-    MatProgressSpinner,
     TranslocoPipe,
     WishlistCardComponent,
     GameSearchPanelComponent

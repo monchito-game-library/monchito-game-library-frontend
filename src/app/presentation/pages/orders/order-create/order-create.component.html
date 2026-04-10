@@ -32,7 +32,7 @@
         </button>
         <button mat-flat-button type="submit" [disabled]="form.invalid || saving()">
           @if (saving()) {
-            {{ 'orders.header.save' | transloco }}...
+            <mat-spinner diameter="18" />
           } @else {
             {{ 'orders.header.save' | transloco }}
           }
