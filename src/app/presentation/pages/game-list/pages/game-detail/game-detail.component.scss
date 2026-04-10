@@ -1,10 +1,9 @@
-// Scroll container — matches the pattern of other detail pages (e.g. wishlist-detail)
 .game-detail {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden; // el body es quien scrollea en todos los breakpoints
 }
 
 .game-detail__loading {
@@ -165,6 +164,9 @@
 
 // ── Body ──────────────────────────────────────────────────────────────────────
 .game-detail__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -317,18 +319,15 @@
 @media (orientation: landscape) and (max-height: 500px) {
   .game-detail {
     flex-direction: row;
-    overflow: hidden; // el propio contenedor no scrollea
   }
 
   .game-detail__hero {
     width: 42%;
-    height: 100dvh; // porcentaje no resuelve cuando el padre tiene altura por flex:1
+    height: 100dvh;
     flex-shrink: 0;
   }
 
   .game-detail__body {
-    flex: 1;
-    overflow-y: auto; // solo el body scrollea
     padding: 1rem;
     margin: 0;
     max-width: none;
