@@ -45,6 +45,12 @@
                 <mat-icon>emoji_events</mat-icon>
               </span>
             }
+            @if (isLoaned()) {
+              <span class="game-card__loan-chip">
+                <mat-icon>handshake</mat-icon>
+                {{ loanChipLabel() }}
+              </span>
+            }
           </div>
           <p class="game-card__title">{{ game().title }}</p>
           @if (edition()) {

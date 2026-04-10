@@ -5,6 +5,8 @@ import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
+import { GameLoanStatusModel } from '@/interfaces/game-loan-status.interface';
+import { GameLoanDto } from '@/dtos/supabase/game-loan.dto';
 
 /** Contract for the game repository. */
 export interface GameRepositoryContract {
@@ -99,6 +101,27 @@ export interface GameRepositoryContract {
    * @param {GameSaleStatusModel} sale - New sale status values
    */
   updateSaleStatus(userId: string, uuid: string, sale: GameSaleStatusModel): Promise<void>;
+
+  /**
+   * Creates a new active loan for a game. Returns the UUID of the created loan row.
+   *
+   * @param {GameLoanStatusModel} loan - Datos del préstamo a registrar
+   */
+  createLoan(loan: GameLoanStatusModel): Promise<string>;
+
+  /**
+   * Marks a loan as returned by setting returned_at to today's date.
+   *
+   * @param {string} loanId - UUID of the game_loans row
+   */
+  returnLoan(loanId: string): Promise<void>;
+
+  /**
+   * Returns the full loan history for a game, ordered by loaned_at descending.
+   *
+   * @param {string} userGameId - UUID of the user_games row
+   */
+  getLoanHistory(userGameId: string): Promise<GameLoanDto[]>;
 }
 
 /** InjectionToken for GameRepositoryContract. */

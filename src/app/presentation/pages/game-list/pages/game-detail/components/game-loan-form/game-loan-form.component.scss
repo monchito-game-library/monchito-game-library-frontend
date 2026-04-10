@@ -1,0 +1,87 @@
+.game-loan-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.game-loan-form__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.game-loan-form__back-btn {
+  flex-shrink: 0;
+}
+
+.game-loan-form__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.game-loan-form__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.game-loan-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.game-loan-form__section-title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mat-sys-outline);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.game-loan-form__info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--mat-sys-on-surface);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--mat-sys-primary);
+  }
+}
+
+.game-loan-form__field {
+  width: 100%;
+}
+
+.game-loan-form__action-btn {
+  align-self: flex-start;
+}
+
+// ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
+@media (max-width: 768px) and (orientation: portrait) {
+  .game-loan-form__action-btn {
+    align-self: stretch;
+  }
+}
+
+// ────────────────────────── Responsive: landscape mobile ──────────────────────────
+@media (orientation: landscape) and (max-height: 500px) {
+  .game-loan-form {
+    gap: 1rem;
+  }
+
+  .game-loan-form__content {
+    gap: 1rem;
+  }
+}

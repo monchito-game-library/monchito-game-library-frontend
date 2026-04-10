@@ -98,6 +98,12 @@ export interface UserGameFullDto extends UserGameDto {
   developers?: string[];
   publishers?: string[];
   source: 'rawg' | 'manual';
+  /** UUID of the active loan row. Null if not on loan. */
+  active_loan_id?: string | null;
+  /** Name of the person the game is loaned to. Null if not on loan. */
+  active_loan_to?: string | null;
+  /** Date the active loan started (ISO string). Null if not on loan. */
+  active_loan_at?: string | null;
 }
 
 /**
@@ -132,6 +138,12 @@ export interface UserGameEditDto {
   sale_price: number | null;
   sold_at: string | null;
   sold_price_final: number | null;
+  /** UUID of the active loan row. Null if not on loan. */
+  active_loan_id?: string | null;
+  /** Name of the person the game is loaned to. Null if not on loan. */
+  active_loan_to?: string | null;
+  /** Date the active loan started (ISO string). Null if not on loan. */
+  active_loan_at?: string | null;
 }
 
 /**
@@ -157,6 +169,12 @@ export interface UserGameListDto {
   for_sale: boolean;
   sold_at: string | null;
   sold_price_final: number | null;
+  /** UUID of the active loan row. Null if not on loan. */
+  active_loan_id?: string | null;
+  /** Name of the person the game is loaned to. Null if not on loan. */
+  active_loan_to?: string | null;
+  /** Date the active loan started (ISO string). Null if not on loan. */
+  active_loan_at?: string | null;
 }
 
 /** Payload for inserting or updating a row in game_catalog. */
