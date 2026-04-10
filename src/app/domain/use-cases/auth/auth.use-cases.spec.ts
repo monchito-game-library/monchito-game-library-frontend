@@ -19,7 +19,9 @@ const mockRepo: AuthRepositoryContract = {
   signOut: vi.fn(),
   resetPassword: vi.fn(),
   onAuthStateChange: vi.fn(),
-  updateDisplayName: vi.fn()
+  updateDisplayName: vi.fn(),
+  updatePassword: vi.fn(),
+  onPasswordRecovery: vi.fn()
 };
 
 describe('AuthUseCasesImpl', () => {

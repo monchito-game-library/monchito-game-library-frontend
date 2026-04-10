@@ -101,6 +101,28 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   }
 
   /**
+   * Updates the authenticated user's password.
+   * Must be called while a PASSWORD_RECOVERY session is active.
+   *
+   * @param {string} newPassword - New password in plain text
+   */
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await this._supabase.auth.updateUser({ password: newPassword });
+    if (error) throw new Error(error.message);
+  }
+
+  /**
+   * Registers a listener that fires once when Supabase detects a PASSWORD_RECOVERY session.
+   *
+   * @param {() => void} callback - Called when the recovery session is established
+   */
+  onPasswordRecovery(callback: () => void): void {
+    this._supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') callback();
+    });
+  }
+
+  /**
    * Maps a Supabase User object to the domain AuthUserModel.
    *
    * @param {User} user - Objeto usuario de Supabase Auth
