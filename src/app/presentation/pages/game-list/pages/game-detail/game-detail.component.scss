@@ -1,9 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .game-detail {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden; // el body es quien scrollea en todos los breakpoints
+  overflow: hidden;
 }
 
 .game-detail__loading {
