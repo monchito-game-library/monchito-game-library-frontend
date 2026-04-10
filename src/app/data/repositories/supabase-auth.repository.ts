@@ -48,9 +48,11 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
     });
     if (error || !data.user) throw new Error(error?.message ?? 'Registration failed');
 
-    await this._supabase
+    const { error: prefsError } = await this._supabase
       .from('user_preferences')
       .insert({ user_id: data.user.id, theme: 'light', language: 'es', role: 'user' });
+    if (prefsError)
+      throw new Error(`Registration succeeded but failed to create user preferences: ${prefsError.message}`);
 
     return this._mapUser(data.user);
   }
