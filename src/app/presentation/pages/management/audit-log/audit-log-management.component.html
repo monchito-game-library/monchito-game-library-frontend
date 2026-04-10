@@ -22,6 +22,9 @@
 
           <div class="audit-log-entry__body">
             <div class="audit-log-entry__action">{{ getActionLabel(entry.action) }}</div>
+            @if (entry.performedByEmail) {
+              <div class="audit-log-entry__actor">{{ entry.performedByEmail }}</div>
+            }
             @if (entry.description) {
               <div class="audit-log-entry__description">{{ entry.description }}</div>
             }
