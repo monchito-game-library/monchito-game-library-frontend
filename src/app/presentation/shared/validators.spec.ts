@@ -60,4 +60,16 @@ describe('validDateValidator', () => {
   it('devuelve { invalidDate: true } para una fecha imposible', () => {
     expect(validDateValidator({ value: '2024-13-99' })).toEqual({ invalidDate: true });
   });
+
+  it('devuelve { invalidDate: true } para año con menos de 4 dígitos', () => {
+    expect(validDateValidator({ value: '0024-06-01' })).toEqual({ invalidDate: true });
+  });
+
+  it('devuelve { invalidDate: true } para año 0', () => {
+    expect(validDateValidator({ value: '0000-01-01' })).toEqual({ invalidDate: true });
+  });
+
+  it('devuelve null para el límite superior del año válido (9999)', () => {
+    expect(validDateValidator({ value: '9999-12-31' })).toBeNull();
+  });
 });

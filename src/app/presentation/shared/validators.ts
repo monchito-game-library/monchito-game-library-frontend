@@ -30,5 +30,7 @@ export function validDateValidator(control: { value: string | null | undefined }
   const val = control.value;
   if (!val) return null;
   const d = new Date(val);
-  return isNaN(d.getTime()) ? { invalidDate: true } : null;
+  if (isNaN(d.getTime())) return { invalidDate: true };
+  const year = d.getUTCFullYear();
+  return year >= 1000 && year <= 9999 ? null : { invalidDate: true };
 }
