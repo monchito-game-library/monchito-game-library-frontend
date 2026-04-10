@@ -147,7 +147,11 @@
       }
     </button>
 
-    <!-- Desktop-only: add button -->
+    <!-- Desktop-only: action buttons -->
+    <button mat-stroked-button routerLink="/games/sold" class="game-list__sold-btn">
+      <mat-icon>sell</mat-icon>
+      {{ 'soldGames.title' | transloco }}
+    </button>
     <button mat-flat-button color="primary" routerLink="/games/add" class="game-list__add-btn">
       <mat-icon>add</mat-icon>
       {{ 'nav.add' | transloco }}

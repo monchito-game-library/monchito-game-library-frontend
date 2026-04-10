@@ -1,6 +1,6 @@
 # Monchito Game Library — Estado del Backend (Supabase)
 
-> Última actualización: 2026-04-09
+> Última actualización: 2026-04-10
 > Para recrear la base de datos desde cero ejecuta `docs/supabase-schema-current.sql`.
 
 ---
@@ -76,11 +76,17 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 | `description` | TEXT | Notas personales |
 | `tags_personal` | TEXT[] | |
 | `is_favorite` | BOOLEAN | Default FALSE |
-| `cover_position` | NUMERIC | Posición vertical del recorte de portada |
+| `cover_position` | VARCHAR(20) | Posición focal del recorte de portada (ej: `'50% 20%'`) |
+| `for_sale` | BOOLEAN NOT NULL | Default FALSE — el juego está publicado en venta |
+| `sale_price` | NUMERIC(10,2) | Precio deseado de venta |
+| `sold_at` | DATE | Fecha de venta real. `NULL` = en colección activa |
+| `sold_price_final` | NUMERIC(10,2) | Precio final obtenido en la venta |
 | `created_at` | TIMESTAMP TZ | |
 | `updated_at` | TIMESTAMP TZ | Trigger automático |
 
 **RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+**Índice único parcial:** `user_games_unique_per_platform` — `UNIQUE(user_id, game_catalog_id, platform, format, edition) WHERE sold_at IS NULL`. Solo impide duplicados en juegos activos; los vendidos no computan, permitiendo re-añadir un juego ya vendido.
 
 ---
 
@@ -108,15 +114,15 @@ Configuración personal de cada usuario.
 | Columna | Tipo | Notas |
 |---|---|---|
 | `user_id` | UUID PK FK auth.users | ON DELETE CASCADE |
-| `theme` | TEXT | `'light'` \| `'dark'` |
+| `theme` | TEXT | `'light'` \| `'dark'`. Default: `'light'` |
 | `language` | TEXT | `'es'` \| `'en'` |
 | `avatar_url` | TEXT | URL pública del bucket `avatars` |
 | `banner_url` | TEXT | URL pública del bucket `banners` o URL RAWG |
-| `role` | TEXT | `'user'` \| `'admin'` — solo modificable via service role |
-| `created_at` | TIMESTAMP TZ | |
-| `updated_at` | TIMESTAMP TZ | Trigger automático |
+| `role` | TEXT | `'user'` \| `'admin'` — modificable via el RPC `set_user_role` |
 
 **RLS:** Solo el propio usuario.
+
+> **Nota:** `user_preferences` **no tiene** columnas `created_at` ni `updated_at` en producción.
 
 ---
 
@@ -129,6 +135,7 @@ Lista de deseos personal de cada usuario. Pendiente de uso en UI.
 | `id` | UUID PK | |
 | `user_id` | UUID FK auth.users | ON DELETE CASCADE |
 | `game_catalog_id` | UUID FK game_catalog | ON DELETE CASCADE |
+| `platform` | TEXT NOT NULL | Plataforma de interés (ej: `'PS5'`) |
 | `desired_price` | NUMERIC(10,2) | |
 | `priority` | INTEGER | 1–5 (1 = máxima) |
 | `notes` | TEXT | |
@@ -136,7 +143,28 @@ Lista de deseos personal de cada usuario. Pendiente de uso en UI.
 | `created_at` | TIMESTAMP TZ | |
 | `updated_at` | TIMESTAMP TZ | Trigger automático |
 
+**UNIQUE:** `(user_id, game_catalog_id, platform)`
+
 **RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+---
+
+### `game_loans`
+
+Historial de préstamos de juegos de la colección personal.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `user_game_id` | UUID FK user_games | ON DELETE CASCADE — el juego prestado |
+| `loaned_to` | TEXT NOT NULL | Nombre de la persona a quien se prestó |
+| `loaned_at` | DATE NOT NULL | Fecha del préstamo |
+| `returned_at` | DATE | NULL mientras el préstamo está activo |
+| `created_at` | TIMESTAMP TZ | |
+
+**RLS:** Solo el propio usuario (via join con `user_games`).
+
+> **Uso en vista:** `user_games_full` hace LEFT JOIN con `game_loans WHERE returned_at IS NULL` para exponer el préstamo activo como `active_loan_id`, `active_loan_to`, `active_loan_at`.
 
 ---
 
@@ -199,6 +227,8 @@ Participantes de un pedido.
 | `joined_at` | TIMESTAMP TZ | Default `now()` |
 | `display_name` | TEXT | Nombre cacheado en el momento de unirse |
 | `is_ready` | BOOLEAN NOT NULL | Default `false` — el miembro ha marcado sus líneas como listas |
+
+**UNIQUE:** `(order_id, user_id)` — impide que un usuario aparezca dos veces en el mismo pedido.
 
 **RLS:**
 - SELECT: `user_id = auth.uid()` — **cada usuario solo ve su propia fila**. Los datos de todos los miembros se obtienen vía el RPC `get_order_members_info` (SECURITY DEFINER).
@@ -298,19 +328,23 @@ Todas las vistas con datos de usuario usan `WITH (security_invoker = on)` para q
 
 ### `user_games_full`
 
-Join de `user_games` + `game_catalog`. Vista principal del frontend para leer la colección completa de un usuario.
+Join de `user_games` + `game_catalog` + préstamo activo (`game_loans`). Vista principal del frontend para leer la colección completa de un usuario.
 
-Columnas destacadas: todos los campos de `user_games` (incluido `cover_position`) + datos básicos del catálogo (`title`, `slug`, `image_url`, `rating`, `metacritic_score`, `platforms`, `genres`, `tags`, `developers`, `publishers`, `source`).
+Columnas destacadas: todos los campos de `user_games` (incluidos `for_sale`, `sold_at`, `sold_price_final`, `cover_position`) + datos básicos del catálogo (`title`, `slug`, `image_url`, `rating`, `metacritic_score`, `platforms`, `genres`, `tags`, `developers`, `publishers`, `source`) + préstamo activo (`active_loan_id`, `active_loan_to`, `active_loan_at`).
+
+El frontend filtra por `sold_at IS NULL` para la colección activa y por `sold_at IS NOT NULL` para el historial de ventas (`/games/sold`).
 
 ```sql
-SELECT * FROM user_games_full WHERE user_id = $1 ORDER BY created_at DESC;
+SELECT * FROM user_games_full WHERE user_id = $1 AND sold_at IS NULL ORDER BY created_at DESC;
 ```
 
 ### `user_wishlist_full`
 
 Join de `user_wishlist` + `game_catalog`. Vista para leer la lista de deseos de un usuario con los datos del juego incluidos.
 
-Columnas: `id`, `user_id`, `game_catalog_id`, `desired_price`, `priority`, `notes`, `created_at` + `title`, `slug`, `image_url`, `released_date`, `rating`, `metacritic_score`, `platforms`, `genres`.
+Columnas expuestas: `id`, `user_id`, `game_catalog_id`, `platform`, `desired_price`, `priority`, `notes`, `created_at` + `title`, `slug`, `image_url`, `released_date`, `rating`, `metacritic_score`, `platforms`, `genres`.
+
+> **Nota:** `notify_on_sale` y `updated_at` de `user_wishlist` **no se exponen** en esta vista.
 
 ```sql
 SELECT * FROM user_wishlist_full WHERE user_id = $1 ORDER BY priority ASC;
@@ -331,17 +365,29 @@ SELECT * FROM user_wishlist_full WHERE user_id = $1 ORDER BY priority ASC;
 
 ## Funciones RPC
 
-Ambas funciones son `SECURITY DEFINER` — se ejecutan con los permisos del owner de la función, lo que permite saltar el RLS donde es necesario.
+Todas las funciones son `SECURITY DEFINER` — se ejecutan con los permisos del owner de la función, lo que permite saltar el RLS donde es necesario.
+
+### `search_game_catalog(search_query TEXT)`
+
+Busca juegos en `game_catalog` por título, descripción, desarrollador o publisher. Devuelve columnas seleccionadas + campo `relevance` (0–100) ordenadas por relevancia DESC, luego por rating DESC. Límite interno de 50 resultados. Usada por el buscador de juegos del frontend.
 
 ### `get_order_members_info(p_order_id UUID)`
 
 Devuelve todos los miembros de un pedido enriquecidos con datos de `auth.users` y `user_preferences`. Necesaria porque el RLS de `order_members` solo permite ver la propia fila, y el frontend no tiene acceso directo a `auth.users`.
 
-Campos devueltos: `id`, `order_id`, `user_id`, `role`, `is_ready`, `joined_at`, `display_name` (COALESCE de `om.display_name` y `auth.users.raw_user_meta_data`), `email`, `avatar_url` (COALESCE de `user_preferences.avatar_url` y `auth.users.raw_user_meta_data`).
+Campos devueltos: `id`, `order_id`, `user_id`, `role`, `is_ready`, `joined_at`, `display_name` (COALESCE de `om.display_name` y `auth.users.raw_user_meta_data`), `email`, `avatar_url` (COALESCE de `user_preferences.avatar_url` y `auth.users.raw_user_meta_data`). Resultados ordenados por `joined_at ASC`.
 
 ### `set_member_ready(p_order_id UUID, p_user_id UUID, p_is_ready BOOLEAN)`
 
 Actualiza `order_members.is_ready` y a continuación hace `UPDATE orders SET updated_at = now()` para disparar el canal realtime del pedido (`order-{orderId}`), notificando a todos los participantes del cambio de estado.
+
+### `set_user_role(target_user_id UUID, new_role TEXT)`
+
+Hace UPSERT sobre `user_preferences.role` para el usuario indicado (crea la fila si no existe). Solo ejecutable por admins. Permite ascender o degradar usuarios sin exponer la tabla `user_preferences` al cliente con permisos de escritura general.
+
+### `get_all_users_with_roles()`
+
+Devuelve todos los usuarios de la aplicación enriquecidos con su rol de `user_preferences` y metadatos de `auth.users` (email, nombre, avatar). Necesaria porque el frontend no tiene acceso directo a `auth.users`. Solo ejecutable por admins.
 
 ---
 
@@ -364,7 +410,7 @@ La limpieza de cada canal se hace al destruir `OrderDetailComponent` (función d
 
 | Trigger | Tabla | Evento | Acción |
 |---|---|---|---|
-| `trg_*_updated_at` | `user_games`, `stores`, `user_preferences`, `user_wishlist`, `game_catalog`, `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_*_updated_at` | `user_games`, `stores`, `user_wishlist`, `game_catalog`, `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_order_products_updated_at` | `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_increment_users_on_insert` | `user_games` | AFTER INSERT | Incrementa `game_catalog.times_added_by_users` |
 | `trg_decrement_users_on_delete` | `user_games` | AFTER DELETE | Decrementa `game_catalog.times_added_by_users` |

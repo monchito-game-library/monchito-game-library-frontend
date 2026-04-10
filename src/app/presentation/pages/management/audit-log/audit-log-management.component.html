@@ -3,38 +3,40 @@
     <h1 class="audit-log-page__title">{{ 'management.auditLog.title' | transloco }}</h1>
   </header>
 
-  @if (loading()) {
-    <div class="audit-log-page__loading">
-      <mat-spinner diameter="40" />
-    </div>
-  } @else if (entries().length === 0) {
-    <div class="audit-log-empty">
-      <mat-icon class="audit-log-empty__icon">history</mat-icon>
-      <p class="audit-log-empty__text">{{ 'management.auditLog.empty' | transloco }}</p>
-    </div>
-  } @else {
-    <div class="audit-log-list">
-      @for (entry of entries(); track entry.id) {
-        <div class="audit-log-entry">
-          <div class="audit-log-entry__icon-wrap">
-            <mat-icon class="audit-log-entry__icon">{{ getActionIcon(entry.action) }}</mat-icon>
-          </div>
+  <div class="audit-log-page__content">
+    @if (loading()) {
+      <div class="audit-log-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (entries().length === 0) {
+      <div class="audit-log-empty">
+        <mat-icon class="audit-log-empty__icon">history</mat-icon>
+        <p class="audit-log-empty__text">{{ 'management.auditLog.empty' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="audit-log-list">
+        @for (entry of entries(); track entry.id) {
+          <div class="audit-log-entry">
+            <div class="audit-log-entry__icon-wrap">
+              <mat-icon class="audit-log-entry__icon">{{ getActionIcon(entry.action) }}</mat-icon>
+            </div>
 
-          <div class="audit-log-entry__body">
-            <div class="audit-log-entry__action">{{ getActionLabel(entry.action) }}</div>
-            @if (entry.performedByEmail) {
-              <div class="audit-log-entry__actor">{{ entry.performedByEmail }}</div>
-            }
-            @if (entry.description) {
-              <div class="audit-log-entry__description">{{ entry.description }}</div>
-            }
-          </div>
+            <div class="audit-log-entry__body">
+              <div class="audit-log-entry__action">{{ getActionLabel(entry.action) }}</div>
+              @if (entry.performedByEmail) {
+                <div class="audit-log-entry__actor">{{ entry.performedByEmail }}</div>
+              }
+              @if (entry.description) {
+                <div class="audit-log-entry__description">{{ entry.description }}</div>
+              }
+            </div>
 
-          <div class="audit-log-entry__date">
-            {{ entry.createdAt | date: 'dd/MM/yy HH:mm' }}
+            <div class="audit-log-entry__date">
+              {{ entry.createdAt | date: 'dd/MM/yy HH:mm' }}
+            </div>
           </div>
-        </div>
-      }
-    </div>
-  }
+        }
+      </div>
+    }
+  </div>
 </div>
