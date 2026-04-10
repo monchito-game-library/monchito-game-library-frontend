@@ -1,0 +1,178 @@
+<div class="game-detail">
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="game-detail__loading">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (game(); as g) {
+    <!-- Hero — full-width cover with gradient overlay -->
+    <div class="game-detail__hero" [style.background-image]="'url(' + coverUrl() + ')'">
+      <div class="game-detail__hero-overlay">
+        <!-- Back button -->
+        <div class="game-detail__topbar">
+          <button
+            mat-icon-button
+            class="game-detail__back-btn"
+            (click)="goBack()"
+            [attr.aria-label]="'common.back' | transloco">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+
+        <!-- Bottom: chips, title, edition -->
+        <div class="game-detail__hero-info">
+          <div class="game-detail__chips-row">
+            @if (gameStatus()) {
+              <span class="game-detail__status-chip" [style.background-color]="gameStatus()!.color">
+                <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
+                {{ gameStatus()!.labelKey | transloco }}
+              </span>
+            }
+            @if (g.platform) {
+              <span class="game-detail__platform-chip">{{ g.platform }}</span>
+            }
+            @if (g.isFavorite) {
+              <span class="game-detail__fav-chip">
+                <mat-icon>favorite</mat-icon>
+              </span>
+            }
+            @if (g.platinum) {
+              <span class="game-detail__platinum-chip">
+                <mat-icon>emoji_events</mat-icon>
+              </span>
+            }
+          </div>
+          <h1 class="game-detail__title">{{ g.title }}</h1>
+          @if (g.edition) {
+            <p class="game-detail__edition">{{ g.edition }}</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="game-detail__body">
+      <!-- Personal data section -->
+      <section class="game-detail__section">
+        <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
+        <div class="game-detail__data-grid">
+          @if (g.price !== null) {
+            <div class="game-detail__data-item">
+              <span class="game-detail__data-label">
+                <mat-icon>payments</mat-icon>
+                {{ 'gameForm.fields.price' | transloco }}
+              </span>
+              <span class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</span>
+            </div>
+          }
+
+          @if (storeName()) {
+            <div class="game-detail__data-item">
+              <span class="game-detail__data-label">
+                <mat-icon>storefront</mat-icon>
+                {{ 'gameForm.fields.store' | transloco }}
+              </span>
+              <span class="game-detail__data-value">{{ storeName() }}</span>
+            </div>
+          }
+
+          @if (formatKey()) {
+            <div class="game-detail__data-item">
+              <span class="game-detail__data-label">
+                <mat-icon>{{ g.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
+                {{ 'gameForm.fields.format' | transloco }}
+              </span>
+              <span class="game-detail__data-value">{{ formatKey()! | transloco }}</span>
+            </div>
+          }
+
+          @if (conditionKey()) {
+            <div class="game-detail__data-item">
+              <span class="game-detail__data-label">
+                <mat-icon>grade</mat-icon>
+                {{ 'gameForm.fields.condition' | transloco }}
+              </span>
+              <span class="game-detail__data-value">{{ conditionKey()! | transloco }}</span>
+            </div>
+          }
+
+          @if (g.personalRating !== null) {
+            <div class="game-detail__data-item">
+              <span class="game-detail__data-label">
+                <mat-icon>star</mat-icon>
+                {{ 'gameForm.fields.rating' | transloco }}
+              </span>
+              <span class="game-detail__data-value game-detail__data-value--rating">
+                <span class="game-detail__stars">
+                  @for (s of ratingStars(); track $index) {
+                    <mat-icon>star</mat-icon>
+                  }
+                  @if (hasHalfStar()) {
+                    <mat-icon>star_half</mat-icon>
+                  }
+                </span>
+                <span>{{ g.personalRating }}/10</span>
+              </span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Notes section -->
+      @if (g.description) {
+        <section class="game-detail__section">
+          <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
+          <p class="game-detail__notes">{{ g.description }}</p>
+        </section>
+      }
+
+      <!-- RAWG info section -->
+      @if (g.rawgId) {
+        <section class="game-detail__section">
+          <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
+          <div class="game-detail__data-grid">
+            @if (g.releasedDate) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>event</mat-icon>
+                  {{ 'gameDetail.released' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ g.releasedDate }}</span>
+              </div>
+            }
+
+            @if (g.rawgRating) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>public</mat-icon>
+                  {{ 'gameDetail.communityRating' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+              </div>
+            }
+          </div>
+
+          @if (g.genres.length) {
+            <div class="game-detail__genres">
+              @for (genre of g.genres; track genre) {
+                <span class="game-detail__genre-chip">{{ genre }}</span>
+              }
+            </div>
+          }
+        </section>
+      }
+
+      <!-- Actions footer -->
+      <div class="game-detail__actions">
+        <button mat-stroked-button (click)="editGame()">
+          <mat-icon>edit</mat-icon>
+          {{ 'gameCard.menu.edit' | transloco }}
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
+          <mat-icon>delete</mat-icon>
+          {{ 'gameCard.menu.delete' | transloco }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

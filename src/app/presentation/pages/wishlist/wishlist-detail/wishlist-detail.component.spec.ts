@@ -256,7 +256,7 @@ describe('WishlistDetailComponent', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('navega a /add con catalogEntry y wishlistItemId si el dialog se confirma', async () => {
+    it('navega a /games/add con catalogEntry y wishlistItemId si el dialog se confirma', async () => {
       component.item.set(makeItem());
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
@@ -265,7 +265,7 @@ describe('WishlistDetailComponent', () => {
       await component.onOwn();
 
       expect(router.navigate).toHaveBeenCalledWith(
-        ['/add'],
+        ['/games/add'],
         expect.objectContaining({ state: expect.objectContaining({ wishlistItemId: 'item-1' }) })
       );
     });

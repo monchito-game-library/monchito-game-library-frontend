@@ -14,7 +14,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -50,7 +50,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
-import { GameCoverPositionDialogComponent } from '@/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
+import { GameCoverPositionDialogComponent } from '@/pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';
@@ -103,6 +103,7 @@ export class GameFormComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _router: Router = inject(Router);
+  private readonly _location: Location = inject(Location);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -449,7 +450,11 @@ export class GameFormComponent implements OnInit {
           }
         }
         this._userPreferencesState.allGames.set([]);
-        void this._router.navigate(['/list']);
+        if (this._gameUuid) {
+          this._location.back();
+        } else {
+          void this._router.navigate(['/games']);
+        }
       } catch (err: unknown) {
         const isDuplicate =
           err instanceof Error && (err.message.includes('23505') || err.message.toLowerCase().includes('duplicate'));
@@ -472,23 +477,11 @@ export class GameFormComponent implements OnInit {
    * Abre un diálogo de confirmación y elimina el juego si se confirma.
    * Solo disponible en modo edición.
    */
-  async onDelete(): Promise<void> {
-    if (!this._gameUuid) return;
-
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this._transloco.translate('gameCard.dialog.delete.title'),
-        message: this._transloco.translate('gameCard.dialog.delete.message')
-      } satisfies ConfirmDialogInterface
-    });
-
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (confirmed && this._gameUuid) {
-        await this._gameUseCases.deleteGame(this._userContext.requireUserId(), this._gameUuid);
-        this._userPreferencesState.allGames.set([]);
-        void this._router.navigate(['/list']);
-      }
-    });
+  /**
+   * Navigates back to the previous page without saving any changes.
+   */
+  onCancel(): void {
+    this._location.back();
   }
 
   /**

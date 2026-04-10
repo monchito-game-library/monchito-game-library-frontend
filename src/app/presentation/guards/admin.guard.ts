@@ -17,7 +17,7 @@ export const canActivateAdmin: CanActivateFn = () => {
 
   if (userPreferences.preferencesLoaded()) {
     if (userPreferences.isAdmin()) return true;
-    void router.navigateByUrl('/list');
+    void router.navigateByUrl('/games');
     return false;
   }
 
@@ -26,7 +26,7 @@ export const canActivateAdmin: CanActivateFn = () => {
     take(1),
     map(() => {
       if (userPreferences.isAdmin()) return true;
-      void router.navigateByUrl('/list');
+      void router.navigateByUrl('/games');
       return false;
     })
   );

@@ -596,5 +596,20 @@
       "changeRoleSuccess": "Rol actualizado correctamente.",
       "changeRoleError": "No se pudo actualizar el rol."
     }
+  },
+  "gameDetail": {
+    "myData": "Mis datos",
+    "notes": "Notas",
+    "catalogInfo": "Información del catálogo",
+    "released": "Lanzamiento",
+    "communityRating": "Valoración comunidad",
+    "condition": {
+      "new": "Nuevo",
+      "used": "Segunda mano"
+    },
+    "snack": {
+      "loadError": "Error al cargar el juego",
+      "deleteError": "Error al eliminar el juego"
+    }
   }
 }

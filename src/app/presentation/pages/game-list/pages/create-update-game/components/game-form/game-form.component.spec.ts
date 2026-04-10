@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Location } from '@angular/common';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, ActivatedRoute, Router } from '@angular/router';
 import { NEVER } from 'rxjs';
@@ -565,36 +566,14 @@ describe('GameFormComponent', () => {
     });
   });
 
-  describe('onDelete', () => {
-    it('no abre el diálogo cuando no hay _gameUuid', async () => {
-      const dialog = TestBed.inject(MatDialog);
-      await component.onDelete();
-      expect(dialog.open).not.toHaveBeenCalled();
-    });
+  describe('onCancel', () => {
+    it('llama a location.back()', () => {
+      const location = TestBed.inject(Location);
+      vi.spyOn(location, 'back').mockImplementation(() => {});
 
-    it('llama a deleteGame y navega cuando se confirma', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
-      (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
-      (gameUseCases.deleteGame as any).mockResolvedValue(undefined);
-      (component as any)._gameUuid = 'game-uuid';
+      component.onCancel();
 
-      await component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(gameUseCases.deleteGame).toHaveBeenCalledWith('user-1', 'game-uuid');
-    });
-
-    it('no llama a deleteGame cuando el diálogo no se confirma', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
-      (dialog.open as any).mockReturnValue({ afterClosed: () => of(false) });
-      (component as any)._gameUuid = 'game-uuid';
-
-      await component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(gameUseCases.deleteGame).not.toHaveBeenCalled();
+      expect(location.back).toHaveBeenCalled();
     });
   });
 
