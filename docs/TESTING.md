@@ -43,9 +43,9 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `audit-log/audit-log.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `auth/auth.use-cases.spec.ts` | 14 | ✅ Cubierto |
+| `auth/auth.use-cases.spec.ts` | 18 | ✅ Cubierto |
 | `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
-| `game/game.use-cases.spec.ts` | 9 | ✅ Cubierto |
+| `game/game.use-cases.spec.ts` | 15 | ✅ Cubierto |
 | `orders/orders.use-cases.spec.ts` | 28 | ✅ Cubierto |
 | `protector/protector.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `store/store.use-cases.spec.ts` | 5 | ✅ Cubierto |
@@ -105,7 +105,7 @@
 | `pages/game-list/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
 | `pages/game-list/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 82 | ✅ Cubierto |
 | `pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 15 | ✅ Cubierto |
-| `pages/game-list/pages/game-detail/game-detail.component.spec.ts` | 36 | ✅ Cubierto |
+| `pages/game-list/pages/game-detail/game-detail.component.spec.ts` | 38 | ✅ Cubierto |
 | `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
@@ -183,7 +183,7 @@
 | Fichero | Tests | Estado |
 |---|---|---|
 | `rawg.repository.spec.ts` | 20 | ✅ Cubierto |
-| `supabase.repository.spec.ts` | 31 | ✅ Cubierto |
+| `supabase.repository.spec.ts` | 41 | ✅ Cubierto |
 | `supabase-auth.repository.spec.ts` | 20 | ✅ Cubierto |
 | `supabase-audit-log.repository.spec.ts` | 7 | ✅ Cubierto |
 | `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
@@ -220,15 +220,15 @@
 |---|---|---|
 | Configuración | 1 | 3 |
 | Mappers | 7 | 127 |
-| Use Cases | 10 | 97 |
-| Repositorios | 9 (+1 pendiente) | 130 |
+| Use Cases | 10 | 107 |
+| Repositorios | 9 (+1 pendiente) | 140 |
 | Guards | 3 | 12 |
 | Servicios | 5 | 64 |
-| Componentes | 36 | 740 |
+| Componentes | 36 | 742 |
 | Abstractas | 1 | 29 |
 | App component | 1 | 27 |
 | Utilidades | 4 | 57 |
-| **Total** | **80** | **1326** |
+| **Total** | **80** | **1460** |
 
 > El total de 1326 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
 
@@ -238,10 +238,10 @@
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.15 % |
-| Branches | 95.12 % |
-| Functions | 99.52 % |
-| Lines | 99.9 % |
+| Statements | 98.66 % |
+| Branches | 94.54 % |
+| Functions | 98.85 % |
+| Lines | 99.67 % |
 
 ```bash
 npm run test:coverage

@@ -148,4 +148,37 @@ describe('AuthUseCasesImpl', () => {
       expect(mockRepo.updateDisplayName).toHaveBeenCalledWith('Nuevo nombre');
     });
   });
+
+  describe('updatePassword', () => {
+    it('devuelve { success: true } cuando el repositorio resuelve', async () => {
+      vi.mocked(mockRepo.updatePassword).mockResolvedValue();
+      const result = await useCases.updatePassword('newPass123');
+
+      expect(result).toEqual({ success: true });
+      expect(mockRepo.updatePassword).toHaveBeenCalledWith('newPass123');
+    });
+
+    it('devuelve { success: false, error } cuando el repositorio lanza un Error', async () => {
+      vi.mocked(mockRepo.updatePassword).mockRejectedValue(new Error('Auth error'));
+      const result = await useCases.updatePassword('newPass123');
+
+      expect(result).toEqual({ success: false, error: 'Auth error' });
+    });
+
+    it('devuelve mensaje genérico cuando el repositorio lanza un valor no Error', async () => {
+      vi.mocked(mockRepo.updatePassword).mockRejectedValue('unexpected');
+      const result = await useCases.updatePassword('newPass123');
+
+      expect(result).toEqual({ success: false, error: 'Failed to update password' });
+    });
+  });
+
+  describe('onPasswordRecovery', () => {
+    it('delega en repo.onPasswordRecovery', () => {
+      const callback = vi.fn();
+      useCases.onPasswordRecovery(callback);
+
+      expect(mockRepo.onPasswordRecovery).toHaveBeenCalledWith(callback);
+    });
+  });
 });
