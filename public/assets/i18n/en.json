@@ -593,6 +593,7 @@
       "notesLabel": "Notes",
       "notesPlaceholder": "e.g. Available on special order only",
       "empty": "No products in the catalogue yet.",
+      "active": "Active",
       "inactive": "Inactive",
       "deactivateBtn": "Deactivate",
       "activateBtn": "Activate",

@@ -594,6 +594,7 @@
       "notesLabel": "Notas",
       "notesPlaceholder": "ej. Solo disponible por encargo",
       "empty": "No hay productos en el catálogo todavía.",
+      "active": "Activo",
       "inactive": "Inactivo",
       "deactivateBtn": "Desactivar",
       "activateBtn": "Activar",
