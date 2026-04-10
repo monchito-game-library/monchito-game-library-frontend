@@ -27,31 +27,34 @@ export class UserPreferencesInitService {
    * @param {string} userId - Authenticated user ID
    */
   async loadPreferences(userId: string): Promise<void> {
-    const prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
-    if (!prefs) {
+    try {
+      const prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
+      if (!prefs) return;
+
+      if (prefs.theme === 'dark') {
+        this._themeService.setDarkTheme();
+      } else {
+        this._themeService.setLightTheme();
+      }
+
+      if (prefs.language) {
+        this._transloco.setActiveLang(prefs.language);
+      }
+
+      if (prefs.avatarUrl) {
+        this._userPreferencesState.avatarUrl.set(prefs.avatarUrl);
+      }
+
+      if (prefs.bannerUrl) {
+        this._userPreferencesState.bannerImageUrl.set(prefs.bannerUrl);
+      }
+
+      this._userPreferencesState.role.set(prefs.role);
+    } catch {
+      // If loading fails, continue with app defaults — preferencesLoaded must still be set to true
+      // so that guards (admin.guard) don't block indefinitely waiting for this signal.
+    } finally {
       this._userPreferencesState.preferencesLoaded.set(true);
-      return;
     }
-
-    if (prefs.theme === 'dark') {
-      this._themeService.setDarkTheme();
-    } else {
-      this._themeService.setLightTheme();
-    }
-
-    if (prefs.language) {
-      this._transloco.setActiveLang(prefs.language);
-    }
-
-    if (prefs.avatarUrl) {
-      this._userPreferencesState.avatarUrl.set(prefs.avatarUrl);
-    }
-
-    if (prefs.bannerUrl) {
-      this._userPreferencesState.bannerImageUrl.set(prefs.bannerUrl);
-    }
-
-    this._userPreferencesState.role.set(prefs.role);
-    this._userPreferencesState.preferencesLoaded.set(true);
   }
 }

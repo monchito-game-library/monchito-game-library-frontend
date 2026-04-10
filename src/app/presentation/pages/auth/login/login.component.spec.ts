@@ -136,13 +136,13 @@ describe('LoginComponent', () => {
       expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
     });
 
-    it('usa "Login failed" como error por defecto cuando no hay mensaje', async () => {
+    it('usa la clave de traducción como error por defecto cuando no hay mensaje', async () => {
       mockAuthUseCases.signIn.mockResolvedValue({ success: false });
       component.loginForm.setValue({ email: 'test@test.com', password: 'wrongpass' });
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Login failed');
+      expect(component.errorMessage()).toBe('auth.login.loginFailed');
     });
   });
 });

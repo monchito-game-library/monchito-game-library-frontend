@@ -13,7 +13,9 @@ const mockAuthUseCases: AuthUseCasesContract = {
   signUp: vi.fn(),
   signOut: vi.fn(),
   resetPassword: vi.fn(),
-  updateDisplayName: vi.fn()
+  updateDisplayName: vi.fn(),
+  updatePassword: vi.fn(),
+  onPasswordRecovery: vi.fn()
 };
 
 const mockRouter = { navigate: vi.fn() };

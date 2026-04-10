@@ -30,6 +30,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { GameSaleFormComponent } from './components/game-sale-form/game-sale-form.component';
+import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -45,7 +46,8 @@ import { GameSaleFormComponent } from './components/game-sale-form/game-sale-for
     MatButton,
     MatProgressSpinner,
     TranslocoPipe,
-    GameSaleFormComponent
+    GameSaleFormComponent,
+    GameLoanFormComponent
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -69,6 +71,9 @@ export class GameDetailComponent implements OnInit {
 
   /** Whether the sale form view is active. */
   readonly showSaleForm: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the loan form view is active. */
+  readonly showLoanForm: WritableSignal<boolean> = signal<boolean>(false);
 
   /** The game being displayed. */
   readonly game: WritableSignal<GameEditModel | null> = signal<GameEditModel | null>(null);
@@ -148,6 +153,7 @@ export class GameDetailComponent implements OnInit {
    * Switches the body to the sale form view.
    */
   openSaleView(): void {
+    this.showLoanForm.set(false);
     this.showSaleForm.set(true);
   }
 
@@ -156,6 +162,21 @@ export class GameDetailComponent implements OnInit {
    */
   closeSaleView(): void {
     this.showSaleForm.set(false);
+  }
+
+  /**
+   * Switches the body to the loan form view.
+   */
+  openLoanView(): void {
+    this.showSaleForm.set(false);
+    this.showLoanForm.set(true);
+  }
+
+  /**
+   * Returns to the data view from the loan form.
+   */
+  closeLoanView(): void {
+    this.showLoanForm.set(false);
   }
 
   /**
@@ -170,6 +191,17 @@ export class GameDetailComponent implements OnInit {
   }
 
   /**
+   * Called when the loan form action completes successfully.
+   * Updates the game signal and returns to the data view.
+   *
+   * @param {GameEditModel} updated - Game model with the new loan values applied
+   */
+  onLoanSaved(updated: GameEditModel): void {
+    this.game.set(updated);
+    this.showLoanForm.set(false);
+  }
+
+  /**
    * Opens a confirmation dialog and deletes the game if confirmed.
    * Navigates to the list on success.
    */
@@ -179,8 +211,8 @@ export class GameDetailComponent implements OnInit {
 
     const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this._transloco.translate('gameCard.dialog.delete.title'),
-        message: this._transloco.translate('gameCard.dialog.delete.message')
+        title: 'gameCard.dialog.delete.title',
+        message: 'gameCard.dialog.delete.message'
       } satisfies ConfirmDialogInterface
     });
 

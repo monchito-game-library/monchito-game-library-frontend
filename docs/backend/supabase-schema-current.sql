@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-04-09
+-- Última revisión: 2026-04-10
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -245,7 +245,66 @@ CREATE INDEX IF NOT EXISTS idx_user_wishlist_priority ON user_wishlist(priority)
 
 
 -- ============================================================
--- 6. ROW LEVEL SECURITY (RLS)
+-- 6. TABLA: game_loans
+--    Historial de préstamos de juegos físicos.
+--    El préstamo activo es la fila con returned_at IS NULL.
+--    RLS: solo el propietario del user_games puede leer/escribir.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS game_loans (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_game_id UUID NOT NULL REFERENCES user_games(id) ON DELETE CASCADE,
+  loaned_to    TEXT NOT NULL,                          -- v1: texto libre
+  loaned_at    DATE NOT NULL DEFAULT CURRENT_DATE,
+  returned_at  DATE,                                   -- NULL mientras siga prestado
+  created_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Índices
+CREATE INDEX IF NOT EXISTS idx_game_loans_user_game_id
+  ON game_loans(user_game_id);
+CREATE INDEX IF NOT EXISTS idx_game_loans_active
+  ON game_loans(user_game_id) WHERE returned_at IS NULL;
+
+-- RLS
+ALTER TABLE game_loans ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read their own loans"
+  ON game_loans FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_games
+      WHERE user_games.id = game_loans.user_game_id
+        AND user_games.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can insert their own loans"
+  ON game_loans FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM user_games
+      WHERE user_games.id = game_loans.user_game_id
+        AND user_games.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can update their own loans"
+  ON game_loans FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_games
+      WHERE user_games.id = game_loans.user_game_id
+        AND user_games.user_id = auth.uid()
+    )
+  );
+
+
+-- ============================================================
+-- 7. ROW LEVEL SECURITY (RLS)
 -- ============================================================
 
 -- game_catalog: lectura pública, escritura autenticada
@@ -368,7 +427,8 @@ CREATE TRIGGER trg_decrement_users_on_delete
 --    security_invoker = on → respeta el RLS del usuario autenticado.
 -- ============================================================
 
-CREATE OR REPLACE VIEW user_games_full WITH (security_invoker = on) AS
+DROP VIEW IF EXISTS user_games_full;
+CREATE VIEW user_games_full WITH (security_invoker = on) AS
 SELECT
   ug.id,
   ug.user_id,
@@ -413,10 +473,22 @@ SELECT
   ug.sold_at,
   ug.sold_price_final,
 
+  -- Préstamo activo (NULL si no está prestado)
+  al.id          AS active_loan_id,
+  al.loaned_to   AS active_loan_to,
+  al.loaned_at   AS active_loan_at,
+
   ug.created_at,
   ug.updated_at
 FROM user_games ug
-JOIN game_catalog gc ON ug.game_catalog_id = gc.id;
+JOIN game_catalog gc ON ug.game_catalog_id = gc.id
+LEFT JOIN LATERAL (
+  SELECT id, loaned_to, loaned_at
+  FROM   game_loans
+  WHERE  user_game_id = ug.id
+    AND  returned_at IS NULL
+  LIMIT  1
+) al ON TRUE;
 
 
 -- ============================================================

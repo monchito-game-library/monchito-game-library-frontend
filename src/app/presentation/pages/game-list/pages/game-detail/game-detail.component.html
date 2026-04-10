@@ -50,6 +50,12 @@
                 }
               </span>
             }
+            @if (g.activeLoanId) {
+              <span class="game-detail__loan-chip">
+                <mat-icon>handshake</mat-icon>
+                {{ 'gameDetail.loan.loanedBadge' | transloco }} {{ g.activeLoanTo }}
+              </span>
+            }
           </div>
           <h1 class="game-detail__title">{{ g.title }}</h1>
           @if (g.edition) {
@@ -63,6 +69,8 @@
     <div class="game-detail__body">
       @if (showSaleForm()) {
         <app-game-sale-form [game]="g" (saved)="onSaleSaved($event)" (cancelled)="closeSaleView()" />
+      } @else if (showLoanForm()) {
+        <app-game-loan-form [game]="g" (saved)="onLoanSaved($event)" (cancelled)="closeLoanView()" />
       } @else {
         <!-- Personal data section -->
         <section class="game-detail__section">
@@ -184,6 +192,12 @@
             <mat-icon>sell</mat-icon>
             {{ 'gameDetail.sale.manageBtn' | transloco }}
           </button>
+          @if (g.format === 'physical') {
+            <button mat-stroked-button (click)="openLoanView()">
+              <mat-icon>handshake</mat-icon>
+              {{ g.activeLoanId ? ('gameDetail.loan.returnBtn' | transloco) : ('gameDetail.loan.loanBtn' | transloco) }}
+            </button>
+          }
           <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
             <mat-icon>delete</mat-icon>
             {{ 'gameCard.menu.delete' | transloco }}

@@ -8,8 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Préstamos de juegos](#préstamos-de-juegos) | **Alta** |
-| [Historial de ventas (`/games/sold`)](#historial-de-ventas-gamessold) | Media |
+| [Historial de ventas (`/games/sold`)](#historial-de-ventas-gamessold) | **Alta** |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
@@ -19,57 +18,6 @@
 ---
 
 ## Alta prioridad
-
-### Préstamos de juegos
-
-Marcar un juego físico de la colección como prestado a un amigo para que quede registrado que no está en la estantería. Solo aplica a juegos con `format = 'physical'`.
-
-#### Comportamiento
-
-- Desde la card o la página de detalle del juego, el usuario pulsa **"Prestar"**.
-- En desktop se abre un `MatDialog`; en mobile (≤768px) un `MatBottomSheet` (patrón ya establecido en el proyecto).
-- El formulario tiene dos campos: **¿A quién?** (texto libre) y **Fecha** (date picker, hoy por defecto).
-- Al guardar, el juego muestra un chip en la card con icono `person` + nombre truncado (~12 chars): _"Prestado · Juan G."_.
-- Para recuperarlo: botón **"Marcar como devuelto"** en el mismo dialog/sheet, que rellena `returned_at` con la fecha actual.
-
-#### v1 / v2
-
-- **v1:** el receptor del préstamo es texto libre (nombre escrito a mano).
-- **v2 (cuando exista sección social):** el campo de texto se convierte en un selector híbrido — primero muestra los contactos de la lista de amigos y, si no está, permite escribir texto libre igualmente.
-
-#### UI en la card
-
-- Chip compacto en la zona overlay de la card (misma fila que la plataforma), visible tanto en desktop como en mobile.
-- En mobile de 2 columnas (≤600px), el chip muestra solo el icono + nombre muy corto para no desbordar.
-- Si el juego está prestado **y** a la venta a la vez, ambos indicadores conviven: el chip de préstamo con texto y el icono de venta sin texto.
-- Filtro **"Prestados"** en la colección para ver todos los juegos actualmente fuera de la estantería.
-
-#### Historial
-
-El historial completo de préstamos (quién lo tuvo y cuándo) se mostrará en la **página de detalle del juego**.
-
-#### Modelo de datos
-
-Nueva tabla `game_loans`:
-
-```sql
-CREATE TABLE game_loans (
-  id           UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_game_id UUID  NOT NULL REFERENCES user_games(id) ON DELETE CASCADE,
-  loaned_to    TEXT  NOT NULL,         -- v1: texto libre; v2: puede coexistir con friend_id
-  loaned_at    DATE  NOT NULL DEFAULT CURRENT_DATE,
-  returned_at  DATE,                  -- NULL mientras siga prestado
-  created_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-El préstamo activo es la fila con `returned_at IS NULL`. Si hay más de una fila es el historial.
-
-RLS: solo el propietario del `user_game` puede leer y escribir sus préstamos.
-
----
-
-## Media prioridad
 
 ### Historial de ventas (`/games/sold`)
 
@@ -316,6 +264,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Préstamos de juegos~~ ✅
+
+Tabla `game_loans` en Supabase con RLS. Vista `user_games_full` actualizada con LEFT JOIN LATERAL para exponer `active_loan_id/to/at`. Capas de datos y dominio completas (`createLoan`, `returnLoan`, `getLoanHistory`). Formulario inline en la página de detalle con dos modos (prestar / devolver). Chip azul en la card con nombre truncado a 12 chars. Filtro **"Solo prestados"** en el sheet de filtros de la colección. Solo aplica a juegos con `format = 'physical'`.
+
+---
 
 ### ~~Página de detalle de juego (`/games/:id`) — sección personal~~ ✅
 

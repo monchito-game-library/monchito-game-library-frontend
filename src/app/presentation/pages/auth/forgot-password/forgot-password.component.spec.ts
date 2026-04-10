@@ -101,7 +101,7 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.successMessage()).toContain('Password reset email sent');
+      expect(component.successMessage()).toBe('auth.forgotPassword.successMessage');
     });
 
     it('navega a /auth/login 3 segundos después del éxito', async () => {
@@ -125,13 +125,13 @@ describe('ForgotPasswordComponent', () => {
       expect(component.successMessage()).toBe('');
     });
 
-    it('usa "Failed to send reset email" como error por defecto', async () => {
+    it('usa la clave de traducción como error por defecto', async () => {
       mockAuthUseCases.resetPassword.mockResolvedValue({ success: false });
       component.forgotPasswordForm.setValue({ email: 'user@example.com' });
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Failed to send reset email');
+      expect(component.errorMessage()).toBe('auth.forgotPassword.sendFailed');
     });
 
     it('loading vuelve a false tras completar', async () => {

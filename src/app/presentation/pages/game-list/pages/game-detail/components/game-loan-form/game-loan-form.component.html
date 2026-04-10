@@ -1,0 +1,80 @@
+<div class="game-loan-form">
+  <!-- Header -->
+  <div class="game-loan-form__header">
+    <button
+      mat-icon-button
+      class="game-loan-form__back-btn"
+      (click)="onCancel()"
+      [attr.aria-label]="'common.back' | transloco">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="game-loan-form__title">{{ 'gameDetail.loan.title' | transloco }}</h2>
+  </div>
+
+  @if (isLoaned()) {
+    <!-- Return mode: active loan info -->
+    <section class="game-loan-form__section">
+      <h3 class="game-loan-form__section-title">{{ 'gameDetail.loan.activeSection' | transloco }}</h3>
+
+      <div class="game-loan-form__info-row">
+        <mat-icon>person</mat-icon>
+        <span>{{ game().activeLoanTo }}</span>
+      </div>
+      <div class="game-loan-form__info-row">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ game().activeLoanAt }}</span>
+      </div>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        class="game-loan-form__action-btn"
+        (click)="onReturn()"
+        [disabled]="returning()">
+        @if (returning()) {
+          <mat-icon>hourglass_empty</mat-icon>
+        } @else {
+          <mat-icon>undo</mat-icon>
+        }
+        {{ 'gameDetail.loan.returnBtn' | transloco }}
+      </button>
+    </section>
+  } @else {
+    <!-- Loan mode: create loan form -->
+    <form [formGroup]="form" class="game-loan-form__content">
+      <section class="game-loan-form__section">
+        <h3 class="game-loan-form__section-title">{{ 'gameDetail.loan.newSection' | transloco }}</h3>
+
+        <mat-form-field appearance="outline" class="game-loan-form__field">
+          <mat-label>{{ 'gameDetail.loan.loanedTo' | transloco }}</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="loanedTo"
+            [placeholder]="'gameDetail.loan.loanedToPlaceholder' | transloco" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="game-loan-form__field">
+          <mat-label>{{ 'gameDetail.loan.loanedAt' | transloco }}</mat-label>
+          <input matInput type="date" formControlName="loanedAt" />
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="game-loan-form__action-btn"
+          (click)="onLoan()"
+          [disabled]="saving()">
+          @if (saving()) {
+            <mat-icon>hourglass_empty</mat-icon>
+          } @else {
+            <mat-icon>handshake</mat-icon>
+          }
+          {{ 'gameDetail.loan.loanBtn' | transloco }}
+        </button>
+      </section>
+    </form>
+  }
+</div>

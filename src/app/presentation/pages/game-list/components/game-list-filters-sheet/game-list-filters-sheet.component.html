@@ -89,6 +89,15 @@
       </span>
       <app-toggle-switch [checked]="data.onlyFavorites()" (changed)="data.onlyFavorites.set($event)" />
     </div>
+
+    <!-- Loaned toggle -->
+    <div class="filters-sheet__toggle-row">
+      <span class="filters-sheet__toggle-label">
+        <mat-icon>handshake</mat-icon>
+        {{ 'gameList.aria.onlyLoaned' | transloco }}
+      </span>
+      <app-toggle-switch [checked]="data.onlyLoaned()" (changed)="data.onlyLoaned.set($event)" />
+    </div>
   </div>
 
   <mat-divider />

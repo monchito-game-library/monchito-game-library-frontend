@@ -30,7 +30,10 @@ const mockGame: GameListModel = {
   coverPosition: null,
   forSale: false,
   soldAt: null,
-  soldPriceFinal: null
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('GameCardComponent — computed signals', () => {
@@ -182,6 +185,51 @@ describe('GameCardComponent — computed signals', () => {
       fixture2.detectChanges();
 
       expect(fixture2.componentInstance.coverObjectPosition()).toBe('30% 50%');
+    });
+  });
+
+  describe('isLoaned (computed)', () => {
+    it('devuelve false cuando activeLoanId es null', () => {
+      expect(component.isLoaned()).toBe(false);
+    });
+
+    it('devuelve true cuando activeLoanId tiene valor', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', {
+        ...mockGame,
+        activeLoanId: 'loan-1',
+        activeLoanTo: 'Juan',
+        activeLoanAt: '2024-06-01'
+      });
+      fixture2.detectChanges();
+
+      expect(fixture2.componentInstance.isLoaned()).toBe(true);
+    });
+  });
+
+  describe('loanChipLabel (computed)', () => {
+    it('devuelve el nombre completo si tiene 12 caracteres o menos', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', { ...mockGame, activeLoanId: 'loan-1', activeLoanTo: 'Juan' });
+      fixture2.detectChanges();
+
+      expect(fixture2.componentInstance.loanChipLabel()).toBe('Juan');
+    });
+
+    it('trunca el nombre si supera los 12 caracteres', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', {
+        ...mockGame,
+        activeLoanId: 'loan-1',
+        activeLoanTo: 'NombreMuyLargo123'
+      });
+      fixture2.detectChanges();
+
+      expect(fixture2.componentInstance.loanChipLabel()).toBe('NombreMuyLar…');
+    });
+
+    it('devuelve cadena vacía cuando activeLoanTo es null', () => {
+      expect(component.loanChipLabel()).toBe('');
     });
   });
 

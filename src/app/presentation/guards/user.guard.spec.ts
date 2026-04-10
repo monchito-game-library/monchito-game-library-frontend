@@ -7,7 +7,7 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { AuthStateService } from '@/services/auth-state.service';
 import { canActivateUser } from './user.guard';
 
-const mockRouter = { navigateByUrl: vi.fn() };
+const mockRouter = { navigateByUrl: vi.fn(), navigate: vi.fn() };
 
 describe('canActivateUser', () => {
   let mockAuthState: Partial<AuthStateService>;
@@ -31,19 +31,21 @@ describe('canActivateUser', () => {
   it('devuelve true cuando el usuario está autenticado y loading es false', () => {
     vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(true);
 
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/games' } as never));
 
     expect(result).toBe(true);
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it('devuelve false y redirige a /auth/login cuando no está autenticado', () => {
+  it('devuelve false y redirige a /auth/login con returnUrl cuando no está autenticado', () => {
     vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(false);
 
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/orders/123' } as never));
 
     expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/auth/login');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { returnUrl: '/orders/123' }
+    });
   });
 
   it('devuelve Observable que resuelve true cuando loading cambia a false y usuario está autenticado', async () => {
@@ -60,7 +62,7 @@ describe('canActivateUser', () => {
       ]
     });
 
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/games' } as never));
     const promise = firstValueFrom(result as Observable<boolean>);
 
     loadingSignal.set(false);
@@ -83,13 +85,15 @@ describe('canActivateUser', () => {
       ]
     });
 
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, {} as never));
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/orders/123' } as never));
     const promise = firstValueFrom(result as Observable<boolean>);
 
     loadingSignal.set(false);
     TestBed.flushEffects();
 
     expect(await promise).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/auth/login');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { returnUrl: '/orders/123' }
+    });
   });
 });

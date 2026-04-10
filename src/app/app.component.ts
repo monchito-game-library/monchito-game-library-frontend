@@ -132,7 +132,7 @@ export class AppComponent implements OnInit {
    */
   getPageTitle(): string {
     const route = this.currentRoute();
-    if (route.startsWith('/update/')) return 'nav.add';
+    if (route.startsWith('/games/edit/')) return 'nav.add';
     const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
     const match = allItems.find((item) => route.startsWith(item.route));
     return match?.label ?? '';

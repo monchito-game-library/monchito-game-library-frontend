@@ -43,6 +43,9 @@ function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
     salePrice: null,
     soldAt: null,
     soldPriceFinal: null,
+    activeLoanId: null,
+    activeLoanTo: null,
+    activeLoanAt: null,
     ...overrides
   };
 }
@@ -383,6 +386,13 @@ describe('GameDetailComponent', () => {
       component.openSaleView();
       expect(component.showSaleForm()).toBe(true);
     });
+
+    it('desactiva showLoanForm al activar showSaleForm', () => {
+      component.showLoanForm.set(true);
+      component.openSaleView();
+      expect(component.showLoanForm()).toBe(false);
+      expect(component.showSaleForm()).toBe(true);
+    });
   });
 
   describe('closeSaleView', () => {
@@ -402,6 +412,41 @@ describe('GameDetailComponent', () => {
 
       expect(component.game()).toEqual(updated);
       expect(component.showSaleForm()).toBe(false);
+    });
+  });
+
+  describe('openLoanView', () => {
+    it('activa la señal showLoanForm', () => {
+      expect(component.showLoanForm()).toBe(false);
+      component.openLoanView();
+      expect(component.showLoanForm()).toBe(true);
+    });
+
+    it('desactiva showSaleForm al activar showLoanForm', () => {
+      component.showSaleForm.set(true);
+      component.openLoanView();
+      expect(component.showSaleForm()).toBe(false);
+      expect(component.showLoanForm()).toBe(true);
+    });
+  });
+
+  describe('closeLoanView', () => {
+    it('desactiva la señal showLoanForm', () => {
+      component.showLoanForm.set(true);
+      component.closeLoanView();
+      expect(component.showLoanForm()).toBe(false);
+    });
+  });
+
+  describe('onLoanSaved', () => {
+    it('actualiza la señal game con el modelo recibido y desactiva showLoanForm', () => {
+      const updated = makeGame({ activeLoanId: 'loan-1', activeLoanTo: 'Juan', activeLoanAt: '2024-06-01' });
+      component.showLoanForm.set(true);
+
+      component.onLoanSaved(updated);
+
+      expect(component.game()).toEqual(updated);
+      expect(component.showLoanForm()).toBe(false);
     });
   });
 });
