@@ -10,19 +10,16 @@ export const gameListRoutes: Routes = [
   // Rutas estáticas antes del segmento dinámico :id para evitar colisiones
   {
     path: 'add',
-    loadComponent: () =>
-      import('./pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
-    canActivate: [canActivateUser]
+    loadChildren: () =>
+      import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
   },
   {
     path: 'edit/:id',
-    loadComponent: () =>
-      import('./pages/create-update-game/create-and-update-game.component').then((m) => m.CreateAndUpdateGameComponent),
-    canActivate: [canActivateUser]
+    loadChildren: () =>
+      import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
   },
   {
     path: ':id',
-    loadComponent: () => import('./pages/game-detail/game-detail.component').then((m) => m.GameDetailComponent),
-    canActivate: [canActivateUser]
+    loadChildren: () => import('./pages/game-detail/game-detail.routes').then((m) => m.gameDetailRoutes)
   }
 ];
