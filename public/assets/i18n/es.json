@@ -601,6 +601,8 @@
       "activateBtn": "Activar",
       "deactivateConfirm": "¿Desactivar el producto «{{ name }}»? Dejará de aparecer en nuevos pedidos pero se conservará en los pedidos ya existentes.",
       "activateConfirm": "¿Volver a activar el producto «{{ name }}»?",
+      "deleteBtn": "Eliminar",
+      "deleteConfirm": "¿Eliminar el protector «{{ name }}»? Esta acción es permanente y no se puede deshacer.",
       "packsTitle": "Packs disponibles",
       "addPack": "Añadir pack",
       "packsEmpty": "Añade al menos un pack",

@@ -78,4 +78,14 @@ export class SupabaseProtectorRepository implements ProtectorRepositoryContract 
     if (error) throw new Error(`Failed to toggle protector active state: ${error.message}`);
     return mapProtector(data as ProtectorDto);
   }
+
+  /**
+   * Permanently deletes a protector from the catalogue.
+   *
+   * @param {string} id - Protector UUID
+   */
+  async delete(id: string): Promise<void> {
+    const { error } = await this._supabase.from(this._table).delete().eq('id', id);
+    if (error) throw new Error(`Failed to delete protector: ${error.message}`);
+  }
 }

@@ -174,4 +174,22 @@ describe('SupabaseProtectorRepository', () => {
       await expect(repo.toggleActive('p-1', true)).rejects.toThrow('Failed to toggle protector active state');
     });
   });
+
+  describe('delete', () => {
+    it('llama a delete y filtra por id', async () => {
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.delete('p-1');
+
+      expect(b.delete).toHaveBeenCalled();
+      expect(b.eq).toHaveBeenCalledWith('id', 'p-1');
+    });
+
+    it('lanza error si Supabase devuelve error', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Delete failed' } }));
+
+      await expect(repo.delete('p-1')).rejects.toThrow('Failed to delete protector');
+    });
+  });
 });
