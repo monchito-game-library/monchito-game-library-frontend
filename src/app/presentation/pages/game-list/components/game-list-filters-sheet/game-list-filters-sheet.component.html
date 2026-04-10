@@ -108,5 +108,9 @@
       <mat-icon>filter_alt_off</mat-icon>
       {{ 'gameList.empty.clearFilters' | transloco }}
     </button>
+    <a mat-stroked-button routerLink="/games/sold" (click)="close()">
+      <mat-icon>sell</mat-icon>
+      {{ 'soldGames.title' | transloco }}
+    </a>
   </div>
 </div>

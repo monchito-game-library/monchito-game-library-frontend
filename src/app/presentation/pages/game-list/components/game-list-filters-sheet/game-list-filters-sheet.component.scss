@@ -76,5 +76,6 @@
 .filters-sheet__footer {
   padding: 0.75rem 1.25rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }

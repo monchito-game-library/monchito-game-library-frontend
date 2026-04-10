@@ -8,7 +8,6 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Historial de ventas (`/games/sold`)](#historial-de-ventas-gamessold) | **Alta** |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
@@ -18,21 +17,6 @@
 ---
 
 ## Alta prioridad
-
-### Historial de ventas (`/games/sold`)
-
-Página que muestra los juegos ya vendidos (aquellos con `sold_at IS NOT NULL`). Derivada de la feature de venta, que ya está implementada — los datos existen, solo falta la vista.
-
-#### UI
-
-- Accesible desde un filtro en la colección o ruta directa `/games/sold`.
-- Cards estilo lista (no grid), más compactas, orientadas a la información:
-  - Portada pequeña + título + plataforma.
-  - Precio pagado originalmente → precio de venta final (y la diferencia si se quiere mostrar).
-  - Fecha de venta.
-- Sin acciones — es solo consulta. Útil para no repetir juegos ya vendidos o para recordar a cuánto se vendió.
-
----
 
 ### Integración RAWG en detalle de juego
 
@@ -280,6 +264,12 @@ Página con ruta propia `/games/:id`. La card navega a la página de detalle en 
 ### ~~Juegos a la venta~~ ✅
 
 Toggle **"Gestionar venta"** desde la página de detalle del juego. Permite marcar un juego como disponible para vender con precio de venta deseado, y registrar la venta final con precio obtenido y fecha. Al registrar la venta el juego desaparece de la colección activa. Chip `sell` en la card indicando que el juego está a la venta, con precio si lo tiene. Filtro **"En venta"** en la colección. La vista de historial de ventas queda pendiente — ver [Historial de ventas](#historial-de-ventas-gamessold).
+
+---
+
+### ~~Historial de ventas (`/games/sold`)~~ ✅
+
+Página `/games/sold` con los juegos vendidos (`sold_at IS NOT NULL`), accesible desde el bottom-nav/nav-rail. Cards estilo lista con portada, título, plataforma, precio de compra → precio de venta final y fecha de venta. Sin acciones — solo consulta. Al confirmar la venta desde el detalle, el juego desaparece de la colección activa y navega a `/games`. Índice único parcial `WHERE sold_at IS NULL` en `user_games` para permitir recomprar un juego ya vendido. Schema Supabase actualizado con los datos reales de producción.
 
 ---
 

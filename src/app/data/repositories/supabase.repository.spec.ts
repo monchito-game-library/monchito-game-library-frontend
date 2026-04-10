@@ -12,6 +12,7 @@ function makeBuilder(result: { data?: unknown; error: { message: string } | null
     'select',
     'eq',
     'neq',
+    'not',
     'is',
     'order',
     'range',
@@ -600,6 +601,119 @@ describe('SupabaseRepository', () => {
       await expect(repo.addGameForUser('user-1', { ...gameModel, rawgId: null }, undefined)).rejects.toThrow(
         'Failed to create game catalog'
       );
+    });
+  });
+
+  describe('getSoldGames', () => {
+    const soldDto = {
+      ...fullDto,
+      sold_at: '2024-06-01',
+      sold_price_final: 30,
+      for_sale: false
+    };
+
+    it('devuelve los juegos vendidos mapeados', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [soldDto], error: null }));
+
+      const result = await repo.getSoldGames('user-1');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].soldAt).toBe('2024-06-01');
+    });
+
+    it('lanza error si la consulta falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'DB error' } }));
+
+      await expect(repo.getSoldGames('user-1')).rejects.toThrow('Failed to fetch sold games');
+    });
+  });
+
+  describe('updateSaleStatus', () => {
+    it('llama a .update() con los campos de venta correctos', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: null, error: null }));
+
+      await repo.updateSaleStatus('user-1', 'uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: '2024-06-01',
+        soldPriceFinal: 28
+      });
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('user_games');
+    });
+
+    it('lanza error si la actualización falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Update error' } }));
+
+      await expect(
+        repo.updateSaleStatus('user-1', 'uuid-1', {
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null
+        })
+      ).rejects.toThrow('Failed to update sale status');
+    });
+  });
+
+  describe('createLoan', () => {
+    it('inserta el préstamo y devuelve el UUID', async () => {
+      const b = makeBuilder({ data: { id: 'loan-uuid' }, error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      const result = await repo.createLoan({ userGameId: 'game-uuid', loanedTo: 'Ana', loanedAt: '2024-06-01' });
+
+      expect(result).toBe('loan-uuid');
+      expect(mockSupabase.from).toHaveBeenCalledWith('game_loans');
+    });
+
+    it('lanza error si el insert falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: null, error: { message: 'Insert error' } }));
+
+      await expect(
+        repo.createLoan({ userGameId: 'game-uuid', loanedTo: 'Ana', loanedAt: '2024-06-01' })
+      ).rejects.toThrow('Failed to create loan');
+    });
+  });
+
+  describe('returnLoan', () => {
+    it('actualiza returned_at en game_loans', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: null, error: null }));
+
+      await repo.returnLoan('loan-uuid');
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('game_loans');
+    });
+
+    it('lanza error si la actualización falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Return error' } }));
+
+      await expect(repo.returnLoan('loan-uuid')).rejects.toThrow('Failed to return loan');
+    });
+  });
+
+  describe('getLoanHistory', () => {
+    it('devuelve el historial de préstamos', async () => {
+      const loanDto = {
+        id: 'loan-1',
+        user_game_id: 'game-uuid',
+        loaned_to: 'Ana',
+        loaned_at: '2024-06-01',
+        returned_at: '2024-06-10',
+        created_at: '2024-06-01T10:00:00Z'
+      };
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [loanDto], error: null }));
+
+      const result = await repo.getLoanHistory('game-uuid');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].loaned_to).toBe('Ana');
+    });
+
+    it('lanza error si la consulta falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'History error' } }));
+
+      await expect(repo.getLoanHistory('game-uuid')).rejects.toThrow('Failed to fetch loan history');
     });
   });
 });
