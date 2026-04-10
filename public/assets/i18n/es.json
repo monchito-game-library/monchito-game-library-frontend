@@ -408,6 +408,7 @@
     "title": "Historial de ventas",
     "empty": "No has vendido ningún juego todavía.",
     "paid": "Compra",
+    "sold": "Venta",
     "snack": {
       "loadError": "Error al cargar el historial de ventas"
     }

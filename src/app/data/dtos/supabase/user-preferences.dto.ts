@@ -6,8 +6,6 @@ export interface UserPreferencesDto {
   avatar_url: string | null;
   banner_url?: string | null;
   role: string;
-  created_at?: string;
-  updated_at?: string;
 }
 
 /** Payload for inserting or updating a row in user_preferences. */

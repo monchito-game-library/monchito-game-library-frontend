@@ -404,8 +404,19 @@ describe('GameDetailComponent', () => {
   });
 
   describe('onSaleSaved', () => {
-    it('actualiza la señal game con el modelo recibido y desactiva showSaleForm', () => {
+    it('navega a /games cuando el juego queda vendido (soldAt presente)', () => {
+      const router = TestBed.inject(Router as any) as any;
       const updated = makeGame({ forSale: false, salePrice: null, soldAt: '2024-06-01', soldPriceFinal: 28 });
+      component.showSaleForm.set(true);
+
+      component.onSaleSaved(updated);
+
+      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(component.showSaleForm()).toBe(true);
+    });
+
+    it('actualiza la señal game y desactiva showSaleForm cuando no hay soldAt', () => {
+      const updated = makeGame({ forSale: true, salePrice: 20, soldAt: null, soldPriceFinal: null });
       component.showSaleForm.set(true);
 
       component.onSaleSaved(updated);

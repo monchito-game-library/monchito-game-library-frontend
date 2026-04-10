@@ -105,8 +105,7 @@ CREATE TABLE IF NOT EXISTS stores (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Índices
-CREATE INDEX IF NOT EXISTS idx_stores_created_by ON stores(created_by);
+-- Nota: no hay índices adicionales en producción para stores (solo PK).
 
 -- RLS
 ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
@@ -175,7 +174,7 @@ CREATE TABLE IF NOT EXISTS user_games (
   is_favorite BOOLEAN DEFAULT FALSE,
 
   -- Posición de la portada (punto focal configurable en la card)
-  cover_position TEXT,
+  cover_position VARCHAR(20),
 
   -- Venta
   for_sale         BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -189,16 +188,19 @@ CREATE TABLE IF NOT EXISTS user_games (
 );
 
 -- Índices
-CREATE INDEX IF NOT EXISTS idx_user_games_user_id        ON user_games(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_games_catalog_id     ON user_games(game_catalog_id);
-CREATE INDEX IF NOT EXISTS idx_user_games_platform       ON user_games(platform);
-CREATE INDEX IF NOT EXISTS idx_user_games_store          ON user_games(store);
-CREATE INDEX IF NOT EXISTS idx_user_games_format         ON user_games(format);
-CREATE INDEX IF NOT EXISTS idx_user_games_status         ON user_games(status);
+CREATE INDEX IF NOT EXISTS idx_user_games_user_id             ON user_games(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_games_game_catalog_id     ON user_games(game_catalog_id);
+CREATE INDEX IF NOT EXISTS idx_user_games_platform            ON user_games(platform);
+CREATE INDEX IF NOT EXISTS idx_user_games_status              ON user_games(status);
 CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_platinum       ON user_games(platinum)     WHERE platinum = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_for_sale       ON user_games(for_sale)     WHERE for_sale = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at)      WHERE sold_at IS NOT NULL;
+
+-- Unicidad solo en juegos activos (sold_at IS NULL); los vendidos no computan
+CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_platform
+  ON user_games(user_id, game_catalog_id, platform, format, edition)
+  WHERE sold_at IS NULL;
 
 
 -- ============================================================
@@ -209,16 +211,15 @@ CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at) 
 
 CREATE TABLE IF NOT EXISTS user_preferences (
   user_id    UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  theme      TEXT DEFAULT 'dark'  CHECK (theme IN ('light', 'dark')),
+  theme      TEXT DEFAULT 'light' CHECK (theme IN ('light', 'dark')),
   language   TEXT DEFAULT 'es'    CHECK (language IN ('es', 'en')),
   avatar_url TEXT,               -- URL pública del bucket 'avatars'
   banner_url TEXT,               -- URL del banner (bucket 'banners' o URL externa RAWG)
-  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin'))
 );
 
--- Nota: el campo `role` solo debe modificarse via service role (SQL directo).
+-- Nota: user_preferences NO tiene columnas created_at ni updated_at en producción.
+-- El campo `role` debe modificarse via el RPC set_user_role (SECURITY DEFINER).
 -- El cliente nunca envía `role` en el payload de upsert.
 
 
@@ -644,8 +645,7 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_owner_id ON orders(owner_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status   ON orders(status);
+-- Nota: no hay índices adicionales en producción para orders (solo PK).
 
 DROP TRIGGER IF EXISTS trg_orders_updated_at ON orders;
 CREATE TRIGGER trg_orders_updated_at
@@ -705,8 +705,7 @@ CREATE TABLE IF NOT EXISTS order_members (
   UNIQUE (order_id, user_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_order_members_order_id ON order_members(order_id);
-CREATE INDEX IF NOT EXISTS idx_order_members_user_id  ON order_members(user_id);
+-- Nota: no hay índices adicionales en producción para order_members (solo PK + UNIQUE).
 
 ALTER TABLE order_members ENABLE ROW LEVEL SECURITY;
 
@@ -756,8 +755,7 @@ CREATE TABLE IF NOT EXISTS order_invitations (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_order_invitations_order_id ON order_invitations(order_id);
-CREATE INDEX IF NOT EXISTS idx_order_invitations_token    ON order_invitations(token);
+-- Nota: no hay índices adicionales en producción para order_invitations (solo PK + UNIQUE token).
 
 ALTER TABLE order_invitations ENABLE ROW LEVEL SECURITY;
 
@@ -806,9 +804,7 @@ CREATE TABLE IF NOT EXISTS order_lines (
   created_at       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_order_lines_order_id   ON order_lines(order_id);
-CREATE INDEX IF NOT EXISTS idx_order_lines_product_id ON order_lines(product_id);
-CREATE INDEX IF NOT EXISTS idx_order_lines_requested_by ON order_lines(requested_by);
+-- Nota: no hay índices adicionales en producción para order_lines (solo PK).
 
 ALTER TABLE order_lines ENABLE ROW LEVEL SECURITY;
 
@@ -927,6 +923,84 @@ CREATE POLICY "Order owner can update allocations"
 -- 17. FUNCIONES RPC
 -- ============================================================
 
+-- Busca juegos en game_catalog por título, descripción, desarrollador o publisher.
+-- Devuelve columnas seleccionadas + score de relevancia, ordenado DESC.
+-- LIMIT interno: 50. Parámetro: search_query (TEXT).
+CREATE OR REPLACE FUNCTION search_game_catalog(search_query TEXT)
+RETURNS TABLE (
+  id UUID, rawg_id INTEGER, title TEXT, slug TEXT, image_url TEXT,
+  released_date DATE, rating NUMERIC, metacritic_score INTEGER,
+  platforms TEXT[], genres TEXT[], source TEXT, relevance INTEGER
+)
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    gc.id, gc.rawg_id, gc.title, gc.slug, gc.image_url,
+    gc.released_date, gc.rating, gc.metacritic_score,
+    gc.platforms, gc.genres, gc.source,
+    CASE
+      WHEN LOWER(gc.title) = LOWER(search_query) THEN 100
+      WHEN LOWER(gc.title) LIKE LOWER(search_query || '%') THEN 90
+      WHEN LOWER(gc.title) LIKE LOWER('%' || search_query || '%') THEN 70
+      WHEN LOWER(gc.description_raw) LIKE LOWER('%' || search_query || '%') THEN 50
+      ELSE 10
+    END AS relevance
+  FROM game_catalog gc
+  WHERE
+    LOWER(gc.title) LIKE LOWER('%' || search_query || '%')
+    OR LOWER(gc.description_raw) LIKE LOWER('%' || search_query || '%')
+    OR search_query = ANY(
+      SELECT LOWER(unnest(gc.developers))
+      UNION ALL
+      SELECT LOWER(unnest(gc.publishers))
+    )
+  ORDER BY relevance DESC, gc.rating DESC NULLS LAST
+  LIMIT 50;
+END;
+$$;
+
+-- Actualiza (o crea) el rol de un usuario en user_preferences via UPSERT.
+-- Parámetros: target_user_id, new_role.
+CREATE OR REPLACE FUNCTION set_user_role(target_user_id UUID, new_role TEXT)
+RETURNS VOID
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+BEGIN
+  INSERT INTO public.user_preferences (user_id, role)
+  VALUES (target_user_id, new_role)
+  ON CONFLICT (user_id)
+  DO UPDATE SET role = new_role;
+END;
+$$;
+
+-- Devuelve todos los usuarios con su rol desde auth.users + user_preferences.
+-- Ordenado por fecha de creación descendente.
+CREATE OR REPLACE FUNCTION get_all_users_with_roles()
+RETURNS TABLE (
+  user_id    UUID,
+  email      TEXT,
+  role       TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE
+)
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    au.id         AS user_id,
+    au.email::TEXT,
+    COALESCE(up.role, 'user')::TEXT AS role,
+    up.avatar_url::TEXT,
+    au.created_at
+  FROM auth.users au
+  LEFT JOIN public.user_preferences up ON up.user_id = au.id
+  ORDER BY au.created_at DESC;
+END;
+$$;
+
 -- Devuelve los miembros de un pedido con datos de auth.users
 -- (email, avatar_url) que no están en la tabla order_members.
 CREATE OR REPLACE FUNCTION get_order_members_info(p_order_id UUID)
@@ -947,15 +1021,17 @@ AS $$
     om.id,
     om.order_id,
     om.user_id,
-    om.role,
-    om.joined_at,
-    COALESCE(om.display_name, au.raw_user_meta_data->>'display_name') AS display_name,
-    au.email,
-    au.raw_user_meta_data->>'avatar_url'                              AS avatar_url,
-    om.is_ready
+    om.role::TEXT,
+    om.is_ready,
+    COALESCE(om.display_name, u.raw_user_meta_data->>'display_name') AS display_name,
+    u.email,
+    COALESCE(up.avatar_url, u.raw_user_meta_data->>'avatar_url')     AS avatar_url,
+    om.joined_at
   FROM order_members om
-  JOIN auth.users au ON au.id = om.user_id
-  WHERE om.order_id = p_order_id;
+  JOIN auth.users u ON u.id = om.user_id
+  LEFT JOIN user_preferences up ON up.user_id = om.user_id
+  WHERE om.order_id = p_order_id
+  ORDER BY om.joined_at ASC;
 $$;
 
 -- Actualiza el flag is_ready de un miembro. Solo el propio miembro puede llamarla.
@@ -976,6 +1052,11 @@ BEGIN
   SET is_ready = p_is_ready
   WHERE order_id = p_order_id
     AND user_id  = p_user_id;
+
+  -- Toca updated_at en orders para disparar el canal realtime
+  UPDATE orders
+  SET updated_at = now()
+  WHERE id = p_order_id;
 END;
 $$;
 

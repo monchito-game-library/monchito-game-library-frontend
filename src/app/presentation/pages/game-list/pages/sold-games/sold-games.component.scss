@@ -1,0 +1,165 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sold-games-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.sold-games-page__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sold-games-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--mat-sys-on-surface);
+}
+
+.sold-games-page__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.sold-games-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex: 1;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sold-games-page__empty-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+}
+
+.sold-games-page__empty-text {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.sold-games-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sold-game-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--mat-sys-surface-container);
+}
+
+.sold-game-card__cover-wrap {
+  flex-shrink: 0;
+  width: 56px;
+  height: 80px;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.sold-game-card__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sold-game-card__cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sold-game-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.sold-game-card__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sold-game-card__platform {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sold-game-card__prices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.sold-game-card__price-paid,
+.sold-game-card__price-sold {
+  font-size: 0.78rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.sold-game-card__diff {
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &--positive {
+    color: var(--mat-sys-primary);
+  }
+
+  &--negative {
+    color: var(--mat-sys-error);
+  }
+}
+
+.sold-game-card__date {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+}
+
+// ────────────────────────── Responsive: ≤ 820px ──────────────────────────
+@media (max-width: 820px) {
+  .sold-games-page {
+    padding: 1rem;
+  }
+
+  .sold-games-page__title {
+    font-size: 1.25rem;
+  }
+}

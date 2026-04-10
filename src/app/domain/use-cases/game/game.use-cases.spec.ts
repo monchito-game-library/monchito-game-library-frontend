@@ -98,4 +98,42 @@ describe('GameUseCasesImpl', () => {
 
     expect(mockRepo.clearAllForUser).toHaveBeenCalledWith('user-1');
   });
+
+  it('getSoldGames delega en repo.getSoldGames', async () => {
+    vi.mocked(mockRepo.getSoldGames).mockResolvedValue([]);
+    await useCases.getSoldGames('user-1');
+
+    expect(mockRepo.getSoldGames).toHaveBeenCalledWith('user-1');
+  });
+
+  it('updateSaleStatus delega en repo.updateSaleStatus', async () => {
+    vi.mocked(mockRepo.updateSaleStatus).mockResolvedValue();
+    const sale = { forSale: false, salePrice: null, soldAt: '2024-06-01', soldPriceFinal: 25 };
+    await useCases.updateSaleStatus('user-1', 'uuid-1', sale);
+
+    expect(mockRepo.updateSaleStatus).toHaveBeenCalledWith('user-1', 'uuid-1', sale);
+  });
+
+  it('createLoan delega en repo.createLoan', async () => {
+    vi.mocked(mockRepo.createLoan).mockResolvedValue('loan-uuid');
+    const loan = { userGameId: 'game-uuid', loanedTo: 'Ana', loanedAt: '2024-06-01' };
+    const result = await useCases.createLoan(loan);
+
+    expect(mockRepo.createLoan).toHaveBeenCalledWith(loan);
+    expect(result).toBe('loan-uuid');
+  });
+
+  it('returnLoan delega en repo.returnLoan', async () => {
+    vi.mocked(mockRepo.returnLoan).mockResolvedValue();
+    await useCases.returnLoan('loan-uuid');
+
+    expect(mockRepo.returnLoan).toHaveBeenCalledWith('loan-uuid');
+  });
+
+  it('getLoanHistory delega en repo.getLoanHistory', async () => {
+    vi.mocked(mockRepo.getLoanHistory).mockResolvedValue([]);
+    await useCases.getLoanHistory('game-uuid');
+
+    expect(mockRepo.getLoanHistory).toHaveBeenCalledWith('game-uuid');
+  });
 });
