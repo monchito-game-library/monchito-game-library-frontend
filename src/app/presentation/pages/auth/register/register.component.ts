@@ -6,7 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
@@ -37,6 +37,7 @@ export class RegisterComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether a registration request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -97,10 +98,10 @@ export class RegisterComponent {
     this.loading.set(false);
 
     if (result.success) {
-      this.successMessage.set('Registration successful! Please check your email to verify your account.');
+      this.successMessage.set(this._transloco.translate('auth.register.successMessage'));
       setTimeout(() => void this._router.navigate(['/auth/login']), 3000);
     } else {
-      this.errorMessage.set(result.error ?? 'Registration failed');
+      this.errorMessage.set(result.error ?? this._transloco.translate('auth.register.registrationFailed'));
     }
   }
 

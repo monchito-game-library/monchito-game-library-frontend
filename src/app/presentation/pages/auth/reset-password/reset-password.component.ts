@@ -6,7 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
@@ -37,6 +37,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether the recovery session from the email link has been established. */
   readonly recoveryReady: WritableSignal<boolean> = signal(false);
@@ -108,11 +109,11 @@ export class ResetPasswordComponent implements OnInit {
     this.loading.set(false);
 
     if (result.success) {
-      this.successMessage.set('Password updated successfully! Redirecting to login…');
+      this.successMessage.set(this._transloco.translate('auth.resetPassword.successMessage'));
       await this._authUseCases.signOut();
       setTimeout(() => void this._router.navigate(['/auth/login']), 2000);
     } else {
-      this.errorMessage.set(result.error ?? 'Failed to update password');
+      this.errorMessage.set(result.error ?? this._transloco.translate('auth.resetPassword.updateFailed'));
     }
   }
 

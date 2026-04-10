@@ -167,7 +167,7 @@ describe('ResetPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.successMessage()).toContain('Password updated successfully');
+      expect(component.successMessage()).toBe('auth.resetPassword.successMessage');
     });
 
     it('navega a /auth/login 2 segundos después del éxito', async () => {
@@ -192,13 +192,13 @@ describe('ResetPasswordComponent', () => {
       expect(component.successMessage()).toBe('');
     });
 
-    it('usa "Failed to update password" como error por defecto', async () => {
+    it('usa la clave de traducción como error por defecto', async () => {
       mockAuthUseCases.updatePassword.mockResolvedValue({ success: false });
       component.resetPasswordForm.setValue({ password: 'nueva1234', confirmPassword: 'nueva1234' });
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Failed to update password');
+      expect(component.errorMessage()).toBe('auth.resetPassword.updateFailed');
     });
 
     it('loading vuelve a false tras completar', async () => {

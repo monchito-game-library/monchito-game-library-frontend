@@ -489,7 +489,8 @@
       "submit": "Sign In",
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don't have an account?",
-      "register": "Register here"
+      "register": "Register here",
+      "loginFailed": "Login failed"
     },
     "register": {
       "title": "Create Account",
@@ -511,7 +512,9 @@
       "passwordMismatch": "Passwords do not match",
       "submit": "Create Account",
       "hasAccount": "Already have an account?",
-      "login": "Sign in here"
+      "login": "Sign in here",
+      "successMessage": "Account created! Please check your email to verify your account.",
+      "registrationFailed": "Registration failed"
     },
     "forgotPassword": {
       "title": "Reset Password",
@@ -521,7 +524,9 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Invalid email",
       "submit": "Send Reset Link",
-      "backToLogin": "Back to Sign In"
+      "backToLogin": "Back to Sign In",
+      "successMessage": "Reset link sent! Please check your inbox.",
+      "sendFailed": "Failed to send reset email"
     },
     "resetPassword": {
       "title": "New Password",
@@ -536,7 +541,9 @@
       "confirmPasswordRequired": "You must confirm your password",
       "passwordMismatch": "Passwords do not match",
       "submit": "Save new password",
-      "backToLogin": "Back to Sign In"
+      "backToLogin": "Back to Sign In",
+      "successMessage": "Password updated successfully! Redirecting to login…",
+      "updateFailed": "Failed to update password"
     }
   },
   "management": {
