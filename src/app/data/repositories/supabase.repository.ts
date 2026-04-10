@@ -47,10 +47,29 @@ export class SupabaseRepository implements GameRepositoryContract {
    * @param {string} userId - UUID del usuario autenticado
    */
   async getAllGamesForList(userId: string): Promise<GameListModel[]> {
-    const all = await this._paginateView<UserGameListDto>(
-      userId,
-      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position'
-    );
+    const PAGE_SIZE = 1000;
+    let all: UserGameListDto[] = [];
+    let from = 0;
+    const select =
+      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final';
+
+    while (true) {
+      const { data, error } = await this._supabase
+        .from(this._viewName)
+        .select(select)
+        .eq('user_id', userId)
+        .is('sold_at', null)
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) throw new Error(`Failed to fetch games: ${error.message}`);
+      if (!data || data.length === 0) break;
+
+      all = all.concat(data as UserGameListDto[]);
+      if (data.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+
     return all.map(mapGameList);
   }
 
@@ -186,7 +205,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     const { data, error } = await this._supabase
       .from(this._viewName)
       .select(
-        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position'
+        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final'
       )
       .eq('user_id', userId)
       .eq('id', uuid)
@@ -194,6 +213,27 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     if (error || !data) return undefined;
     return mapGameEdit(data as UserGameEditDto);
+  }
+
+  /**
+   * Returns all games that have been sold (sold_at IS NOT NULL) for the given user,
+   * ordered by sold_at descending.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  async getSoldGames(userId: string): Promise<GameListModel[]> {
+    const select =
+      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final';
+
+    const { data, error } = await this._supabase
+      .from(this._viewName)
+      .select(select)
+      .eq('user_id', userId)
+      .not('sold_at', 'is', null)
+      .order('sold_at', { ascending: false });
+
+    if (error) throw new Error(`Failed to fetch sold games: ${error.message}`);
+    return (data || []).map(mapGameList);
   }
 
   /**

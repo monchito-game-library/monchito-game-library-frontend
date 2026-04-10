@@ -123,6 +123,13 @@ export class GameFormComponent implements OnInit {
   private _gameId?: number;
   /** Supabase UUID of the user_games row — set in edit mode for direct DB updates. */
   private _gameUuid?: string;
+  /** Sale fields preserved from the loaded game — not editable in this form. */
+  private _saleData = {
+    forSale: false,
+    salePrice: null as number | null,
+    soldAt: null as string | null,
+    soldPriceFinal: null as number | null
+  };
   /** Catalog entry passed from the wishlist "I have this game" action via router state. */
   private _pendingCatalogEntry: GameCatalogDto | null = null;
   /** Wishlist item ID to delete after a successful save (from "I have this game" flow). */
@@ -337,6 +344,12 @@ export class GameFormComponent implements OnInit {
       );
       if (game) {
         this._gameId = game.id;
+        this._saleData = {
+          forSale: game.forSale,
+          salePrice: game.salePrice,
+          soldAt: game.soldAt,
+          soldPriceFinal: game.soldPriceFinal
+        };
         this.form.patchValue(
           {
             title: game.title,
@@ -427,7 +440,11 @@ export class GameFormComponent implements OnInit {
         format: raw.format ?? null,
         isFavorite: raw.is_favorite ?? false,
         imageUrl: this.selectedImageUrl() ?? undefined,
-        coverPosition: this._coverPosition()
+        coverPosition: this._coverPosition(),
+        forSale: this._saleData.forSale,
+        salePrice: this._saleData.salePrice,
+        soldAt: this._saleData.soldAt,
+        soldPriceFinal: this._saleData.soldPriceFinal
       };
 
       const baseEntry = this.selectedGame()?.rawg_id ? this.selectedGame() : null;

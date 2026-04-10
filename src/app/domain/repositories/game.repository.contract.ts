@@ -82,6 +82,13 @@ export interface GameRepositoryContract {
    * @param {string} uuid - Supabase UUID of the user_games row
    */
   getGameForEdit(userId: string, uuid: string): Promise<GameEditModel | undefined>;
+
+  /**
+   * Returns all games that have been sold (sold_at IS NOT NULL) for the given user.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  getSoldGames(userId: string): Promise<GameListModel[]>;
 }
 
 /** InjectionToken for GameRepositoryContract. */

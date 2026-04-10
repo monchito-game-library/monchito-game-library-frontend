@@ -80,6 +80,13 @@ export interface GameUseCasesContract {
    * @param {string} userId - UUID del usuario autenticado
    */
   clearAll(userId: string): Promise<void>;
+
+  /**
+   * Returns all sold games for the user (sold_at IS NOT NULL), ordered by sold_at descending.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  getSoldGames(userId: string): Promise<GameListModel[]>;
 }
 
 export const GAME_USE_CASES = new InjectionToken<GameUseCasesContract>('GAME_USE_CASES');

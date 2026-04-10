@@ -95,6 +95,10 @@
       "status": "Status",
       "platinum": "Platinum",
       "is_favorite": "Favourite",
+      "for_sale": "For sale",
+      "sale_price": "Desired selling price",
+      "sold_price_final": "Final selling price",
+      "sold_at": "Sale date",
       "edition": "Edition",
       "editionPlaceholder": "Deluxe Edition, GOTY...",
       "rating": "My Rating (0-10)",
@@ -224,6 +228,7 @@
     },
     "aria": {
       "onlyFavorites": "Favourites only",
+      "onlyForSale": "For sale only",
       "clearFilters": "Clear filters"
     }
   },
@@ -395,6 +400,14 @@
     },
     "placing": {
       "noBreakdown": "No breakdown available"
+    }
+  },
+  "soldGames": {
+    "title": "Sales history",
+    "empty": "You haven't sold any games yet.",
+    "paid": "Paid",
+    "snack": {
+      "loadError": "Error loading sales history"
     }
   },
   "wishlist": {

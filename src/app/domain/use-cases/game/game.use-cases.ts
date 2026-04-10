@@ -103,4 +103,13 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   async clearAll(userId: string): Promise<void> {
     return this._repo.clearAllForUser(userId);
   }
+
+  /**
+   * Returns all sold games for the user, ordered by sold_at descending.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  async getSoldGames(userId: string): Promise<GameListModel[]> {
+    return this._repo.getSoldGames(userId);
+  }
 }
