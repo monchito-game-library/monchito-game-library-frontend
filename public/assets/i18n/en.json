@@ -681,6 +681,7 @@
       "soldPriceFinal": "Final price obtained",
       "soldPricePlaceholder": "e.g. 25.00",
       "soldAt": "Sale date",
+      "soldAtInvalid": "Please enter a valid date",
       "soldWarning": "Once confirmed, the game will move to your sales history and disappear from your collection.",
       "saveBtn": "Save",
       "markAsSoldBtn": "Mark as sold",
