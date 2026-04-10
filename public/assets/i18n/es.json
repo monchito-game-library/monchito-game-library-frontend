@@ -623,6 +623,28 @@
     "snack": {
       "loadError": "Error al cargar el juego",
       "deleteError": "Error al eliminar el juego"
+    },
+    "sale": {
+      "manageBtn": "Venta",
+      "forSaleBadge": "En venta",
+      "title": "Venta",
+      "availability": "Disponible para venta",
+      "forSale": "A la venta",
+      "salePrice": "Precio deseado",
+      "salePricePlaceholder": "ej. 29.99",
+      "registerSection": "¿Ya lo vendiste?",
+      "soldPriceFinal": "Precio final obtenido",
+      "soldPricePlaceholder": "ej. 25.00",
+      "soldAt": "Fecha de venta",
+      "soldWarning": "Al confirmar, el juego pasará al historial y dejará de aparecer en tu colección.",
+      "saveBtn": "Guardar",
+      "markAsSoldBtn": "Marcar como vendido",
+      "snack": {
+        "saveError": "Error al guardar el estado de venta",
+        "saveSuccess": "Estado de venta actualizado",
+        "soldSuccess": "Juego marcado como vendido",
+        "soldError": "Error al registrar la venta"
+      }
     }
   }
 }

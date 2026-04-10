@@ -622,6 +622,28 @@
     "snack": {
       "loadError": "Error loading game",
       "deleteError": "Error deleting game"
+    },
+    "sale": {
+      "manageBtn": "Sale",
+      "forSaleBadge": "For sale",
+      "title": "Sale",
+      "availability": "Available for sale",
+      "forSale": "For sale",
+      "salePrice": "Desired price",
+      "salePricePlaceholder": "e.g. 29.99",
+      "registerSection": "Already sold it?",
+      "soldPriceFinal": "Final price obtained",
+      "soldPricePlaceholder": "e.g. 25.00",
+      "soldAt": "Sale date",
+      "soldWarning": "Once confirmed, the game will move to your sales history and disappear from your collection.",
+      "saveBtn": "Save",
+      "markAsSoldBtn": "Mark as sold",
+      "snack": {
+        "saveError": "Error saving sale status",
+        "saveSuccess": "Sale status updated",
+        "soldSuccess": "Game marked as sold",
+        "soldError": "Error registering the sale"
+      }
     }
   }
 }

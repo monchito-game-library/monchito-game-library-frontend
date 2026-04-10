@@ -7,6 +7,7 @@ import { GameModel } from '@/models/game/game.model';
 import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import { GameUseCasesContract } from './game.use-cases.contract';
+import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 
 @Injectable()
 export class GameUseCasesImpl implements GameUseCasesContract {
@@ -111,5 +112,16 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    */
   async getSoldGames(userId: string): Promise<GameListModel[]> {
     return this._repo.getSoldGames(userId);
+  }
+
+  /**
+   * Updates only the sale-related fields of a game.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} uuid - Supabase UUID of the user_games row
+   * @param {GameSaleStatusModel} sale - New sale status values
+   */
+  async updateSaleStatus(userId: string, uuid: string, sale: GameSaleStatusModel): Promise<void> {
+    return this._repo.updateSaleStatus(userId, uuid, sale);
   }
 }

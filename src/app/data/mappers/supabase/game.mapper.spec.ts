@@ -18,7 +18,10 @@ const baseDto: UserGameListDto = {
   format: 'physical',
   is_favorite: true,
   image_url: 'https://example.com/gow.jpg',
-  cover_position: null
+  cover_position: null,
+  for_sale: false,
+  sold_at: null,
+  sold_price_final: null
 };
 
 describe('mapGameList', () => {
@@ -141,7 +144,11 @@ const baseFullDto: UserGameFullDto = {
   esrb_rating: 'Mature',
   available_platforms: ['PS4', 'PS5'],
   genres: ['Action', 'Adventure'],
-  source: 'rawg'
+  source: 'rawg',
+  for_sale: false,
+  sale_price: null,
+  sold_at: null,
+  sold_price_final: null
 };
 
 describe('mapGame', () => {
@@ -260,7 +267,11 @@ const baseEditDto: UserGameEditDto = {
   released_date: '2018-04-20',
   rawg_rating: 4.42,
   genres: ['Action', 'Adventure'],
-  cover_position: null
+  cover_position: null,
+  for_sale: false,
+  sale_price: null,
+  sold_at: null,
+  sold_price_final: null
 };
 
 describe('mapGameEdit', () => {

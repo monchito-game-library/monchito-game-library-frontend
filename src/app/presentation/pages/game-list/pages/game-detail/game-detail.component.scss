@@ -125,6 +125,26 @@
   }
 }
 
+.game-detail__sale-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.4);
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
 .game-detail__title {
   margin: 0;
   font-size: 1.5rem;

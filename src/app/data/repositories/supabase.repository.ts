@@ -8,6 +8,7 @@ import { PlatformType } from '@/types/platform.type';
 import { GameRepositoryContract } from '@/domain/repositories/game.repository.contract';
 import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
+import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import {
   GameCatalogInsertDto,
   UserGameEditDto,
@@ -234,6 +235,28 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     if (error) throw new Error(`Failed to fetch sold games: ${error.message}`);
     return (data || []).map(mapGameList);
+  }
+
+  /**
+   * Updates only the 4 sale-related columns of a user_games row.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} uuid - Supabase UUID of the user_games row
+   * @param {GameSaleStatusModel} sale - New sale status values
+   */
+  async updateSaleStatus(userId: string, uuid: string, sale: GameSaleStatusModel): Promise<void> {
+    const { error } = await this._supabase
+      .from(this._userGamesTable)
+      .update({
+        for_sale: sale.forSale,
+        sale_price: sale.salePrice,
+        sold_at: sale.soldAt,
+        sold_price_final: sale.soldPriceFinal
+      })
+      .eq('id', uuid)
+      .eq('user_id', userId);
+
+    if (error) throw new Error(`Failed to update sale status: ${error.message}`);
   }
 
   /**
