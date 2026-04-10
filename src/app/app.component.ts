@@ -120,8 +120,8 @@ export class AppComponent implements OnInit {
    */
   isNavActive(route: string): boolean {
     const current = this.currentRoute();
-    if (route === '/add') {
-      return current.startsWith('/add') || current.startsWith('/update/');
+    if (route === '/games/add') {
+      return current.startsWith('/games/add') || current.startsWith('/games/edit/');
     }
     return current.startsWith(route);
   }

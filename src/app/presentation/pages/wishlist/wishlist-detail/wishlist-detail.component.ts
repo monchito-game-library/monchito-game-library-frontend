@@ -160,7 +160,7 @@ export class WishlistDetailComponent implements OnInit {
       metacritic_score: null
     };
 
-    void this._router.navigate(['/add'], { state: { catalogEntry, wishlistItemId: i.id } });
+    void this._router.navigate(['/games/add'], { state: { catalogEntry, wishlistItemId: i.id } });
   }
 
   /**

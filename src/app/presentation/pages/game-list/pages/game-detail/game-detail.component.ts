@@ -128,7 +128,7 @@ export class GameDetailComponent implements OnInit {
   editGame(): void {
     const uuid = this.game()?.uuid;
     if (!uuid) return;
-    void this._router.navigate(['/update', uuid]);
+    void this._router.navigate(['/games/edit', uuid]);
   }
 
   /**
