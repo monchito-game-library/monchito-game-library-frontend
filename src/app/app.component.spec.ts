@@ -122,8 +122,8 @@ describe('AppComponent', () => {
   });
 
   describe('getPageTitle', () => {
-    it('devuelve "nav.add" para rutas /update/:id (retrocompatibilidad)', () => {
-      component.currentRoute.set('/update/42');
+    it('devuelve "nav.add" para rutas /games/edit/:id', () => {
+      component.currentRoute.set('/games/edit/42');
       expect(component.getPageTitle()).toBe('nav.add');
     });
 

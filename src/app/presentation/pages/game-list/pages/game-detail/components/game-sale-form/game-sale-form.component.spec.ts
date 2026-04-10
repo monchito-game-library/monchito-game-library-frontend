@@ -37,6 +37,9 @@ function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
     salePrice: null,
     soldAt: null,
     soldPriceFinal: null,
+    activeLoanId: null,
+    activeLoanTo: null,
+    activeLoanAt: null,
     ...overrides
   };
 }

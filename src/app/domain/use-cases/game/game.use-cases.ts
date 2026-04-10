@@ -8,6 +8,8 @@ import { PlatformType } from '@/types/platform.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import { GameUseCasesContract } from './game.use-cases.contract';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
+import { GameLoanStatusModel } from '@/interfaces/game-loan-status.interface';
+import { GameLoanDto } from '@/dtos/supabase/game-loan.dto';
 
 @Injectable()
 export class GameUseCasesImpl implements GameUseCasesContract {
@@ -123,5 +125,32 @@ export class GameUseCasesImpl implements GameUseCasesContract {
    */
   async updateSaleStatus(userId: string, uuid: string, sale: GameSaleStatusModel): Promise<void> {
     return this._repo.updateSaleStatus(userId, uuid, sale);
+  }
+
+  /**
+   * Creates a new active loan for a game. Returns the UUID of the created loan row.
+   *
+   * @param {GameLoanStatusModel} loan - Datos del préstamo a registrar
+   */
+  async createLoan(loan: GameLoanStatusModel): Promise<string> {
+    return this._repo.createLoan(loan);
+  }
+
+  /**
+   * Marks a loan as returned by setting returned_at to today's date.
+   *
+   * @param {string} loanId - UUID of the game_loans row
+   */
+  async returnLoan(loanId: string): Promise<void> {
+    return this._repo.returnLoan(loanId);
+  }
+
+  /**
+   * Returns the full loan history for a game, ordered by loaned_at descending.
+   *
+   * @param {string} userGameId - UUID of the user_games row
+   */
+  async getLoanHistory(userGameId: string): Promise<GameLoanDto[]> {
+    return this._repo.getLoanHistory(userGameId);
   }
 }

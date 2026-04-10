@@ -9,6 +9,8 @@ import { GameRepositoryContract } from '@/domain/repositories/game.repository.co
 import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
+import { GameLoanStatusModel } from '@/interfaces/game-loan-status.interface';
+import { GameLoanDto, GameLoanInsertDto } from '@/dtos/supabase/game-loan.dto';
 import {
   GameCatalogInsertDto,
   UserGameEditDto,
@@ -29,6 +31,7 @@ export class SupabaseRepository implements GameRepositoryContract {
   private readonly _viewName = 'user_games_full';
   private readonly _catalogTable = 'game_catalog';
   private readonly _userGamesTable = 'user_games';
+  private readonly _loansTable = 'game_loans';
 
   /**
    * Returns all games for a user, paginating in batches of 1000 to work around
@@ -52,7 +55,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     let all: UserGameListDto[] = [];
     let from = 0;
     const select =
-      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final';
+      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
 
     while (true) {
       const { data, error } = await this._supabase
@@ -206,7 +209,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     const { data, error } = await this._supabase
       .from(this._viewName)
       .select(
-        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final'
+        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at'
       )
       .eq('user_id', userId)
       .eq('id', uuid)
@@ -224,7 +227,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    */
   async getSoldGames(userId: string): Promise<GameListModel[]> {
     const select =
-      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final';
+      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
 
     const { data, error } = await this._supabase
       .from(this._viewName)
@@ -257,6 +260,50 @@ export class SupabaseRepository implements GameRepositoryContract {
       .eq('user_id', userId);
 
     if (error) throw new Error(`Failed to update sale status: ${error.message}`);
+  }
+
+  /**
+   * Creates a new active loan for a game. Returns the UUID of the created loan row.
+   *
+   * @param {GameLoanStatusModel} loan - Datos del préstamo a registrar
+   */
+  async createLoan(loan: GameLoanStatusModel): Promise<string> {
+    const payload: GameLoanInsertDto = {
+      user_game_id: loan.userGameId,
+      loaned_to: loan.loanedTo,
+      loaned_at: loan.loanedAt
+    };
+
+    const { data, error } = await this._supabase.from(this._loansTable).insert(payload).select('id').single();
+    if (error) throw new Error(`Failed to create loan: ${error.message}`);
+    return data.id;
+  }
+
+  /**
+   * Marks a loan as returned by setting returned_at to today's date.
+   *
+   * @param {string} loanId - UUID of the game_loans row
+   */
+  async returnLoan(loanId: string): Promise<void> {
+    const returned_at = new Date().toISOString().slice(0, 10);
+    const { error } = await this._supabase.from(this._loansTable).update({ returned_at }).eq('id', loanId);
+    if (error) throw new Error(`Failed to return loan: ${error.message}`);
+  }
+
+  /**
+   * Returns the full loan history for a game, ordered by loaned_at descending.
+   *
+   * @param {string} userGameId - UUID of the user_games row
+   */
+  async getLoanHistory(userGameId: string): Promise<GameLoanDto[]> {
+    const { data, error } = await this._supabase
+      .from(this._loansTable)
+      .select('*')
+      .eq('user_game_id', userGameId)
+      .order('loaned_at', { ascending: false });
+
+    if (error) throw new Error(`Failed to fetch loan history: ${error.message}`);
+    return (data || []) as GameLoanDto[];
   }
 
   /**

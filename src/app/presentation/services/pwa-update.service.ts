@@ -11,7 +11,7 @@ const FORM_ROUTES = ['/games/add', '/games/edit/'];
  *
  * Strategy:
  * - Safe route → shows a full-screen loading overlay and reloads after 400ms.
- * - Form route (/add, /update/:id) → defers until the user navigates away,
+ * - Form route (/games/add, /games/edit/:id) → defers until the user navigates away,
  *   then shows the same overlay and reloads.
  */
 @Injectable({ providedIn: 'root' })

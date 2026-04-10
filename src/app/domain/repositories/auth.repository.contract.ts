@@ -51,6 +51,22 @@ export interface AuthRepositoryContract {
    * @param {string} displayName - New display name (may include emojis)
    */
   updateDisplayName(displayName: string): Promise<void>;
+
+  /**
+   * Updates the password of the currently authenticated user.
+   * Must be called while a PASSWORD_RECOVERY session is active.
+   *
+   * @param {string} newPassword - New password in plain text
+   */
+  updatePassword(newPassword: string): Promise<void>;
+
+  /**
+   * Registers a one-time listener that fires when Supabase detects a PASSWORD_RECOVERY
+   * session (i.e. the user arrived via the reset-password email link).
+   *
+   * @param {() => void} callback - Called once the recovery session is ready
+   */
+  onPasswordRecovery(callback: () => void): void;
 }
 
 /** InjectionToken for AuthRepositoryContract. */

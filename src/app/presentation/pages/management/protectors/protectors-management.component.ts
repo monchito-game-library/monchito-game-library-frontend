@@ -271,7 +271,7 @@ export class ProtectorsManagementComponent implements OnInit {
         action: 'protector.toggle_active',
         entityType: 'protector',
         entityId: protector.id,
-        description: `${protector.name} → ${nextActive ? 'active' : 'inactive'}`
+        description: `${protector.name} → ${this._transloco.translate(nextActive ? 'management.products.active' : 'management.products.inactive')}`
       });
       await this._loadProtectors();
     });

@@ -35,7 +35,10 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     forSale: dto.for_sale ?? false,
     salePrice: dto.sale_price ?? null,
     soldAt: dto.sold_at ?? null,
-    soldPriceFinal: dto.sold_price_final ?? null
+    soldPriceFinal: dto.sold_price_final ?? null,
+    activeLoanId: dto.active_loan_id ?? null,
+    activeLoanTo: dto.active_loan_to ?? null,
+    activeLoanAt: dto.active_loan_at ?? null
   };
 }
 
@@ -70,7 +73,10 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
     forSale: dto.for_sale ?? false,
     salePrice: dto.sale_price ?? null,
     soldAt: dto.sold_at ?? null,
-    soldPriceFinal: dto.sold_price_final ?? null
+    soldPriceFinal: dto.sold_price_final ?? null,
+    activeLoanId: dto.active_loan_id ?? null,
+    activeLoanTo: dto.active_loan_to ?? null,
+    activeLoanAt: dto.active_loan_at ?? null
   };
 }
 
@@ -98,7 +104,10 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
     coverPosition: dto.cover_position ?? null,
     forSale: dto.for_sale ?? false,
     soldAt: dto.sold_at ?? null,
-    soldPriceFinal: dto.sold_price_final ?? null
+    soldPriceFinal: dto.sold_price_final ?? null,
+    activeLoanId: dto.active_loan_id ?? null,
+    activeLoanTo: dto.active_loan_to ?? null,
+    activeLoanAt: dto.active_loan_at ?? null
   };
 }
 

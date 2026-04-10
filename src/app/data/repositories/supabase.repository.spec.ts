@@ -239,7 +239,10 @@ describe('SupabaseRepository', () => {
         forSale: false,
         salePrice: null,
         soldAt: null,
-        soldPriceFinal: null
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
       };
 
       await repo.addGameForUser('user-1', gameModel, catalogEntry);
@@ -359,7 +362,10 @@ describe('SupabaseRepository', () => {
       forSale: false,
       salePrice: null,
       soldAt: null,
-      soldPriceFinal: null
+      soldPriceFinal: null,
+      activeLoanId: null,
+      activeLoanTo: null,
+      activeLoanAt: null
     };
 
     it('lanza error cuando uuid es undefined', async () => {
@@ -474,7 +480,10 @@ describe('SupabaseRepository', () => {
       forSale: false,
       salePrice: null,
       soldAt: null,
-      soldPriceFinal: null
+      soldPriceFinal: null,
+      activeLoanId: null,
+      activeLoanTo: null,
+      activeLoanAt: null
     };
 
     it('crea un nuevo catálogo manual cuando no existe título igual', async () => {
@@ -536,7 +545,10 @@ describe('SupabaseRepository', () => {
       forSale: false,
       salePrice: null,
       soldAt: null,
-      soldPriceFinal: null
+      soldPriceFinal: null,
+      activeLoanId: null,
+      activeLoanTo: null,
+      activeLoanAt: null
     };
 
     const catalogEntry = {

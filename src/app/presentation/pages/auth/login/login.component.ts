@@ -6,7 +6,7 @@ import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 
@@ -38,6 +38,7 @@ export class LoginComponent {
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether a login request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -82,7 +83,7 @@ export class LoginComponent {
       const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/games';
       void this._router.navigateByUrl(returnUrl);
     } else {
-      this.errorMessage.set(result.error ?? 'Login failed');
+      this.errorMessage.set(result.error ?? this._transloco.translate('auth.login.loginFailed'));
     }
   }
 }

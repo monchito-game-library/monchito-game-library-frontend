@@ -130,6 +130,17 @@ describe('SupabaseAuthRepository', () => {
 
       await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow('Registration failed');
     });
+
+    it('lanza error cuando falla el insert de user_preferences', async () => {
+      mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
+      mockSupabase.from.mockReturnValue({
+        insert: vi.fn().mockResolvedValue({ error: { message: 'DB constraint violation' } })
+      });
+
+      await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow(
+        'Registration succeeded but failed to create user preferences: DB constraint violation'
+      );
+    });
   });
 
   describe('signOut', () => {

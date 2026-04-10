@@ -62,6 +62,24 @@ describe('UserPreferencesInitService', () => {
       expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
     });
 
+    it('establece preferencesLoaded=true aunque loadPreferences lance un error', async () => {
+      mockUserPreferencesUseCases.loadPreferences.mockRejectedValue(new Error('Supabase down'));
+
+      await service.loadPreferences('user-1');
+
+      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
+    });
+
+    it('no aplica ningún ajuste cuando loadPreferences lanza un error', async () => {
+      mockUserPreferencesUseCases.loadPreferences.mockRejectedValue(new Error('Supabase down'));
+
+      await service.loadPreferences('user-1');
+
+      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+      expect(mockTransloco.setActiveLang).not.toHaveBeenCalled();
+    });
+
     it('no aplica ningún ajuste adicional cuando las preferencias son null', async () => {
       mockUserPreferencesUseCases.loadPreferences.mockResolvedValue(null);
 
