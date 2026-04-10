@@ -39,6 +39,10 @@ function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
     rawgRating: 4.42,
     genres: ['Action', 'Adventure'],
     coverPosition: null,
+    forSale: false,
+    salePrice: null,
+    soldAt: null,
+    soldPriceFinal: null,
     ...overrides
   };
 }
@@ -370,6 +374,34 @@ describe('GameDetailComponent', () => {
     it('devuelve false cuando game es null', () => {
       component.game.set(null);
       expect(component.hasHalfStar()).toBe(false);
+    });
+  });
+
+  describe('openSaleView', () => {
+    it('activa la señal showSaleForm', () => {
+      expect(component.showSaleForm()).toBe(false);
+      component.openSaleView();
+      expect(component.showSaleForm()).toBe(true);
+    });
+  });
+
+  describe('closeSaleView', () => {
+    it('desactiva la señal showSaleForm', () => {
+      component.showSaleForm.set(true);
+      component.closeSaleView();
+      expect(component.showSaleForm()).toBe(false);
+    });
+  });
+
+  describe('onSaleSaved', () => {
+    it('actualiza la señal game con el modelo recibido y desactiva showSaleForm', () => {
+      const updated = makeGame({ forSale: false, salePrice: null, soldAt: '2024-06-01', soldPriceFinal: 28 });
+      component.showSaleForm.set(true);
+
+      component.onSaleSaved(updated);
+
+      expect(component.game()).toEqual(updated);
+      expect(component.showSaleForm()).toBe(false);
     });
   });
 });

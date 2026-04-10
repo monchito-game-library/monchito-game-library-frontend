@@ -41,6 +41,15 @@
                 <mat-icon>emoji_events</mat-icon>
               </span>
             }
+            @if (g.forSale) {
+              <span class="game-detail__sale-chip">
+                <mat-icon>sell</mat-icon>
+                {{ 'gameDetail.sale.forSaleBadge' | transloco }}
+                @if (g.salePrice !== null) {
+                  · {{ g.salePrice | currency: 'EUR' }}
+                }
+              </span>
+            }
           </div>
           <h1 class="game-detail__title">{{ g.title }}</h1>
           @if (g.edition) {
@@ -52,127 +61,135 @@
 
     <!-- Body -->
     <div class="game-detail__body">
-      <!-- Personal data section -->
-      <section class="game-detail__section">
-        <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
-        <div class="game-detail__data-grid">
-          @if (g.price !== null) {
-            <div class="game-detail__data-item">
-              <span class="game-detail__data-label">
-                <mat-icon>payments</mat-icon>
-                {{ 'gameForm.fields.price' | transloco }}
-              </span>
-              <span class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</span>
-            </div>
-          }
-
-          @if (storeName()) {
-            <div class="game-detail__data-item">
-              <span class="game-detail__data-label">
-                <mat-icon>storefront</mat-icon>
-                {{ 'gameForm.fields.store' | transloco }}
-              </span>
-              <span class="game-detail__data-value">{{ storeName() }}</span>
-            </div>
-          }
-
-          @if (formatKey()) {
-            <div class="game-detail__data-item">
-              <span class="game-detail__data-label">
-                <mat-icon>{{ g.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
-                {{ 'gameForm.fields.format' | transloco }}
-              </span>
-              <span class="game-detail__data-value">{{ formatKey()! | transloco }}</span>
-            </div>
-          }
-
-          @if (conditionKey()) {
-            <div class="game-detail__data-item">
-              <span class="game-detail__data-label">
-                <mat-icon>grade</mat-icon>
-                {{ 'gameForm.fields.condition' | transloco }}
-              </span>
-              <span class="game-detail__data-value">{{ conditionKey()! | transloco }}</span>
-            </div>
-          }
-
-          @if (g.personalRating !== null) {
-            <div class="game-detail__data-item">
-              <span class="game-detail__data-label">
-                <mat-icon>star</mat-icon>
-                {{ 'gameForm.fields.rating' | transloco }}
-              </span>
-              <span class="game-detail__data-value game-detail__data-value--rating">
-                <span class="game-detail__stars">
-                  @for (s of ratingStars(); track $index) {
-                    <mat-icon>star</mat-icon>
-                  }
-                  @if (hasHalfStar()) {
-                    <mat-icon>star_half</mat-icon>
-                  }
-                </span>
-                <span>{{ g.personalRating }}/10</span>
-              </span>
-            </div>
-          }
-        </div>
-      </section>
-
-      <!-- Notes section -->
-      @if (g.description) {
+      @if (showSaleForm()) {
+        <app-game-sale-form [game]="g" (saved)="onSaleSaved($event)" (cancelled)="closeSaleView()" />
+      } @else {
+        <!-- Personal data section -->
         <section class="game-detail__section">
-          <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
-          <p class="game-detail__notes">{{ g.description }}</p>
-        </section>
-      }
-
-      <!-- RAWG info section -->
-      @if (g.rawgId) {
-        <section class="game-detail__section">
-          <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
+          <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
           <div class="game-detail__data-grid">
-            @if (g.releasedDate) {
+            @if (g.price !== null) {
               <div class="game-detail__data-item">
                 <span class="game-detail__data-label">
-                  <mat-icon>event</mat-icon>
-                  {{ 'gameDetail.released' | transloco }}
+                  <mat-icon>payments</mat-icon>
+                  {{ 'gameForm.fields.price' | transloco }}
                 </span>
-                <span class="game-detail__data-value">{{ g.releasedDate }}</span>
+                <span class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</span>
               </div>
             }
 
-            @if (g.rawgRating) {
+            @if (storeName()) {
               <div class="game-detail__data-item">
                 <span class="game-detail__data-label">
-                  <mat-icon>public</mat-icon>
-                  {{ 'gameDetail.communityRating' | transloco }}
+                  <mat-icon>storefront</mat-icon>
+                  {{ 'gameForm.fields.store' | transloco }}
                 </span>
-                <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+                <span class="game-detail__data-value">{{ storeName() }}</span>
+              </div>
+            }
+
+            @if (formatKey()) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>{{ g.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
+                  {{ 'gameForm.fields.format' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ formatKey()! | transloco }}</span>
+              </div>
+            }
+
+            @if (conditionKey()) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>grade</mat-icon>
+                  {{ 'gameForm.fields.condition' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ conditionKey()! | transloco }}</span>
+              </div>
+            }
+
+            @if (g.personalRating !== null) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>star</mat-icon>
+                  {{ 'gameForm.fields.rating' | transloco }}
+                </span>
+                <span class="game-detail__data-value game-detail__data-value--rating">
+                  <span class="game-detail__stars">
+                    @for (s of ratingStars(); track $index) {
+                      <mat-icon>star</mat-icon>
+                    }
+                    @if (hasHalfStar()) {
+                      <mat-icon>star_half</mat-icon>
+                    }
+                  </span>
+                  <span>{{ g.personalRating }}/10</span>
+                </span>
               </div>
             }
           </div>
+        </section>
 
-          @if (g.genres.length) {
-            <div class="game-detail__genres">
-              @for (genre of g.genres; track genre) {
-                <span class="game-detail__genre-chip">{{ genre }}</span>
+        <!-- Notes section -->
+        @if (g.description) {
+          <section class="game-detail__section">
+            <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
+            <p class="game-detail__notes">{{ g.description }}</p>
+          </section>
+        }
+
+        <!-- RAWG info section -->
+        @if (g.rawgId) {
+          <section class="game-detail__section">
+            <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
+            <div class="game-detail__data-grid">
+              @if (g.releasedDate) {
+                <div class="game-detail__data-item">
+                  <span class="game-detail__data-label">
+                    <mat-icon>event</mat-icon>
+                    {{ 'gameDetail.released' | transloco }}
+                  </span>
+                  <span class="game-detail__data-value">{{ g.releasedDate }}</span>
+                </div>
+              }
+
+              @if (g.rawgRating) {
+                <div class="game-detail__data-item">
+                  <span class="game-detail__data-label">
+                    <mat-icon>public</mat-icon>
+                    {{ 'gameDetail.communityRating' | transloco }}
+                  </span>
+                  <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+                </div>
               }
             </div>
-          }
-        </section>
-      }
 
-      <!-- Actions footer -->
-      <div class="game-detail__actions">
-        <button mat-stroked-button (click)="editGame()">
-          <mat-icon>edit</mat-icon>
-          {{ 'gameCard.menu.edit' | transloco }}
-        </button>
-        <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
-          <mat-icon>delete</mat-icon>
-          {{ 'gameCard.menu.delete' | transloco }}
-        </button>
-      </div>
+            @if (g.genres.length) {
+              <div class="game-detail__genres">
+                @for (genre of g.genres; track genre) {
+                  <span class="game-detail__genre-chip">{{ genre }}</span>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Actions footer -->
+        <div class="game-detail__actions">
+          <button mat-stroked-button (click)="editGame()">
+            <mat-icon>edit</mat-icon>
+            {{ 'gameCard.menu.edit' | transloco }}
+          </button>
+          <button mat-stroked-button (click)="openSaleView()">
+            <mat-icon>sell</mat-icon>
+            {{ 'gameDetail.sale.manageBtn' | transloco }}
+          </button>
+          <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
+            <mat-icon>delete</mat-icon>
+            {{ 'gameCard.menu.delete' | transloco }}
+          </button>
+        </div>
+      }
     </div>
   }
 </div>

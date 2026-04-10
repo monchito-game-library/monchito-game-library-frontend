@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-03-28
+-- Última revisión: 2026-04-09
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -174,6 +174,15 @@ CREATE TABLE IF NOT EXISTS user_games (
   -- Favorito
   is_favorite BOOLEAN DEFAULT FALSE,
 
+  -- Posición de la portada (punto focal configurable en la card)
+  cover_position TEXT,
+
+  -- Venta
+  for_sale         BOOLEAN      NOT NULL DEFAULT FALSE,
+  sale_price       NUMERIC(10,2),          -- precio deseado
+  sold_at          DATE,                   -- fecha de venta real (NULL = en colección activa)
+  sold_price_final NUMERIC(10,2),          -- precio final obtenido
+
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -188,6 +197,8 @@ CREATE INDEX IF NOT EXISTS idx_user_games_format         ON user_games(format);
 CREATE INDEX IF NOT EXISTS idx_user_games_status         ON user_games(status);
 CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_platinum       ON user_games(platinum)     WHERE platinum = TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_games_for_sale       ON user_games(for_sale)     WHERE for_sale = TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at)      WHERE sold_at IS NOT NULL;
 
 
 -- ============================================================
@@ -396,6 +407,11 @@ SELECT
   ug.description     AS user_notes,
   ug.is_favorite,
   ug.cover_position,
+
+  ug.for_sale,
+  ug.sale_price,
+  ug.sold_at,
+  ug.sold_price_final,
 
   ug.created_at,
   ug.updated_at
