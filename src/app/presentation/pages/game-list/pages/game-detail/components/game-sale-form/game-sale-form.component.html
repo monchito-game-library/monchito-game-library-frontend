@@ -71,7 +71,7 @@
 
       <mat-form-field appearance="outline" class="game-sale-form__field">
         <mat-label>{{ 'gameDetail.sale.soldAt' | transloco }}</mat-label>
-        <input matInput type="date" formControlName="soldAt" />
+        <input matInput type="date" min="1000-01-01" max="9999-12-31" formControlName="soldAt" />
         @if (form.controls.soldAt.hasError('invalidDate')) {
           <mat-error>{{ 'gameDetail.sale.soldAtInvalid' | transloco }}</mat-error>
         }
