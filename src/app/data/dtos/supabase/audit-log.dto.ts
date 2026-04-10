@@ -2,6 +2,7 @@
 export interface AuditLogRowDto {
   id: string;
   performed_by: string;
+  performed_by_email: string | null;
   action: string;
   entity_type: string | null;
   entity_id: string | null;

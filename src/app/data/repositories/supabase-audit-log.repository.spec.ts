@@ -18,6 +18,7 @@ function makeBuilder(result: { data?: unknown; error: unknown }) {
 const logRow = {
   id: 'log-1',
   performed_by: 'user-1',
+  performed_by_email: 'admin@example.com',
   action: 'DELETE_GAME',
   entity_type: 'game',
   entity_id: 'game-uuid',
@@ -45,6 +46,7 @@ describe('SupabaseAuditLogRepository', () => {
       expect(result).toHaveLength(1);
       expect(result[0].action).toBe('DELETE_GAME');
       expect(result[0].performedBy).toBe('user-1');
+      expect(result[0].performedByEmail).toBe('admin@example.com');
       expect(result[0].entityType).toBe('game');
     });
 
@@ -76,13 +78,31 @@ describe('SupabaseAuditLogRepository', () => {
 
   describe('insertLog', () => {
     it('inserta el log cuando hay usuario autenticado', async () => {
-      mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+      mockSupabase.auth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-1', email: 'admin@example.com' } }
+      });
       const b = makeBuilder({ error: null });
       mockSupabase.from.mockReturnValue(b);
 
       await repo.insertLog({ action: 'DELETE_GAME', entityType: 'game', entityId: 'g-1', description: null });
 
-      expect(b.insert).toHaveBeenCalledWith(expect.objectContaining({ performed_by: 'user-1', action: 'DELETE_GAME' }));
+      expect(b.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          performed_by: 'user-1',
+          performed_by_email: 'admin@example.com',
+          action: 'DELETE_GAME'
+        })
+      );
+    });
+
+    it('guarda performed_by_email como null cuando el usuario no tiene email', async () => {
+      mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: 'user-1', email: undefined } } });
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.insertLog({ action: 'DELETE_GAME', entityType: null, entityId: null, description: null });
+
+      expect(b.insert).toHaveBeenCalledWith(expect.objectContaining({ performed_by_email: null }));
     });
 
     it('no inserta nada cuando no hay usuario autenticado', async () => {
