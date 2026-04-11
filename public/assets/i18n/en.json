@@ -492,7 +492,9 @@
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don't have an account?",
       "register": "Register here",
-      "loginFailed": "Login failed"
+      "loginFailed": "Login failed",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     },
     "register": {
       "title": "Create Account",
@@ -605,6 +607,7 @@
       "deleteConfirm": "Delete protector «{{ name }}»? This action is permanent and cannot be undone.",
       "packsTitle": "Available packs",
       "addPack": "Add pack",
+      "removePack": "Remove pack",
       "packsEmpty": "Add at least one pack",
       "packQty": "Quantity",
       "packPrice": "Total price",

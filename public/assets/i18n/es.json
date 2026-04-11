@@ -493,7 +493,9 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "noAccount": "¿No tienes una cuenta?",
       "register": "Regístrate aquí",
-      "loginFailed": "Error al iniciar sesión"
+      "loginFailed": "Error al iniciar sesión",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
     },
     "register": {
       "title": "Crear cuenta",
@@ -606,6 +608,7 @@
       "deleteConfirm": "¿Eliminar el protector «{{ name }}»? Esta acción es permanente y no se puede deshacer.",
       "packsTitle": "Packs disponibles",
       "addPack": "Añadir pack",
+      "removePack": "Eliminar pack",
       "packsEmpty": "Añade al menos un pack",
       "packQty": "Cantidad",
       "packPrice": "Precio total",

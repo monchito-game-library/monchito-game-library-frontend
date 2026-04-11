@@ -37,22 +37,32 @@
               <button
                 mat-icon-button
                 [matTooltip]="'orders.header.shareInvite' | transloco"
+                [attr.aria-label]="'orders.header.shareInvite' | transloco"
                 (click)="onShareInvitation()"
                 [disabled]="saving()">
                 <mat-icon>link</mat-icon>
               </button>
             }
             @if (ord.status === ORDER_STATUS.DRAFT) {
-              <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
+              <button
+                mat-icon-button
+                [matTooltip]="'orders.header.edit' | transloco"
+                [attr.aria-label]="'orders.header.edit' | transloco"
+                (click)="onEditHeader()">
                 <mat-icon>edit</mat-icon>
               </button>
             }
-            <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
+            <button
+              mat-icon-button
+              [matTooltip]="'orders.header.delete' | transloco"
+              [attr.aria-label]="'orders.header.delete' | transloco"
+              (click)="onDeleteOrder()">
               <mat-icon>delete</mat-icon>
             </button>
             <button
               mat-icon-button
               [matTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
+              [attr.aria-label]="'orders.header.advanceStatus' | transloco"
               (click)="onRegressStatus()"
               [disabled]="saving() || !prevStatus()">
               <mat-icon>arrow_back</mat-icon>
@@ -60,6 +70,7 @@
             <button
               mat-icon-button
               [matTooltip]="'orders.header.nextStep' | transloco"
+              [attr.aria-label]="'orders.header.nextStep' | transloco"
               (click)="onAdvanceStatus()"
               [disabled]="
                 saving() ||
@@ -87,6 +98,7 @@
           <button
             mat-icon-button
             [matTooltip]="'orders.header.nextStep' | transloco"
+            [attr.aria-label]="'orders.header.nextStep' | transloco"
             (click)="onConfirmPacks()"
             [disabled]="saving() || !allPacksSelected()">
             <mat-icon>arrow_forward</mat-icon>
@@ -109,6 +121,7 @@
           <button
             mat-icon-button
             [matTooltip]="'orders.header.nextStep' | transloco"
+            [attr.aria-label]="'orders.header.nextStep' | transloco"
             (click)="onAdvanceStatus()"
             [disabled]="saving()">
             <mat-icon>arrow_forward</mat-icon>
