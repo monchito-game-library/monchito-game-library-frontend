@@ -479,6 +479,8 @@
   },
   "auth": {
     "logout": "Cerrar sesión",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
     "login": {
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
@@ -493,9 +495,7 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "noAccount": "¿No tienes una cuenta?",
       "register": "Regístrate aquí",
-      "loginFailed": "Error al iniciar sesión",
-      "showPassword": "Mostrar contraseña",
-      "hidePassword": "Ocultar contraseña"
+      "loginFailed": "Error al iniciar sesión"
     },
     "register": {
       "title": "Crear cuenta",

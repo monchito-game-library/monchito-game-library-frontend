@@ -73,19 +73,16 @@ export class OrderStepperComponent {
 
   constructor() {
     // Re-initialise internal state whenever the steps input changes (e.g. on first load).
-    effect(
-      () => {
-        const steps = this.packSteps();
-        this.currentStep.set(0);
-        this.stepSelections.set(new Map(steps.map((s) => [s.productId, 0])));
-        const initialConfirmed = new Set<string>();
-        if (steps.length > 0 && steps[0].suggestions.length > 0) {
-          initialConfirmed.add(steps[0].productId);
-        }
-        this._confirmedSelections.set(initialConfirmed);
-      },
-      { allowSignalWrites: true }
-    );
+    effect(() => {
+      const steps = this.packSteps();
+      this.currentStep.set(0);
+      this.stepSelections.set(new Map(steps.map((s) => [s.productId, 0])));
+      const initialConfirmed = new Set<string>();
+      if (steps.length > 0 && steps[0].suggestions.length > 0) {
+        initialConfirmed.add(steps[0].productId);
+      }
+      this._confirmedSelections.set(initialConfirmed);
+    });
 
     // Propagate changes to allPacksSelected up to the parent.
     effect(() => {

@@ -478,6 +478,8 @@
   },
   "auth": {
     "logout": "Logout",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "login": {
       "title": "Sign In",
       "email": "Email",
@@ -492,9 +494,7 @@
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don't have an account?",
       "register": "Register here",
-      "loginFailed": "Login failed",
-      "showPassword": "Show password",
-      "hidePassword": "Hide password"
+      "loginFailed": "Login failed"
     },
     "register": {
       "title": "Create Account",
