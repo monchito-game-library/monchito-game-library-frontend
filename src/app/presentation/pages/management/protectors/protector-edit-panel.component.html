@@ -44,7 +44,8 @@
           mat-icon-button
           type="button"
           (click)="addPack()"
-          [matTooltip]="'management.products.addPack' | transloco">
+          [matTooltip]="'management.products.addPack' | transloco"
+          [attr.aria-label]="'management.products.addPack' | transloco">
           <mat-icon>add</mat-icon>
         </button>
       </div>
@@ -78,7 +79,12 @@
               <input matInput formControlName="url" type="url" placeholder="https://..." />
             </mat-form-field>
 
-            <button mat-icon-button type="button" (click)="removePack($index)" class="pack-row__remove">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="removePack($index)"
+              class="pack-row__remove"
+              [attr.aria-label]="'management.products.removePack' | transloco">
               <mat-icon>delete</mat-icon>
             </button>
           </div>

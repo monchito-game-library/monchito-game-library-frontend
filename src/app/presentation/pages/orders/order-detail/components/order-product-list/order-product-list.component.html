@@ -60,12 +60,14 @@
                     <button
                       mat-icon-button
                       [matTooltip]="'orders.lines.edit' | transloco"
+                      [attr.aria-label]="'orders.lines.edit' | transloco"
                       (click)="lineEdit.emit(line)">
                       <mat-icon>edit</mat-icon>
                     </button>
                     <button
                       mat-icon-button
                       [matTooltip]="'orders.lines.delete' | transloco"
+                      [attr.aria-label]="'orders.lines.delete' | transloco"
                       (click)="lineDelete.emit(line.id)">
                       <mat-icon>delete</mat-icon>
                     </button>

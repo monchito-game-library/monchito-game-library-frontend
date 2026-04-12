@@ -479,6 +479,8 @@
   },
   "auth": {
     "logout": "Cerrar sesión",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
     "login": {
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
@@ -606,6 +608,7 @@
       "deleteConfirm": "¿Eliminar el protector «{{ name }}»? Esta acción es permanente y no se puede deshacer.",
       "packsTitle": "Packs disponibles",
       "addPack": "Añadir pack",
+      "removePack": "Eliminar pack",
       "packsEmpty": "Añade al menos un pack",
       "packQty": "Cantidad",
       "packPrice": "Precio total",
