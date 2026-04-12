@@ -54,7 +54,12 @@
           formControlName="password"
           [placeholder]="'auth.register.passwordPlaceholder' | transloco"
           autocomplete="new-password" />
-        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco">
           <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
         @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
@@ -75,7 +80,12 @@
           formControlName="confirmPassword"
           [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
           autocomplete="new-password" />
-        <button mat-icon-button matSuffix type="button" (click)="toggleConfirmPasswordVisibility()">
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="toggleConfirmPasswordVisibility()"
+          [attr.aria-label]="(hideConfirmPassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco">
           <mat-icon>{{ hideConfirmPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
         @if (

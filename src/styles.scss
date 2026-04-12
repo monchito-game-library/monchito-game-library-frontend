@@ -45,6 +45,14 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  user-select: none;
+}
+
+// Permitir selección de texto solo en elementos donde tiene sentido
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
 }
 
 // Oculta los spin buttons nativos de inputs numéricos para que matTextSuffix

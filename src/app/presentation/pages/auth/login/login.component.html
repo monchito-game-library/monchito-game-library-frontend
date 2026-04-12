@@ -36,7 +36,12 @@
           formControlName="password"
           [placeholder]="'auth.login.passwordPlaceholder' | transloco"
           autocomplete="current-password" />
-        <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco">
           <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
         </button>
         @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {

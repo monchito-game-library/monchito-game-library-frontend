@@ -478,6 +478,8 @@
   },
   "auth": {
     "logout": "Logout",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "login": {
       "title": "Sign In",
       "email": "Email",
@@ -605,6 +607,7 @@
       "deleteConfirm": "Delete protector «{{ name }}»? This action is permanent and cannot be undone.",
       "packsTitle": "Available packs",
       "addPack": "Add pack",
+      "removePack": "Remove pack",
       "packsEmpty": "Add at least one pack",
       "packQty": "Quantity",
       "packPrice": "Total price",
