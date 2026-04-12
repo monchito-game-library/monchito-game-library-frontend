@@ -1,9 +1,12 @@
 import { Routes } from '@angular/router';
 import { canActivateUser } from '@/guards/user.guard';
+import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
+import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
 
 export const gameListRoutes: Routes = [
   {
     path: '',
+    providers: [gameRepositoryProvider, gameUseCasesProvider],
     loadComponent: () => import('./game-list.component').then((m) => m.GameListComponent),
     canActivate: [canActivateUser]
   },
