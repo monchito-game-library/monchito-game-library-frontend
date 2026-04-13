@@ -1,21 +1,4 @@
+import { PLATFORM } from '@/constants/platform.constant';
+
 /** All valid gaming platforms, used in forms, filters and validations. */
-export type PlatformType =
-  | 'PS5'
-  | 'PS4'
-  | 'PS3'
-  | 'PS2'
-  | 'PS1'
-  | 'PS-VITA'
-  | 'PSP'
-  | 'GBC'
-  | 'GBA'
-  | 'DS'
-  | '3DS'
-  | 'WII'
-  | 'GAME-CUBE'
-  | 'SWITCH'
-  | 'XBOX'
-  | 'XBOX-360'
-  | 'XBOX-ONE'
-  | 'XBOX-SERIES'
-  | 'PC';
+export type PlatformType = (typeof PLATFORM)[keyof typeof PLATFORM];
