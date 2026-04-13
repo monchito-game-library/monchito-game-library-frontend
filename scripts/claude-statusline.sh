@@ -3,7 +3,7 @@ input=$(cat)
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd')
 folder=$(basename "$cwd")
 branch=$(git -C "$cwd" --no-optional-locks rev-parse --abbrev-ref HEAD 2>/dev/null)
-remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
+used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 
 parts=""
 
@@ -21,26 +21,41 @@ if [ -n "$model_name" ]; then
   parts=$(printf "%s  \033[35m🤖 %s\033[0m" "$parts" "$model_name")
 fi
 
-# 4. Context remaining percentage as progress bar (if available)
-if [ -n "$remaining" ]; then
-  remaining_int=$(printf "%.0f" "$remaining")
-  used_int=$(( 100 - remaining_int ))
-  filled=$(( (used_int + 5) / 10 ))
-  [ "$filled" -gt 10 ] && filled=10
+# 4. Session cost (if available and > 0)
+cost=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
+if [ -n "$cost" ]; then
+  cost_check=$(echo "$cost" | awk '{print ($1 > 0) ? "yes" : "no"}')
+  if [ "$cost_check" = "yes" ]; then
+    cost_fmt=$(printf "%.2f" "$cost")
+    parts=$(printf "%s  💰 \$%s" "$parts" "$cost_fmt")
+  fi
+fi
+
+# 5. Context bar calibrated to auto-compact threshold (80% used)
+if [ -n "$used" ]; then
+  used_int=$(printf "%.0f" "$used")
+  # filled blocks: scale used_percentage over 80% threshold, capped at 10
+  filled=$(awk "BEGIN {v=int(($used_int/80.0)*10+0.5); if(v>10) v=10; print v}")
   empty=$(( 10 - filled ))
+  # remaining until auto-compact
+  if [ "$used_int" -lt 80 ]; then
+    remaining_until=$(( 80 - used_int ))
+  else
+    remaining_until=0
+  fi
   bar=""
   i=0
   while [ "$i" -lt "$filled" ]; do bar="${bar}▓"; i=$(( i + 1 )); done
   i=0
   while [ "$i" -lt "$empty" ]; do bar="${bar}░"; i=$(( i + 1 )); done
-  if [ "$remaining_int" -gt 60 ]; then
+  if [ "$remaining_until" -gt 48 ]; then
     ctx_color="\033[32m"
-  elif [ "$remaining_int" -ge 30 ]; then
+  elif [ "$remaining_until" -ge 24 ]; then
     ctx_color="\033[33m"
   else
     ctx_color="\033[31m"
   fi
-  parts=$(printf "%s  %b%s %s%%\033[0m" "$parts" "$ctx_color" "$bar" "$remaining_int")
+  parts=$(printf "%s  %b%s %s%%\033[0m" "$parts" "$ctx_color" "$bar" "$remaining_until")
 fi
 
 printf "%s" "$parts"
