@@ -8,6 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
+| [Hub de colección con categorías (consolas y mandos)](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
@@ -17,6 +18,47 @@
 ---
 
 ## Alta prioridad
+
+### Hub de colección con categorías (consolas y mandos)
+
+La página de colección actual (`/games`) muestra juegos, consolas y mandos mezclados. Se reestructura para tener un hub con cards por categoría y subrutas independientes por tipo.
+
+#### Navegación
+
+```
+/games                → hub con cards de categoría (juegos, consolas, mandos)
+/games/list           → listado de juegos (lo actual)
+/games/list/:id       → detalle de juego
+/games/list/add       → añadir juego
+/games/list/edit/:id  → editar juego
+/games/list/sold      → historial de ventas
+/games/consoles       → listado de consolas
+/games/controllers    → listado de mandos
+```
+
+El hub muestra una card por categoría con el contador de elementos. Al hacer clic navega a la subruta correspondiente.
+
+#### Consolas (`user_consoles`)
+
+Campos: marca, modelo, región (PAL / NTSC / NTSC-J), condición, precio, tienda, fecha de compra, notas.
+
+#### Mandos (`user_controllers`)
+
+Campos: modelo, edición especial, color (obligatorio), compatibilidad (PS5 / Xbox / PC / Switch...), condición, precio, tienda, fecha de compra, notas. Los mandos son entidades independientes — no están vinculados a ninguna consola.
+
+#### Base de datos
+
+Tablas `user_consoles` y `user_controllers` creadas en Supabase con RLS (cada usuario solo ve los suyos). Ver schema en `docs/backend/supabase-schema-current.sql`.
+
+#### Implementación
+
+- Renombrar la ruta `/games` actual a `/games/list` y añadir redirect `/games` → hub.
+- Crear la página hub con cards de categoría.
+- Capas de datos completas para consolas y mandos (DTO, mapper, repositorio, casos de uso, providers DI).
+- Listados de consolas y mandos con filtros específicos por categoría.
+- Formularios de alta/edición para cada categoría.
+
+---
 
 ### Integración RAWG en detalle de juego
 
