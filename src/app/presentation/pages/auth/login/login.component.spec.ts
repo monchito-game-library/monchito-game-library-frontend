@@ -105,7 +105,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games/list');
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
     });
 
     it('llama a signIn con el email y password del formulario', async () => {

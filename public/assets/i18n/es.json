@@ -696,5 +696,27 @@
         "soldError": "Error al registrar la venta"
       }
     }
+  },
+  "gamesHub": {
+    "title": "Mi Colección",
+    "games": {
+      "title": "Juegos",
+      "subtitle": "Tu colección de videojuegos"
+    },
+    "consolesCategory": {
+      "title": "Consolas",
+      "subtitle": "Tus consolas"
+    },
+    "controllers": {
+      "title": "Mandos",
+      "subtitle": "Tus mandos"
+    },
+    "loading": "Cargando...",
+    "items": "{{ count }} elementos",
+    "oneItem": "1 elemento",
+    "tabOverview": "Resumen",
+    "tabGames": "Juegos",
+    "tabConsoles": "Consolas",
+    "tabControllers": "Mandos"
   }
 }

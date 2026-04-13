@@ -1,0 +1,50 @@
+<div class="games-hub">
+  <h1 class="games-hub__title">{{ 'gamesHub.title' | transloco }}</h1>
+
+  <div class="games-hub__grid">
+    <button class="games-hub__card" (click)="goToGames()">
+      <mat-icon class="games-hub__card-icon">sports_esports</mat-icon>
+      <span class="games-hub__card-title">{{ 'gamesHub.games.title' | transloco }}</span>
+      <span class="games-hub__card-subtitle">{{ 'gamesHub.games.subtitle' | transloco }}</span>
+      <span class="games-hub__card-count">
+        @if (gamesCount() === null) {
+          <mat-progress-spinner diameter="20" mode="indeterminate" />
+        } @else if (gamesCount() === 1) {
+          {{ 'gamesHub.oneItem' | transloco }}
+        } @else {
+          {{ 'gamesHub.items' | transloco: { count: gamesCount() } }}
+        }
+      </span>
+    </button>
+
+    <button class="games-hub__card" (click)="goToConsoles()">
+      <mat-icon class="games-hub__card-icon">tv</mat-icon>
+      <span class="games-hub__card-title">{{ 'gamesHub.consolesCategory.title' | transloco }}</span>
+      <span class="games-hub__card-subtitle">{{ 'gamesHub.consolesCategory.subtitle' | transloco }}</span>
+      <span class="games-hub__card-count">
+        @if (consolesCount() === null) {
+          <mat-progress-spinner diameter="20" mode="indeterminate" />
+        } @else if (consolesCount() === 1) {
+          {{ 'gamesHub.oneItem' | transloco }}
+        } @else {
+          {{ 'gamesHub.items' | transloco: { count: consolesCount() } }}
+        }
+      </span>
+    </button>
+
+    <button class="games-hub__card" (click)="goToControllers()">
+      <mat-icon class="games-hub__card-icon">gamepad</mat-icon>
+      <span class="games-hub__card-title">{{ 'gamesHub.controllers.title' | transloco }}</span>
+      <span class="games-hub__card-subtitle">{{ 'gamesHub.controllers.subtitle' | transloco }}</span>
+      <span class="games-hub__card-count">
+        @if (controllersCount() === null) {
+          <mat-progress-spinner diameter="20" mode="indeterminate" />
+        } @else if (controllersCount() === 1) {
+          {{ 'gamesHub.oneItem' | transloco }}
+        } @else {
+          {{ 'gamesHub.items' | transloco: { count: controllersCount() } }}
+        }
+      </span>
+    </button>
+  </div>
+</div>

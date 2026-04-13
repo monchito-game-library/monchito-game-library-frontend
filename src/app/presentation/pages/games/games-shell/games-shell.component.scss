@@ -1,0 +1,39 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.games-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+
+  .games-shell__tabs {
+    flex-shrink: 0;
+  }
+
+  .games-shell__content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .games-shell__tab-label {
+    margin-left: 0.5rem;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .games-shell {
+    .games-shell__tab-label {
+      display: none;
+    }
+  }
+}

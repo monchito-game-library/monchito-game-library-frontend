@@ -5,6 +5,7 @@ export const gamesRoutes: Routes = [
   {
     path: '',
     canActivate: [canActivateUser],
+    loadComponent: () => import('./games-shell/games-shell.component').then((m) => m.GamesShellComponent),
     children: [
       {
         path: '',
