@@ -254,10 +254,10 @@ describe('GameCardComponent — computed signals', () => {
   });
 
   describe('editGame', () => {
-    it('navega a /games/:uuid cuando la tarjeta no está girada', () => {
+    it('navega a /games/list/:uuid cuando la tarjeta no está girada', () => {
       const router = TestBed.inject(Router as any) as any;
       component.editGame();
-      expect(router.navigate).toHaveBeenCalledWith(['/games', mockGame.uuid]);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list', mockGame.uuid]);
     });
 
     it('no navega cuando la tarjeta está girada', () => {

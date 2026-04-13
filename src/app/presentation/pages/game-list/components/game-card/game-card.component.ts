@@ -150,7 +150,7 @@ export class GameCardComponent {
    */
   editGame = (): void => {
     if (this.isFlipped()) return;
-    void this._router.navigate(['/games', this.game().uuid]);
+    void this._router.navigate(['/games/list', this.game().uuid]);
   };
 
   /**

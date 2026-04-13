@@ -474,7 +474,7 @@ export class GameFormComponent implements OnInit {
         if (this._gameUuid) {
           this._location.back();
         } else {
-          void this._router.navigate(['/games']);
+          void this._router.navigate(['/games/list']);
         }
       } catch (err: unknown) {
         const isDuplicate =

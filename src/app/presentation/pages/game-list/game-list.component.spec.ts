@@ -712,11 +712,11 @@ describe('GameListComponent — router subscription', () => {
     await component.ngOnInit();
   });
 
-  it('recarga los juegos al navegar a /games', () => {
+  it('recarga los juegos al navegar a /games/list', () => {
     const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
     const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
 
-    routerEvents$.next(new NavigationEnd(1, '/games', '/games'));
+    routerEvents$.next(new NavigationEnd(1, '/games/list', '/games/list'));
 
     expect(gameUseCases.getAllGamesForList.mock.calls.length).toBeGreaterThan(callsBefore);
   });

@@ -127,7 +127,7 @@ export class GameDetailComponent implements OnInit {
   ngOnInit(): void {
     const uuid = this._route.snapshot.paramMap.get('id');
     if (!uuid) {
-      void this._router.navigate(['/games']);
+      void this._router.navigate(['/games/list']);
       return;
     }
     void this._loadData(uuid);
@@ -146,7 +146,7 @@ export class GameDetailComponent implements OnInit {
   editGame(): void {
     const uuid = this.game()?.uuid;
     if (!uuid) return;
-    void this._router.navigate(['/games/edit', uuid]);
+    void this._router.navigate(['/games/list/edit', uuid]);
   }
 
   /**
@@ -187,7 +187,7 @@ export class GameDetailComponent implements OnInit {
    */
   onSaleSaved(updated: GameEditModel): void {
     if (updated.soldAt) {
-      void this._router.navigate(['/games']);
+      void this._router.navigate(['/games/list']);
       return;
     }
     this.game.set(updated);
@@ -226,7 +226,7 @@ export class GameDetailComponent implements OnInit {
     this.deleting.set(true);
     try {
       await this._gameUseCases.deleteGame(this._userId, game.uuid);
-      void this._router.navigate(['/games']);
+      void this._router.navigate(['/games/list']);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
       this.deleting.set(false);
@@ -246,7 +246,7 @@ export class GameDetailComponent implements OnInit {
       ]);
 
       if (!game) {
-        void this._router.navigate(['/games']);
+        void this._router.navigate(['/games/list']);
         return;
       }
 
@@ -254,7 +254,7 @@ export class GameDetailComponent implements OnInit {
       this.stores.set(stores);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
-      void this._router.navigate(['/games']);
+      void this._router.navigate(['/games/list']);
     } finally {
       this.loading.set(false);
     }

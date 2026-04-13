@@ -99,13 +99,13 @@ describe('LoginComponent', () => {
       expect(component.loginForm.touched).toBe(true);
     });
 
-    it('navega a /games tras un login exitoso', async () => {
+    it('navega a /games/list tras un login exitoso', async () => {
       mockAuthUseCases.signIn.mockResolvedValue({ success: true });
       component.loginForm.setValue({ email: 'test@test.com', password: 'secret123' });
 
       await component.onSubmit();
 
-      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games/list');
     });
 
     it('llama a signIn con el email y password del formulario', async () => {

@@ -110,20 +110,20 @@ describe('AppComponent', () => {
       expect(component.isNavActive('/games')).toBe(false);
     });
 
-    it('/games/add es activo cuando la ruta actual es /games/edit/:id', () => {
-      component.currentRoute.set('/games/edit/123');
-      expect(component.isNavActive('/games/add')).toBe(true);
+    it('/games/list/add es activo cuando la ruta actual es /games/list/edit/:id', () => {
+      component.currentRoute.set('/games/list/edit/123');
+      expect(component.isNavActive('/games/list/add')).toBe(true);
     });
 
-    it('/games/add es activo cuando la ruta actual es /games/add', () => {
-      component.currentRoute.set('/games/add');
-      expect(component.isNavActive('/games/add')).toBe(true);
+    it('/games/list/add es activo cuando la ruta actual es /games/list/add', () => {
+      component.currentRoute.set('/games/list/add');
+      expect(component.isNavActive('/games/list/add')).toBe(true);
     });
   });
 
   describe('getPageTitle', () => {
-    it('devuelve "nav.add" para rutas /games/edit/:id', () => {
-      component.currentRoute.set('/games/edit/42');
+    it('devuelve "nav.add" para rutas /games/list/edit/:id', () => {
+      component.currentRoute.set('/games/list/edit/42');
       expect(component.getPageTitle()).toBe('nav.add');
     });
 

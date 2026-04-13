@@ -120,8 +120,8 @@ export class AppComponent implements OnInit {
    */
   isNavActive(route: string): boolean {
     const current = this.currentRoute();
-    if (route === '/games/add') {
-      return current.startsWith('/games/add') || current.startsWith('/games/edit/');
+    if (route === '/games/list/add') {
+      return current.startsWith('/games/list/add') || current.startsWith('/games/list/edit/');
     }
     return current.startsWith(route);
   }
@@ -132,7 +132,7 @@ export class AppComponent implements OnInit {
    */
   getPageTitle(): string {
     const route = this.currentRoute();
-    if (route.startsWith('/games/edit/')) return 'nav.add';
+    if (route.startsWith('/games/list/edit/')) return 'nav.add';
     const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
     const match = allItems.find((item) => route.startsWith(item.route));
     return match?.label ?? '';

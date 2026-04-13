@@ -127,7 +127,7 @@ describe('GameDetailComponent', () => {
       component.ngOnInit();
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list']);
     });
 
     it('navega a /games si el juego no existe (null)', async () => {
@@ -138,7 +138,7 @@ describe('GameDetailComponent', () => {
       component.ngOnInit();
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list']);
     });
 
     it('muestra snackbar de error y navega a /games si la carga falla', async () => {
@@ -151,7 +151,7 @@ describe('GameDetailComponent', () => {
       await new Promise((r) => setTimeout(r, 0));
 
       expect(snackBar.open).toHaveBeenCalled();
-      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list']);
     });
 
     it('desactiva loading incluso si la carga falla', async () => {
@@ -180,7 +180,7 @@ describe('GameDetailComponent', () => {
 
       component.editGame();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/games/edit', 'game-uuid-1']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list/edit', 'game-uuid-1']);
     });
 
     it('no navega si game es null', () => {
@@ -224,7 +224,7 @@ describe('GameDetailComponent', () => {
       await component.deleteGame();
 
       expect(gameUseCases.deleteGame).toHaveBeenCalledWith('user-1', 'game-uuid-1');
-      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list']);
     });
 
     it('muestra snackbar de error si deleteGame lanza', async () => {
@@ -411,7 +411,7 @@ describe('GameDetailComponent', () => {
 
       component.onSaleSaved(updated);
 
-      expect(router.navigate).toHaveBeenCalledWith(['/games']);
+      expect(router.navigate).toHaveBeenCalledWith(['/games/list']);
       expect(component.showSaleForm()).toBe(true);
     });
 
