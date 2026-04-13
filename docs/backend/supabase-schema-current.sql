@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-04-10
+-- Última revisión: 2026-04-13
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -1062,7 +1062,58 @@ $$;
 
 
 -- ============================================================
--- 18. STORAGE BUCKETS
+-- 18. USER_CONSOLES
+-- ============================================================
+
+CREATE TABLE user_consoles (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  brand         TEXT NOT NULL,
+  model         TEXT NOT NULL,
+  region        TEXT,
+  condition     TEXT NOT NULL,
+  price         NUMERIC(8,2),
+  store         TEXT,
+  purchase_date DATE,
+  notes         TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE user_consoles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own consoles"
+ON user_consoles FOR ALL
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================
+-- 19. USER_CONTROLLERS
+-- ============================================================
+
+CREATE TABLE user_controllers (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  model         TEXT NOT NULL,
+  edition       TEXT,
+  color         TEXT NOT NULL,
+  compatibility TEXT NOT NULL,
+  condition     TEXT NOT NULL,
+  price         NUMERIC(8,2),
+  store         TEXT,
+  purchase_date DATE,
+  notes         TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE user_controllers ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own controllers"
+ON user_controllers FOR ALL
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- ============================================================
+-- 20. STORAGE BUCKETS
 -- (configurar en Supabase Dashboard > Storage, no en SQL)
 --
 -- Bucket: avatars
