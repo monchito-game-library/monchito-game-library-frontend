@@ -9,6 +9,8 @@
 | Mejora | Prioridad |
 |---|---|
 | [Hub de colección con categorías (consolas y mandos)](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta |
+| [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta |
+| [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
@@ -57,6 +59,101 @@ Tablas `user_consoles` y `user_controllers` creadas en Supabase con RLS (cada us
 - Capas de datos completas para consolas y mandos (DTO, mapper, repositorio, casos de uso, providers DI).
 - Listados de consolas y mandos con filtros específicos por categoría.
 - Formularios de alta/edición para cada categoría.
+
+---
+
+### Formularios y gestión de consolas y mandos
+
+Los listados de consolas (`/games/consoles`) y mandos (`/games/controllers`) están implementados con soporte de delete. Queda la gestión completa: formulario de alta, formulario de edición y rutas propias.
+
+#### Rutas a añadir
+
+```
+/games/consoles/add          → formulario de alta de consola
+/games/consoles/edit/:id     → formulario de edición de consola
+/games/controllers/add       → formulario de alta de mando
+/games/controllers/edit/:id  → formulario de edición de mando
+```
+
+Seguir el mismo patrón que `game-list/pages/create-update-game`: cada formulario es una página hija con su propio `*.routes.ts`, cargada con `loadChildren` desde el routes padre.
+
+#### Formulario de consola
+
+Campos: marca (texto libre), modelo (texto libre), región (select: PAL / NTSC / NTSC-J), condición (select: Nuevo / Usado), precio (número opcional), tienda (select igual que juegos), fecha de compra (datepicker opcional), notas (textarea opcional), imagen (ver [Imágenes de consolas y mandos](#imágenes-de-consolas-y-mandos-supabase-storage)).
+
+#### Formulario de mando
+
+Campos: modelo (texto libre), edición (texto libre opcional), color (color picker o texto libre), compatibilidad (select: PS5 / PS4 / PS3 / Xbox / PC / Switch / Universal), condición (select), precio (opcional), tienda (optional), fecha de compra (opcional), notas (opcional), imagen (ver más abajo).
+
+#### Implementación
+
+- Interfaces `ConsoleForm` / `ConsoleFormValue` y `ControllerForm` / `ControllerFormValue` en `entities/interfaces/forms/`.
+- El use-case `add` y `update` ya existen — el formulario los llama directamente.
+- El FAB y el botón de "Añadir" en el estado vacío navegan a `/games/consoles/add` y `/games/controllers/add`.
+- Cada card en el listado añade botón de editar que navega a `edit/:id`.
+- Diálogo de confirmación en delete (ya implementado) se mantiene.
+
+---
+
+### Imágenes de consolas y mandos (Supabase Storage)
+
+Consolas y mandos no tienen integración con RAWG — las imágenes las sube el propio usuario y se guardan en Supabase Storage. Esta feature se implementa junto con o inmediatamente después de los formularios de alta/edición.
+
+#### Base de datos
+
+Añadir campo `image_url` a las tablas existentes:
+
+```sql
+ALTER TABLE user_consoles ADD COLUMN image_url TEXT;
+ALTER TABLE user_controllers ADD COLUMN image_url TEXT;
+```
+
+Actualizar los modelos, DTOs y mappers correspondientes para incluir el nuevo campo.
+
+#### Supabase Storage
+
+Crear un bucket privado `hardware-images` en Supabase Storage con RLS: cada usuario solo puede leer y escribir sus propios archivos.
+
+```sql
+-- Política de lectura
+CREATE POLICY "Users can view their own hardware images"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'hardware-images' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Política de escritura
+CREATE POLICY "Users can upload their own hardware images"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'hardware-images' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Política de borrado
+CREATE POLICY "Users can delete their own hardware images"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'hardware-images' AND auth.uid()::text = (storage.foldername(name))[1]);
+```
+
+Las imágenes se guardan en la ruta `{user_id}/{console_or_controller_id}.{ext}`.
+
+#### Servicio de upload
+
+Crear `HardwareImageService` en `presentation/services/` que encapsule:
+- `uploadImage(userId, itemId, file: File): Promise<string>` — sube al bucket y devuelve la URL pública.
+- `deleteImage(userId, itemId): Promise<void>` — borra el archivo del bucket.
+
+Usar el cliente de Supabase ya configurado en el repositorio (`SupabaseService`).
+
+#### UI en el formulario
+
+El campo de imagen en el formulario de consola/mando funciona igual que el crop de portadas de juegos:
+1. Input tipo `file` (acepta `image/*`) con botón de "Subir imagen".
+2. Preview de la imagen seleccionada antes de guardar.
+3. Al guardar el formulario: primero se sube la imagen → se obtiene la URL → se guarda la URL en el campo `image_url` del registro.
+4. Si ya hay imagen, mostrarla con opción de "Cambiar" o "Eliminar".
+
+#### UI en las cards del listado
+
+- Si `image_url` existe: mostrar la imagen como fondo o thumbnail en la card (reemplaza el icono `tv`/`gamepad` actual).
+- Si no: mantener el icono como fallback.
+- Usar `NgOptimizedImage` **sin modo `fill`** para evitar el conflicto conocido con CDK virtual scroll. Usar `width` y `height` explícitos en función del tamaño de la card.
 
 ---
 

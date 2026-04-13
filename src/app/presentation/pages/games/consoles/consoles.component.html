@@ -1,0 +1,96 @@
+<div class="consoles">
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="consoles__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+      <p>{{ 'consolesPage.loading' | transloco }}</p>
+    </div>
+
+    <!-- Empty -->
+  } @else if (consoles().length === 0) {
+    <div class="consoles__empty">
+      <mat-icon class="consoles__empty-icon">tv_off</mat-icon>
+      <p class="consoles__empty-title">{{ 'consolesPage.empty.title' | transloco }}</p>
+      <p class="consoles__empty-subtitle">{{ 'consolesPage.empty.subtitle' | transloco }}</p>
+      <button mat-flat-button color="primary">
+        <mat-icon>add</mat-icon>
+        {{ 'consolesPage.empty.add' | transloco }}
+      </button>
+    </div>
+
+    <!-- List -->
+  } @else {
+    <div class="consoles__header">
+      <span class="consoles__count">
+        @if (consoles().length === 1) {
+          {{ 'consolesPage.countOne' | transloco }}
+        } @else {
+          {{ 'consolesPage.count' | transloco: { count: consoles().length } }}
+        }
+      </span>
+    </div>
+
+    <div class="consoles__grid">
+      @for (console of consoles(); track console.id) {
+        <div class="consoles__card">
+          <div class="consoles__card-header">
+            <mat-icon class="consoles__card-icon">tv</mat-icon>
+            <div class="consoles__card-titles">
+              <span class="consoles__card-model">{{ console.model }}</span>
+              <span class="consoles__card-brand">{{ console.brand }}</span>
+            </div>
+            <button mat-icon-button class="consoles__card-delete" (click)="onDelete(console)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+
+          <div class="consoles__card-chips">
+            @if (console.condition === GAME_CONDITION.NEW) {
+              <mat-chip class="consoles__chip consoles__chip--new">
+                <mat-icon matChipAvatar>fiber_new</mat-icon>
+                {{ 'consolesPage.condition.new' | transloco }}
+              </mat-chip>
+            } @else {
+              <mat-chip class="consoles__chip consoles__chip--used">
+                {{ 'consolesPage.condition.used' | transloco }}
+              </mat-chip>
+            }
+            @if (console.region) {
+              <mat-chip class="consoles__chip">{{ console.region }}</mat-chip>
+            }
+          </div>
+
+          <div class="consoles__card-meta">
+            @if (console.price !== null) {
+              <span class="consoles__meta-item">
+                <mat-icon>payments</mat-icon>
+                {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+              </span>
+            }
+            @if (console.store) {
+              <span class="consoles__meta-item">
+                <mat-icon>storefront</mat-icon>
+                {{ console.store }}
+              </span>
+            }
+            @if (console.purchaseDate) {
+              <span class="consoles__meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
+              </span>
+            }
+          </div>
+
+          @if (console.notes) {
+            <p class="consoles__card-notes">{{ console.notes }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- FAB -->
+  <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

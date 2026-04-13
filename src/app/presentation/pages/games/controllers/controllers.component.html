@@ -1,0 +1,98 @@
+<div class="controllers">
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="controllers__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+      <p>{{ 'controllersPage.loading' | transloco }}</p>
+    </div>
+
+    <!-- Empty -->
+  } @else if (controllers().length === 0) {
+    <div class="controllers__empty">
+      <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
+      <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
+      <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
+      <button mat-flat-button color="primary">
+        <mat-icon>add</mat-icon>
+        {{ 'controllersPage.empty.add' | transloco }}
+      </button>
+    </div>
+
+    <!-- List -->
+  } @else {
+    <div class="controllers__header">
+      <span class="controllers__count">
+        @if (controllers().length === 1) {
+          {{ 'controllersPage.countOne' | transloco }}
+        } @else {
+          {{ 'controllersPage.count' | transloco: { count: controllers().length } }}
+        }
+      </span>
+    </div>
+
+    <div class="controllers__grid">
+      @for (controller of controllers(); track controller.id) {
+        <div class="controllers__card">
+          <div class="controllers__card-header">
+            <div class="controllers__card-color" [style.background-color]="controller.color"></div>
+            <div class="controllers__card-titles">
+              <span class="controllers__card-model">{{ controller.model }}</span>
+              @if (controller.edition) {
+                <span class="controllers__card-edition">{{ controller.edition }}</span>
+              }
+            </div>
+            <button mat-icon-button class="controllers__card-delete" (click)="onDelete(controller)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+
+          <div class="controllers__card-chips">
+            <mat-chip class="controllers__chip controllers__chip--compat">
+              {{ controller.compatibility }}
+            </mat-chip>
+            @if (controller.condition === GAME_CONDITION.NEW) {
+              <mat-chip class="controllers__chip controllers__chip--new">
+                <mat-icon matChipAvatar>fiber_new</mat-icon>
+                {{ 'controllersPage.condition.new' | transloco }}
+              </mat-chip>
+            } @else {
+              <mat-chip class="controllers__chip controllers__chip--used">
+                {{ 'controllersPage.condition.used' | transloco }}
+              </mat-chip>
+            }
+          </div>
+
+          <div class="controllers__card-meta">
+            @if (controller.price !== null) {
+              <span class="controllers__meta-item">
+                <mat-icon>payments</mat-icon>
+                {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+              </span>
+            }
+            @if (controller.store) {
+              <span class="controllers__meta-item">
+                <mat-icon>storefront</mat-icon>
+                {{ controller.store }}
+              </span>
+            }
+            @if (controller.purchaseDate) {
+              <span class="controllers__meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
+              </span>
+            }
+          </div>
+
+          @if (controller.notes) {
+            <p class="controllers__card-notes">{{ controller.notes }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- FAB -->
+  <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

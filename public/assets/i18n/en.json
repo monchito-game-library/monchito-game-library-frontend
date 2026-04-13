@@ -717,5 +717,55 @@
     "tabGames": "Games",
     "tabConsoles": "Consoles",
     "tabControllers": "Controllers"
+  },
+  "consolesPage": {
+    "title": "My Consoles",
+    "loading": "Loading consoles...",
+    "add": "Add console",
+    "count": "{{ count }} consoles",
+    "countOne": "1 console",
+    "empty": {
+      "title": "No consoles",
+      "subtitle": "Add your first console to the collection",
+      "add": "Add console"
+    },
+    "condition": {
+      "new": "New",
+      "used": "Used"
+    },
+    "deleteDialog": {
+      "title": "Delete console",
+      "message": "Are you sure you want to delete this console?"
+    },
+    "snack": {
+      "deleted": "Console deleted",
+      "deleteError": "Error deleting console",
+      "loadError": "Error loading consoles"
+    }
+  },
+  "controllersPage": {
+    "title": "My Controllers",
+    "loading": "Loading controllers...",
+    "add": "Add controller",
+    "count": "{{ count }} controllers",
+    "countOne": "1 controller",
+    "empty": {
+      "title": "No controllers",
+      "subtitle": "Add your first controller to the collection",
+      "add": "Add controller"
+    },
+    "condition": {
+      "new": "New",
+      "used": "Used"
+    },
+    "deleteDialog": {
+      "title": "Delete controller",
+      "message": "Are you sure you want to delete this controller?"
+    },
+    "snack": {
+      "deleted": "Controller deleted",
+      "deleteError": "Error deleting controller",
+      "loadError": "Error loading controllers"
+    }
   }
 }

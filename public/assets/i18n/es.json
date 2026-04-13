@@ -718,5 +718,55 @@
     "tabGames": "Juegos",
     "tabConsoles": "Consolas",
     "tabControllers": "Mandos"
+  },
+  "consolesPage": {
+    "title": "Mis Consolas",
+    "loading": "Cargando consolas...",
+    "add": "Añadir consola",
+    "count": "{{ count }} consolas",
+    "countOne": "1 consola",
+    "empty": {
+      "title": "Sin consolas",
+      "subtitle": "Añade tu primera consola a la colección",
+      "add": "Añadir consola"
+    },
+    "condition": {
+      "new": "Nuevo",
+      "used": "Usado"
+    },
+    "deleteDialog": {
+      "title": "Eliminar consola",
+      "message": "¿Seguro que quieres eliminar esta consola?"
+    },
+    "snack": {
+      "deleted": "Consola eliminada",
+      "deleteError": "Error al eliminar la consola",
+      "loadError": "Error al cargar las consolas"
+    }
+  },
+  "controllersPage": {
+    "title": "Mis Mandos",
+    "loading": "Cargando mandos...",
+    "add": "Añadir mando",
+    "count": "{{ count }} mandos",
+    "countOne": "1 mando",
+    "empty": {
+      "title": "Sin mandos",
+      "subtitle": "Añade tu primer mando a la colección",
+      "add": "Añadir mando"
+    },
+    "condition": {
+      "new": "Nuevo",
+      "used": "Usado"
+    },
+    "deleteDialog": {
+      "title": "Eliminar mando",
+      "message": "¿Seguro que quieres eliminar este mando?"
+    },
+    "snack": {
+      "deleted": "Mando eliminado",
+      "deleteError": "Error al eliminar el mando",
+      "loadError": "Error al cargar los mandos"
+    }
   }
 }
