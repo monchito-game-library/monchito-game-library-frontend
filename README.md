@@ -143,11 +143,14 @@ El repositorio carga todos los juegos del usuario en memoria al iniciar la vista
 
 ## Claude Code — Status line
 
-Si usas [Claude Code](https://claude.ai/code) para trabajar en este proyecto, puedes instalar la status line del equipo para ver en todo momento la carpeta, rama git, modelo activo y contexto restante:
+Si usas [Claude Code](https://claude.ai/code) para trabajar en este proyecto, puedes instalar la status line del equipo para ver en todo momento la carpeta, rama git, modelo activo, coste acumulado de la sesión y contexto usado:
 
 ```
-📁 monchito-game-library  🌿 master  🤖 Claude Sonnet 4.6  ▓▓░░░░░░░░ 80%
+📁 monchito-game-library  🌿 master  🤖 Claude Sonnet 4.6  💰 $0.08  ▓▓░░░░░░░░ 18%
 ```
+
+- **Barra de contexto**: muestra el porcentaje de contexto usado. La barra se llena conforme crece la conversación y cambia de color: verde (<40%), amarillo (40-64%), rojo (≥64%). El auto-compact se activa alrededor del 80%.
+- **Coste `💰`**: coste acumulado en USD desde que se inició el proceso. Informativo — no refleja lo que pagas con suscripción.
 
 ### Instalación
 
