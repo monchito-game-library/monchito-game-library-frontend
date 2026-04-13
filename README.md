@@ -13,6 +13,7 @@ Aplicación Angular para gestionar tu colección personal de videojuegos. Permit
 - [Scripts](#scripts)
 - [Arquitectura](#arquitectura)
 - [Notas sobre rendimiento](#notas-sobre-rendimiento)
+- [Claude Code — Status line](#claude-code--status-line)
 - [Créditos](#créditos)
 - [Licencia](#licencia)
 
@@ -137,6 +138,35 @@ La capa `presentation` nunca importa directamente de `data`. Los contratos de re
 ## Notas sobre rendimiento
 
 El repositorio carga todos los juegos del usuario en memoria al iniciar la vista. Supabase tiene un límite por defecto de 1000 filas por query; la implementación pagina automáticamente en lotes de 1000 para soportar colecciones de cualquier tamaño sin cambios en el resto de la app. Los filtros, la búsqueda y la ordenación son operaciones en memoria (instantáneas). El virtual scroll del CDK se encarga de no renderizar más cards de las visibles en pantalla.
+
+---
+
+## Claude Code — Status line
+
+Si usas [Claude Code](https://claude.ai/code) para trabajar en este proyecto, puedes instalar la status line del equipo para ver en todo momento la carpeta, rama git, modelo activo y contexto restante:
+
+```
+📁 monchito-game-library  🌿 master  🤖 Claude Sonnet 4.6  ▓▓░░░░░░░░ 80%
+```
+
+### Instalación
+
+**1. Copia el script:**
+```sh
+cp scripts/claude-statusline.sh ~/.claude/statusline-command.sh
+chmod +x ~/.claude/statusline-command.sh
+```
+
+**2. Añade la clave `statusLine` en `~/.claude/settings.json`:**
+```json
+{
+  "statusLine": {
+    "command": "~/.claude/statusline-command.sh"
+  }
+}
+```
+
+> Si ya tienes tu propia status line configurada, no es necesario que la cambies.
 
 ---
 
