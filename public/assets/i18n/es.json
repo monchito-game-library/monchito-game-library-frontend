@@ -576,7 +576,59 @@
       "stores": "Tiendas",
       "users": "Usuarios",
       "auditLog": "Registro",
-      "products": "Protectores"
+      "products": "Protectores",
+      "hardware": "Hardware"
+    },
+    "hardware": {
+      "title": "Catálogo de hardware",
+      "brands": {
+        "addBtn": "Nueva marca",
+        "addTitle": "Nueva marca",
+        "editTitle": "Editar marca",
+        "nameLabel": "Nombre",
+        "empty": "No hay marcas todavía. Añade la primera.",
+        "viewModels": "Ver modelos",
+        "deleteConfirm": "¿Eliminar la marca «{{ name }}»?",
+        "deleteWarning": "Se eliminarán también todos sus modelos y ediciones."
+      },
+      "models": {
+        "addBtn": "Nuevo modelo",
+        "addTitle": "Nuevo modelo",
+        "editTitle": "Editar modelo",
+        "nameLabel": "Nombre",
+        "typeLabel": "Tipo",
+        "typeConsole": "Consola",
+        "typeController": "Mando",
+        "generationLabel": "Generación",
+        "empty": "No hay modelos todavía. Añade el primero.",
+        "viewEditions": "Ver ediciones",
+        "deleteConfirm": "¿Eliminar el modelo «{{ name }}»?",
+        "deleteWarning": "Se eliminarán también todas sus ediciones y especificaciones.",
+        "sectionModel": "Modelo",
+        "sectionSpecs": "Especificaciones técnicas",
+        "launchYearLabel": "Año de lanzamiento",
+        "discontinuedYearLabel": "Año descontinuación",
+        "categoryLabel": "Categoría",
+        "categoryHome": "Sobremesa",
+        "categoryPortable": "Portátil",
+        "categoryHybrid": "Híbrida",
+        "mediaLabel": "Formato de medios",
+        "mediaOpticalDisc": "Disco óptico",
+        "mediaDigital": "Digital",
+        "mediaCartridge": "Cartucho",
+        "mediaHybrid": "Híbrido",
+        "mediaBuiltIn": "Integrado",
+        "videoResolutionLabel": "Resolución de vídeo",
+        "unitsSoldLabel": "Unidades vendidas (M)"
+      },
+      "editions": {
+        "addBtn": "Nueva edición",
+        "addTitle": "Nueva edición",
+        "editTitle": "Editar edición",
+        "nameLabel": "Nombre",
+        "empty": "No hay ediciones todavía. Añade la primera.",
+        "deleteConfirm": "¿Eliminar la edición «{{ name }}»?"
+      }
     },
     "products": {
       "title": "Catálogo de protectores",
@@ -769,6 +821,26 @@
       "loadError": "Error al cargar los mandos"
     }
   },
+  "consoleDetailPage": {
+    "sectionUser": "Mi consola",
+    "sectionCatalog": "Del catálogo",
+    "generation": "Generación",
+    "launchYear": "Año de lanzamiento",
+    "discontinuedYear": "Descontinuada",
+    "stillOnSale": "En venta",
+    "category": "Categoría",
+    "category_home": "Sobremesa",
+    "category_portable": "Portátil",
+    "category_hybrid": "Híbrida",
+    "media": "Formato",
+    "media_optical_disc": "Disco óptico",
+    "media_digital": "Digital",
+    "media_cartridge": "Cartucho",
+    "media_hybrid": "Híbrido",
+    "media_built_in": "Memoria interna",
+    "videoResolution": "Resolución de vídeo",
+    "unitsSoldMillion": "Unidades vendidas"
+  },
   "consolePage": {
     "addTitle": "Añadir consola",
     "editTitle": "Editar consola",
@@ -794,6 +866,7 @@
   "controllerPage": {
     "addTitle": "Añadir mando",
     "editTitle": "Editar mando",
+    "brand": "Marca",
     "model": "Modelo",
     "edition": "Edición especial",
     "color": "Color",

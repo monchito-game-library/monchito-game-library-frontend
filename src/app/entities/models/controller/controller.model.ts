@@ -7,10 +7,12 @@ export interface ControllerModel {
   id: string;
   /** UUID of the owner. */
   userId: string;
-  /** Model name (e.g. DualSense, Xbox Wireless Controller). */
-  model: string;
-  /** Special edition name. Null if it is a standard edition. */
-  edition: string | null;
+  /** UUID of the hardware brand (references hardware_brands). */
+  brandId: string;
+  /** UUID of the hardware model (references hardware_models). */
+  modelId: string;
+  /** UUID of the hardware edition (references hardware_editions). Null if standard edition. */
+  editionId: string | null;
   /** Main color of the controller. */
   color: string;
   /** Platform compatibility. */

@@ -19,8 +19,9 @@ const mockRepo: ControllerRepositoryContract = {
 const controllerModel: ControllerModel = {
   id: 'controller-uuid-1',
   userId: 'user-1',
-  model: 'DualSense',
-  edition: null,
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: null,
   color: 'Blanco',
   compatibility: 'PS5',
   condition: 'new',

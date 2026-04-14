@@ -112,6 +112,11 @@
     text-overflow: ellipsis;
   }
 
+  .controllers__card-brand {
+    font-size: 0.8125rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
   .controllers__card-edition {
     font-size: 0.8125rem;
     color: var(--mat-sys-on-surface-variant);

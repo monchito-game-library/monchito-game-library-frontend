@@ -7,12 +7,12 @@ export interface ConsoleModel {
   id: string;
   /** UUID of the owner. */
   userId: string;
-  /** Brand of the console (e.g. Sony, Microsoft, Nintendo). */
-  brand: string;
-  /** Model name (e.g. PlayStation 5, Xbox Series X). */
-  model: string;
-  /** Special edition name (e.g. Final Fantasy XVI Limited Edition). Null if standard. */
-  edition: string | null;
+  /** UUID of the hardware brand (references hardware_brands). */
+  brandId: string;
+  /** UUID of the hardware model (references hardware_models). */
+  modelId: string;
+  /** UUID of the hardware edition (references hardware_editions). Null if standard edition. */
+  editionId: string | null;
   /** Geographic region. Null if not specified. */
   region: ConsoleRegionType | null;
   /** Physical condition. */

@@ -1,0 +1,125 @@
+<div class="console-detail">
+  @if (loading()) {
+    <div class="console-detail__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    </div>
+  } @else if (console()) {
+    <div class="console-detail__header">
+      <button mat-icon-button type="button" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="console-detail__header-titles">
+        <h2 class="console-detail__title">{{ model()?.name ?? '—' }}</h2>
+        <span class="console-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
+      </div>
+      <button mat-icon-button type="button" (click)="onEdit()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+
+    @if (edition()) {
+      <div class="console-detail__edition">
+        <mat-icon>star</mat-icon>
+        {{ edition()!.name }}
+      </div>
+    }
+
+    <!-- Sección: Mi consola -->
+    <section class="console-detail__section">
+      <h3 class="console-detail__section-title">{{ 'consoleDetailPage.sectionUser' | transloco }}</h3>
+
+      <div class="console-detail__chips">
+        @if (console()!.condition === GAME_CONDITION.NEW) {
+          <mat-chip class="console-detail__chip console-detail__chip--new">
+            <mat-icon matChipAvatar>fiber_new</mat-icon>
+            {{ 'consolesPage.condition.new' | transloco }}
+          </mat-chip>
+        } @else {
+          <mat-chip class="console-detail__chip console-detail__chip--used">
+            {{ 'consolesPage.condition.used' | transloco }}
+          </mat-chip>
+        }
+        @if (console()!.region) {
+          <mat-chip class="console-detail__chip">{{ console()!.region }}</mat-chip>
+        }
+      </div>
+
+      <dl class="console-detail__dl">
+        @if (console()!.price !== null) {
+          <div class="console-detail__dl-row">
+            <dt><mat-icon>payments</mat-icon> {{ 'consolePage.price' | transloco }}</dt>
+            <dd>{{ console()!.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        }
+        @if (console()!.store) {
+          <div class="console-detail__dl-row">
+            <dt><mat-icon>storefront</mat-icon> {{ 'consolePage.store' | transloco }}</dt>
+            <dd>{{ resolveStoreName(console()!.store) }}</dd>
+          </div>
+        }
+        @if (console()!.purchaseDate) {
+          <div class="console-detail__dl-row">
+            <dt><mat-icon>calendar_today</mat-icon> {{ 'consolePage.purchaseDate' | transloco }}</dt>
+            <dd>{{ console()!.purchaseDate | date: 'dd/MM/yyyy' }}</dd>
+          </div>
+        }
+        @if (console()!.notes) {
+          <div class="console-detail__dl-row console-detail__dl-row--full">
+            <dt><mat-icon>notes</mat-icon> {{ 'consolePage.notes' | transloco }}</dt>
+            <dd>{{ console()!.notes }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <!-- Sección: Del catálogo -->
+    @if (specs()) {
+      <section class="console-detail__section">
+        <h3 class="console-detail__section-title">{{ 'consoleDetailPage.sectionCatalog' | transloco }}</h3>
+
+        <dl class="console-detail__dl">
+          @if (model()?.generation) {
+            <div class="console-detail__dl-row">
+              <dt>{{ 'consoleDetailPage.generation' | transloco }}</dt>
+              <dd>{{ model()!.generation }}ª gen.</dd>
+            </div>
+          }
+          <div class="console-detail__dl-row">
+            <dt>{{ 'consoleDetailPage.launchYear' | transloco }}</dt>
+            <dd>{{ specs()!.launchYear }}</dd>
+          </div>
+          <div class="console-detail__dl-row">
+            <dt>{{ 'consoleDetailPage.discontinuedYear' | transloco }}</dt>
+            <dd>
+              @if (specs()!.discontinuedYear) {
+                {{ specs()!.discontinuedYear }}
+              } @else {
+                {{ 'consoleDetailPage.stillOnSale' | transloco }}
+              }
+            </dd>
+          </div>
+          <div class="console-detail__dl-row">
+            <dt>{{ 'consoleDetailPage.category' | transloco }}</dt>
+            <dd>{{ 'consoleDetailPage.category_' + specs()!.category | transloco }}</dd>
+          </div>
+          <div class="console-detail__dl-row">
+            <dt>{{ 'consoleDetailPage.media' | transloco }}</dt>
+            <dd>{{ 'consoleDetailPage.media_' + specs()!.media | transloco }}</dd>
+          </div>
+          @if (specs()!.videoResolution) {
+            <div class="console-detail__dl-row">
+              <dt>{{ 'consoleDetailPage.videoResolution' | transloco }}</dt>
+              <dd>{{ specs()!.videoResolution }}</dd>
+            </div>
+          }
+          @if (specs()!.unitsSoldMillion !== null) {
+            <div class="console-detail__dl-row">
+              <dt>{{ 'consoleDetailPage.unitsSoldMillion' | transloco }}</dt>
+              <dd>{{ specs()!.unitsSoldMillion }}M</dd>
+            </div>
+          }
+        </dl>
+      </section>
+    }
+  }
+</div>

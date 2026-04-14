@@ -4,9 +4,9 @@ import { ConsoleRegionType } from '@/types/console-region.type';
 import { GameConditionType } from '@/types/game-condition.type';
 
 export interface ConsoleFormValue {
-  brand: string | null;
-  model: string | null;
-  edition: string | null;
+  brandId: string | null;
+  modelId: string | null;
+  editionId: string | null;
   region: ConsoleRegionType | null;
   condition: GameConditionType;
   price: number | null;
@@ -16,9 +16,9 @@ export interface ConsoleFormValue {
 }
 
 export interface ConsoleForm {
-  brand: FormControl<string | null>;
-  model: FormControl<string | null>;
-  edition: FormControl<string | null>;
+  brandId: FormControl<string | null>;
+  modelId: FormControl<string | null>;
+  editionId: FormControl<string | null>;
   region: FormControl<ConsoleRegionType | null>;
   condition: FormControl<GameConditionType>;
   price: FormControl<number | null>;

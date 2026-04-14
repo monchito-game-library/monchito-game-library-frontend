@@ -12,8 +12,9 @@ export function mapController(dto: ControllerDto): ControllerModel {
   return {
     id: dto.id,
     userId: dto.user_id,
-    model: dto.model,
-    edition: dto.edition,
+    brandId: dto.brand_id,
+    modelId: dto.model_id,
+    editionId: dto.edition_id ?? null,
     color: dto.color,
     compatibility: dto.compatibility as ControllerCompatibilityType,
     condition: dto.condition as GameConditionType,
@@ -34,8 +35,9 @@ export function mapController(dto: ControllerDto): ControllerModel {
 export function mapControllerToInsertDto(userId: string, model: ControllerModel): ControllerInsertDto {
   return {
     user_id: userId,
-    model: model.model,
-    edition: model.edition,
+    brand_id: model.brandId,
+    model_id: model.modelId,
+    edition_id: model.editionId,
     color: model.color,
     compatibility: model.compatibility,
     condition: model.condition,

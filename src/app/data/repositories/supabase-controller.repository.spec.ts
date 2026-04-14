@@ -17,8 +17,9 @@ function makeBuilder(result: { data?: unknown; error: { message: string } | null
 const controllerDto = {
   id: 'controller-uuid-1',
   user_id: 'user-1',
-  model: 'DualSense',
-  edition: null,
+  brand_id: 'brand-uuid-1',
+  model_id: 'model-uuid-1',
+  edition_id: null,
   color: 'Blanco',
   compatibility: 'PS5',
   condition: 'new',
@@ -32,8 +33,9 @@ const controllerDto = {
 const controllerModel = {
   id: 'controller-uuid-1',
   userId: 'user-1',
-  model: 'DualSense',
-  edition: null,
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: null,
   color: 'Blanco',
   compatibility: 'PS5' as const,
   condition: 'new' as const,
@@ -62,7 +64,7 @@ describe('SupabaseControllerRepository', () => {
       const result = await repo.getAllForUser('user-1');
 
       expect(result).toHaveLength(1);
-      expect(result[0].model).toBe('DualSense');
+      expect(result[0].modelId).toBe('model-uuid-1');
       expect(result[0].color).toBe('Blanco');
     });
 
@@ -88,7 +90,7 @@ describe('SupabaseControllerRepository', () => {
 
       expect(result).toBeDefined();
       expect(result!.id).toBe('controller-uuid-1');
-      expect(result!.model).toBe('DualSense');
+      expect(result!.modelId).toBe('model-uuid-1');
     });
 
     it('devuelve undefined cuando Supabase devuelve error (no encontrado)', async () => {
@@ -109,7 +111,8 @@ describe('SupabaseControllerRepository', () => {
       expect(b.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_id: 'user-1',
-          model: 'DualSense',
+          brand_id: 'brand-uuid-1',
+          model_id: 'model-uuid-1',
           color: 'Blanco',
           compatibility: 'PS5',
           condition: 'new',
@@ -132,7 +135,7 @@ describe('SupabaseControllerRepository', () => {
 
       await repo.update('user-1', 'controller-uuid-1', controllerModel);
 
-      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ model: 'DualSense', color: 'Blanco' }));
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ model_id: 'model-uuid-1', color: 'Blanco' }));
       expect(b.eq).toHaveBeenCalledWith('id', 'controller-uuid-1');
       expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
     });

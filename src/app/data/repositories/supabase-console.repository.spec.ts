@@ -17,13 +17,13 @@ function makeBuilder(result: { data?: unknown; error: { message: string } | null
 const consoleDto = {
   id: 'console-uuid-1',
   user_id: 'user-1',
-  brand: 'Sony',
-  model: 'PlayStation 5',
-  edition: null,
+  brand_id: 'brand-uuid-1',
+  model_id: 'model-uuid-1',
+  edition_id: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,
-  store: 'MediaMarkt',
+  store: 'store-uuid-1',
   purchase_date: '2023-11-10',
   notes: null,
   created_at: '2023-11-10T10:00:00Z'
@@ -32,13 +32,13 @@ const consoleDto = {
 const consoleModel = {
   id: 'console-uuid-1',
   userId: 'user-1',
-  brand: 'Sony',
-  model: 'PlayStation 5',
-  edition: null,
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: null,
   region: 'PAL' as const,
   condition: 'new' as const,
   price: 549.99,
-  store: 'MediaMarkt',
+  store: 'store-uuid-1',
   purchaseDate: '2023-11-10',
   notes: null,
   createdAt: '2023-11-10T10:00:00Z'
@@ -62,8 +62,8 @@ describe('SupabaseConsoleRepository', () => {
       const result = await repo.getAllForUser('user-1');
 
       expect(result).toHaveLength(1);
-      expect(result[0].brand).toBe('Sony');
-      expect(result[0].model).toBe('PlayStation 5');
+      expect(result[0].brandId).toBe('brand-uuid-1');
+      expect(result[0].modelId).toBe('model-uuid-1');
     });
 
     it('devuelve array vacío si no hay consolas', async () => {
@@ -88,7 +88,7 @@ describe('SupabaseConsoleRepository', () => {
 
       expect(result).toBeDefined();
       expect(result!.id).toBe('console-uuid-1');
-      expect(result!.brand).toBe('Sony');
+      expect(result!.brandId).toBe('brand-uuid-1');
     });
 
     it('devuelve undefined cuando Supabase devuelve error (no encontrado)', async () => {
@@ -109,8 +109,8 @@ describe('SupabaseConsoleRepository', () => {
       expect(b.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_id: 'user-1',
-          brand: 'Sony',
-          model: 'PlayStation 5',
+          brand_id: 'brand-uuid-1',
+          model_id: 'model-uuid-1',
           region: 'PAL',
           condition: 'new',
           price: 549.99
@@ -132,7 +132,9 @@ describe('SupabaseConsoleRepository', () => {
 
       await repo.update('user-1', 'console-uuid-1', consoleModel);
 
-      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ brand: 'Sony', model: 'PlayStation 5' }));
+      expect(b.update).toHaveBeenCalledWith(
+        expect.objectContaining({ brand_id: 'brand-uuid-1', model_id: 'model-uuid-1' })
+      );
       expect(b.eq).toHaveBeenCalledWith('id', 'console-uuid-1');
       expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
     });

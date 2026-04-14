@@ -40,10 +40,8 @@
           <div class="controllers__card-header">
             <div class="controllers__card-color" [style.background-color]="controller.color"></div>
             <div class="controllers__card-titles">
-              <span class="controllers__card-model">{{ controller.model }}</span>
-              @if (controller.edition) {
-                <span class="controllers__card-edition">{{ controller.edition }}</span>
-              }
+              <span class="controllers__card-model">{{ resolveModelName(controller.modelId) }}</span>
+              <span class="controllers__card-brand">{{ resolveBrandName(controller.brandId) }}</span>
             </div>
             <button mat-icon-button class="controllers__card-edit" (click)="onEdit(controller)">
               <mat-icon>edit</mat-icon>

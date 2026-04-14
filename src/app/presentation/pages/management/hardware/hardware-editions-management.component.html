@@ -1,0 +1,51 @@
+<div class="editions-page" [class.editions-page--panel-open]="panelOpen()">
+  <header class="editions-page__header">
+    <div class="editions-page__header-left">
+      <button mat-icon-button (click)="onBack()" class="editions-page__back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="editions-page__titles">
+        <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
+        <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
+      </div>
+    </div>
+    <button mat-flat-button color="primary" (click)="onAddEdition()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.hardware.editions.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (panelOpen()) {
+    <div class="editions-edit-panel-wrapper">
+      <app-hardware-edition-edit-panel
+        [edition]="selectedEdition() ?? null"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (deleted)="onDeleteEdition()" />
+    </div>
+  }
+
+  <div class="editions-grid-wrapper">
+    @if (loading()) {
+      <div class="editions-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (editions().length === 0) {
+      <p class="editions-page__empty">{{ 'management.hardware.editions.empty' | transloco }}</p>
+    } @else {
+      <div class="editions-grid">
+        @for (edition of editions(); track edition.id) {
+          <div
+            class="edition-card"
+            [class.edition-card--selected]="selectedEdition()?.id === edition.id"
+            (click)="onSelectEdition(edition)">
+            <mat-icon class="edition-card__icon">star_outline</mat-icon>
+            <div class="edition-card__info">
+              <span class="edition-card__name">{{ edition.name }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

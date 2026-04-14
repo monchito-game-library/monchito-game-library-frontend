@@ -1,0 +1,65 @@
+<div class="models-page" [class.models-page--panel-open]="panelOpen()">
+  <header class="models-page__header">
+    <div class="models-page__header-left">
+      <button mat-icon-button (click)="onBack()" class="models-page__back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="models-page__titles">
+        <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
+        <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>
+      </div>
+    </div>
+    <button mat-flat-button color="primary" (click)="onAddModel()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.hardware.models.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (panelOpen()) {
+    <div class="models-edit-panel-wrapper">
+      <app-hardware-model-edit-panel
+        [model]="selectedModel() ?? null"
+        [specs]="selectedSpecs()"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (deleted)="onDeleteModel()" />
+    </div>
+  }
+
+  <div class="models-grid-wrapper">
+    @if (loading()) {
+      <div class="models-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (models().length === 0) {
+      <p class="models-page__empty">{{ 'management.hardware.models.empty' | transloco }}</p>
+    } @else {
+      <div class="models-grid">
+        @for (model of models(); track model.id) {
+          <div
+            class="model-card"
+            [class.model-card--selected]="selectedModel()?.id === model.id"
+            (click)="onSelectModel(model)">
+            <mat-icon class="model-card__icon">{{ model.type === 'console' ? 'tv' : 'gamepad' }}</mat-icon>
+            <div class="model-card__info">
+              <span class="model-card__name">{{ model.name }}</span>
+              <div class="model-card__chips">
+                <span class="model-card__chip">{{ getTypeLabel(model.type) }}</span>
+                @if (model.generation) {
+                  <span class="model-card__chip">Gen {{ model.generation }}</span>
+                }
+              </div>
+            </div>
+            <button
+              mat-icon-button
+              class="model-card__drill-btn"
+              [attr.aria-label]="'management.hardware.models.viewEditions' | transloco"
+              (click)="$event.stopPropagation(); onOpenEditions(model)">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

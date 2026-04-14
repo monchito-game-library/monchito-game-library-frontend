@@ -4,8 +4,9 @@ import { ControllerCompatibilityType } from '@/types/controller-compatibility.ty
 import { GameConditionType } from '@/types/game-condition.type';
 
 export interface ControllerFormValue {
-  model: string | null;
-  edition: string | null;
+  brandId: string | null;
+  modelId: string | null;
+  editionId: string | null;
   color: string;
   compatibility: ControllerCompatibilityType;
   condition: GameConditionType;
@@ -16,8 +17,9 @@ export interface ControllerFormValue {
 }
 
 export interface ControllerForm {
-  model: FormControl<string | null>;
-  edition: FormControl<string | null>;
+  brandId: FormControl<string | null>;
+  modelId: FormControl<string | null>;
+  editionId: FormControl<string | null>;
   color: FormControl<string>;
   compatibility: FormControl<ControllerCompatibilityType>;
   condition: FormControl<GameConditionType>;

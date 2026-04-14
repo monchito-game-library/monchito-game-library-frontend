@@ -16,9 +16,9 @@ const mockRepo: ConsoleRepositoryContract = {
 const consoleModel: ConsoleModel = {
   id: 'console-uuid-1',
   userId: 'user-1',
-  brand: 'Sony',
-  model: 'PlayStation 5',
-  edition: null,
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,

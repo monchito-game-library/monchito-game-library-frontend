@@ -8,8 +8,7 @@
 
 | Mejora | Prioridad |
 |---|---|
-| [Hub de colección con categorías (consolas y mandos)](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta |
-| [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta |
+| [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
@@ -20,6 +19,230 @@
 ---
 
 ## Alta prioridad
+
+### Catálogo de hardware (marcas, modelos y ediciones)
+
+Catálogo global de marcas, modelos y ediciones de consolas y mandos gestionado desde el panel de administración. Sustituye los campos de texto libre actuales (`brand`, `model`, `edition`) por referencias a IDs normalizados, garantizando consistencia entre usuarios.
+
+#### Por qué
+
+Sin un catálogo centralizado, distintos usuarios pueden registrar la misma consola como "PlayStation 5", "PS5", "play 5", etc. El catálogo resuelve esto con un selector jerárquico.
+
+#### Modelo de datos
+
+Las especificaciones técnicas se separan en tablas propias por tipo, evitando nulls cruzados entre consolas y mandos:
+
+```
+hardware_brands          → id, name                              (Sony, Microsoft, Nintendo…)
+hardware_models          → id, brand_id, name, type, generation  ('console' | 'controller')
+hardware_console_specs   → model_id, launch_year, discontinued_year, category, media, video_resolution, units_sold_million
+hardware_controller_specs → model_id, ...                        (campos a definir)
+hardware_editions        → id, model_id, name                    (Final Fantasy XVI Limited Ed…)
+```
+
+`user_consoles` y `user_controllers` pasan de tener texto libre a tener `brand_id`, `model_id`, `edition_id` (FK opcionales para edición).
+
+##### Campos de `hardware_console_specs`
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `launch_year` | `INTEGER` | Año de lanzamiento |
+| `discontinued_year` | `INTEGER` nullable | Año de descontinuación. `null` = aún en venta |
+| `category` | `TEXT` | `'home'` \| `'portable'` \| `'hybrid'` |
+| `media` | `TEXT` | `'optical_disc'` \| `'digital'` \| `'cartridge'` \| `'hybrid'` \| `'built_in'` |
+| `video_resolution` | `TEXT` nullable | Resolución máxima de vídeo (texto libre: `'4K'`, `'1080p'`, `'480×272'`). `null` si no aplica |
+| `units_sold_million` | `NUMERIC` nullable | Unidades vendidas en millones. Dato agregado por familia de modelo (ej: PS4 + PS4 Slim + PS4 Pro comparten el mismo total, igual que hace la propia Sony) |
+
+##### Fuentes de datos por marca
+
+| Marca | Fuente |
+|---|---|
+| Sony | [Wikipedia — Anexo:Videoconsolas de Sony](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Sony) |
+| Microsoft | [Wikipedia — Anexo:Videoconsolas de Microsoft](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Microsoft) |
+| Nintendo | [Wikipedia — Anexo:Videoconsolas de Nintendo](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Nintendo) |
+
+##### Seed — Sony (24 modelos)
+
+| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
+|---|---|---|---|---|---|---|---|
+| PlayStation | 5 | 1994 | 2000 | home | optical_disc | 640×480 | 104 |
+| PocketStation | 5 | 1999 | 2008 | portable | optical_disc | null | 5 |
+| PSOne | 5 | 2000 | 2005 | home | optical_disc | 640×480 | 104 |
+| PlayStation 2 | 6 | 2000 | 2004 | home | optical_disc | 480p | 150 |
+| PSX | 6 | 2003 | 2016 | hybrid | optical_disc | 480p | null |
+| PlayStation 2 Slim | 6 | 2004 | 2013 | home | optical_disc | 480p | 150 |
+| PlayStation Portable | 7 | 2005 | 2007 | portable | optical_disc | 480×272 | 80 |
+| PlayStation 3 | 7 | 2006 | 2010 | home | optical_disc | 1080p | 86 |
+| PSP Slim & Lite | 7 | 2007 | 2010 | portable | optical_disc | 480×272 | 80 |
+| PSP-3000 | 7 | 2008 | 2014 | portable | optical_disc | 480×272 | 80 |
+| PlayStation 3 Slim | 7 | 2009 | 2016 | home | optical_disc | 1080p | 86 |
+| PSP Go | 7 | 2009 | 2011 | portable | digital | 480×272 | 80 |
+| PSP Street | 7 | 2011 | 2015 | portable | optical_disc | 480×272 | 80 |
+| PlayStation 3 Super Slim | 7 | 2012 | 2017 | home | optical_disc | 1080p | 86 |
+| PlayStation Vita | 8 | 2011 | 2016 | portable | cartridge | 960×544 | 16 |
+| PlayStation 4 | 8 | 2013 | 2017 | home | optical_disc | 1080p | 117 |
+| PS Vita Slim | 8 | 2014 | 2017 | portable | cartridge | 960×544 | 16 |
+| PlayStation 4 Slim | 8 | 2016 | 2022 | home | optical_disc | 1080p | 117 |
+| PlayStation 4 Pro | 8 | 2017 | 2022 | home | optical_disc | 4K | 117 |
+| PlayStation Classic | 8 | 2018 | null | home | built_in | 480p | null |
+| PlayStation 5 | 9 | 2020 | null | home | optical_disc | 4K | 67 |
+| PlayStation 5 Digital | 9 | 2020 | null | home | digital | 4K | 67 |
+| PlayStation 5 Slim | 9 | 2023 | null | home | hybrid | 4K | 67 |
+| PlayStation 5 Pro | 9 | 2024 | null | home | digital | 4K | 67 |
+
+##### Seed — Microsoft (15 modelos)
+
+| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
+|---|---|---|---|---|---|---|---|
+| Xbox | 6 | 2001 | 2006 | home | optical_disc | 480p | 24 |
+| Xbox 360 | 7 | 2005 | 2009 | home | optical_disc | 720p | 85 |
+| Xbox 360 Premium | 7 | 2005 | 2009 | home | optical_disc | 720p | 85 |
+| Xbox 360 Elite | 7 | 2007 | 2010 | home | optical_disc | 1080p | 85 |
+| Xbox 360 S | 7 | 2010 | 2013 | home | optical_disc | 1080p | 85 |
+| Xbox 360 E | 7 | 2013 | 2016 | home | optical_disc | 1080p | 85 |
+| Xbox One | 8 | 2013 | 2017 | home | optical_disc | 1080p | 51 |
+| Xbox One S | 8 | 2016 | 2022 | home | optical_disc | 1080p | 51 |
+| Xbox One X | 8 | 2017 | 2022 | home | optical_disc | 4K | 51 |
+| Xbox One S All-Digital | 8 | 2019 | 2022 | home | digital | 1080p | 51 |
+| Xbox Series X | 9 | 2020 | null | home | hybrid | 4K | 31 |
+| Xbox Series S | 9 | 2020 | null | home | digital | 1440p | 31 |
+| Xbox Series S Robot White | 9 | 2024 | null | home | digital | 1440p | 31 |
+| Xbox Series X Digital Edition | 9 | 2024 | null | home | digital | 4K | 31 |
+| Xbox Series X Galaxy Edition | 9 | 2024 | null | home | hybrid | 4K | 31 |
+
+##### Seed — Nintendo (34 modelos)
+
+| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
+|---|---|---|---|---|---|---|---|
+| Color TV-Game | 1 | 1977 | 1983 | home | built_in | null | 3 |
+| Game & Watch | 2 | 1980 | 1991 | portable | built_in | null | 40 |
+| Famicom | 3 | 1983 | 1993 | home | cartridge | 256×240 | 61 |
+| NES | 3 | 1985 | 1995 | home | cartridge | 256×240 | 61 |
+| NES-101 | 3 | 1993 | 2003 | home | cartridge | 256×240 | 61 |
+| Game Boy | 4 | 1989 | 1998 | portable | cartridge | 160×144 | 118 |
+| Super Nintendo | 4 | 1990 | 1999 | home | cartridge | 256×240 | 49 |
+| Game Boy Pocket | 4 | 1995 | 2000 | portable | cartridge | 160×144 | 118 |
+| Game Boy Light | 4 | 1997 | 2003 | portable | cartridge | 160×144 | 56 |
+| Virtual Boy | 5 | 1995 | 1996 | portable | cartridge | 384×224 | 0.77 |
+| Nintendo 64 | 5 | 1996 | 2003 | home | cartridge | 640×480 | 32 |
+| Game Boy Color | 5 | 1998 | 2004 | portable | cartridge | 160×144 | 118 |
+| GameCube | 6 | 2001 | 2007 | home | optical_disc | 480p | 21 |
+| Game Boy Advance | 6 | 2001 | 2008 | portable | cartridge | 240×160 | 81 |
+| Game Boy Advance SP | 6 | 2003 | 2008 | portable | cartridge | 240×160 | 43 |
+| Game Boy Micro | 6 | 2004 | 2008 | portable | cartridge | 240×160 | 2.4 |
+| Nintendo DS | 7 | 2004 | 2007 | portable | cartridge | 256×192 | 154 |
+| Wii | 7 | 2006 | 2016 | home | optical_disc | 480p | 101 |
+| DS Lite | 7 | 2006 | 2012 | portable | cartridge | 256×192 | 154 |
+| DSi | 7 | 2008 | 2013 | portable | cartridge | 256×192 | 154 |
+| DSi XL | 7 | 2010 | 2013 | portable | cartridge | 256×192 | 154 |
+| Nintendo 3DS | 8 | 2011 | 2017 | portable | cartridge | 400×240 | 75 |
+| Nintendo 3DS XL | 8 | 2012 | 2017 | portable | cartridge | 400×240 | 75 |
+| Wii U | 8 | 2012 | 2017 | home | optical_disc | 1080p | 14 |
+| Nintendo 2DS | 8 | 2013 | 2018 | portable | cartridge | 400×240 | 75 |
+| New Nintendo 3DS | 8 | 2014 | 2019 | portable | cartridge | 400×240 | 75 |
+| New Nintendo 3DS XL | 8 | 2014 | 2019 | portable | cartridge | 400×240 | 75 |
+| NES Classic Edition | 8 | 2016 | null | home | built_in | 480p | 2.3 |
+| New Nintendo 2DS XL | 8 | 2017 | 2020 | portable | cartridge | 400×240 | 75 |
+| SNES Classic Edition | 8 | 2017 | null | home | built_in | 480p | 5.3 |
+| Nintendo Switch | 8 | 2017 | null | hybrid | cartridge | 1080p | 153 |
+| Switch Lite | 8 | 2019 | null | portable | cartridge | 720p | 153 |
+| Switch OLED | 8 | 2021 | null | hybrid | cartridge | 1080p | 153 |
+| Nintendo Switch 2 | 9 | 2025 | null | hybrid | cartridge | 4K | 8.67 |
+
+#### Migraciones Supabase
+
+**Bloque 1 — Ya aplicadas** ✅
+
+```sql
+-- hardware_brands, hardware_models, hardware_editions
+-- ALTER user_consoles (brand_id, model_id, edition_id)
+-- ALTER user_controllers (brand_id, model_id, edition_id)
+```
+
+**Bloque 2 — Ya aplicadas** ✅
+
+```sql
+-- Añadir generation a hardware_models
+ALTER TABLE hardware_models
+  ADD COLUMN generation INTEGER;
+
+-- Especificaciones de consola
+CREATE TABLE hardware_console_specs (
+  model_id             UUID PRIMARY KEY REFERENCES hardware_models(id) ON DELETE CASCADE,
+  launch_year          INTEGER NOT NULL,
+  discontinued_year    INTEGER,
+  category             TEXT NOT NULL CHECK (category IN ('home', 'portable', 'hybrid')),
+  media                TEXT NOT NULL CHECK (media IN ('optical_disc', 'digital', 'cartridge', 'hybrid', 'built_in')),
+  video_resolution     TEXT,
+  units_sold_million   NUMERIC
+);
+ALTER TABLE hardware_console_specs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can read console specs"
+  ON hardware_console_specs FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can manage console specs"
+  ON hardware_console_specs FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+-- Especificaciones de mando (campos a definir)
+CREATE TABLE hardware_controller_specs (
+  model_id UUID PRIMARY KEY REFERENCES hardware_models(id) ON DELETE CASCADE
+  -- campos específicos de mando se añadirán cuando se definan
+);
+ALTER TABLE hardware_controller_specs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users can read controller specs"
+  ON hardware_controller_specs FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can manage controller specs"
+  ON hardware_controller_specs FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+```
+
+#### Plan de implementación
+
+**Fase 1 — Capa de datos** ✅ completada
+
+- ✅ Migraciones bloque 1 aplicadas (`hardware_brands`, `hardware_models`, `hardware_editions`, ALTER `user_consoles`, ALTER `user_controllers`)
+- ✅ Tipo `HardwareModelType` + constante `HARDWARE_MODEL_TYPE`
+- ✅ Entidades: `HardwareBrandModel`, `HardwareModelModel`, `HardwareEditionModel`
+- ✅ DTOs: `HardwareBrandDto`, `HardwareModelDto`, `HardwareEditionDto`
+- ✅ Mappers + specs: `hardware-brand.mapper`, `hardware-model.mapper`, `hardware-edition.mapper`
+- ✅ Contratos de repositorio: `hardware-brand.repository.contract`, etc.
+- ✅ Implementaciones Supabase + specs: `SupabaseHardwareBrandRepository`, etc.
+- ✅ Casos de uso + specs: `HardwareBrandUseCasesImpl`, `HardwareModelUseCasesImpl`, `HardwareEditionUseCasesImpl`
+- ✅ Providers DI: `hardwareBrandRepositoryProvider`, `hardwareModelRepositoryProvider`, `hardwareEditionRepositoryProvider` (y sus use-cases)
+- ✅ Migraciones bloque 2 aplicadas (`generation` en `hardware_models`, `hardware_console_specs`, `hardware_controller_specs`)
+- ✅ Entidad `HardwareConsoleSpecsModel` + DTO + mapper + repositorio + use-cases + DI
+- ✅ Actualizar `ConsoleModel` / `ControllerModel`: sustituir `brand/model/edition: string` por `brandId/modelId/editionId: string` (UUIDs FK) + actualizar DTOs, mappers, formularios y tests
+- ✅ Seed SQL: 73 modelos (Sony 24 + Microsoft 15 + Nintendo 34) en `hardware_brands`, `hardware_models` y `hardware_console_specs`
+
+**Fase 2 — Gestión (admin)** ⏳ pendiente
+
+Nueva sección `/management/hardware` con navegación contextual (drill-down):
+
+```
+/management/hardware                          → listado de marcas + CRUD
+/management/hardware/:brandId/models          → modelos de esa marca + CRUD (con specs inline)
+/management/hardware/models/:modelId/editions → ediciones de ese modelo + CRUD
+```
+
+- Breadcrumb en cada nivel (`Hardware > Sony > PlayStation 5`). Acceso restringido a admins.
+- El formulario de modelo muestra los campos de specs según el tipo (`console` → campos de `hardware_console_specs`).
+- Registrar los providers de hardware en las rutas de gestión.
+
+**Fase 3 — Formularios de consola y mando** ⏳ pendiente (depende de Fase 1 y 2)
+
+Sustituir los campos de texto libre por selectores jerárquicos:
+1. **Marca** → `mat-select` con todas las marcas
+2. **Modelo** → `mat-select` filtrado por marca + tipo del formulario (`console` | `controller`), se limpia al cambiar marca
+3. **Edición** → `mat-select` filtrado por modelo seleccionado, opcional, se limpia al cambiar modelo
+
+**Fase 4 — Listas y detalle de consolas y mandos** ⏳ pendiente (depende de Fase 1)
+
+- Sustituir la resolución actual por nombre (lookup en memoria) por datos hidratados via join en Supabase.
+- Pantalla de detalle de consola: muestra datos del usuario (precio, condición, tienda, notas) + datos del catálogo (`hardware_console_specs`: generación, lanzamiento, descontinuación, categoría, formato, resolución, unidades vendidas).
+
+---
 
 ### Hub de colección con categorías (consolas y mandos)
 

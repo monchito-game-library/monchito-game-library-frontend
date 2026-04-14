@@ -39,13 +39,10 @@
         <div class="consoles__card">
           <div class="consoles__card-header">
             <mat-icon class="consoles__card-icon">tv</mat-icon>
-            <div class="consoles__card-titles">
-              <span class="consoles__card-model">{{ console.model }}</span>
-              <span class="consoles__card-brand">{{ console.brand }}</span>
-              @if (console.edition) {
-                <span class="consoles__card-edition">{{ console.edition }}</span>
-              }
-            </div>
+            <button type="button" class="consoles__card-titles" (click)="onDetail(console)">
+              <span class="consoles__card-model">{{ resolveModelName(console.modelId) }}</span>
+              <span class="consoles__card-brand">{{ resolveBrandName(console.brandId) }}</span>
+            </button>
             <button mat-icon-button class="consoles__card-edit" (click)="onEdit(console)">
               <mat-icon>edit</mat-icon>
             </button>

@@ -2,8 +2,9 @@
 export interface ControllerDto {
   id: string;
   user_id: string;
-  model: string;
-  edition: string | null;
+  brand_id: string;
+  model_id: string;
+  edition_id: string | null;
   color: string;
   compatibility: string;
   condition: string;
@@ -17,8 +18,9 @@ export interface ControllerDto {
 /** Payload for inserting a row in user_controllers. */
 export interface ControllerInsertDto {
   user_id: string;
-  model: string;
-  edition: string | null;
+  brand_id: string;
+  model_id: string;
+  edition_id: string | null;
   color: string;
   compatibility: string;
   condition: string;

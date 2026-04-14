@@ -13,7 +13,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
@@ -24,12 +24,27 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ControllerForm, ControllerFormValue } from '@/interfaces/forms/controller-form.interface';
 import { ControllerModel } from '@/models/controller/controller.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
+import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import {
+  HARDWARE_BRAND_USE_CASES,
+  HardwareBrandUseCasesContract
+} from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
+import {
+  HARDWARE_MODEL_USE_CASES,
+  HardwareModelUseCasesContract
+} from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
+import {
+  HARDWARE_EDITION_USE_CASES,
+  HardwareEditionUseCasesContract
+} from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { availableControllerCompatibilities } from '@/constants/available-controller-compatibilities.constant';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
@@ -49,7 +64,6 @@ import { ControllerCompatibilityType } from '@/types/controller-compatibility.ty
     MatIcon,
     MatFormField,
     MatLabel,
-    MatError,
     MatSuffix,
     MatInput,
     MatSelect,
@@ -66,15 +80,30 @@ export class CreateUpdateControllerComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
+  private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
+  private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
+  private readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
+
+  private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
+  private _controllerId: string | null = null;
 
   /** Available controller compatibilities for the selector. */
   readonly availableCompatibilities = availableControllerCompatibilities;
 
   /** GAME_CONDITION constant exposed to the template. */
   readonly GAME_CONDITION = GAME_CONDITION;
+
+  /** All hardware brands available for selection. */
+  readonly brands: WritableSignal<HardwareBrandModel[]> = signal<HardwareBrandModel[]>([]);
+
+  /** Hardware models filtered by the selected brand and type='controller'. */
+  readonly models: WritableSignal<HardwareModelModel[]> = signal<HardwareModelModel[]>([]);
+
+  /** Hardware editions filtered by the selected model. */
+  readonly editions: WritableSignal<HardwareEditionModel[]> = signal<HardwareEditionModel[]>([]);
 
   /** True when editing an existing controller, false when creating. */
   readonly isEditMode: WritableSignal<boolean> = signal<boolean>(false);
@@ -87,8 +116,9 @@ export class CreateUpdateControllerComponent implements OnInit {
 
   /** Reactive form for the controller data. */
   readonly form: FormGroup<ControllerForm> = this._fb.group<ControllerForm>({
-    model: this._fb.control<string | null>(null, Validators.required),
-    edition: this._fb.control<string | null>(null),
+    brandId: this._fb.control<string | null>(null),
+    modelId: this._fb.control<string | null>(null),
+    editionId: this._fb.control<string | null>(null),
     color: this._fb.nonNullable.control<string>('#000000', Validators.required),
     compatibility: this._fb.nonNullable.control<ControllerCompatibilityType>(
       availableControllerCompatibilities[0].code,
@@ -101,8 +131,7 @@ export class CreateUpdateControllerComponent implements OnInit {
     notes: this._fb.control<string | null>(null)
   });
 
-  private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
-
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   private readonly _storeInput: Signal<string | null> = toSignal(this.form.controls.store.valueChanges, {
     initialValue: null
   });
@@ -113,10 +142,9 @@ export class CreateUpdateControllerComponent implements OnInit {
     return this._storeModels().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(input));
   });
 
-  private _controllerId: string | null = null;
-
   async ngOnInit(): Promise<void> {
     void this._loadStores();
+    void this._loadBrands();
     const id = this._route.snapshot.paramMap.get('id');
     if (id) {
       this._controllerId = id;
@@ -150,8 +178,9 @@ export class CreateUpdateControllerComponent implements OnInit {
         const updated: ControllerModel = {
           id: this._controllerId,
           userId,
-          model: value.model!,
-          edition: value.edition,
+          brandId: value.brandId ?? '',
+          modelId: value.modelId ?? '',
+          editionId: value.editionId,
           color: value.color,
           compatibility: value.compatibility,
           condition: value.condition,
@@ -171,8 +200,9 @@ export class CreateUpdateControllerComponent implements OnInit {
         const created: ControllerModel = {
           id: '',
           userId,
-          model: value.model!,
-          edition: value.edition,
+          brandId: value.brandId ?? '',
+          modelId: value.modelId ?? '',
+          editionId: value.editionId,
           color: value.color,
           compatibility: value.compatibility,
           condition: value.condition,
@@ -210,6 +240,30 @@ export class CreateUpdateControllerComponent implements OnInit {
   }
 
   /**
+   * Reacciona al cambio de marca: limpia modelo y edición, y carga los modelos de la nueva marca.
+   *
+   * @param {string | null} brandId - UUID de la marca seleccionada
+   */
+  async onBrandChange(brandId: string | null): Promise<void> {
+    this.form.controls.modelId.setValue(null);
+    this.form.controls.editionId.setValue(null);
+    this.models.set([]);
+    this.editions.set([]);
+    if (brandId) await this._loadModels(brandId);
+  }
+
+  /**
+   * Reacciona al cambio de modelo: limpia la edición y carga las ediciones del nuevo modelo.
+   *
+   * @param {string | null} modelId - UUID del modelo seleccionado
+   */
+  async onModelChange(modelId: string | null): Promise<void> {
+    this.form.controls.editionId.setValue(null);
+    this.editions.set([]);
+    if (modelId) await this._loadEditions(modelId);
+  }
+
+  /**
    * Carga la lista de tiendas disponibles desde Supabase.
    */
   private async _loadStores(): Promise<void> {
@@ -222,7 +276,46 @@ export class CreateUpdateControllerComponent implements OnInit {
   }
 
   /**
+   * Carga todas las marcas de hardware disponibles.
+   */
+  private async _loadBrands(): Promise<void> {
+    try {
+      this.brands.set(await this._brandUseCases.getAll());
+    } catch {
+      // Fallo silencioso
+    }
+  }
+
+  /**
+   * Carga los modelos de mando de la marca indicada.
+   *
+   * @param {string} brandId - UUID de la marca
+   */
+  private async _loadModels(brandId: string): Promise<void> {
+    try {
+      const all = await this._modelUseCases.getAllByBrand(brandId);
+      this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'controller'));
+    } catch {
+      // Fallo silencioso
+    }
+  }
+
+  /**
+   * Carga las ediciones del modelo indicado.
+   *
+   * @param {string} modelId - UUID del modelo
+   */
+  private async _loadEditions(modelId: string): Promise<void> {
+    try {
+      this.editions.set(await this._editionUseCases.getAllByModel(modelId));
+    } catch {
+      // Fallo silencioso
+    }
+  }
+
+  /**
    * Carga los datos del mando a editar y parchea el formulario.
+   * En modo edición precarga la jerarquía marca → modelo → edición antes de parchear.
    *
    * @param {string} id - UUID del mando a editar
    */
@@ -234,9 +327,14 @@ export class CreateUpdateControllerComponent implements OnInit {
         this._router.navigate(['/games/controllers']);
         return;
       }
+      if (controller.brandId) {
+        await this._loadModels(controller.brandId);
+        if (controller.modelId) await this._loadEditions(controller.modelId);
+      }
       this.form.patchValue({
-        model: controller.model,
-        edition: controller.edition,
+        brandId: controller.brandId,
+        modelId: controller.modelId,
+        editionId: controller.editionId,
         color: controller.color,
         compatibility: controller.compatibility,
         condition: controller.condition,

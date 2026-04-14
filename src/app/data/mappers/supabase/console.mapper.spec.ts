@@ -7,13 +7,13 @@ import { mapConsole, mapConsoleToInsertDto } from '@/mappers/supabase/console.ma
 const baseDto: ConsoleDto = {
   id: 'console-uuid-1',
   user_id: 'user-uuid-1',
-  brand: 'Sony',
-  model: 'PlayStation 5',
-  edition: null,
+  brand_id: 'brand-uuid-1',
+  model_id: 'model-uuid-1',
+  edition_id: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,
-  store: 'MediaMarkt',
+  store: 'store-uuid-1',
   purchase_date: '2023-11-10',
   notes: 'Edición estándar con lector de discos',
   created_at: '2023-11-10T10:00:00Z'
@@ -22,13 +22,13 @@ const baseDto: ConsoleDto = {
 const baseModel: ConsoleModel = {
   id: 'console-uuid-1',
   userId: 'user-uuid-1',
-  brand: 'Sony',
-  model: 'PlayStation 5',
-  edition: null,
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,
-  store: 'MediaMarkt',
+  store: 'store-uuid-1',
   purchaseDate: '2023-11-10',
   notes: 'Edición estándar con lector de discos',
   createdAt: '2023-11-10T10:00:00Z'
@@ -40,66 +40,58 @@ describe('mapConsole', () => {
 
     expect(result.id).toBe('console-uuid-1');
     expect(result.userId).toBe('user-uuid-1');
-    expect(result.brand).toBe('Sony');
-    expect(result.model).toBe('PlayStation 5');
-    expect(result.edition).toBeNull();
+    expect(result.brandId).toBe('brand-uuid-1');
+    expect(result.modelId).toBe('model-uuid-1');
+    expect(result.editionId).toBeNull();
     expect(result.region).toBe('PAL');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(549.99);
-    expect(result.store).toBe('MediaMarkt');
+    expect(result.store).toBe('store-uuid-1');
     expect(result.purchaseDate).toBe('2023-11-10');
     expect(result.notes).toBe('Edición estándar con lector de discos');
     expect(result.createdAt).toBe('2023-11-10T10:00:00Z');
   });
 
+  it('mapea editionId con valor', () => {
+    const result = mapConsole({ ...baseDto, edition_id: 'edition-uuid-1' });
+    expect(result.editionId).toBe('edition-uuid-1');
+  });
+
+  it('mapea editionId null a null', () => {
+    const result = mapConsole({ ...baseDto, edition_id: null });
+    expect(result.editionId).toBeNull();
+  });
+
   it('mapea region null a null', () => {
-    const result = mapConsole({ ...baseDto, region: null });
-    expect(result.region).toBeNull();
+    expect(mapConsole({ ...baseDto, region: null }).region).toBeNull();
   });
 
   it('mapea price null a null', () => {
-    const result = mapConsole({ ...baseDto, price: null });
-    expect(result.price).toBeNull();
+    expect(mapConsole({ ...baseDto, price: null }).price).toBeNull();
   });
 
   it('mapea store null a null', () => {
-    const result = mapConsole({ ...baseDto, store: null });
-    expect(result.store).toBeNull();
+    expect(mapConsole({ ...baseDto, store: null }).store).toBeNull();
   });
 
   it('mapea purchase_date null a null', () => {
-    const result = mapConsole({ ...baseDto, purchase_date: null });
-    expect(result.purchaseDate).toBeNull();
+    expect(mapConsole({ ...baseDto, purchase_date: null }).purchaseDate).toBeNull();
   });
 
   it('mapea notes null a null', () => {
-    const result = mapConsole({ ...baseDto, notes: null });
-    expect(result.notes).toBeNull();
-  });
-
-  it('mapea edition con valor a string', () => {
-    const result = mapConsole({ ...baseDto, edition: 'Final Fantasy XVI Limited Edition' });
-    expect(result.edition).toBe('Final Fantasy XVI Limited Edition');
-  });
-
-  it('mapea edition null a null', () => {
-    const result = mapConsole({ ...baseDto, edition: null });
-    expect(result.edition).toBeNull();
+    expect(mapConsole({ ...baseDto, notes: null }).notes).toBeNull();
   });
 
   it('mapea condición used correctamente', () => {
-    const result = mapConsole({ ...baseDto, condition: 'used' });
-    expect(result.condition).toBe('used');
+    expect(mapConsole({ ...baseDto, condition: 'used' }).condition).toBe('used');
   });
 
   it('mapea región NTSC correctamente', () => {
-    const result = mapConsole({ ...baseDto, region: 'NTSC' });
-    expect(result.region).toBe('NTSC');
+    expect(mapConsole({ ...baseDto, region: 'NTSC' }).region).toBe('NTSC');
   });
 
   it('mapea región NTSC-J correctamente', () => {
-    const result = mapConsole({ ...baseDto, region: 'NTSC-J' });
-    expect(result.region).toBe('NTSC-J');
+    expect(mapConsole({ ...baseDto, region: 'NTSC-J' }).region).toBe('NTSC-J');
   });
 });
 
@@ -108,39 +100,39 @@ describe('mapConsoleToInsertDto', () => {
     const result = mapConsoleToInsertDto('user-1', baseModel);
 
     expect(result.user_id).toBe('user-1');
-    expect(result.brand).toBe('Sony');
-    expect(result.model).toBe('PlayStation 5');
-    expect(result.edition).toBeNull();
+    expect(result.brand_id).toBe('brand-uuid-1');
+    expect(result.model_id).toBe('model-uuid-1');
+    expect(result.edition_id).toBeNull();
     expect(result.region).toBe('PAL');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(549.99);
-    expect(result.store).toBe('MediaMarkt');
+    expect(result.store).toBe('store-uuid-1');
     expect(result.purchase_date).toBe('2023-11-10');
     expect(result.notes).toBe('Edición estándar con lector de discos');
   });
 
+  it('propaga editionId al DTO', () => {
+    const result = mapConsoleToInsertDto('user-1', { ...baseModel, editionId: 'edition-uuid-1' });
+    expect(result.edition_id).toBe('edition-uuid-1');
+  });
+
   it('propaga region null al DTO', () => {
-    const result = mapConsoleToInsertDto('user-1', { ...baseModel, region: null });
-    expect(result.region).toBeNull();
+    expect(mapConsoleToInsertDto('user-1', { ...baseModel, region: null }).region).toBeNull();
   });
 
   it('propaga price null al DTO', () => {
-    const result = mapConsoleToInsertDto('user-1', { ...baseModel, price: null });
-    expect(result.price).toBeNull();
+    expect(mapConsoleToInsertDto('user-1', { ...baseModel, price: null }).price).toBeNull();
   });
 
   it('propaga store null al DTO', () => {
-    const result = mapConsoleToInsertDto('user-1', { ...baseModel, store: null });
-    expect(result.store).toBeNull();
+    expect(mapConsoleToInsertDto('user-1', { ...baseModel, store: null }).store).toBeNull();
   });
 
   it('propaga purchaseDate null al DTO', () => {
-    const result = mapConsoleToInsertDto('user-1', { ...baseModel, purchaseDate: null });
-    expect(result.purchase_date).toBeNull();
+    expect(mapConsoleToInsertDto('user-1', { ...baseModel, purchaseDate: null }).purchase_date).toBeNull();
   });
 
   it('propaga notes null al DTO', () => {
-    const result = mapConsoleToInsertDto('user-1', { ...baseModel, notes: null });
-    expect(result.notes).toBeNull();
+    expect(mapConsoleToInsertDto('user-1', { ...baseModel, notes: null }).notes).toBeNull();
   });
 });

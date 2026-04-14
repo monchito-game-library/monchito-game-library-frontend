@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-04-13
+-- Última revisión: 2026-04-14
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -1062,15 +1062,126 @@ $$;
 
 
 -- ============================================================
--- 18. USER_CONSOLES
+-- 18. HARDWARE CATALOG (brands → models → editions → specs)
+--     Catálogo global gestionado por admins.
+--     Lectura: todos los usuarios autenticados.
+--     Escritura: solo role = 'admin' en user_preferences.
+-- ============================================================
+
+CREATE TABLE hardware_brands (
+  id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL UNIQUE
+);
+
+ALTER TABLE hardware_brands ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read brands"
+  ON hardware_brands FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can insert brands"
+  ON hardware_brands FOR INSERT TO authenticated
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can update brands"
+  ON hardware_brands FOR UPDATE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can delete brands"
+  ON hardware_brands FOR DELETE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+
+CREATE TABLE hardware_models (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  brand_id   UUID NOT NULL REFERENCES hardware_brands(id) ON DELETE CASCADE,
+  name       TEXT NOT NULL,
+  type       TEXT NOT NULL CHECK (type IN ('console', 'controller')),
+  generation INTEGER,
+  UNIQUE (brand_id, name, type)
+);
+
+ALTER TABLE hardware_models ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read models"
+  ON hardware_models FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can insert models"
+  ON hardware_models FOR INSERT TO authenticated
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can update models"
+  ON hardware_models FOR UPDATE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can delete models"
+  ON hardware_models FOR DELETE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+
+CREATE TABLE hardware_editions (
+  id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  model_id UUID NOT NULL REFERENCES hardware_models(id) ON DELETE CASCADE,
+  name     TEXT NOT NULL,
+  UNIQUE (model_id, name)
+);
+
+ALTER TABLE hardware_editions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read editions"
+  ON hardware_editions FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can insert editions"
+  ON hardware_editions FOR INSERT TO authenticated
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can update editions"
+  ON hardware_editions FOR UPDATE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+CREATE POLICY "Admins can delete editions"
+  ON hardware_editions FOR DELETE TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+
+-- Especificaciones técnicas de consolas (1:1 con hardware_models donde type = 'console').
+-- Datos de referencia obtenidos de Wikipedia. units_sold_million es acumulado por familia.
+CREATE TABLE hardware_console_specs (
+  model_id             UUID    PRIMARY KEY REFERENCES hardware_models(id) ON DELETE CASCADE,
+  launch_year          INTEGER NOT NULL,
+  discontinued_year    INTEGER,
+  category             TEXT    NOT NULL CHECK (category IN ('home', 'portable', 'hybrid')),
+  media                TEXT    NOT NULL CHECK (media IN ('optical_disc', 'digital', 'cartridge', 'hybrid', 'built_in')),
+  video_resolution     TEXT,
+  units_sold_million   NUMERIC
+);
+
+ALTER TABLE hardware_console_specs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read console specs"
+  ON hardware_console_specs FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can manage console specs"
+  ON hardware_console_specs FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+
+-- Especificaciones técnicas de mandos (1:1 con hardware_models donde type = 'controller').
+-- Campos a definir en futuras iteraciones.
+CREATE TABLE hardware_controller_specs (
+  model_id UUID PRIMARY KEY REFERENCES hardware_models(id) ON DELETE CASCADE
+);
+
+ALTER TABLE hardware_controller_specs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read controller specs"
+  ON hardware_controller_specs FOR SELECT TO authenticated USING (TRUE);
+CREATE POLICY "Admins can manage controller specs"
+  ON hardware_controller_specs FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+
+
+-- ============================================================
+-- 19. USER_CONSOLES
 -- ============================================================
 
 CREATE TABLE user_consoles (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  brand         TEXT NOT NULL,
-  model         TEXT NOT NULL,
-  edition       TEXT,
+  brand_id      UUID NOT NULL REFERENCES hardware_brands(id),
+  model_id      UUID NOT NULL REFERENCES hardware_models(id),
+  edition_id    UUID REFERENCES hardware_editions(id),
   region        TEXT,
   condition     TEXT NOT NULL,
   price         NUMERIC(8,2),
@@ -1088,14 +1199,15 @@ USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
 -- ============================================================
--- 19. USER_CONTROLLERS
+-- 20. USER_CONTROLLERS
 -- ============================================================
 
 CREATE TABLE user_controllers (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  model         TEXT NOT NULL,
-  edition       TEXT,
+  brand_id      UUID NOT NULL REFERENCES hardware_brands(id),
+  model_id      UUID NOT NULL REFERENCES hardware_models(id),
+  edition_id    UUID REFERENCES hardware_editions(id),
   color         TEXT NOT NULL,
   compatibility TEXT NOT NULL,
   condition     TEXT NOT NULL,

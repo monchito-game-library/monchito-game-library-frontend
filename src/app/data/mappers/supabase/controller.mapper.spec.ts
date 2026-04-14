@@ -7,13 +7,14 @@ import { mapController, mapControllerToInsertDto } from '@/mappers/supabase/cont
 const baseDto: ControllerDto = {
   id: 'controller-uuid-1',
   user_id: 'user-uuid-1',
-  model: 'DualSense',
-  edition: 'Edición God of War',
+  brand_id: 'brand-uuid-1',
+  model_id: 'model-uuid-1',
+  edition_id: 'edition-uuid-1',
   color: 'Negro',
   compatibility: 'PS5',
   condition: 'new',
   price: 79.99,
-  store: 'GAME',
+  store: 'store-uuid-1',
   purchase_date: '2023-12-25',
   notes: 'Edición limitada',
   created_at: '2023-12-25T09:00:00Z'
@@ -22,13 +23,14 @@ const baseDto: ControllerDto = {
 const baseModel: ControllerModel = {
   id: 'controller-uuid-1',
   userId: 'user-uuid-1',
-  model: 'DualSense',
-  edition: 'Edición God of War',
+  brandId: 'brand-uuid-1',
+  modelId: 'model-uuid-1',
+  editionId: 'edition-uuid-1',
   color: 'Negro',
   compatibility: 'PS5',
   condition: 'new',
   price: 79.99,
-  store: 'GAME',
+  store: 'store-uuid-1',
   purchaseDate: '2023-12-25',
   notes: 'Edición limitada',
   createdAt: '2023-12-25T09:00:00Z'
@@ -40,56 +42,49 @@ describe('mapController', () => {
 
     expect(result.id).toBe('controller-uuid-1');
     expect(result.userId).toBe('user-uuid-1');
-    expect(result.model).toBe('DualSense');
-    expect(result.edition).toBe('Edición God of War');
+    expect(result.brandId).toBe('brand-uuid-1');
+    expect(result.modelId).toBe('model-uuid-1');
+    expect(result.editionId).toBe('edition-uuid-1');
     expect(result.color).toBe('Negro');
     expect(result.compatibility).toBe('PS5');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(79.99);
-    expect(result.store).toBe('GAME');
+    expect(result.store).toBe('store-uuid-1');
     expect(result.purchaseDate).toBe('2023-12-25');
     expect(result.notes).toBe('Edición limitada');
     expect(result.createdAt).toBe('2023-12-25T09:00:00Z');
   });
 
-  it('mapea edition null a null', () => {
-    const result = mapController({ ...baseDto, edition: null });
-    expect(result.edition).toBeNull();
+  it('mapea editionId null a null', () => {
+    expect(mapController({ ...baseDto, edition_id: null }).editionId).toBeNull();
   });
 
   it('mapea price null a null', () => {
-    const result = mapController({ ...baseDto, price: null });
-    expect(result.price).toBeNull();
+    expect(mapController({ ...baseDto, price: null }).price).toBeNull();
   });
 
   it('mapea store null a null', () => {
-    const result = mapController({ ...baseDto, store: null });
-    expect(result.store).toBeNull();
+    expect(mapController({ ...baseDto, store: null }).store).toBeNull();
   });
 
   it('mapea purchase_date null a null', () => {
-    const result = mapController({ ...baseDto, purchase_date: null });
-    expect(result.purchaseDate).toBeNull();
+    expect(mapController({ ...baseDto, purchase_date: null }).purchaseDate).toBeNull();
   });
 
   it('mapea notes null a null', () => {
-    const result = mapController({ ...baseDto, notes: null });
-    expect(result.notes).toBeNull();
+    expect(mapController({ ...baseDto, notes: null }).notes).toBeNull();
   });
 
   it('mapea condición used correctamente', () => {
-    const result = mapController({ ...baseDto, condition: 'used' });
-    expect(result.condition).toBe('used');
+    expect(mapController({ ...baseDto, condition: 'used' }).condition).toBe('used');
   });
 
   it('mapea compatibilidad Xbox correctamente', () => {
-    const result = mapController({ ...baseDto, compatibility: 'Xbox' });
-    expect(result.compatibility).toBe('Xbox');
+    expect(mapController({ ...baseDto, compatibility: 'Xbox' }).compatibility).toBe('Xbox');
   });
 
   it('mapea compatibilidad Universal correctamente', () => {
-    const result = mapController({ ...baseDto, compatibility: 'Universal' });
-    expect(result.compatibility).toBe('Universal');
+    expect(mapController({ ...baseDto, compatibility: 'Universal' }).compatibility).toBe('Universal');
   });
 });
 
@@ -98,39 +93,35 @@ describe('mapControllerToInsertDto', () => {
     const result = mapControllerToInsertDto('user-1', baseModel);
 
     expect(result.user_id).toBe('user-1');
-    expect(result.model).toBe('DualSense');
-    expect(result.edition).toBe('Edición God of War');
+    expect(result.brand_id).toBe('brand-uuid-1');
+    expect(result.model_id).toBe('model-uuid-1');
+    expect(result.edition_id).toBe('edition-uuid-1');
     expect(result.color).toBe('Negro');
     expect(result.compatibility).toBe('PS5');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(79.99);
-    expect(result.store).toBe('GAME');
+    expect(result.store).toBe('store-uuid-1');
     expect(result.purchase_date).toBe('2023-12-25');
     expect(result.notes).toBe('Edición limitada');
   });
 
-  it('propaga edition null al DTO', () => {
-    const result = mapControllerToInsertDto('user-1', { ...baseModel, edition: null });
-    expect(result.edition).toBeNull();
+  it('propaga editionId null al DTO', () => {
+    expect(mapControllerToInsertDto('user-1', { ...baseModel, editionId: null }).edition_id).toBeNull();
   });
 
   it('propaga price null al DTO', () => {
-    const result = mapControllerToInsertDto('user-1', { ...baseModel, price: null });
-    expect(result.price).toBeNull();
+    expect(mapControllerToInsertDto('user-1', { ...baseModel, price: null }).price).toBeNull();
   });
 
   it('propaga store null al DTO', () => {
-    const result = mapControllerToInsertDto('user-1', { ...baseModel, store: null });
-    expect(result.store).toBeNull();
+    expect(mapControllerToInsertDto('user-1', { ...baseModel, store: null }).store).toBeNull();
   });
 
   it('propaga purchaseDate null al DTO', () => {
-    const result = mapControllerToInsertDto('user-1', { ...baseModel, purchaseDate: null });
-    expect(result.purchase_date).toBeNull();
+    expect(mapControllerToInsertDto('user-1', { ...baseModel, purchaseDate: null }).purchase_date).toBeNull();
   });
 
   it('propaga notes null al DTO', () => {
-    const result = mapControllerToInsertDto('user-1', { ...baseModel, notes: null });
-    expect(result.notes).toBeNull();
+    expect(mapControllerToInsertDto('user-1', { ...baseModel, notes: null }).notes).toBeNull();
   });
 });

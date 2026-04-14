@@ -12,9 +12,9 @@ export function mapConsole(dto: ConsoleDto): ConsoleModel {
   return {
     id: dto.id,
     userId: dto.user_id,
-    brand: dto.brand,
-    model: dto.model,
-    edition: dto.edition ?? null,
+    brandId: dto.brand_id,
+    modelId: dto.model_id,
+    editionId: dto.edition_id ?? null,
     region: (dto.region as ConsoleRegionType) ?? null,
     condition: dto.condition as GameConditionType,
     price: dto.price,
@@ -34,9 +34,9 @@ export function mapConsole(dto: ConsoleDto): ConsoleModel {
 export function mapConsoleToInsertDto(userId: string, model: ConsoleModel): ConsoleInsertDto {
   return {
     user_id: userId,
-    brand: model.brand,
-    model: model.model,
-    edition: model.edition,
+    brand_id: model.brandId,
+    model_id: model.modelId,
+    edition_id: model.editionId,
     region: model.region,
     condition: model.condition,
     price: model.price,

@@ -19,16 +19,36 @@
   } @else {
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-update-controller__form">
       <mat-form-field appearance="outline" class="create-update-controller__field--full">
+        <mat-label>{{ 'controllerPage.brand' | transloco }}</mat-label>
+        <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)">
+          <mat-option [value]="null">—</mat-option>
+          @for (brand of brands(); track brand.id) {
+            <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="create-update-controller__field--full">
         <mat-label>{{ 'controllerPage.model' | transloco }}</mat-label>
-        <input matInput formControlName="model" />
-        @if (form.get('model')?.hasError('required')) {
-          <mat-error>{{ 'controllerPage.required' | transloco }}</mat-error>
-        }
+        <mat-select
+          formControlName="modelId"
+          [disabled]="!form.controls.brandId.value"
+          (selectionChange)="onModelChange($event.value)">
+          <mat-option [value]="null">—</mat-option>
+          @for (model of models(); track model.id) {
+            <mat-option [value]="model.id">{{ model.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="create-update-controller__field--full">
         <mat-label>{{ 'controllerPage.edition' | transloco }}</mat-label>
-        <input matInput formControlName="edition" />
+        <mat-select formControlName="editionId" [disabled]="!form.controls.modelId.value">
+          <mat-option [value]="null">—</mat-option>
+          @for (edition of editions(); track edition.id) {
+            <mat-option [value]="edition.id">{{ edition.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <div class="create-update-controller__color-field">

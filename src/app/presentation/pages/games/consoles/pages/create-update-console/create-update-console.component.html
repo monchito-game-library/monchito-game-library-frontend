@@ -20,23 +20,35 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-update-console__form">
       <mat-form-field appearance="outline" class="create-update-console__field--full">
         <mat-label>{{ 'consolePage.brand' | transloco }}</mat-label>
-        <input matInput formControlName="brand" />
-        @if (form.get('brand')?.hasError('required')) {
-          <mat-error>{{ 'consolePage.required' | transloco }}</mat-error>
-        }
+        <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)">
+          <mat-option [value]="null">—</mat-option>
+          @for (brand of brands(); track brand.id) {
+            <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="create-update-console__field--full">
         <mat-label>{{ 'consolePage.model' | transloco }}</mat-label>
-        <input matInput formControlName="model" />
-        @if (form.get('model')?.hasError('required')) {
-          <mat-error>{{ 'consolePage.required' | transloco }}</mat-error>
-        }
+        <mat-select
+          formControlName="modelId"
+          [disabled]="!form.controls.brandId.value"
+          (selectionChange)="onModelChange($event.value)">
+          <mat-option [value]="null">—</mat-option>
+          @for (model of models(); track model.id) {
+            <mat-option [value]="model.id">{{ model.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="create-update-console__field--full">
         <mat-label>{{ 'consolePage.edition' | transloco }}</mat-label>
-        <input matInput formControlName="edition" />
+        <mat-select formControlName="editionId" [disabled]="!form.controls.modelId.value">
+          <mat-option [value]="null">—</mat-option>
+          @for (edition of editions(); track edition.id) {
+            <mat-option [value]="edition.id">{{ edition.name }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">

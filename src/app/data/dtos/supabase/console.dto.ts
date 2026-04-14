@@ -2,9 +2,9 @@
 export interface ConsoleDto {
   id: string;
   user_id: string;
-  brand: string;
-  model: string;
-  edition: string | null;
+  brand_id: string;
+  model_id: string;
+  edition_id: string | null;
   region: string | null;
   condition: string;
   price: number | null;
@@ -17,9 +17,9 @@ export interface ConsoleDto {
 /** Payload for inserting a row in user_consoles. */
 export interface ConsoleInsertDto {
   user_id: string;
-  brand: string;
-  model: string;
-  edition: string | null;
+  brand_id: string;
+  model_id: string;
+  edition_id: string | null;
   region: string | null;
   condition: string;
   price: number | null;
