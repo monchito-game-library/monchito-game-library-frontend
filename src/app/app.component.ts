@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
   readonly navItems: NavItemInterface[] = [
     { icon: 'sports_esports', label: 'nav.collection', route: '/games' },
     { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' },
+    { icon: 'sell', label: 'nav.sale', route: '/sale' },
     { icon: 'shopping_cart', label: 'nav.orders', route: '/orders' }
   ];
 

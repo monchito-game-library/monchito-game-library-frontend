@@ -237,7 +237,14 @@ export class CreateUpdateConsoleComponent implements OnInit {
           store: value.store,
           purchaseDate: value.purchaseDate,
           notes: value.notes,
-          createdAt: ''
+          createdAt: '',
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null,
+          activeLoanId: null,
+          activeLoanTo: null,
+          activeLoanAt: null
         };
         await this._consoleUseCases.update(userId, this._consoleId, updated);
         this._snackBar.open(
@@ -258,7 +265,14 @@ export class CreateUpdateConsoleComponent implements OnInit {
           store: value.store,
           purchaseDate: value.purchaseDate,
           notes: value.notes,
-          createdAt: ''
+          createdAt: '',
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null,
+          activeLoanId: null,
+          activeLoanTo: null,
+          activeLoanAt: null
         };
         await this._consoleUseCases.add(userId, created);
         this._snackBar.open(

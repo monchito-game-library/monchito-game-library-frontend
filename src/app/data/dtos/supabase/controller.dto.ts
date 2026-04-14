@@ -13,6 +13,13 @@ export interface ControllerDto {
   purchase_date: string | null;
   notes: string | null;
   created_at: string;
+  for_sale: boolean;
+  sale_price: number | null;
+  sold_at: string | null;
+  sold_price_final: number | null;
+  active_loan_id: string | null;
+  active_loan_to: string | null;
+  active_loan_at: string | null;
 }
 
 /** Payload for inserting a row in user_controllers. */

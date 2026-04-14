@@ -51,10 +51,6 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .controller-detail__delete-btn {
-    color: var(--mat-sys-error);
-  }
-
   .controller-detail__edition {
     display: flex;
     align-items: center;
@@ -116,22 +112,67 @@
   }
 
   .controller-detail__chip {
+    display: inline-flex;
+    align-items: center;
     font-size: 0.75rem;
+    padding: 2px 0.5rem;
+    border-radius: 20px;
+    font-weight: 500;
 
     &--compat {
-      background-color: var(--mat-sys-secondary-container);
-      color: var(--mat-sys-on-secondary-container);
+      background-color: transparent;
+      border: 1px solid var(--mat-sys-outline-variant);
+      color: var(--mat-sys-on-surface-variant);
     }
 
     &--new {
-      background-color: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      background-color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      font-weight: 600;
     }
 
     &--used {
-      background-color: var(--mat-sys-surface-container-high);
-      color: var(--mat-sys-on-surface-variant);
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
     }
+  }
+
+  .controller-detail__status-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .controller-detail__status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &--sale {
+      background-color: var(--mat-sys-tertiary-container);
+      color: var(--mat-sys-on-tertiary-container);
+    }
+
+    &--loan {
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+  }
+
+  .controller-detail__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
   .controller-detail__purchase-row {

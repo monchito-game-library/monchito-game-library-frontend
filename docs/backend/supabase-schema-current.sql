@@ -1,6 +1,6 @@
 -- ============================================================
 -- MONCHITO GAME LIBRARY — SCHEMA ACTUAL (estado real en prod)
--- Última revisión: 2026-04-14
+-- Última revisión: 2026-04-14 (v2: ventas y préstamos en consolas/mandos, vistas de mercado)
 -- ============================================================
 -- Este fichero es la fuente de verdad para recrear la base de
 -- datos desde cero. Reemplaza a supabase-schema-v3-fixed.sql
@@ -1177,18 +1177,29 @@ CREATE POLICY "Admins can manage controller specs"
 -- ============================================================
 
 CREATE TABLE user_consoles (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  brand_id      UUID NOT NULL REFERENCES hardware_brands(id),
-  model_id      UUID NOT NULL REFERENCES hardware_models(id),
-  edition_id    UUID REFERENCES hardware_editions(id),
-  region        TEXT,
-  condition     TEXT NOT NULL,
-  price         NUMERIC(8,2),
-  store         TEXT,
-  purchase_date DATE,
-  notes         TEXT,
-  created_at    TIMESTAMPTZ DEFAULT NOW()
+  id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id          UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  brand_id         UUID        NOT NULL REFERENCES hardware_brands(id),
+  model_id         UUID        NOT NULL REFERENCES hardware_models(id),
+  edition_id       UUID        REFERENCES hardware_editions(id),
+  region           TEXT,
+  condition        TEXT        NOT NULL,
+  price            NUMERIC(8,2),
+  store            TEXT,
+  purchase_date    DATE,
+  notes            TEXT,
+  created_at       TIMESTAMPTZ DEFAULT NOW(),
+
+  -- Venta
+  for_sale         BOOLEAN     NOT NULL DEFAULT FALSE,
+  sale_price       NUMERIC(10,2),
+  sold_at          TIMESTAMPTZ,           -- NULL = en colección activa
+  sold_price_final NUMERIC(10,2),
+
+  -- Préstamo activo (desnormalizado para acceso rápido)
+  active_loan_id   UUID,                 -- FK lógica a hardware_loans.id
+  active_loan_to   TEXT,
+  active_loan_at   TIMESTAMPTZ
 );
 
 ALTER TABLE user_consoles ENABLE ROW LEVEL SECURITY;
@@ -1203,19 +1214,30 @@ WITH CHECK (auth.uid() = user_id);
 -- ============================================================
 
 CREATE TABLE user_controllers (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  brand_id      UUID NOT NULL REFERENCES hardware_brands(id),
-  model_id      UUID NOT NULL REFERENCES hardware_models(id),
-  edition_id    UUID REFERENCES hardware_editions(id),
-  color         TEXT NOT NULL,
-  compatibility TEXT NOT NULL,
-  condition     TEXT NOT NULL,
-  price         NUMERIC(8,2),
-  store         TEXT,
-  purchase_date DATE,
-  notes         TEXT,
-  created_at    TIMESTAMPTZ DEFAULT NOW()
+  id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id          UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  brand_id         UUID        NOT NULL REFERENCES hardware_brands(id),
+  model_id         UUID        NOT NULL REFERENCES hardware_models(id),
+  edition_id       UUID        REFERENCES hardware_editions(id),
+  color            TEXT        NOT NULL,
+  compatibility    TEXT        NOT NULL,
+  condition        TEXT        NOT NULL,
+  price            NUMERIC(8,2),
+  store            TEXT,
+  purchase_date    DATE,
+  notes            TEXT,
+  created_at       TIMESTAMPTZ DEFAULT NOW(),
+
+  -- Venta
+  for_sale         BOOLEAN     NOT NULL DEFAULT FALSE,
+  sale_price       NUMERIC(10,2),
+  sold_at          TIMESTAMPTZ,           -- NULL = en colección activa
+  sold_price_final NUMERIC(10,2),
+
+  -- Préstamo activo (desnormalizado para acceso rápido)
+  active_loan_id   UUID,                 -- FK lógica a hardware_loans.id
+  active_loan_to   TEXT,
+  active_loan_at   TIMESTAMPTZ
 );
 
 ALTER TABLE user_controllers ENABLE ROW LEVEL SECURITY;
@@ -1226,7 +1248,148 @@ USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
 -- ============================================================
--- 20. STORAGE BUCKETS
+-- 21. HARDWARE_LOANS
+--     Historial de préstamos de consolas y mandos.
+--     Tabla polimórfica: item_type discrimina el tipo de ítem.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS hardware_loans (
+  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  item_type     TEXT        NOT NULL CHECK (item_type IN ('console', 'controller')),
+  user_item_id  UUID        NOT NULL,   -- FK lógica a user_consoles.id o user_controllers.id
+  loaned_to     TEXT        NOT NULL,
+  loaned_at     TIMESTAMPTZ NOT NULL,
+  returned_at   TIMESTAMPTZ,            -- NULL = préstamo activo
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS hardware_loans_item_idx
+  ON hardware_loans (item_type, user_item_id);
+
+ALTER TABLE hardware_loans ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users manage own hardware loans"
+  ON hardware_loans FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_consoles    WHERE id = hardware_loans.user_item_id AND user_id = auth.uid()
+      UNION
+      SELECT 1 FROM user_controllers WHERE id = hardware_loans.user_item_id AND user_id = auth.uid()
+    )
+  );
+
+-- ============================================================
+-- 22. VISTA: available_items
+--     Todos los artículos marcados como en venta (for_sale = TRUE)
+--     y aún no vendidos (sold_at IS NULL).
+--     UNION de juegos + consolas + mandos.
+-- ============================================================
+
+CREATE OR REPLACE VIEW available_items AS
+  SELECT
+    ug.id::TEXT                                       AS id,
+    'game'::TEXT                                      AS item_type,
+    ug.title                                          AS item_name,
+    NULL::TEXT                                        AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    ug.sale_price                                     AS sale_price,
+    ug.user_id                                        AS user_id,
+    ug.created_at                                     AS created_at
+  FROM user_games_full ug
+  WHERE ug.for_sale = TRUE AND ug.sold_at IS NULL
+
+  UNION ALL
+
+  SELECT
+    uc.id::TEXT                                       AS id,
+    'console'::TEXT                                   AS item_type,
+    hm.name                                           AS item_name,
+    hb.name                                           AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    uc.sale_price                                     AS sale_price,
+    uc.user_id                                        AS user_id,
+    uc.created_at                                     AS created_at
+  FROM user_consoles uc
+  JOIN hardware_models hm ON hm.id = uc.model_id
+  JOIN hardware_brands hb ON hb.id = uc.brand_id
+  WHERE uc.for_sale = TRUE AND uc.sold_at IS NULL
+
+  UNION ALL
+
+  SELECT
+    uct.id::TEXT                                      AS id,
+    'controller'::TEXT                                AS item_type,
+    hm.name                                           AS item_name,
+    hb.name                                           AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    uct.sale_price                                    AS sale_price,
+    uct.user_id                                       AS user_id,
+    uct.created_at                                    AS created_at
+  FROM user_controllers uct
+  JOIN hardware_models hm ON hm.id = uct.model_id
+  JOIN hardware_brands hb ON hb.id = uct.brand_id
+  WHERE uct.for_sale = TRUE AND uct.sold_at IS NULL;
+
+ALTER VIEW available_items SET (security_invoker = true);
+
+-- ============================================================
+-- 23. VISTA: sold_items
+--     Historial global de ventas (sold_at IS NOT NULL).
+--     UNION de juegos + consolas + mandos, ordenado por fecha.
+-- ============================================================
+
+CREATE OR REPLACE VIEW sold_items AS
+  SELECT
+    ug.id::TEXT                                       AS id,
+    'game'::TEXT                                      AS item_type,
+    ug.title                                          AS item_name,
+    NULL::TEXT                                        AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    ug.sold_price_final                               AS sold_price_final,
+    ug.sold_at                                        AS sold_at,
+    ug.user_id                                        AS user_id,
+    ug.created_at                                     AS created_at
+  FROM user_games_full ug
+  WHERE ug.sold_at IS NOT NULL
+
+  UNION ALL
+
+  SELECT
+    uc.id::TEXT                                       AS id,
+    'console'::TEXT                                   AS item_type,
+    hm.name                                           AS item_name,
+    hb.name                                           AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    uc.sold_price_final                               AS sold_price_final,
+    uc.sold_at                                        AS sold_at,
+    uc.user_id                                        AS user_id,
+    uc.created_at                                     AS created_at
+  FROM user_consoles uc
+  JOIN hardware_models hm ON hm.id = uc.model_id
+  JOIN hardware_brands hb ON hb.id = uc.brand_id
+  WHERE uc.sold_at IS NOT NULL
+
+  UNION ALL
+
+  SELECT
+    uct.id::TEXT                                      AS id,
+    'controller'::TEXT                                AS item_type,
+    hm.name                                           AS item_name,
+    hb.name                                           AS brand_name,
+    NULL::TEXT                                        AS model_name,
+    uct.sold_price_final                              AS sold_price_final,
+    uct.sold_at                                       AS sold_at,
+    uct.user_id                                       AS user_id,
+    uct.created_at                                    AS created_at
+  FROM user_controllers uct
+  JOIN hardware_models hm ON hm.id = uct.model_id
+  JOIN hardware_brands hb ON hb.id = uct.brand_id
+  WHERE uct.sold_at IS NOT NULL;
+
+ALTER VIEW sold_items SET (security_invoker = true);
+
+-- ============================================================
+-- 24. STORAGE BUCKETS
 -- (configurar en Supabase Dashboard > Storage, no en SQL)
 --
 -- Bucket: avatars

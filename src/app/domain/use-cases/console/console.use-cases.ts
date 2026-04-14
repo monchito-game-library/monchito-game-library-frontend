@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 
 import { ConsoleModel } from '@/models/console/console.model';
 import { CONSOLE_REPOSITORY, ConsoleRepositoryContract } from '@/domain/repositories/console.repository.contract';
+import { HardwareLoanStatusModel } from '@/interfaces/hardware-loan-status.interface';
+import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
 import { ConsoleUseCasesContract } from './console.use-cases.contract';
 
 @Injectable()
@@ -56,5 +58,36 @@ export class ConsoleUseCasesImpl implements ConsoleUseCasesContract {
    */
   async delete(userId: string, id: string): Promise<void> {
     return this._repo.delete(userId, id);
+  }
+
+  /**
+   * Updates the sale status of a console.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} id - Supabase UUID of the user_consoles row
+   * @param {HardwareSaleStatusModel} sale - Sale status to persist
+   */
+  async updateSaleStatus(userId: string, id: string, sale: HardwareSaleStatusModel): Promise<void> {
+    return this._repo.updateSaleStatus(userId, id, sale);
+  }
+
+  /**
+   * Creates a new loan for a console. Returns the UUID of the created hardware_loans row.
+   *
+   * @param {HardwareLoanStatusModel} loan - Loan details
+   */
+  async createLoan(loan: HardwareLoanStatusModel): Promise<string> {
+    return this._repo.createLoan(loan);
+  }
+
+  /**
+   * Marks an active loan as returned. Clears the active_loan_* fields on the console.
+   *
+   * @param {string} loanId - UUID of the hardware_loans row
+   * @param {string} consoleId - UUID of the user_consoles row
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  async returnLoan(loanId: string, consoleId: string, userId: string): Promise<void> {
+    return this._repo.returnLoan(loanId, consoleId, userId);
   }
 }

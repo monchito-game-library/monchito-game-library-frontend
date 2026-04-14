@@ -230,7 +230,14 @@ export class CreateUpdateControllerComponent implements OnInit {
           store: value.store,
           purchaseDate: value.purchaseDate,
           notes: value.notes,
-          createdAt: ''
+          createdAt: '',
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null,
+          activeLoanId: null,
+          activeLoanTo: null,
+          activeLoanAt: null
         };
         await this._controllerUseCases.update(userId, this._controllerId, updated);
         this._snackBar.open(
@@ -252,7 +259,14 @@ export class CreateUpdateControllerComponent implements OnInit {
           store: value.store,
           purchaseDate: value.purchaseDate,
           notes: value.notes,
-          createdAt: ''
+          createdAt: '',
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null,
+          activeLoanId: null,
+          activeLoanTo: null,
+          activeLoanAt: null
         };
         await this._controllerUseCases.add(userId, created);
         this._snackBar.open(

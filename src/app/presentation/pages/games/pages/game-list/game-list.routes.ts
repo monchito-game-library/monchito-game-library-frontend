@@ -15,10 +15,6 @@ export const gameListRoutes: Routes = [
       },
       // Rutas estáticas antes del segmento dinámico :id para evitar colisiones
       {
-        path: 'sold',
-        loadChildren: () => import('./pages/sold-games/sold-games.routes').then((m) => m.soldGamesRoutes)
-      },
-      {
         path: 'add',
         loadChildren: () =>
           import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)

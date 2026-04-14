@@ -9,6 +9,7 @@ export const routes: Routes = [
   { path: 'home', redirectTo: 'games', pathMatch: 'full' },
   { path: 'games', loadChildren: () => import('@/pages/games/games.routes').then((m) => m.gamesRoutes) },
   { path: 'wishlist', loadChildren: () => import('@/pages/wishlist/wishlist.routes').then((m) => m.wishlistRoutes) },
+  { path: 'sale', loadChildren: () => import('@/pages/sale/sale.routes').then((m) => m.saleRoutes) },
   { path: 'orders', loadChildren: () => import('@/pages/orders/orders.routes').then((m) => m.ordersRoutes) },
   { path: 'settings', loadChildren: () => import('@/pages/settings/settings.routes').then((m) => m.settingsRoutes) },
   {

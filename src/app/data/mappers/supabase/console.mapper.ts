@@ -21,7 +21,14 @@ export function mapConsole(dto: ConsoleDto): ConsoleModel {
     store: dto.store,
     purchaseDate: dto.purchase_date,
     notes: dto.notes,
-    createdAt: dto.created_at
+    createdAt: dto.created_at,
+    forSale: dto.for_sale ?? false,
+    salePrice: dto.sale_price ?? null,
+    soldAt: dto.sold_at ?? null,
+    soldPriceFinal: dto.sold_price_final ?? null,
+    activeLoanId: dto.active_loan_id ?? null,
+    activeLoanTo: dto.active_loan_to ?? null,
+    activeLoanAt: dto.active_loan_at ?? null
   };
 }
 

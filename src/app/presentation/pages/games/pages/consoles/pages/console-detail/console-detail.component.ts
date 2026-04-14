@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatIconButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ConsoleModel } from '@/models/console/console.model';
@@ -36,6 +35,14 @@ import {
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
+import {
+  HardwareLoanFormComponent,
+  HardwareLoanItem
+} from '@/components/hardware-loan-form/hardware-loan-form.component';
+import {
+  HardwareSaleFormComponent,
+  HardwareSaleItem
+} from '@/components/hardware-sale-form/hardware-sale-form.component';
 
 @Component({
   selector: 'app-console-detail',
@@ -43,7 +50,17 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
   styleUrl: './console-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, DatePipe, MatIconButton, MatIcon, MatProgressSpinner, MatChipsModule, TranslocoPipe]
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    MatIconButton,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    TranslocoPipe,
+    HardwareLoanFormComponent,
+    HardwareSaleFormComponent
+  ]
 })
 export class ConsoleDetailComponent implements OnInit {
   private readonly _router: Router = inject(Router);
@@ -86,6 +103,15 @@ export class ConsoleDetailComponent implements OnInit {
     undefined
   );
 
+  /** Whether the sale form view is active. */
+  readonly showSaleForm: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the loan form view is active. */
+  readonly showLoanForm: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether a delete operation is in progress. */
+  readonly deleting: WritableSignal<boolean> = signal<boolean>(false);
+
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id') ?? '';
     await Promise.all([this._loadConsoleWithCatalog(id), this._loadStores()]);
@@ -117,6 +143,63 @@ export class ConsoleDetailComponent implements OnInit {
   }
 
   /**
+   * Activa la vista del formulario de venta.
+   */
+  openSaleView(): void {
+    this.showLoanForm.set(false);
+    this.showSaleForm.set(true);
+  }
+
+  /**
+   * Cierra la vista del formulario de venta.
+   */
+  closeSaleView(): void {
+    this.showSaleForm.set(false);
+  }
+
+  /**
+   * Activa la vista del formulario de préstamo.
+   */
+  openLoanView(): void {
+    this.showSaleForm.set(false);
+    this.showLoanForm.set(true);
+  }
+
+  /**
+   * Cierra la vista del formulario de préstamo.
+   */
+  closeLoanView(): void {
+    this.showLoanForm.set(false);
+  }
+
+  /**
+   * Llamado cuando el formulario de venta guarda correctamente.
+   * Si la consola fue vendida, navega a la lista; si no, actualiza la señal.
+   *
+   * @param {ConsoleModel} updated - Modelo con los nuevos valores de venta aplicados
+   */
+  onSaleSaved(updated: HardwareSaleItem): void {
+    const model = updated as ConsoleModel;
+    if (model.soldAt) {
+      void this._router.navigate(['/games/consoles']);
+      return;
+    }
+    this.console.set(model);
+    this.showSaleForm.set(false);
+  }
+
+  /**
+   * Llamado cuando el formulario de préstamo completa una acción.
+   * Actualiza la señal de consola y cierra el formulario.
+   *
+   * @param {HardwareLoanItem} updated - Modelo con los nuevos valores de préstamo aplicados
+   */
+  onLoanSaved(updated: HardwareLoanItem): void {
+    this.console.set(updated as ConsoleModel);
+    this.showLoanForm.set(false);
+  }
+
+  /**
    * Muestra un diálogo de confirmación y elimina la consola si el usuario confirma.
    * Tras eliminar, redirige a la lista de consolas.
    */
@@ -132,6 +215,7 @@ export class ConsoleDetailComponent implements OnInit {
       if (!confirmed) return;
       const c = this.console();
       if (!c) return;
+      this.deleting.set(true);
       try {
         await this._consoleUseCases.delete(this._userContext.requireUserId(), c.id);
         this._snackBar.open(
@@ -146,6 +230,7 @@ export class ConsoleDetailComponent implements OnInit {
           this._transloco.translate('common.close'),
           { duration: 3000 }
         );
+        this.deleting.set(false);
       }
     });
   }

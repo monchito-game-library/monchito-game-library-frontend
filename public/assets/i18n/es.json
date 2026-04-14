@@ -472,7 +472,8 @@
       "openUserMenu": "Abrir menú de usuario",
       "bottomNav": "Navegación"
     },
-    "management": "Gestión"
+    "management": "Gestión",
+    "sale": "En venta"
   },
   "selectUser": {
     "title": "Seleccionar usuario"
@@ -907,5 +908,80 @@
     "pc": "PC",
     "switch": "Nintendo Switch",
     "universal": "Universal"
+  },
+  "hardwareLoan": {
+    "title": "Préstamo",
+    "loanedBadge": "Prestado a",
+    "activeSection": "Préstamo activo",
+    "newSection": "Nuevo préstamo",
+    "loanedTo": "Persona",
+    "loanedToPlaceholder": "ej. Juan",
+    "loanedAt": "Fecha de préstamo",
+    "loanBtn": "Prestar",
+    "returnBtn": "Devuelto",
+    "snack": {
+      "loanSuccess": "Préstamo registrado",
+      "loanError": "Error al registrar el préstamo",
+      "returnSuccess": "Préstamo marcado como devuelto",
+      "returnError": "Error al registrar la devolución"
+    }
+  },
+  "hardwareSale": {
+    "title": "Venta",
+    "manageBtn": "Venta",
+    "forSaleBadge": "En venta",
+    "availability": "Disponible para venta",
+    "forSale": "A la venta",
+    "salePrice": "Precio deseado",
+    "salePricePlaceholder": "ej. 29.99",
+    "registerSection": "¿Ya lo vendiste?",
+    "soldPriceFinal": "Precio final obtenido",
+    "soldPricePlaceholder": "ej. 25.00",
+    "soldAt": "Fecha de venta",
+    "soldAtInvalid": "Introduce una fecha válida",
+    "soldWarning": "Al confirmar, el artículo pasará al historial y dejará de aparecer en tu colección.",
+    "saveBtn": "Guardar",
+    "markAsSoldBtn": "Marcar como vendido",
+    "snack": {
+      "saveError": "Error al guardar el estado de venta",
+      "saveSuccess": "Estado de venta actualizado",
+      "soldSuccess": "Artículo marcado como vendido",
+      "soldError": "Error al registrar la venta"
+    }
+  },
+  "salePage": {
+    "tabs": {
+      "available": "En venta",
+      "history": "Historial"
+    },
+    "filter": {
+      "all": "Todo",
+      "game": "Juegos",
+      "console": "Consolas",
+      "controller": "Mandos"
+    },
+    "type": {
+      "game": "Juego",
+      "console": "Consola",
+      "controller": "Mando"
+    },
+    "available": {
+      "items": "artículos en venta",
+      "noPrice": "Sin precio",
+      "empty": {
+        "title": "Nada en venta",
+        "subtitle": "Marca juegos, consolas o mandos como disponibles para la venta desde su detalle"
+      }
+    },
+    "history": {
+      "items": "ventas",
+      "empty": {
+        "title": "Sin historial de ventas",
+        "subtitle": "Aquí aparecerán los artículos que hayas marcado como vendidos"
+      }
+    },
+    "snack": {
+      "loadError": "Error al cargar los datos de venta"
+    }
   }
 }

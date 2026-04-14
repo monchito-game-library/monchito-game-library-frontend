@@ -12,12 +12,6 @@
         <h2 class="controller-detail__title">{{ model()?.name ?? '—' }}</h2>
         <span class="controller-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
       </div>
-      <button mat-icon-button type="button" (click)="onEdit()">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button type="button" class="controller-detail__delete-btn" (click)="onDelete()">
-        <mat-icon>delete_outline</mat-icon>
-      </button>
     </div>
 
     @if (edition()) {
@@ -27,70 +21,129 @@
       </div>
     }
 
-    <!-- Sección: Mi mando -->
-    <section class="controller-detail__section">
-      <h3 class="controller-detail__section-title">{{ 'controllerDetailPage.sectionUser' | transloco }}</h3>
-
-      <div class="controller-detail__color-row">
-        <div class="controller-detail__color-swatch" [style.background-color]="controller()!.color"></div>
-        <span class="controller-detail__color-label">{{ controller()!.color }}</span>
-      </div>
-
-      <div class="controller-detail__chips">
-        <mat-chip class="controller-detail__chip controller-detail__chip--compat">
-          {{ controller()!.compatibility }}
-        </mat-chip>
-        @if (controller()!.condition === GAME_CONDITION.NEW) {
-          <mat-chip class="controller-detail__chip controller-detail__chip--new">
-            <mat-icon matChipAvatar>fiber_new</mat-icon>
-            {{ 'controllersPage.condition.new' | transloco }}
-          </mat-chip>
-        } @else {
-          <mat-chip class="controller-detail__chip controller-detail__chip--used">
-            {{ 'controllersPage.condition.used' | transloco }}
-          </mat-chip>
+    <!-- Chips de estado (venta / préstamo) -->
+    @if (controller()!.forSale || controller()!.activeLoanId) {
+      <div class="controller-detail__status-chips">
+        @if (controller()!.forSale) {
+          <span class="controller-detail__status-chip controller-detail__status-chip--sale">
+            <mat-icon>sell</mat-icon>
+            {{ 'hardwareSale.forSaleBadge' | transloco }}
+            @if (controller()!.salePrice !== null) {
+              · {{ controller()!.salePrice | currency: 'EUR' }}
+            }
+          </span>
+        }
+        @if (controller()!.activeLoanId) {
+          <span class="controller-detail__status-chip controller-detail__status-chip--loan">
+            <mat-icon>handshake</mat-icon>
+            {{ 'hardwareLoan.loanedBadge' | transloco }} {{ controller()!.activeLoanTo }}
+          </span>
         }
       </div>
+    }
 
-      <div class="controller-detail__purchase-row">
-        @if (controller()!.price !== null) {
-          <div class="controller-detail__purchase-item">
-            <div class="controller-detail__purchase-header">
-              <mat-icon>payments</mat-icon>
-              <span class="controller-detail__purchase-label">{{ 'controllerPage.price' | transloco }}</span>
+    <!-- Body: formularios o datos -->
+    @if (showSaleForm()) {
+      <app-hardware-sale-form
+        [item]="controller()!"
+        itemType="controller"
+        (saved)="onSaleSaved($event)"
+        (cancelled)="closeSaleView()" />
+    } @else if (showLoanForm()) {
+      <app-hardware-loan-form
+        [item]="controller()!"
+        itemType="controller"
+        (saved)="onLoanSaved($event)"
+        (cancelled)="closeLoanView()" />
+    } @else {
+      <!-- Sección: Mi mando -->
+      <section class="controller-detail__section">
+        <h3 class="controller-detail__section-title">{{ 'controllerDetailPage.sectionUser' | transloco }}</h3>
+
+        <div class="controller-detail__color-row">
+          <div class="controller-detail__color-swatch" [style.background-color]="controller()!.color"></div>
+          <span class="controller-detail__color-label">{{ controller()!.color }}</span>
+        </div>
+
+        <div class="controller-detail__chips">
+          <span class="controller-detail__chip controller-detail__chip--compat">
+            {{ controller()!.compatibility }}
+          </span>
+          @if (controller()!.condition === GAME_CONDITION.NEW) {
+            <span class="controller-detail__chip controller-detail__chip--new">
+              {{ 'controllersPage.condition.new' | transloco }}
+            </span>
+          } @else {
+            <span class="controller-detail__chip controller-detail__chip--used">
+              {{ 'controllersPage.condition.used' | transloco }}
+            </span>
+          }
+        </div>
+
+        <div class="controller-detail__purchase-row">
+          @if (controller()!.price !== null) {
+            <div class="controller-detail__purchase-item">
+              <div class="controller-detail__purchase-header">
+                <mat-icon>payments</mat-icon>
+                <span class="controller-detail__purchase-label">{{ 'controllerPage.price' | transloco }}</span>
+              </div>
+              <span class="controller-detail__purchase-value">{{
+                controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
-            <span class="controller-detail__purchase-value">{{
-              controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2'
-            }}</span>
-          </div>
-        }
-        @if (controller()!.store) {
-          <div class="controller-detail__purchase-item">
-            <div class="controller-detail__purchase-header">
-              <mat-icon>storefront</mat-icon>
-              <span class="controller-detail__purchase-label">{{ 'controllerPage.store' | transloco }}</span>
+          }
+          @if (controller()!.store) {
+            <div class="controller-detail__purchase-item">
+              <div class="controller-detail__purchase-header">
+                <mat-icon>storefront</mat-icon>
+                <span class="controller-detail__purchase-label">{{ 'controllerPage.store' | transloco }}</span>
+              </div>
+              <span class="controller-detail__purchase-value">{{ resolveStoreName(controller()!.store) }}</span>
             </div>
-            <span class="controller-detail__purchase-value">{{ resolveStoreName(controller()!.store) }}</span>
-          </div>
-        }
-        @if (controller()!.purchaseDate) {
-          <div class="controller-detail__purchase-item">
-            <div class="controller-detail__purchase-header">
-              <mat-icon>calendar_today</mat-icon>
-              <span class="controller-detail__purchase-label">{{ 'controllerPage.purchaseDate' | transloco }}</span>
+          }
+          @if (controller()!.purchaseDate) {
+            <div class="controller-detail__purchase-item">
+              <div class="controller-detail__purchase-header">
+                <mat-icon>calendar_today</mat-icon>
+                <span class="controller-detail__purchase-label">{{ 'controllerPage.purchaseDate' | transloco }}</span>
+              </div>
+              <span class="controller-detail__purchase-value">{{
+                controller()!.purchaseDate | date: 'dd/MM/yyyy'
+              }}</span>
             </div>
-            <span class="controller-detail__purchase-value">{{ controller()!.purchaseDate | date: 'dd/MM/yyyy' }}</span>
-          </div>
+          }
+        </div>
+        @if (controller()!.notes) {
+          <dl class="controller-detail__dl">
+            <div class="controller-detail__dl-row controller-detail__dl-row--full">
+              <dt><mat-icon>notes</mat-icon> {{ 'controllerPage.notes' | transloco }}</dt>
+              <dd>{{ controller()!.notes }}</dd>
+            </div>
+          </dl>
         }
+      </section>
+
+      <!-- Acciones -->
+      <div class="controller-detail__actions">
+        <button mat-stroked-button type="button" (click)="onEdit()">
+          <mat-icon>edit</mat-icon>
+          {{ 'gameCard.menu.edit' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="openSaleView()">
+          <mat-icon>sell</mat-icon>
+          {{ 'hardwareSale.manageBtn' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="openLoanView()">
+          <mat-icon>handshake</mat-icon>
+          {{
+            controller()!.activeLoanId ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco)
+          }}
+        </button>
+        <button mat-stroked-button type="button" color="warn" (click)="onDelete()" [disabled]="deleting()">
+          <mat-icon>delete</mat-icon>
+          {{ 'gameCard.menu.delete' | transloco }}
+        </button>
       </div>
-      @if (controller()!.notes) {
-        <dl class="controller-detail__dl">
-          <div class="controller-detail__dl-row controller-detail__dl-row--full">
-            <dt><mat-icon>notes</mat-icon> {{ 'controllerPage.notes' | transloco }}</dt>
-            <dd>{{ controller()!.notes }}</dd>
-          </div>
-        </dl>
-      }
-    </section>
+    }
   }
 </div>

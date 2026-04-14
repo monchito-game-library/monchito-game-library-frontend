@@ -471,7 +471,8 @@
       "openUserMenu": "Open user menu",
       "bottomNav": "Navigation"
     },
-    "management": "Management"
+    "management": "Management",
+    "sale": "For sale"
   },
   "selectUser": {
     "title": "Select User"
@@ -906,5 +907,80 @@
     "pc": "PC",
     "switch": "Nintendo Switch",
     "universal": "Universal"
+  },
+  "salePage": {
+    "tabs": {
+      "available": "For sale",
+      "history": "History"
+    },
+    "filter": {
+      "all": "All",
+      "game": "Games",
+      "console": "Consoles",
+      "controller": "Controllers"
+    },
+    "type": {
+      "game": "Game",
+      "console": "Console",
+      "controller": "Controller"
+    },
+    "available": {
+      "items": "items for sale",
+      "noPrice": "No price",
+      "empty": {
+        "title": "Nothing for sale",
+        "subtitle": "Mark games, consoles or controllers as available for sale from their detail page"
+      }
+    },
+    "history": {
+      "items": "sales",
+      "empty": {
+        "title": "No sales history",
+        "subtitle": "Items you have marked as sold will appear here"
+      }
+    },
+    "snack": {
+      "loadError": "Error loading sale data"
+    }
+  },
+  "hardwareLoan": {
+    "title": "Loan",
+    "loanedBadge": "Loaned to",
+    "activeSection": "Active loan",
+    "newSection": "New loan",
+    "loanedTo": "Person",
+    "loanedToPlaceholder": "e.g. John",
+    "loanedAt": "Loan date",
+    "loanBtn": "Lend",
+    "returnBtn": "Returned",
+    "snack": {
+      "loanSuccess": "Loan registered",
+      "loanError": "Error registering loan",
+      "returnSuccess": "Loan marked as returned",
+      "returnError": "Error registering return"
+    }
+  },
+  "hardwareSale": {
+    "title": "Sale",
+    "manageBtn": "Sale",
+    "forSaleBadge": "For sale",
+    "availability": "Available for sale",
+    "forSale": "For sale",
+    "salePrice": "Asking price",
+    "salePricePlaceholder": "e.g. 29.99",
+    "registerSection": "Already sold it?",
+    "soldPriceFinal": "Final sale price",
+    "soldPricePlaceholder": "e.g. 25.00",
+    "soldAt": "Sale date",
+    "soldAtInvalid": "Enter a valid date",
+    "soldWarning": "Once confirmed, the item will move to history and will no longer appear in your collection.",
+    "saveBtn": "Save",
+    "markAsSoldBtn": "Mark as sold",
+    "snack": {
+      "saveError": "Error saving sale status",
+      "saveSuccess": "Sale status updated",
+      "soldSuccess": "Item marked as sold",
+      "soldError": "Error registering sale"
+    }
   }
 }

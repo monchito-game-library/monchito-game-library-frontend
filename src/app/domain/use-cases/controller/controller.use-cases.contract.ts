@@ -1,6 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
 import { ControllerModel } from '@/models/controller/controller.model';
+import { HardwareLoanStatusModel } from '@/interfaces/hardware-loan-status.interface';
+import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
 
 export interface ControllerUseCasesContract {
   /**
@@ -42,6 +44,31 @@ export interface ControllerUseCasesContract {
    * @param {string} id - Supabase UUID of the user_controllers row
    */
   delete(userId: string, id: string): Promise<void>;
+
+  /**
+   * Updates the sale status of a controller.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} id - Supabase UUID of the user_controllers row
+   * @param {HardwareSaleStatusModel} sale - Sale status to persist
+   */
+  updateSaleStatus(userId: string, id: string, sale: HardwareSaleStatusModel): Promise<void>;
+
+  /**
+   * Creates a new loan for a controller. Returns the UUID of the created hardware_loans row.
+   *
+   * @param {HardwareLoanStatusModel} loan - Loan details
+   */
+  createLoan(loan: HardwareLoanStatusModel): Promise<string>;
+
+  /**
+   * Marks an active loan as returned. Clears the active_loan_* fields on the controller.
+   *
+   * @param {string} loanId - UUID of the hardware_loans row
+   * @param {string} controllerId - UUID of the user_controllers row
+   * @param {string} userId - UUID del usuario autenticado
+   */
+  returnLoan(loanId: string, controllerId: string, userId: string): Promise<void>;
 }
 
 /** InjectionToken for ControllerUseCasesContract. */

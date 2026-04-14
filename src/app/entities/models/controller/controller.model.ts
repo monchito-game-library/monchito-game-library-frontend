@@ -29,4 +29,18 @@ export interface ControllerModel {
   notes: string | null;
   /** ISO timestamp of when the record was created. */
   createdAt: string;
+  /** Whether the controller is listed for sale. */
+  forSale: boolean;
+  /** Asking price. Null if not set. */
+  salePrice: number | null;
+  /** Date the controller was sold (ISO date string). Null if still owned. */
+  soldAt: string | null;
+  /** Final sale price obtained. Null if not sold. */
+  soldPriceFinal: number | null;
+  /** UUID of the active hardware_loans row. Null if not loaned. */
+  activeLoanId: string | null;
+  /** Name of the person the controller is loaned to. Null if not loaned. */
+  activeLoanTo: string | null;
+  /** Date the active loan started (ISO date string). Null if not loaned. */
+  activeLoanAt: string | null;
 }

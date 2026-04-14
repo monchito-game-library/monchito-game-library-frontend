@@ -29,10 +29,6 @@
     flex-shrink: 0;
   }
 
-  .console-detail__delete-btn {
-    color: var(--mat-sys-error);
-  }
-
   .console-detail__header-titles {
     flex: 1;
     display: flex;
@@ -78,17 +74,67 @@
   }
 
   .console-detail__chip {
+    display: inline-flex;
+    align-items: center;
     font-size: 0.75rem;
+    padding: 2px 0.5rem;
+    border-radius: 20px;
+    font-weight: 500;
 
     &--new {
-      background-color: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      background-color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      font-weight: 600;
     }
 
     &--used {
-      background-color: var(--mat-sys-surface-container-high);
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+
+    &--neutral {
+      background-color: transparent;
+      border: 1px solid var(--mat-sys-outline-variant);
       color: var(--mat-sys-on-surface-variant);
     }
+  }
+
+  .console-detail__status-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .console-detail__status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+
+    mat-icon {
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &--sale {
+      background-color: var(--mat-sys-tertiary-container);
+      color: var(--mat-sys-on-tertiary-container);
+    }
+
+    &--loan {
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+  }
+
+  .console-detail__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
   .console-detail__section {
