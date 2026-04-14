@@ -6,15 +6,17 @@
 
 ## Índice
 
-| Mejora | Prioridad |
-|---|---|
-| [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta |
-| [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta |
-| [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media |
-| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media |
-| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja |
-| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja |
-| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja |
+| Mejora | Prioridad | Estado |
+|---|---|---|
+| [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta | ✅ Completado |
+| [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta | ✅ Completado |
+| [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta | ✅ Completado |
+| [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
+| [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
+| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
+| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
+| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
+| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
 
 ---
 
@@ -216,7 +218,7 @@ CREATE POLICY "Admins can manage controller specs"
 - ✅ Actualizar `ConsoleModel` / `ControllerModel`: sustituir `brand/model/edition: string` por `brandId/modelId/editionId: string` (UUIDs FK) + actualizar DTOs, mappers, formularios y tests
 - ✅ Seed SQL: 73 modelos (Sony 24 + Microsoft 15 + Nintendo 34) en `hardware_brands`, `hardware_models` y `hardware_console_specs`
 
-**Fase 2 — Gestión (admin)** ⏳ pendiente
+**Fase 2 — Gestión (admin)** ✅ completada
 
 Nueva sección `/management/hardware` con navegación contextual (drill-down):
 
@@ -226,27 +228,27 @@ Nueva sección `/management/hardware` con navegación contextual (drill-down):
 /management/hardware/models/:modelId/editions → ediciones de ese modelo + CRUD
 ```
 
-- Breadcrumb en cada nivel (`Hardware > Sony > PlayStation 5`). Acceso restringido a admins.
-- El formulario de modelo muestra los campos de specs según el tipo (`console` → campos de `hardware_console_specs`).
-- Registrar los providers de hardware en las rutas de gestión.
+- ✅ Breadcrumb en cada nivel (`Hardware > Sony > PlayStation 5`). Acceso restringido a admins.
+- ✅ El formulario de modelo muestra los campos de specs según el tipo (`console` → campos de `hardware_console_specs`).
+- ✅ Providers de hardware registrados en las rutas de gestión.
 
-**Fase 3 — Formularios de consola y mando** ⏳ pendiente (depende de Fase 1 y 2)
+**Fase 3 — Formularios de consola y mando** ✅ completada
 
-Sustituir los campos de texto libre por selectores jerárquicos:
-1. **Marca** → `mat-select` con todas las marcas
-2. **Modelo** → `mat-select` filtrado por marca + tipo del formulario (`console` | `controller`), se limpia al cambiar marca
-3. **Edición** → `mat-select` filtrado por modelo seleccionado, opcional, se limpia al cambiar modelo
+Selectores jerárquicos implementados:
+1. ✅ **Marca** → autocomplete con todas las marcas
+2. ✅ **Modelo** → autocomplete filtrado por marca + tipo, se limpia al cambiar marca
+3. ✅ **Edición** → select filtrado por modelo seleccionado, opcional, se limpia al cambiar modelo
 
-**Fase 4 — Listas y detalle de consolas y mandos** ⏳ pendiente (depende de Fase 1)
+**Fase 4 — Listas y detalle de consolas y mandos** ✅ completada
 
-- Sustituir la resolución actual por nombre (lookup en memoria) por datos hidratados via join en Supabase.
-- Pantalla de detalle de consola: muestra datos del usuario (precio, condición, tienda, notas) + datos del catálogo (`hardware_console_specs`: generación, lanzamiento, descontinuación, categoría, formato, resolución, unidades vendidas).
+- ✅ Resolución de nombres (marca, modelo, tienda) por lookup en memoria cargado al iniciar la vista.
+- ✅ Pantalla de detalle de consola y mando: muestra datos del usuario (precio, condición, tienda, notas) + nombre de marca y modelo resueltos del catálogo.
 
 ---
 
-### Hub de colección con categorías (consolas y mandos)
+### Hub de colección con categorías (consolas y mandos) ✅ completado
 
-La página de colección actual (`/games`) muestra juegos, consolas y mandos mezclados. Se reestructura para tener un hub con cards por categoría y subrutas independientes por tipo.
+La página de colección (`/games`) actúa como hub con cards por categoría y subrutas independientes por tipo.
 
 #### Navegación
 
@@ -285,9 +287,9 @@ Tablas `user_consoles` y `user_controllers` creadas en Supabase con RLS (cada us
 
 ---
 
-### Formularios y gestión de consolas y mandos
+### Formularios y gestión de consolas y mandos ✅ completado
 
-Los listados de consolas (`/games/consoles`) y mandos (`/games/controllers`) están implementados con soporte de delete. Queda la gestión completa: formulario de alta, formulario de edición y rutas propias.
+Los listados de consolas (`/games/consoles`) y mandos (`/games/controllers`) están implementados con soporte completo de alta, edición y baja.
 
 #### Rutas a añadir
 

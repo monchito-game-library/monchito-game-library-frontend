@@ -38,13 +38,15 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 - Formulario de juego con sugerencia automática de formato según tienda
 - Reposicionamiento de portada por juego (punto focal configurable en la card)
 - Recorte de avatar y banner de perfil (implementación propia sin dependencias externas)
+- Colección de consolas (`/games/consoles`) y mandos (`/games/controllers`) con alta, edición y detalle
 - Panel de administración (`/management`): gestión de usuarios, tiendas, protectores y audit log
+- Catálogo de hardware (marcas, modelos, ediciones) gestionado desde el panel de administración
 - Catálogo de protectores/cajas con packs y precios, base para pedidos grupales
 - PWA instalable con estrategia de actualización automática en segundo plano
 - Tema claro/oscuro con Angular Material 3
 - Navegación Rail (desktop) y Bottom Navigation (móvil)
 - Soporte multilenguaje (ES/EN) con Transloco
-- +1292 tests unitarios con Vitest (~99 % de cobertura de statements)
+- +940 tests unitarios con Vitest (~95 % de cobertura de ramas)
 
 ---
 
