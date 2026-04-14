@@ -8,6 +8,3 @@ export interface HardwareConsoleSpecsDto {
   video_resolution: string | null;
   units_sold_million: number | null;
 }
-
-/** Payload for upserting a row in hardware_console_specs. */
-export type HardwareConsoleSpecsUpsertDto = HardwareConsoleSpecsDto;

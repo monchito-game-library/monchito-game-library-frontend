@@ -8,6 +8,3 @@ export interface HardwareBrandDto {
 
 /** Payload for inserting a row in hardware_brands. */
 export type HardwareBrandInsertDto = Pick<HardwareBrandDto, 'name'>;
-
-/** Payload for updating a row in hardware_brands. */
-export type HardwareBrandUpdateDto = Partial<HardwareBrandInsertDto>;

@@ -9,6 +9,3 @@ export interface HardwareEditionDto {
 
 /** Payload for inserting a row in hardware_editions. */
 export type HardwareEditionInsertDto = Pick<HardwareEditionDto, 'model_id' | 'name'>;
-
-/** Payload for updating a row in hardware_editions. */
-export type HardwareEditionUpdateDto = Partial<Pick<HardwareEditionDto, 'name'>>;

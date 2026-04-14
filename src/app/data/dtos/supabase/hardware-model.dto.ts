@@ -11,6 +11,3 @@ export interface HardwareModelDto {
 
 /** Payload for inserting a row in hardware_models. */
 export type HardwareModelInsertDto = Pick<HardwareModelDto, 'brand_id' | 'name' | 'type' | 'generation'>;
-
-/** Payload for updating a row in hardware_models. */
-export type HardwareModelUpdateDto = Partial<Pick<HardwareModelDto, 'name'>>;
