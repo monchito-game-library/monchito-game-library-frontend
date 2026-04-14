@@ -28,6 +28,10 @@
           {{ 'consolesPage.count' | transloco: { count: consoles().length } }}
         }
       </span>
+      <button mat-stroked-button class="consoles__add-btn">
+        <mat-icon>add</mat-icon>
+        {{ 'consolesPage.add' | transloco }}
+      </button>
     </div>
 
     <div class="consoles__grid">
@@ -87,10 +91,10 @@
         </div>
       }
     </div>
-  }
 
-  <!-- FAB -->
-  <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco">
-    <mat-icon>add</mat-icon>
-  </button>
+    <!-- FAB: solo mobile -->
+    <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
 </div>

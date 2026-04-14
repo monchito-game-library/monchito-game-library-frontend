@@ -28,6 +28,10 @@
           {{ 'controllersPage.count' | transloco: { count: controllers().length } }}
         }
       </span>
+      <button mat-stroked-button class="controllers__add-btn">
+        <mat-icon>add</mat-icon>
+        {{ 'controllersPage.add' | transloco }}
+      </button>
     </div>
 
     <div class="controllers__grid">
@@ -89,10 +93,10 @@
         </div>
       }
     </div>
-  }
 
-  <!-- FAB -->
-  <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco">
-    <mat-icon>add</mat-icon>
-  </button>
+    <!-- FAB: solo mobile -->
+    <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
 </div>

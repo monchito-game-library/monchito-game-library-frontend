@@ -48,12 +48,23 @@
 
   .consoles__header {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     .consoles__count {
       font-size: 0.875rem;
       color: var(--mat-sys-on-surface-variant);
       font-weight: 500;
     }
+  }
+
+  .consoles__add-btn {
+    flex-shrink: 0;
+  }
+
+  .consoles__fab {
+    display: none;
   }
 
   .consoles__grid {
@@ -160,13 +171,6 @@
     border-top: 1px solid var(--mat-sys-outline-variant);
     padding-top: 0.5rem;
   }
-
-  .consoles__fab {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 10;
-  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
@@ -178,8 +182,16 @@
       grid-template-columns: 1fr;
     }
 
+    .consoles__add-btn {
+      display: none;
+    }
+
     .consoles__fab {
-      bottom: 5rem;
+      display: flex !important;
+      position: fixed;
+      bottom: calc(60px + 1rem);
+      right: 1rem;
+      z-index: 10;
     }
   }
 }

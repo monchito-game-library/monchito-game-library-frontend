@@ -48,12 +48,23 @@
 
   .controllers__header {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
     .controllers__count {
       font-size: 0.875rem;
       color: var(--mat-sys-on-surface-variant);
       font-weight: 500;
     }
+  }
+
+  .controllers__add-btn {
+    flex-shrink: 0;
+  }
+
+  .controllers__fab {
+    display: none;
   }
 
   .controllers__grid {
@@ -171,13 +182,6 @@
     border-top: 1px solid var(--mat-sys-outline-variant);
     padding-top: 0.5rem;
   }
-
-  .controllers__fab {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 10;
-  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
@@ -189,8 +193,16 @@
       grid-template-columns: 1fr;
     }
 
+    .controllers__add-btn {
+      display: none;
+    }
+
     .controllers__fab {
-      bottom: 5rem;
+      display: flex !important;
+      position: fixed;
+      bottom: calc(60px + 1rem);
+      right: 1rem;
+      z-index: 10;
     }
   }
 }
