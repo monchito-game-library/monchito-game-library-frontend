@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -18,7 +19,7 @@ import { UserContextService } from '@/services/user-context.service';
   styleUrls: ['./games-hub.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [MatIcon, SkeletonComponent, TranslocoPipe]
 })
 export class GamesHubComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);

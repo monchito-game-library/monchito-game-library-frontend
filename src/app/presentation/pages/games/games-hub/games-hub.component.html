@@ -8,7 +8,7 @@
       <span class="games-hub__card-subtitle">{{ 'gamesHub.games.subtitle' | transloco }}</span>
       <span class="games-hub__card-count">
         @if (gamesCount() === null) {
-          <mat-progress-spinner diameter="20" mode="indeterminate" />
+          <app-skeleton width="80px" height="1rem" />
         } @else if (gamesCount() === 1) {
           {{ 'gamesHub.oneItem' | transloco }}
         } @else {
@@ -23,7 +23,7 @@
       <span class="games-hub__card-subtitle">{{ 'gamesHub.consolesCategory.subtitle' | transloco }}</span>
       <span class="games-hub__card-count">
         @if (consolesCount() === null) {
-          <mat-progress-spinner diameter="20" mode="indeterminate" />
+          <app-skeleton width="80px" height="1rem" />
         } @else if (consolesCount() === 1) {
           {{ 'gamesHub.oneItem' | transloco }}
         } @else {
@@ -38,7 +38,7 @@
       <span class="games-hub__card-subtitle">{{ 'gamesHub.controllers.subtitle' | transloco }}</span>
       <span class="games-hub__card-count">
         @if (controllersCount() === null) {
-          <mat-progress-spinner diameter="20" mode="indeterminate" />
+          <app-skeleton width="80px" height="1rem" />
         } @else if (controllersCount() === 1) {
           {{ 'gamesHub.oneItem' | transloco }}
         } @else {
