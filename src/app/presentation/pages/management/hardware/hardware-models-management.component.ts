@@ -14,7 +14,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -37,6 +37,7 @@ import {
   HardwareConsoleSpecsUseCasesContract
 } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
+import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-form-result.interface';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { HardwareConsoleSpecsModel } from '@/models/hardware-console-specs/hardware-console-specs.model';
 import { HardwareModelFormResult } from '@/interfaces/management/hardware-model-form-result.interface';
@@ -48,6 +49,7 @@ import { CONSOLE_SPECS_CATEGORY } from '@/constants/console-specs-category.const
 import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { HardwareBrandEditPanelComponent } from './hardware-brands-management.component';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component
@@ -179,7 +181,15 @@ export class HardwareModelEditPanelComponent {
   styleUrl: './hardware-models-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HardwareModelEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [
+    HardwareBrandEditPanelComponent,
+    HardwareModelEditPanelComponent,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    MatProgressSpinner,
+    TranslocoPipe
+  ]
 })
 export class HardwareModelsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
@@ -211,8 +221,11 @@ export class HardwareModelsManagementComponent implements OnInit {
     null
   );
 
-  /** Whether the edit panel is visible. */
+  /** Whether the model edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Whether the brand edit panel is visible. */
+  readonly brandPanelOpen: WritableSignal<boolean> = signal<boolean>(false);
 
   async ngOnInit(): Promise<void> {
     this._brandId = this._route.snapshot.paramMap.get('brandId') ?? '';
@@ -220,9 +233,10 @@ export class HardwareModelsManagementComponent implements OnInit {
   }
 
   /**
-   * Opens the edit panel in add mode.
+   * Opens the model edit panel in add mode, closing the brand panel if open.
    */
   onAddModel(): void {
+    this.brandPanelOpen.set(false);
     this.selectedModel.set(null);
     this.selectedSpecs.set(null);
     this.panelOpen.set(true);
@@ -230,10 +244,12 @@ export class HardwareModelsManagementComponent implements OnInit {
 
   /**
    * Selects a model and opens the edit panel, loading its specs if it is a console.
+   * Closes the brand panel if open.
    *
    * @param {HardwareModelModel} model - Model to edit
    */
   async onSelectModel(model: HardwareModelModel): Promise<void> {
+    this.brandPanelOpen.set(false);
     this.selectedModel.set(model);
     this.selectedSpecs.set(null);
     this.panelOpen.set(true);
@@ -241,6 +257,55 @@ export class HardwareModelsManagementComponent implements OnInit {
       const specs = await this._specsUseCases.getByModelId(model.id);
       this.selectedSpecs.set(specs ?? null);
     }
+  }
+
+  /**
+   * Opens the brand edit panel for the current brand, closing the model panel if open.
+   */
+  onEditBrand(): void {
+    this.panelOpen.set(false);
+    this.selectedModel.set(undefined);
+    this.selectedSpecs.set(null);
+    this.brandPanelOpen.set(true);
+  }
+
+  /**
+   * Closes the brand edit panel.
+   */
+  onBrandPanelClose(): void {
+    this.brandPanelOpen.set(false);
+  }
+
+  /**
+   * Persists the updated brand name and reloads the brand.
+   *
+   * @param {HardwareBrandFormResult} result - Form result from the brand edit panel
+   */
+  async onBrandSaved(result: HardwareBrandFormResult): Promise<void> {
+    const b = this.brand();
+    if (!b) return;
+    await this._brandUseCases.update(b.id, { name: result.name });
+    await this._loadBrand();
+    this.onBrandPanelClose();
+  }
+
+  /**
+   * Shows a confirmation dialog and removes the brand, then navigates back to the brands list.
+   */
+  onBrandDeleted(): void {
+    const b = this.brand();
+    if (!b) return;
+    const ref = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._transloco.translate('management.hardware.brands.deleteConfirm', { name: b.name }),
+        message: this._transloco.translate('management.hardware.brands.deleteWarning')
+      } satisfies ConfirmDialogInterface
+    });
+    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      await this._brandUseCases.delete(b.id);
+      this.onBack();
+    });
   }
 
   /**

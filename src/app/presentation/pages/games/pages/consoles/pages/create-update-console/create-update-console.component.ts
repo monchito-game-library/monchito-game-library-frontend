@@ -158,13 +158,18 @@ export class CreateUpdateConsoleComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    void this._loadStores();
-    void this._loadBrands();
     const id = this._route.snapshot.paramMap.get('id');
     if (id) {
       this._consoleId = id;
       this.isEditMode.set(true);
+      // En modo edición, esperar a que marcas y tiendas estén cargadas antes de parchear
+      // el formulario, para que displayBrandLabel y displayStoreLabel puedan resolver los
+      // UUIDs a sus etiquetas y el usuario no vea campos vacíos que podría sobrescribir.
+      await Promise.all([this._loadBrands(), this._loadStores()]);
       await this._loadConsole(id);
+    } else {
+      void this._loadStores();
+      void this._loadBrands();
     }
   }
 
@@ -209,12 +214,22 @@ export class CreateUpdateConsoleComponent implements OnInit {
       const value = this.form.getRawValue() as ConsoleFormValue;
       const userId = this._userContext.requireUserId();
 
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!value.brandId || !uuidRegex.test(value.brandId) || !value.modelId || !uuidRegex.test(value.modelId)) {
+        this._snackBar.open(
+          this._transloco.translate('consolePage.snack.selectBrandModel'),
+          this._transloco.translate('common.close'),
+          { duration: 3000 }
+        );
+        return;
+      }
+
       if (this.isEditMode() && this._consoleId) {
         const updated: ConsoleModel = {
           id: this._consoleId,
           userId,
-          brandId: value.brandId ?? '',
-          modelId: value.modelId ?? '',
+          brandId: value.brandId,
+          modelId: value.modelId,
           editionId: value.editionId,
           region: value.region,
           condition: value.condition,
@@ -234,8 +249,8 @@ export class CreateUpdateConsoleComponent implements OnInit {
         const created: ConsoleModel = {
           id: '',
           userId,
-          brandId: value.brandId ?? '',
-          modelId: value.modelId ?? '',
+          brandId: value.brandId,
+          modelId: value.modelId,
           editionId: value.editionId,
           region: value.region,
           condition: value.condition,

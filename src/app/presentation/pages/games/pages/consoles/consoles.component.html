@@ -1,46 +1,57 @@
 <div class="consoles">
-  <!-- Loading -->
-  @if (loading()) {
-    <div class="consoles__loading">
-      <mat-progress-spinner diameter="48" mode="indeterminate" />
-      <p>{{ 'consolesPage.loading' | transloco }}</p>
-    </div>
-
-    <!-- Empty -->
-  } @else if (consoles().length === 0) {
-    <div class="consoles__empty">
-      <mat-icon class="consoles__empty-icon">tv_off</mat-icon>
-      <p class="consoles__empty-title">{{ 'consolesPage.empty.title' | transloco }}</p>
-      <p class="consoles__empty-subtitle">{{ 'consolesPage.empty.subtitle' | transloco }}</p>
-      <button mat-flat-button color="primary" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        {{ 'consolesPage.empty.add' | transloco }}
-      </button>
-    </div>
-
-    <!-- List -->
-  } @else {
-    <div class="consoles__header">
-      <span class="consoles__count">
-        @if (filteredConsoles().length === 1) {
-          {{ 'consolesPage.countOne' | transloco }}
+  <!-- Header fijo con stats y filtros -->
+  <div class="consoles__header">
+    <div class="consoles__stats">
+      <div class="consoles__stat">
+        <mat-icon>tv</mat-icon>
+        @if (loading()) {
+          <app-skeleton width="24px" height="12px" />
         } @else {
-          {{ 'consolesPage.count' | transloco: { count: filteredConsoles().length } }}
+          <span>{{ filteredConsoles().length }}</span>
         }
-      </span>
-      <button mat-stroked-button class="consoles__add-btn" (click)="onAdd()">
+      </div>
+      <div class="consoles__stat-divider"></div>
+      <div class="consoles__stat">
+        <mat-icon>payments</mat-icon>
+        @if (loading()) {
+          <app-skeleton width="60px" height="12px" />
+        } @else {
+          <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="consoles__filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="consoles__filter--search">
+        <mat-label>{{ 'consolesPage.search' | transloco }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="consoles__add-btn" (click)="onAdd()">
         <mat-icon>add</mat-icon>
         {{ 'consolesPage.add' | transloco }}
       </button>
     </div>
+  </div>
 
-    <mat-form-field class="consoles__search" appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ 'consolesPage.search' | transloco }}</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
-    </mat-form-field>
-
-    @if (filteredConsoles().length === 0) {
+  <!-- Content scrollable -->
+  <div class="consoles__content">
+    @if (loading()) {
+      <div class="consoles__loading">
+        <mat-progress-spinner diameter="48" mode="indeterminate" />
+        <p>{{ 'consolesPage.loading' | transloco }}</p>
+      </div>
+    } @else if (consoles().length === 0) {
+      <div class="consoles__empty">
+        <mat-icon class="consoles__empty-icon">tv_off</mat-icon>
+        <p class="consoles__empty-title">{{ 'consolesPage.empty.title' | transloco }}</p>
+        <p class="consoles__empty-subtitle">{{ 'consolesPage.empty.subtitle' | transloco }}</p>
+        <button mat-flat-button color="primary" (click)="onAdd()">
+          <mat-icon>add</mat-icon>
+          {{ 'consolesPage.empty.add' | transloco }}
+        </button>
+      </div>
+    } @else if (filteredConsoles().length === 0) {
       <div class="consoles__no-results">
         <mat-icon>search_off</mat-icon>
         <p>{{ 'consolesPage.noResults' | transloco }}</p>
@@ -98,10 +109,10 @@
         }
       </div>
     }
+  </div>
 
-    <!-- FAB: solo mobile -->
-    <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco" (click)="onAdd()">
-      <mat-icon>add</mat-icon>
-    </button>
-  }
+  <!-- FAB: solo mobile -->
+  <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco" (click)="onAdd()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>

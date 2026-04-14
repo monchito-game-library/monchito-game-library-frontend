@@ -12,20 +12,20 @@
     </div>
     <div class="game-list__stat-divider"></div>
     <div class="game-list__stat">
-      <mat-icon>emoji_events</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
-      } @else {
-        <span>{{ platinumCount() }}</span>
-      }
-    </div>
-    <div class="game-list__stat-divider"></div>
-    <div class="game-list__stat">
       <mat-icon>payments</mat-icon>
       @if (loading()) {
         <app-skeleton width="40px" height="12px" />
       } @else {
         <span>{{ totalPrice() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+      }
+    </div>
+    <div class="game-list__stat-divider"></div>
+    <div class="game-list__stat">
+      <mat-icon>emoji_events</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="24px" height="12px" />
+      } @else {
+        <span>{{ platinumCount() }}</span>
       }
     </div>
   </div>

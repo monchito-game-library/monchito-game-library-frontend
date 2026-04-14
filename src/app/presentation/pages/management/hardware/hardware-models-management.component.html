@@ -1,19 +1,35 @@
-<div class="models-page" [class.models-page--panel-open]="panelOpen()">
+<div class="models-page" [class.models-page--panel-open]="panelOpen() || brandPanelOpen()">
   <header class="models-page__header">
     <div class="models-page__header-left">
-      <button mat-icon-button (click)="onBack()" class="models-page__back-btn">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <mat-icon class="models-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
       <div class="models-page__titles">
         <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>
       </div>
+      <button
+        mat-icon-button
+        type="button"
+        class="models-page__edit-btn"
+        [attr.aria-label]="'common.edit' | transloco"
+        (click)="onEditBrand()">
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
     <button mat-flat-button color="primary" (click)="onAddModel()" [disabled]="loading()">
       <mat-icon>add</mat-icon>
       {{ 'management.hardware.models.addBtn' | transloco }}
     </button>
   </header>
+
+  @if (brandPanelOpen()) {
+    <div class="brand-edit-panel-wrapper">
+      <app-hardware-brand-edit-panel
+        [brand]="brand() ?? null"
+        (saved)="onBrandSaved($event)"
+        (cancelled)="onBrandPanelClose()"
+        (deleted)="onBrandDeleted()" />
+    </div>
+  }
 
   @if (panelOpen()) {
     <div class="models-edit-panel-wrapper">
@@ -39,7 +55,7 @@
           <div
             class="model-card"
             [class.model-card--selected]="selectedModel()?.id === model.id"
-            (click)="onSelectModel(model)">
+            (click)="onOpenEditions(model)">
             <mat-icon class="model-card__icon">{{ model.type === 'console' ? 'tv' : 'gamepad' }}</mat-icon>
             <div class="model-card__info">
               <span class="model-card__name">{{ model.name }}</span>
@@ -50,13 +66,7 @@
                 }
               </div>
             </div>
-            <button
-              mat-icon-button
-              class="model-card__drill-btn"
-              [attr.aria-label]="'management.hardware.models.viewEditions' | transloco"
-              (click)="$event.stopPropagation(); onOpenEditions(model)">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
+            <mat-icon class="model-card__chevron">chevron_right</mat-icon>
           </div>
         }
       </div>

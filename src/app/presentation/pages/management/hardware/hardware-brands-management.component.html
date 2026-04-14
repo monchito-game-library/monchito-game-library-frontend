@@ -32,18 +32,12 @@
           <div
             class="brand-card"
             [class.brand-card--selected]="selectedBrand()?.id === brand.id"
-            (click)="onSelectBrand(brand)">
+            (click)="onOpenModels(brand)">
             <mat-icon class="brand-card__icon">memory</mat-icon>
             <div class="brand-card__info">
               <span class="brand-card__name">{{ brand.name }}</span>
             </div>
-            <button
-              mat-icon-button
-              class="brand-card__drill-btn"
-              [attr.aria-label]="'management.hardware.brands.viewModels' | transloco"
-              (click)="$event.stopPropagation(); onOpenModels(brand)">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
+            <mat-icon class="brand-card__chevron">chevron_right</mat-icon>
           </div>
         }
       </div>

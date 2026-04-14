@@ -19,6 +19,7 @@ import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -57,7 +58,8 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
     MatLabel,
     MatPrefix,
     MatInput,
-    TranslocoPipe
+    TranslocoPipe,
+    SkeletonComponent
   ]
 })
 export class ControllersComponent implements OnInit {
@@ -96,6 +98,11 @@ export class ControllersComponent implements OnInit {
       return modelName.toLowerCase().includes(q) || brandName.toLowerCase().includes(q);
     });
   });
+
+  /** Suma del precio de todos los mandos filtrados. */
+  readonly totalSpent: Signal<number> = computed((): number =>
+    this.filteredControllers().reduce((acc: number, c: ControllerModel): number => acc + (c.price ?? 0), 0)
+  );
 
   async ngOnInit(): Promise<void> {
     await Promise.all([this._loadControllers(), this._loadStores(), this._loadCatalog()]);

@@ -1,46 +1,57 @@
 <div class="controllers">
-  <!-- Loading -->
-  @if (loading()) {
-    <div class="controllers__loading">
-      <mat-progress-spinner diameter="48" mode="indeterminate" />
-      <p>{{ 'controllersPage.loading' | transloco }}</p>
-    </div>
-
-    <!-- Empty -->
-  } @else if (controllers().length === 0) {
-    <div class="controllers__empty">
-      <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
-      <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
-      <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
-      <button mat-flat-button color="primary" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        {{ 'controllersPage.empty.add' | transloco }}
-      </button>
-    </div>
-
-    <!-- List -->
-  } @else {
-    <div class="controllers__header">
-      <span class="controllers__count">
-        @if (filteredControllers().length === 1) {
-          {{ 'controllersPage.countOne' | transloco }}
+  <!-- Header fijo con stats y filtros -->
+  <div class="controllers__header">
+    <div class="controllers__stats">
+      <div class="controllers__stat">
+        <mat-icon>gamepad</mat-icon>
+        @if (loading()) {
+          <app-skeleton width="24px" height="12px" />
         } @else {
-          {{ 'controllersPage.count' | transloco: { count: filteredControllers().length } }}
+          <span>{{ filteredControllers().length }}</span>
         }
-      </span>
-      <button mat-stroked-button class="controllers__add-btn" (click)="onAdd()">
+      </div>
+      <div class="controllers__stat-divider"></div>
+      <div class="controllers__stat">
+        <mat-icon>payments</mat-icon>
+        @if (loading()) {
+          <app-skeleton width="60px" height="12px" />
+        } @else {
+          <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="controllers__filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="controllers__filter--search">
+        <mat-label>{{ 'controllersPage.search' | transloco }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="controllers__add-btn" (click)="onAdd()">
         <mat-icon>add</mat-icon>
         {{ 'controllersPage.add' | transloco }}
       </button>
     </div>
+  </div>
 
-    <mat-form-field class="controllers__search" appearance="outline" subscriptSizing="dynamic">
-      <mat-label>{{ 'controllersPage.search' | transloco }}</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
-    </mat-form-field>
-
-    @if (filteredControllers().length === 0) {
+  <!-- Content scrollable -->
+  <div class="controllers__content">
+    @if (loading()) {
+      <div class="controllers__loading">
+        <mat-progress-spinner diameter="48" mode="indeterminate" />
+        <p>{{ 'controllersPage.loading' | transloco }}</p>
+      </div>
+    } @else if (controllers().length === 0) {
+      <div class="controllers__empty">
+        <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
+        <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
+        <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
+        <button mat-flat-button color="primary" (click)="onAdd()">
+          <mat-icon>add</mat-icon>
+          {{ 'controllersPage.empty.add' | transloco }}
+        </button>
+      </div>
+    } @else if (filteredControllers().length === 0) {
       <div class="controllers__no-results">
         <mat-icon>search_off</mat-icon>
         <p>{{ 'controllersPage.noResults' | transloco }}</p>
@@ -98,10 +109,10 @@
         }
       </div>
     }
+  </div>
 
-    <!-- FAB: solo mobile -->
-    <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco" (click)="onAdd()">
-      <mat-icon>add</mat-icon>
-    </button>
-  }
+  <!-- FAB: solo mobile -->
+  <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco" (click)="onAdd()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>

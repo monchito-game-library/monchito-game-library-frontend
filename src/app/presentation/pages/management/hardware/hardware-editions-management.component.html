@@ -1,19 +1,36 @@
-<div class="editions-page" [class.editions-page--panel-open]="panelOpen()">
+<div class="editions-page" [class.editions-page--panel-open]="panelOpen() || modelPanelOpen()">
   <header class="editions-page__header">
     <div class="editions-page__header-left">
-      <button mat-icon-button (click)="onBack()" class="editions-page__back-btn">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <mat-icon class="editions-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
       <div class="editions-page__titles">
         <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
       </div>
+      <button
+        mat-icon-button
+        type="button"
+        class="editions-page__edit-btn"
+        [attr.aria-label]="'common.edit' | transloco"
+        (click)="onEditModel()">
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
     <button mat-flat-button color="primary" (click)="onAddEdition()" [disabled]="loading()">
       <mat-icon>add</mat-icon>
       {{ 'management.hardware.editions.addBtn' | transloco }}
     </button>
   </header>
+
+  @if (modelPanelOpen()) {
+    <div class="model-edit-panel-wrapper">
+      <app-hardware-model-edit-panel
+        [model]="model() ?? null"
+        [specs]="selectedModelSpecs()"
+        (saved)="onModelSaved($event)"
+        (cancelled)="onModelPanelClose()"
+        (deleted)="onModelDeleted()" />
+    </div>
+  }
 
   @if (panelOpen()) {
     <div class="editions-edit-panel-wrapper">
@@ -43,6 +60,7 @@
             <div class="edition-card__info">
               <span class="edition-card__name">{{ edition.name }}</span>
             </div>
+            <mat-icon class="edition-card__chevron">chevron_right</mat-icon>
           </div>
         }
       </div>

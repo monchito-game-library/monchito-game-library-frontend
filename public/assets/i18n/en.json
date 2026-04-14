@@ -867,7 +867,8 @@
     "snack": {
       "saved": "Console saved",
       "updated": "Console updated",
-      "saveError": "Error saving console"
+      "saveError": "Error saving console",
+      "selectBrandModel": "Please select a valid brand and model"
     }
   },
   "controllerPage": {

@@ -30,8 +30,15 @@
   min-width: 0;
 }
 
-.models-page__back-btn {
+.models-page__back-icon {
+  cursor: pointer;
   flex-shrink: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.models-page__edit-btn {
+  flex-shrink: 0;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .models-page__titles {
@@ -54,6 +61,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.brand-edit-panel-wrapper {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
 }
 
 .models-edit-panel-wrapper {
@@ -152,9 +165,12 @@
     font-family: monospace;
   }
 
-  .model-card__drill-btn {
+  .model-card__chevron {
     flex-shrink: 0;
     color: var(--mat-sys-on-surface-variant);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -181,6 +197,7 @@
       display: none;
     }
 
+    .brand-edit-panel-wrapper,
     .models-edit-panel-wrapper {
       flex: 1;
       max-height: none;
