@@ -70,39 +70,44 @@
             </div>
 
             <div class="controllers__card-chips">
-              <mat-chip class="controllers__chip controllers__chip--compat">
+              <span class="controllers__chip controllers__chip--compat">
                 {{ controller.compatibility }}
-              </mat-chip>
-              @if (controller.condition === GAME_CONDITION.NEW) {
-                <mat-chip class="controllers__chip controllers__chip--new">
-                  <mat-icon matChipAvatar>fiber_new</mat-icon>
-                  {{ 'controllersPage.condition.new' | transloco }}
-                </mat-chip>
-              } @else {
-                <mat-chip class="controllers__chip controllers__chip--used">
-                  {{ 'controllersPage.condition.used' | transloco }}
-                </mat-chip>
-              }
+              </span>
+              <span
+                class="controllers__chip"
+                [class.controllers__chip--new]="controller.condition === GAME_CONDITION.NEW"
+                [class.controllers__chip--used]="controller.condition !== GAME_CONDITION.NEW">
+                {{
+                  (controller.condition === GAME_CONDITION.NEW
+                    ? 'controllersPage.condition.new'
+                    : 'controllersPage.condition.used'
+                  ) | transloco
+                }}
+              </span>
             </div>
 
             <div class="controllers__card-meta">
-              @if (controller.price !== null) {
-                <span class="controllers__meta-item">
-                  <mat-icon>payments</mat-icon>
-                  {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                </span>
-              }
+              <div class="controllers__meta-row">
+                @if (controller.price !== null) {
+                  <span class="controllers__meta-item">
+                    <mat-icon>payments</mat-icon>
+                    {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                  </span>
+                }
+                @if (controller.purchaseDate) {
+                  <span class="controllers__meta-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
+                  </span>
+                }
+              </div>
               @if (controller.store) {
-                <span class="controllers__meta-item">
-                  <mat-icon>storefront</mat-icon>
-                  {{ resolveStoreName(controller.store) }}
-                </span>
-              }
-              @if (controller.purchaseDate) {
-                <span class="controllers__meta-item">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
-                </span>
+                <div class="controllers__meta-row">
+                  <span class="controllers__meta-item">
+                    <mat-icon>storefront</mat-icon>
+                    {{ resolveStoreName(controller.store) }}
+                  </span>
+                </div>
               }
             </div>
           </button>

@@ -201,27 +201,41 @@
 }
 
 .controllers__chip {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 0.5rem;
+  border-radius: 20px;
+  line-height: 1.4;
 
   &--compat {
-    background-color: var(--mat-sys-secondary-container);
-    color: var(--mat-sys-on-secondary-container);
+    background-color: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    border: 1px solid var(--mat-sys-outline-variant);
   }
 
   &--new {
-    background-color: var(--mat-sys-primary-container);
-    color: var(--mat-sys-on-primary-container);
+    background-color: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    font-weight: 600;
   }
 
   &--used {
-    background-color: var(--mat-sys-surface-container-high);
-    color: var(--mat-sys-on-surface-variant);
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
   }
 }
 
 .controllers__card-meta {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controllers__meta-row {
+  display: flex;
+  align-items: center;
   gap: 0.75rem;
 }
 

@@ -13,7 +13,6 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -50,7 +49,6 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
     MatFabButton,
     MatIcon,
     MatProgressSpinner,
-    MatChipsModule,
     MatFormField,
     MatLabel,
     MatPrefix,

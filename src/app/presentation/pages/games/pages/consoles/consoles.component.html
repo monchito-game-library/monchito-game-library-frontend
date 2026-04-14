@@ -70,39 +70,44 @@
             </div>
 
             <div class="consoles__card-chips">
-              @if (console.condition === GAME_CONDITION.NEW) {
-                <mat-chip class="consoles__chip consoles__chip--new">
-                  <mat-icon matChipAvatar>fiber_new</mat-icon>
-                  {{ 'consolesPage.condition.new' | transloco }}
-                </mat-chip>
-              } @else {
-                <mat-chip class="consoles__chip consoles__chip--used">
-                  {{ 'consolesPage.condition.used' | transloco }}
-                </mat-chip>
-              }
+              <span
+                class="consoles__chip"
+                [class.consoles__chip--new]="console.condition === GAME_CONDITION.NEW"
+                [class.consoles__chip--used]="console.condition !== GAME_CONDITION.NEW">
+                {{
+                  (console.condition === GAME_CONDITION.NEW
+                    ? 'consolesPage.condition.new'
+                    : 'consolesPage.condition.used'
+                  ) | transloco
+                }}
+              </span>
               @if (console.region) {
-                <mat-chip class="consoles__chip">{{ console.region }}</mat-chip>
+                <span class="consoles__chip consoles__chip--neutral">{{ console.region }}</span>
               }
             </div>
 
             <div class="consoles__card-meta">
-              @if (console.price !== null) {
-                <span class="consoles__meta-item">
-                  <mat-icon>payments</mat-icon>
-                  {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                </span>
-              }
+              <div class="consoles__meta-row">
+                @if (console.price !== null) {
+                  <span class="consoles__meta-item">
+                    <mat-icon>payments</mat-icon>
+                    {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                  </span>
+                }
+                @if (console.purchaseDate) {
+                  <span class="consoles__meta-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
+                  </span>
+                }
+              </div>
               @if (console.store) {
-                <span class="consoles__meta-item">
-                  <mat-icon>storefront</mat-icon>
-                  {{ resolveStoreName(console.store) }}
-                </span>
-              }
-              @if (console.purchaseDate) {
-                <span class="consoles__meta-item">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
-                </span>
+                <div class="consoles__meta-row">
+                  <span class="consoles__meta-item">
+                    <mat-icon>storefront</mat-icon>
+                    {{ resolveStoreName(console.store) }}
+                  </span>
+                </div>
               }
             </div>
           </button>
