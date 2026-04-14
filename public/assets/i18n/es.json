@@ -768,5 +768,62 @@
       "deleteError": "Error al eliminar el mando",
       "loadError": "Error al cargar los mandos"
     }
+  },
+  "consolePage": {
+    "addTitle": "Añadir consola",
+    "editTitle": "Editar consola",
+    "brand": "Marca",
+    "model": "Modelo",
+    "edition": "Edición especial",
+    "region": "Región",
+    "regionNone": "Sin región",
+    "condition": "Estado",
+    "price": "Precio (€)",
+    "store": "Tienda",
+    "purchaseDate": "Fecha de compra",
+    "notes": "Notas",
+    "required": "Campo obligatorio",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "snack": {
+      "saved": "Consola guardada",
+      "updated": "Consola actualizada",
+      "saveError": "Error al guardar la consola"
+    }
+  },
+  "controllerPage": {
+    "addTitle": "Añadir mando",
+    "editTitle": "Editar mando",
+    "model": "Modelo",
+    "edition": "Edición especial",
+    "color": "Color",
+    "compatibility": "Compatibilidad",
+    "condition": "Estado",
+    "price": "Precio (€)",
+    "store": "Tienda",
+    "purchaseDate": "Fecha de compra",
+    "notes": "Notas",
+    "required": "Campo obligatorio",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "snack": {
+      "saved": "Mando guardado",
+      "updated": "Mando actualizado",
+      "saveError": "Error al guardar el mando"
+    }
+  },
+  "consoleRegions": {
+    "pal": "PAL",
+    "ntsc": "NTSC",
+    "ntscJ": "NTSC-J"
+  },
+  "controllerCompatibilities": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "xbox": "Xbox",
+    "pc": "PC",
+    "switch": "Nintendo Switch",
+    "universal": "Universal"
   }
 }

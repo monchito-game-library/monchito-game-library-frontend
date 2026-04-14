@@ -767,5 +767,62 @@
       "deleteError": "Error deleting controller",
       "loadError": "Error loading controllers"
     }
+  },
+  "consolePage": {
+    "addTitle": "Add console",
+    "editTitle": "Edit console",
+    "brand": "Brand",
+    "model": "Model",
+    "edition": "Special edition",
+    "region": "Region",
+    "regionNone": "No region",
+    "condition": "Condition",
+    "price": "Price (€)",
+    "store": "Store",
+    "purchaseDate": "Purchase date",
+    "notes": "Notes",
+    "required": "Required field",
+    "cancel": "Cancel",
+    "save": "Save",
+    "snack": {
+      "saved": "Console saved",
+      "updated": "Console updated",
+      "saveError": "Error saving console"
+    }
+  },
+  "controllerPage": {
+    "addTitle": "Add controller",
+    "editTitle": "Edit controller",
+    "model": "Model",
+    "edition": "Special edition",
+    "color": "Color",
+    "compatibility": "Compatibility",
+    "condition": "Condition",
+    "price": "Price (€)",
+    "store": "Store",
+    "purchaseDate": "Purchase date",
+    "notes": "Notes",
+    "required": "Required field",
+    "cancel": "Cancel",
+    "save": "Save",
+    "snack": {
+      "saved": "Controller saved",
+      "updated": "Controller updated",
+      "saveError": "Error saving controller"
+    }
+  },
+  "consoleRegions": {
+    "pal": "PAL",
+    "ntsc": "NTSC",
+    "ntscJ": "NTSC-J"
+  },
+  "controllerCompatibilities": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "xbox": "Xbox",
+    "pc": "PC",
+    "switch": "Nintendo Switch",
+    "universal": "Universal"
   }
 }

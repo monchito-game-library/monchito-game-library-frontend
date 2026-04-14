@@ -1,0 +1,104 @@
+<div class="create-update-console">
+  <div class="create-update-console__header">
+    <button mat-icon-button type="button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="create-update-console__title">
+      @if (isEditMode()) {
+        {{ 'consolePage.editTitle' | transloco }}
+      } @else {
+        {{ 'consolePage.addTitle' | transloco }}
+      }
+    </h2>
+  </div>
+
+  @if (loading()) {
+    <div class="create-update-console__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-update-console__form">
+      <mat-form-field appearance="outline" class="create-update-console__field--full">
+        <mat-label>{{ 'consolePage.brand' | transloco }}</mat-label>
+        <input matInput formControlName="brand" />
+        @if (form.get('brand')?.hasError('required')) {
+          <mat-error>{{ 'consolePage.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="create-update-console__field--full">
+        <mat-label>{{ 'consolePage.model' | transloco }}</mat-label>
+        <input matInput formControlName="model" />
+        @if (form.get('model')?.hasError('required')) {
+          <mat-error>{{ 'consolePage.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="create-update-console__field--full">
+        <mat-label>{{ 'consolePage.edition' | transloco }}</mat-label>
+        <input matInput formControlName="edition" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'consolePage.condition' | transloco }}</mat-label>
+        <mat-select formControlName="condition">
+          <mat-option [value]="GAME_CONDITION.NEW">{{ 'consolesPage.condition.new' | transloco }}</mat-option>
+          <mat-option [value]="GAME_CONDITION.USED">{{ 'consolesPage.condition.used' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'consolePage.region' | transloco }}</mat-label>
+        <mat-select formControlName="region">
+          <mat-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</mat-option>
+          @for (region of availableRegions; track region.code) {
+            <mat-option [value]="region.code">{{ region.labelKey | transloco }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'consolePage.price' | transloco }}</mat-label>
+        <input matInput type="number" formControlName="price" min="0" step="0.01" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'consolePage.store' | transloco }}</mat-label>
+        <input type="text" matInput [matAutocomplete]="storeAuto" formControlName="store" />
+        <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
+          @for (store of filteredStores(); track store.id) {
+            <mat-option [value]="store.id">{{ store.label }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (form.controls.store.value) {
+          <button matSuffix mat-icon-button type="button" (click)="form.controls.store.setValue(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'consolePage.purchaseDate' | transloco }}</mat-label>
+        <input matInput type="date" formControlName="purchaseDate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="create-update-console__field--full">
+        <mat-label>{{ 'consolePage.notes' | transloco }}</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="create-update-console__footer">
+        <button mat-stroked-button type="button" (click)="onCancel()">
+          {{ 'consolePage.cancel' | transloco }}
+        </button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || saving()">
+          @if (saving()) {
+            <mat-progress-spinner diameter="20" mode="indeterminate" />
+          } @else {
+            {{ 'consolePage.save' | transloco }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

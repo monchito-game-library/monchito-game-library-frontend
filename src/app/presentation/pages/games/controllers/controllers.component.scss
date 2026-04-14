@@ -120,6 +120,15 @@
     text-overflow: ellipsis;
   }
 
+  .controllers__card-edit {
+    flex-shrink: 0;
+    color: var(--mat-sys-on-surface-variant);
+
+    &:hover {
+      color: var(--mat-sys-primary);
+    }
+  }
+
   .controllers__card-delete {
     flex-shrink: 0;
     color: var(--mat-sys-on-surface-variant);

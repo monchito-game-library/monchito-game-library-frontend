@@ -1070,6 +1070,7 @@ CREATE TABLE user_consoles (
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   brand         TEXT NOT NULL,
   model         TEXT NOT NULL,
+  edition       TEXT,
   region        TEXT,
   condition     TEXT NOT NULL,
   price         NUMERIC(8,2),

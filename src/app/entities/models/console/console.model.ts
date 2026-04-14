@@ -11,6 +11,8 @@ export interface ConsoleModel {
   brand: string;
   /** Model name (e.g. PlayStation 5, Xbox Series X). */
   model: string;
+  /** Special edition name (e.g. Final Fantasy XVI Limited Edition). Null if standard. */
+  edition: string | null;
   /** Geographic region. Null if not specified. */
   region: ConsoleRegionType | null;
   /** Physical condition. */

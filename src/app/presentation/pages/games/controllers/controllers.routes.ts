@@ -10,6 +10,20 @@ export const controllersRoutes: Routes = [
       {
         path: '',
         loadComponent: () => import('./controllers.component').then((m) => m.ControllersComponent)
+      },
+      {
+        path: 'add',
+        loadChildren: () =>
+          import('./pages/create-update-controller/create-update-controller.routes').then(
+            (m) => m.createUpdateControllerRoutes
+          )
+      },
+      {
+        path: 'edit/:id',
+        loadChildren: () =>
+          import('./pages/create-update-controller/create-update-controller.routes').then(
+            (m) => m.createUpdateControllerRoutes
+          )
       }
     ]
   }

@@ -18,6 +18,7 @@ const consoleModel: ConsoleModel = {
   userId: 'user-1',
   brand: 'Sony',
   model: 'PlayStation 5',
+  edition: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,

@@ -114,6 +114,24 @@
     color: var(--mat-sys-on-surface-variant);
   }
 
+  .consoles__card-edition {
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .consoles__card-edit {
+    flex-shrink: 0;
+    color: var(--mat-sys-on-surface-variant);
+
+    &:hover {
+      color: var(--mat-sys-primary);
+    }
+  }
+
   .consoles__card-delete {
     flex-shrink: 0;
     color: var(--mat-sys-on-surface-variant);

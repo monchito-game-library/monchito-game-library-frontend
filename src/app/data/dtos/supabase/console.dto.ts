@@ -4,6 +4,7 @@ export interface ConsoleDto {
   user_id: string;
   brand: string;
   model: string;
+  edition: string | null;
   region: string | null;
   condition: string;
   price: number | null;
@@ -18,6 +19,7 @@ export interface ConsoleInsertDto {
   user_id: string;
   brand: string;
   model: string;
+  edition: string | null;
   region: string | null;
   condition: string;
   price: number | null;

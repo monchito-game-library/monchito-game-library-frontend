@@ -9,6 +9,7 @@ const baseDto: ConsoleDto = {
   user_id: 'user-uuid-1',
   brand: 'Sony',
   model: 'PlayStation 5',
+  edition: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,
@@ -23,6 +24,7 @@ const baseModel: ConsoleModel = {
   userId: 'user-uuid-1',
   brand: 'Sony',
   model: 'PlayStation 5',
+  edition: null,
   region: 'PAL',
   condition: 'new',
   price: 549.99,
@@ -40,6 +42,7 @@ describe('mapConsole', () => {
     expect(result.userId).toBe('user-uuid-1');
     expect(result.brand).toBe('Sony');
     expect(result.model).toBe('PlayStation 5');
+    expect(result.edition).toBeNull();
     expect(result.region).toBe('PAL');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(549.99);
@@ -74,6 +77,16 @@ describe('mapConsole', () => {
     expect(result.notes).toBeNull();
   });
 
+  it('mapea edition con valor a string', () => {
+    const result = mapConsole({ ...baseDto, edition: 'Final Fantasy XVI Limited Edition' });
+    expect(result.edition).toBe('Final Fantasy XVI Limited Edition');
+  });
+
+  it('mapea edition null a null', () => {
+    const result = mapConsole({ ...baseDto, edition: null });
+    expect(result.edition).toBeNull();
+  });
+
   it('mapea condición used correctamente', () => {
     const result = mapConsole({ ...baseDto, condition: 'used' });
     expect(result.condition).toBe('used');
@@ -97,6 +110,7 @@ describe('mapConsoleToInsertDto', () => {
     expect(result.user_id).toBe('user-1');
     expect(result.brand).toBe('Sony');
     expect(result.model).toBe('PlayStation 5');
+    expect(result.edition).toBeNull();
     expect(result.region).toBe('PAL');
     expect(result.condition).toBe('new');
     expect(result.price).toBe(549.99);

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Router } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -9,10 +10,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ControllerModel } from '@/models/controller/controller.model';
+import { StoreModel } from '@/models/store/store.model';
 import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
+import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
@@ -36,11 +39,15 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
   ]
 })
 export class ControllersComponent implements OnInit {
+  private readonly _router: Router = inject(Router);
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
+  private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
+
+  private readonly _stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
 
   /** Condition constant exposed to the template for comparisons. */
   readonly GAME_CONDITION = GAME_CONDITION;
@@ -52,7 +59,35 @@ export class ControllersComponent implements OnInit {
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
   async ngOnInit(): Promise<void> {
-    await this._loadControllers();
+    await Promise.all([this._loadControllers(), this._loadStores()]);
+  }
+
+  /**
+   * Devuelve el nombre de la tienda a partir de su UUID.
+   * Si no se encuentra, devuelve el propio id (fallback para datos legacy).
+   *
+   * @param {string | null} id - UUID de la tienda
+   */
+  resolveStoreName(id: string | null): string {
+    if (!id) return '';
+    const store: StoreModel | undefined = this._stores().find((s: StoreModel): boolean => s.id === id);
+    return store?.label ?? id;
+  }
+
+  /**
+   * Navega al formulario de creación de mando.
+   */
+  onAdd(): void {
+    this._router.navigate(['/games/controllers/add']);
+  }
+
+  /**
+   * Navega al formulario de edición del mando indicado.
+   *
+   * @param {ControllerModel} controller - El mando a editar
+   */
+  onEdit(controller: ControllerModel): void {
+    this._router.navigate(['/games/controllers/edit', controller.id]);
   }
 
   /**
@@ -91,6 +126,18 @@ export class ControllersComponent implements OnInit {
   /**
    * Loads all controllers for the current user from the use-case.
    */
+  /**
+   * Carga la lista de tiendas disponibles desde Supabase.
+   */
+  private async _loadStores(): Promise<void> {
+    try {
+      const stores: StoreModel[] = await this._storeUseCases.getAllStores();
+      this._stores.set(stores);
+    } catch {
+      // Fallo silencioso
+    }
+  }
+
   private async _loadControllers(): Promise<void> {
     this.loading.set(true);
     try {

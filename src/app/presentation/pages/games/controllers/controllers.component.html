@@ -12,7 +12,7 @@
       <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
       <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
       <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
-      <button mat-flat-button color="primary">
+      <button mat-flat-button color="primary" (click)="onAdd()">
         <mat-icon>add</mat-icon>
         {{ 'controllersPage.empty.add' | transloco }}
       </button>
@@ -28,7 +28,7 @@
           {{ 'controllersPage.count' | transloco: { count: controllers().length } }}
         }
       </span>
-      <button mat-stroked-button class="controllers__add-btn">
+      <button mat-stroked-button class="controllers__add-btn" (click)="onAdd()">
         <mat-icon>add</mat-icon>
         {{ 'controllersPage.add' | transloco }}
       </button>
@@ -45,6 +45,9 @@
                 <span class="controllers__card-edition">{{ controller.edition }}</span>
               }
             </div>
+            <button mat-icon-button class="controllers__card-edit" (click)="onEdit(controller)">
+              <mat-icon>edit</mat-icon>
+            </button>
             <button mat-icon-button class="controllers__card-delete" (click)="onDelete(controller)">
               <mat-icon>delete_outline</mat-icon>
             </button>
@@ -76,7 +79,7 @@
             @if (controller.store) {
               <span class="controllers__meta-item">
                 <mat-icon>storefront</mat-icon>
-                {{ controller.store }}
+                {{ resolveStoreName(controller.store) }}
               </span>
             }
             @if (controller.purchaseDate) {
@@ -95,7 +98,7 @@
     </div>
 
     <!-- FAB: solo mobile -->
-    <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco">
+    <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco" (click)="onAdd()">
       <mat-icon>add</mat-icon>
     </button>
   }
