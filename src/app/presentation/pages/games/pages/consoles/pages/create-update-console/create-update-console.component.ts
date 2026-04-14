@@ -85,6 +85,10 @@ export class CreateUpdateConsoleComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
+  private readonly _storeInput: Signal<string | null>;
+  private readonly _brandInput: Signal<string | null>;
+  private readonly _modelInput: Signal<string | null>;
+
   private _consoleId: string | null = null;
 
   /** Available console regions for the region selector. */
@@ -124,21 +128,6 @@ export class CreateUpdateConsoleComponent implements OnInit {
     notes: this._fb.control<string | null>(null)
   });
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _storeInput: Signal<string | null> = toSignal(this.form.controls.store.valueChanges, {
-    initialValue: null
-  });
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _brandInput: Signal<string | null> = toSignal(this.form.controls.brandId.valueChanges, {
-    initialValue: null
-  });
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _modelInput: Signal<string | null> = toSignal(this.form.controls.modelId.valueChanges, {
-    initialValue: null
-  });
-
   /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
     const input: string = this._storeInput()?.toString().toLowerCase() ?? '';
@@ -157,14 +146,20 @@ export class CreateUpdateConsoleComponent implements OnInit {
     return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(input));
   });
 
+  constructor() {
+    this._storeInput = toSignal(this.form.controls.store.valueChanges, { initialValue: null });
+    this._brandInput = toSignal(this.form.controls.brandId.valueChanges, { initialValue: null });
+    this._modelInput = toSignal(this.form.controls.modelId.valueChanges, { initialValue: null });
+  }
+
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id');
     if (id) {
       this._consoleId = id;
       this.isEditMode.set(true);
-      // En modo edición, esperar a que marcas y tiendas estén cargadas antes de parchear
-      // el formulario, para que displayBrandLabel y displayStoreLabel puedan resolver los
-      // UUIDs a sus etiquetas y el usuario no vea campos vacíos que podría sobrescribir.
+      // In edit mode, wait for brands and stores to load before patching the form
+      // so that displayBrandLabel and displayStoreLabel can resolve UUIDs to their labels
+      // and the user does not see empty fields they might accidentally overwrite.
       await Promise.all([this._loadBrands(), this._loadStores()]);
       await this._loadConsole(id);
     } else {
@@ -338,7 +333,7 @@ export class CreateUpdateConsoleComponent implements OnInit {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this._storeModels.set(stores);
     } catch {
-      // Fallo silencioso: el campo se convierte en texto libre
+      // Silent failure: field falls back to free text
     }
   }
 
@@ -349,7 +344,7 @@ export class CreateUpdateConsoleComponent implements OnInit {
     try {
       this.brands.set(await this._brandUseCases.getAll());
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 
@@ -363,7 +358,7 @@ export class CreateUpdateConsoleComponent implements OnInit {
       const all = await this._modelUseCases.getAllByBrand(brandId);
       this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'console'));
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 
@@ -376,7 +371,7 @@ export class CreateUpdateConsoleComponent implements OnInit {
     try {
       this.editions.set(await this._editionUseCases.getAllByModel(modelId));
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 

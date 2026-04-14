@@ -77,6 +77,7 @@ import { CatalogItemCardComponent } from '@/pages/management/components/catalog-
 })
 export class HardwareModelEditPanelComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _typeValue: Signal<HardwareModelType | null>;
 
   /** The model to edit, or null when creating a new one. */
   readonly model = input<HardwareModelModel | null>(null);
@@ -102,6 +103,9 @@ export class HardwareModelEditPanelComponent {
   /** CONSOLE_SPECS_MEDIA exposed to the template. */
   readonly CONSOLE_SPECS_MEDIA = CONSOLE_SPECS_MEDIA;
 
+  /** True when the selected type is 'console', controlling specs fields visibility. */
+  readonly isConsole: Signal<boolean> = computed((): boolean => this._typeValue() === HARDWARE_MODEL_TYPE['CONSOLE']);
+
   readonly form = this._fb.group({
     name: ['' as string, Validators.required],
     type: [HARDWARE_MODEL_TYPE['CONSOLE'] as HardwareModelType, Validators.required],
@@ -114,15 +118,10 @@ export class HardwareModelEditPanelComponent {
     unitsSoldMillion: [null as number | null]
   });
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _typeValue: Signal<HardwareModelType | null> = toSignal(this.form.controls.type.valueChanges, {
-    initialValue: this.form.controls.type.value
-  });
-
-  /** True when the selected type is 'console', controlling specs fields visibility. */
-  readonly isConsole: Signal<boolean> = computed((): boolean => this._typeValue() === HARDWARE_MODEL_TYPE['CONSOLE']);
-
   constructor() {
+    this._typeValue = toSignal(this.form.controls.type.valueChanges, {
+      initialValue: this.form.controls.type.value
+    });
     effect(() => {
       const m = this.model();
       const s = this.specs();

@@ -161,7 +161,7 @@ export class ControllersComponent implements OnInit {
       this._brands.set(brands);
       this._hardwareModels.set(models);
     } catch {
-      // Fallo silencioso: los nombres mostrarán '—'
+      // Silent failure: names will display '—'
     }
   }
 
@@ -173,7 +173,7 @@ export class ControllersComponent implements OnInit {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this._stores.set(stores);
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 

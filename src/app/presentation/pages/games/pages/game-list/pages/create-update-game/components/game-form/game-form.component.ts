@@ -466,7 +466,7 @@ export class GameFormComponent implements OnInit {
             try {
               await this._wishlistUseCases.deleteItem(userId, this._pendingWishlistItemId);
             } catch {
-              // El juego ya se guardó; si falla el borrado de wishlist el usuario puede borrarlo manualmente
+              // Game already saved; if wishlist removal fails the user can delete it manually
             }
           }
         }
@@ -653,7 +653,7 @@ export class GameFormComponent implements OnInit {
       const models: StoreModel[] = await this._storeUseCases.getAllStores();
       this._storeModels.set(models);
     } catch {
-      // Catch vacío intencionado: evita code smell de bloque catch vacío. El fallback estático ya es una lista vacía; las tiendas de BD son best-effort
+      // Intentionally empty catch: static fallback is already an empty list; store data from DB is best-effort
     }
   }
 
@@ -689,7 +689,7 @@ export class GameFormComponent implements OnInit {
       const screenshots = allScreenshots.filter((url: string) => url !== currentImageUrl);
       this.selectedGame.update((game) => (game ? { ...game, screenshots } : game));
     } catch {
-      // Catch vacío intencionado: evita code smell de bloque catch vacío. Los thumbnails simplemente no se mostrarán
+      // Intentionally empty catch: thumbnails will simply not be shown
     } finally {
       this.screenshotsLoading.set(false);
     }

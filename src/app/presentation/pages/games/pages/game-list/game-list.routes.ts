@@ -13,7 +13,7 @@ export const gameListRoutes: Routes = [
         loadComponent: () => import('./game-list.component').then((m) => m.GameListComponent),
         canActivate: [canActivateUser]
       },
-      // Rutas estáticas antes del segmento dinámico :id para evitar colisiones
+      // Static routes must come before the dynamic :id segment to avoid conflicts
       {
         path: 'add',
         loadChildren: () =>

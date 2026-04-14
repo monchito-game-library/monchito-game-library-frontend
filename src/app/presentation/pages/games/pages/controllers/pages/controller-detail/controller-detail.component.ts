@@ -265,7 +265,7 @@ export class ControllerDetailComponent implements OnInit {
     try {
       this._stores = await this._storeUseCases.getAllStores();
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 }

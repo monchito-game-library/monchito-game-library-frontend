@@ -88,6 +88,10 @@ export class CreateUpdateControllerComponent implements OnInit {
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
+  private readonly _storeInput: Signal<string | null>;
+  private readonly _brandInput: Signal<string | null>;
+  private readonly _modelInput: Signal<string | null>;
+
   private _controllerId: string | null = null;
 
   /** Available controller compatibilities for the selector. */
@@ -131,21 +135,6 @@ export class CreateUpdateControllerComponent implements OnInit {
     notes: this._fb.control<string | null>(null)
   });
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _storeInput: Signal<string | null> = toSignal(this.form.controls.store.valueChanges, {
-    initialValue: null
-  });
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _brandInput: Signal<string | null> = toSignal(this.form.controls.brandId.valueChanges, {
-    initialValue: null
-  });
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _modelInput: Signal<string | null> = toSignal(this.form.controls.modelId.valueChanges, {
-    initialValue: null
-  });
-
   /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
     const input: string = this._storeInput()?.toString().toLowerCase() ?? '';
@@ -163,6 +152,12 @@ export class CreateUpdateControllerComponent implements OnInit {
     const input: string = this._modelInput()?.toString().toLowerCase() ?? '';
     return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(input));
   });
+
+  constructor() {
+    this._storeInput = toSignal(this.form.controls.store.valueChanges, { initialValue: null });
+    this._brandInput = toSignal(this.form.controls.brandId.valueChanges, { initialValue: null });
+    this._modelInput = toSignal(this.form.controls.modelId.valueChanges, { initialValue: null });
+  }
 
   async ngOnInit(): Promise<void> {
     void this._loadStores();
@@ -332,7 +327,7 @@ export class CreateUpdateControllerComponent implements OnInit {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this._storeModels.set(stores);
     } catch {
-      // Fallo silencioso: el campo se convierte en texto libre
+      // Silent failure: field falls back to free text
     }
   }
 
@@ -343,7 +338,7 @@ export class CreateUpdateControllerComponent implements OnInit {
     try {
       this.brands.set(await this._brandUseCases.getAll());
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 
@@ -357,7 +352,7 @@ export class CreateUpdateControllerComponent implements OnInit {
       const all = await this._modelUseCases.getAllByBrand(brandId);
       this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'controller'));
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 
@@ -370,7 +365,7 @@ export class CreateUpdateControllerComponent implements OnInit {
     try {
       this.editions.set(await this._editionUseCases.getAllByModel(modelId));
     } catch {
-      // Fallo silencioso
+      // Silent failure
     }
   }
 

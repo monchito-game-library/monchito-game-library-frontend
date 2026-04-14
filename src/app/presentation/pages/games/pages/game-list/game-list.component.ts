@@ -242,18 +242,17 @@ export class GameListComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     void this._loadStores();
 
-    // Mostrar caché inmediatamente si existe, mientras se recarga desde Supabase
+    // Show cache immediately if available while reloading from Supabase
     const cached = this._userPreferencesState.allGames();
     if (cached.length > 0) {
       this.allGames.set(cached);
       this.loading.set(false);
     }
 
-    // Siempre forzar refresco al montar el componente para reflejar ventas,
-    // préstamos o cualquier cambio hecho desde el detalle.
-    // La suscripción a NavigationEnd era propensa a perderse porque el componente
-    // se destruye al navegar al detalle y NavigationEnd puede dispararse antes de
-    // que la suscripción quede registrada tras el await.
+    // Always force a refresh on mount to reflect sales, loans or any change
+    // made from the detail view. NavigationEnd subscription was unreliable because
+    // the component is destroyed on navigation and NavigationEnd can fire before
+    // the subscription is registered after the await.
     await this._loadGames(true);
 
     this._bpSubscription = this._breakpointObserver
@@ -355,7 +354,7 @@ export class GameListComponent implements OnInit, OnDestroy {
       const stores: StoreModel[] = await this._storeUseCases.getAllStores();
       this.stores.set(stores);
     } catch {
-      // Catch vacío intencionado: evita code smell de bloque catch vacío. El filtro simplemente no mostrará opciones de tienda
+      // Intentionally empty catch: filter will simply show no store options
     }
   }
 
