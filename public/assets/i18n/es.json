@@ -777,6 +777,8 @@
     "add": "Añadir consola",
     "count": "{{ count }} consolas",
     "countOne": "1 consola",
+    "search": "Buscar consola",
+    "noResults": "Sin resultados para esa búsqueda",
     "empty": {
       "title": "Sin consolas",
       "subtitle": "Añade tu primera consola a la colección",
@@ -796,12 +798,17 @@
       "loadError": "Error al cargar las consolas"
     }
   },
+  "controllerDetailPage": {
+    "sectionUser": "Mi mando"
+  },
   "controllersPage": {
     "title": "Mis Mandos",
     "loading": "Cargando mandos...",
     "add": "Añadir mando",
     "count": "{{ count }} mandos",
     "countOne": "1 mando",
+    "search": "Buscar mando",
+    "noResults": "Sin resultados para esa búsqueda",
     "empty": {
       "title": "Sin mandos",
       "subtitle": "Añade tu primer mando a la colección",
@@ -823,7 +830,7 @@
   },
   "consoleDetailPage": {
     "sectionUser": "Mi consola",
-    "sectionCatalog": "Del catálogo",
+    "sectionCatalog": "Especificaciones",
     "generation": "Generación",
     "launchYear": "Año de lanzamiento",
     "discontinuedYear": "Descontinuada",

@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
+import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -24,7 +34,6 @@ import {
   HardwareModelUseCasesContract
 } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
-import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 
 @Component({
@@ -38,10 +47,13 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
     DatePipe,
     MatButton,
     MatFabButton,
-    MatIconButton,
     MatIcon,
     MatProgressSpinner,
     MatChipsModule,
+    MatFormField,
+    MatLabel,
+    MatPrefix,
+    MatInput,
     TranslocoPipe
   ]
 })
@@ -52,7 +64,6 @@ export class ConsolesComponent implements OnInit {
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
@@ -63,11 +74,25 @@ export class ConsolesComponent implements OnInit {
   /** Condition constant exposed to the template for comparisons. */
   readonly GAME_CONDITION = GAME_CONDITION;
 
+  /** Text entered in the search input. */
+  readonly searchQuery: WritableSignal<string> = signal<string>('');
+
   /** List of consoles owned by the user. */
   readonly consoles: WritableSignal<ConsoleModel[]> = signal<ConsoleModel[]>([]);
 
   /** True while the initial data load is in progress. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
+
+  /** Consoles filtered by searchQuery against model name and brand name. */
+  readonly filteredConsoles: Signal<ConsoleModel[]> = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.consoles();
+    return this.consoles().filter((c: ConsoleModel) => {
+      const modelName = this._hardwareModels().find((m: HardwareModelModel) => m.id === c.modelId)?.name ?? '';
+      const brandName = this._brands().find((b: HardwareBrandModel) => b.id === c.brandId)?.name ?? '';
+      return modelName.toLowerCase().includes(q) || brandName.toLowerCase().includes(q);
+    });
+  });
 
   async ngOnInit(): Promise<void> {
     await Promise.all([this._loadConsoles(), this._loadStores(), this._loadCatalog()]);
@@ -119,48 +144,6 @@ export class ConsolesComponent implements OnInit {
    */
   onAdd(): void {
     this._router.navigate(['/games/consoles/add']);
-  }
-
-  /**
-   * Navega al formulario de edición de la consola indicada.
-   *
-   * @param {ConsoleModel} console - La consola a editar
-   */
-  onEdit(console: ConsoleModel): void {
-    this._router.navigate(['/games/consoles/edit', console.id]);
-  }
-
-  /**
-   * Opens a confirmation dialog and deletes the console if confirmed.
-   *
-   * @param {ConsoleModel} console - The console to delete
-   */
-  onDelete(console: ConsoleModel): void {
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this._transloco.translate('consolesPage.deleteDialog.title'),
-        message: this._transloco.translate('consolesPage.deleteDialog.message')
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
-      if (!confirmed) return;
-      try {
-        await this._consoleUseCases.delete(this._userContext.requireUserId(), console.id);
-        this.consoles.update((list) => list.filter((c) => c.id !== console.id));
-        this._snackBar.open(
-          this._transloco.translate('consolesPage.snack.deleted'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      } catch {
-        this._snackBar.open(
-          this._transloco.translate('consolesPage.snack.deleteError'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      }
-    });
   }
 
   /**

@@ -1,0 +1,83 @@
+<div class="controller-detail">
+  @if (loading()) {
+    <div class="controller-detail__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    </div>
+  } @else if (controller()) {
+    <div class="controller-detail__header">
+      <button mat-icon-button type="button" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="controller-detail__header-titles">
+        <h2 class="controller-detail__title">{{ model()?.name ?? '—' }}</h2>
+        <span class="controller-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
+      </div>
+      <button mat-icon-button type="button" (click)="onEdit()">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button type="button" class="controller-detail__delete-btn" (click)="onDelete()">
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+    </div>
+
+    @if (edition()) {
+      <div class="controller-detail__edition">
+        <mat-icon>star</mat-icon>
+        {{ edition()!.name }}
+      </div>
+    }
+
+    <!-- Sección: Mi mando -->
+    <section class="controller-detail__section">
+      <h3 class="controller-detail__section-title">{{ 'controllerDetailPage.sectionUser' | transloco }}</h3>
+
+      <div class="controller-detail__color-row">
+        <div class="controller-detail__color-swatch" [style.background-color]="controller()!.color"></div>
+        <span class="controller-detail__color-label">{{ controller()!.color }}</span>
+      </div>
+
+      <div class="controller-detail__chips">
+        <mat-chip class="controller-detail__chip controller-detail__chip--compat">
+          {{ controller()!.compatibility }}
+        </mat-chip>
+        @if (controller()!.condition === GAME_CONDITION.NEW) {
+          <mat-chip class="controller-detail__chip controller-detail__chip--new">
+            <mat-icon matChipAvatar>fiber_new</mat-icon>
+            {{ 'controllersPage.condition.new' | transloco }}
+          </mat-chip>
+        } @else {
+          <mat-chip class="controller-detail__chip controller-detail__chip--used">
+            {{ 'controllersPage.condition.used' | transloco }}
+          </mat-chip>
+        }
+      </div>
+
+      <dl class="controller-detail__dl">
+        @if (controller()!.price !== null) {
+          <div class="controller-detail__dl-row">
+            <dt><mat-icon>payments</mat-icon> {{ 'controllerPage.price' | transloco }}</dt>
+            <dd>{{ controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        }
+        @if (controller()!.store) {
+          <div class="controller-detail__dl-row">
+            <dt><mat-icon>storefront</mat-icon> {{ 'controllerPage.store' | transloco }}</dt>
+            <dd>{{ resolveStoreName(controller()!.store) }}</dd>
+          </div>
+        }
+        @if (controller()!.purchaseDate) {
+          <div class="controller-detail__dl-row">
+            <dt><mat-icon>calendar_today</mat-icon> {{ 'controllerPage.purchaseDate' | transloco }}</dt>
+            <dd>{{ controller()!.purchaseDate | date: 'dd/MM/yyyy' }}</dd>
+          </div>
+        }
+        @if (controller()!.notes) {
+          <div class="controller-detail__dl-row controller-detail__dl-row--full">
+            <dt><mat-icon>notes</mat-icon> {{ 'controllerPage.notes' | transloco }}</dt>
+            <dd>{{ controller()!.notes }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+</div>

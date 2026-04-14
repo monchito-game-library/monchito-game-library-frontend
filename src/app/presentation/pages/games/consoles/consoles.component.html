@@ -22,10 +22,10 @@
   } @else {
     <div class="consoles__header">
       <span class="consoles__count">
-        @if (consoles().length === 1) {
+        @if (filteredConsoles().length === 1) {
           {{ 'consolesPage.countOne' | transloco }}
         } @else {
-          {{ 'consolesPage.count' | transloco: { count: consoles().length } }}
+          {{ 'consolesPage.count' | transloco: { count: filteredConsoles().length } }}
         }
       </span>
       <button mat-stroked-button class="consoles__add-btn" (click)="onAdd()">
@@ -34,66 +34,70 @@
       </button>
     </div>
 
-    <div class="consoles__grid">
-      @for (console of consoles(); track console.id) {
-        <div class="consoles__card">
-          <div class="consoles__card-header">
-            <mat-icon class="consoles__card-icon">tv</mat-icon>
-            <button type="button" class="consoles__card-titles" (click)="onDetail(console)">
-              <span class="consoles__card-model">{{ resolveModelName(console.modelId) }}</span>
-              <span class="consoles__card-brand">{{ resolveBrandName(console.brandId) }}</span>
-            </button>
-            <button mat-icon-button class="consoles__card-edit" (click)="onEdit(console)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button class="consoles__card-delete" (click)="onDelete(console)">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
+    <mat-form-field class="consoles__search" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'consolesPage.search' | transloco }}</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+    </mat-form-field>
 
-          <div class="consoles__card-chips">
-            @if (console.condition === GAME_CONDITION.NEW) {
-              <mat-chip class="consoles__chip consoles__chip--new">
-                <mat-icon matChipAvatar>fiber_new</mat-icon>
-                {{ 'consolesPage.condition.new' | transloco }}
-              </mat-chip>
-            } @else {
-              <mat-chip class="consoles__chip consoles__chip--used">
-                {{ 'consolesPage.condition.used' | transloco }}
-              </mat-chip>
-            }
-            @if (console.region) {
-              <mat-chip class="consoles__chip">{{ console.region }}</mat-chip>
-            }
-          </div>
+    @if (filteredConsoles().length === 0) {
+      <div class="consoles__no-results">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'consolesPage.noResults' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="consoles__grid">
+        @for (console of filteredConsoles(); track console.id) {
+          <button type="button" class="consoles__card" (click)="onDetail(console)">
+            <div class="consoles__card-header">
+              <mat-icon class="consoles__card-icon">tv</mat-icon>
+              <div class="consoles__card-titles">
+                <span class="consoles__card-model">{{ resolveModelName(console.modelId) }}</span>
+                <span class="consoles__card-brand">{{ resolveBrandName(console.brandId) }}</span>
+              </div>
+              <mat-icon class="consoles__card-chevron">chevron_right</mat-icon>
+            </div>
 
-          <div class="consoles__card-meta">
-            @if (console.price !== null) {
-              <span class="consoles__meta-item">
-                <mat-icon>payments</mat-icon>
-                {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-              </span>
-            }
-            @if (console.store) {
-              <span class="consoles__meta-item">
-                <mat-icon>storefront</mat-icon>
-                {{ resolveStoreName(console.store) }}
-              </span>
-            }
-            @if (console.purchaseDate) {
-              <span class="consoles__meta-item">
-                <mat-icon>calendar_today</mat-icon>
-                {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
-              </span>
-            }
-          </div>
+            <div class="consoles__card-chips">
+              @if (console.condition === GAME_CONDITION.NEW) {
+                <mat-chip class="consoles__chip consoles__chip--new">
+                  <mat-icon matChipAvatar>fiber_new</mat-icon>
+                  {{ 'consolesPage.condition.new' | transloco }}
+                </mat-chip>
+              } @else {
+                <mat-chip class="consoles__chip consoles__chip--used">
+                  {{ 'consolesPage.condition.used' | transloco }}
+                </mat-chip>
+              }
+              @if (console.region) {
+                <mat-chip class="consoles__chip">{{ console.region }}</mat-chip>
+              }
+            </div>
 
-          @if (console.notes) {
-            <p class="consoles__card-notes">{{ console.notes }}</p>
-          }
-        </div>
-      }
-    </div>
+            <div class="consoles__card-meta">
+              @if (console.price !== null) {
+                <span class="consoles__meta-item">
+                  <mat-icon>payments</mat-icon>
+                  {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              }
+              @if (console.store) {
+                <span class="consoles__meta-item">
+                  <mat-icon>storefront</mat-icon>
+                  {{ resolveStoreName(console.store) }}
+                </span>
+              }
+              @if (console.purchaseDate) {
+                <span class="consoles__meta-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
+                </span>
+              }
+            </div>
+          </button>
+        }
+      </div>
+    }
 
     <!-- FAB: solo mobile -->
     <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco" (click)="onAdd()">

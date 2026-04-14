@@ -776,6 +776,8 @@
     "add": "Add console",
     "count": "{{ count }} consoles",
     "countOne": "1 console",
+    "search": "Search console",
+    "noResults": "No results for that search",
     "empty": {
       "title": "No consoles",
       "subtitle": "Add your first console to the collection",
@@ -795,12 +797,17 @@
       "loadError": "Error loading consoles"
     }
   },
+  "controllerDetailPage": {
+    "sectionUser": "My controller"
+  },
   "controllersPage": {
     "title": "My Controllers",
     "loading": "Loading controllers...",
     "add": "Add controller",
     "count": "{{ count }} controllers",
     "countOne": "1 controller",
+    "search": "Search controller",
+    "noResults": "No results for that search",
     "empty": {
       "title": "No controllers",
       "subtitle": "Add your first controller to the collection",
@@ -822,7 +829,7 @@
   },
   "consoleDetailPage": {
     "sectionUser": "My console",
-    "sectionCatalog": "From catalog",
+    "sectionCatalog": "Specifications",
     "generation": "Generation",
     "launchYear": "Launch year",
     "discontinuedYear": "Discontinued",

@@ -15,6 +15,9 @@
       <button mat-icon-button type="button" (click)="onEdit()">
         <mat-icon>edit</mat-icon>
       </button>
+      <button mat-icon-button type="button" class="console-detail__delete-btn" (click)="onDelete()">
+        <mat-icon>delete_outline</mat-icon>
+      </button>
     </div>
 
     @if (edition()) {

@@ -3,19 +3,21 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { ConsoleModel } from '@/models/console/console.model';
+import { ControllerModel } from '@/models/controller/controller.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
-import { HardwareConsoleSpecsModel } from '@/models/hardware-console-specs/hardware-console-specs.model';
 import { StoreModel } from '@/models/store/store.model';
-import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
+import {
+  CONTROLLER_USE_CASES,
+  ControllerUseCasesContract
+} from '@/domain/use-cases/controller/controller.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -29,31 +31,26 @@ import {
   HARDWARE_EDITION_USE_CASES,
   HardwareEditionUseCasesContract
 } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
-import {
-  HARDWARE_CONSOLE_SPECS_USE_CASES,
-  HardwareConsoleSpecsUseCasesContract
-} from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 
 @Component({
-  selector: 'app-console-detail',
-  templateUrl: './console-detail.component.html',
-  styleUrl: './console-detail.component.scss',
+  selector: 'app-controller-detail',
+  templateUrl: './controller-detail.component.html',
+  styleUrl: './controller-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, DatePipe, MatIconButton, MatIcon, MatProgressSpinner, MatChipsModule, TranslocoPipe]
 })
-export class ConsoleDetailComponent implements OnInit {
+export class ControllerDetailComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);
+  private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   private readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
-  private readonly _specsUseCases: HardwareConsoleSpecsUseCasesContract = inject(HARDWARE_CONSOLE_SPECS_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -67,8 +64,8 @@ export class ConsoleDetailComponent implements OnInit {
   /** True while data is being loaded. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
-  /** The user's console entry. */
-  readonly console: WritableSignal<ConsoleModel | undefined> = signal<ConsoleModel | undefined>(undefined);
+  /** The user's controller entry. */
+  readonly controller: WritableSignal<ControllerModel | undefined> = signal<ControllerModel | undefined>(undefined);
 
   /** Brand from the catalog. */
   readonly brand: WritableSignal<HardwareBrandModel | undefined> = signal<HardwareBrandModel | undefined>(undefined);
@@ -81,14 +78,9 @@ export class ConsoleDetailComponent implements OnInit {
     undefined
   );
 
-  /** Technical specs from the catalog. */
-  readonly specs: WritableSignal<HardwareConsoleSpecsModel | undefined> = signal<HardwareConsoleSpecsModel | undefined>(
-    undefined
-  );
-
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id') ?? '';
-    await Promise.all([this._loadConsoleWithCatalog(id), this._loadStores()]);
+    await Promise.all([this._loadControllerWithCatalog(id), this._loadStores()]);
   }
 
   /**
@@ -102,47 +94,47 @@ export class ConsoleDetailComponent implements OnInit {
   }
 
   /**
-   * Navega de vuelta a la lista de consolas.
+   * Navega de vuelta a la lista de mandos.
    */
   onBack(): void {
-    this._router.navigate(['/games/consoles']);
+    this._router.navigate(['/games/controllers']);
   }
 
   /**
-   * Navega al formulario de edición de la consola actual.
+   * Navega al formulario de edición del mando actual.
    */
   onEdit(): void {
-    const c = this.console();
-    if (c) this._router.navigate(['/games/consoles/edit', c.id]);
+    const c = this.controller();
+    if (c) this._router.navigate(['/games/controllers/edit', c.id]);
   }
 
   /**
-   * Muestra un diálogo de confirmación y elimina la consola si el usuario confirma.
-   * Tras eliminar, redirige a la lista de consolas.
+   * Muestra un diálogo de confirmación y elimina el mando si el usuario confirma.
+   * Tras eliminar, redirige a la lista de mandos.
    */
   onDelete(): void {
     const dialogRef = this._dialog.open(ConfirmDialogComponent, {
       data: {
-        title: this._transloco.translate('consolesPage.deleteDialog.title'),
-        message: this._transloco.translate('consolesPage.deleteDialog.message')
+        title: this._transloco.translate('controllersPage.deleteDialog.title'),
+        message: this._transloco.translate('controllersPage.deleteDialog.message')
       }
     });
 
     dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
-      const c = this.console();
+      const c = this.controller();
       if (!c) return;
       try {
-        await this._consoleUseCases.delete(this._userContext.requireUserId(), c.id);
+        await this._controllerUseCases.delete(this._userContext.requireUserId(), c.id);
         this._snackBar.open(
-          this._transloco.translate('consolesPage.snack.deleted'),
+          this._transloco.translate('controllersPage.snack.deleted'),
           this._transloco.translate('common.close'),
           { duration: 3000 }
         );
-        this._router.navigate(['/games/consoles']);
+        this._router.navigate(['/games/controllers']);
       } catch {
         this._snackBar.open(
-          this._transloco.translate('consolesPage.snack.deleteError'),
+          this._transloco.translate('controllersPage.snack.deleteError'),
           this._transloco.translate('common.close'),
           { duration: 3000 }
         );
@@ -151,33 +143,31 @@ export class ConsoleDetailComponent implements OnInit {
   }
 
   /**
-   * Carga la consola y todos los datos del catálogo asociados (marca, modelo, edición, specs).
+   * Carga el mando y los datos del catálogo asociados (marca, modelo, edición).
    *
-   * @param {string} id - UUID de la consola del usuario
+   * @param {string} id - UUID del mando del usuario
    */
-  private async _loadConsoleWithCatalog(id: string): Promise<void> {
+  private async _loadControllerWithCatalog(id: string): Promise<void> {
     this.loading.set(true);
     try {
-      const c = await this._consoleUseCases.getById(this._userContext.requireUserId(), id);
+      const c = await this._controllerUseCases.getById(this._userContext.requireUserId(), id);
       if (!c) {
-        this._router.navigate(['/games/consoles']);
+        this._router.navigate(['/games/controllers']);
         return;
       }
-      this.console.set(c);
+      this.controller.set(c);
 
-      const [brand, model, edition, specs] = await Promise.all([
+      const [brand, model, edition] = await Promise.all([
         c.brandId ? this._brandUseCases.getById(c.brandId) : Promise.resolve(undefined),
         c.modelId ? this._modelUseCases.getById(c.modelId) : Promise.resolve(undefined),
-        c.editionId ? this._editionUseCases.getById(c.editionId) : Promise.resolve(undefined),
-        c.modelId ? this._specsUseCases.getByModelId(c.modelId) : Promise.resolve(undefined)
+        c.editionId ? this._editionUseCases.getById(c.editionId) : Promise.resolve(undefined)
       ]);
 
       this.brand.set(brand);
       this.model.set(model);
       this.edition.set(edition);
-      this.specs.set(specs);
     } catch {
-      this._router.navigate(['/games/consoles']);
+      this._router.navigate(['/games/controllers']);
     } finally {
       this.loading.set(false);
     }

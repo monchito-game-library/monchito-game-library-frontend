@@ -22,10 +22,10 @@
   } @else {
     <div class="controllers__header">
       <span class="controllers__count">
-        @if (controllers().length === 1) {
+        @if (filteredControllers().length === 1) {
           {{ 'controllersPage.countOne' | transloco }}
         } @else {
-          {{ 'controllersPage.count' | transloco: { count: controllers().length } }}
+          {{ 'controllersPage.count' | transloco: { count: filteredControllers().length } }}
         }
       </span>
       <button mat-stroked-button class="controllers__add-btn" (click)="onAdd()">
@@ -34,66 +34,70 @@
       </button>
     </div>
 
-    <div class="controllers__grid">
-      @for (controller of controllers(); track controller.id) {
-        <div class="controllers__card">
-          <div class="controllers__card-header">
-            <div class="controllers__card-color" [style.background-color]="controller.color"></div>
-            <div class="controllers__card-titles">
-              <span class="controllers__card-model">{{ resolveModelName(controller.modelId) }}</span>
-              <span class="controllers__card-brand">{{ resolveBrandName(controller.brandId) }}</span>
+    <mat-form-field class="controllers__search" appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'controllersPage.search' | transloco }}</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
+    </mat-form-field>
+
+    @if (filteredControllers().length === 0) {
+      <div class="controllers__no-results">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'controllersPage.noResults' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="controllers__grid">
+        @for (controller of filteredControllers(); track controller.id) {
+          <button type="button" class="controllers__card" (click)="onDetail(controller)">
+            <div class="controllers__card-header">
+              <div class="controllers__card-color" [style.background-color]="controller.color"></div>
+              <div class="controllers__card-titles">
+                <span class="controllers__card-model">{{ resolveModelName(controller.modelId) }}</span>
+                <span class="controllers__card-brand">{{ resolveBrandName(controller.brandId) }}</span>
+              </div>
+              <mat-icon class="controllers__card-chevron">chevron_right</mat-icon>
             </div>
-            <button mat-icon-button class="controllers__card-edit" (click)="onEdit(controller)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button class="controllers__card-delete" (click)="onDelete(controller)">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
 
-          <div class="controllers__card-chips">
-            <mat-chip class="controllers__chip controllers__chip--compat">
-              {{ controller.compatibility }}
-            </mat-chip>
-            @if (controller.condition === GAME_CONDITION.NEW) {
-              <mat-chip class="controllers__chip controllers__chip--new">
-                <mat-icon matChipAvatar>fiber_new</mat-icon>
-                {{ 'controllersPage.condition.new' | transloco }}
+            <div class="controllers__card-chips">
+              <mat-chip class="controllers__chip controllers__chip--compat">
+                {{ controller.compatibility }}
               </mat-chip>
-            } @else {
-              <mat-chip class="controllers__chip controllers__chip--used">
-                {{ 'controllersPage.condition.used' | transloco }}
-              </mat-chip>
-            }
-          </div>
+              @if (controller.condition === GAME_CONDITION.NEW) {
+                <mat-chip class="controllers__chip controllers__chip--new">
+                  <mat-icon matChipAvatar>fiber_new</mat-icon>
+                  {{ 'controllersPage.condition.new' | transloco }}
+                </mat-chip>
+              } @else {
+                <mat-chip class="controllers__chip controllers__chip--used">
+                  {{ 'controllersPage.condition.used' | transloco }}
+                </mat-chip>
+              }
+            </div>
 
-          <div class="controllers__card-meta">
-            @if (controller.price !== null) {
-              <span class="controllers__meta-item">
-                <mat-icon>payments</mat-icon>
-                {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-              </span>
-            }
-            @if (controller.store) {
-              <span class="controllers__meta-item">
-                <mat-icon>storefront</mat-icon>
-                {{ resolveStoreName(controller.store) }}
-              </span>
-            }
-            @if (controller.purchaseDate) {
-              <span class="controllers__meta-item">
-                <mat-icon>calendar_today</mat-icon>
-                {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
-              </span>
-            }
-          </div>
-
-          @if (controller.notes) {
-            <p class="controllers__card-notes">{{ controller.notes }}</p>
-          }
-        </div>
-      }
-    </div>
+            <div class="controllers__card-meta">
+              @if (controller.price !== null) {
+                <span class="controllers__meta-item">
+                  <mat-icon>payments</mat-icon>
+                  {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              }
+              @if (controller.store) {
+                <span class="controllers__meta-item">
+                  <mat-icon>storefront</mat-icon>
+                  {{ resolveStoreName(controller.store) }}
+                </span>
+              }
+              @if (controller.purchaseDate) {
+                <span class="controllers__meta-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
+                </span>
+              }
+            </div>
+          </button>
+        }
+      </div>
+    }
 
     <!-- FAB: solo mobile -->
     <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco" (click)="onAdd()">

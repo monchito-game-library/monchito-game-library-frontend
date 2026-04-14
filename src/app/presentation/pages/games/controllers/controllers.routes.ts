@@ -39,6 +39,11 @@ export const controllersRoutes: Routes = [
           import('./pages/create-update-controller/create-update-controller.routes').then(
             (m) => m.createUpdateControllerRoutes
           )
+      },
+      {
+        path: ':id',
+        loadChildren: () =>
+          import('./pages/controller-detail/controller-detail.routes').then((m) => m.controllerDetailRoutes)
       }
     ]
   }

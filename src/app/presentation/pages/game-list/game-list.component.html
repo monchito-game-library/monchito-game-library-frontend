@@ -148,11 +148,11 @@
     </button>
 
     <!-- Desktop-only: action buttons -->
-    <button mat-stroked-button routerLink="/games/sold" class="game-list__sold-btn">
+    <button mat-stroked-button routerLink="/games/list/sold" class="game-list__sold-btn">
       <mat-icon>sell</mat-icon>
       {{ 'soldGames.title' | transloco }}
     </button>
-    <button mat-flat-button color="primary" routerLink="/games/add" class="game-list__add-btn">
+    <button mat-flat-button color="primary" routerLink="/games/list/add" class="game-list__add-btn">
       <mat-icon>add</mat-icon>
       {{ 'nav.add' | transloco }}
     </button>
@@ -197,7 +197,7 @@
     <mat-icon class="game-list__empty-icon">sports_esports</mat-icon>
     <p class="game-list__empty-title">{{ 'gameList.empty.emptyCollection' | transloco }}</p>
     <p class="game-list__empty-subtitle">{{ 'gameList.empty.emptyCollectionSubtitle' | transloco }}</p>
-    <button mat-flat-button routerLink="/games/add">
+    <button mat-flat-button routerLink="/games/list/add">
       <mat-icon>add_circle</mat-icon>
       {{ 'gameList.empty.addGame' | transloco }}
     </button>
@@ -205,6 +205,11 @@
 }
 
 <!-- FAB: solo visible en mobile -->
-<button mat-fab type="button" class="game-list__fab" routerLink="/games/add" [attr.aria-label]="'nav.add' | transloco">
+<button
+  mat-fab
+  type="button"
+  class="game-list__fab"
+  routerLink="/games/list/add"
+  [attr.aria-label]="'nav.add' | transloco">
   <mat-icon>add</mat-icon>
 </button>
