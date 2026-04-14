@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -81,7 +81,6 @@ export class GameListComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
-  private _routerSubscription?: Subscription;
   private _bpSubscription?: Subscription;
 
   /**
@@ -253,15 +252,20 @@ export class GameListComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     void this._loadStores();
-    await this._loadGames(false);
 
-    this._routerSubscription = this._router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        if (event.url === '/games/list' || event.url.startsWith('/games/list')) {
-          void this._loadGames(true);
-        }
-      });
+    // Mostrar caché inmediatamente si existe, mientras se recarga desde Supabase
+    const cached = this._userPreferencesState.allGames();
+    if (cached.length > 0) {
+      this.allGames.set(cached);
+      this.loading.set(false);
+    }
+
+    // Siempre forzar refresco al montar el componente para reflejar ventas,
+    // préstamos o cualquier cambio hecho desde el detalle.
+    // La suscripción a NavigationEnd era propensa a perderse porque el componente
+    // se destruye al navegar al detalle y NavigationEnd puede dispararse antes de
+    // que la suscripción quede registrada tras el await.
+    await this._loadGames(true);
 
     this._bpSubscription = this._breakpointObserver
       .observe([
@@ -282,7 +286,6 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._routerSubscription?.unsubscribe();
     this._bpSubscription?.unsubscribe();
   }
 
