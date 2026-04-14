@@ -81,7 +81,7 @@ export class PwaUpdateService {
         position:fixed;inset:0;z-index:99999;
         background:var(--mat-sys-surface,#1e1e2e);
         display:flex;flex-direction:column;align-items:center;justify-content:center;
-        gap:1.5rem;font-family:Roboto,'Helvetica Neue',sans-serif;
+        gap:1.5rem;font-family:Outfit,'Helvetica Neue',sans-serif;
       ">
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
           style="animation:pwa-spin 0.9s linear infinite;">
