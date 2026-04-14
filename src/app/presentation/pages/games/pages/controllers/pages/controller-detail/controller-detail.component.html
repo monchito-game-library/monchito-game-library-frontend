@@ -52,32 +52,45 @@
         }
       </div>
 
-      <dl class="controller-detail__dl">
+      <div class="controller-detail__purchase-row">
         @if (controller()!.price !== null) {
-          <div class="controller-detail__dl-row">
-            <dt><mat-icon>payments</mat-icon> {{ 'controllerPage.price' | transloco }}</dt>
-            <dd>{{ controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          <div class="controller-detail__purchase-item">
+            <div class="controller-detail__purchase-header">
+              <mat-icon>payments</mat-icon>
+              <span class="controller-detail__purchase-label">{{ 'controllerPage.price' | transloco }}</span>
+            </div>
+            <span class="controller-detail__purchase-value">{{
+              controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
         }
         @if (controller()!.store) {
-          <div class="controller-detail__dl-row">
-            <dt><mat-icon>storefront</mat-icon> {{ 'controllerPage.store' | transloco }}</dt>
-            <dd>{{ resolveStoreName(controller()!.store) }}</dd>
+          <div class="controller-detail__purchase-item">
+            <div class="controller-detail__purchase-header">
+              <mat-icon>storefront</mat-icon>
+              <span class="controller-detail__purchase-label">{{ 'controllerPage.store' | transloco }}</span>
+            </div>
+            <span class="controller-detail__purchase-value">{{ resolveStoreName(controller()!.store) }}</span>
           </div>
         }
         @if (controller()!.purchaseDate) {
-          <div class="controller-detail__dl-row">
-            <dt><mat-icon>calendar_today</mat-icon> {{ 'controllerPage.purchaseDate' | transloco }}</dt>
-            <dd>{{ controller()!.purchaseDate | date: 'dd/MM/yyyy' }}</dd>
+          <div class="controller-detail__purchase-item">
+            <div class="controller-detail__purchase-header">
+              <mat-icon>calendar_today</mat-icon>
+              <span class="controller-detail__purchase-label">{{ 'controllerPage.purchaseDate' | transloco }}</span>
+            </div>
+            <span class="controller-detail__purchase-value">{{ controller()!.purchaseDate | date: 'dd/MM/yyyy' }}</span>
           </div>
         }
-        @if (controller()!.notes) {
+      </div>
+      @if (controller()!.notes) {
+        <dl class="controller-detail__dl">
           <div class="controller-detail__dl-row controller-detail__dl-row--full">
             <dt><mat-icon>notes</mat-icon> {{ 'controllerPage.notes' | transloco }}</dt>
             <dd>{{ controller()!.notes }}</dd>
           </div>
-        }
-      </dl>
+        </dl>
+      }
     </section>
   }
 </div>

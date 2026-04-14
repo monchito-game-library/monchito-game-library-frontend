@@ -134,6 +134,46 @@
     }
   }
 
+  .controller-detail__purchase-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .controller-detail__purchase-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .controller-detail__purchase-header {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    mat-icon {
+      font-size: 0.875rem;
+      width: 0.875rem;
+      height: 0.875rem;
+      color: var(--mat-sys-outline);
+    }
+  }
+
+  .controller-detail__purchase-label {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .controller-detail__purchase-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+  }
+
   .controller-detail__dl {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -172,6 +212,7 @@
       font-size: 0.9375rem;
       color: var(--mat-sys-on-surface);
       font-weight: 600;
+      white-space: pre-wrap;
     }
   }
 }

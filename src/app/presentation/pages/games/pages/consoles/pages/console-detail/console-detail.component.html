@@ -47,32 +47,45 @@
         }
       </div>
 
-      <dl class="console-detail__dl">
+      <div class="console-detail__purchase-row">
         @if (console()!.price !== null) {
-          <div class="console-detail__dl-row">
-            <dt><mat-icon>payments</mat-icon> {{ 'consolePage.price' | transloco }}</dt>
-            <dd>{{ console()!.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          <div class="console-detail__purchase-item">
+            <div class="console-detail__purchase-header">
+              <mat-icon>payments</mat-icon>
+              <span class="console-detail__purchase-label">{{ 'consolePage.price' | transloco }}</span>
+            </div>
+            <span class="console-detail__purchase-value">{{
+              console()!.price | currency: 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
         }
         @if (console()!.store) {
-          <div class="console-detail__dl-row">
-            <dt><mat-icon>storefront</mat-icon> {{ 'consolePage.store' | transloco }}</dt>
-            <dd>{{ resolveStoreName(console()!.store) }}</dd>
+          <div class="console-detail__purchase-item">
+            <div class="console-detail__purchase-header">
+              <mat-icon>storefront</mat-icon>
+              <span class="console-detail__purchase-label">{{ 'consolePage.store' | transloco }}</span>
+            </div>
+            <span class="console-detail__purchase-value">{{ resolveStoreName(console()!.store) }}</span>
           </div>
         }
         @if (console()!.purchaseDate) {
-          <div class="console-detail__dl-row">
-            <dt><mat-icon>calendar_today</mat-icon> {{ 'consolePage.purchaseDate' | transloco }}</dt>
-            <dd>{{ console()!.purchaseDate | date: 'dd/MM/yyyy' }}</dd>
+          <div class="console-detail__purchase-item">
+            <div class="console-detail__purchase-header">
+              <mat-icon>calendar_today</mat-icon>
+              <span class="console-detail__purchase-label">{{ 'consolePage.purchaseDate' | transloco }}</span>
+            </div>
+            <span class="console-detail__purchase-value">{{ console()!.purchaseDate | date: 'dd/MM/yyyy' }}</span>
           </div>
         }
-        @if (console()!.notes) {
+      </div>
+      @if (console()!.notes) {
+        <dl class="console-detail__dl">
           <div class="console-detail__dl-row console-detail__dl-row--full">
             <dt><mat-icon>notes</mat-icon> {{ 'consolePage.notes' | transloco }}</dt>
             <dd>{{ console()!.notes }}</dd>
           </div>
-        }
-      </dl>
+        </dl>
+      }
     </section>
 
     <!-- Sección: Del catálogo -->
