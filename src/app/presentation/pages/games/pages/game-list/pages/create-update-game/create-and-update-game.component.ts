@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { GameFormComponent } from '@/pages/game-list/pages/create-update-game/components/game-form/game-form.component';
+import { GameFormComponent } from '@/pages/games/pages/game-list/pages/create-update-game/components/game-form/game-form.component';
 
 @Component({
   selector: 'app-update-game',

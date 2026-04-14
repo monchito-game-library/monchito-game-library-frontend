@@ -1,5 +1,5 @@
-<div class="games-shell">
-  <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="games-shell__tabs">
+<div class="games">
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel" class="games__tabs">
     <a
       mat-tab-link
       routerLink="/games"
@@ -8,12 +8,12 @@
       #rlaOverview="routerLinkActive"
       [active]="rlaOverview.isActive">
       <mat-icon>home</mat-icon>
-      <span class="games-shell__tab-label">{{ 'gamesHub.tabOverview' | transloco }}</span>
+      <span class="games__tab-label">{{ 'gamesHub.tabOverview' | transloco }}</span>
     </a>
 
     <a mat-tab-link routerLink="/games/list" routerLinkActive #rlaGames="routerLinkActive" [active]="rlaGames.isActive">
       <mat-icon>sports_esports</mat-icon>
-      <span class="games-shell__tab-label">{{ 'gamesHub.tabGames' | transloco }}</span>
+      <span class="games__tab-label">{{ 'gamesHub.tabGames' | transloco }}</span>
     </a>
 
     <a
@@ -23,7 +23,7 @@
       #rlaConsoles="routerLinkActive"
       [active]="rlaConsoles.isActive">
       <mat-icon>tv</mat-icon>
-      <span class="games-shell__tab-label">{{ 'gamesHub.tabConsoles' | transloco }}</span>
+      <span class="games__tab-label">{{ 'gamesHub.tabConsoles' | transloco }}</span>
     </a>
 
     <a
@@ -33,11 +33,11 @@
       #rlaControllers="routerLinkActive"
       [active]="rlaControllers.isActive">
       <mat-icon>gamepad</mat-icon>
-      <span class="games-shell__tab-label">{{ 'gamesHub.tabControllers' | transloco }}</span>
+      <span class="games__tab-label">{{ 'gamesHub.tabControllers' | transloco }}</span>
     </a>
   </nav>
 
-  <mat-tab-nav-panel #tabPanel class="games-shell__content">
+  <mat-tab-nav-panel #tabPanel class="games__content">
     <router-outlet />
   </mat-tab-nav-panel>
 </div>

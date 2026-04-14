@@ -50,7 +50,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
-import { GameCoverPositionDialogComponent } from '@/pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
+import { GameCoverPositionDialogComponent } from '@/pages/games/pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { UserContextService } from '@/services/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences.service';

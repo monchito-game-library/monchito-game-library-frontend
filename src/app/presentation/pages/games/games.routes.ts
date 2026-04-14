@@ -5,23 +5,24 @@ export const gamesRoutes: Routes = [
   {
     path: '',
     canActivate: [canActivateUser],
-    loadComponent: () => import('./games-shell/games-shell.component').then((m) => m.GamesShellComponent),
+    loadComponent: () => import('./games.component').then((m) => m.GamesComponent),
     children: [
       {
         path: '',
-        loadChildren: () => import('./games-hub/games-hub.routes').then((m) => m.gamesHubRoutes)
+        loadChildren: () => import('./pages/games-hub/games-hub.routes').then((m) => m.gamesHubRoutes)
       },
       {
         path: 'list',
-        loadChildren: () => import('@/pages/game-list/game-list.routes').then((m) => m.gameListRoutes)
+        loadChildren: () => import('@/pages/games/pages/game-list/game-list.routes').then((m) => m.gameListRoutes)
       },
       {
         path: 'consoles',
-        loadChildren: () => import('@/pages/games/consoles/consoles.routes').then((m) => m.consolesRoutes)
+        loadChildren: () => import('@/pages/games/pages/consoles/consoles.routes').then((m) => m.consolesRoutes)
       },
       {
         path: 'controllers',
-        loadChildren: () => import('@/pages/games/controllers/controllers.routes').then((m) => m.controllersRoutes)
+        loadChildren: () =>
+          import('@/pages/games/pages/controllers/controllers.routes').then((m) => m.controllersRoutes)
       }
     ]
   }

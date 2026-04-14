@@ -6,17 +6,17 @@
   overflow: hidden;
 }
 
-.games-shell {
+.games {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 
-  .games-shell__tabs {
+  .games__tabs {
     flex-shrink: 0;
   }
 
-  .games-shell__content {
+  .games__content {
     flex: 1;
     overflow: hidden;
     display: flex;
@@ -24,15 +24,15 @@
     min-height: 0;
   }
 
-  .games-shell__tab-label {
+  .games__tab-label {
     margin-left: 0.5rem;
   }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
-  .games-shell {
-    .games-shell__tab-label {
+  .games {
+    .games__tab-label {
       display: none;
     }
   }
