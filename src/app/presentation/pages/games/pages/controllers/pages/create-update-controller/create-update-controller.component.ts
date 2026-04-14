@@ -118,7 +118,7 @@ export class CreateUpdateControllerComponent implements OnInit {
   readonly form: FormGroup<ControllerForm> = this._fb.group<ControllerForm>({
     brandId: this._fb.control<string | null>(null),
     modelId: this._fb.control<string | null>(null),
-    editionId: this._fb.control<string | null>(null),
+    editionId: this._fb.control<string | null>({ value: null, disabled: true }),
     color: this._fb.nonNullable.control<string>('#000000', Validators.required),
     compatibility: this._fb.nonNullable.control<ControllerCompatibilityType>(
       availableControllerCompatibilities[0].code,
@@ -136,10 +136,32 @@ export class CreateUpdateControllerComponent implements OnInit {
     initialValue: null
   });
 
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  private readonly _brandInput: Signal<string | null> = toSignal(this.form.controls.brandId.valueChanges, {
+    initialValue: null
+  });
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  private readonly _modelInput: Signal<string | null> = toSignal(this.form.controls.modelId.valueChanges, {
+    initialValue: null
+  });
+
   /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
     const input: string = this._storeInput()?.toString().toLowerCase() ?? '';
     return this._storeModels().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(input));
+  });
+
+  /** Brands filtered by the current autocomplete input value. */
+  readonly filteredBrands: Signal<HardwareBrandModel[]> = computed((): HardwareBrandModel[] => {
+    const input: string = this._brandInput()?.toString().toLowerCase() ?? '';
+    return this.brands().filter((b: HardwareBrandModel): boolean => b.name.toLowerCase().includes(input));
+  });
+
+  /** Models filtered by the current autocomplete input value. */
+  readonly filteredModels: Signal<HardwareModelModel[]> = computed((): HardwareModelModel[] => {
+    const input: string = this._modelInput()?.toString().toLowerCase() ?? '';
+    return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(input));
   });
 
   async ngOnInit(): Promise<void> {
@@ -161,6 +183,26 @@ export class CreateUpdateControllerComponent implements OnInit {
   displayStoreLabel = (id: string | null): string => {
     const store: StoreModel | undefined = this._storeModels().find((s: StoreModel): boolean => s.id === id);
     return store?.label ?? '';
+  };
+
+  /**
+   * Devuelve el nombre de la marca a partir de su UUID para mostrarla en el autocomplete.
+   *
+   * @param {string | null} id - UUID de la marca
+   */
+  displayBrandLabel = (id: string | null): string => {
+    const brand: HardwareBrandModel | undefined = this.brands().find((b: HardwareBrandModel): boolean => b.id === id);
+    return brand?.name ?? '';
+  };
+
+  /**
+   * Devuelve el nombre del modelo a partir de su UUID para mostrarlo en el autocomplete.
+   *
+   * @param {string | null} id - UUID del modelo
+   */
+  displayModelLabel = (id: string | null): string => {
+    const model: HardwareModelModel | undefined = this.models().find((m: HardwareModelModel): boolean => m.id === id);
+    return model?.name ?? '';
   };
 
   /**
@@ -260,7 +302,12 @@ export class CreateUpdateControllerComponent implements OnInit {
   async onModelChange(modelId: string | null): Promise<void> {
     this.form.controls.editionId.setValue(null);
     this.editions.set([]);
-    if (modelId) await this._loadEditions(modelId);
+    if (modelId) {
+      this.form.controls.editionId.enable();
+      await this._loadEditions(modelId);
+    } else {
+      this.form.controls.editionId.disable();
+    }
   }
 
   /**
@@ -329,7 +376,10 @@ export class CreateUpdateControllerComponent implements OnInit {
       }
       if (controller.brandId) {
         await this._loadModels(controller.brandId);
-        if (controller.modelId) await this._loadEditions(controller.modelId);
+        if (controller.modelId) {
+          this.form.controls.editionId.enable();
+          await this._loadEditions(controller.modelId);
+        }
       }
       this.form.patchValue({
         brandId: controller.brandId,

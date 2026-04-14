@@ -20,30 +20,51 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="create-update-controller__form">
       <mat-form-field appearance="outline" class="create-update-controller__field--full">
         <mat-label>{{ 'controllerPage.brand' | transloco }}</mat-label>
-        <mat-select formControlName="brandId" (selectionChange)="onBrandChange($event.value)">
-          <mat-option [value]="null">—</mat-option>
-          @for (brand of brands(); track brand.id) {
+        <input type="text" matInput [matAutocomplete]="brandAuto" formControlName="brandId" />
+        <mat-autocomplete
+          #brandAuto="matAutocomplete"
+          [displayWith]="displayBrandLabel"
+          (optionSelected)="onBrandChange($event.option.value)">
+          @for (brand of filteredBrands(); track brand.id) {
             <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
           }
-        </mat-select>
+        </mat-autocomplete>
+        @if (form.controls.brandId.value) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="form.controls.brandId.setValue(null); onBrandChange(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="create-update-controller__field--full">
         <mat-label>{{ 'controllerPage.model' | transloco }}</mat-label>
-        <mat-select
-          formControlName="modelId"
-          [disabled]="!form.controls.brandId.value"
-          (selectionChange)="onModelChange($event.value)">
-          <mat-option [value]="null">—</mat-option>
-          @for (model of models(); track model.id) {
+        <input type="text" matInput [matAutocomplete]="modelAuto" formControlName="modelId" />
+        <mat-autocomplete
+          #modelAuto="matAutocomplete"
+          [displayWith]="displayModelLabel"
+          (optionSelected)="onModelChange($event.option.value)">
+          @for (model of filteredModels(); track model.id) {
             <mat-option [value]="model.id">{{ model.name }}</mat-option>
           }
-        </mat-select>
+        </mat-autocomplete>
+        @if (form.controls.modelId.value) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="form.controls.modelId.setValue(null); onModelChange(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="create-update-controller__field--full">
         <mat-label>{{ 'controllerPage.edition' | transloco }}</mat-label>
-        <mat-select formControlName="editionId" [disabled]="!form.controls.modelId.value">
+        <mat-select formControlName="editionId">
           <mat-option [value]="null">—</mat-option>
           @for (edition of editions(); track edition.id) {
             <mat-option [value]="edition.id">{{ edition.name }}</mat-option>
