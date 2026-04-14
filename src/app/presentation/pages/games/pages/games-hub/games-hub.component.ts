@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -19,7 +29,7 @@ import { UserContextService } from '@/services/user-context.service';
   styleUrls: ['./games-hub.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, SkeletonComponent, TranslocoPipe]
+  imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe]
 })
 export class GamesHubComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
@@ -36,6 +46,24 @@ export class GamesHubComponent implements OnInit {
 
   /** Número de mandos en la colección. Null mientras carga. */
   readonly controllersCount: WritableSignal<number | null> = signal<number | null>(null);
+
+  /** Total gastado en juegos. Null mientras carga. */
+  readonly gamesTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
+
+  /** Total gastado en consolas. Null mientras carga. */
+  readonly consolesTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
+
+  /** Total gastado en mandos. Null mientras carga. */
+  readonly controllersTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
+
+  /** Suma total gastada en toda la colección. Null mientras cualquiera de los tres totales siga cargando. */
+  readonly collectionTotalSpent: Signal<number | null> = computed((): number | null => {
+    const games = this.gamesTotalSpent();
+    const consoles = this.consolesTotalSpent();
+    const controllers = this.controllersTotalSpent();
+    if (games === null || consoles === null || controllers === null) return null;
+    return games + consoles + controllers;
+  });
 
   async ngOnInit(): Promise<void> {
     await this._loadCounts();
@@ -78,5 +106,9 @@ export class GamesHubComponent implements OnInit {
     this.gamesCount.set(games.length);
     this.consolesCount.set(consoles.length);
     this.controllersCount.set(controllers.length);
+
+    this.gamesTotalSpent.set(games.reduce((acc, g) => acc + (g.price ?? 0), 0));
+    this.consolesTotalSpent.set(consoles.reduce((acc, c) => acc + (c.price ?? 0), 0));
+    this.controllersTotalSpent.set(controllers.reduce((acc, c) => acc + (c.price ?? 0), 0));
   }
 }

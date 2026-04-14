@@ -753,7 +753,7 @@
     "title": "Mi Colección",
     "games": {
       "title": "Juegos",
-      "subtitle": "Tu colección de videojuegos"
+      "subtitle": "Tus videojuegos"
     },
     "consolesCategory": {
       "title": "Consolas",
@@ -763,6 +763,7 @@
       "title": "Mandos",
       "subtitle": "Tus mandos"
     },
+    "totalSpent": "Total invertido en la colección",
     "loading": "Cargando...",
     "items": "{{ count }} elementos",
     "oneItem": "1 elemento",

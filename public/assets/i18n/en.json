@@ -752,7 +752,7 @@
     "title": "My Collection",
     "games": {
       "title": "Games",
-      "subtitle": "Your video game collection"
+      "subtitle": "Your games"
     },
     "consolesCategory": {
       "title": "Consoles",
@@ -762,6 +762,7 @@
       "title": "Controllers",
       "subtitle": "Your controllers"
     },
+    "totalSpent": "Total invested in collection",
     "loading": "Loading...",
     "items": "{{ count }} items",
     "oneItem": "1 item",

@@ -1,14 +1,49 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .games-hub {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
   gap: 2rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
 
   .games-hub__title {
     font-size: 1.75rem;
     font-weight: 600;
     margin: 0;
+  }
+
+  .games-hub__total-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .games-hub__total-label {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .games-hub__total-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--mat-sys-primary);
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
   }
 
   .games-hub__grid {
@@ -71,12 +106,26 @@
     color: var(--mat-sys-primary);
     min-height: 1.25rem;
   }
+
+  .games-hub__card-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+    min-height: 1.25rem;
+  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .games-hub {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem calc(60px + 0.75rem);
+
+    .games-hub__total-amount {
+      font-size: 1.75rem;
+    }
 
     .games-hub__grid {
       grid-template-columns: 1fr;
@@ -84,29 +133,17 @@
     }
 
     .games-hub__card {
-      flex-direction: row;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 1.5rem;
-      text-align: left;
+      padding: 1.5rem;
     }
 
     .games-hub__card-icon {
-      flex-shrink: 0;
-    }
-
-    .games-hub__card-title,
-    .games-hub__card-subtitle,
-    .games-hub__card-count {
-      display: block;
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
     }
 
     .games-hub__card-title {
       font-size: 1rem;
-    }
-
-    .games-hub__card-count {
-      justify-content: flex-start;
     }
   }
 }

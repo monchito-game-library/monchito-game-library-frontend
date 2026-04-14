@@ -1,6 +1,17 @@
 <div class="games-hub">
   <h1 class="games-hub__title">{{ 'gamesHub.title' | transloco }}</h1>
 
+  <div class="games-hub__total-banner">
+    <span class="games-hub__total-label">{{ 'gamesHub.totalSpent' | transloco }}</span>
+    <span class="games-hub__total-amount">
+      @if (collectionTotalSpent() === null) {
+        <app-skeleton width="120px" height="2rem" />
+      } @else {
+        {{ collectionTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+      }
+    </span>
+  </div>
+
   <div class="games-hub__grid">
     <button class="games-hub__card" (click)="goToGames()">
       <mat-icon class="games-hub__card-icon">sports_esports</mat-icon>
@@ -13,6 +24,13 @@
           {{ 'gamesHub.oneItem' | transloco }}
         } @else {
           {{ 'gamesHub.items' | transloco: { count: gamesCount() } }}
+        }
+      </span>
+      <span class="games-hub__card-total">
+        @if (gamesTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ gamesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
         }
       </span>
     </button>
@@ -30,6 +48,13 @@
           {{ 'gamesHub.items' | transloco: { count: consolesCount() } }}
         }
       </span>
+      <span class="games-hub__card-total">
+        @if (consolesTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ consolesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        }
+      </span>
     </button>
 
     <button class="games-hub__card" (click)="goToControllers()">
@@ -43,6 +68,13 @@
           {{ 'gamesHub.oneItem' | transloco }}
         } @else {
           {{ 'gamesHub.items' | transloco: { count: controllersCount() } }}
+        }
+      </span>
+      <span class="games-hub__card-total">
+        @if (controllersTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ controllersTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
         }
       </span>
     </button>
