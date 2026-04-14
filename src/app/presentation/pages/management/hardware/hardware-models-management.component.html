@@ -52,22 +52,13 @@
     } @else {
       <div class="models-grid">
         @for (model of models(); track model.id) {
-          <div
-            class="model-card"
-            [class.model-card--selected]="selectedModel()?.id === model.id"
-            (click)="onOpenEditions(model)">
-            <mat-icon class="model-card__icon">{{ model.type === 'console' ? 'tv' : 'gamepad' }}</mat-icon>
-            <div class="model-card__info">
-              <span class="model-card__name">{{ model.name }}</span>
-              <div class="model-card__chips">
-                <span class="model-card__chip">{{ getTypeLabel(model.type) }}</span>
-                @if (model.generation) {
-                  <span class="model-card__chip">Gen {{ model.generation }}</span>
-                }
-              </div>
-            </div>
-            <mat-icon class="model-card__chevron">chevron_right</mat-icon>
-          </div>
+          <app-catalog-item-card
+            [icon]="model.type === 'console' ? 'tv' : 'gamepad'"
+            [name]="model.name"
+            [chips]="getModelChips(model)"
+            [selected]="selectedModel()?.id === model.id"
+            [showChevron]="true"
+            (cardClick)="onOpenEditions(model)" />
         }
       </div>
     }

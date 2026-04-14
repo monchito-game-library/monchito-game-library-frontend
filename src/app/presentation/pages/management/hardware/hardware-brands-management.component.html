@@ -29,16 +29,12 @@
     } @else {
       <div class="brands-grid">
         @for (brand of brands(); track brand.id) {
-          <div
-            class="brand-card"
-            [class.brand-card--selected]="selectedBrand()?.id === brand.id"
-            (click)="onOpenModels(brand)">
-            <mat-icon class="brand-card__icon">memory</mat-icon>
-            <div class="brand-card__info">
-              <span class="brand-card__name">{{ brand.name }}</span>
-            </div>
-            <mat-icon class="brand-card__chevron">chevron_right</mat-icon>
-          </div>
+          <app-catalog-item-card
+            icon="memory"
+            [name]="brand.name"
+            [selected]="selectedBrand()?.id === brand.id"
+            [showChevron]="true"
+            (cardClick)="onOpenModels(brand)" />
         }
       </div>
     }

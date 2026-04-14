@@ -52,16 +52,11 @@
     } @else {
       <div class="editions-grid">
         @for (edition of editions(); track edition.id) {
-          <div
-            class="edition-card"
-            [class.edition-card--selected]="selectedEdition()?.id === edition.id"
-            (click)="onSelectEdition(edition)">
-            <mat-icon class="edition-card__icon">star_outline</mat-icon>
-            <div class="edition-card__info">
-              <span class="edition-card__name">{{ edition.name }}</span>
-            </div>
-            <mat-icon class="edition-card__chevron">chevron_right</mat-icon>
-          </div>
+          <app-catalog-item-card
+            icon="star_outline"
+            [name]="edition.name"
+            [selected]="selectedEdition()?.id === edition.id"
+            (cardClick)="onSelectEdition(edition)" />
         }
       </div>
     }

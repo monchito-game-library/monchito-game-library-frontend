@@ -50,6 +50,7 @@ import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { HardwareBrandEditPanelComponent } from './hardware-brands-management.component';
+import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component
@@ -184,6 +185,7 @@ export class HardwareModelEditPanelComponent {
   imports: [
     HardwareBrandEditPanelComponent,
     HardwareModelEditPanelComponent,
+    CatalogItemCardComponent,
     MatButton,
     MatIconButton,
     MatIcon,
@@ -389,6 +391,17 @@ export class HardwareModelsManagementComponent implements OnInit {
       await this._loadModels();
       this.onClosePanel();
     });
+  }
+
+  /**
+   * Returns the chip labels for a hardware model card.
+   *
+   * @param {HardwareModelModel} model - Model to build chips for
+   */
+  getModelChips(model: HardwareModelModel): string[] {
+    const chips: string[] = [this.getTypeLabel(model.type)];
+    if (model.generation) chips.push(`Gen ${model.generation}`);
+    return chips;
   }
 
   /**

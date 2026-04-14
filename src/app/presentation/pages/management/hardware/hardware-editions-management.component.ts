@@ -40,6 +40,7 @@ import { HARDWARE_MODEL_TYPE } from '@/constants/hardware-model.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { HardwareModelEditPanelComponent } from './hardware-models-management.component';
+import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component
@@ -104,6 +105,7 @@ export class HardwareEditionEditPanelComponent {
   imports: [
     HardwareModelEditPanelComponent,
     HardwareEditionEditPanelComponent,
+    CatalogItemCardComponent,
     MatButton,
     MatIconButton,
     MatIcon,

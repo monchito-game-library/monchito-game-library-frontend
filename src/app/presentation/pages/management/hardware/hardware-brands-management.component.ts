@@ -27,6 +27,7 @@ import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model
 import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-form-result.interface';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component
@@ -88,7 +89,14 @@ export class HardwareBrandEditPanelComponent {
   styleUrl: './hardware-brands-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [HardwareBrandEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [
+    HardwareBrandEditPanelComponent,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    TranslocoPipe,
+    CatalogItemCardComponent
+  ]
 })
 export class HardwareBrandsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
