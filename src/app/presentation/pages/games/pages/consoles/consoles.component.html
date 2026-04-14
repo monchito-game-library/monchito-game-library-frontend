@@ -1,38 +1,28 @@
 <div class="consoles">
-  <!-- Header fijo con stats y filtros -->
-  <div class="consoles__header">
-    <div class="consoles__stats">
-      <div class="consoles__stat">
-        <mat-icon>tv</mat-icon>
-        @if (loading()) {
-          <app-skeleton width="24px" height="12px" />
-        } @else {
-          <span>{{ filteredConsoles().length }}</span>
-        }
-      </div>
-      <div class="consoles__stat-divider"></div>
-      <div class="consoles__stat">
-        <mat-icon>payments</mat-icon>
-        @if (loading()) {
-          <app-skeleton width="60px" height="12px" />
-        } @else {
-          <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        }
-      </div>
+  <!-- Header: stats, búsqueda y botón de añadir -->
+  <app-list-page-header
+    [searchValue]="searchQuery()"
+    searchPlaceholder="consolesPage.search"
+    (searchChange)="searchQuery.set($event)"
+    (addClick)="onAdd()">
+    <div class="consoles__stat">
+      <mat-icon>tv</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="24px" height="12px" />
+      } @else {
+        <span>{{ filteredConsoles().length }}</span>
+      }
     </div>
-
-    <div class="consoles__filters">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="consoles__filter--search">
-        <mat-label>{{ 'consolesPage.search' | transloco }}</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
-      </mat-form-field>
-      <button mat-flat-button color="primary" class="consoles__add-btn" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        {{ 'consolesPage.add' | transloco }}
-      </button>
+    <div class="consoles__stat-divider"></div>
+    <div class="consoles__stat">
+      <mat-icon>payments</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="60px" height="12px" />
+      } @else {
+        <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+      }
     </div>
-  </div>
+  </app-list-page-header>
 
   <!-- Content scrollable -->
   <div class="consoles__content">

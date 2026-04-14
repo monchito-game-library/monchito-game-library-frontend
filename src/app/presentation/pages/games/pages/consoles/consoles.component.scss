@@ -15,23 +15,7 @@
   position: relative;
 }
 
-// ─── Header ───────────────────────────────────────────────────────────────────
-
-.consoles__header {
-  flex-shrink: 0;
-  background-color: var(--mat-sys-surface-container-high);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-  padding: 0.75rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.consoles__stats {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+// ─── Stats proyectados ────────────────────────────────────────────────────────
 
 .consoles__stat {
   display: flex;
@@ -52,21 +36,6 @@
   width: 1px;
   height: 14px;
   background-color: var(--mat-sys-outline-variant);
-}
-
-.consoles__filters {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.consoles__filter--search {
-  flex: 1;
-}
-
-.consoles__add-btn {
-  flex-shrink: 0;
-  margin-left: auto;
 }
 
 // ─── Content ──────────────────────────────────────────────────────────────────
@@ -259,10 +228,6 @@
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
-  .consoles__header {
-    padding: 0.75rem 1rem;
-  }
-
   .consoles__content {
     padding: 1rem;
     padding-bottom: calc(60px + 1rem);
@@ -270,10 +235,6 @@
 
   .consoles__grid {
     grid-template-columns: 1fr;
-  }
-
-  .consoles__add-btn {
-    display: none;
   }
 
   .consoles__fab {

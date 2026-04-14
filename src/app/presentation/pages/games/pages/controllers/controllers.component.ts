@@ -10,11 +10,9 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -38,6 +36,7 @@ import {
 } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { UserContextService } from '@/services/user-context.service';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
+import { ListPageHeaderComponent } from '@/pages/games/components/list-page-header/list-page-header.component';
 
 @Component({
   selector: 'app-controllers',
@@ -48,16 +47,12 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
   imports: [
     CurrencyPipe,
     DatePipe,
-    MatButton,
     MatFabButton,
     MatIcon,
     MatProgressSpinner,
-    MatFormField,
-    MatLabel,
-    MatPrefix,
-    MatInput,
     TranslocoPipe,
-    SkeletonComponent
+    SkeletonComponent,
+    ListPageHeaderComponent
   ]
 })
 export class ControllersComponent implements OnInit {

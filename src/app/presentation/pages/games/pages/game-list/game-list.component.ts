@@ -16,11 +16,7 @@ import { Subscription } from 'rxjs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatInput } from '@angular/material/input';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
+import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -43,6 +39,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
 import { GameListFiltersSheetComponent } from '@/pages/games/pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 import { GameListSortField } from '@/types/game-list-sort-field.type';
+import { ListPageHeaderComponent } from '@/pages/games/components/list-page-header/list-page-header.component';
 
 @Component({
   selector: 'app-game-list',
@@ -52,23 +49,16 @@ import { GameListSortField } from '@/types/game-list-sort-field.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    FormsModule,
     ScrollingModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatSelect,
-    MatOption,
     MatButton,
     MatFabButton,
-    MatIconButton,
     MatIcon,
     MatProgressSpinner,
-    MatPrefix,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
-    SkeletonComponent
+    SkeletonComponent,
+    ListPageHeaderComponent
   ]
 })
 export class GameListComponent implements OnInit, OnDestroy {
@@ -323,13 +313,19 @@ export class GameListComponent implements OnInit, OnDestroy {
   trackByRowIndex = (index: number): number => index;
 
   /**
-   * Updates the search term signal from the input event.
+   * Actualiza el término de búsqueda desde el valor emitido por el header.
    *
-   * @param {Event} event - Input event from the search field
+   * @param {string} value - Nuevo valor del campo de búsqueda
    */
-  onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    if (target) this.searchTerm.set(target.value.trim());
+  onSearchInput(value: string): void {
+    this.searchTerm.set(value.trim());
+  }
+
+  /**
+   * Navega al formulario de alta de juego.
+   */
+  onAdd(): void {
+    void this._router.navigate(['/games/list/add']);
   }
 
   /**

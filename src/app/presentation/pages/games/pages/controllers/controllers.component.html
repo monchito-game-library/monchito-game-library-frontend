@@ -1,38 +1,28 @@
 <div class="controllers">
-  <!-- Header fijo con stats y filtros -->
-  <div class="controllers__header">
-    <div class="controllers__stats">
-      <div class="controllers__stat">
-        <mat-icon>gamepad</mat-icon>
-        @if (loading()) {
-          <app-skeleton width="24px" height="12px" />
-        } @else {
-          <span>{{ filteredControllers().length }}</span>
-        }
-      </div>
-      <div class="controllers__stat-divider"></div>
-      <div class="controllers__stat">
-        <mat-icon>payments</mat-icon>
-        @if (loading()) {
-          <app-skeleton width="60px" height="12px" />
-        } @else {
-          <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        }
-      </div>
+  <!-- Header: stats, búsqueda y botón de añadir -->
+  <app-list-page-header
+    [searchValue]="searchQuery()"
+    searchPlaceholder="controllersPage.search"
+    (searchChange)="searchQuery.set($event)"
+    (addClick)="onAdd()">
+    <div class="controllers__stat">
+      <mat-icon>gamepad</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="24px" height="12px" />
+      } @else {
+        <span>{{ filteredControllers().length }}</span>
+      }
     </div>
-
-    <div class="controllers__filters">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="controllers__filter--search">
-        <mat-label>{{ 'controllersPage.search' | transloco }}</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
-      </mat-form-field>
-      <button mat-flat-button color="primary" class="controllers__add-btn" (click)="onAdd()">
-        <mat-icon>add</mat-icon>
-        {{ 'controllersPage.add' | transloco }}
-      </button>
+    <div class="controllers__stat-divider"></div>
+    <div class="controllers__stat">
+      <mat-icon>payments</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="60px" height="12px" />
+      } @else {
+        <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+      }
     </div>
-  </div>
+  </app-list-page-header>
 
   <!-- Content scrollable -->
   <div class="controllers__content">
