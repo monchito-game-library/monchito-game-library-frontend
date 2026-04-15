@@ -3,9 +3,7 @@ import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 import { filter } from 'rxjs/operators';
-
-/** Routes where the user may have unsaved work — update is deferred until they leave. */
-const FORM_ROUTES = ['/collection/games/add', '/collection/games/edit/'];
+import { FORM_ROUTES } from '@/constants/form-routes.constant';
 
 /**
  * Presentation service that enforces PWA updates automatically.
