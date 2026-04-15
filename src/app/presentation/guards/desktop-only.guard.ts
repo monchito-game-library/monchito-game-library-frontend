@@ -12,7 +12,7 @@ export const canActivateDesktopOnly: CanActivateFn = () => {
   const router: Router = inject(Router);
 
   if (window.innerWidth < MIN_DESKTOP_WIDTH_PX) {
-    void router.navigateByUrl('/games');
+    void router.navigateByUrl('/collection');
     return false;
   }
 

@@ -1,0 +1,86 @@
+<div class="collection-overview">
+  <h1 class="collection-overview__title">{{ 'collectionOverview.title' | transloco }}</h1>
+
+  <div class="collection-overview__total-banner">
+    <span class="collection-overview__total-label">{{ 'collectionOverview.totalSpent' | transloco }}</span>
+    <span class="collection-overview__total-amount">
+      @if (collectionTotalSpent() === null) {
+        <app-skeleton width="120px" height="2rem" />
+      } @else {
+        {{ collectionTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+      }
+    </span>
+  </div>
+
+  <div class="collection-overview__grid">
+    <button class="collection-overview__card" (click)="goToGames()">
+      <mat-icon class="collection-overview__card-icon">sports_esports</mat-icon>
+      <span class="collection-overview__card-title">{{ 'collectionOverview.games.title' | transloco }}</span>
+      <span class="collection-overview__card-subtitle">{{ 'collectionOverview.games.subtitle' | transloco }}</span>
+      <span class="collection-overview__card-count">
+        @if (gamesCount() === null) {
+          <app-skeleton width="80px" height="1rem" />
+        } @else if (gamesCount() === 1) {
+          {{ 'collectionOverview.oneItem' | transloco }}
+        } @else {
+          {{ 'collectionOverview.items' | transloco: { count: gamesCount() } }}
+        }
+      </span>
+      <span class="collection-overview__card-total">
+        @if (gamesTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ gamesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        }
+      </span>
+    </button>
+
+    <button class="collection-overview__card" (click)="goToConsoles()">
+      <mat-icon class="collection-overview__card-icon">tv</mat-icon>
+      <span class="collection-overview__card-title">{{ 'collectionOverview.consolesCategory.title' | transloco }}</span>
+      <span class="collection-overview__card-subtitle">{{
+        'collectionOverview.consolesCategory.subtitle' | transloco
+      }}</span>
+      <span class="collection-overview__card-count">
+        @if (consolesCount() === null) {
+          <app-skeleton width="80px" height="1rem" />
+        } @else if (consolesCount() === 1) {
+          {{ 'collectionOverview.oneItem' | transloco }}
+        } @else {
+          {{ 'collectionOverview.items' | transloco: { count: consolesCount() } }}
+        }
+      </span>
+      <span class="collection-overview__card-total">
+        @if (consolesTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ consolesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        }
+      </span>
+    </button>
+
+    <button class="collection-overview__card" (click)="goToControllers()">
+      <mat-icon class="collection-overview__card-icon">gamepad</mat-icon>
+      <span class="collection-overview__card-title">{{ 'collectionOverview.controllers.title' | transloco }}</span>
+      <span class="collection-overview__card-subtitle">{{
+        'collectionOverview.controllers.subtitle' | transloco
+      }}</span>
+      <span class="collection-overview__card-count">
+        @if (controllersCount() === null) {
+          <app-skeleton width="80px" height="1rem" />
+        } @else if (controllersCount() === 1) {
+          {{ 'collectionOverview.oneItem' | transloco }}
+        } @else {
+          {{ 'collectionOverview.items' | transloco: { count: controllersCount() } }}
+        }
+      </span>
+      <span class="collection-overview__card-total">
+        @if (controllersTotalSpent() === null) {
+          <app-skeleton width="60px" height="0.875rem" />
+        } @else {
+          {{ controllersTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        }
+      </span>
+    </button>
+  </div>
+</div>

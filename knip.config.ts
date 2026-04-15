@@ -6,7 +6,7 @@ const config: KnipConfig = {
     'src/app/app.routes.ts',
     'src/environments/**/*.ts',
     'eslint-rules/**/*.js',
-    'scripts/**/*.js'
+    'scripts/**/*.{js,mts}'
   ],
   project: ['src/**/*.ts', 'eslint-rules/**/*.js'],
   ignoreDependencies: [

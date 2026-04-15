@@ -1,0 +1,112 @@
+<div class="filters-sheet">
+  <!-- Header -->
+  <div class="filters-sheet__header">
+    <span class="filters-sheet__title">{{ 'gameList.filters.filters' | transloco }}</span>
+    <button mat-icon-button (click)="close()" [attr.aria-label]="'common.close' | transloco">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider />
+
+  <!-- Filter fields -->
+  <div class="filters-sheet__body">
+    <!-- Console -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
+      <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
+      <mat-select [value]="data.selectedConsole()" (selectionChange)="data.selectedConsole.set($event.value)">
+        <mat-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</mat-option>
+        @for (c of consoles; track c.code) {
+          <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Store -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
+      <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
+      <mat-select [value]="data.selectedStore()" (selectionChange)="data.selectedStore.set($event.value)">
+        <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
+        @for (s of data.stores(); track s.id) {
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Format -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
+      <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
+      <mat-select [value]="data.selectedFormat()" (selectionChange)="data.selectedFormat.set($event.value)">
+        <mat-option value="">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
+        <mat-option value="physical">{{ 'gameList.filters.physical' | transloco }}</mat-option>
+        <mat-option value="digital">{{ 'gameList.filters.digital' | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Status -->
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
+      <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
+      <mat-select [value]="data.selectedStatus()" (selectionChange)="data.selectedStatus.set($event.value)">
+        <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
+        @for (status of gameStatuses; track status.code) {
+          <mat-option [value]="status.code">
+            <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+            {{ status.labelKey | transloco }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Sort -->
+    <div class="filters-sheet__sort-row">
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="filters-sheet__field filters-sheet__field--sort">
+        <mat-label>{{ 'gameList.filters.sortBy' | transloco }}</mat-label>
+        <mat-select [value]="data.sortBy()" (selectionChange)="data.sortBy.set($event.value)">
+          <mat-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</mat-option>
+          <mat-option value="title">{{ 'gameList.sort.title' | transloco }}</mat-option>
+          <mat-option value="price">{{ 'gameList.sort.price' | transloco }}</mat-option>
+          <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-icon-button
+        (click)="data.sortDirection.set(data.sortDirection() === 'asc' ? 'desc' : 'asc')"
+        [attr.aria-label]="'Sort direction: ' + data.sortDirection()">
+        <mat-icon>{{ data.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Favourites toggle -->
+    <div class="filters-sheet__toggle-row">
+      <span class="filters-sheet__toggle-label">
+        <mat-icon [class.filters-sheet__fav-icon--active]="data.onlyFavorites()">
+          {{ data.onlyFavorites() ? 'favorite' : 'favorite_border' }}
+        </mat-icon>
+        {{ 'gameList.aria.onlyFavorites' | transloco }}
+      </span>
+      <app-toggle-switch [checked]="data.onlyFavorites()" (changed)="data.onlyFavorites.set($event)" />
+    </div>
+
+    <!-- Loaned toggle -->
+    <div class="filters-sheet__toggle-row">
+      <span class="filters-sheet__toggle-label">
+        <mat-icon>handshake</mat-icon>
+        {{ 'gameList.aria.onlyLoaned' | transloco }}
+      </span>
+      <app-toggle-switch [checked]="data.onlyLoaned()" (changed)="data.onlyLoaned.set($event)" />
+    </div>
+  </div>
+
+  <mat-divider />
+
+  <!-- Footer -->
+  <div class="filters-sheet__footer">
+    <button mat-stroked-button color="warn" (click)="onClearAll()">
+      <mat-icon>filter_alt_off</mat-icon>
+      {{ 'gameList.empty.clearFilters' | transloco }}
+    </button>
+  </div>
+</div>

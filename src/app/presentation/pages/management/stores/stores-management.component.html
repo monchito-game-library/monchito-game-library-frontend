@@ -27,20 +27,12 @@
     } @else {
       <div class="stores-grid">
         @for (store of stores(); track store.id) {
-          <div
-            class="store-card"
-            [class.store-card--selected]="selectedStore()?.id === store.id"
-            (click)="onSelectStore(store)">
-            <mat-icon class="store-card__icon">storefront</mat-icon>
-            <div class="store-card__info">
-              <span class="store-card__name">{{ store.label }}</span>
-              @if (store.formatHint) {
-                <div class="store-card__chips">
-                  <span class="store-card__chip">{{ getFormatHintLabel(store.formatHint) }}</span>
-                </div>
-              }
-            </div>
-          </div>
+          <app-catalog-item-card
+            icon="storefront"
+            [name]="store.label"
+            [chips]="store.formatHint ? [getFormatHintLabel(store.formatHint)] : []"
+            [selected]="selectedStore()?.id === store.id"
+            (cardClick)="onSelectStore(store)" />
         }
       </div>
     }

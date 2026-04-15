@@ -1,0 +1,42 @@
+<div class="brands-page" [class.brands-page--panel-open]="panelOpen()">
+  <header class="brands-page__header">
+    <div class="brands-page__header-left">
+      <h1 class="brands-page__title">{{ 'management.hardware.title' | transloco }}</h1>
+    </div>
+    <button mat-flat-button color="primary" (click)="onAddBrand()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.hardware.brands.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (panelOpen()) {
+    <div class="brands-edit-panel-wrapper">
+      <app-hardware-brand-edit-panel
+        [brand]="selectedBrand() ?? null"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (deleted)="onDeleteBrand()" />
+    </div>
+  }
+
+  <div class="brands-grid-wrapper">
+    @if (loading()) {
+      <div class="brands-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (brands().length === 0) {
+      <p class="brands-page__empty">{{ 'management.hardware.brands.empty' | transloco }}</p>
+    } @else {
+      <div class="brands-grid">
+        @for (brand of brands(); track brand.id) {
+          <app-catalog-item-card
+            icon="memory"
+            [name]="brand.name"
+            [selected]="selectedBrand()?.id === brand.id"
+            [showChevron]="true"
+            (cardClick)="onOpenModels(brand)" />
+        }
+      </div>
+    }
+  </div>
+</div>

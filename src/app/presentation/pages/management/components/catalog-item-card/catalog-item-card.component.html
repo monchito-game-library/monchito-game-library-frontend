@@ -1,0 +1,16 @@
+<mat-icon class="catalog-item-card__icon">{{ icon() }}</mat-icon>
+
+<div class="catalog-item-card__info">
+  <span class="catalog-item-card__name">{{ name() }}</span>
+  @if (chips().length > 0) {
+    <div class="catalog-item-card__chips">
+      @for (chip of chips(); track chip) {
+        <span class="catalog-item-card__chip">{{ chip }}</span>
+      }
+    </div>
+  }
+</div>
+
+@if (showChevron()) {
+  <mat-icon class="catalog-item-card__chevron">chevron_right</mat-icon>
+}

@@ -40,6 +40,10 @@ export const managementRoutes: Routes = [
         path: 'protectors',
         loadComponent: () =>
           import('./protectors/protectors-management.component').then((m) => m.ProtectorsManagementComponent)
+      },
+      {
+        path: 'hardware',
+        loadChildren: () => import('./hardware/hardware-management.routes').then((m) => m.hardwareManagementRoutes)
       }
     ]
   }

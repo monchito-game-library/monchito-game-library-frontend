@@ -235,6 +235,19 @@ describe('OrderInfoSectionComponent', () => {
 
       vi.useRealTimers();
     });
+
+    it('cancela el timer previo si se llama onCancelEdit mientras hay uno pendiente', () => {
+      vi.useFakeTimers();
+
+      component.onCancelEdit();
+      // Llamar de nuevo antes de que expire el timer — cancela el anterior
+      component.onCancelEdit();
+
+      vi.advanceTimersByTime(350);
+      expect(component.hidingActions()).toBe(false);
+
+      vi.useRealTimers();
+    });
   });
 
   describe('onSaveHeader()', () => {
@@ -254,6 +267,24 @@ describe('OrderInfoSectionComponent', () => {
       await savePromise;
 
       expect(component.hidingActions()).toBe(true);
+      vi.advanceTimersByTime(700);
+      expect(component.hidingActions()).toBe(false);
+
+      vi.useRealTimers();
+    });
+
+    it('cancela el timer previo si se llama onSaveHeader mientras hay uno pendiente', async () => {
+      vi.useFakeTimers();
+
+      // Iniciar un timer desde onCancelEdit
+      component.onCancelEdit();
+      expect(component.hidingActions()).toBe(true);
+
+      // Guardar antes de que expire — cancela el timer anterior y crea uno nuevo
+      const savePromise = component.onSaveHeader();
+      await Promise.resolve();
+      await savePromise;
+
       vi.advanceTimersByTime(700);
       expect(component.hidingActions()).toBe(false);
 

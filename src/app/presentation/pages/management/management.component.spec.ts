@@ -15,7 +15,7 @@ describe('ManagementComponent', () => {
   });
 
   it('se crea correctamente', () => expect(component).toBeTruthy());
-  it('expone 4 secciones de navegación', () => expect(component.sections).toHaveLength(4));
+  it('expone 5 secciones de navegación', () => expect(component.sections).toHaveLength(5));
   it('las secciones tienen icon, label y route', () => {
     component.sections.forEach((s) => {
       expect(s.icon).toBeTruthy();

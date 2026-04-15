@@ -8,9 +8,24 @@
 
 | Bug | Componente | Prioridad |
 |---|---|---|
+| ~~[Flujo de venta de juegos no elimina el juego de la colección](#flujo-de-venta-de-juegos-no-elimina-el-juego-de-la-colección)~~ | `GameDetailComponent` | ✅ Resuelto |
 | ~~[Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile)~~ | `WishlistComponent` | ✅ Resuelto |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
 | ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
+
+---
+
+## ~~Flujo de venta de juegos no elimina el juego de la colección~~
+
+**Componente:** `GameDetailComponent`
+**Fichero:** `src/app/presentation/pages/games/pages/game-list/pages/game-detail/`
+
+**Descripción:**
+Al marcar un juego como vendido desde el detalle, el juego no desaparece de la colección. El usuario puede indicar que lo ha vendido sin pasar por el flujo de puesta en venta, y el registro permanece visible en la lista como si siguiera en la colección.
+
+**Causa:** `GameListComponent` y `GameDetailComponent` son componentes hermanos (no padre-hijo). Al navegar al detalle, `GameListComponent` se destruye y se recrea al volver. En `ngOnInit`, la suscripción a `NavigationEnd` se registraba después de `await this._loadGames(false)`. Angular disparaba `NavigationEnd` mientras el componente estaba suspendido en ese `await`, de modo que el evento se perdía y la lista mostraba datos obsoletos de la caché (con el juego ya vendido todavía visible).
+
+**Solución:** eliminada la suscripción a `NavigationEnd`. El componente ahora muestra la caché inmediatamente si existe (para UX fluida) y siempre fuerza `_loadGames(true)` al montarse, garantizando que la lista refleje el estado real de Supabase independientemente de cómo se haya llegado a ella.
 
 ---
 

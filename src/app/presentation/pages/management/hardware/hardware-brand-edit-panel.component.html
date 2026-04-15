@@ -1,0 +1,37 @@
+<div class="edit-panel">
+  <div class="edit-panel__header">
+    <h2 class="edit-panel__title">
+      {{ (brand() ? 'management.hardware.brands.editTitle' : 'management.hardware.brands.addTitle') | transloco }}
+      @if (brand()) {
+        <span class="edit-panel__subtitle">— {{ brand()!.name }}</span>
+      }
+    </h2>
+  </div>
+
+  <form [formGroup]="form" class="edit-panel__form">
+    <div class="edit-panel__fields">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'management.hardware.brands.nameLabel' | transloco }}</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="edit-panel__actions">
+      @if (brand()) {
+        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
+          <mat-icon>delete_outline</mat-icon>
+          {{ 'common.delete' | transloco }}
+        </button>
+      }
+      <div class="edit-panel__actions-right">
+        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="form.invalid">
+          {{ 'common.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
