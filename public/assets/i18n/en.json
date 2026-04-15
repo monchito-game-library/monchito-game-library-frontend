@@ -471,7 +471,8 @@
       "openUserMenu": "Open user menu",
       "bottomNav": "Navigation"
     },
-    "management": "Management"
+    "management": "Management",
+    "sale": "For sale"
   },
   "selectUser": {
     "title": "Select User"
@@ -575,7 +576,59 @@
       "stores": "Stores",
       "users": "Users",
       "auditLog": "Activity log",
-      "products": "Protectors"
+      "products": "Protectors",
+      "hardware": "Hardware"
+    },
+    "hardware": {
+      "title": "Hardware catalogue",
+      "brands": {
+        "addBtn": "New brand",
+        "addTitle": "New brand",
+        "editTitle": "Edit brand",
+        "nameLabel": "Name",
+        "empty": "No brands yet. Add the first one.",
+        "viewModels": "View models",
+        "deleteConfirm": "Delete brand «{{ name }}»?",
+        "deleteWarning": "All its models and editions will also be deleted."
+      },
+      "models": {
+        "addBtn": "New model",
+        "addTitle": "New model",
+        "editTitle": "Edit model",
+        "nameLabel": "Name",
+        "typeLabel": "Type",
+        "typeConsole": "Console",
+        "typeController": "Controller",
+        "generationLabel": "Generation",
+        "empty": "No models yet. Add the first one.",
+        "viewEditions": "View editions",
+        "deleteConfirm": "Delete model «{{ name }}»?",
+        "deleteWarning": "All its editions and specs will also be deleted.",
+        "sectionModel": "Model",
+        "sectionSpecs": "Technical specifications",
+        "launchYearLabel": "Launch year",
+        "discontinuedYearLabel": "Discontinued year",
+        "categoryLabel": "Category",
+        "categoryHome": "Home",
+        "categoryPortable": "Portable",
+        "categoryHybrid": "Hybrid",
+        "mediaLabel": "Media format",
+        "mediaOpticalDisc": "Optical disc",
+        "mediaDigital": "Digital",
+        "mediaCartridge": "Cartridge",
+        "mediaHybrid": "Hybrid",
+        "mediaBuiltIn": "Built-in",
+        "videoResolutionLabel": "Video resolution",
+        "unitsSoldLabel": "Units sold (M)"
+      },
+      "editions": {
+        "addBtn": "New edition",
+        "addTitle": "New edition",
+        "editTitle": "Edit edition",
+        "nameLabel": "Name",
+        "empty": "No editions yet. Add the first one.",
+        "deleteConfirm": "Delete edition «{{ name }}»?"
+      }
     },
     "products": {
       "title": "Protector catalogue",
@@ -694,6 +747,240 @@
         "soldSuccess": "Game marked as sold",
         "soldError": "Error registering the sale"
       }
+    }
+  },
+  "collectionOverview": {
+    "title": "My Collection",
+    "games": {
+      "title": "Games",
+      "subtitle": "Your games"
+    },
+    "consolesCategory": {
+      "title": "Consoles",
+      "subtitle": "Your consoles"
+    },
+    "controllers": {
+      "title": "Controllers",
+      "subtitle": "Your controllers"
+    },
+    "totalSpent": "Total invested in collection",
+    "loading": "Loading...",
+    "items": "{{ count }} items",
+    "oneItem": "1 item",
+    "tabOverview": "Overview",
+    "tabGames": "Games",
+    "tabConsoles": "Consoles",
+    "tabControllers": "Controllers"
+  },
+  "consolesPage": {
+    "title": "My Consoles",
+    "loading": "Loading consoles...",
+    "add": "Add console",
+    "count": "{{ count }} consoles",
+    "countOne": "1 console",
+    "search": "Search console",
+    "noResults": "No results for that search",
+    "empty": {
+      "title": "No consoles",
+      "subtitle": "Add your first console to the collection",
+      "add": "Add console"
+    },
+    "condition": {
+      "new": "New",
+      "used": "Used"
+    },
+    "deleteDialog": {
+      "title": "Delete console",
+      "message": "Are you sure you want to delete this console?"
+    },
+    "snack": {
+      "deleted": "Console deleted",
+      "deleteError": "Error deleting console",
+      "loadError": "Error loading consoles"
+    }
+  },
+  "controllerDetailPage": {
+    "sectionUser": "My controller"
+  },
+  "controllersPage": {
+    "title": "My Controllers",
+    "loading": "Loading controllers...",
+    "add": "Add controller",
+    "count": "{{ count }} controllers",
+    "countOne": "1 controller",
+    "search": "Search controller",
+    "noResults": "No results for that search",
+    "empty": {
+      "title": "No controllers",
+      "subtitle": "Add your first controller to the collection",
+      "add": "Add controller"
+    },
+    "condition": {
+      "new": "New",
+      "used": "Used"
+    },
+    "deleteDialog": {
+      "title": "Delete controller",
+      "message": "Are you sure you want to delete this controller?"
+    },
+    "snack": {
+      "deleted": "Controller deleted",
+      "deleteError": "Error deleting controller",
+      "loadError": "Error loading controllers"
+    }
+  },
+  "consoleDetailPage": {
+    "sectionUser": "My console",
+    "sectionCatalog": "Specifications",
+    "generation": "Generation",
+    "launchYear": "Launch year",
+    "discontinuedYear": "Discontinued",
+    "stillOnSale": "Still on sale",
+    "category": "Category",
+    "category_home": "Home",
+    "category_portable": "Portable",
+    "category_hybrid": "Hybrid",
+    "media": "Media",
+    "media_optical_disc": "Optical disc",
+    "media_digital": "Digital",
+    "media_cartridge": "Cartridge",
+    "media_hybrid": "Hybrid",
+    "media_built_in": "Built-in",
+    "videoResolution": "Video resolution",
+    "unitsSoldMillion": "Units sold"
+  },
+  "consolePage": {
+    "addTitle": "Add console",
+    "editTitle": "Edit console",
+    "brand": "Brand",
+    "model": "Model",
+    "edition": "Special edition",
+    "region": "Region",
+    "regionNone": "No region",
+    "condition": "Condition",
+    "price": "Price (€)",
+    "store": "Store",
+    "purchaseDate": "Purchase date",
+    "notes": "Notes",
+    "required": "Required field",
+    "cancel": "Cancel",
+    "save": "Save",
+    "snack": {
+      "saved": "Console saved",
+      "updated": "Console updated",
+      "saveError": "Error saving console",
+      "selectBrandModel": "Please select a valid brand and model"
+    }
+  },
+  "controllerPage": {
+    "addTitle": "Add controller",
+    "editTitle": "Edit controller",
+    "brand": "Brand",
+    "model": "Model",
+    "edition": "Special edition",
+    "color": "Color",
+    "compatibility": "Compatibility",
+    "condition": "Condition",
+    "price": "Price (€)",
+    "store": "Store",
+    "purchaseDate": "Purchase date",
+    "notes": "Notes",
+    "required": "Required field",
+    "cancel": "Cancel",
+    "save": "Save",
+    "snack": {
+      "saved": "Controller saved",
+      "updated": "Controller updated",
+      "saveError": "Error saving controller"
+    }
+  },
+  "consoleRegions": {
+    "pal": "PAL",
+    "ntsc": "NTSC",
+    "ntscJ": "NTSC-J"
+  },
+  "controllerCompatibilities": {
+    "ps5": "PlayStation 5",
+    "ps4": "PlayStation 4",
+    "ps3": "PlayStation 3",
+    "xbox": "Xbox",
+    "pc": "PC",
+    "switch": "Nintendo Switch",
+    "universal": "Universal"
+  },
+  "salePage": {
+    "tabs": {
+      "available": "For sale",
+      "history": "History"
+    },
+    "filter": {
+      "all": "All",
+      "game": "Games",
+      "console": "Consoles",
+      "controller": "Controllers"
+    },
+    "type": {
+      "game": "Game",
+      "console": "Console",
+      "controller": "Controller"
+    },
+    "available": {
+      "items": "items for sale",
+      "noPrice": "No price",
+      "empty": {
+        "title": "Nothing for sale",
+        "subtitle": "Mark games, consoles or controllers as available for sale from their detail page"
+      }
+    },
+    "history": {
+      "items": "sales",
+      "empty": {
+        "title": "No sales history",
+        "subtitle": "Items you have marked as sold will appear here"
+      }
+    },
+    "snack": {
+      "loadError": "Error loading sale data"
+    }
+  },
+  "hardwareLoan": {
+    "title": "Loan",
+    "loanedBadge": "Loaned to",
+    "activeSection": "Active loan",
+    "newSection": "New loan",
+    "loanedTo": "Person",
+    "loanedToPlaceholder": "e.g. John",
+    "loanedAt": "Loan date",
+    "loanBtn": "Lend",
+    "returnBtn": "Returned",
+    "snack": {
+      "loanSuccess": "Loan registered",
+      "loanError": "Error registering loan",
+      "returnSuccess": "Loan marked as returned",
+      "returnError": "Error registering return"
+    }
+  },
+  "hardwareSale": {
+    "title": "Sale",
+    "manageBtn": "Sale",
+    "forSaleBadge": "For sale",
+    "availability": "Available for sale",
+    "forSale": "For sale",
+    "salePrice": "Asking price",
+    "salePricePlaceholder": "e.g. 29.99",
+    "registerSection": "Already sold it?",
+    "soldPriceFinal": "Final sale price",
+    "soldPricePlaceholder": "e.g. 25.00",
+    "soldAt": "Sale date",
+    "soldAtInvalid": "Enter a valid date",
+    "soldWarning": "Once confirmed, the item will move to history and will no longer appear in your collection.",
+    "saveBtn": "Save",
+    "markAsSoldBtn": "Mark as sold",
+    "snack": {
+      "saveError": "Error saving sale status",
+      "saveSuccess": "Sale status updated",
+      "soldSuccess": "Item marked as sold",
+      "soldError": "Error registering sale"
     }
   }
 }

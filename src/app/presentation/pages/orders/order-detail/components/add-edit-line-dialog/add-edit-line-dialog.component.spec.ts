@@ -130,6 +130,17 @@ describe('AddEditLineDialogComponent — modo editar (con line)', () => {
   });
 });
 
+describe('AddEditLineDialogComponent — modo editar con producto no encontrado', () => {
+  it('productSearchControl es null cuando el productId del pedido no existe en la lista de productos', () => {
+    vi.clearAllMocks();
+    const existingLine = makeOrderLine({ productId: 'unknown-product-id' });
+    const fixture = setupTestBed({ products, line: existingLine });
+    const component = fixture.componentInstance;
+
+    expect(component.productSearchControl.value).toBeNull();
+  });
+});
+
 // ─── onProductSelected ────────────────────────────────────────────────────────
 
 describe('AddEditLineDialogComponent — onProductSelected()', () => {
@@ -177,6 +188,14 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
     expect(component.form.controls.productId.errors).toBeNull();
     expect(component.productSearchControl.errors).toBeNull();
   });
+
+  it('establece null en productSearchControl cuando el productId no existe en la lista', () => {
+    const event = { option: { value: 'unknown-product-id' } } as MatAutocompleteSelectedEvent;
+
+    component.onProductSelected(event);
+
+    expect(component.productSearchControl.value).toBeNull();
+  });
 });
 
 // ─── filteredProducts ─────────────────────────────────────────────────────────
@@ -219,6 +238,13 @@ describe('AddEditLineDialogComponent — filteredProducts signal', () => {
     fixture.detectChanges();
 
     expect(component.filteredProducts()).toHaveLength(2);
+  });
+
+  it('trata el valor null como cadena vacía y devuelve lista vacía', () => {
+    component.productSearchControl.setValue(null);
+    fixture.detectChanges();
+
+    expect(component.filteredProducts()).toEqual([]);
   });
 });
 

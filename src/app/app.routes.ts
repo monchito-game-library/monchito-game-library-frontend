@@ -6,9 +6,13 @@ export const routes: Routes = [
     path: 'reset-password',
     loadChildren: () => import('@/pages/auth/reset-password/reset-password.routes').then((m) => m.resetPasswordRoutes)
   },
-  { path: 'home', redirectTo: 'games', pathMatch: 'full' },
-  { path: 'games', loadChildren: () => import('@/pages/game-list/game-list.routes').then((m) => m.gameListRoutes) },
+  { path: 'home', redirectTo: 'collection', pathMatch: 'full' },
+  {
+    path: 'collection',
+    loadChildren: () => import('@/pages/collection/collection.routes').then((m) => m.collectionRoutes)
+  },
   { path: 'wishlist', loadChildren: () => import('@/pages/wishlist/wishlist.routes').then((m) => m.wishlistRoutes) },
+  { path: 'sale', loadChildren: () => import('@/pages/sale/sale.routes').then((m) => m.saleRoutes) },
   { path: 'orders', loadChildren: () => import('@/pages/orders/orders.routes').then((m) => m.ordersRoutes) },
   { path: 'settings', loadChildren: () => import('@/pages/settings/settings.routes').then((m) => m.settingsRoutes) },
   {

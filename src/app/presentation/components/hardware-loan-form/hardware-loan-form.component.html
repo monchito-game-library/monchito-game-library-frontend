@@ -1,0 +1,80 @@
+<div class="hardware-loan-form">
+  <!-- Header -->
+  <div class="hardware-loan-form__header">
+    <button
+      mat-icon-button
+      class="hardware-loan-form__back-btn"
+      (click)="onCancel()"
+      [attr.aria-label]="'common.back' | transloco">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="hardware-loan-form__title">{{ 'hardwareLoan.title' | transloco }}</h2>
+  </div>
+
+  @if (isLoaned()) {
+    <!-- Return mode: active loan info -->
+    <section class="hardware-loan-form__section">
+      <h3 class="hardware-loan-form__section-title">{{ 'hardwareLoan.activeSection' | transloco }}</h3>
+
+      <div class="hardware-loan-form__info-row">
+        <mat-icon>person</mat-icon>
+        <span>{{ item().activeLoanTo }}</span>
+      </div>
+      <div class="hardware-loan-form__info-row">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ item().activeLoanAt }}</span>
+      </div>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        class="hardware-loan-form__action-btn"
+        (click)="onReturn()"
+        [disabled]="returning()">
+        @if (returning()) {
+          <mat-icon>hourglass_empty</mat-icon>
+        } @else {
+          <mat-icon>undo</mat-icon>
+        }
+        {{ 'hardwareLoan.returnBtn' | transloco }}
+      </button>
+    </section>
+  } @else {
+    <!-- Loan mode: create loan form -->
+    <form [formGroup]="form" class="hardware-loan-form__content">
+      <section class="hardware-loan-form__section">
+        <h3 class="hardware-loan-form__section-title">{{ 'hardwareLoan.newSection' | transloco }}</h3>
+
+        <mat-form-field appearance="outline" class="hardware-loan-form__field">
+          <mat-label>{{ 'hardwareLoan.loanedTo' | transloco }}</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="loanedTo"
+            [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="hardware-loan-form__field">
+          <mat-label>{{ 'hardwareLoan.loanedAt' | transloco }}</mat-label>
+          <input matInput type="date" formControlName="loanedAt" />
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          class="hardware-loan-form__action-btn"
+          (click)="onLoan()"
+          [disabled]="saving()">
+          @if (saving()) {
+            <mat-icon>hourglass_empty</mat-icon>
+          } @else {
+            <mat-icon>handshake</mat-icon>
+          }
+          {{ 'hardwareLoan.loanBtn' | transloco }}
+        </button>
+      </section>
+    </form>
+  }
+</div>

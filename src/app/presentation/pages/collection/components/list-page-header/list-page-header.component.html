@@ -1,0 +1,33 @@
+<!-- Stats: proyectados desde el padre -->
+<div class="list-page-header__stats">
+  <ng-content />
+</div>
+
+<!-- Búsqueda y acciones -->
+<div class="list-page-header__filters">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-page-header__search">
+    <mat-label>{{ searchPlaceholder() | transloco }}</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput [value]="searchValue()" (input)="searchChange.emit($any($event.target).value)" />
+  </mat-form-field>
+
+  @if (showFilterBtn()) {
+    <button
+      class="list-page-header__filter-btn"
+      mat-icon-button
+      (click)="filterClick.emit()"
+      [attr.aria-label]="'gameList.filters.filters' | transloco">
+      <mat-icon>tune</mat-icon>
+      @if (filterCount() > 0) {
+        <span class="list-page-header__filter-badge">{{ filterCount() }}</span>
+      }
+    </button>
+  }
+
+  @if (showAddBtn()) {
+    <button mat-flat-button color="primary" class="list-page-header__add-btn" (click)="addClick.emit()">
+      <mat-icon>add</mat-icon>
+      {{ 'nav.add' | transloco }}
+    </button>
+  }
+</div>

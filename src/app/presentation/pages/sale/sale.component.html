@@ -1,0 +1,163 @@
+<div class="sale-page">
+  <mat-tab-group
+    class="sale-page__tab-group"
+    animationDuration="150ms"
+    (selectedTabChange)="setTab($event.index === 0 ? 'available' : 'history')">
+    <!-- ─── Tab: En venta ─────────────────────────────────────────────────── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>sell</mat-icon>
+        <span class="sale-page__tab-label">{{ 'salePage.tabs.available' | transloco }}</span>
+      </ng-template>
+
+      <div class="sale-page__tab-content">
+        <!-- Filtros de tipo -->
+        <div class="sale-page__filters">
+          @for (
+            filter of [
+              ['all', 'sports_esports'],
+              ['game', 'sports_esports'],
+              ['console', 'tv'],
+              ['controller', 'gamepad']
+            ];
+            track filter[0]
+          ) {
+            <button
+              class="sale-page__filter-chip"
+              [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+              (click)="setFilter($any(filter[0]))">
+              <mat-icon>{{ filter[1] }}</mat-icon>
+              {{ 'salePage.filter.' + filter[0] | transloco }}
+            </button>
+          }
+        </div>
+
+        <!-- Content -->
+        <div class="sale-page__content">
+          @if (loading()) {
+            <div class="sale-page__loading">
+              <mat-progress-spinner diameter="48" mode="indeterminate" />
+            </div>
+          } @else if (filteredAvailable().length === 0) {
+            <div class="sale-page__empty">
+              <mat-icon>sell</mat-icon>
+              <p class="sale-page__empty-title">{{ 'salePage.available.empty.title' | transloco }}</p>
+              <p class="sale-page__empty-subtitle">{{ 'salePage.available.empty.subtitle' | transloco }}</p>
+            </div>
+          } @else {
+            <div class="sale-page__summary">
+              <span class="sale-page__summary-count">{{ filteredAvailable().length }}</span>
+              <span class="sale-page__summary-label">{{ 'salePage.available.items' | transloco }}</span>
+              <span class="sale-page__summary-divider"></span>
+              <mat-icon>payments</mat-icon>
+              <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </div>
+            <div class="sale-page__list">
+              @for (item of filteredAvailable(); track item.id) {
+                <div class="sale-page__item">
+                  <div class="sale-page__item-icon">
+                    <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
+                  </div>
+                  <div class="sale-page__item-info">
+                    <span class="sale-page__item-name">{{ item.itemName }}</span>
+                    @if (item.brandName) {
+                      <span class="sale-page__item-sub">{{ item.brandName }}</span>
+                    }
+                    <span class="sale-page__item-type-chip">{{ typeKey(item.itemType) | transloco }}</span>
+                  </div>
+                  <div class="sale-page__item-price">
+                    @if (item.salePrice !== null) {
+                      {{ item.salePrice | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                    } @else {
+                      <span class="sale-page__item-no-price">{{ 'salePage.available.noPrice' | transloco }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ─── Tab: Historial ────────────────────────────────────────────────── -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>history</mat-icon>
+        <span class="sale-page__tab-label">{{ 'salePage.tabs.history' | transloco }}</span>
+      </ng-template>
+
+      <div class="sale-page__tab-content">
+        <!-- Filtros de tipo -->
+        <div class="sale-page__filters">
+          @for (
+            filter of [
+              ['all', 'sports_esports'],
+              ['game', 'sports_esports'],
+              ['console', 'tv'],
+              ['controller', 'gamepad']
+            ];
+            track filter[0]
+          ) {
+            <button
+              class="sale-page__filter-chip"
+              [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+              (click)="setFilter($any(filter[0]))">
+              <mat-icon>{{ filter[1] }}</mat-icon>
+              {{ 'salePage.filter.' + filter[0] | transloco }}
+            </button>
+          }
+        </div>
+
+        <!-- Content -->
+        <div class="sale-page__content">
+          @if (loading()) {
+            <div class="sale-page__loading">
+              <mat-progress-spinner diameter="48" mode="indeterminate" />
+            </div>
+          } @else if (filteredSold().length === 0) {
+            <div class="sale-page__empty">
+              <mat-icon>history</mat-icon>
+              <p class="sale-page__empty-title">{{ 'salePage.history.empty.title' | transloco }}</p>
+              <p class="sale-page__empty-subtitle">{{ 'salePage.history.empty.subtitle' | transloco }}</p>
+            </div>
+          } @else {
+            <div class="sale-page__summary">
+              <span class="sale-page__summary-count">{{ filteredSold().length }}</span>
+              <span class="sale-page__summary-label">{{ 'salePage.history.items' | transloco }}</span>
+              <span class="sale-page__summary-divider"></span>
+              <mat-icon>payments</mat-icon>
+              <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </div>
+            <div class="sale-page__list">
+              @for (item of filteredSold(); track item.id) {
+                <div class="sale-page__item">
+                  <div class="sale-page__item-icon">
+                    <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
+                  </div>
+                  <div class="sale-page__item-info">
+                    <span class="sale-page__item-name">{{ item.itemName }}</span>
+                    @if (item.brandName) {
+                      <span class="sale-page__item-sub">{{ item.brandName }}</span>
+                    }
+                    <span class="sale-page__item-type-chip">{{ typeKey(item.itemType) | transloco }}</span>
+                  </div>
+                  <div class="sale-page__item-right">
+                    <span class="sale-page__item-sold-price">
+                      @if (item.soldPriceFinal !== null) {
+                        {{ item.soldPriceFinal | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                      } @else {
+                        —
+                      }
+                    </span>
+                    <span class="sale-page__item-date">{{ item.soldAt | date: 'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

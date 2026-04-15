@@ -228,4 +228,47 @@ describe('SupabaseAuthRepository', () => {
       await expect(repo.updateDisplayName('New Name')).rejects.toThrow('Failed to update display name');
     });
   });
+
+  describe('updatePassword', () => {
+    it('actualiza la contraseña sin lanzar errores', async () => {
+      mockSupabase.auth.updateUser.mockResolvedValue({ error: null });
+
+      await expect(repo.updatePassword('newPass123')).resolves.toBeUndefined();
+      expect(mockSupabase.auth.updateUser).toHaveBeenCalledWith({ password: 'newPass123' });
+    });
+
+    it('lanza error si updateUser falla', async () => {
+      mockSupabase.auth.updateUser.mockResolvedValue({ error: { message: 'Password too weak' } });
+
+      await expect(repo.updatePassword('weak')).rejects.toThrow('Password too weak');
+    });
+  });
+
+  describe('onPasswordRecovery', () => {
+    it('llama al callback cuando el evento es PASSWORD_RECOVERY', () => {
+      let captured: ((event: string) => void) | null = null;
+      mockSupabase.auth.onAuthStateChange.mockImplementation((cb: any) => {
+        captured = cb;
+      });
+      const callback = vi.fn();
+
+      repo.onPasswordRecovery(callback);
+      captured!('PASSWORD_RECOVERY');
+
+      expect(callback).toHaveBeenCalledOnce();
+    });
+
+    it('no llama al callback para otros eventos de auth', () => {
+      let captured: ((event: string) => void) | null = null;
+      mockSupabase.auth.onAuthStateChange.mockImplementation((cb: any) => {
+        captured = cb;
+      });
+      const callback = vi.fn();
+
+      repo.onPasswordRecovery(callback);
+      captured!('SIGNED_IN');
+
+      expect(callback).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
@@ -104,6 +104,20 @@ describe('ResetPasswordComponent', () => {
       expect(component.hideConfirmPassword()).toBe(false);
       component.toggleConfirmPasswordVisibility();
       expect(component.hideConfirmPassword()).toBe(true);
+    });
+  });
+
+  describe('_passwordMatchValidator (privado)', () => {
+    it('devuelve null cuando el control no tiene el campo password', () => {
+      const group = new FormGroup({ confirmPassword: new FormControl('pass123') });
+      const result = (component as any)._passwordMatchValidator(group);
+      expect(result).toBeNull();
+    });
+
+    it('devuelve null cuando el control no tiene el campo confirmPassword', () => {
+      const group = new FormGroup({ password: new FormControl('pass123') });
+      const result = (component as any)._passwordMatchValidator(group);
+      expect(result).toBeNull();
     });
   });
 

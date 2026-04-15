@@ -32,6 +32,7 @@ import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { StoreFormResult } from '@/interfaces/management/store-form-result.interface';
+import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Edit panel component (inline, below the page header)
@@ -109,7 +110,7 @@ export class StoreEditPanelComponent {
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoreEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [StoreEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe, CatalogItemCardComponent]
 })
 export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);

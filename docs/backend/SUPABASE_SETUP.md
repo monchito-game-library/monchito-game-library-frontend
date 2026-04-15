@@ -1,7 +1,7 @@
 # Monchito Game Library — Estado del Backend (Supabase)
 
-> Última actualización: 2026-04-10
-> Para recrear la base de datos desde cero ejecuta `docs/supabase-schema-current.sql`.
+> Última actualización: 2026-04-15
+> Para recrear la base de datos desde cero ejecuta `docs/backend/schema/supabase-schema-current.sql` y después los seeds de `docs/backend/seeds/`.
 
 ---
 
@@ -322,6 +322,164 @@ Tokens de invitación para que nuevos usuarios se unan a un pedido.
 
 ---
 
+### `hardware_brands`
+
+Catálogo global de marcas de hardware (Sony, Microsoft, Nintendo…). Gestionado desde el panel de administración.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `name` | TEXT UNIQUE NOT NULL | Nombre de la marca |
+
+**RLS:** Lectura para usuarios autenticados. Escritura solo para admins (`user_preferences.role = 'admin'`).
+
+---
+
+### `hardware_models`
+
+Modelos de hardware agrupados por marca. Incluye consolas y mandos diferenciados por `type`.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `brand_id` | UUID FK hardware_brands | ON DELETE CASCADE |
+| `name` | TEXT NOT NULL | Nombre del modelo |
+| `type` | TEXT NOT NULL | `'console'` \| `'controller'` |
+| `generation` | INTEGER | Generación de la consola (ej: 9 para PS5) |
+
+**UNIQUE:** `(brand_id, name, type)`
+
+**RLS:** Lectura para usuarios autenticados. Escritura solo para admins.
+
+---
+
+### `hardware_editions`
+
+Ediciones especiales de un modelo (ej: "Final Fantasy XVI Limited Edition").
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `model_id` | UUID FK hardware_models | ON DELETE CASCADE |
+| `name` | TEXT NOT NULL | Nombre de la edición |
+
+**UNIQUE:** `(model_id, name)`
+
+**RLS:** Lectura para usuarios autenticados. Escritura solo para admins.
+
+---
+
+### `hardware_console_specs`
+
+Especificaciones técnicas de consolas. Relación 1:1 con `hardware_models` donde `type = 'console'`. Datos de referencia (Wikipedia).
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `model_id` | UUID PK FK hardware_models | ON DELETE CASCADE |
+| `launch_year` | INTEGER NOT NULL | Año de lanzamiento |
+| `discontinued_year` | INTEGER | NULL = aún en venta |
+| `category` | TEXT NOT NULL | `'home'` \| `'portable'` \| `'hybrid'` |
+| `media` | TEXT NOT NULL | `'optical_disc'` \| `'digital'` \| `'cartridge'` \| `'hybrid'` \| `'built_in'` |
+| `video_resolution` | TEXT | Resolución máxima (texto libre: `'4K'`, `'1080p'`) |
+| `units_sold_million` | NUMERIC | Unidades vendidas en millones (acumulado por familia) |
+
+**RLS:** Lectura para usuarios autenticados. Escritura solo para admins.
+
+---
+
+### `hardware_controller_specs`
+
+Especificaciones técnicas de mandos. Relación 1:1 con `hardware_models` donde `type = 'controller'`. Actualmente solo contiene `model_id`; campos específicos se añadirán en futuras iteraciones.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `model_id` | UUID PK FK hardware_models | ON DELETE CASCADE |
+
+**RLS:** Lectura para usuarios autenticados. Escritura solo para admins.
+
+---
+
+### `user_consoles`
+
+Consolas de la colección personal de cada usuario.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `user_id` | UUID FK auth.users | ON DELETE CASCADE |
+| `brand_id` | UUID FK hardware_brands | Marca de la consola |
+| `model_id` | UUID FK hardware_models | Modelo de la consola |
+| `edition_id` | UUID FK hardware_editions | Edición especial (opcional) |
+| `region` | TEXT | `'PAL'` \| `'NTSC'` \| `'NTSC-J'` \| NULL |
+| `condition` | TEXT NOT NULL | `'new'` \| `'used'` |
+| `price` | NUMERIC(8,2) | Precio de compra |
+| `store` | TEXT | UUID FK stores (guardado como texto) |
+| `purchase_date` | DATE | |
+| `notes` | TEXT | |
+| `created_at` | TIMESTAMPTZ | Default `now()` |
+| `for_sale` | BOOLEAN NOT NULL | Default FALSE |
+| `sale_price` | NUMERIC(10,2) | |
+| `sold_at` | TIMESTAMPTZ | NULL = en colección activa |
+| `sold_price_final` | NUMERIC(10,2) | |
+| `active_loan_id` | UUID | FK lógica a `hardware_loans.id` |
+| `active_loan_to` | TEXT | |
+| `active_loan_at` | TIMESTAMPTZ | |
+
+**RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+---
+
+### `user_controllers`
+
+Mandos de la colección personal de cada usuario.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `user_id` | UUID FK auth.users | ON DELETE CASCADE |
+| `brand_id` | UUID FK hardware_brands | |
+| `model_id` | UUID FK hardware_models | |
+| `edition_id` | UUID FK hardware_editions | Edición especial (opcional) |
+| `color` | TEXT NOT NULL | Color del mando (ej: `'#000000'`) |
+| `compatibility` | TEXT NOT NULL | `'PS5'` \| `'PS4'` \| `'Xbox'` \| `'PC'` \| `'Switch'` \| ... |
+| `condition` | TEXT NOT NULL | `'new'` \| `'used'` |
+| `price` | NUMERIC(8,2) | |
+| `store` | TEXT | UUID FK stores (guardado como texto) |
+| `purchase_date` | DATE | |
+| `notes` | TEXT | |
+| `created_at` | TIMESTAMPTZ | Default `now()` |
+| `for_sale` | BOOLEAN NOT NULL | Default FALSE |
+| `sale_price` | NUMERIC(10,2) | |
+| `sold_at` | TIMESTAMPTZ | NULL = en colección activa |
+| `sold_price_final` | NUMERIC(10,2) | |
+| `active_loan_id` | UUID | FK lógica a `hardware_loans.id` |
+| `active_loan_to` | TEXT | |
+| `active_loan_at` | TIMESTAMPTZ | |
+
+**RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+---
+
+### `hardware_loans`
+
+Historial de préstamos de consolas y mandos. Tabla polimórfica: `item_type` discrimina el tipo de ítem prestado.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `item_type` | TEXT NOT NULL | `'console'` \| `'controller'` |
+| `user_item_id` | UUID NOT NULL | FK lógica a `user_consoles.id` o `user_controllers.id` |
+| `loaned_to` | TEXT NOT NULL | Nombre de la persona a quien se prestó |
+| `loaned_at` | TIMESTAMPTZ NOT NULL | Fecha del préstamo |
+| `returned_at` | TIMESTAMPTZ | NULL mientras el préstamo está activo |
+| `created_at` | TIMESTAMPTZ NOT NULL | Default `now()` |
+
+**Índice:** `hardware_loans_item_idx` sobre `(item_type, user_item_id)`.
+
+**RLS:** Solo el propio usuario (via join con `user_consoles` o `user_controllers`).
+
+---
+
 ## Vistas
 
 Todas las vistas con datos de usuario usan `WITH (security_invoker = on)` para que el RLS se aplique correctamente.
@@ -349,6 +507,18 @@ Columnas expuestas: `id`, `user_id`, `game_catalog_id`, `platform`, `desired_pri
 ```sql
 SELECT * FROM user_wishlist_full WHERE user_id = $1 ORDER BY priority ASC;
 ```
+
+### `available_items`
+
+UNION de `user_games_full` + `user_consoles` + `user_controllers` donde `for_sale = TRUE AND sold_at IS NULL`. Devuelve todos los artículos actualmente en venta de cualquier tipo.
+
+Columnas expuestas: `id` (TEXT), `item_type` (`'game'` | `'console'` | `'controller'`), `item_name`, `brand_name` (NULL para juegos), `model_name`, `sale_price`, `user_id`, `created_at`.
+
+### `sold_items`
+
+UNION de `user_games_full` + `user_consoles` + `user_controllers` donde `sold_at IS NOT NULL`. Historial global de ventas de cualquier tipo de ítem.
+
+Columnas expuestas: `id` (TEXT), `item_type` (`'game'` | `'console'` | `'controller'`), `item_name`, `brand_name` (NULL para juegos), `model_name`, `sold_price_final`, `sold_at`, `user_id`, `created_at`.
 
 ---
 
@@ -410,12 +580,17 @@ La limpieza de cada canal se hace al destruir `OrderDetailComponent` (función d
 
 | Trigger | Tabla | Evento | Acción |
 |---|---|---|---|
-| `trg_*_updated_at` | `user_games`, `stores`, `user_wishlist`, `game_catalog`, `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_game_catalog_updated_at` | `game_catalog` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_games_updated_at` | `user_games` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_preferences_updated_at` | `user_preferences` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_wishlist_updated_at` | `user_wishlist` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_stores_updated_at` | `stores` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_order_products_updated_at` | `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_orders_updated_at` | `orders` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_increment_users_on_insert` | `user_games` | AFTER INSERT | Incrementa `game_catalog.times_added_by_users` |
 | `trg_decrement_users_on_delete` | `user_games` | AFTER DELETE | Decrementa `game_catalog.times_added_by_users` |
 
-> **Nota:** `orders` y `order_lines` **no tienen trigger de `updated_at`**. El campo `orders.updated_at` se actualiza manualmente desde el repositorio y desde el RPC `set_member_ready`.
+> **Nota:** `order_lines` no tiene trigger de `updated_at`. El campo `orders.updated_at` se actualiza tanto por el trigger `trg_orders_updated_at` como manualmente desde el RPC `set_member_ready` (para disparar el canal realtime sin modificar otros campos).
 
 ---
 
