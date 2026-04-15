@@ -4,14 +4,14 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 /** Routes where the user may have unsaved work — update is deferred until they leave. */
-const FORM_ROUTES = ['/games/add', '/games/edit/'];
+const FORM_ROUTES = ['/collection/games/add', '/collection/games/edit/'];
 
 /**
  * Presentation service that enforces PWA updates automatically.
  *
  * Strategy:
  * - Safe route → shows a full-screen loading overlay and reloads after 400ms.
- * - Form route (/games/add, /games/edit/:id) → defers until the user navigates away,
+ * - Form route (/collection/games/add, /collection/games/edit/:id) → defers until the user navigates away,
  *   then shows the same overlay and reloads.
  */
 @Injectable({ providedIn: 'root' })

@@ -47,7 +47,7 @@ describe('canActivateAdmin', () => {
     const result = TestBed.runInInjectionContext(() => canActivateAdmin({} as never, {} as never));
 
     expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
   });
 
   it('devuelve Observable que resuelve true cuando preferencesLoaded cambia y el usuario es admin', async () => {
@@ -94,6 +94,6 @@ describe('canActivateAdmin', () => {
     TestBed.flushEffects();
 
     expect(await promise).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/games');
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
   });
 });

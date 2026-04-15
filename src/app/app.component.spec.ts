@@ -94,41 +94,41 @@ describe('AppComponent', () => {
 
     it('es true cuando hay usuario y la ruta es privada', () => {
       mockUserContext.isUserSelected.mockReturnValue(true);
-      component.currentRoute.set('/games');
+      component.currentRoute.set('/collection');
       expect(component.isAuthenticated()).toBe(true);
     });
   });
 
   describe('isNavActive', () => {
     it('es true cuando la ruta actual comienza con la ruta del item', () => {
-      component.currentRoute.set('/games');
-      expect(component.isNavActive('/games')).toBe(true);
+      component.currentRoute.set('/collection');
+      expect(component.isNavActive('/collection')).toBe(true);
     });
 
     it('es false cuando la ruta actual no coincide', () => {
       component.currentRoute.set('/wishlist');
-      expect(component.isNavActive('/games')).toBe(false);
+      expect(component.isNavActive('/collection')).toBe(false);
     });
 
-    it('/games/list/add es activo cuando la ruta actual es /games/list/edit/:id', () => {
-      component.currentRoute.set('/games/list/edit/123');
-      expect(component.isNavActive('/games/list/add')).toBe(true);
+    it('/collection/games/add es activo cuando la ruta actual es /collection/games/edit/:id', () => {
+      component.currentRoute.set('/collection/games/edit/123');
+      expect(component.isNavActive('/collection/games/add')).toBe(true);
     });
 
-    it('/games/list/add es activo cuando la ruta actual es /games/list/add', () => {
-      component.currentRoute.set('/games/list/add');
-      expect(component.isNavActive('/games/list/add')).toBe(true);
+    it('/collection/games/add es activo cuando la ruta actual es /collection/games/add', () => {
+      component.currentRoute.set('/collection/games/add');
+      expect(component.isNavActive('/collection/games/add')).toBe(true);
     });
   });
 
   describe('getPageTitle', () => {
-    it('devuelve "nav.add" para rutas /games/list/edit/:id', () => {
-      component.currentRoute.set('/games/list/edit/42');
+    it('devuelve "nav.add" para rutas /collection/games/edit/:id', () => {
+      component.currentRoute.set('/collection/games/edit/42');
       expect(component.getPageTitle()).toBe('nav.add');
     });
 
-    it('devuelve el label del nav item activo (/games → nav.collection)', () => {
-      component.currentRoute.set('/games');
+    it('devuelve el label del nav item activo (/collection → nav.collection)', () => {
+      component.currentRoute.set('/collection');
       expect(component.getPageTitle()).toBe('nav.collection');
     });
 
