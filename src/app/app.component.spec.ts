@@ -203,7 +203,7 @@ describe('AppComponent', () => {
       const initService = TestBed.inject(UserPreferencesInitService as any) as any;
 
       mockUserContext.userId.set('user-1');
-      TestBed.flushEffects();
+      TestBed.tick();
 
       expect(initService.loadPreferences).toHaveBeenCalledWith('user-1');
     });
