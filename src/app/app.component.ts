@@ -9,6 +9,7 @@ import {
   ViewChildren,
   WritableSignal
 } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
@@ -28,7 +29,16 @@ import { PwaUpdateService } from '@/services/pwa-update.service';
   styleUrls: ['./app.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent, TranslocoPipe]
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    SkeletonComponent,
+    TranslocoPipe,
+    NgOptimizedImage
+  ]
 })
 export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);

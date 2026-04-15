@@ -983,5 +983,8 @@
     "snack": {
       "loadError": "Error al cargar los datos de venta"
     }
+  },
+  "pwa": {
+    "updating": "Actualizando…"
   }
 }

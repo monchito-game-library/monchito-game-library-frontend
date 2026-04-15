@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
-import { Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 import { filter } from 'rxjs/operators';
 
 /** Routes where the user may have unsaved work — update is deferred until they leave. */
@@ -18,6 +19,7 @@ const FORM_ROUTES = ['/collection/games/add', '/collection/games/edit/'];
 export class PwaUpdateService {
   private readonly _swUpdate: SwUpdate = inject(SwUpdate);
   private readonly _router: Router = inject(Router);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** True once VERSION_READY has fired and the update is pending activation. */
   private _updatePending: boolean = false;
@@ -90,7 +92,7 @@ export class PwaUpdateService {
             stroke-dasharray="100" stroke-dashoffset="60"/>
         </svg>
         <span style="color:var(--mat-sys-on-surface,#fff);font-size:1rem;font-weight:500;">
-          Actualizando…
+          ${this._transloco.translate('pwa.updating')}
         </span>
       </div>
       <style>@keyframes pwa-spin{to{transform:rotate(360deg)}}</style>
@@ -103,7 +105,7 @@ export class PwaUpdateService {
   /**
    * Returns true if the given URL corresponds to a form route with unsaved data risk.
    *
-   * @param {string} url - URL de la actualización de la PWA
+   * @param {string} url - Current URL to check against form routes
    */
   private _isFormRoute(url: string): boolean {
     return FORM_ROUTES.some((route) => url.startsWith(route));

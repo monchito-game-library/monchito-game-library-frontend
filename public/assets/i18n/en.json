@@ -982,5 +982,8 @@
       "soldSuccess": "Item marked as sold",
       "soldError": "Error registering sale"
     }
+  },
+  "pwa": {
+    "updating": "Updating…"
   }
 }

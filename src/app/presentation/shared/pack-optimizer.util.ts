@@ -70,7 +70,7 @@ function _roundedSuggestions(
 }
 
 /**
- * Runs a DP optimizer over the given packs to find the top N cheapest combinations
+ * Runs a DP optimizer over the given packs to find the top N the cheapest combinations
  * covering at least `needed` units.
  *
  * @param {number} needed - Total units required

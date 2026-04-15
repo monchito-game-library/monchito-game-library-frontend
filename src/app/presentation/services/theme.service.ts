@@ -1,6 +1,6 @@
 import { effect, Injectable, Renderer2, RendererFactory2, signal } from '@angular/core';
 
-/** Presentation service that manages the dark/light theme. The preference is persisted in Supabase; system colour-scheme is used as the initial default. */
+/** Presentation service that manages the dark/light theme. The preference is persisted in Supabase; system color-scheme is used as the initial default. */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly _renderer: Renderer2;
@@ -25,7 +25,7 @@ export class ThemeService {
     });
   }
 
-  /** Initialises the theme from the system colour-scheme preference. Supabase will override this once user preferences are loaded. */
+  /** Initializes the theme from the system color-scheme preference. Supabase will override this once user preferences are loaded. */
   initTheme(): void {
     localStorage.removeItem('user-theme');
     const prefersDark: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;

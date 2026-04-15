@@ -10,7 +10,7 @@ import { ThemeService } from './theme.service';
 import { UserPreferencesService } from './user-preferences.service';
 
 /**
- * Handles application-level initialisation of user preferences.
+ * Handles application-level initialization of user preferences.
  * Loads preferences from Supabase and applies theme, language, avatar and banner to the app state.
  */
 @Injectable({ providedIn: 'root' })

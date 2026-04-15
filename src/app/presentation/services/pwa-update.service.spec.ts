@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SwUpdate } from '@angular/service-worker';
 import { Router, NavigationEnd } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 import { Subject } from 'rxjs';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
@@ -30,6 +31,7 @@ describe('PwaUpdateService', () => {
     TestBed.configureTestingModule({
       providers: [
         PwaUpdateService,
+        { provide: TranslocoService, useValue: { translate: vi.fn().mockReturnValue('Updating…') } },
         {
           provide: SwUpdate,
           useValue: {
