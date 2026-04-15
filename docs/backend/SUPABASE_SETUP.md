@@ -1,7 +1,7 @@
 # Monchito Game Library — Estado del Backend (Supabase)
 
 > Última actualización: 2026-04-15
-> Para recrear la base de datos desde cero ejecuta `docs/supabase-schema-current.sql`.
+> Para recrear la base de datos desde cero ejecuta `docs/backend/schema/supabase-schema-current.sql` y después los seeds de `docs/backend/seeds/`.
 
 ---
 
@@ -508,6 +508,18 @@ Columnas expuestas: `id`, `user_id`, `game_catalog_id`, `platform`, `desired_pri
 SELECT * FROM user_wishlist_full WHERE user_id = $1 ORDER BY priority ASC;
 ```
 
+### `available_items`
+
+UNION de `user_games_full` + `user_consoles` + `user_controllers` donde `for_sale = TRUE AND sold_at IS NULL`. Devuelve todos los artículos actualmente en venta de cualquier tipo.
+
+Columnas expuestas: `id` (TEXT), `item_type` (`'game'` | `'console'` | `'controller'`), `item_name`, `brand_name` (NULL para juegos), `model_name`, `sale_price`, `user_id`, `created_at`.
+
+### `sold_items`
+
+UNION de `user_games_full` + `user_consoles` + `user_controllers` donde `sold_at IS NOT NULL`. Historial global de ventas de cualquier tipo de ítem.
+
+Columnas expuestas: `id` (TEXT), `item_type` (`'game'` | `'console'` | `'controller'`), `item_name`, `brand_name` (NULL para juegos), `model_name`, `sold_price_final`, `sold_at`, `user_id`, `created_at`.
+
 ---
 
 ## Storage Buckets
@@ -568,12 +580,17 @@ La limpieza de cada canal se hace al destruir `OrderDetailComponent` (función d
 
 | Trigger | Tabla | Evento | Acción |
 |---|---|---|---|
-| `trg_*_updated_at` | `user_games`, `stores`, `user_wishlist`, `game_catalog`, `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_game_catalog_updated_at` | `game_catalog` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_games_updated_at` | `user_games` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_preferences_updated_at` | `user_preferences` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_user_wishlist_updated_at` | `user_wishlist` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_stores_updated_at` | `stores` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_order_products_updated_at` | `order_products` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
+| `trg_orders_updated_at` | `orders` | BEFORE UPDATE | Actualiza `updated_at = NOW()` |
 | `trg_increment_users_on_insert` | `user_games` | AFTER INSERT | Incrementa `game_catalog.times_added_by_users` |
 | `trg_decrement_users_on_delete` | `user_games` | AFTER DELETE | Decrementa `game_catalog.times_added_by_users` |
 
-> **Nota:** `orders` y `order_lines` **no tienen trigger de `updated_at`**. El campo `orders.updated_at` se actualiza manualmente desde el repositorio y desde el RPC `set_member_ready`.
+> **Nota:** `order_lines` no tiene trigger de `updated_at`. El campo `orders.updated_at` se actualiza tanto por el trigger `trg_orders_updated_at` como manualmente desde el RPC `set_member_ready` (para disparar el canal realtime sin modificar otros campos).
 
 ---
 
