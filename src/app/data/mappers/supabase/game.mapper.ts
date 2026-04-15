@@ -11,7 +11,7 @@ import { PlatformType } from '@/types/platform.type';
  * Maps a user_games_full view row to the GameModel domain model.
  * Prefers user-specific fields (user_platform, user_notes) over catalog defaults.
  *
- * @param {UserGameFullDto} dto - DTO/modelo recibido para mapear
+ * @param {UserGameFullDto} dto - Row from the user_games_full view
  */
 export function mapGame(dto: UserGameFullDto): GameModel {
   return {
@@ -45,7 +45,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
 /**
  * Maps a UserGameEditDto (partial view row) to the GameEditModel used by the edit form.
  *
- * @param {UserGameEditDto} dto - DTO/modelo recibido para mapear
+ * @param {UserGameEditDto} dto - Partial view row for the edit form
  */
 export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
   return {
@@ -83,7 +83,7 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
 /**
  * Maps a UserGameListDto (partial view row) to the GameListModel used by the list and card.
  *
- * @param {UserGameListDto} dto - DTO/modelo recibido para mapear
+ * @param {UserGameListDto} dto - Partial view row for the list and card
  */
 export function mapGameList(dto: UserGameListDto): GameListModel {
   return {
@@ -115,7 +115,7 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
  * Maps game-data fields from a GameModel to a UserGameInsertDto.
  * Operational fields (user_id, game_catalog_id) must be added by the caller.
  *
- * @param {GameModel} model - Modelo de juego a mapear
+ * @param {GameModel} model - Game model to map
  */
 export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
   return {

@@ -90,7 +90,7 @@ export class ConsolesComponent implements OnInit {
     });
   });
 
-  /** Suma del precio de todas las consolas filtradas. */
+  /** Sum of prices for all filtered consoles. */
   readonly totalSpent: Signal<number> = computed((): number =>
     this.filteredConsoles().reduce((acc: number, c: ConsoleModel): number => acc + (c.price ?? 0), 0)
   );
@@ -100,10 +100,10 @@ export class ConsolesComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre de la tienda a partir de su UUID.
-   * Si no se encuentra, devuelve el propio id (fallback para datos legacy).
+   * Returns the store name for the given UUID.
+   * Falls back to the raw id for legacy data.
    *
-   * @param {string | null} id - UUID de la tienda
+   * @param {string | null} id - Store UUID
    */
   resolveStoreName(id: string | null): string {
     if (!id) return '';
@@ -112,9 +112,9 @@ export class ConsolesComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre de la marca a partir de su UUID.
+   * Returns the brand name for the given UUID.
    *
-   * @param {string | null} id - UUID de la marca
+   * @param {string | null} id - Brand UUID
    */
   resolveBrandName(id: string | null): string {
     if (!id) return '—';
@@ -122,9 +122,9 @@ export class ConsolesComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre del modelo a partir de su UUID.
+   * Returns the model name for the given UUID.
    *
-   * @param {string | null} id - UUID del modelo
+   * @param {string | null} id - Hardware model UUID
    */
   resolveModelName(id: string | null): string {
     if (!id) return '—';
@@ -132,23 +132,23 @@ export class ConsolesComponent implements OnInit {
   }
 
   /**
-   * Navega a la pantalla de detalle de la consola indicada.
+   * Navigates to the detail screen for the given console.
    *
-   * @param {ConsoleModel} console - La consola a visualizar
+   * @param {ConsoleModel} console - Console to display
    */
   onDetail(console: ConsoleModel): void {
     this._router.navigate(['/collection/consoles', console.id]);
   }
 
   /**
-   * Navega al formulario de creación de consola.
+   * Navigates to the console creation form.
    */
   onAdd(): void {
     this._router.navigate(['/collection/consoles/add']);
   }
 
   /**
-   * Carga marcas y modelos de consola del catálogo para resolver nombres en la lista.
+   * Loads console brands and models from the catalogue to resolve names in the list.
    */
   private async _loadCatalog(): Promise<void> {
     try {
@@ -164,7 +164,7 @@ export class ConsolesComponent implements OnInit {
   }
 
   /**
-   * Carga la lista de tiendas disponibles desde Supabase.
+   * Loads the list of available stores from Supabase.
    */
   private async _loadStores(): Promise<void> {
     try {

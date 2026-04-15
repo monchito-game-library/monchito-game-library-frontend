@@ -93,7 +93,7 @@ export class ControllersComponent implements OnInit {
     });
   });
 
-  /** Suma del precio de todos los mandos filtrados. */
+  /** Sum of prices for all filtered controllers. */
   readonly totalSpent: Signal<number> = computed((): number =>
     this.filteredControllers().reduce((acc: number, c: ControllerModel): number => acc + (c.price ?? 0), 0)
   );
@@ -103,10 +103,10 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre de la tienda a partir de su UUID.
-   * Si no se encuentra, devuelve el propio id (fallback para datos legacy).
+   * Returns the store name for the given UUID.
+   * Falls back to the raw id for legacy data.
    *
-   * @param {string | null} id - UUID de la tienda
+   * @param {string | null} id - Store UUID
    */
   resolveStoreName(id: string | null): string {
     if (!id) return '';
@@ -115,9 +115,9 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre de la marca a partir de su UUID.
+   * Returns the brand name for the given UUID.
    *
-   * @param {string | null} id - UUID de la marca
+   * @param {string | null} id - Brand UUID
    */
   resolveBrandName(id: string | null): string {
     if (!id) return '—';
@@ -125,9 +125,9 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Devuelve el nombre del modelo a partir de su UUID.
+   * Returns the model name for the given UUID.
    *
-   * @param {string | null} id - UUID del modelo
+   * @param {string | null} id - Hardware model UUID
    */
   resolveModelName(id: string | null): string {
     if (!id) return '—';
@@ -135,23 +135,23 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Navega a la pantalla de detalle del mando indicado.
+   * Navigates to the detail screen for the given controller.
    *
-   * @param {ControllerModel} controller - El mando a visualizar
+   * @param {ControllerModel} controller - Controller to display
    */
   onDetail(controller: ControllerModel): void {
     this._router.navigate(['/collection/controllers', controller.id]);
   }
 
   /**
-   * Navega al formulario de creación de mando.
+   * Navigates to the controller creation form.
    */
   onAdd(): void {
     this._router.navigate(['/collection/controllers/add']);
   }
 
   /**
-   * Carga marcas y modelos de mando del catálogo para resolver nombres en la lista.
+   * Loads controller brands and models from the catalogue to resolve names in the list.
    */
   private async _loadCatalog(): Promise<void> {
     try {
@@ -167,7 +167,7 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Carga la lista de tiendas disponibles desde Supabase.
+   * Loads the list of available stores from Supabase.
    */
   private async _loadStores(): Promise<void> {
     try {
@@ -179,7 +179,7 @@ export class ControllersComponent implements OnInit {
   }
 
   /**
-   * Carga todos los mandos del usuario desde el caso de uso.
+   * Loads all controllers for the current user from the use-case.
    */
   private async _loadControllers(): Promise<void> {
     this.loading.set(true);

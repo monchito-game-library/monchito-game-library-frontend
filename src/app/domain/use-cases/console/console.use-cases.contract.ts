@@ -8,14 +8,14 @@ export interface ConsoleUseCasesContract {
   /**
    * Returns all consoles owned by the given user.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    */
   getAllForUser(userId: string): Promise<ConsoleModel[]>;
 
   /**
    * Returns a single console by UUID.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_consoles row
    */
   getById(userId: string, id: string): Promise<ConsoleModel | undefined>;
@@ -23,7 +23,7 @@ export interface ConsoleUseCasesContract {
   /**
    * Adds a new console for the given user.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {ConsoleModel} console - Domain model to persist
    */
   add(userId: string, console: ConsoleModel): Promise<void>;
@@ -31,7 +31,7 @@ export interface ConsoleUseCasesContract {
   /**
    * Updates an existing console.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_consoles row
    * @param {ConsoleModel} console - Updated domain model
    */
@@ -40,7 +40,7 @@ export interface ConsoleUseCasesContract {
   /**
    * Deletes a console by UUID.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_consoles row
    */
   delete(userId: string, id: string): Promise<void>;
@@ -48,7 +48,7 @@ export interface ConsoleUseCasesContract {
   /**
    * Updates the sale status of a console.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_consoles row
    * @param {HardwareSaleStatusModel} sale - Sale status to persist
    */
@@ -66,7 +66,7 @@ export interface ConsoleUseCasesContract {
    *
    * @param {string} loanId - UUID of the hardware_loans row
    * @param {string} consoleId - UUID of the user_consoles row
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    */
   returnLoan(loanId: string, consoleId: string, userId: string): Promise<void>;
 }

@@ -14,27 +14,27 @@ import { TranslocoPipe } from '@jsverse/transloco';
   imports: [MatButton, MatIconButton, MatFormField, MatLabel, MatPrefix, MatIcon, MatInput, TranslocoPipe]
 })
 export class ListPageHeaderComponent {
-  /** Clave de transloco para el label del campo de búsqueda. */
+  /** Transloco key for the search field label. */
   readonly searchPlaceholder = input<string>('');
 
-  /** Valor actual del campo de búsqueda. */
+  /** Current value of the search field. */
   readonly searchValue = input<string>('');
 
-  /** Si es true, muestra el botón de añadir en el header. */
+  /** When true, shows the add button in the header. */
   readonly showAddBtn = input<boolean>(true);
 
-  /** Si es true, muestra el botón de filtros (abre un panel lateral). */
+  /** When true, shows the filter button (opens a side panel). */
   readonly showFilterBtn = input<boolean>(false);
 
-  /** Número de filtros activos, mostrado como badge en el botón de filtros. */
+  /** Number of active filters, displayed as a badge on the filter button. */
   readonly filterCount = input<number>(0);
 
-  /** Emitido cuando cambia el valor del campo de búsqueda. */
+  /** Emitted when the search field value changes. */
   readonly searchChange = output<string>();
 
-  /** Emitido cuando se pulsa el botón de filtros. */
+  /** Emitted when the filter button is clicked. */
   readonly filterClick = output<void>();
 
-  /** Emitido cuando se pulsa el botón de añadir. */
+  /** Emitted when the add button is clicked. */
   readonly addClick = output<void>();
 }

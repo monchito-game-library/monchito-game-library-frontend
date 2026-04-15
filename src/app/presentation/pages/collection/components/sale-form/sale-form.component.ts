@@ -131,7 +131,7 @@ export class SaleFormComponent implements OnInit {
   }
 
   /**
-   * Emits the cancelled event.
+   * Emits the canceled event.
    */
   onCancel(): void {
     this.cancelled.emit();
