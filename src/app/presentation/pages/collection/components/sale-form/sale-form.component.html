@@ -1,36 +1,36 @@
-<div class="game-sale-form">
+<div class="sale-form">
   <!-- Header -->
-  <div class="game-sale-form__header">
+  <div class="sale-form__header">
     <button
       mat-icon-button
-      class="game-sale-form__back-btn"
+      class="sale-form__back-btn"
       (click)="onCancel()"
       [attr.aria-label]="'common.back' | transloco">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="game-sale-form__title">{{ 'gameDetail.sale.title' | transloco }}</h2>
+    <h2 class="sale-form__title">{{ i18nPrefix() + '.title' | transloco }}</h2>
   </div>
 
-  <form [formGroup]="form" class="game-sale-form__content">
+  <form [formGroup]="form" class="sale-form__content">
     <!-- Section 1: Availability -->
-    <section class="game-sale-form__section">
-      <h3 class="game-sale-form__section-title">{{ 'gameDetail.sale.availability' | transloco }}</h3>
+    <section class="sale-form__section">
+      <h3 class="sale-form__section-title">{{ i18nPrefix() + '.availability' | transloco }}</h3>
 
-      <div class="game-sale-form__toggle-row">
-        <span class="game-sale-form__toggle-label">{{ 'gameDetail.sale.forSale' | transloco }}</span>
+      <div class="sale-form__toggle-row">
+        <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
         <mat-slide-toggle formControlName="forSale" color="primary" />
       </div>
 
       @if (isForSale) {
-        <mat-form-field appearance="outline" class="game-sale-form__field">
-          <mat-label>{{ 'gameDetail.sale.salePrice' | transloco }}</mat-label>
+        <mat-form-field appearance="outline" class="sale-form__field">
+          <mat-label>{{ i18nPrefix() + '.salePrice' | transloco }}</mat-label>
           <input
             matInput
             type="number"
             min="0"
             step="0.01"
             formControlName="salePrice"
-            [placeholder]="'gameDetail.sale.salePricePlaceholder' | transloco" />
+            [placeholder]="i18nPrefix() + '.salePricePlaceholder' | transloco" />
           <span matTextSuffix>€</span>
         </mat-form-field>
       }
@@ -39,7 +39,7 @@
         mat-flat-button
         color="primary"
         type="button"
-        class="game-sale-form__save-btn"
+        class="sale-form__save-btn"
         (click)="onSave()"
         [disabled]="saving() || selling()">
         @if (saving()) {
@@ -47,46 +47,46 @@
         } @else {
           <mat-icon>save</mat-icon>
         }
-        {{ 'gameDetail.sale.saveBtn' | transloco }}
+        {{ i18nPrefix() + '.saveBtn' | transloco }}
       </button>
     </section>
 
     <mat-divider />
 
     <!-- Section 2: Register sale -->
-    <section class="game-sale-form__section">
-      <h3 class="game-sale-form__section-title">{{ 'gameDetail.sale.registerSection' | transloco }}</h3>
+    <section class="sale-form__section">
+      <h3 class="sale-form__section-title">{{ i18nPrefix() + '.registerSection' | transloco }}</h3>
 
-      <mat-form-field appearance="outline" class="game-sale-form__field">
-        <mat-label>{{ 'gameDetail.sale.soldPriceFinal' | transloco }}</mat-label>
+      <mat-form-field appearance="outline" class="sale-form__field">
+        <mat-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</mat-label>
         <input
           matInput
           type="number"
           min="0"
           step="0.01"
           formControlName="soldPriceFinal"
-          [placeholder]="'gameDetail.sale.soldPricePlaceholder' | transloco" />
+          [placeholder]="i18nPrefix() + '.soldPricePlaceholder' | transloco" />
         <span matTextSuffix>€</span>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="game-sale-form__field">
-        <mat-label>{{ 'gameDetail.sale.soldAt' | transloco }}</mat-label>
+      <mat-form-field appearance="outline" class="sale-form__field">
+        <mat-label>{{ i18nPrefix() + '.soldAt' | transloco }}</mat-label>
         <input matInput type="date" min="1000-01-01" max="9999-12-31" formControlName="soldAt" />
         @if (form.controls.soldAt.hasError('invalidDate')) {
-          <mat-error>{{ 'gameDetail.sale.soldAtInvalid' | transloco }}</mat-error>
+          <mat-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</mat-error>
         }
       </mat-form-field>
 
-      <p class="game-sale-form__warning">
+      <p class="sale-form__warning">
         <mat-icon>warning</mat-icon>
-        {{ 'gameDetail.sale.soldWarning' | transloco }}
+        {{ i18nPrefix() + '.soldWarning' | transloco }}
       </p>
 
       <button
         mat-flat-button
         color="warn"
         type="button"
-        class="game-sale-form__sold-btn"
+        class="sale-form__sold-btn"
         (click)="onMarkAsSold()"
         [disabled]="!canMarkAsSold || saving() || selling()">
         @if (selling()) {
@@ -94,7 +94,7 @@
         } @else {
           <mat-icon>sell</mat-icon>
         }
-        {{ 'gameDetail.sale.markAsSoldBtn' | transloco }}
+        {{ i18nPrefix() + '.markAsSoldBtn' | transloco }}
       </button>
     </section>
   </form>

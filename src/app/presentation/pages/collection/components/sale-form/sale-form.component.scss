@@ -1,39 +1,39 @@
-.hardware-sale-form {
+.sale-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
 }
 
-.hardware-sale-form__header {
+.sale-form__header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.hardware-sale-form__back-btn {
+.sale-form__back-btn {
   flex-shrink: 0;
 }
 
-.hardware-sale-form__title {
+.sale-form__title {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
 }
 
-.hardware-sale-form__content {
+.sale-form__content {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.hardware-sale-form__section {
+.sale-form__section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.hardware-sale-form__section-title {
+.sale-form__section-title {
   margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
@@ -44,7 +44,7 @@
   border-bottom: 1px solid var(--mat-sys-outline-variant);
 }
 
-.hardware-sale-form__toggle-row {
+.sale-form__toggle-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,21 +52,21 @@
   padding: 0.25rem 0;
 }
 
-.hardware-sale-form__toggle-label {
+.sale-form__toggle-label {
   font-size: 0.9rem;
   color: var(--mat-sys-on-surface);
 }
 
-.hardware-sale-form__field {
+.sale-form__field {
   width: 100%;
 }
 
-.hardware-sale-form__save-btn,
-.hardware-sale-form__sold-btn {
+.sale-form__save-btn,
+.sale-form__sold-btn {
   align-self: flex-start;
 }
 
-.hardware-sale-form__warning {
+.sale-form__warning {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -90,8 +90,8 @@
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
 @media (max-width: 768px) and (orientation: portrait) {
-  .hardware-sale-form__save-btn,
-  .hardware-sale-form__sold-btn {
+  .sale-form__save-btn,
+  .sale-form__sold-btn {
     align-self: stretch;
   }
 }

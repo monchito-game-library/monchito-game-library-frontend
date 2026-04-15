@@ -48,11 +48,14 @@ describe('canActivateUser', () => {
     });
   });
 
-  it('devuelve Observable que resuelve true cuando loading cambia a false y usuario está autenticado', async () => {
+  function setupDeferredGuard(
+    authenticated: boolean,
+    url: string
+  ): { loadingSignal: ReturnType<typeof signal<boolean>>; promise: Promise<boolean> } {
     const loadingSignal = signal<boolean>(true);
     const deferredAuthState: Partial<AuthStateService> = {
       loading: loadingSignal.asReadonly(),
-      isAuthenticated: vi.fn().mockReturnValue(true)
+      isAuthenticated: vi.fn().mockReturnValue(authenticated)
     };
 
     TestBed.configureTestingModule({
@@ -62,35 +65,22 @@ describe('canActivateUser', () => {
       ]
     });
 
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/games' } as never));
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url } as never));
     const promise = firstValueFrom(result as Observable<boolean>);
+    return { loadingSignal, promise };
+  }
 
+  it('devuelve Observable que resuelve true cuando loading cambia a false y usuario está autenticado', async () => {
+    const { loadingSignal, promise } = setupDeferredGuard(true, '/games');
     loadingSignal.set(false);
-    TestBed.flushEffects();
-
+    TestBed.tick();
     expect(await promise).toBe(true);
   });
 
   it('devuelve Observable que resuelve false cuando loading cambia a false y usuario no está autenticado', async () => {
-    const loadingSignal = signal<boolean>(true);
-    const deferredAuthState: Partial<AuthStateService> = {
-      loading: loadingSignal.asReadonly(),
-      isAuthenticated: vi.fn().mockReturnValue(false)
-    };
-
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: AuthStateService, useValue: deferredAuthState },
-        { provide: Router, useValue: mockRouter }
-      ]
-    });
-
-    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/orders/123' } as never));
-    const promise = firstValueFrom(result as Observable<boolean>);
-
+    const { loadingSignal, promise } = setupDeferredGuard(false, '/orders/123');
     loadingSignal.set(false);
-    TestBed.flushEffects();
-
+    TestBed.tick();
     expect(await promise).toBe(false);
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login'], {
       queryParams: { returnUrl: '/orders/123' }

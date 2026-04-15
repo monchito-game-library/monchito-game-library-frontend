@@ -39,10 +39,9 @@ import {
   HardwareLoanFormComponent,
   HardwareLoanItem
 } from '@/components/hardware-loan-form/hardware-loan-form.component';
-import {
-  HardwareSaleFormComponent,
-  HardwareSaleItem
-} from '@/components/hardware-sale-form/hardware-sale-form.component';
+import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
+import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
+import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
 
 @Component({
   selector: 'app-console-detail',
@@ -59,7 +58,7 @@ import {
     MatProgressSpinner,
     TranslocoPipe,
     HardwareLoanFormComponent,
-    HardwareSaleFormComponent
+    SaleFormComponent
   ]
 })
 export class ConsoleDetailComponent implements OnInit {
@@ -111,6 +110,40 @@ export class ConsoleDetailComponent implements OnInit {
 
   /** Whether a delete operation is in progress. */
   readonly deleting: WritableSignal<boolean> = signal<boolean>(false);
+
+  /**
+   * Saves the console's availability status (forSale + salePrice) via the use case.
+   * Passed as the saveFn input to SaleFormComponent.
+   *
+   * @param {SaleAvailabilityValues} v - Availability values from the form
+   */
+  readonly consoleSaveFn = async (v: SaleAvailabilityValues): Promise<void> => {
+    const c = this.console()!;
+    const sale: HardwareSaleStatusModel = {
+      forSale: v.forSale,
+      salePrice: v.forSale ? v.salePrice : null,
+      soldAt: c.soldAt,
+      soldPriceFinal: c.soldPriceFinal
+    };
+    await this._consoleUseCases.updateSaleStatus(this._userContext.requireUserId(), c.id, sale);
+  };
+
+  /**
+   * Registers the console as sold via the use case.
+   * Passed as the sellFn input to SaleFormComponent.
+   *
+   * @param {SaleSoldValues} v - Sold values from the form
+   */
+  readonly consoleSellFn = async (v: SaleSoldValues): Promise<void> => {
+    const c = this.console()!;
+    const sale: HardwareSaleStatusModel = {
+      forSale: false,
+      salePrice: null,
+      soldAt: v.soldAt,
+      soldPriceFinal: v.soldPriceFinal
+    };
+    await this._consoleUseCases.updateSaleStatus(this._userContext.requireUserId(), c.id, sale);
+  };
 
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id') ?? '';
@@ -173,19 +206,23 @@ export class ConsoleDetailComponent implements OnInit {
   }
 
   /**
-   * Llamado cuando el formulario de venta guarda correctamente.
-   * Si la consola fue vendida, navega a la lista; si no, actualiza la señal.
+   * Called after the sale form saves availability successfully.
+   * Updates the console signal with the new forSale/salePrice values and closes the form.
    *
-   * @param {ConsoleModel} updated - Modelo con los nuevos valores de venta aplicados
+   * @param {SaleAvailabilityValues} values - Updated availability values from the form
    */
-  onSaleSaved(updated: HardwareSaleItem): void {
-    const model = updated as ConsoleModel;
-    if (model.soldAt) {
-      void this._router.navigate(['/collection/consoles']);
-      return;
-    }
-    this.console.set(model);
+  onSaveCompleted(values: SaleAvailabilityValues): void {
+    const c = this.console()!;
+    this.console.set({ ...c, forSale: values.forSale, salePrice: values.forSale ? values.salePrice : null });
     this.showSaleForm.set(false);
+  }
+
+  /**
+   * Called after the sale form registers the console as sold.
+   * Navigates to the consoles list since the console is no longer in the active collection.
+   */
+  onSellCompleted(): void {
+    void this._router.navigate(['/collection/consoles']);
   }
 
   /**

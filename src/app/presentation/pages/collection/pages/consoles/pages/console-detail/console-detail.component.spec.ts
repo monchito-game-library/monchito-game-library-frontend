@@ -332,25 +332,30 @@ describe('ConsoleDetailComponent', () => {
     });
   });
 
-  describe('onSaleSaved', () => {
-    it('navega a /collection/consoles cuando la consola queda vendida (soldAt presente)', () => {
-      const router = TestBed.inject(Router as any) as any;
-      const updated = makeConsole({ forSale: false, salePrice: null, soldAt: '2024-06-01', soldPriceFinal: 250 });
+  describe('onSaveCompleted', () => {
+    it('actualiza la señal console con los nuevos valores de disponibilidad y cierra el formulario', () => {
+      component.console.set(makeConsole({ forSale: false, salePrice: null }));
       component.showSaleForm.set(true);
 
-      component.onSaleSaved(updated);
+      component.onSaveCompleted({ forSale: true, salePrice: 200 });
 
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
+      expect(component.console()?.forSale).toBe(true);
+      expect(component.console()?.salePrice).toBe(200);
+      expect(component.showSaleForm()).toBe(false);
     });
 
-    it('actualiza la señal console y desactiva showSaleForm cuando no hay soldAt', () => {
-      const updated = makeConsole({ forSale: true, salePrice: 200, soldAt: null, soldPriceFinal: null });
-      component.showSaleForm.set(true);
+    it('pone salePrice a null cuando forSale es false', () => {
+      component.console.set(makeConsole({ forSale: true, salePrice: 200 }));
+      component.onSaveCompleted({ forSale: false, salePrice: null });
+      expect(component.console()?.salePrice).toBeNull();
+    });
+  });
 
-      component.onSaleSaved(updated);
-
-      expect(component.console()).toEqual(updated);
-      expect(component.showSaleForm()).toBe(false);
+  describe('onSellCompleted', () => {
+    it('navega a /collection/consoles', () => {
+      const router = TestBed.inject(Router as any) as any;
+      component.onSellCompleted();
+      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
     });
   });
 

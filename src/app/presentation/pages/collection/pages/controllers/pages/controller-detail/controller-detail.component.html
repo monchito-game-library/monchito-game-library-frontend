@@ -44,10 +44,13 @@
 
     <!-- Body: formularios o datos -->
     @if (showSaleForm()) {
-      <app-hardware-sale-form
-        [item]="controller()!"
-        itemType="controller"
-        (saved)="onSaleSaved($event)"
+      <app-sale-form
+        [initialValues]="controller()!"
+        i18nPrefix="hardwareSale"
+        [saveFn]="controllerSaveFn"
+        [sellFn]="controllerSellFn"
+        (saveCompleted)="onSaveCompleted($event)"
+        (sellCompleted)="onSellCompleted()"
         (cancelled)="closeSaleView()" />
     } @else if (showLoanForm()) {
       <app-hardware-loan-form
