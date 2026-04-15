@@ -6,22 +6,22 @@
   padding-top: 1rem;
 }
 
-.game-search-panel {
+.catalog-search-panel {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 
-  .game-search-panel__input-wrapper {
+  .catalog-search-panel__input-wrapper {
     flex-shrink: 0;
     padding-bottom: 0.5rem;
   }
 
-  .game-search-panel__field {
+  .catalog-search-panel__field {
     width: 100%;
   }
 
-  .game-search-panel__results {
+  .catalog-search-panel__results {
     flex: 1;
     overflow-y: auto;
     display: flex;
@@ -30,7 +30,7 @@
     padding-right: 0.25rem;
   }
 
-  .game-search-panel__placeholder {
+  .catalog-search-panel__placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -192,8 +192,8 @@
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
-  .game-search-panel {
-    .game-search-panel__results {
+  .catalog-search-panel {
+    .catalog-search-panel__results {
       padding-bottom: calc(60px + 1rem);
     }
   }

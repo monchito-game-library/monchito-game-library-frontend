@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -24,14 +24,15 @@ import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/c
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 
 @Component({
-  selector: 'app-game-search-panel',
-  templateUrl: './game-search-panel.component.html',
-  styleUrl: './game-search-panel.component.scss',
+  selector: 'app-catalog-search-panel',
+  templateUrl: './catalog-search-panel.component.html',
+  styleUrl: './catalog-search-panel.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DatePipe,
     DecimalPipe,
+    NgOptimizedImage,
     MatFormField,
     MatLabel,
     MatPrefix,
@@ -41,7 +42,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     TranslocoPipe
   ]
 })
-export class GameSearchPanelComponent implements OnInit {
+export class CatalogSearchPanelComponent implements OnInit {
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
@@ -67,11 +68,11 @@ export class GameSearchPanelComponent implements OnInit {
       .subscribe((query: string) => void this._performSearch(query));
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const query = this.initialQuery().trim();
     if (query) {
       this.searchQuery.set(query);
-      void this._performSearch(query);
+      await this._performSearch(query);
     }
   }
 

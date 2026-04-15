@@ -36,7 +36,7 @@ import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constan
 import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
+import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -61,7 +61,7 @@ import { GameSearchPanelComponent } from '@/components/game-search-panel/game-se
     MatIcon,
     TranslocoPipe,
     WishlistCardComponent,
-    GameSearchPanelComponent
+    CatalogSearchPanelComponent
   ]
 })
 export class WishlistComponent implements OnInit {

@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { GameSearchPanelComponent } from './game-search-panel.component';
+import { CatalogSearchPanelComponent } from './catalog-search-panel.component';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 
@@ -20,20 +20,20 @@ const mockGame: GameCatalogDto = {
   metacritic_score: null
 };
 
-describe('GameSearchPanelComponent', () => {
-  let component: GameSearchPanelComponent;
-  let fixture: ComponentFixture<GameSearchPanelComponent>;
+describe('CatalogSearchPanelComponent', () => {
+  let component: CatalogSearchPanelComponent;
+  let fixture: ComponentFixture<CatalogSearchPanelComponent>;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
-      imports: [GameSearchPanelComponent],
+      imports: [CatalogSearchPanelComponent],
       providers: [{ provide: CATALOG_USE_CASES, useValue: { searchGames: vi.fn().mockResolvedValue([]) } }],
       schemas: [NO_ERRORS_SCHEMA]
     });
-    TestBed.overrideComponent(GameSearchPanelComponent, { set: { imports: [], template: '' } });
-    fixture = TestBed.createComponent(GameSearchPanelComponent);
+    TestBed.overrideComponent(CatalogSearchPanelComponent, { set: { imports: [], template: '' } });
+    fixture = TestBed.createComponent(CatalogSearchPanelComponent);
     component = fixture.componentInstance;
   });
 

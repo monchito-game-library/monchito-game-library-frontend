@@ -36,7 +36,7 @@ import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/ga
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
-import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
+import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GameModel } from '@/models/game/game.model';
 import { StoreModel } from '@/models/store/store.model';
@@ -97,7 +97,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform.utils';
     MatAutocomplete,
     MatSuffix,
     SkeletonComponent,
-    GameSearchPanelComponent
+    CatalogSearchPanelComponent
   ]
 })
 export class GameFormComponent implements OnInit {
