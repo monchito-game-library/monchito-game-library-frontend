@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { UserGameEditDto, UserGameFullDto, UserGameListDto } from '@/dtos/supabase/game-catalog.dto';
-import { mapGame, mapGameEdit, mapGameList } from '@/mappers/supabase/game.mapper';
+import { mapGame, mapGameEdit, mapGameList, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
+import { GameModel } from '@/models/game/game.model';
 
 const baseDto: UserGameListDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
@@ -108,6 +109,10 @@ describe('mapGameList', () => {
     const result = mapGameList({ ...baseDto, id: '' });
     expect(Number.isNaN(result.id)).toBe(true);
   });
+
+  it('mapea for_sale undefined a false', () => {
+    expect(mapGameList({ ...baseDto, for_sale: undefined as any }).forSale).toBe(false);
+  });
 });
 
 // ─────────────────────────── mapGame ───────────────────────────
@@ -212,6 +217,10 @@ describe('mapGame', () => {
   it('usa NaN como id cuando dto.id es cadena vacía', () => {
     const result = mapGame({ ...baseFullDto, id: '' } as unknown as UserGameFullDto);
     expect(Number.isNaN(result.id)).toBe(true);
+  });
+
+  it('mapea for_sale undefined a false', () => {
+    expect(mapGame({ ...baseFullDto, for_sale: undefined as any }).forSale).toBe(false);
   });
 
   it('aplica fallbacks ?? cuando los campos opcionales son null', () => {
@@ -363,6 +372,10 @@ describe('mapGameEdit', () => {
     expect(Number.isNaN(result.id)).toBe(true);
   });
 
+  it('mapea for_sale undefined a false', () => {
+    expect(mapGameEdit({ ...baseEditDto, for_sale: undefined as any }).forSale).toBe(false);
+  });
+
   it('aplica fallbacks ?? para condition, platinum y store cuando son null', () => {
     const dto = {
       ...baseEditDto,
@@ -375,5 +388,61 @@ describe('mapGameEdit', () => {
     expect(result.condition).toBe('new');
     expect(result.platinum).toBe(false);
     expect(result.store).toBeNull();
+  });
+});
+
+// ─────────────────────────── mapGameToInsertDto ───────────────────────────
+
+const baseGameModel: GameModel = {
+  id: 1,
+  uuid: '550e8400-e29b-41d4-a716-446655440000',
+  title: 'God of War',
+  price: 59.99,
+  store: 'GAME',
+  platform: 'PS5',
+  condition: 'new',
+  platinum: false,
+  description: 'notas',
+  status: 'playing',
+  personalRating: 9,
+  edition: null,
+  format: 'physical',
+  isFavorite: true,
+  imageUrl: 'https://example.com/gow.jpg',
+  coverPosition: null,
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
+};
+
+describe('mapGameToInsertDto', () => {
+  it('mapea los campos estándar correctamente', () => {
+    const result = mapGameToInsertDto(baseGameModel);
+
+    expect(result.price).toBe(59.99);
+    expect(result.store).toBe('GAME');
+    expect(result.platform).toBe('PS5');
+    expect(result.condition).toBe('new');
+    expect(result.platinum).toBe(false);
+    expect(result.status).toBe('playing');
+    expect(result.personal_rating).toBe(9);
+    expect(result.format).toBe('physical');
+    expect(result.is_favorite).toBe(true);
+    expect(result.cover_position).toBeNull();
+    expect(result.for_sale).toBe(false);
+  });
+
+  it('mapea forSale undefined a false', () => {
+    const result = mapGameToInsertDto({ ...baseGameModel, forSale: undefined as any });
+    expect(result.for_sale).toBe(false);
+  });
+
+  it('mapea coverPosition null a null', () => {
+    const result = mapGameToInsertDto({ ...baseGameModel, coverPosition: null });
+    expect(result.cover_position).toBeNull();
   });
 });

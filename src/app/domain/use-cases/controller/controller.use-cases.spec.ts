@@ -108,4 +108,36 @@ describe('ControllerUseCasesImpl', () => {
 
     expect(mockRepo.delete).toHaveBeenCalledWith('user-1', 'controller-uuid-1');
   });
+
+  it('updateSaleStatus delega en repo.updateSaleStatus con los parámetros correctos', async () => {
+    const sale = { forSale: true, salePrice: 79, soldAt: null, soldPriceFinal: null };
+    vi.mocked(mockRepo.updateSaleStatus).mockResolvedValue();
+
+    await useCases.updateSaleStatus('user-1', 'controller-uuid-1', sale);
+
+    expect(mockRepo.updateSaleStatus).toHaveBeenCalledWith('user-1', 'controller-uuid-1', sale);
+  });
+
+  it('createLoan delega en repo.createLoan y devuelve el id del préstamo', async () => {
+    const loan = {
+      itemType: 'controller' as const,
+      userItemId: 'controller-uuid-1',
+      loanedTo: 'amigo',
+      loanedAt: '2024-03-01'
+    };
+    vi.mocked(mockRepo.createLoan).mockResolvedValue('loan-uuid-1');
+
+    const result = await useCases.createLoan(loan);
+
+    expect(mockRepo.createLoan).toHaveBeenCalledWith(loan);
+    expect(result).toBe('loan-uuid-1');
+  });
+
+  it('returnLoan delega en repo.returnLoan con los parámetros correctos', async () => {
+    vi.mocked(mockRepo.returnLoan).mockResolvedValue();
+
+    await useCases.returnLoan('loan-uuid-1', 'controller-uuid-1', 'user-1');
+
+    expect(mockRepo.returnLoan).toHaveBeenCalledWith('loan-uuid-1', 'controller-uuid-1', 'user-1');
+  });
 });

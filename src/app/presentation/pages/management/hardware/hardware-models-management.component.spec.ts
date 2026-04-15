@@ -130,6 +130,14 @@ describe('HardwareModelsManagementComponent', () => {
       expect(specsUseCases.getByModelId).toHaveBeenCalledWith('model-uuid-1');
       expect(component.selectedSpecs()).toEqual(mockSpecs);
     });
+
+    it('establece selectedSpecs a null cuando getByModelId devuelve null', async () => {
+      // El mock por defecto ya devuelve null — no es necesario sobreescribir
+      const model = makeModel({ type: 'console' });
+      await component.onSelectModel(model);
+
+      expect(component.selectedSpecs()).toBeNull();
+    });
   });
 
   describe('onClosePanel', () => {
@@ -188,6 +196,15 @@ describe('HardwareModelsManagementComponent', () => {
       expect(component.models()).toEqual(mockModels);
       expect(component.loading()).toBe(false);
     });
+
+    it('usa cadena vacía como brandId cuando paramMap.get devuelve null', async () => {
+      const route = TestBed.inject(ActivatedRoute as any) as any;
+      route.snapshot.paramMap.get.mockReturnValueOnce(null);
+
+      await component.ngOnInit();
+
+      expect((component as any)._brandId).toBe('');
+    });
   });
 
   describe('onDeleteModel', () => {
@@ -230,6 +247,161 @@ describe('HardwareModelsManagementComponent', () => {
     it('navega a /management/hardware', () => {
       component.onBack();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/management/hardware']);
+    });
+  });
+
+  describe('onEditBrand', () => {
+    it('cierra el panel de modelo y abre el panel de marca', () => {
+      component.panelOpen.set(true);
+      component.onEditBrand();
+      expect(component.panelOpen()).toBe(false);
+      expect(component.brandPanelOpen()).toBe(true);
+    });
+
+    it('resetea selectedModel a undefined', () => {
+      component.selectedModel.set(makeModel());
+      component.onEditBrand();
+      expect(component.selectedModel()).toBeUndefined();
+    });
+  });
+
+  describe('onBrandPanelClose', () => {
+    it('cierra el panel de marca', () => {
+      component.brandPanelOpen.set(true);
+      component.onBrandPanelClose();
+      expect(component.brandPanelOpen()).toBe(false);
+    });
+  });
+
+  describe('onBrandSaved', () => {
+    it('no hace nada si no hay marca cargada', async () => {
+      component.brand.set(undefined);
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      brandUseCases.update = vi.fn();
+
+      await component.onBrandSaved({ name: 'Nueva Marca' });
+
+      expect(brandUseCases.update).not.toHaveBeenCalled();
+    });
+
+    it('llama a update y cierra el panel de marca', async () => {
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      brandUseCases.update = vi.fn().mockResolvedValue(undefined);
+      brandUseCases.getById = vi.fn().mockResolvedValue({ id: 'brand-uuid-1', name: 'Sony' });
+      component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
+      component.brandPanelOpen.set(true);
+
+      await component.onBrandSaved({ name: 'Sony Actualizado' });
+
+      expect(brandUseCases.update).toHaveBeenCalledWith('brand-uuid-1', { name: 'Sony Actualizado' });
+      expect(component.brandPanelOpen()).toBe(false);
+    });
+  });
+
+  describe('onBrandDeleted', () => {
+    it('no hace nada si no hay marca cargada', () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      component.brand.set(undefined);
+      component.onBrandDeleted();
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('no elimina la marca si el dialog se cancela', () => {
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      brandUseCases.delete = vi.fn();
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+      component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
+
+      component.onBrandDeleted();
+
+      expect(brandUseCases.delete).not.toHaveBeenCalled();
+    });
+
+    it('elimina la marca y navega al listado si el dialog se confirma', async () => {
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      brandUseCases.delete = vi.fn().mockResolvedValue(undefined);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
+
+      component.onBrandDeleted();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(brandUseCases.delete).toHaveBeenCalledWith('brand-uuid-1');
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/management/hardware']);
+    });
+  });
+
+  describe('onOpenEditions', () => {
+    it('navega a la página de ediciones del modelo', () => {
+      component.onOpenEditions(makeModel({ id: 'model-uuid-1' }));
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/management/hardware/models', 'model-uuid-1', 'editions']);
+    });
+  });
+
+  describe('onSaved', () => {
+    const modelResult = { name: 'PS5 Slim', type: 'console' as const, generation: 9, specs: null };
+
+    it('llama a update si hay modelo seleccionado y cierra el panel', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.update.mockResolvedValue(undefined);
+      modelUseCases.getAllByBrand.mockResolvedValue([]);
+      component.selectedModel.set(makeModel({ id: 'model-uuid-1' }));
+      component.panelOpen.set(true);
+
+      await component.onSaved(modelResult);
+
+      expect(modelUseCases.update).toHaveBeenCalledWith('model-uuid-1', { name: 'PS5 Slim' });
+      expect(component.panelOpen()).toBe(false);
+    });
+
+    it('llama a create si no hay modelo seleccionado (null)', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.create = vi
+        .fn()
+        .mockResolvedValue({
+          id: 'new-model-id',
+          name: 'PS5 Slim',
+          type: 'console',
+          generation: 9,
+          brandId: 'brand-uuid-1'
+        });
+      modelUseCases.getAllByBrand.mockResolvedValue([]);
+      await component.ngOnInit(); // carga _brandId desde la ruta
+      component.selectedModel.set(null);
+
+      await component.onSaved(modelResult);
+
+      expect(modelUseCases.create).toHaveBeenCalledWith(expect.objectContaining({ name: 'PS5 Slim', type: 'console' }));
+      expect(component.panelOpen()).toBe(false);
+    });
+
+    it('llama a upsert de specs cuando result.specs no es null', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      modelUseCases.update.mockResolvedValue(undefined);
+      modelUseCases.getAllByBrand.mockResolvedValue([]);
+      specsUseCases.upsert.mockResolvedValue(undefined);
+      component.selectedModel.set(makeModel({ id: 'model-uuid-1' }));
+
+      await component.onSaved({
+        name: 'PS5',
+        type: 'console',
+        generation: 9,
+        specs: {
+          launchYear: 2020,
+          discontinuedYear: null,
+          category: 'home',
+          media: 'optical_disc',
+          videoResolution: null,
+          unitsSoldMillion: null
+        }
+      });
+
+      expect(specsUseCases.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ modelId: 'model-uuid-1', launchYear: 2020 })
+      );
     });
   });
 });
@@ -345,6 +517,22 @@ describe('HardwareModelEditPanelComponent', () => {
       component.form.patchValue({ name: 'DualSense', type: 'controller', generation: 5 });
       component.onSave();
       expect(spy).toHaveBeenCalledWith(expect.objectContaining({ name: 'DualSense', type: 'controller', specs: null }));
+    });
+
+    it('emite el resultado correcto para type console con launchYear', () => {
+      const spy = vi.spyOn(component.saved, 'emit');
+      component.form.patchValue({
+        name: 'PS5',
+        type: 'console',
+        generation: 9,
+        launchYear: 2020,
+        category: 'home',
+        media: 'optical_disc'
+      });
+      component.onSave();
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'PS5', type: 'console', specs: expect.objectContaining({ launchYear: 2020 }) })
+      );
     });
   });
 });

@@ -300,4 +300,93 @@ describe('HardwareLoanFormComponent', () => {
       expect(mockConsoleUseCases.returnLoan).not.toHaveBeenCalled();
     });
   });
+
+  describe('_userId — guard defensivo (userId null)', () => {
+    let guardFixture: ComponentFixture<HardwareLoanFormComponent>;
+    let guardComponent: HardwareLoanFormComponent;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [
+          HardwareLoanFormComponent,
+          TranslocoTestingModule.forRoot({
+            langs: { es: {} },
+            translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
+          })
+        ],
+        providers: [
+          { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
+          { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
+          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          { provide: UserContextService, useValue: { userId: signal<string | null>(null) } }
+        ],
+        schemas: [NO_ERRORS_SCHEMA]
+      });
+
+      guardFixture = TestBed.createComponent(HardwareLoanFormComponent);
+      guardComponent = guardFixture.componentInstance;
+      guardFixture.componentRef.setInput('item', makeConsole({ activeLoanId: 'loan-uuid-1' }));
+      guardFixture.componentRef.setInput('itemType', 'console');
+    });
+
+    it('muestra snackbar cuando el userId es null al intentar devolver el item', async () => {
+      guardFixture.detectChanges();
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await guardComponent.onReturn();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(guardComponent.returning()).toBe(false);
+    });
+  });
+
+  describe('_useCase — guard defensivo (sin CONSOLE_USE_CASES)', () => {
+    let guardFixture: ComponentFixture<HardwareLoanFormComponent>;
+    let guardComponent: HardwareLoanFormComponent;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [
+          HardwareLoanFormComponent,
+          TranslocoTestingModule.forRoot({
+            langs: { es: {} },
+            translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
+          })
+        ],
+        providers: [
+          { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
+          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
+        ],
+        schemas: [NO_ERRORS_SCHEMA]
+      });
+
+      guardFixture = TestBed.createComponent(HardwareLoanFormComponent);
+      guardComponent = guardFixture.componentInstance;
+      guardFixture.componentRef.setInput('item', makeConsole());
+      guardFixture.componentRef.setInput('itemType', 'console');
+    });
+
+    it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta crear un préstamo', async () => {
+      guardFixture.detectChanges();
+      guardComponent.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await guardComponent.onLoan();
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+
+    it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta devolver un item', async () => {
+      guardFixture.componentRef.setInput('item', makeConsole({ activeLoanId: 'loan-uuid-1' }));
+      guardFixture.detectChanges();
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await guardComponent.onReturn();
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+  });
 });

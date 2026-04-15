@@ -178,6 +178,15 @@ describe('HardwareEditionsManagementComponent', () => {
       expect(component.editions()).toEqual(mockEditions);
       expect(component.loading()).toBe(false);
     });
+
+    it('usa cadena vacía como modelId cuando paramMap.get devuelve null', async () => {
+      const route = TestBed.inject(ActivatedRoute as any) as any;
+      route.snapshot.paramMap.get.mockReturnValueOnce(null);
+
+      await component.ngOnInit();
+
+      expect((component as any)._modelId).toBe('');
+    });
   });
 
   describe('onSaved', () => {
@@ -244,6 +253,142 @@ describe('HardwareEditionsManagementComponent', () => {
 
       expect(editionUseCases.delete).toHaveBeenCalledWith('edition-uuid-1');
       expect(component.panelOpen()).toBe(false);
+    });
+  });
+
+  describe('onEditModel', () => {
+    it('cierra el panel de edición y abre el model panel', async () => {
+      component.panelOpen.set(true);
+      component.model.set(makeModel({ type: 'controller' }));
+
+      await component.onEditModel();
+
+      expect(component.panelOpen()).toBe(false);
+      expect(component.modelPanelOpen()).toBe(true);
+    });
+
+    it('carga specs si el modelo es de tipo console', async () => {
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      const mockSpecs = {
+        id: 'specs-1',
+        modelId: 'model-uuid-1',
+        launchYear: 2020,
+        discontinuedYear: null,
+        category: 'home',
+        media: 'optical_disc',
+        videoResolution: null,
+        unitsSoldMillion: null
+      };
+      specsUseCases.getByModelId.mockResolvedValue(mockSpecs);
+      component.model.set(makeModel({ type: 'console' }));
+
+      await component.onEditModel();
+
+      expect(specsUseCases.getByModelId).toHaveBeenCalledWith('model-uuid-1');
+      expect(component.selectedModelSpecs()).toEqual(mockSpecs);
+    });
+
+    it('no carga specs si el modelo es de tipo controller', async () => {
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      component.model.set(makeModel({ type: 'controller' }));
+
+      await component.onEditModel();
+
+      expect(specsUseCases.getByModelId).not.toHaveBeenCalled();
+    });
+
+    it('establece selectedModelSpecs a null cuando getByModelId devuelve null', async () => {
+      // El mock por defecto ya devuelve null — no es necesario sobreescribir
+      component.model.set(makeModel({ type: 'console' }));
+
+      await component.onEditModel();
+
+      expect(component.selectedModelSpecs()).toBeNull();
+    });
+  });
+
+  describe('onModelSaved', () => {
+    it('no hace nada si no hay modelo cargado', async () => {
+      component.model.set(undefined);
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+
+      await component.onModelSaved({ name: 'Test', type: 'console', generation: 9, specs: null });
+
+      expect(modelUseCases.update).not.toHaveBeenCalled();
+    });
+
+    it('llama a update y cierra el model panel', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.update.mockResolvedValue(undefined);
+      modelUseCases.getById.mockResolvedValue(makeModel());
+      component.model.set(makeModel({ id: 'model-uuid-1' }));
+      component.modelPanelOpen.set(true);
+
+      await component.onModelSaved({ name: 'PS5 Slim', type: 'console', generation: 9, specs: null });
+
+      expect(modelUseCases.update).toHaveBeenCalledWith('model-uuid-1', { name: 'PS5 Slim' });
+      expect(component.modelPanelOpen()).toBe(false);
+    });
+
+    it('llama a upsert de specs cuando result.specs no es null', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      modelUseCases.update.mockResolvedValue(undefined);
+      modelUseCases.getById.mockResolvedValue(makeModel());
+      specsUseCases.upsert.mockResolvedValue(undefined);
+      component.model.set(makeModel({ id: 'model-uuid-1' }));
+
+      await component.onModelSaved({
+        name: 'PS5',
+        type: 'console',
+        generation: 9,
+        specs: {
+          launchYear: 2020,
+          discontinuedYear: null,
+          category: 'home',
+          media: 'optical_disc',
+          videoResolution: null,
+          unitsSoldMillion: null
+        }
+      });
+
+      expect(specsUseCases.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ modelId: 'model-uuid-1', launchYear: 2020 })
+      );
+    });
+  });
+
+  describe('onModelDeleted', () => {
+    it('no hace nada si no hay modelo cargado', () => {
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      component.model.set(undefined);
+      component.onModelDeleted();
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('no elimina el modelo si el dialog se cancela', () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
+      component.model.set(makeModel());
+
+      component.onModelDeleted();
+
+      expect(modelUseCases.delete).not.toHaveBeenCalled();
+    });
+
+    it('elimina el modelo y navega atrás si el dialog se confirma', async () => {
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.delete.mockResolvedValue(undefined);
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      component.model.set(makeModel({ id: 'model-uuid-1', brandId: 'brand-uuid-1' }));
+
+      component.onModelDeleted();
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(modelUseCases.delete).toHaveBeenCalledWith('model-uuid-1');
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/management/hardware', 'brand-uuid-1', 'models']);
     });
   });
 });

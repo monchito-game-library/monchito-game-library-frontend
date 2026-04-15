@@ -626,6 +626,14 @@ describe('SupabaseRepository', () => {
 
       await expect(repo.getSoldGames('user-1')).rejects.toThrow('Failed to fetch sold games');
     });
+
+    it('devuelve [] cuando data es null sin error', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: null, error: null }));
+
+      const result = await repo.getSoldGames('user-1');
+
+      expect(result).toEqual([]);
+    });
   });
 
   describe('updateSaleStatus', () => {
@@ -714,6 +722,14 @@ describe('SupabaseRepository', () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'History error' } }));
 
       await expect(repo.getLoanHistory('game-uuid')).rejects.toThrow('Failed to fetch loan history');
+    });
+
+    it('devuelve [] cuando data es null sin error', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: null, error: null }));
+
+      const result = await repo.getLoanHistory('game-uuid');
+
+      expect(result).toEqual([]);
     });
   });
 });

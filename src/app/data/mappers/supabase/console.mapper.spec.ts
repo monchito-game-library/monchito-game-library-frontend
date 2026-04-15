@@ -107,6 +107,10 @@ describe('mapConsole', () => {
   it('mapea región NTSC-J correctamente', () => {
     expect(mapConsole({ ...baseDto, region: 'NTSC-J' }).region).toBe('NTSC-J');
   });
+
+  it('mapea for_sale undefined a false', () => {
+    expect(mapConsole({ ...baseDto, for_sale: undefined as any }).forSale).toBe(false);
+  });
 });
 
 describe('mapConsoleToInsertDto', () => {

@@ -247,6 +247,19 @@ describe('HardwareSaleFormComponent', () => {
         expect.objectContaining({ forSale: false, salePrice: null })
       );
     });
+
+    it('cuando forSale es true pero salePrice es null, envía salePrice null en el payload', async () => {
+      fixture.detectChanges();
+      component.form.patchValue({ forSale: true, salePrice: null });
+
+      await component.onSave();
+
+      expect(mockConsoleUseCases.updateSaleStatus).toHaveBeenCalledWith(
+        'user-1',
+        'console-uuid-1',
+        expect.objectContaining({ forSale: true, salePrice: null })
+      );
+    });
   });
 
   describe('onMarkAsSold', () => {
@@ -304,6 +317,84 @@ describe('HardwareSaleFormComponent', () => {
 
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.selling()).toBe(false);
+    });
+  });
+
+  describe('_userId — guard defensivo (userId null)', () => {
+    let guardFixture: ComponentFixture<HardwareSaleFormComponent>;
+    let guardComponent: HardwareSaleFormComponent;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [
+          HardwareSaleFormComponent,
+          TranslocoTestingModule.forRoot({
+            langs: { es: {} },
+            translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
+          })
+        ],
+        providers: [
+          { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
+          { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
+          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          { provide: UserContextService, useValue: { userId: signal<string | null>(null) } }
+        ],
+        schemas: [NO_ERRORS_SCHEMA]
+      });
+
+      guardFixture = TestBed.createComponent(HardwareSaleFormComponent);
+      guardComponent = guardFixture.componentInstance;
+      guardFixture.componentRef.setInput('item', makeConsole());
+      guardFixture.componentRef.setInput('itemType', 'console');
+    });
+
+    it('muestra snackbar cuando userId es null al intentar guardar', async () => {
+      guardFixture.detectChanges();
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await guardComponent.onSave();
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(guardComponent.saving()).toBe(false);
+    });
+  });
+
+  describe('_useCase — guard defensivo (sin CONSOLE_USE_CASES)', () => {
+    let guardFixture: ComponentFixture<HardwareSaleFormComponent>;
+    let guardComponent: HardwareSaleFormComponent;
+
+    beforeEach(() => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [
+          HardwareSaleFormComponent,
+          TranslocoTestingModule.forRoot({
+            langs: { es: {} },
+            translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
+          })
+        ],
+        providers: [
+          { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
+          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
+        ],
+        schemas: [NO_ERRORS_SCHEMA]
+      });
+
+      guardFixture = TestBed.createComponent(HardwareSaleFormComponent);
+      guardComponent = guardFixture.componentInstance;
+      guardFixture.componentRef.setInput('item', makeConsole());
+      guardFixture.componentRef.setInput('itemType', 'console');
+    });
+
+    it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta guardar', async () => {
+      guardFixture.detectChanges();
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await guardComponent.onSave();
+
+      expect(snackBar.open).toHaveBeenCalled();
     });
   });
 });

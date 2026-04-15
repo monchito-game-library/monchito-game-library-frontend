@@ -188,4 +188,83 @@ describe('SupabaseConsoleRepository', () => {
       await expect(repo.delete('user-1', 'console-uuid-1')).rejects.toThrow('Failed to delete console');
     });
   });
+
+  describe('updateSaleStatus', () => {
+    it('actualiza los campos de venta con id y user_id correctos', async () => {
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.updateSaleStatus('user-1', 'console-uuid-1', {
+        forSale: true,
+        salePrice: 299,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ for_sale: true, sale_price: 299 }));
+      expect(b.eq).toHaveBeenCalledWith('id', 'console-uuid-1');
+      expect(b.eq).toHaveBeenCalledWith('user_id', 'user-1');
+    });
+
+    it('lanza error si el update de sale status falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Sale update failed' } }));
+
+      await expect(
+        repo.updateSaleStatus('user-1', 'console-uuid-1', {
+          forSale: false,
+          salePrice: null,
+          soldAt: null,
+          soldPriceFinal: null
+        })
+      ).rejects.toThrow('Failed to update console sale status');
+    });
+  });
+
+  describe('createLoan', () => {
+    it('inserta el préstamo y devuelve el id creado', async () => {
+      const loanBuilder = makeBuilder({ data: { id: 'loan-uuid-1' }, error: null });
+      const consoleBuilder = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValueOnce(loanBuilder).mockReturnValueOnce(consoleBuilder);
+
+      const result = await repo.createLoan({
+        itemType: 'console',
+        userItemId: 'console-uuid-1',
+        loanedTo: 'amigo',
+        loanedAt: '2024-03-01'
+      });
+
+      expect(result).toBe('loan-uuid-1');
+      expect(loanBuilder.insert).toHaveBeenCalledWith(
+        expect.objectContaining({ item_type: 'console', user_item_id: 'console-uuid-1', loaned_to: 'amigo' })
+      );
+    });
+
+    it('lanza error si el insert del préstamo falla', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Loan insert failed' } }));
+
+      await expect(
+        repo.createLoan({
+          itemType: 'console',
+          userItemId: 'console-uuid-1',
+          loanedTo: 'amigo',
+          loanedAt: '2024-03-01'
+        })
+      ).rejects.toThrow('Failed to create console loan');
+    });
+  });
+
+  describe('returnLoan', () => {
+    it('actualiza hardware_loans y limpia los campos de préstamo de la consola', async () => {
+      const loanBuilder = makeBuilder({ error: null });
+      const consoleBuilder = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValueOnce(loanBuilder).mockReturnValueOnce(consoleBuilder);
+
+      await repo.returnLoan('loan-uuid-1', 'console-uuid-1', 'user-1');
+
+      expect(loanBuilder.update).toHaveBeenCalledWith(expect.objectContaining({ returned_at: expect.any(String) }));
+      expect(consoleBuilder.update).toHaveBeenCalledWith(
+        expect.objectContaining({ active_loan_id: null, active_loan_to: null, active_loan_at: null })
+      );
+    });
+  });
 });
