@@ -174,46 +174,33 @@ describe('AuthStateService', () => {
   });
 
   describe('onAuthStateChange', () => {
-    it('navega a /auth/login cuando el usuario pasa de autenticado a null', async () => {
+    async function setupWithCallback(session: AuthUserModel | null): Promise<(user: AuthUserModel | null) => void> {
       let capturedCallback: ((user: AuthUserModel | null) => void) | null = null;
       vi.mocked(mockAuthUseCases.onAuthStateChange).mockImplementation((cb) => {
         capturedCallback = cb;
       });
-      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(fakeUser);
+      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(session);
       service = TestBed.inject(AuthStateService);
       await Promise.resolve();
+      return capturedCallback!;
+    }
 
-      capturedCallback!(null);
-
+    it('navega a /auth/login cuando el usuario pasa de autenticado a null', async () => {
+      const callback = await setupWithCallback(fakeUser);
+      callback(null);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login']);
     });
 
     it('no navega cuando el usuario se actualiza con un nuevo usuario', async () => {
-      let capturedCallback: ((user: AuthUserModel | null) => void) | null = null;
-      vi.mocked(mockAuthUseCases.onAuthStateChange).mockImplementation((cb) => {
-        capturedCallback = cb;
-      });
-      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(fakeUser);
-      service = TestBed.inject(AuthStateService);
-      await Promise.resolve();
-
+      const callback = await setupWithCallback(fakeUser);
       const updatedUser: AuthUserModel = { ...fakeUser, displayName: 'New Name' };
-      capturedCallback!(updatedUser);
-
+      callback(updatedUser);
       expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
 
     it('no navega si el usuario era null antes del cambio', async () => {
-      let capturedCallback: ((user: AuthUserModel | null) => void) | null = null;
-      vi.mocked(mockAuthUseCases.onAuthStateChange).mockImplementation((cb) => {
-        capturedCallback = cb;
-      });
-      vi.mocked(mockAuthUseCases.getSession).mockResolvedValue(null);
-      service = TestBed.inject(AuthStateService);
-      await Promise.resolve();
-
-      capturedCallback!(null);
-
+      const callback = await setupWithCallback(null);
+      callback(null);
       expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
   });
