@@ -36,7 +36,7 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import {
   HardwareLoanFormComponent,
   HardwareLoanItem
-} from '@/components/hardware-loan-form/hardware-loan-form.component';
+} from '@/pages/collection/components/hardware-loan-form/hardware-loan-form.component';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
