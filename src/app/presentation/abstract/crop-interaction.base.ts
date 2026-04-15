@@ -1,7 +1,5 @@
 import { computed, signal, Signal, WritableSignal } from '@angular/core';
-
-const MIN_SCALE = 1;
-const MAX_SCALE = 4;
+import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
 
 /**
  * Abstract base class that encapsulates the shared drag, zoom and touch

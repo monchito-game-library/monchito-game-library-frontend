@@ -9,21 +9,19 @@ import { hardwareModelUseCasesProvider } from '@/di/use-cases/hardware-model.use
 import { hardwareEditionUseCasesProvider } from '@/di/use-cases/hardware-edition.use-cases.provider';
 import { hardwareConsoleSpecsUseCasesProvider } from '@/di/use-cases/hardware-console-specs.use-cases.provider';
 
-const hardwareProviders = [
-  hardwareBrandRepositoryProvider,
-  hardwareModelRepositoryProvider,
-  hardwareEditionRepositoryProvider,
-  hardwareConsoleSpecsRepositoryProvider,
-  hardwareBrandUseCasesProvider,
-  hardwareModelUseCasesProvider,
-  hardwareEditionUseCasesProvider,
-  hardwareConsoleSpecsUseCasesProvider
-];
-
 export const hardwareManagementRoutes: Routes = [
   {
     path: '',
-    providers: hardwareProviders,
+    providers: [
+      hardwareBrandRepositoryProvider,
+      hardwareModelRepositoryProvider,
+      hardwareEditionRepositoryProvider,
+      hardwareConsoleSpecsRepositoryProvider,
+      hardwareBrandUseCasesProvider,
+      hardwareModelUseCasesProvider,
+      hardwareEditionUseCasesProvider,
+      hardwareConsoleSpecsUseCasesProvider
+    ],
     children: [
       {
         path: '',

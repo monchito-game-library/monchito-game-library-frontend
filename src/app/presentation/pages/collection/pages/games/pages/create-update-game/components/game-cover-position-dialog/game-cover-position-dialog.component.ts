@@ -11,9 +11,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { CropInteractionBase } from '@/abstract/crop-interaction.base';
-
-const MIN_SCALE = 1;
-const MAX_SCALE = 4;
+import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
 
 @Component({
   selector: 'app-game-cover-position-dialog',

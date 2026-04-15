@@ -17,8 +17,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 
-const PRIORITY_RANGE = WISHLIST_PRIORITY_OPTIONS;
-
 @Component({
   selector: 'app-wishlist-card',
   templateUrl: './wishlist-card.component.html',
@@ -47,7 +45,7 @@ export class WishlistCardComponent {
   readonly ownClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
 
   /** Priority star range used to render the star icons. */
-  readonly priorityRange: number[] = PRIORITY_RANGE;
+  readonly priorityRange: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
   readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {
