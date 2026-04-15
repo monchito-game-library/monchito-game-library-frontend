@@ -119,7 +119,7 @@
 | `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
-| `pages/games/pages/games-hub/games-hub.component.spec.ts` | 30 | ✅ Cubierto |
+| `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 30 | ✅ Cubierto |
 | `pages/games/components/list-page-header/list-page-header.component.spec.ts` | 5 | ✅ Cubierto |
 | `pages/games/pages/consoles/consoles.component.spec.ts` | 22 | ✅ Cubierto |
 | `pages/games/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 35 | ✅ Cubierto |

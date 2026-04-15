@@ -6,7 +6,7 @@ import { consoleUseCasesProvider } from '@/di/use-cases/console.use-cases.provid
 import { controllerRepositoryProvider } from '@/di/repositories/controller.repository.provider';
 import { controllerUseCasesProvider } from '@/di/use-cases/controller.use-cases.provider';
 
-export const gamesHubRoutes: Routes = [
+export const collectionOverviewRoutes: Routes = [
   {
     path: '',
     providers: [
@@ -20,7 +20,7 @@ export const gamesHubRoutes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./games-hub.component').then((m) => m.GamesHubComponent)
+        loadComponent: () => import('./collection-overview.component').then((m) => m.CollectionOverviewComponent)
       }
     ]
   }

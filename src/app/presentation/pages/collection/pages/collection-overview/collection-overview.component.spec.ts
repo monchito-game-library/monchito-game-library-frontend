@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { GamesHubComponent } from './games-hub.component';
+import { CollectionOverviewComponent } from './collection-overview.component';
 import { GAME_USE_CASES } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES } from '@/domain/use-cases/console/console.use-cases.contract';
 import { CONTROLLER_USE_CASES } from '@/domain/use-cases/controller/controller.use-cases.contract';
@@ -32,13 +32,13 @@ function makeController(overrides: { price?: number | null } = {}): { price: num
 }
 
 /**
- * Tests del componente GamesHubComponent.
+ * Tests del componente CollectionOverviewComponent.
  * Verifica señales iniciales, señal computada collectionTotalSpent,
  * navegación y carga de datos en ngOnInit.
  */
-describe('GamesHubComponent', () => {
-  let component: GamesHubComponent;
-  let fixture: ComponentFixture<GamesHubComponent>;
+describe('CollectionOverviewComponent', () => {
+  let component: CollectionOverviewComponent;
+  let fixture: ComponentFixture<CollectionOverviewComponent>;
 
   const mockGameUseCases = {
     getAllGamesForList: vi.fn()
@@ -67,7 +67,7 @@ describe('GamesHubComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        GamesHubComponent,
+        CollectionOverviewComponent,
         TranslocoTestingModule.forRoot({
           langs: { en: {} },
           translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
@@ -83,7 +83,7 @@ describe('GamesHubComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     });
 
-    fixture = TestBed.createComponent(GamesHubComponent);
+    fixture = TestBed.createComponent(CollectionOverviewComponent);
     component = fixture.componentInstance;
     // No detectChanges() para evitar ngOnInit automático
   });

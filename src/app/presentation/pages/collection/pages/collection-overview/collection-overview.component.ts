@@ -24,14 +24,14 @@ import {
 import { UserContextService } from '@/services/user-context.service';
 
 @Component({
-  selector: 'app-games-hub',
-  templateUrl: './games-hub.component.html',
-  styleUrls: ['./games-hub.component.scss'],
+  selector: 'app-collection-overview',
+  templateUrl: './collection-overview.component.html',
+  styleUrls: ['./collection-overview.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe]
 })
-export class GamesHubComponent implements OnInit {
+export class CollectionOverviewComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);

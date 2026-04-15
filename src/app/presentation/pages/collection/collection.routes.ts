@@ -9,7 +9,8 @@ export const collectionRoutes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () => import('./pages/games-hub/games-hub.routes').then((m) => m.gamesHubRoutes)
+        loadChildren: () =>
+          import('./pages/collection-overview/collection-overview.routes').then((m) => m.collectionOverviewRoutes)
       },
       {
         path: 'games',

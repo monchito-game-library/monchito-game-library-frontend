@@ -5,7 +5,7 @@
   min-height: 0;
 }
 
-.games-hub {
+.collection-overview {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,20 +16,20 @@
   overflow-y: auto;
   box-sizing: border-box;
 
-  .games-hub__title {
+  .collection-overview__title {
     font-size: 1.75rem;
     font-weight: 600;
     margin: 0;
   }
 
-  .games-hub__total-banner {
+  .collection-overview__total-banner {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
   }
 
-  .games-hub__total-label {
+  .collection-overview__total-label {
     font-size: 0.875rem;
     font-weight: 400;
     color: var(--mat-sys-on-surface-variant);
@@ -37,7 +37,7 @@
     letter-spacing: 0.05em;
   }
 
-  .games-hub__total-amount {
+  .collection-overview__total-amount {
     font-size: 2rem;
     font-weight: 700;
     color: var(--mat-sys-primary);
@@ -46,7 +46,7 @@
     align-items: center;
   }
 
-  .games-hub__grid {
+  .collection-overview__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
@@ -54,7 +54,7 @@
     max-width: 900px;
   }
 
-  .games-hub__card {
+  .collection-overview__card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -79,25 +79,25 @@
     }
   }
 
-  .games-hub__card-icon {
+  .collection-overview__card-icon {
     font-size: 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
     color: var(--mat-sys-primary);
   }
 
-  .games-hub__card-title {
+  .collection-overview__card-title {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--mat-sys-on-surface);
   }
 
-  .games-hub__card-subtitle {
+  .collection-overview__card-subtitle {
     font-size: 0.875rem;
     color: var(--mat-sys-on-surface-variant);
   }
 
-  .games-hub__card-count {
+  .collection-overview__card-count {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +107,7 @@
     min-height: 1.25rem;
   }
 
-  .games-hub__card-total {
+  .collection-overview__card-total {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -120,29 +120,29 @@
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
-  .games-hub {
+  .collection-overview {
     padding: 1.5rem 1rem calc(60px + 0.75rem);
 
-    .games-hub__total-amount {
+    .collection-overview__total-amount {
       font-size: 1.75rem;
     }
 
-    .games-hub__grid {
+    .collection-overview__grid {
       grid-template-columns: 1fr;
       max-width: 100%;
     }
 
-    .games-hub__card {
+    .collection-overview__card {
       padding: 1.5rem;
     }
 
-    .games-hub__card-icon {
+    .collection-overview__card-icon {
       font-size: 2rem;
       width: 2rem;
       height: 2rem;
     }
 
-    .games-hub__card-title {
+    .collection-overview__card-title {
       font-size: 1rem;
     }
   }
