@@ -50,9 +50,12 @@ describe('canActivateAdmin', () => {
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
   });
 
-  it('devuelve Observable que resuelve true cuando preferencesLoaded cambia y el usuario es admin', async () => {
+  function setupObservableGuard(role: 'admin' | 'user'): {
+    loadedSignal: ReturnType<typeof signal<boolean>>;
+    promise: Promise<boolean>;
+  } {
     const loadedSignal = signal<boolean>(false);
-    const roleSignal = signal<'admin' | 'user'>('admin');
+    const roleSignal = signal<'admin' | 'user'>(role);
 
     TestBed.configureTestingModule({
       providers: [
@@ -66,33 +69,20 @@ describe('canActivateAdmin', () => {
 
     const result = TestBed.runInInjectionContext(() => canActivateAdmin({} as never, {} as never));
     const promise = firstValueFrom(result as Observable<boolean>);
+    return { loadedSignal, promise };
+  }
 
+  it('devuelve Observable que resuelve true cuando preferencesLoaded cambia y el usuario es admin', async () => {
+    const { loadedSignal, promise } = setupObservableGuard('admin');
     loadedSignal.set(true);
-    TestBed.flushEffects();
-
+    TestBed.tick();
     expect(await promise).toBe(true);
   });
 
   it('devuelve Observable que resuelve false y redirige cuando preferencesLoaded cambia y no es admin', async () => {
-    const loadedSignal = signal<boolean>(false);
-    const roleSignal = signal<'admin' | 'user'>('user');
-
-    TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: UserPreferencesService,
-          useValue: { preferencesLoaded: loadedSignal.asReadonly(), isAdmin: computed(() => roleSignal() === 'admin') }
-        },
-        { provide: Router, useValue: mockRouter }
-      ]
-    });
-
-    const result = TestBed.runInInjectionContext(() => canActivateAdmin({} as never, {} as never));
-    const promise = firstValueFrom(result as Observable<boolean>);
-
+    const { loadedSignal, promise } = setupObservableGuard('user');
     loadedSignal.set(true);
-    TestBed.flushEffects();
-
+    TestBed.tick();
     expect(await promise).toBe(false);
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
   });
