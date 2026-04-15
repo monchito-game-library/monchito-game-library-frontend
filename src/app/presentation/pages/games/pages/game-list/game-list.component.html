@@ -2,6 +2,7 @@
 <app-list-page-header
   [searchValue]="searchTerm()"
   searchPlaceholder="gameList.filters.title"
+  [showAddBtn]="allGames().length > 0"
   [showFilterBtn]="true"
   [filterCount]="activeFilterCount()"
   (searchChange)="onSearchInput($event)"

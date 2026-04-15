@@ -28,6 +28,8 @@
 |---|---|---|
 | `order/order.mapper.spec.ts` | 39 | ✅ Cubierto |
 | `rawg/rawg.mapper.spec.ts` | 19 | ✅ Cubierto |
+| `supabase/console.mapper.spec.ts` | 17 | ✅ Cubierto |
+| `supabase/controller.mapper.spec.ts` | 13 | ✅ Cubierto |
 | `supabase/game.mapper.spec.ts` | 39 | ✅ Cubierto |
 | `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/store.mapper.spec.ts` | 7 | ✅ Cubierto |
@@ -45,6 +47,8 @@
 | `audit-log/audit-log.use-cases.spec.ts` | 4 | ✅ Cubierto |
 | `auth/auth.use-cases.spec.ts` | 18 | ✅ Cubierto |
 | `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
+| `console/console.use-cases.spec.ts` | 15 | ✅ Cubierto |
+| `controller/controller.use-cases.spec.ts` | 15 | ✅ Cubierto |
 | `game/game.use-cases.spec.ts` | 15 | ✅ Cubierto |
 | `orders/orders.use-cases.spec.ts` | 28 | ✅ Cubierto |
 | `protector/protector.use-cases.spec.ts` | 5 | ✅ Cubierto |
@@ -102,6 +106,8 @@
 | `pages/auth/forgot-password/forgot-password.component.spec.ts` | 15 | ✅ Cubierto |
 | `pages/auth/login/login.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/auth/register/register.component.spec.ts` | 20 | ✅ Cubierto |
+| `components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 20 | ✅ Cubierto |
+| `components/hardware-sale-form/hardware-sale-form.component.spec.ts` | 19 | ✅ Cubierto |
 | `pages/game-list/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
 | `pages/game-list/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 82 | ✅ Cubierto |
 | `pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 15 | ✅ Cubierto |
@@ -109,8 +115,19 @@
 | `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
+| `pages/games/pages/games-hub/games-hub.component.spec.ts` | 30 | ✅ Cubierto |
+| `pages/games/components/list-page-header/list-page-header.component.spec.ts` | 5 | ✅ Cubierto |
+| `pages/games/pages/consoles/consoles.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/games/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 35 | ✅ Cubierto |
+| `pages/games/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 20 | ✅ Cubierto |
+| `pages/games/pages/controllers/controllers.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/games/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 33 | ✅ Cubierto |
+| `pages/games/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 20 | ✅ Cubierto |
 | `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/management/audit-log/audit-log-management.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/hardware/hardware-brands-management.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/management/hardware/hardware-models-management.component.spec.ts` | 28 | ✅ Cubierto |
+| `pages/management/hardware/hardware-editions-management.component.spec.ts` | 27 | ✅ Cubierto |
 | `pages/management/protectors/protectors-management.component.spec.ts` | 37 | ✅ Cubierto |
 | `pages/management/stores/stores-management.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/management/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
@@ -186,6 +203,8 @@
 | `supabase.repository.spec.ts` | 41 | ✅ Cubierto |
 | `supabase-auth.repository.spec.ts` | 20 | ✅ Cubierto |
 | `supabase-audit-log.repository.spec.ts` | 7 | ✅ Cubierto |
+| `supabase-console.repository.spec.ts` | 13 | ✅ Cubierto |
+| `supabase-controller.repository.spec.ts` | 13 | ✅ Cubierto |
 | `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
 | `supabase-protector.repository.spec.ts` | 13 | ✅ Cubierto |
 | `supabase-store.repository.spec.ts` | 9 | ✅ Cubierto |
@@ -219,18 +238,18 @@
 | Capa | Ficheros | Tests |
 |---|---|---|
 | Configuración | 1 | 3 |
-| Mappers | 7 | 127 |
-| Use Cases | 10 | 107 |
-| Repositorios | 9 (+1 pendiente) | 140 |
+| Mappers | 9 | 157 |
+| Use Cases | 12 | 137 |
+| Repositorios | 11 (+1 pendiente) | 166 |
 | Guards | 3 | 12 |
 | Servicios | 5 | 64 |
-| Componentes | 36 | 742 |
+| Componentes | 51 | 1329 |
 | Abstractas | 1 | 29 |
 | App component | 1 | 27 |
 | Utilidades | 4 | 57 |
-| **Total** | **80** | **1460** |
+| **Total** | **114** | **1925** |
 
-> El total de 1326 incluye todos los `it()` de todos los ficheros `.spec.ts`. Fuente autoritativa: `ng test`.
+> Fuente autoritativa: `npm run test:coverage`.
 
 ---
 
@@ -238,10 +257,10 @@
 
 | Métrica | Valor |
 |---|---|
-| Statements | 98.66 % |
-| Branches | 94.54 % |
-| Functions | 98.85 % |
-| Lines | 99.67 % |
+| Statements | 95.68 % |
+| Branches | 92.92 % |
+| Functions | 95.61 % |
+| Lines | 96.36 % |
 
 ```bash
 npm run test:coverage

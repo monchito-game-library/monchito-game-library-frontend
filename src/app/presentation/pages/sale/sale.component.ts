@@ -12,6 +12,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, SoldItemModel, MarketItemType } from '@/models/market/market-item.model';
@@ -28,7 +29,7 @@ import { SaleTab, SaleFilterType } from '@/types/sale-page.type';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [marketRepositoryProvider, marketUseCasesProvider],
-  imports: [CurrencyPipe, DatePipe, MatIcon, MatProgressSpinner, TranslocoPipe]
+  imports: [CurrencyPipe, DatePipe, MatIcon, MatProgressSpinner, MatTab, MatTabGroup, MatTabLabel, TranslocoPipe]
 })
 export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatFabButton } from '@angular/material/button';
+import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -44,6 +44,7 @@ import { ListPageHeaderComponent } from '@/pages/games/components/list-page-head
   imports: [
     CurrencyPipe,
     DatePipe,
+    MatButton,
     MatFabButton,
     MatIcon,
     MatProgressSpinner,

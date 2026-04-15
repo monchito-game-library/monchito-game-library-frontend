@@ -17,7 +17,14 @@ const baseDto: ControllerDto = {
   store: 'store-uuid-1',
   purchase_date: '2023-12-25',
   notes: 'Edición limitada',
-  created_at: '2023-12-25T09:00:00Z'
+  created_at: '2023-12-25T09:00:00Z',
+  for_sale: false,
+  sale_price: null,
+  sold_at: null,
+  sold_price_final: null,
+  active_loan_id: null,
+  active_loan_to: null,
+  active_loan_at: null
 };
 
 const baseModel: ControllerModel = {
@@ -33,7 +40,14 @@ const baseModel: ControllerModel = {
   store: 'store-uuid-1',
   purchaseDate: '2023-12-25',
   notes: 'Edición limitada',
-  createdAt: '2023-12-25T09:00:00Z'
+  createdAt: '2023-12-25T09:00:00Z',
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('mapController', () => {

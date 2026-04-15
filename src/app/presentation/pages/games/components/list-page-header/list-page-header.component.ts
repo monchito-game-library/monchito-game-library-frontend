@@ -20,6 +20,9 @@ export class ListPageHeaderComponent {
   /** Valor actual del campo de búsqueda. */
   readonly searchValue = input<string>('');
 
+  /** Si es true, muestra el botón de añadir en el header. */
+  readonly showAddBtn = input<boolean>(true);
+
   /** Si es true, muestra el botón de filtros (abre un panel lateral). */
   readonly showFilterBtn = input<boolean>(false);
 

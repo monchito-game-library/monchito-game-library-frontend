@@ -7,7 +7,7 @@ import { SupabaseConsoleRepository } from './supabase-console.repository';
 
 function makeBuilder(result: { data?: unknown; error: { message: string } | null }) {
   const b: any = {};
-  for (const m of ['select', 'eq', 'order', 'insert', 'update', 'delete', 'single']) {
+  for (const m of ['select', 'eq', 'is', 'order', 'insert', 'update', 'delete', 'single']) {
     b[m] = vi.fn().mockReturnValue(b);
   }
   b.then = (resolve: any, reject?: any) => Promise.resolve(result).then(resolve, reject);
@@ -26,7 +26,14 @@ const consoleDto = {
   store: 'store-uuid-1',
   purchase_date: '2023-11-10',
   notes: null,
-  created_at: '2023-11-10T10:00:00Z'
+  created_at: '2023-11-10T10:00:00Z',
+  for_sale: false,
+  sale_price: null,
+  sold_at: null,
+  sold_price_final: null,
+  active_loan_id: null,
+  active_loan_to: null,
+  active_loan_at: null
 };
 
 const consoleModel = {
@@ -41,7 +48,14 @@ const consoleModel = {
   store: 'store-uuid-1',
   purchaseDate: '2023-11-10',
   notes: null,
-  createdAt: '2023-11-10T10:00:00Z'
+  createdAt: '2023-11-10T10:00:00Z',
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('SupabaseConsoleRepository', () => {

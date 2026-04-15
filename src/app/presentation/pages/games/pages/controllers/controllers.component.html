@@ -3,6 +3,7 @@
   <app-list-page-header
     [searchValue]="searchQuery()"
     searchPlaceholder="controllersPage.search"
+    [showAddBtn]="controllers().length > 0"
     (searchChange)="searchQuery.set($event)"
     (addClick)="onAdd()">
     <div class="controllers__stat">
@@ -36,7 +37,7 @@
         <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
         <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
         <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button color="primary" (click)="onAdd()">
+        <button mat-flat-button (click)="onAdd()">
           <mat-icon>add</mat-icon>
           {{ 'controllersPage.empty.add' | transloco }}
         </button>

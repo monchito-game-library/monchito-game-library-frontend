@@ -7,7 +7,7 @@ import { SupabaseControllerRepository } from './supabase-controller.repository';
 
 function makeBuilder(result: { data?: unknown; error: { message: string } | null }) {
   const b: any = {};
-  for (const m of ['select', 'eq', 'order', 'insert', 'update', 'delete', 'single']) {
+  for (const m of ['select', 'eq', 'is', 'order', 'insert', 'update', 'delete', 'single']) {
     b[m] = vi.fn().mockReturnValue(b);
   }
   b.then = (resolve: any, reject?: any) => Promise.resolve(result).then(resolve, reject);
@@ -43,7 +43,14 @@ const controllerModel = {
   store: 'GAME',
   purchaseDate: '2023-12-25',
   notes: null,
-  createdAt: '2023-12-25T09:00:00Z'
+  createdAt: '2023-12-25T09:00:00Z',
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('SupabaseControllerRepository', () => {

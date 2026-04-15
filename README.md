@@ -46,7 +46,7 @@ Desplegada en Vercel. Ver `docs/deploy/VERCEL_DEPLOY.md` para detalles de config
 - Tema claro/oscuro con Angular Material 3
 - Navegación Rail (desktop) y Bottom Navigation (móvil)
 - Soporte multilenguaje (ES/EN) con Transloco
-- +940 tests unitarios con Vitest (~95 % de cobertura de ramas)
+- +1925 tests unitarios con Vitest (~93 % de cobertura de ramas)
 
 ---
 

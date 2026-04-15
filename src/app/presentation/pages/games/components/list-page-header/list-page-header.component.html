@@ -24,8 +24,10 @@
     </button>
   }
 
-  <button mat-flat-button color="primary" class="list-page-header__add-btn" (click)="addClick.emit()">
-    <mat-icon>add</mat-icon>
-    {{ 'nav.add' | transloco }}
-  </button>
+  @if (showAddBtn()) {
+    <button mat-flat-button color="primary" class="list-page-header__add-btn" (click)="addClick.emit()">
+      <mat-icon>add</mat-icon>
+      {{ 'nav.add' | transloco }}
+    </button>
+  }
 </div>

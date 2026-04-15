@@ -450,15 +450,14 @@ describe('GameListComponent', () => {
   });
 
   describe('onSearchInput', () => {
-    it('actualiza searchTerm con el valor del input (trim)', () => {
-      const event = { target: { value: '  god of war  ' } } as unknown as Event;
-      component.onSearchInput(event);
+    it('actualiza searchTerm con el valor recibido (trim)', () => {
+      component.onSearchInput('  god of war  ');
       expect(component.searchTerm()).toBe('god of war');
     });
 
-    it('no falla si el target es null', () => {
-      const event = { target: null } as unknown as Event;
-      expect(() => component.onSearchInput(event)).not.toThrow();
+    it('acepta cadena vacía sin lanzar error', () => {
+      expect(() => component.onSearchInput('')).not.toThrow();
+      expect(component.searchTerm()).toBe('');
     });
   });
 
@@ -474,16 +473,19 @@ describe('GameListComponent', () => {
       expect(component.loading()).toBe(false);
     });
 
-    it('usa la caché de allGames si ya tiene datos', async () => {
+    it('muestra la caché inmediatamente y luego recarga desde Supabase', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       const userPreferences = TestBed.inject(UserPreferencesService as any) as any;
       const cached = [makeGame({ title: 'Cached' })];
+      const fresh = [makeGame({ title: 'Fresh' })];
       userPreferences.allGames.set(cached);
+      gameUseCases.getAllGamesForList.mockResolvedValue(fresh);
 
       await component.ngOnInit();
 
-      expect(gameUseCases.getAllGamesForList).not.toHaveBeenCalled();
-      expect(component.allGames()).toEqual(cached);
+      // Always forces a refresh even when cache is present
+      expect(gameUseCases.getAllGamesForList).toHaveBeenCalled();
+      expect(component.allGames()).toEqual(fresh);
     });
   });
 
@@ -678,13 +680,11 @@ describe('GameListComponent — breakpoint observer', () => {
   });
 });
 
-describe('GameListComponent — router subscription', () => {
+describe('GameListComponent — carga inicial', () => {
   let component: GameListComponent;
-  let routerEvents$: Subject<any>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    routerEvents$ = new Subject();
 
     TestBed.configureTestingModule({
       imports: [GameListComponent],
@@ -698,7 +698,7 @@ describe('GameListComponent — router subscription', () => {
         { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: Router, useValue: { events: routerEvents$.asObservable() } },
+        { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn() } } } },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
         { provide: MatBottomSheet, useValue: { open: vi.fn() } }
@@ -712,21 +712,12 @@ describe('GameListComponent — router subscription', () => {
     await component.ngOnInit();
   });
 
-  it('recarga los juegos al navegar a /games/list', () => {
+  it('siempre llama a getAllGamesForList en ngOnInit (force refresh)', () => {
     const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-    const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
-
-    routerEvents$.next(new NavigationEnd(1, '/games/list', '/games/list'));
-
-    expect(gameUseCases.getAllGamesForList.mock.calls.length).toBeGreaterThan(callsBefore);
+    expect(gameUseCases.getAllGamesForList).toHaveBeenCalledWith('user-1');
   });
 
-  it('no recarga los juegos si la URL no empieza por /games', () => {
-    const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-    const callsBefore = gameUseCases.getAllGamesForList.mock.calls.length;
-
-    routerEvents$.next(new NavigationEnd(1, '/wishlist', '/wishlist'));
-
-    expect(gameUseCases.getAllGamesForList.mock.calls.length).toBe(callsBefore);
+  it('loading queda en false tras la carga', () => {
+    expect(component.loading()).toBe(false);
   });
 });

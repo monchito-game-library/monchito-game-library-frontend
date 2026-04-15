@@ -10,7 +10,10 @@ const mockRepo: ConsoleRepositoryContract = {
   getById: vi.fn(),
   add: vi.fn(),
   update: vi.fn(),
-  delete: vi.fn()
+  delete: vi.fn(),
+  updateSaleStatus: vi.fn(),
+  createLoan: vi.fn(),
+  returnLoan: vi.fn()
 };
 
 const consoleModel: ConsoleModel = {
@@ -25,7 +28,14 @@ const consoleModel: ConsoleModel = {
   store: 'MediaMarkt',
   purchaseDate: '2023-11-10',
   notes: null,
-  createdAt: '2023-11-10T10:00:00Z'
+  createdAt: '2023-11-10T10:00:00Z',
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('ConsoleUseCasesImpl', () => {

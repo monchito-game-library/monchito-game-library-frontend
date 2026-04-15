@@ -3,6 +3,7 @@
   <app-list-page-header
     [searchValue]="searchQuery()"
     searchPlaceholder="consolesPage.search"
+    [showAddBtn]="consoles().length > 0"
     (searchChange)="searchQuery.set($event)"
     (addClick)="onAdd()">
     <div class="consoles__stat">
@@ -36,7 +37,7 @@
         <mat-icon class="consoles__empty-icon">tv_off</mat-icon>
         <p class="consoles__empty-title">{{ 'consolesPage.empty.title' | transloco }}</p>
         <p class="consoles__empty-subtitle">{{ 'consolesPage.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button color="primary" (click)="onAdd()">
+        <button mat-flat-button (click)="onAdd()">
           <mat-icon>add</mat-icon>
           {{ 'consolesPage.empty.add' | transloco }}
         </button>

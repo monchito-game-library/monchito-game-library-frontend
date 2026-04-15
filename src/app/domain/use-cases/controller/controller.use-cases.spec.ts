@@ -13,7 +13,10 @@ const mockRepo: ControllerRepositoryContract = {
   getById: vi.fn(),
   add: vi.fn(),
   update: vi.fn(),
-  delete: vi.fn()
+  delete: vi.fn(),
+  updateSaleStatus: vi.fn(),
+  createLoan: vi.fn(),
+  returnLoan: vi.fn()
 };
 
 const controllerModel: ControllerModel = {
@@ -29,7 +32,14 @@ const controllerModel: ControllerModel = {
   store: 'GAME',
   purchaseDate: '2023-12-25',
   notes: null,
-  createdAt: '2023-12-25T09:00:00Z'
+  createdAt: '2023-12-25T09:00:00Z',
+  forSale: false,
+  salePrice: null,
+  soldAt: null,
+  soldPriceFinal: null,
+  activeLoanId: null,
+  activeLoanTo: null,
+  activeLoanAt: null
 };
 
 describe('ControllerUseCasesImpl', () => {
