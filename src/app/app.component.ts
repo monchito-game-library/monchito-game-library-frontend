@@ -42,8 +42,9 @@ export class AppComponent implements OnInit {
 
   /** Navigation items shared by desktop rail and mobile bottom nav. */
   readonly navItems: NavItemInterface[] = [
-    { icon: 'sports_esports', label: 'nav.collection', route: '/games' },
+    { icon: 'sports_esports', label: 'nav.collection', route: '/collection' },
     { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' },
+    { icon: 'sell', label: 'nav.sale', route: '/sale' },
     { icon: 'shopping_cart', label: 'nav.orders', route: '/orders' }
   ];
 
@@ -120,8 +121,8 @@ export class AppComponent implements OnInit {
    */
   isNavActive(route: string): boolean {
     const current = this.currentRoute();
-    if (route === '/games/add') {
-      return current.startsWith('/games/add') || current.startsWith('/games/edit/');
+    if (route === '/collection/games/add') {
+      return current.startsWith('/collection/games/add') || current.startsWith('/collection/games/edit/');
     }
     return current.startsWith(route);
   }
@@ -132,7 +133,7 @@ export class AppComponent implements OnInit {
    */
   getPageTitle(): string {
     const route = this.currentRoute();
-    if (route.startsWith('/games/edit/')) return 'nav.add';
+    if (route.startsWith('/collection/games/edit/')) return 'nav.add';
     const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
     const match = allItems.find((item) => route.startsWith(item.route));
     return match?.label ?? '';

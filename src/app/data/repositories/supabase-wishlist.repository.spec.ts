@@ -172,6 +172,15 @@ describe('SupabaseWishlistRepository', () => {
       expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ platform: 'PC' }));
     });
 
+    it('usa cadena vacía como platform cuando se proporciona null', async () => {
+      const b = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValue(b);
+
+      await repo.updateItem('user-1', 'w-1', { platform: null });
+
+      expect(b.update).toHaveBeenCalledWith(expect.objectContaining({ platform: '' }));
+    });
+
     it('actualiza también notes cuando se incluye en el patch', async () => {
       const b = makeBuilder({ error: null });
       mockSupabase.from.mockReturnValue(b);

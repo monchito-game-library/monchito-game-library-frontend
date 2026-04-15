@@ -102,22 +102,22 @@ describe('PwaUpdateService', () => {
   });
 
   describe('VERSION_READY en ruta de formulario', () => {
-    it('no añade el overlay en /games/add', () => {
-      mockRouterUrl = '/games/add';
+    it('no añade el overlay en /collection/games/add', () => {
+      mockRouterUrl = '/collection/games/add';
       service.init();
       versionUpdates$.next({ type: 'VERSION_READY' });
       expect(document.body.children.length).toBe(bodyChildrenBefore);
     });
 
-    it('no añade el overlay en /games/edit/:id', () => {
-      mockRouterUrl = '/games/edit/123';
+    it('no añade el overlay en /collection/games/edit/:id', () => {
+      mockRouterUrl = '/collection/games/edit/123';
       service.init();
       versionUpdates$.next({ type: 'VERSION_READY' });
       expect(document.body.children.length).toBe(bodyChildrenBefore);
     });
 
     it('añade el overlay al navegar a una ruta segura', () => {
-      mockRouterUrl = '/games/add';
+      mockRouterUrl = '/collection/games/add';
       service.init();
       versionUpdates$.next({ type: 'VERSION_READY' });
 
@@ -126,16 +126,16 @@ describe('PwaUpdateService', () => {
     });
 
     it('no añade el overlay al navegar a otra ruta de formulario', () => {
-      mockRouterUrl = '/games/add';
+      mockRouterUrl = '/collection/games/add';
       service.init();
       versionUpdates$.next({ type: 'VERSION_READY' });
 
-      routerEvents$.next(new NavigationEnd(1, '/games/edit/123', '/games/edit/123'));
+      routerEvents$.next(new NavigationEnd(1, '/collection/games/edit/123', '/collection/games/edit/123'));
       expect(document.body.children.length).toBe(bodyChildrenBefore);
     });
 
     it('no dispara el overlay si no había update pendiente al navegar', () => {
-      mockRouterUrl = '/games/add';
+      mockRouterUrl = '/collection/games/add';
       service.init();
 
       routerEvents$.next(new NavigationEnd(1, '/home', '/home'));

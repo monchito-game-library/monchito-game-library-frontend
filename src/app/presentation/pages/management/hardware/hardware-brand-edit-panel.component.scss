@@ -1,0 +1,78 @@
+.edit-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-panel__header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 2rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.edit-panel__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--mat-sys-on-surface);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.edit-panel__subtitle {
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.edit-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.25rem 2rem 1rem;
+}
+
+.edit-panel__fields {
+  display: grid;
+  grid-template-columns: minmax(0, 360px);
+  gap: 0 0.75rem;
+  align-items: start;
+}
+
+.edit-panel__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.edit-panel__actions-right {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.edit-panel__delete-btn {
+  color: var(--mat-sys-error);
+  border-color: var(--mat-sys-error);
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .edit-panel__header {
+    padding: 0.75rem 1rem 0.5rem;
+  }
+
+  .edit-panel__subtitle {
+    display: none;
+  }
+
+  .edit-panel__form {
+    padding: 0.25rem 1rem 1rem;
+  }
+
+  .edit-panel__fields {
+    grid-template-columns: 1fr;
+  }
+}

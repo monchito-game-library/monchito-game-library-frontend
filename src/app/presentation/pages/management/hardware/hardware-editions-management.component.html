@@ -1,0 +1,64 @@
+<div class="editions-page" [class.editions-page--panel-open]="panelOpen() || modelPanelOpen()">
+  <header class="editions-page__header">
+    <div class="editions-page__header-left">
+      <mat-icon class="editions-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
+      <div class="editions-page__titles">
+        <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
+        <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
+      </div>
+      <button
+        mat-icon-button
+        type="button"
+        class="editions-page__edit-btn"
+        [attr.aria-label]="'common.edit' | transloco"
+        (click)="onEditModel()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+    <button mat-flat-button color="primary" (click)="onAddEdition()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.hardware.editions.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (modelPanelOpen()) {
+    <div class="model-edit-panel-wrapper">
+      <app-hardware-model-edit-panel
+        [model]="model() ?? null"
+        [specs]="selectedModelSpecs()"
+        (saved)="onModelSaved($event)"
+        (cancelled)="onModelPanelClose()"
+        (deleted)="onModelDeleted()" />
+    </div>
+  }
+
+  @if (panelOpen()) {
+    <div class="editions-edit-panel-wrapper">
+      <app-hardware-edition-edit-panel
+        [edition]="selectedEdition() ?? null"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (deleted)="onDeleteEdition()" />
+    </div>
+  }
+
+  <div class="editions-grid-wrapper">
+    @if (loading()) {
+      <div class="editions-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (editions().length === 0) {
+      <p class="editions-page__empty">{{ 'management.hardware.editions.empty' | transloco }}</p>
+    } @else {
+      <div class="editions-grid">
+        @for (edition of editions(); track edition.id) {
+          <app-catalog-item-card
+            icon="star_outline"
+            [name]="edition.name"
+            [selected]="selectedEdition()?.id === edition.id"
+            (cardClick)="onSelectEdition(edition)" />
+        }
+      </div>
+    }
+  </div>
+</div>

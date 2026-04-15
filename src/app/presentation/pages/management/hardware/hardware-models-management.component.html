@@ -1,0 +1,66 @@
+<div class="models-page" [class.models-page--panel-open]="panelOpen() || brandPanelOpen()">
+  <header class="models-page__header">
+    <div class="models-page__header-left">
+      <mat-icon class="models-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
+      <div class="models-page__titles">
+        <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
+        <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>
+      </div>
+      <button
+        mat-icon-button
+        type="button"
+        class="models-page__edit-btn"
+        [attr.aria-label]="'common.edit' | transloco"
+        (click)="onEditBrand()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+    <button mat-flat-button color="primary" (click)="onAddModel()" [disabled]="loading()">
+      <mat-icon>add</mat-icon>
+      {{ 'management.hardware.models.addBtn' | transloco }}
+    </button>
+  </header>
+
+  @if (brandPanelOpen()) {
+    <div class="brand-edit-panel-wrapper">
+      <app-hardware-brand-edit-panel
+        [brand]="brand() ?? null"
+        (saved)="onBrandSaved($event)"
+        (cancelled)="onBrandPanelClose()"
+        (deleted)="onBrandDeleted()" />
+    </div>
+  }
+
+  @if (panelOpen()) {
+    <div class="models-edit-panel-wrapper">
+      <app-hardware-model-edit-panel
+        [model]="selectedModel() ?? null"
+        [specs]="selectedSpecs()"
+        (saved)="onSaved($event)"
+        (cancelled)="onClosePanel()"
+        (deleted)="onDeleteModel()" />
+    </div>
+  }
+
+  <div class="models-grid-wrapper">
+    @if (loading()) {
+      <div class="models-page__loading">
+        <mat-spinner diameter="40" />
+      </div>
+    } @else if (models().length === 0) {
+      <p class="models-page__empty">{{ 'management.hardware.models.empty' | transloco }}</p>
+    } @else {
+      <div class="models-grid">
+        @for (model of models(); track model.id) {
+          <app-catalog-item-card
+            [icon]="model.type === 'console' ? 'tv' : 'gamepad'"
+            [name]="model.name"
+            [chips]="getModelChips(model)"
+            [selected]="selectedModel()?.id === model.id"
+            [showChevron]="true"
+            (cardClick)="onOpenEditions(model)" />
+        }
+      </div>
+    }
+  </div>
+</div>

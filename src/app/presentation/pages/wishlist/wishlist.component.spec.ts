@@ -285,6 +285,16 @@ describe('WishlistComponent', () => {
 
       expect(component.viewMode()).toBe('form');
     });
+
+    it('no abre el formulario si el editItemId del state no coincide con ningún item', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.getAllForUser.mockResolvedValue([makeItem({ id: 'other-item' })]);
+      window.history.pushState({ editItemId: 'not-found-id' }, '');
+
+      await component.ngOnInit();
+
+      expect(component.viewMode()).toBe('list');
+    });
   });
 
   describe('onCardClicked', () => {
@@ -358,7 +368,7 @@ describe('WishlistComponent', () => {
       await component.onOwnItem(makeItem());
 
       expect(router.navigate).toHaveBeenCalledWith(
-        ['/games/add'],
+        ['/collection/games/add'],
         expect.objectContaining({ state: expect.any(Object) })
       );
     });
@@ -440,6 +450,23 @@ describe('WishlistComponent', () => {
         ['/wishlist', 'item-1'],
         expect.objectContaining({ state: { item } })
       );
+    });
+
+    it('vuelve a list mode si _returnToDetail es true pero el item actualizado no se encuentra', async () => {
+      const item = makeItem({ id: 'item-1' });
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.updateItem.mockResolvedValue(undefined);
+      // Tras recargar, los items no contienen el que buscamos
+      wishlistUseCases.getAllForUser.mockResolvedValue([makeItem({ id: 'other-item' })]);
+
+      (component as any)._editingItem = item;
+      (component as any)._returnToDetail = true;
+      (component as any)._returnToDetailId = 'item-1';
+      component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
+
+      await component.onMobileConfirm();
+
+      expect(component.viewMode()).toBe('list');
     });
 
     it('muestra snackbar de error si updateItem lanza en modo edición', async () => {
