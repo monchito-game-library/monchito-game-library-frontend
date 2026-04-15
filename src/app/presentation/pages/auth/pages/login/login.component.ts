@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,8 @@ import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-c
     MatError,
     MatPrefix,
     MatSuffix,
-    TranslocoPipe
+    TranslocoPipe,
+    AuthPanelComponent
   ]
 })
 /** Login page component. Handles user authentication and redirects to the game list on success. */

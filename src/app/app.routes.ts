@@ -4,7 +4,8 @@ export const routes: Routes = [
   { path: 'auth', loadChildren: () => import('@/pages/auth/auth.routes').then((m) => m.authRoutes) },
   {
     path: 'reset-password',
-    loadChildren: () => import('@/pages/auth/reset-password/reset-password.routes').then((m) => m.resetPasswordRoutes)
+    loadChildren: () =>
+      import('@/pages/auth/pages/reset-password/reset-password.routes').then((m) => m.resetPasswordRoutes)
   },
   { path: 'home', redirectTo: 'collection', pathMatch: 'full' },
   {

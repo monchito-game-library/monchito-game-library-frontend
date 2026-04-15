@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
 
 @Component({
   selector: 'app-forgot-password',
@@ -27,7 +28,8 @@ import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-c
     MatIcon,
     MatError,
     MatPrefix,
-    TranslocoPipe
+    TranslocoPipe,
+    AuthPanelComponent
   ]
 })
 /** Forgot-password page component. Sends a password-reset email and redirects to login on success. */

@@ -1,5 +1,5 @@
+import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -9,11 +9,12 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
 
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.scss'],
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -29,37 +30,37 @@ import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-c
     MatError,
     MatPrefix,
     MatSuffix,
-    TranslocoPipe
+    TranslocoPipe,
+    AuthPanelComponent
   ]
 })
-/** Reset-password page component. Validates the recovery session and updates the user's password. */
-export class ResetPasswordComponent implements OnInit {
+/** Registration page component. Creates a new account and redirects to login on success. */
+export class RegisterComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _router: Router = inject(Router);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
-  /** Whether the recovery session from the email link has been established. */
-  readonly recoveryReady: WritableSignal<boolean> = signal(false);
-
-  /** Whether a password update request is in progress. */
+  /** Whether a registration request is in progress. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
-  /** Error message to display when the update fails. */
+  /** Error message to display when registration fails. */
   readonly errorMessage: WritableSignal<string> = signal('');
 
-  /** Success message shown after the password is updated successfully. */
+  /** Success message shown after a successful registration. */
   readonly successMessage: WritableSignal<string> = signal('');
 
-  /** Whether the new password field is hidden. */
+  /** Whether the password field is hidden. */
   readonly hidePassword: WritableSignal<boolean> = signal(true);
 
   /** Whether the confirm-password field is hidden. */
   readonly hideConfirmPassword: WritableSignal<boolean> = signal(true);
 
-  /** Reactive form with new password and confirm-password fields. */
-  readonly resetPasswordForm = this._fb.group(
+  /** Reactive registration form with display name, email, password and confirm-password fields. */
+  readonly registerForm = this._fb.group(
     {
+      displayName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     },
@@ -67,35 +68,25 @@ export class ResetPasswordComponent implements OnInit {
   );
 
   /**
-   * Registers the PASSWORD_RECOVERY listener on init so the form activates
-   * as soon as Supabase establishes the recovery session from the email link.
-   */
-  ngOnInit(): void {
-    this._authUseCases.onPasswordRecovery(() => {
-      this.recoveryReady.set(true);
-    });
-  }
-
-  /**
-   * Toggles the new password field visibility.
+   * Toggles the password field visibility.
    */
   togglePasswordVisibility(): void {
-    this.hidePassword.update((v: boolean) => !v);
+    this.hidePassword.update((value: boolean) => !value);
   }
 
   /**
    * Toggles the confirm-password field visibility.
    */
   toggleConfirmPasswordVisibility(): void {
-    this.hideConfirmPassword.update((v: boolean) => !v);
+    this.hideConfirmPassword.update((value: boolean) => !value);
   }
 
   /**
-   * Validates the form, updates the password, signs out and navigates to login on success.
+   * Validates the form, executes registration and redirects to login on success.
    */
   async onSubmit(): Promise<void> {
-    if (this.resetPasswordForm.invalid) {
-      this.resetPasswordForm.markAllAsTouched();
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
@@ -103,17 +94,16 @@ export class ResetPasswordComponent implements OnInit {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    const { password } = this.resetPasswordForm.value;
-    const result: AuthResult = await this._authUseCases.updatePassword(password!);
+    const { displayName, email, password } = this.registerForm.value;
+    const result: AuthResult = await this._authUseCases.signUp(email!, password!, displayName!);
 
     this.loading.set(false);
 
     if (result.success) {
-      this.successMessage.set(this._transloco.translate('auth.resetPassword.successMessage'));
-      await this._authUseCases.signOut();
-      setTimeout(() => void this._router.navigate(['/auth/login']), 2000);
+      this.successMessage.set(this._transloco.translate('auth.register.successMessage'));
+      setTimeout(() => void this._router.navigate(['/auth/login']), 3000);
     } else {
-      this.errorMessage.set(result.error ?? this._transloco.translate('auth.resetPassword.updateFailed'));
+      this.errorMessage.set(result.error ?? this._transloco.translate('auth.register.registrationFailed'));
     }
   }
 
