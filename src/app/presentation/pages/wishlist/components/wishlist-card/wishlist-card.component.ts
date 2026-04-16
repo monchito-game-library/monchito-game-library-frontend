@@ -8,7 +8,7 @@ import {
   OutputEmitterRef,
   Signal
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -23,7 +23,7 @@ import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constan
   styleUrl: './wishlist-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
 })
 export class WishlistCardComponent {
   /** Wishlist item to display. */
