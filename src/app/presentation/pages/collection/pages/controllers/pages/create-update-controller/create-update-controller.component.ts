@@ -133,105 +133,60 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
   }
 
   /**
-   * Valida el formulario y guarda el mando (creación o actualización).
-   * Navega de vuelta a la lista si tiene éxito.
+   * Validates the form and saves the controller (create or update).
+   * Navigates back to the list on success.
    */
   async onSubmit(): Promise<void> {
     if (this.form.invalid || this.saving()) return;
-    this.saving.set(true);
-    try {
-      const value = this.form.getRawValue() as ControllerFormValue;
-      const userId = this._userContext.requireUserId();
+    const value = this.form.getRawValue() as ControllerFormValue;
+    const userId = this._userContext.requireUserId();
 
-      if (this.isEditMode() && this._controllerId) {
-        const updated: ControllerModel = {
-          id: this._controllerId,
-          userId,
-          brandId: value.brandId ?? '',
-          modelId: value.modelId ?? '',
-          editionId: value.editionId,
-          color: value.color,
-          compatibility: value.compatibility,
-          condition: value.condition,
-          price: value.price,
-          store: value.store,
-          purchaseDate: value.purchaseDate,
-          notes: value.notes,
-          createdAt: '',
-          forSale: false,
-          salePrice: null,
-          soldAt: null,
-          soldPriceFinal: null,
-          activeLoanId: null,
-          activeLoanTo: null,
-          activeLoanAt: null
-        };
-        await this._controllerUseCases.update(userId, this._controllerId, updated);
-        this._snackBar.open(
-          this._transloco.translate('controllerPage.snack.updated'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      } else {
-        const created: ControllerModel = {
-          id: '',
-          userId,
-          brandId: value.brandId ?? '',
-          modelId: value.modelId ?? '',
-          editionId: value.editionId,
-          color: value.color,
-          compatibility: value.compatibility,
-          condition: value.condition,
-          price: value.price,
-          store: value.store,
-          purchaseDate: value.purchaseDate,
-          notes: value.notes,
-          createdAt: '',
-          forSale: false,
-          salePrice: null,
-          soldAt: null,
-          soldPriceFinal: null,
-          activeLoanId: null,
-          activeLoanTo: null,
-          activeLoanAt: null
-        };
-        await this._controllerUseCases.add(userId, created);
-        this._snackBar.open(
-          this._transloco.translate('controllerPage.snack.saved'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      }
+    const basePayload: Omit<ControllerModel, 'id'> = {
+      userId,
+      brandId: value.brandId ?? '',
+      modelId: value.modelId ?? '',
+      editionId: value.editionId,
+      color: value.color,
+      compatibility: value.compatibility,
+      condition: value.condition,
+      price: value.price,
+      store: value.store,
+      purchaseDate: value.purchaseDate,
+      notes: value.notes,
+      createdAt: '',
+      forSale: false,
+      salePrice: null,
+      soldAt: null,
+      soldPriceFinal: null,
+      activeLoanId: null,
+      activeLoanTo: null,
+      activeLoanAt: null
+    };
 
-      this._router.navigate([this._listRoute]);
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('controllerPage.snack.saveError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-    } finally {
-      this.saving.set(false);
-    }
+    const isEdit = this.isEditMode() && this._controllerId;
+    const successKey = isEdit ? 'controllerPage.snack.updated' : 'controllerPage.snack.saved';
+
+    await this._executeSubmit(
+      () =>
+        isEdit
+          ? this._controllerUseCases.update(userId, this._controllerId!, { id: this._controllerId!, ...basePayload })
+          : this._controllerUseCases.add(userId, { id: '', ...basePayload }),
+      successKey,
+      'controllerPage.snack.saveError'
+    );
   }
 
   /**
-   * Carga los datos del mando a editar y parchea el formulario.
-   * En modo edición precarga la jerarquía marca → modelo → edición antes de parchear.
+   * Loads the controller data for editing and patches the form.
+   * Pre-loads the brand → model → edition hierarchy before patching.
    *
-   * @param {string} id - UUID del mando a editar
+   * @param {string} id - Controller UUID to edit
    */
   private async _loadController(id: string): Promise<void> {
     const item = await this._loadHardwareForEdit(id);
     if (!item) return;
     const controller = item as ControllerModel;
-    if (controller.brandId) {
-      await this._loadModels(controller.brandId);
-      if (controller.modelId) {
-        this.form.controls.editionId.enable();
-        await this._loadEditions(controller.modelId);
-      }
-    }
+    await this._loadBrandCascade(controller.brandId, controller.modelId);
     this.form.patchValue({
       brandId: controller.brandId,
       modelId: controller.modelId,

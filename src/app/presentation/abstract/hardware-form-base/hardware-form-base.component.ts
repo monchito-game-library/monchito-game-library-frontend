@@ -247,4 +247,47 @@ export abstract class HardwareFormBaseComponent {
       // Silent failure
     }
   }
+
+  /**
+   * Loads the brand → model → edition cascade for the given brand and model UUIDs.
+   * Enables the editionId control only when a model is already selected.
+   *
+   * @param {string | null} brandId - Brand UUID, or null to skip
+   * @param {string | null} modelId - Model UUID, or null to skip edition loading
+   */
+  protected async _loadBrandCascade(brandId: string | null, modelId: string | null): Promise<void> {
+    if (brandId) {
+      await this._loadModels(brandId);
+      if (modelId) {
+        this._sharedFormControls.editionId.enable();
+        await this._loadEditions(modelId);
+      }
+    }
+  }
+
+  /**
+   * Wraps a save operation with loading state, snackbar feedback and navigation.
+   * Sets `saving` to true while in progress, shows a snackbar based on the result
+   * and navigates to the list on success.
+   *
+   * @param {() => Promise<void>} saveFn - The async save operation to execute
+   * @param {string} successKey - Transloco key for the success snackbar
+   * @param {string} errorKey - Transloco key for the error snackbar
+   */
+  protected async _executeSubmit(saveFn: () => Promise<void>, successKey: string, errorKey: string): Promise<void> {
+    this.saving.set(true);
+    try {
+      await saveFn();
+      this._snackBar.open(this._transloco.translate(successKey), this._transloco.translate('common.close'), {
+        duration: 3000
+      });
+      void this._router.navigate([this._listRoute]);
+    } catch {
+      this._snackBar.open(this._transloco.translate(errorKey), this._transloco.translate('common.close'), {
+        duration: 3000
+      });
+    } finally {
+      this.saving.set(false);
+    }
+  }
 }

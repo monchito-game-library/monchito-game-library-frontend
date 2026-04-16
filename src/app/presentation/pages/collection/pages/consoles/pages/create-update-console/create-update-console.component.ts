@@ -131,113 +131,69 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
   }
 
   /**
-   * Valida el formulario y guarda la consola (creación o actualización).
-   * Navega de vuelta a la lista si tiene éxito.
+   * Validates the form and saves the console (create or update).
+   * Navigates back to the list on success.
    */
   async onSubmit(): Promise<void> {
     if (this.form.invalid || this.saving()) return;
-    this.saving.set(true);
-    try {
-      const value = this.form.getRawValue() as ConsoleFormValue;
-      const userId = this._userContext.requireUserId();
+    const value = this.form.getRawValue() as ConsoleFormValue;
+    const userId = this._userContext.requireUserId();
 
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      if (!value.brandId || !uuidRegex.test(value.brandId) || !value.modelId || !uuidRegex.test(value.modelId)) {
-        this._snackBar.open(
-          this._transloco.translate('consolePage.snack.selectBrandModel'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-        return;
-      }
-
-      if (this.isEditMode() && this._consoleId) {
-        const updated: ConsoleModel = {
-          id: this._consoleId,
-          userId,
-          brandId: value.brandId,
-          modelId: value.modelId,
-          editionId: value.editionId,
-          region: value.region,
-          condition: value.condition,
-          price: value.price,
-          store: value.store,
-          purchaseDate: value.purchaseDate,
-          notes: value.notes,
-          createdAt: '',
-          forSale: false,
-          salePrice: null,
-          soldAt: null,
-          soldPriceFinal: null,
-          activeLoanId: null,
-          activeLoanTo: null,
-          activeLoanAt: null
-        };
-        await this._consoleUseCases.update(userId, this._consoleId, updated);
-        this._snackBar.open(
-          this._transloco.translate('consolePage.snack.updated'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      } else {
-        const created: ConsoleModel = {
-          id: '',
-          userId,
-          brandId: value.brandId,
-          modelId: value.modelId,
-          editionId: value.editionId,
-          region: value.region,
-          condition: value.condition,
-          price: value.price,
-          store: value.store,
-          purchaseDate: value.purchaseDate,
-          notes: value.notes,
-          createdAt: '',
-          forSale: false,
-          salePrice: null,
-          soldAt: null,
-          soldPriceFinal: null,
-          activeLoanId: null,
-          activeLoanTo: null,
-          activeLoanAt: null
-        };
-        await this._consoleUseCases.add(userId, created);
-        this._snackBar.open(
-          this._transloco.translate('consolePage.snack.saved'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
-      }
-
-      this._router.navigate([this._listRoute]);
-    } catch {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!value.brandId || !uuidRegex.test(value.brandId) || !value.modelId || !uuidRegex.test(value.modelId)) {
       this._snackBar.open(
-        this._transloco.translate('consolePage.snack.saveError'),
+        this._transloco.translate('consolePage.snack.selectBrandModel'),
         this._transloco.translate('common.close'),
         { duration: 3000 }
       );
-    } finally {
-      this.saving.set(false);
+      return;
     }
+
+    const basePayload: Omit<ConsoleModel, 'id'> = {
+      userId,
+      brandId: value.brandId,
+      modelId: value.modelId,
+      editionId: value.editionId,
+      region: value.region,
+      condition: value.condition,
+      price: value.price,
+      store: value.store,
+      purchaseDate: value.purchaseDate,
+      notes: value.notes,
+      createdAt: '',
+      forSale: false,
+      salePrice: null,
+      soldAt: null,
+      soldPriceFinal: null,
+      activeLoanId: null,
+      activeLoanTo: null,
+      activeLoanAt: null
+    };
+
+    const isEdit = this.isEditMode() && this._consoleId;
+    const successKey = isEdit ? 'consolePage.snack.updated' : 'consolePage.snack.saved';
+
+    await this._executeSubmit(
+      () =>
+        isEdit
+          ? this._consoleUseCases.update(userId, this._consoleId!, { id: this._consoleId!, ...basePayload })
+          : this._consoleUseCases.add(userId, { id: '', ...basePayload }),
+      successKey,
+      'consolePage.snack.saveError'
+    );
   }
 
   /**
-   * Carga los datos de la consola a editar y parchea el formulario.
-   * En modo edición precarga la jerarquía marca → modelo → edición antes de parchear.
+   * Loads the console data for editing and patches the form.
+   * Pre-loads the brand → model → edition hierarchy before patching.
    *
-   * @param {string} id - UUID de la consola a editar
+   * @param {string} id - Console UUID to edit
    */
   private async _loadConsole(id: string): Promise<void> {
     const item = await this._loadHardwareForEdit(id);
     if (!item) return;
     const console = item as ConsoleModel;
-    if (console.brandId) {
-      await this._loadModels(console.brandId);
-      if (console.modelId) {
-        this.form.controls.editionId.enable();
-        await this._loadEditions(console.modelId);
-      }
-    }
+    await this._loadBrandCascade(console.brandId, console.modelId);
     this.form.patchValue({
       brandId: console.brandId,
       modelId: console.modelId,

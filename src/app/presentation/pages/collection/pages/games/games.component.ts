@@ -177,7 +177,7 @@ export class GamesComponent implements OnInit, OnDestroy {
       const matchesStore = store ? game.store === store : true;
       const matchesStatus = status ? game.status === status : true;
       const matchesFormat = format ? game.format === format : true;
-      const matchesFavorites = favorites ? game.isFavorite === true : true;
+      const matchesFavorites = favorites ? game.isFavorite : true;
       const matchesLoaned = loaned ? game.activeLoanId !== null : true;
       return (
         matchesSearch &&
@@ -193,7 +193,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     const sortBy = this.sortBy();
     const direction = this.sortDirection();
     filtered = filtered.sort((a: GameListModel, b: GameListModel): number => {
-      let comparison = 0;
+      let comparison: number;
       switch (sortBy) {
         case 'title':
           comparison = a.title.localeCompare(b.title);
@@ -252,7 +252,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     // Always force a refresh on mount to reflect sales, loans or any change
     // made from the detail view. NavigationEnd subscription was unreliable because
     // the component is destroyed on navigation and NavigationEnd can fire before
-    // the subscription is registered after the await.
+    // the subscription is registered after to await.
     await this._loadGames(true);
 
     this._bpSubscription = this._breakpointObserver
@@ -264,7 +264,7 @@ export class GamesComponent implements OnInit, OnDestroy {
         '(max-width: 1600px)'
       ])
       .subscribe((state) => {
-        this.isMobile.set(!!state.breakpoints['(max-width: 768px)']);
+        this.isMobile.set(state.breakpoints['(max-width: 768px)']);
         if (state.breakpoints['(max-width: 600px)']) this.columnCount.set(2);
         else if (state.breakpoints['(max-width: 900px)']) this.columnCount.set(3);
         else if (state.breakpoints['(max-width: 1200px)']) this.columnCount.set(4);
@@ -292,7 +292,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   /**
    * Handles a game-deleted event from the card component.
-   * The card has already performed the delete — this only reloads the list and shows a snack.
+   * The card has already performed to delete — this only reloads the list and shows a snack.
    */
   async onGameDeleted(): Promise<void> {
     await this._loadGames(true);
@@ -311,16 +311,16 @@ export class GamesComponent implements OnInit, OnDestroy {
   trackByRowIndex = (index: number): number => index;
 
   /**
-   * Actualiza el término de búsqueda desde el valor emitido por el header.
+   * Updates the search term from the value emitted by the header.
    *
-   * @param {string} value - Nuevo valor del campo de búsqueda
+   * @param {string} value - New value of the search input
    */
   onSearchInput(value: string): void {
     this.searchTerm.set(value.trim());
   }
 
   /**
-   * Navega al formulario de alta de juego.
+   * Navigates to the add-game form.
    */
   onAdd(): void {
     void this._router.navigate(['/collection/games/add']);
