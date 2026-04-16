@@ -1,1 +1,1 @@
-export type BadgeChipVariant = 'new' | 'used' | 'neutral' | 'glass';
+export type BadgeChipVariant = 'new' | 'used' | 'neutral';
