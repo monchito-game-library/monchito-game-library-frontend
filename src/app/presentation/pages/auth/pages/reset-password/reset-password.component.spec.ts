@@ -1,11 +1,10 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslocoTestingModule } from '@jsverse/transloco';
+import { FormGroup, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { authBaseImports, authBaseProviders, authBaseSchemas } from '../../auth-spec.helpers';
 import { ResetPasswordComponent } from './reset-password.component';
 
 const mockAuthUseCases = {
@@ -22,20 +21,13 @@ describe('ResetPasswordComponent', () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     TestBed.configureTestingModule({
-      imports: [
-        ResetPasswordComponent,
-        ReactiveFormsModule,
-        TranslocoTestingModule.forRoot({
-          langs: { en: {} },
-          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
-        })
-      ],
+      imports: [ResetPasswordComponent, ...authBaseImports],
       providers: [
         { provide: AUTH_USE_CASES, useValue: mockAuthUseCases },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: { snapshot: { params: {} } } }
+        ...authBaseProviders
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: authBaseSchemas
     });
     component = TestBed.createComponent(ResetPasswordComponent).componentInstance;
   });

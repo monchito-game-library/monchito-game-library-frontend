@@ -1,15 +1,16 @@
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
+import { AuthBaseComponent } from '@/abstract/auth-base.component';
 
 @Component({
   selector: 'app-reset-password',
@@ -35,29 +36,15 @@ import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-pane
   ]
 })
 /** Reset-password page component. Validates the recovery session and updates the user's password. */
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent extends AuthBaseComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
-  private readonly _router: Router = inject(Router);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether the recovery session from the email link has been established. */
-  readonly recoveryReady: WritableSignal<boolean> = signal(false);
-
-  /** Whether a password update request is in progress. */
-  readonly loading: WritableSignal<boolean> = signal(false);
-
-  /** Error message to display when the update fails. */
-  readonly errorMessage: WritableSignal<string> = signal('');
-
-  /** Success message shown after the password is updated successfully. */
-  readonly successMessage: WritableSignal<string> = signal('');
-
-  /** Whether the new password field is hidden. */
-  readonly hidePassword: WritableSignal<boolean> = signal(true);
+  readonly recoveryReady: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Whether the confirm-password field is hidden. */
-  readonly hideConfirmPassword: WritableSignal<boolean> = signal(true);
+  readonly hideConfirmPassword: WritableSignal<boolean> = signal<boolean>(true);
 
   /** Reactive form with new password and confirm-password fields. */
   readonly resetPasswordForm = this._fb.group(
@@ -76,13 +63,6 @@ export class ResetPasswordComponent implements OnInit {
     this._authUseCases.onPasswordRecovery(() => {
       this.recoveryReady.set(true);
     });
-  }
-
-  /**
-   * Toggles the new password field visibility.
-   */
-  togglePasswordVisibility(): void {
-    this.hidePassword.update((v: boolean) => !v);
   }
 
   /**
@@ -111,23 +91,11 @@ export class ResetPasswordComponent implements OnInit {
     this.loading.set(false);
 
     if (result.success) {
-      this.successMessage.set(this._transloco.translate('auth.resetPassword.successMessage'));
+      this._setSuccess('auth.resetPassword.successMessage');
       await this._authUseCases.signOut();
-      setTimeout(() => void this._router.navigate(['/auth/login']), 2000);
+      this._scheduleNavigation(['/auth/login'], 2000);
     } else {
-      this.errorMessage.set(result.error ?? this._transloco.translate('auth.resetPassword.updateFailed'));
+      this._setError(result.error, 'auth.resetPassword.updateFailed');
     }
-  }
-
-  /**
-   * Cross-field validator that checks whether the two password fields match.
-   *
-   * @param {AbstractControl} control - The form group control
-   */
-  private _passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
-    const confirmPassword = control.get('confirmPassword');
-    if (!password || !confirmPassword) return null;
-    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
   }
 }
