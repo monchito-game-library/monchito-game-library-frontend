@@ -23,7 +23,6 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { UserContextService } from '@/services/user-context/user-context.service';
 import { GameLoanStatusModel } from '@/interfaces/game-loan-status.interface';
 import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-form.interface';
 
@@ -39,8 +38,6 @@ export class GameLoanFormComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-  private readonly _userContext: UserContextService = inject(UserContextService);
-
   /** The game whose loan status is being managed. */
   readonly game: InputSignal<GameEditModel> = input.required<GameEditModel>();
 
@@ -141,14 +138,5 @@ export class GameLoanFormComponent implements OnInit {
     } finally {
       this.returning.set(false);
     }
-  }
-
-  /**
-   * Returns the current user ID or throws if no user is authenticated.
-   */
-  private get _userId(): string {
-    const id: string | null = this._userContext.userId();
-    if (!id) throw new Error('No user selected');
-    return id;
   }
 }

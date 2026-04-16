@@ -221,18 +221,6 @@ describe('GameLoanFormComponent', () => {
     });
   });
 
-  describe('_userId (getter privado)', () => {
-    it('devuelve el userId cuando está disponible', () => {
-      expect((component as any)._userId).toBe('user-1');
-    });
-
-    it('lanza un error cuando userId es null', () => {
-      const userContext = TestBed.inject(UserContextService as any) as any;
-      userContext.userId.set(null);
-      expect(() => (component as any)._userId).toThrow('No user selected');
-    });
-  });
-
   describe('onReturn', () => {
     it('no llama a returnLoan si activeLoanId es null', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
