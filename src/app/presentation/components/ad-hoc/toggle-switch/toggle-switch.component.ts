@@ -13,12 +13,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-
-/** Default icon when the toggle is unchecked. */
-const DEFAULT_ICON = 'remove';
-
-/** Default icon when the toggle is checked. */
-const DEFAULT_ICON_CHECKED = 'check';
+import { TOGGLE_SWITCH_DEFAULT_ICON, TOGGLE_SWITCH_DEFAULT_ICON_CHECKED } from '@/constants/toggle-switch.constant';
 
 @Component({
   selector: 'app-toggle-switch',
@@ -46,10 +41,10 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   readonly checked: InputSignal<boolean> = input<boolean>(false);
 
   /** Material icon name displayed when the toggle is unchecked. Defaults to 'remove'. */
-  readonly icon: InputSignal<string> = input<string>(DEFAULT_ICON);
+  readonly icon: InputSignal<string> = input<string>(TOGGLE_SWITCH_DEFAULT_ICON);
 
   /** Material icon name displayed when the toggle is checked. Defaults to 'check'. */
-  readonly iconChecked: InputSignal<string> = input<string>(DEFAULT_ICON_CHECKED);
+  readonly iconChecked: InputSignal<string> = input<string>(TOGGLE_SWITCH_DEFAULT_ICON_CHECKED);
 
   /** Whether the toggle is non-interactive. Used in standalone mode. CVA uses setDisabledState instead. */
   readonly disabled: InputSignal<boolean> = input<boolean>(false);
@@ -75,7 +70,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   /**
    * Called by Angular Forms to push a new value into the component.
    *
-   * @param {boolean} value - Nuevo valor del toggle
+   * @param {boolean} value - New toggle value
    */
   writeValue(value: boolean): void {
     this._value.set(value ?? false);
@@ -103,7 +98,7 @@ export class ToggleSwitchComponent implements ControlValueAccessor, OnChanges {
   /**
    * Called by Angular Forms when the disabled state of the control changes.
    *
-   * @param {boolean} isDisabled - Si el componente debe deshabilitarse
+   * @param {boolean} isDisabled - Whether the component should be disabled
    */
   setDisabledState(isDisabled: boolean): void {
     this._isDisabled.set(isDisabled);

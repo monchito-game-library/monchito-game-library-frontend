@@ -5,7 +5,7 @@ import { GameFormatType } from '@/types/game-format.type';
 /**
  * Maps a stores table row to the StoreModel domain model.
  *
- * @param {StoreDto} dto - DTO/modelo recibido para mapear
+ * @param {StoreDto} dto - Row from the stores table
  */
 export function mapStore(dto: StoreDto): StoreModel {
   return {
@@ -18,7 +18,7 @@ export function mapStore(dto: StoreDto): StoreModel {
 /**
  * Maps a StoreModel and creator UUID to a StoreInsertDto for Supabase inserts.
  *
- * @param {Omit<StoreModel, 'id'>} model - DTO/modelo recibido para mapear
+ * @param {Omit<StoreModel, 'id'>} model - Store model to map
  * @param {string} createdBy - UUID of the user creating the store
  */
 export function mapStoreToInsertDto(model: Omit<StoreModel, 'id'>, createdBy: string): StoreInsertDto {

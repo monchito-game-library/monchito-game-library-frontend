@@ -14,21 +14,21 @@ import { MatIcon } from '@angular/material/icon';
   }
 })
 export class CatalogItemCardComponent {
-  /** Nombre del icono de Material Icons que se muestra a la izquierda. */
+  /** Material Icons name displayed on the left. */
   readonly icon = input<string>('');
 
-  /** Texto principal de la card. */
+  /** Main text of the card. */
   readonly name = input<string>('');
 
-  /** Badges opcionales mostrados bajo el nombre. */
+  /** Optional badges shown below the name. */
   readonly chips = input<string[]>([]);
 
-  /** Si true, aplica el estilo de selección activa. */
+  /** When true, applies the active selection style. */
   readonly selected = input<boolean>(false);
 
-  /** Si true, muestra el icono de chevron a la derecha. */
+  /** When true, shows the chevron icon on the right. */
   readonly showChevron = input<boolean>(false);
 
-  /** Emitido al hacer clic en la card. */
+  /** Emitted when the card is clicked. */
   readonly cardClick = output<void>();
 }

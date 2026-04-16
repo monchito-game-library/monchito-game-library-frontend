@@ -21,13 +21,15 @@
       <mat-spinner diameter="48" />
     </div>
   } @else if (!searchMode()) {
-    <div class="game-form-page__content" @fadeSlide>
+    <div class="game-form-page__content">
       <!-- Left column: cover and search -->
       <aside class="game-cover-panel">
         <div class="game-cover-panel__cover">
           @if (selectedImageUrl()) {
             <img
-              [src]="selectedImageUrl()!"
+              [ngSrc]="selectedImageUrl()!"
+              fill
+              priority
               [alt]="selectedGame()?.title ?? ''"
               [style.object-position]="coverObjectPosition()"
               [style.transform]="coverTransform()"
@@ -70,7 +72,7 @@
                 class="game-cover-panel__thumb"
                 [class.game-cover-panel__thumb--active]="selectedImageUrl() === img"
                 (click)="onSelectImage(img)">
-                <img [src]="img" alt="" />
+                <img [ngSrc]="img" width="72" height="48" alt="" />
               </button>
             }
           </div>
@@ -279,7 +281,7 @@
 
   @if (searchMode()) {
     <div class="game-form-page__search-container">
-      <app-game-search-panel
+      <app-catalog-search-panel
         @fadeSlide
         [initialQuery]="selectedGame() ? (form.controls.title.value ?? '') : ''"
         (gameSelected)="selectGameFromSearch($event)" />

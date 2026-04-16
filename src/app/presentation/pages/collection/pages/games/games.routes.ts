@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from '@/guards/user.guard';
+import { canActivateUser } from '@/guards/user/user.guard';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
 import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
 

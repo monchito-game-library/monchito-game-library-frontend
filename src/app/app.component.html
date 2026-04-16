@@ -43,7 +43,7 @@
           @if (preferencesLoaded()) {
             <img
               class="nav-rail__avatar nav-rail__avatar--loaded"
-              [src]="getAvatarUrl()"
+              [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="40"
               height="40" />
@@ -68,7 +68,7 @@
           @if (preferencesLoaded()) {
             <img
               class="app-topbar__avatar app-topbar__avatar--loaded"
-              [src]="getAvatarUrl()"
+              [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="36"
               height="36" />
@@ -134,7 +134,7 @@
         @if (preferencesLoaded()) {
           <img
             class="profile-menu__avatar profile-menu__avatar--loaded"
-            [src]="getAvatarUrl()"
+            [ngSrc]="getAvatarUrl()"
             [alt]="getDisplayName()"
             width="64"
             height="64" />

@@ -1,0 +1,168 @@
+// ─── Flex chain for table scroll ─────────────────────────────────────────────
+// :host = section--lines (flex:1, min-height:0, overflow:hidden come from parent)
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-detail-page__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+  /* expand: restores margin after the body opens */
+  transition: margin-bottom 0.3s ease 0.3s;
+
+  &--collapsed {
+    margin-bottom: 0;
+    transition: margin-bottom 0.3s ease;
+  }
+}
+
+.order-detail-page__section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+// section-body: flex item that fills remaining space, AND grid container for collapse animation
+.order-detail-page__section-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr;
+  /* expand: opens after the inner fade-in */
+  transition: grid-template-rows 0.45s ease 0.3s;
+
+  &--collapsed {
+    grid-template-rows: 0fr;
+    /* collapse: starts at the same time as the form */
+    transition: grid-template-rows 0.45s ease;
+
+    .order-detail-page__section-body-inner {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+  }
+}
+
+// section-body-inner: flex container to propagate the chain down to table-wrapper
+.order-detail-page__section-body-inner {
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  /* fade-in: waits for the grid to be open */
+  transition: opacity 0.25s ease 0.3s;
+}
+
+.order-detail-page__selecting-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font-size: 0.9375rem;
+  flex-shrink: 0;
+}
+
+.order-detail-page__empty {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9375rem;
+  padding: 1rem 0;
+}
+
+// table-wrapper: last link in the chain, enables real scroll
+.order-detail-page__table-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.order-detail-page__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9375rem;
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--mat-sys-surface-container);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface-variant);
+    border-bottom: 2px solid var(--mat-sys-outline-variant);
+  }
+
+  td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+.order-detail-page__product-name {
+  font-weight: 500;
+}
+
+.order-detail-page__product-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.order-detail-page__product-category {
+  font-size: 0.8125rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.order-detail-page__product-link {
+  display: flex;
+  align-items: center;
+  color: var(--mat-sys-on-surface-variant);
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: color 0.15s;
+
+  mat-icon {
+    font-size: 0.875rem;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  &:hover {
+    color: var(--mat-sys-primary);
+  }
+}
+
+.order-detail-page__line-actions {
+  white-space: nowrap;
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .order-detail-page__table {
+    font-size: 0.875rem;
+
+    th {
+      padding: 0.375rem 0.5rem;
+    }
+
+    td {
+      padding: 0.5rem;
+    }
+  }
+
+  .order-detail-page__selecting-banner {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+}

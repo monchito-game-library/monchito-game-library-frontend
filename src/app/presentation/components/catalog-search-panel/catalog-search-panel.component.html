@@ -1,0 +1,80 @@
+<div class="catalog-search-panel">
+  <div class="catalog-search-panel__input-wrapper">
+    <mat-form-field appearance="outline" class="catalog-search-panel__field">
+      <mat-label>{{ 'gameForm.search.inputLabel' | transloco }}</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
+        autofocus />
+    </mat-form-field>
+  </div>
+
+  <div class="catalog-search-panel__results">
+    @if (searchLoading()) {
+      <div class="catalog-search-panel__placeholder">
+        <mat-spinner diameter="40" />
+      </div>
+    }
+
+    @if (!searchQuery()) {
+      <div class="catalog-search-panel__placeholder">
+        <mat-icon>sports_esports</mat-icon>
+        <p>{{ 'gameForm.search.emptyHint' | transloco }}</p>
+      </div>
+    }
+
+    @if (searchQuery() && !searchLoading() && !searchResults().length) {
+      <div class="catalog-search-panel__placeholder">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ 'gameForm.search.noResults' | transloco: { query: searchQuery() } }}</p>
+      </div>
+    }
+
+    @for (game of searchResults(); track game.rawg_id) {
+      <div class="search-result-card" (click)="onSelectGame(game)">
+        <div class="search-result-card__cover">
+          @if (game.image_url) {
+            <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" width="72" height="96" />
+          } @else {
+            <div class="search-result-card__cover-placeholder">
+              <mat-icon>videogame_asset</mat-icon>
+            </div>
+          }
+        </div>
+        <div class="search-result-card__info">
+          <h3 class="search-result-card__title">{{ game.title }}</h3>
+          <div class="search-result-card__meta">
+            @if (game.released_date) {
+              <span class="search-result-card__year">{{ game.released_date | date: 'yyyy' }}</span>
+            }
+            @if (game.metacritic_score) {
+              <span class="search-result-card__metacritic">MC {{ game.metacritic_score }}</span>
+            }
+            @if (game.rating > 0) {
+              <span class="search-result-card__rating">
+                <mat-icon>star</mat-icon>
+                {{ game.rating | number: '1.1-1' }}
+              </span>
+            }
+          </div>
+          <div class="search-result-card__platforms">
+            @for (platform of game.platforms.slice(0, 4); track platform) {
+              <span class="search-result-card__badge">{{ platform }}</span>
+            }
+            @if (game.platforms.length > 4) {
+              <span class="search-result-card__badge search-result-card__badge--more">
+                +{{ game.platforms.length - 4 }}
+              </span>
+            }
+          </div>
+          @if (game.genres.length > 0) {
+            <p class="search-result-card__genres">{{ game.genres.slice(0, 3).join(' · ') }}</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

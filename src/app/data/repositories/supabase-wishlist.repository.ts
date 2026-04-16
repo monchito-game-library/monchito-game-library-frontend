@@ -20,7 +20,7 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
   /**
    * Returns all wishlist items for the given user ordered by priority descending.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    */
   async getAllForUser(userId: string): Promise<WishlistItemModel[]> {
     const { data, error } = await this._supabase
@@ -38,9 +38,9 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
    * Finds or creates the game_catalog entry for the given RAWG game, then inserts
    * a user_wishlist row linked to that catalog entry.
    *
-   * @param {string} userId - UUID del usuario autenticado
-   * @param {GameCatalogDto} catalogEntry - Entrada del catálogo de juegos
-   * @param {WishlistItemFormValue} formValue - Valores del formulario de wishlist
+   * @param {string} userId - UUID of the authenticated user
+   * @param {GameCatalogDto} catalogEntry - Game catalog entry
+   * @param {WishlistItemFormValue} formValue - Wishlist form values
    */
   async addItem(userId: string, catalogEntry: GameCatalogDto, formValue: WishlistItemFormValue): Promise<void> {
     const gameCatalogId: string = await this._getOrCreateGameCatalog(catalogEntry);
@@ -52,9 +52,9 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
   /**
    * Updates the wishlist-specific fields of an existing item.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_wishlist row
-   * @param {Partial<WishlistItemFormValue>} patch - Campos a actualizar en el item
+   * @param {Partial<WishlistItemFormValue>} patch - Fields to update on the item
    */
   async updateItem(userId: string, id: string, patch: Partial<WishlistItemFormValue>): Promise<void> {
     const payload: WishlistUpdateDto = {};
@@ -71,7 +71,7 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
   /**
    * Deletes a wishlist item by UUID if it belongs to the given user.
    *
-   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} userId - UUID of the authenticated user
    * @param {string} id - Supabase UUID of the user_wishlist row
    */
   async deleteItem(userId: string, id: string): Promise<void> {
@@ -84,7 +84,7 @@ export class SupabaseWishlistRepository implements WishlistRepositoryContract {
    * Finds an existing game_catalog entry by RAWG ID, creating one if it does not exist.
    * Returns the catalog row UUID.
    *
-   * @param {GameCatalogDto} catalogEntry - Entrada del catálogo de juegos
+   * @param {GameCatalogDto} catalogEntry - Game catalog entry
    */
   private async _getOrCreateGameCatalog(catalogEntry: GameCatalogDto): Promise<string> {
     if (catalogEntry.rawg_id) {

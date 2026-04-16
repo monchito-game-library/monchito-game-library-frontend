@@ -21,7 +21,7 @@ import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 @Component({
   selector: 'app-collection-overview',
@@ -38,25 +38,25 @@ export class CollectionOverviewComponent implements OnInit {
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
 
-  /** Número de juegos en la colección. Null mientras carga. */
+  /** Number of games in the collection. Null while loading. */
   readonly gamesCount: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Número de consolas en la colección. Null mientras carga. */
+  /** Number of consoles in the collection. Null while loading. */
   readonly consolesCount: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Número de mandos en la colección. Null mientras carga. */
+  /** Number of controllers in the collection. Null while loading. */
   readonly controllersCount: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Total gastado en juegos. Null mientras carga. */
+  /** Total spent on games. Null while loading. */
   readonly gamesTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Total gastado en consolas. Null mientras carga. */
+  /** Total spent on consoles. Null while loading. */
   readonly consolesTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Total gastado en mandos. Null mientras carga. */
+  /** Total spent on controllers. Null while loading. */
   readonly controllersTotalSpent: WritableSignal<number | null> = signal<number | null>(null);
 
-  /** Suma total gastada en toda la colección. Null mientras cualquiera de los tres totales siga cargando. */
+  /** Total spent across the entire collection. Null while any of the three totals is still loading. */
   readonly collectionTotalSpent: Signal<number | null> = computed((): number | null => {
     const games = this.gamesTotalSpent();
     const consoles = this.consolesTotalSpent();
@@ -70,29 +70,28 @@ export class CollectionOverviewComponent implements OnInit {
   }
 
   /**
-   * Navega a la sección de juegos.
+   * Navigates to the games section.
    */
   goToGames(): void {
-    this._router.navigate(['/collection/games']);
+    void this._router.navigate(['/collection/games']);
   }
 
   /**
-   * Navega a la sección de consolas.
+   * Navigates to the consoles section.
    */
   goToConsoles(): void {
-    this._router.navigate(['/collection/consoles']);
+    void this._router.navigate(['/collection/consoles']);
   }
 
   /**
-   * Navega a la sección de mandos.
+   * Navigates to the controllers section.
    */
   goToControllers(): void {
-    this._router.navigate(['/collection/controllers']);
+    void this._router.navigate(['/collection/controllers']);
   }
 
   /**
-   * Carga en paralelo los contadores de juegos, consolas y mandos del usuario
-   * y actualiza las señales correspondientes.
+   * Loads game, console and controller counts in parallel and updates the corresponding signals.
    */
   private async _loadCounts(): Promise<void> {
     const userId: string = this._userContext.requireUserId();

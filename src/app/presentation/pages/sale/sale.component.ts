@@ -15,12 +15,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { AvailableItemModel, SoldItemModel, MarketItemType } from '@/models/market/market-item.model';
+import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
 import { MARKET_USE_CASES, MarketUseCasesContract } from '@/domain/use-cases/market/market.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
 import { marketUseCasesProvider } from '@/di/use-cases/market.use-cases.provider';
-import { SaleTab, SaleFilterType } from '@/types/sale-page.type';
+import { SaleFilterType, SaleTab } from '@/types/sale-page.type';
 
 @Component({
   selector: 'app-sale',
@@ -37,7 +37,7 @@ export class SaleComponent implements OnInit {
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
-  /** Active tab: 'available' (en venta) or 'history' (historial). */
+  /** Active tab: 'available' or 'history'. */
   readonly activeTab: WritableSignal<SaleTab> = signal<SaleTab>('available');
 
   /** Active item type filter. */

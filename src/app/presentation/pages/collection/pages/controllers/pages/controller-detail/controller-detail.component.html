@@ -1,149 +1,51 @@
-<div class="controller-detail">
-  @if (loading()) {
-    <div class="controller-detail__loading">
-      <mat-progress-spinner diameter="48" mode="indeterminate" />
+<app-hardware-detail-shell
+  [loading]="loading()"
+  [showSaleForm]="showSaleForm()"
+  [showLoanForm]="showLoanForm()"
+  [deleting]="deleting()"
+  [brand]="brand()"
+  [model]="model()"
+  [edition]="edition()"
+  [item]="controller()"
+  [forSale]="controller()?.forSale ?? false"
+  [salePrice]="controller()?.salePrice ?? null"
+  [soldAt]="controller()?.soldAt ?? null"
+  [soldPriceFinal]="controller()?.soldPriceFinal ?? null"
+  [price]="controller()?.price ?? null"
+  [purchaseDate]="controller()?.purchaseDate ?? null"
+  [storeLabel]="resolveStoreName(controller()?.store ?? null)"
+  [notes]="controller()?.notes ?? null"
+  [activeLoanId]="controller()?.activeLoanId ?? null"
+  [activeLoanTo]="controller()?.activeLoanTo ?? null"
+  itemType="controller"
+  i18nPagePrefix="controllerDetailPage"
+  i18nFieldPrefix="controllerPage"
+  [saveFn]="saveFn"
+  [sellFn]="sellFn"
+  (backClicked)="onBack()"
+  (editClicked)="onEdit()"
+  (deleteClicked)="onDelete()"
+  (openSaleClicked)="openSaleView()"
+  (closeSaleClicked)="closeSaleView()"
+  (openLoanClicked)="openLoanView()"
+  (closeLoanClicked)="closeLoanView()"
+  (saveCompleted)="onSaveCompleted($event)"
+  (sellCompleted)="onSellCompleted()"
+  (loanSaved)="onLoanSaved($event)">
+  <!-- hwChips: color swatch + compatibility + condition chips -->
+  <ng-container hwChips>
+    <div class="controller-detail__color-row">
+      <div class="controller-detail__color-swatch" [style.background-color]="controller()?.color"></div>
+      <span class="controller-detail__color-label">{{ controller()?.color }}</span>
     </div>
-  } @else if (controller()) {
-    <div class="controller-detail__header">
-      <button mat-icon-button type="button" (click)="onBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <div class="controller-detail__header-titles">
-        <h2 class="controller-detail__title">{{ model()?.name ?? '—' }}</h2>
-        <span class="controller-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
-      </div>
-    </div>
-
-    @if (edition()) {
-      <div class="controller-detail__edition">
-        <mat-icon>star</mat-icon>
-        {{ edition()!.name }}
-      </div>
-    }
-
-    <!-- Chips de estado (venta / préstamo) -->
-    @if (controller()!.forSale || controller()!.activeLoanId) {
-      <div class="controller-detail__status-chips">
-        @if (controller()!.forSale) {
-          <span class="controller-detail__status-chip controller-detail__status-chip--sale">
-            <mat-icon>sell</mat-icon>
-            {{ 'hardwareSale.forSaleBadge' | transloco }}
-            @if (controller()!.salePrice !== null) {
-              · {{ controller()!.salePrice | currency: 'EUR' }}
-            }
-          </span>
-        }
-        @if (controller()!.activeLoanId) {
-          <span class="controller-detail__status-chip controller-detail__status-chip--loan">
-            <mat-icon>handshake</mat-icon>
-            {{ 'hardwareLoan.loanedBadge' | transloco }} {{ controller()!.activeLoanTo }}
-          </span>
-        }
-      </div>
-    }
-
-    <!-- Body: formularios o datos -->
-    @if (showSaleForm()) {
-      <app-hardware-sale-form
-        [item]="controller()!"
-        itemType="controller"
-        (saved)="onSaleSaved($event)"
-        (cancelled)="closeSaleView()" />
-    } @else if (showLoanForm()) {
-      <app-hardware-loan-form
-        [item]="controller()!"
-        itemType="controller"
-        (saved)="onLoanSaved($event)"
-        (cancelled)="closeLoanView()" />
-    } @else {
-      <!-- Sección: Mi mando -->
-      <section class="controller-detail__section">
-        <h3 class="controller-detail__section-title">{{ 'controllerDetailPage.sectionUser' | transloco }}</h3>
-
-        <div class="controller-detail__color-row">
-          <div class="controller-detail__color-swatch" [style.background-color]="controller()!.color"></div>
-          <span class="controller-detail__color-label">{{ controller()!.color }}</span>
-        </div>
-
-        <div class="controller-detail__chips">
-          <span class="controller-detail__chip controller-detail__chip--compat">
-            {{ controller()!.compatibility }}
-          </span>
-          @if (controller()!.condition === GAME_CONDITION.NEW) {
-            <span class="controller-detail__chip controller-detail__chip--new">
-              {{ 'controllersPage.condition.new' | transloco }}
-            </span>
-          } @else {
-            <span class="controller-detail__chip controller-detail__chip--used">
-              {{ 'controllersPage.condition.used' | transloco }}
-            </span>
-          }
-        </div>
-
-        <div class="controller-detail__purchase-row">
-          @if (controller()!.price !== null) {
-            <div class="controller-detail__purchase-item">
-              <div class="controller-detail__purchase-header">
-                <mat-icon>payments</mat-icon>
-                <span class="controller-detail__purchase-label">{{ 'controllerPage.price' | transloco }}</span>
-              </div>
-              <span class="controller-detail__purchase-value">{{
-                controller()!.price | currency: 'EUR' : 'symbol' : '1.2-2'
-              }}</span>
-            </div>
-          }
-          @if (controller()!.store) {
-            <div class="controller-detail__purchase-item">
-              <div class="controller-detail__purchase-header">
-                <mat-icon>storefront</mat-icon>
-                <span class="controller-detail__purchase-label">{{ 'controllerPage.store' | transloco }}</span>
-              </div>
-              <span class="controller-detail__purchase-value">{{ resolveStoreName(controller()!.store) }}</span>
-            </div>
-          }
-          @if (controller()!.purchaseDate) {
-            <div class="controller-detail__purchase-item">
-              <div class="controller-detail__purchase-header">
-                <mat-icon>calendar_today</mat-icon>
-                <span class="controller-detail__purchase-label">{{ 'controllerPage.purchaseDate' | transloco }}</span>
-              </div>
-              <span class="controller-detail__purchase-value">{{
-                controller()!.purchaseDate | date: 'dd/MM/yyyy'
-              }}</span>
-            </div>
-          }
-        </div>
-        @if (controller()!.notes) {
-          <dl class="controller-detail__dl">
-            <div class="controller-detail__dl-row controller-detail__dl-row--full">
-              <dt><mat-icon>notes</mat-icon> {{ 'controllerPage.notes' | transloco }}</dt>
-              <dd>{{ controller()!.notes }}</dd>
-            </div>
-          </dl>
-        }
-      </section>
-
-      <!-- Acciones -->
-      <div class="controller-detail__actions">
-        <button mat-stroked-button type="button" (click)="onEdit()">
-          <mat-icon>edit</mat-icon>
-          {{ 'gameCard.menu.edit' | transloco }}
-        </button>
-        <button mat-stroked-button type="button" (click)="openSaleView()">
-          <mat-icon>sell</mat-icon>
-          {{ 'hardwareSale.manageBtn' | transloco }}
-        </button>
-        <button mat-stroked-button type="button" (click)="openLoanView()">
-          <mat-icon>handshake</mat-icon>
-          {{
-            controller()!.activeLoanId ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco)
-          }}
-        </button>
-        <button mat-stroked-button type="button" color="warn" (click)="onDelete()" [disabled]="deleting()">
-          <mat-icon>delete</mat-icon>
-          {{ 'gameCard.menu.delete' | transloco }}
-        </button>
-      </div>
-    }
-  }
-</div>
+    <app-badge-chip [label]="controller()?.compatibility ?? ''" variant="neutral" />
+    <app-badge-chip
+      [label]="
+        (controller()?.condition === GAME_CONDITION.NEW
+          ? 'controllersPage.condition.new'
+          : 'controllersPage.condition.used'
+        ) | transloco
+      "
+      [variant]="controller()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+  </ng-container>
+</app-hardware-detail-shell>

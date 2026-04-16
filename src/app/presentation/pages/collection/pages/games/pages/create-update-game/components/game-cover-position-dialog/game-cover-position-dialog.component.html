@@ -14,7 +14,10 @@
     (touchend)="onTouchEnd($event)">
     <img
       class="cover-pos-dialog__image"
-      [src]="config.imageUrl"
+      [ngSrc]="config.imageUrl"
+      width="240"
+      height="320"
+      priority
       [style.object-position]="positionCss()"
       [style.transform]="transformCss()"
       [style.transform-origin]="positionCss()"

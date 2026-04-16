@@ -1,0 +1,118 @@
+<div class="wishlist-detail">
+  <!-- ─── Toolbar ──────────────────────────────────────────────────────────── -->
+  <header class="wishlist-detail__toolbar">
+    <button mat-icon-button type="button" (click)="onBack()" [attr.aria-label]="'common.back' | transloco">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="wishlist-detail__toolbar-title">{{ 'nav.wishlist' | transloco }}</h1>
+    @if (item()) {
+      <div class="wishlist-detail__toolbar-actions">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onEdit()"
+          [matTooltip]="'common.edit' | transloco"
+          [attr.aria-label]="'common.edit' | transloco">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
+          (click)="onDelete()"
+          class="wishlist-detail__delete-btn"
+          [matTooltip]="'common.delete' | transloco"
+          [attr.aria-label]="'common.delete' | transloco">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    }
+  </header>
+
+  <!-- ─── Loading ─────────────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="wishlist-detail__loading">
+      <mat-progress-spinner mode="indeterminate" diameter="40" />
+    </div>
+  }
+
+  <!-- ─── Content ─────────────────────────────────────────────────────────── -->
+  @if (!loading() && item(); as i) {
+    <div class="wishlist-detail__content">
+      <!-- Cover -->
+      <div class="wishlist-detail__cover-wrapper">
+        @if (i.imageUrl) {
+          <img class="wishlist-detail__cover" [ngSrc]="i.imageUrl" [alt]="i.title" width="120" height="160" />
+        } @else {
+          <div class="wishlist-detail__cover wishlist-detail__cover--placeholder">
+            <mat-icon>image_not_supported</mat-icon>
+          </div>
+        }
+      </div>
+
+      <!-- Title -->
+      <h2 class="wishlist-detail__title">{{ i.title }}</h2>
+
+      <!-- Priority + Platform -->
+      <div class="wishlist-detail__meta">
+        <div class="wishlist-detail__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
+          @for (level of priorityRange; track level) {
+            <mat-icon class="wishlist-detail__star" [class.wishlist-detail__star--filled]="level <= i.priority">
+              {{ level <= i.priority ? 'star' : 'star_border' }}
+            </mat-icon>
+          }
+        </div>
+        @if (i.platform) {
+          <span class="wishlist-detail__platform-badge">{{ i.platform }}</span>
+        }
+      </div>
+
+      <!-- Price -->
+      @if (i.desiredPrice !== null) {
+        <p class="wishlist-detail__price">
+          <mat-icon class="wishlist-detail__price-icon">sell</mat-icon>
+          {{ i.desiredPrice | number: '1.2-2' }} €
+        </p>
+      }
+
+      <!-- Genres -->
+      @if (i.genres.length > 0) {
+        <div class="wishlist-detail__genres">
+          @for (genre of i.genres; track genre) {
+            <span class="wishlist-detail__genre-chip">{{ genre }}</span>
+          }
+        </div>
+      }
+
+      <!-- Notes -->
+      @if (i.notes) {
+        <div class="wishlist-detail__notes-section">
+          <p class="wishlist-detail__section-label">{{ 'wishlist.fields.notes' | transloco }}</p>
+          <p class="wishlist-detail__notes">{{ i.notes }}</p>
+        </div>
+      }
+
+      <!-- Store links -->
+      <div class="wishlist-detail__store-section">
+        <p class="wishlist-detail__section-label">{{ 'wishlist.detail.storeLinks' | transloco }}</p>
+        <div class="wishlist-detail__store-links">
+          @for (link of storeLinks(); track link.label) {
+            <a class="wishlist-detail__store-link" [href]="link.url" target="_blank" rel="noopener noreferrer">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Own button -->
+      <button
+        mat-flat-button
+        type="button"
+        class="wishlist-detail__own-btn"
+        (click)="onOwn()"
+        [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
+        <mat-icon>shopping_bag</mat-icon>
+        {{ 'wishlist.card.ownTooltip' | transloco }}
+      </button>
+    </div>
+  }
+</div>
