@@ -15,7 +15,7 @@
         <div class="sale-page__filters">
           @for (
             filter of [
-              ['all', 'sports_esports'],
+              ['all', 'apps'],
               ['game', 'sports_esports'],
               ['console', 'tv'],
               ['controller', 'gamepad']
@@ -27,7 +27,7 @@
               [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
               (click)="setFilter($any(filter[0]))">
               <mat-icon>{{ filter[1] }}</mat-icon>
-              {{ 'salePage.filter.' + filter[0] | transloco }}
+              <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
             </button>
           }
         </div>
@@ -92,7 +92,7 @@
         <div class="sale-page__filters">
           @for (
             filter of [
-              ['all', 'sports_esports'],
+              ['all', 'apps'],
               ['game', 'sports_esports'],
               ['console', 'tv'],
               ['controller', 'gamepad']
@@ -104,7 +104,7 @@
               [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
               (click)="setFilter($any(filter[0]))">
               <mat-icon>{{ filter[1] }}</mat-icon>
-              {{ 'salePage.filter.' + filter[0] | transloco }}
+              <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
             </button>
           }
         </div>
