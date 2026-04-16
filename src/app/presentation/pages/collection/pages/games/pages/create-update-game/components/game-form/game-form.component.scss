@@ -38,6 +38,7 @@
     flex: 1;
     min-height: 0;
     padding: 1.5rem 2rem 0;
+    animation: fadeSlideIn 180ms ease-out;
   }
 
   .game-form-page__search-container {
@@ -417,5 +418,16 @@
         min-height: 100px;
       }
     }
+  }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

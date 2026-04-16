@@ -10,7 +10,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { NgOptimizedImage } from '@angular/common';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -69,16 +69,8 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
   styleUrl: './game-form.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('fadeSlide', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(24px)' }),
-        animate('180ms ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
-      ]),
-      transition(':leave', [animate('120ms ease-in', style({ opacity: 0, transform: 'translateX(-24px)' }))])
-    ])
-  ],
   imports: [
+    NgOptimizedImage,
     ReactiveFormsModule,
     DatePipe,
     MatFormField,
@@ -198,10 +190,7 @@ export class GameFormComponent implements OnInit {
 
       return dynamicPlatforms.filter(
         (platform: AvailablePlatformInterface): boolean =>
-          platform.code.toLowerCase().includes(input) ||
-          (typeof platform.labelKey === 'string' ? platform.labelKey : this._transloco.translate(platform.labelKey))
-            .toLowerCase()
-            .includes(input)
+          platform.code.toLowerCase().includes(input) || platform.labelKey.toLowerCase().includes(input)
       );
     }
 
@@ -297,17 +286,6 @@ export class GameFormComponent implements OnInit {
   isEditMode: boolean = false;
 
   constructor() {
-    // Read catalog entry pre-loaded from the wishlist "I have this game" action
-    const navState = this._router.getCurrentNavigation()?.extras.state as
-      | { catalogEntry?: GameCatalogDto; wishlistItemId?: string }
-      | undefined;
-    if (navState?.catalogEntry) {
-      this._pendingCatalogEntry = navState.catalogEntry;
-    }
-    if (navState?.wishlistItemId) {
-      this._pendingWishlistItemId = navState.wishlistItemId;
-    }
-
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this._formVersion.update((v) => v + 1));
 
     this.form.controls.store.valueChanges
@@ -324,6 +302,13 @@ export class GameFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     void this._loadStores();
+
+    // Read catalog entry pre-loaded from the wishlist "I have this game" action
+    const navState = this._router.lastSuccessfulNavigation()?.extras.state as
+      | { catalogEntry?: GameCatalogDto; wishlistItemId?: string }
+      | undefined;
+    if (navState?.catalogEntry) this._pendingCatalogEntry = navState.catalogEntry;
+    if (navState?.wishlistItemId) this._pendingWishlistItemId = navState.wishlistItemId;
 
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) {
@@ -414,7 +399,7 @@ export class GameFormComponent implements OnInit {
     const confirmTitle: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
     const confirmMessage: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
@@ -494,10 +479,6 @@ export class GameFormComponent implements OnInit {
     });
   }
 
-  /**
-   * Abre un diálogo de confirmación y elimina el juego si se confirma.
-   * Solo disponible en modo edición.
-   */
   /**
    * Navigates back to the previous page without saving any changes.
    */
@@ -614,7 +595,7 @@ export class GameFormComponent implements OnInit {
    *
    * @param {string | null} id - Store UUID to resolve
    */
-  displayStoreLabel = (id: string | null): string => {
+  readonly displayStoreLabel = (id: string | null): string => {
     if (!id) return '';
     const store: StoreModel | undefined = this.stores().find((s: StoreModel): boolean => s.id === id);
     return store?.label ?? '';
@@ -626,7 +607,7 @@ export class GameFormComponent implements OnInit {
    *
    * @param {PlatformType | null} code - Platform code to resolve
    */
-  displayPlatformLabel = (code: PlatformType | null): string => {
+  readonly displayPlatformLabel = (code: PlatformType | null): string => {
     if (!code) return '';
     const platform: AvailablePlatformInterface | undefined = this.platforms.find(
       (p: AvailablePlatformInterface): boolean => p.code === code
