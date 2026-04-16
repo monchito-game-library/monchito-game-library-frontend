@@ -1,7 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, ActivatedRoute, Router } from '@angular/router';
 import { NEVER } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -81,7 +80,7 @@ describe('GameFormComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
-      providers: [provideRouter([]), provideNoopAnimations(), ...buildCommonProviders()],
+      providers: [provideRouter([]), ...buildCommonProviders()],
       schemas: [NO_ERRORS_SCHEMA]
     });
     TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
@@ -713,7 +712,6 @@ describe('GameFormComponent — ngOnInit', () => {
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
       providers: [
-        provideNoopAnimations(),
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(idParam) } } } },
         ...buildCommonProviders({ catalogScreenshots: ['ss1.jpg'] }),
         { provide: GAME_USE_CASES, useValue: gameUseCasesMock }
@@ -825,7 +823,6 @@ describe('GameFormComponent — ngOnInit nav state', () => {
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
       providers: [
-        provideNoopAnimations(),
         {
           provide: Router,
           useValue: {
@@ -878,7 +875,7 @@ describe('GameFormComponent — constructor effect stores', () => {
 
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
-      providers: [provideRouter([]), provideNoopAnimations(), ...buildCommonProviders()],
+      providers: [provideRouter([]), ...buildCommonProviders()],
       schemas: [NO_ERRORS_SCHEMA]
     });
     TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
