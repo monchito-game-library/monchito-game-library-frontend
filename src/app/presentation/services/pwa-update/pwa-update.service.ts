@@ -48,6 +48,8 @@ export class PwaUpdateService {
         void this._swUpdate.checkForUpdate();
       }
     });
+
+    setInterval(() => void this._swUpdate.checkForUpdate(), 10 * 60 * 1000);
   }
 
   /**
