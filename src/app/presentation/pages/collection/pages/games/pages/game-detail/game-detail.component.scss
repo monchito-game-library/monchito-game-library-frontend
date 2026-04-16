@@ -11,7 +11,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto; // scrollbar full-width → siempre pegado al borde
+  overflow-y: auto; // scrollbar full-width → always flush to the edge
 }
 
 .game-detail__loading {
@@ -26,8 +26,8 @@
 .game-detail__hero {
   position: relative;
   width: 100%;
-  // Escala con la altura del viewport: mín 200px, ideal 40vh, máx 580px
-  // Esto cubre desde pantallas cortas (1080p@150%) hasta 2K/4K sin media queries adicionales
+  // Scales with viewport height: min 200px, ideal 40vh, max 580px
+  // Covers short screens (1080p@150%) through 2K/4K without extra media queries
   height: clamp(200px, 40vh, 580px);
   background-size: cover;
   background-position: 50% 50%;
@@ -326,11 +326,11 @@
 }
 
 // ────────────────────────── Responsive: landscape mobile ──────────────────────────
-// Layout de dos columnas: imagen fija a la izquierda, datos scrolleables a la derecha
+// Two-column layout: fixed image on the left, scrollable data on the right
 @media (orientation: landscape) and (max-height: 500px) {
   .game-detail {
     flex-direction: row;
-    overflow: hidden; // el body es el scroll container en landscape
+    overflow: hidden; // body is the scroll container in landscape
   }
 
   .game-detail__hero {

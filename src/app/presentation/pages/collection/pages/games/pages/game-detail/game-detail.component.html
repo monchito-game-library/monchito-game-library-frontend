@@ -131,7 +131,7 @@
                 </span>
                 <span class="game-detail__data-value game-detail__data-value--rating">
                   <span class="game-detail__stars">
-                    @for (s of ratingStars(); track $index) {
+                    @for (_ of ratingStars(); track $index) {
                       <mat-icon>star</mat-icon>
                     }
                     @if (hasHalfStar()) {
