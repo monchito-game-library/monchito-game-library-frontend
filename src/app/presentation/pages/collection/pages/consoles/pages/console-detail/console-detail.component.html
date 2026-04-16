@@ -41,7 +41,7 @@
       "
       [variant]="console()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
     @if (console()?.region) {
-      <app-badge-chip [label]="console()!.region" variant="neutral" />
+      <app-badge-chip [label]="console()!.region!" variant="neutral" />
     }
   </ng-container>
 
