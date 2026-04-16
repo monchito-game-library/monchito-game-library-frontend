@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
@@ -266,7 +266,7 @@ describe('SettingsComponent', () => {
       expect((component as any)._focusTimer).not.toBeNull();
 
       component.ngOnDestroy();
-      expect((component as any)._focusTimer).not.toBeNull(); // timer stored but cancelled
+      expect((component as any)._focusTimer).not.toBeNull(); // timer stored but canceled
 
       vi.useRealTimers();
     });

@@ -9,7 +9,7 @@ export const wishlistRoutes: Routes = [
   },
   {
     path: ':id',
-    loadComponent: () => import('./wishlist-detail/wishlist-detail.component').then((m) => m.WishlistDetailComponent),
+    loadChildren: () => import('./pages/wishlist-detail/wishlist-detail.routes').then((m) => m.wishlistDetailRoutes),
     canActivate: [canActivateUser]
   }
 ];

@@ -25,7 +25,7 @@
           } @else {
             <img
               class="settings__avatar settings__avatar--loaded"
-              [src]="getAvatarUrl()"
+              [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="80"
               height="80" />
@@ -137,7 +137,7 @@
       <div class="settings__banner-results">
         @if (rawgSearchLoading()) {
           <div class="settings__banner-grid">
-            @for (item of skeletonThumbs; track $index) {
+            @for (_ of skeletonThumbs; track $index) {
               <app-skeleton width="88px" height="58px" borderRadius="6px" />
             }
           </div>
@@ -148,7 +148,7 @@
                 class="settings__banner-thumb"
                 [class.settings__banner-thumb--active]="bannerImageUrl() === banner.imageUrl"
                 (click)="onSelectBanner(banner.imageUrl)">
-                <img [src]="banner.imageUrl" [alt]="banner.title" loading="lazy" />
+                <img [ngSrc]="banner.imageUrl" [alt]="banner.title" width="88" height="58" />
                 @if (bannerImageUrl() === banner.imageUrl) {
                   <div class="settings__banner-thumb-check">
                     <mat-icon>check_circle</mat-icon>

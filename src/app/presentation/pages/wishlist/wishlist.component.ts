@@ -9,11 +9,11 @@ import {
   WritableSignal
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe, Location, SlicePipe } from '@angular/common';
+import { DecimalPipe, Location, NgOptimizedImage, SlicePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { map } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
@@ -24,7 +24,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { firstValueFrom } from 'rxjs';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
@@ -46,6 +45,7 @@ import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/c
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DecimalPipe,
+    NgOptimizedImage,
     SlicePipe,
     ReactiveFormsModule,
     MatButton,
@@ -134,9 +134,7 @@ export class WishlistComponent implements OnInit {
    */
   readonly mobileCanConfirm: Signal<boolean> = computed(() => {
     this._mobileFormStatus();
-    if (!this.mobileForm.valid) return false;
-    if (!this._editingItem && !this.pendingCatalogEntry()) return false;
-    return true;
+    return this.mobileForm.valid && (!!this._editingItem || !!this.pendingCatalogEntry());
   });
 
   constructor() {
@@ -168,7 +166,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Navigates to the detail page of the given item, passing it via router state.
    *
-   * @param {WishlistItemModel} item - Item de la wishlist
+   * @param {WishlistItemModel} item - Wishlist item
    */
   onCardClicked(item: WishlistItemModel): void {
     void this._router.navigate(['/wishlist', item.id], { state: { item } });
@@ -188,7 +186,7 @@ export class WishlistComponent implements OnInit {
    * Switches to inline form mode pre-filled with the given item's values.
    * If the item has a rawgId, fetches fresh platform data from RAWG in the background.
    *
-   * @param {WishlistItemModel} item - Item de la wishlist
+   * @param {WishlistItemModel} item - Wishlist item
    */
   onEditItem(item: WishlistItemModel): void {
     this._editingItem = item;
@@ -204,7 +202,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Asks for confirmation and deletes the given wishlist item.
    *
-   * @param {WishlistItemModel} item - Item de la wishlist
+   * @param {WishlistItemModel} item - Wishlist item
    */
   async onDeleteItem(item: WishlistItemModel): Promise<void> {
     const dialogData: ConfirmDialogInterface = {
@@ -237,9 +235,9 @@ export class WishlistComponent implements OnInit {
 
   /**
    * Handles "I have this game": deletes from wishlist and navigates to /add
-   * with the catalog entry pre-loaded in the router state.
+   * with the catalog entry preloaded in the router state.
    *
-   * @param {WishlistItemModel} item - Item de la wishlist
+   * @param {WishlistItemModel} item - Wishlist item
    */
   async onOwnItem(item: WishlistItemModel): Promise<void> {
     const dialogData: ConfirmDialogInterface = {
@@ -274,7 +272,7 @@ export class WishlistComponent implements OnInit {
    * Called from mobile search panel when the user picks a game.
    * Transitions to inline form mode.
    *
-   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
+   * @param {GameCatalogDto} game - Game selected from the catalogue
    */
   onMobileGameSelected(game: GameCatalogDto): void {
     this.pendingCatalogEntry.set(game);
@@ -399,7 +397,7 @@ export class WishlistComponent implements OnInit {
   /**
    * Resets the mobile form with values from an existing item (edit) or defaults (add).
    *
-   * @param {WishlistItemModel | null} item - Item de la wishlist, o null si es nuevo
+   * @param {WishlistItemModel | null} item - Wishlist item, or null when adding a new one
    */
   private _resetMobileForm(item: WishlistItemModel | null): void {
     this.mobileForm.reset({

@@ -12,7 +12,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
-import { firstValueFrom, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
+import { NgOptimizedImage } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -48,6 +49,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgOptimizedImage,
     MatButton,
     MatCard,
     MatCardContent,
@@ -96,7 +98,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
 
-  /** Current dark-mode state, synchronised with ThemeService. */
+  /** Current dark-mode state, synchronized with ThemeService. */
   readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */
@@ -166,7 +168,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Pushes the search term to the subject to apply debounce.
+   * Pushes the search term to the subject to apply to debounce.
    *
    * @param {Event} event - Input event from the search field
    */
@@ -233,7 +235,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Activates display-name edit mode and initialises the input with the current value.
+   * Activates display-name edit mode and initializes the input with the current value.
    */
   onEditName(): void {
     this.nameInputValue.set(this.getDisplayName());
@@ -294,22 +296,22 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   /**
    * Returns the user's avatar URL.
-   * Prioritises the uploaded avatar over the automatically generated one.
+   * Prioritizes the uploaded avatar over the automatically generated one.
    */
   getAvatarUrl(): string {
     return this.avatarUrl() ?? this._userContext.getAvatarUrl();
   }
 
   /**
-   * Abre el dialog de recorte, sube el blob resultante a Supabase Storage y actualiza el signal de URL.
-   * Extrae la lógica común de onAvatarFileSelected y onBannerFileSelected.
+   * Opens the crop dialog, uploads the resulting blob to Supabase Storage and updates the URL signal.
+   * Extracts the shared logic of onAvatarFileSelected and onBannerFileSelected.
    *
    * @param {Event} event - File input event
-   * @param {{ title: string; aspectRatio: number; roundCropper: boolean; resizeToWidth: number; dialogWidth: string; fileName: string }} cropConfig - Opciones del dialog de recorte
-   * @param {WritableSignal<boolean>} loadingSignal - Signal de carga a activar durante la subida
-   * @param {(userId: string, file: File) => Promise<string>} uploadFn - Función de subida del caso de uso
-   * @param {(url: string) => void} setUrl - Callback para actualizar el signal de URL tras la subida
-   * @param {string} errorKey - Clave de traducción para el mensaje de error genérico
+   * @param {{ title: string; aspectRatio: number; roundCropper: boolean; resizeToWidth: number; dialogWidth: string; fileName: string }} cropConfig - Crop dialog options
+   * @param {WritableSignal<boolean>} loadingSignal - Loading signal to activate during upload
+   * @param {(userId: string, file: File) => Promise<string>} uploadFn - Use-case upload function
+   * @param {(url: string) => void} setUrl - Callback to update the URL signal after upload
+   * @param {string} errorKey - Translation key for the generic error message
    */
   private async _handleImageUpload(
     event: Event,

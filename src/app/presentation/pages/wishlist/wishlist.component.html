@@ -112,7 +112,7 @@
       @if (pendingCatalogEntry(); as game) {
         <div class="wishlist-view__game-preview">
           @if (game.image_url) {
-            <img class="wishlist-view__game-cover" [src]="game.image_url" [alt]="game.title" width="48" height="64" />
+            <img class="wishlist-view__game-cover" [ngSrc]="game.image_url" [alt]="game.title" width="48" height="64" />
           }
           <div class="wishlist-view__game-info">
             <span class="wishlist-view__game-title">{{ game.title }}</span>
