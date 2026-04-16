@@ -139,7 +139,7 @@
       (headerSaved)="onInfoHeaderSaved()">
     </app-order-info-section>
 
-    <!-- Lines section, stepper o placing -->
+    <!-- Lines section, stepper or placing -->
     @if (selectingPacks() && isOwner()) {
       <!-- Pack selection stepper -->
       <app-order-stepper
@@ -162,7 +162,7 @@
       </app-order-product-list>
     }
 
-    <!-- Cost summary: solo desde 'ordered' en adelante -->
+    <!-- Cost summary: only from 'ordered' onwards -->
     @if (ord.status === ORDER_STATUS.ORDERED || ord.status === ORDER_STATUS.RECEIVED) {
       <app-order-cost-summary [order]="ord" [userId]="userContext.userId()" />
     }

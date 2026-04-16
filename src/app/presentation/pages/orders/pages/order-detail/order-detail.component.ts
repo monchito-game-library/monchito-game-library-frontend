@@ -17,6 +17,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { lastValueFrom } from 'rxjs';
+
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
@@ -26,7 +28,7 @@ import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderStatusType } from '@/types/order-status.type';
 import { ORDER_STATUS } from '@/constants/order-status.constant';
-import { OrderLineFormValue, OrderLineAllocationFormValue } from '@/interfaces/forms/order-line-form.interface';
+import { OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { OrderInfoSectionComponent } from './components/order-info-section/order-info-section.component';
 import { OrderCostSummaryComponent } from './components/order-cost-summary/order-cost-summary.component';
 import { OrderProductListComponent } from './components/order-product-list/order-product-list.component';
@@ -175,28 +177,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Returns the quantityThisOrder allocated for the current user on a given line, or 0 if none.
-   *
-   * @param {OrderLineModel} line - The order line to check
-   */
-  getMyAllocationQty(line: OrderLineModel): number {
-    const userId: string | null = this.userContext.userId();
-    if (!userId) return 0;
-    return line.allocations.find((a) => a.userId === userId)?.quantityThisOrder ?? 0;
-  }
-
-  /**
-   * Returns the quantityNeeded for the current user on a given line, or 0 if none.
-   *
-   * @param {OrderLineModel} line - The order line to check
-   */
-  getMyAllocationNeeded(line: OrderLineModel): number {
-    const userId: string | null = this.userContext.userId();
-    if (!userId) return 0;
-    return line.allocations.find((a) => a.userId === userId)?.quantityNeeded ?? 0;
-  }
-
-  /**
    * Opens the info section in edit mode via ViewChild.
    */
   onEditHeader(): void {
@@ -232,7 +212,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   /**
    * Advances the order to the next status in the lifecycle.
-   * When transitioning to 'selecting_packs', updates the DB status and initialises the stepper.
+   * When transitioning to 'selecting_packs', updates the DB status and initializes the stepper.
    */
   async onAdvanceStatus(): Promise<void> {
     if (!this.isOwner()) return;
@@ -278,22 +258,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Cancels pack selection by reverting the order status back to 'draft'.
-   */
-  async onCancelPackSelection(): Promise<void> {
-    this.saving.set(true);
-    try {
-      await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.DRAFT });
-      this.packSteps.set([]);
-      await this._loadOrderSilent();
-    } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
-    } finally {
-      this.saving.set(false);
-    }
-  }
-
-  /**
    * Advances the order to 'ordering'. Lines are already saved per-step; only the status changes.
    */
   async onConfirmPacks(): Promise<void> {
@@ -320,14 +284,15 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     const takenProductIds: string[] =
       ord && userId ? ord.lines.filter((l) => l.requestedBy === userId).map((l) => l.productId) : [];
     const data: AddEditLineDialogData = { products: this.products(), takenProductIds };
-    const result = await this._dialog
-      .open<
-        AddEditLineDialogComponent,
-        AddEditLineDialogData,
-        OrderLineFormValue | undefined
-      >(AddEditLineDialogComponent, { data, autoFocus: false })
-      .afterClosed()
-      .toPromise();
+    const result = await lastValueFrom(
+      this._dialog
+        .open<
+          AddEditLineDialogComponent,
+          AddEditLineDialogData,
+          OrderLineFormValue | undefined
+        >(AddEditLineDialogComponent, { data, autoFocus: false })
+        .afterClosed()
+    );
 
     if (!result || !userId) return;
 
@@ -348,14 +313,15 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   async onEditLine(line: OrderLineModel): Promise<void> {
     if (this.products().length === 0) await this._loadProducts();
     const data: AddEditLineDialogData = { products: this.products(), line };
-    const result = await this._dialog
-      .open<
-        AddEditLineDialogComponent,
-        AddEditLineDialogData,
-        OrderLineFormValue | undefined
-      >(AddEditLineDialogComponent, { data, autoFocus: false })
-      .afterClosed()
-      .toPromise();
+    const result = await lastValueFrom(
+      this._dialog
+        .open<
+          AddEditLineDialogComponent,
+          AddEditLineDialogData,
+          OrderLineFormValue | undefined
+        >(AddEditLineDialogComponent, { data, autoFocus: false })
+        .afterClosed()
+    );
 
     if (!result) return;
 
@@ -379,10 +345,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       message: 'orders.lines.deleteMessage'
     };
 
-    const confirmed: boolean | undefined = await this._dialog
-      .open<ConfirmDialogComponent, ConfirmDialogInterface, boolean>(ConfirmDialogComponent, { data: dialogData })
-      .afterClosed()
-      .toPromise();
+    const confirmed: boolean | undefined = await lastValueFrom(
+      this._dialog
+        .open<ConfirmDialogComponent, ConfirmDialogInterface, boolean>(ConfirmDialogComponent, { data: dialogData })
+        .afterClosed()
+    );
 
     if (!confirmed) return;
 
@@ -455,10 +422,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       message: `orders.header.deleteMessage`
     };
 
-    const confirmed: boolean | undefined = await this._dialog
-      .open<ConfirmDialogComponent, ConfirmDialogInterface, boolean>(ConfirmDialogComponent, { data: dialogData })
-      .afterClosed()
-      .toPromise();
+    const confirmed: boolean | undefined = await lastValueFrom(
+      this._dialog
+        .open<ConfirmDialogComponent, ConfirmDialogInterface, boolean>(ConfirmDialogComponent, { data: dialogData })
+        .afterClosed()
+    );
 
     if (!confirmed || !ord) return;
 
@@ -472,25 +440,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Upserts the current user's allocation for a given line.
-   *
-   * @param {string} lineId - UUID of the order line
-   * @param {OrderLineAllocationFormValue} formValue - Allocation quantities
-   */
-  async onUpsertAllocation(lineId: string, formValue: OrderLineAllocationFormValue): Promise<void> {
-    const userId: string | null = this.userContext.userId();
-    if (!userId) return;
-
-    try {
-      await this._ordersUseCases.upsertAllocation(lineId, userId, formValue);
-      await this._loadOrder();
-    } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
-    }
-  }
-
-  /**
-   * Sets order status to 'selecting_packs' in the DB and initialises the stepper.
+   * Sets order status to 'selecting_packs' in the DB and initializes the stepper.
    */
   private async _onAdvanceToSelectingPacks(): Promise<void> {
     this.saving.set(true);
@@ -557,7 +507,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   /**
    * Loads the order by ID from the route parameter and updates the order signal.
-   * If the order is in 'selecting_packs' and the user is the owner, initialises the stepper.
+   * If the order is in 'selecting_packs' and the user is the owner, initializes the stepper.
    * If the order is in 'ordering' and the user is the owner, pre-loads the products catalogue.
    */
   private async _loadOrder(): Promise<void> {
@@ -591,7 +541,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Initialises status-specific state after loading an order.
+   * Initializes status-specific state after loading an order.
    * Starts the pack selection stepper when in 'selecting_packs', and pre-loads
    * the products catalogue when in 'ordering', both only for the owner.
    *
