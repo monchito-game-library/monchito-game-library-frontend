@@ -7,7 +7,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderSummaryCardComponent } from '@/pages/orders/components/order-summary-card/order-summary-card.component';
 
 @Component({

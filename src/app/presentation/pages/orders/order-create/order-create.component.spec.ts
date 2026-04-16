@@ -7,7 +7,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrderCreateComponent } from './order-create.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { mockRouter } from '@/testing/router.mock';
 
 describe('OrderCreateComponent', () => {
   let component: OrderCreateComponent;
@@ -19,10 +20,6 @@ describe('OrderCreateComponent', () => {
 
   const mockUserContext = {
     userId: vi.fn()
-  };
-
-  const mockRouter = {
-    navigate: vi.fn()
   };
 
   beforeEach(() => {

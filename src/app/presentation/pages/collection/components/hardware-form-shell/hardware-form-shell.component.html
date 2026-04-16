@@ -1,0 +1,129 @@
+<div class="hw-form">
+  <div class="hw-form__header">
+    <button mat-icon-button type="button" (click)="cancelClick.emit()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="hw-form__title">
+      @if (isEditMode()) {
+        {{ i18nPrefix() + '.editTitle' | transloco }}
+      } @else {
+        {{ i18nPrefix() + '.addTitle' | transloco }}
+      }
+    </h2>
+  </div>
+
+  @if (loading()) {
+    <div class="hw-form__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    </div>
+  } @else {
+    <form [formGroup]="form()" (ngSubmit)="submitClick.emit()" class="hw-form__form">
+      <mat-form-field appearance="outline" class="hw-form__field--full">
+        <mat-label>{{ i18nPrefix() + '.brand' | transloco }}</mat-label>
+        <input type="text" matInput [matAutocomplete]="brandAuto" formControlName="brandId" />
+        <mat-autocomplete
+          #brandAuto="matAutocomplete"
+          [displayWith]="displayBrandLabel()"
+          (optionSelected)="brandChange.emit($event.option.value)">
+          @for (brand of filteredBrands(); track brand.id) {
+            <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (form().get('brandId')?.value) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="form().get('brandId')?.setValue(null); brandChange.emit(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="hw-form__field--full">
+        <mat-label>{{ i18nPrefix() + '.model' | transloco }}</mat-label>
+        <input type="text" matInput [matAutocomplete]="modelAuto" formControlName="modelId" />
+        <mat-autocomplete
+          #modelAuto="matAutocomplete"
+          [displayWith]="displayModelLabel()"
+          (optionSelected)="modelChange.emit($event.option.value)">
+          @for (model of filteredModels(); track model.id) {
+            <mat-option [value]="model.id">{{ model.name }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (form().get('modelId')?.value) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="form().get('modelId')?.setValue(null); modelChange.emit(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="hw-form__field--full">
+        <mat-label>{{ i18nPrefix() + '.edition' | transloco }}</mat-label>
+        <mat-select formControlName="editionId">
+          <mat-option [value]="null">—</mat-option>
+          @for (edition of editions(); track edition.id) {
+            <mat-option [value]="edition.id">{{ edition.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <ng-container [ngTemplateOutlet]="extraFieldsTpl()" />
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18nPrefix() + '.condition' | transloco }}</mat-label>
+        <mat-select formControlName="condition">
+          <mat-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + 'sPage.condition.new' | transloco }}</mat-option>
+          <mat-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + 'sPage.condition.used' | transloco }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18nPrefix() + '.price' | transloco }}</mat-label>
+        <input matInput type="number" formControlName="price" min="0" step="0.01" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18nPrefix() + '.store' | transloco }}</mat-label>
+        <input type="text" matInput [matAutocomplete]="storeAuto" formControlName="store" />
+        <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel()">
+          @for (store of filteredStores(); track store.id) {
+            <mat-option [value]="store.id">{{ store.label }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (form().get('store')?.value) {
+          <button matSuffix mat-icon-button type="button" (click)="form().get('store')?.setValue(null)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</mat-label>
+        <input matInput type="date" formControlName="purchaseDate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="hw-form__field--full">
+        <mat-label>{{ i18nPrefix() + '.notes' | transloco }}</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="hw-form__footer">
+        <button mat-stroked-button type="button" (click)="cancelClick.emit()">
+          {{ i18nPrefix() + '.cancel' | transloco }}
+        </button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="form().invalid || saving()">
+          @if (saving()) {
+            <mat-progress-spinner diameter="20" mode="indeterminate" />
+          } @else {
+            {{ i18nPrefix() + '.save' | transloco }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

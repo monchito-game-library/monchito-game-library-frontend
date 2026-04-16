@@ -28,7 +28,7 @@ import {
   SaleFormValue,
   SaleSoldValues
 } from '@/interfaces/forms/sale-form.interface';
-import { validDateValidator } from '@/shared/validators';
+import { validDateValidator } from '@/shared/validators/validators';
 
 @Component({
   selector: 'app-sale-form',

@@ -16,7 +16,7 @@ import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
 } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserAdminModel } from '@/models/user-admin/user-admin.model';
 import { UserRoleType } from '@/types/user-role.type';
 

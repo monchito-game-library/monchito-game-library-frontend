@@ -4,7 +4,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrderModel } from '@/models/order/order.model';
-import { sortedMembers } from '@/shared/order-member.util';
+import { sortedMembers } from '@/shared/order-member/order-member.util';
 import { OrderCostSummaryComponent } from './order-cost-summary.component';
 
 // ─── Fixture ────────────────────────────────────────────────────────────────

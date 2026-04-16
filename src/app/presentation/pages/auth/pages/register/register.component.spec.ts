@@ -5,9 +5,9 @@ import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { authBaseImports, authBaseProviders, authBaseSchemas } from '../../auth-spec.helpers';
 import { RegisterComponent } from './register.component';
+import { mockRouter } from '@/testing/router.mock';
 
 const mockAuthUseCases = { signUp: vi.fn() };
-const mockRouter = { navigate: vi.fn() };
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;

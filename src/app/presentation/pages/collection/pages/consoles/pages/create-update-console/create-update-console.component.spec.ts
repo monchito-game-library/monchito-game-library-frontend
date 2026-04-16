@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,6 +6,10 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { CreateUpdateConsoleComponent } from './create-update-console.component';
+import { HardwareFormShellComponent } from '@/pages/collection/components/hardware-form-shell/hardware-form-shell.component';
+
+@Component({ selector: 'app-hardware-form-shell', template: '', standalone: true })
+class HardwareFormShellStubComponent {}
 import { ConsoleModel } from '@/models/console/console.model';
 import { StoreModel } from '@/models/store/store.model';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -22,7 +26,7 @@ import {
   HARDWARE_EDITION_USE_CASES,
   HardwareEditionUseCasesContract
 } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {
   return {
@@ -117,6 +121,10 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(CreateUpdateConsoleComponent, {
+      remove: { imports: [HardwareFormShellComponent] },
+      add: { imports: [HardwareFormShellStubComponent] }
     });
 
     fixture = TestBed.createComponent(CreateUpdateConsoleComponent);
@@ -271,6 +279,10 @@ describe('CreateUpdateConsoleComponent — modo edición', () => {
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(CreateUpdateConsoleComponent, {
+      remove: { imports: [HardwareFormShellComponent] },
+      add: { imports: [HardwareFormShellStubComponent] }
     });
 
     fixture = TestBed.createComponent(CreateUpdateConsoleComponent);

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderLineModel } from '@/models/order/order-line.model';
 import { OrderProductListComponent } from './order-product-list.component';

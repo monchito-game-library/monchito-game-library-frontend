@@ -1,114 +1,35 @@
-<div class="controllers">
-  <!-- Header: stats, búsqueda y botón de añadir -->
-  <app-list-page-header
-    [searchValue]="searchQuery()"
-    searchPlaceholder="controllersPage.search"
-    [showAddBtn]="controllers().length > 0"
-    (searchChange)="searchQuery.set($event)"
-    (addClick)="onAdd()">
-    <div class="controllers__stat">
-      <mat-icon>gamepad</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
-      } @else {
-        <span>{{ filteredControllers().length }}</span>
-      }
-    </div>
-    <div class="controllers__stat-divider"></div>
-    <div class="controllers__stat">
-      <mat-icon>payments</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="60px" height="12px" />
-      } @else {
-        <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-      }
-    </div>
-  </app-list-page-header>
+<app-hardware-list-shell
+  [loading]="loading()"
+  [items]="items()"
+  [filteredItems]="filteredItems()"
+  [totalSpent]="totalSpent()"
+  [searchQuery]="searchQuery()"
+  statIcon="gamepad"
+  emptyIcon="gamepad"
+  i18nPrefix="controllersPage"
+  [resolveModelName]="resolveModelName.bind(this)"
+  [resolveBrandName]="resolveBrandName.bind(this)"
+  [resolveStoreName]="resolveStoreName.bind(this)"
+  [cardHeaderTpl]="cardHeaderTpl"
+  [cardChipsTpl]="cardChipsTpl"
+  (searchChange)="searchQuery.set($event)"
+  (addClick)="onAdd()"
+  (detailClick)="onDetail($any($event))">
+</app-hardware-list-shell>
 
-  <!-- Content scrollable -->
-  <div class="controllers__content">
-    @if (loading()) {
-      <div class="controllers__loading">
-        <mat-progress-spinner diameter="48" mode="indeterminate" />
-        <p>{{ 'controllersPage.loading' | transloco }}</p>
-      </div>
-    } @else if (controllers().length === 0) {
-      <div class="controllers__empty">
-        <mat-icon class="controllers__empty-icon">gamepad</mat-icon>
-        <p class="controllers__empty-title">{{ 'controllersPage.empty.title' | transloco }}</p>
-        <p class="controllers__empty-subtitle">{{ 'controllersPage.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button (click)="onAdd()">
-          <mat-icon>add</mat-icon>
-          {{ 'controllersPage.empty.add' | transloco }}
-        </button>
-      </div>
-    } @else if (filteredControllers().length === 0) {
-      <div class="controllers__no-results">
-        <mat-icon>search_off</mat-icon>
-        <p>{{ 'controllersPage.noResults' | transloco }}</p>
-      </div>
-    } @else {
-      <div class="controllers__grid">
-        @for (controller of filteredControllers(); track controller.id) {
-          <button type="button" class="controllers__card" (click)="onDetail(controller)">
-            <div class="controllers__card-header">
-              <div class="controllers__card-color" [style.background-color]="controller.color"></div>
-              <div class="controllers__card-titles">
-                <span class="controllers__card-model">{{ resolveModelName(controller.modelId) }}</span>
-                <span class="controllers__card-brand">{{ resolveBrandName(controller.brandId) }}</span>
-              </div>
-              <mat-icon class="controllers__card-chevron">chevron_right</mat-icon>
-            </div>
+<ng-template #cardHeaderTpl let-controller>
+  <div class="hw-list__card-color" [style.background-color]="controller.color"></div>
+</ng-template>
 
-            <div class="controllers__card-chips">
-              <span class="controllers__chip controllers__chip--compat">
-                {{ controller.compatibility }}
-              </span>
-              <span
-                class="controllers__chip"
-                [class.controllers__chip--new]="controller.condition === GAME_CONDITION.NEW"
-                [class.controllers__chip--used]="controller.condition !== GAME_CONDITION.NEW">
-                {{
-                  (controller.condition === GAME_CONDITION.NEW
-                    ? 'controllersPage.condition.new'
-                    : 'controllersPage.condition.used'
-                  ) | transloco
-                }}
-              </span>
-            </div>
-
-            <div class="controllers__card-meta">
-              <div class="controllers__meta-row">
-                @if (controller.price !== null) {
-                  <span class="controllers__meta-item">
-                    <mat-icon>payments</mat-icon>
-                    {{ controller.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                  </span>
-                }
-                @if (controller.purchaseDate) {
-                  <span class="controllers__meta-item">
-                    <mat-icon>calendar_today</mat-icon>
-                    {{ controller.purchaseDate | date: 'dd/MM/yyyy' }}
-                  </span>
-                }
-              </div>
-              @if (controller.store) {
-                <div class="controllers__meta-row">
-                  <span class="controllers__meta-item">
-                    <mat-icon>storefront</mat-icon>
-                    {{ resolveStoreName(controller.store) }}
-                  </span>
-                </div>
-              }
-            </div>
-          </button>
-        }
-      </div>
-    }
-  </div>
-
-  <!-- FAB: solo mobile -->
-  <button mat-fab class="controllers__fab" [attr.aria-label]="'controllersPage.add' | transloco" (click)="onAdd()">
-    <mat-icon>add</mat-icon>
-  </button>
-</div>
+<ng-template #cardChipsTpl let-controller>
+  <span class="hw-list__chip hw-list__chip--neutral">{{ controller.compatibility }}</span>
+  <span
+    class="hw-list__chip"
+    [class.hw-list__chip--new]="controller.condition === GAME_CONDITION.NEW"
+    [class.hw-list__chip--used]="controller.condition !== GAME_CONDITION.NEW">
+    {{
+      (controller.condition === GAME_CONDITION.NEW ? 'controllersPage.condition.new' : 'controllersPage.condition.used')
+        | transloco
+    }}
+  </span>
+</ng-template>

@@ -23,7 +23,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { GameLoanStatusModel } from '@/interfaces/game-loan-status.interface';
 import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-form.interface';
 

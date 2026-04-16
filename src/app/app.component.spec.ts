@@ -5,11 +5,11 @@ import { Subject } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { AppComponent } from './app.component';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
-import { UserPreferencesInitService } from '@/services/user-preferences-init.service';
-import { ThemeService } from '@/services/theme.service';
-import { PwaUpdateService } from '@/services/pwa-update.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
+import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
+import { ThemeService } from '@/services/theme/theme.service';
+import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;

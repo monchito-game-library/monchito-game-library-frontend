@@ -67,6 +67,121 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+// ────────────────────────── Shared: hardware list card projected content ──────────────────────────
+// Used by consoles.component and controllers.component inside ng-template inputs (cardHeaderTpl,
+// cardChipsTpl). Must be global because ngTemplateOutlet retains the defining component's encapsulation.
+
+.hw-list__card-icon {
+  color: var(--mat-sys-primary);
+  flex-shrink: 0;
+}
+
+.hw-list__card-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid var(--mat-sys-outline-variant);
+}
+
+.hw-list__chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 0.5rem;
+  border-radius: 20px;
+  line-height: 1.4;
+
+  &--new {
+    background-color: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+    font-weight: 600;
+  }
+
+  &--used {
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+
+  &--neutral {
+    background-color: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    border: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+// ────────────────────────── Shared: hardware detail section / dl ──────────────────────────
+// Used by hardware-detail-shell (user data section) and console-detail (specs section via hwExtra slot).
+// Must live in global styles because ng-content projection retains the host component's encapsulation.
+
+.hw-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--mat-sys-surface-container);
+  border-radius: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  padding: 1.25rem;
+}
+
+.hw-detail__section-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.hw-detail__dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1.5rem;
+}
+
+.hw-detail__dl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    mat-icon {
+      font-size: 0.875rem;
+      width: 0.875rem;
+      height: 0.875rem;
+      color: var(--mat-sys-outline);
+    }
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--mat-sys-on-surface);
+    font-weight: 600;
+    white-space: pre-wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .hw-detail__dl {
+    grid-template-columns: 1fr;
+  }
+}
+
 // ────────────────────────── Snackbar: mobile full-width ──────────────────────────
 @media (max-width: 600px) {
   .snack-mobile {

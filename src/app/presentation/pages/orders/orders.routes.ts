@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from '@/guards/user.guard';
-import { canActivateDesktopOnly } from '@/guards/desktop-only.guard';
+import { canActivateUser } from '@/guards/user/user.guard';
+import { canActivateDesktopOnly } from '@/guards/desktop-only/desktop-only.guard';
 import { orderRepositoryProvider } from '@/di/repositories/order.repository.provider';
 import { ordersUseCasesProvider } from '@/di/use-cases/orders.use-cases.provider';
 

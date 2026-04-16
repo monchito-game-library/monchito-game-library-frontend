@@ -10,7 +10,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { formatBreakdown } from '@/shared/pack-optimizer.util';
+import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { ReadyDialogData } from '@/interfaces/orders/ready-dialog.interface';
 import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
 

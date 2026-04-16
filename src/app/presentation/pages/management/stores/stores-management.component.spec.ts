@@ -7,7 +7,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { StoresManagementComponent, StoreEditPanelComponent } from './stores-management.component';
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatDialog } from '@angular/material/dialog';
 import { StoreModel } from '@/models/store/store.model';

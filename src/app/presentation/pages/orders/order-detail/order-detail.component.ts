@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { OrderModel } from '@/models/order/order.model';
@@ -35,8 +35,8 @@ import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.inter
 import { OrderPlacingComponent } from './components/order-placing/order-placing.component';
 import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/add-edit-line-dialog.component';
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
-import { optimizePacks } from '@/shared/pack-optimizer.util';
-import { allMembersReady } from '@/shared/order-member.util';
+import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
+import { allMembersReady } from '@/shared/order-member/order-member.util';
 
 @Component({
   selector: 'app-order-detail',

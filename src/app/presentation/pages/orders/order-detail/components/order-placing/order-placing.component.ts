@@ -5,7 +5,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderModel } from '@/models/order/order.model';
 import { OrderProductModel } from '@/models/order/order-product.model';
-import { optimizePacks } from '@/shared/pack-optimizer.util';
+import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { PlacingRow } from '@/interfaces/orders/order-placing.interface';
 
 @Component({

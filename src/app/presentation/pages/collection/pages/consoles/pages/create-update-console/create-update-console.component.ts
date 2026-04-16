@@ -1,17 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base.component';
+import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base/hardware-form-base.component';
+import { HardwareFormShellComponent } from '@/pages/collection/components/hardware-form-shell/hardware-form-shell.component';
 import { ConsoleForm, ConsoleFormValue } from '@/interfaces/forms/console-form.interface';
 import { ConsoleModel } from '@/models/console/console.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -31,19 +27,12 @@ import { ConsoleRegionType } from '@/types/console-region.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
     MatFormField,
     MatLabel,
-    MatSuffix,
-    MatInput,
     MatSelect,
     MatOption,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
-    MatProgressSpinner,
-    TranslocoPipe
+    TranslocoPipe,
+    HardwareFormShellComponent
   ]
 })
 export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
@@ -94,6 +83,8 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
   });
 
   protected readonly _listRoute = '/collection/consoles';
+  protected readonly _hardwareModelType = 'console' as const;
+  protected readonly _i18nLoadError = 'consolesPage.snack.loadError';
 
   /**
    * Exposes the shared modelId and editionId form controls to the base class
@@ -104,6 +95,16 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
       modelId: this.form.controls.modelId,
       editionId: this.form.controls.editionId
     };
+  }
+
+  /**
+   * Fetches the console item by user and id from the use case.
+   *
+   * @param {string} userId - Authenticated user UUID
+   * @param {string} id - Console UUID
+   */
+  protected async _fetchHardware(userId: string, id: string): Promise<unknown> {
+    return this._consoleUseCases.getById(userId, id);
   }
 
   constructor() {
@@ -221,61 +222,32 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
   }
 
   /**
-   * Carga los modelos de consola de la marca indicada.
-   * Sobreescribe el método base para filtrar únicamente los de tipo 'console'.
-   *
-   * @param {string} brandId - UUID de la marca
-   */
-  protected override async _loadModels(brandId: string): Promise<void> {
-    try {
-      const all = await this._modelUseCases.getAllByBrand(brandId);
-      this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'console'));
-    } catch {
-      // Silent failure
-    }
-  }
-
-  /**
    * Carga los datos de la consola a editar y parchea el formulario.
    * En modo edición precarga la jerarquía marca → modelo → edición antes de parchear.
    *
    * @param {string} id - UUID de la consola a editar
    */
   private async _loadConsole(id: string): Promise<void> {
-    this.loading.set(true);
-    try {
-      const console = await this._consoleUseCases.getById(this._userContext.requireUserId(), id);
-      if (!console) {
-        this._router.navigate([this._listRoute]);
-        return;
+    const item = await this._loadHardwareForEdit(id);
+    if (!item) return;
+    const console = item as ConsoleModel;
+    if (console.brandId) {
+      await this._loadModels(console.brandId);
+      if (console.modelId) {
+        this.form.controls.editionId.enable();
+        await this._loadEditions(console.modelId);
       }
-      if (console.brandId) {
-        await this._loadModels(console.brandId);
-        if (console.modelId) {
-          this.form.controls.editionId.enable();
-          await this._loadEditions(console.modelId);
-        }
-      }
-      this.form.patchValue({
-        brandId: console.brandId,
-        modelId: console.modelId,
-        editionId: console.editionId,
-        region: console.region,
-        condition: console.condition,
-        price: console.price,
-        store: console.store,
-        purchaseDate: console.purchaseDate,
-        notes: console.notes
-      });
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('consolesPage.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-      this._router.navigate([this._listRoute]);
-    } finally {
-      this.loading.set(false);
     }
+    this.form.patchValue({
+      brandId: console.brandId,
+      modelId: console.modelId,
+      editionId: console.editionId,
+      region: console.region,
+      condition: console.condition,
+      price: console.price,
+      store: console.store,
+      purchaseDate: console.purchaseDate,
+      notes: console.notes
+    });
   }
 }

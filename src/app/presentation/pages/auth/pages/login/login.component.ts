@@ -10,7 +10,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
-import { AuthBaseComponent } from '@/abstract/auth-base.component';
+import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
 
 @Component({
   selector: 'app-login',

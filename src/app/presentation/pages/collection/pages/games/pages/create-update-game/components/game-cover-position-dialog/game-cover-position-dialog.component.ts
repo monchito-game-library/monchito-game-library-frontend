@@ -10,7 +10,7 @@ import { MatButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
-import { CropInteractionBase } from '@/abstract/crop-interaction.base';
+import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
 import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
 
 @Component({

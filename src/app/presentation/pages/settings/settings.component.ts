@@ -24,10 +24,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ThemeService } from '@/services/theme.service';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
-import { RawgSearchStateService } from '@/services/rawg-search-state.service';
+import { ThemeService } from '@/services/theme/theme.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
+import { RawgSearchStateService } from '@/services/rawg-search-state/rawg-search-state.service';
 import {
   USER_PREFERENCES_USE_CASES,
   UserPreferencesUseCasesContract

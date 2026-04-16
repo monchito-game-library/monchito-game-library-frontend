@@ -30,7 +30,7 @@ import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';

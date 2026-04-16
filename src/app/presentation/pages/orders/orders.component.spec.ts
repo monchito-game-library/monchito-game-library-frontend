@@ -6,8 +6,9 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrdersComponent } from './orders.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
+import { mockRouter } from '@/testing/router.mock';
 
 function makeOrderSummary(overrides: Partial<OrderSummaryModel> = {}): OrderSummaryModel {
   return {
@@ -32,10 +33,6 @@ describe('OrdersComponent', () => {
 
   const mockUserContext = {
     userId: vi.fn()
-  };
-
-  const mockRouter = {
-    navigate: vi.fn()
   };
 
   beforeEach(() => {

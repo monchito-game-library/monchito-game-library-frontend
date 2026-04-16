@@ -26,7 +26,7 @@ import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { HardwareLoanStatusModel } from '@/interfaces/hardware-loan-status.interface';
 import { HardwareLoanForm, HardwareLoanFormValue } from '@/interfaces/forms/hardware-loan-form.interface';
 import { HardwareLoanItem } from '@/types/hardware-item.type';

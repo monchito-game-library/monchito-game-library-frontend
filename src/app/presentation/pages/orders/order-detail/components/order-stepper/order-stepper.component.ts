@@ -20,7 +20,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
-import { formatBreakdown } from '@/shared/pack-optimizer.util';
+import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.interface';
 
 @Component({

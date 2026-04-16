@@ -111,25 +111,6 @@
     flex-wrap: wrap;
   }
 
-  .hardware-detail__section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    background-color: var(--mat-sys-surface-container);
-    border-radius: 12px;
-    border: 1px solid var(--mat-sys-outline-variant);
-    padding: 1.25rem;
-  }
-
-  .hardware-detail__section-title {
-    margin: 0;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--mat-sys-on-surface-variant);
-  }
-
   .hardware-detail__purchase-row {
     display: flex;
     justify-content: space-between;
@@ -169,57 +150,11 @@
     font-weight: 600;
     color: var(--mat-sys-on-surface);
   }
-
-  .hardware-detail__dl {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1.5rem;
-  }
-
-  .hardware-detail__dl-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-
-    &--full {
-      grid-column: 1 / -1;
-    }
-
-    dt {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--mat-sys-on-surface-variant);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-
-      mat-icon {
-        font-size: 0.875rem;
-        width: 0.875rem;
-        height: 0.875rem;
-        color: var(--mat-sys-outline);
-      }
-    }
-
-    dd {
-      margin: 0;
-      font-size: 0.9375rem;
-      color: var(--mat-sys-on-surface);
-      font-weight: 600;
-      white-space: pre-wrap;
-    }
-  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .hardware-detail {
     padding: 1rem;
-
-    .hardware-detail__dl {
-      grid-template-columns: 1fr;
-    }
   }
 }

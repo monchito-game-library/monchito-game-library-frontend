@@ -13,7 +13,7 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { defaultGameCover } from '@/constants/game-library.constant';
 
 function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {

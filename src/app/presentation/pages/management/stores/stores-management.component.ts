@@ -26,7 +26,7 @@ import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
 } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { StoreModel } from '@/models/store/store.model';
 import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';

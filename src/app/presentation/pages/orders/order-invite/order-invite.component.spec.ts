@@ -6,9 +6,10 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrderInviteComponent } from './order-invite.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { AuthStateService } from '@/services/auth-state.service';
-import { UserContextService } from '@/services/user-context.service';
+import { AuthStateService } from '@/services/auth-state/auth-state.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
+import { mockRouter } from '@/testing/router.mock';
 
 function makeInvitation(overrides: Partial<OrderInvitationModel> = {}): OrderInvitationModel {
   return {
@@ -41,10 +42,6 @@ describe('OrderInviteComponent', () => {
         get: vi.fn().mockReturnValue('test-token')
       }
     }
-  };
-
-  const mockRouter = {
-    navigate: vi.fn()
   };
 
   const mockAuthState = {

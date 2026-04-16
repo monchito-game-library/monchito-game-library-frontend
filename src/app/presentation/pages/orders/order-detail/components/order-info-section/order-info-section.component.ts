@@ -24,7 +24,7 @@ import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/ord
 import { OrderModel } from '@/models/order/order.model';
 import { OrderForm, OrderFormValue } from '@/interfaces/forms/order-form.interface';
 import { DiscountType } from '@/types/discount-type.type';
-import { sortedMembers, readyCount, allMembersReady } from '@/shared/order-member.util';
+import { sortedMembers, readyCount, allMembersReady } from '@/shared/order-member/order-member.util';
 import { ORDER_STATUS } from '@/constants/order-status.constant';
 
 @Component({

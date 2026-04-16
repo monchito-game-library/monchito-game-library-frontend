@@ -1,17 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base.component';
+import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base/hardware-form-base.component';
+import { HardwareFormShellComponent } from '@/pages/collection/components/hardware-form-shell/hardware-form-shell.component';
 import { ControllerForm, ControllerFormValue } from '@/interfaces/forms/controller-form.interface';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -34,19 +30,12 @@ import { ControllerCompatibilityType } from '@/types/controller-compatibility.ty
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
     MatFormField,
     MatLabel,
-    MatSuffix,
-    MatInput,
     MatSelect,
     MatOption,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
-    MatProgressSpinner,
-    TranslocoPipe
+    TranslocoPipe,
+    HardwareFormShellComponent
   ]
 })
 export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
@@ -101,6 +90,8 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
   });
 
   protected readonly _listRoute = '/collection/controllers';
+  protected readonly _hardwareModelType = 'controller' as const;
+  protected readonly _i18nLoadError = 'controllersPage.snack.loadError';
 
   /**
    * Exposes the shared modelId and editionId form controls to the base class
@@ -111,6 +102,16 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
       modelId: this.form.controls.modelId,
       editionId: this.form.controls.editionId
     };
+  }
+
+  /**
+   * Fetches the controller item by user and id from the use case.
+   *
+   * @param {string} userId - Authenticated user UUID
+   * @param {string} id - Controller UUID
+   */
+  protected async _fetchHardware(userId: string, id: string): Promise<unknown> {
+    return this._controllerUseCases.getById(userId, id);
   }
 
   constructor() {
@@ -215,62 +216,33 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
   }
 
   /**
-   * Carga los modelos de mando de la marca indicada.
-   * Sobreescribe el método base para filtrar únicamente los de tipo 'controller'.
-   *
-   * @param {string} brandId - UUID de la marca
-   */
-  protected override async _loadModels(brandId: string): Promise<void> {
-    try {
-      const all = await this._modelUseCases.getAllByBrand(brandId);
-      this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'controller'));
-    } catch {
-      // Silent failure
-    }
-  }
-
-  /**
    * Carga los datos del mando a editar y parchea el formulario.
    * En modo edición precarga la jerarquía marca → modelo → edición antes de parchear.
    *
    * @param {string} id - UUID del mando a editar
    */
   private async _loadController(id: string): Promise<void> {
-    this.loading.set(true);
-    try {
-      const controller = await this._controllerUseCases.getById(this._userContext.requireUserId(), id);
-      if (!controller) {
-        this._router.navigate([this._listRoute]);
-        return;
+    const item = await this._loadHardwareForEdit(id);
+    if (!item) return;
+    const controller = item as ControllerModel;
+    if (controller.brandId) {
+      await this._loadModels(controller.brandId);
+      if (controller.modelId) {
+        this.form.controls.editionId.enable();
+        await this._loadEditions(controller.modelId);
       }
-      if (controller.brandId) {
-        await this._loadModels(controller.brandId);
-        if (controller.modelId) {
-          this.form.controls.editionId.enable();
-          await this._loadEditions(controller.modelId);
-        }
-      }
-      this.form.patchValue({
-        brandId: controller.brandId,
-        modelId: controller.modelId,
-        editionId: controller.editionId,
-        color: controller.color,
-        compatibility: controller.compatibility,
-        condition: controller.condition,
-        price: controller.price,
-        store: controller.store,
-        purchaseDate: controller.purchaseDate,
-        notes: controller.notes
-      });
-    } catch {
-      this._snackBar.open(
-        this._transloco.translate('controllersPage.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
-      this._router.navigate([this._listRoute]);
-    } finally {
-      this.loading.set(false);
     }
+    this.form.patchValue({
+      brandId: controller.brandId,
+      modelId: controller.modelId,
+      editionId: controller.editionId,
+      color: controller.color,
+      compatibility: controller.compatibility,
+      condition: controller.condition,
+      price: controller.price,
+      store: controller.store,
+      purchaseDate: controller.purchaseDate,
+      notes: controller.notes
+    });
   }
 }

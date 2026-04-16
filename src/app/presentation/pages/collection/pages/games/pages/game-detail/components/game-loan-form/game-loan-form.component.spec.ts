@@ -8,7 +8,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { GameLoanFormComponent } from './game-loan-form.component';
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
   return {

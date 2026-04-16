@@ -27,7 +27,7 @@ import {
   HARDWARE_CONSOLE_SPECS_USE_CASES,
   HardwareConsoleSpecsUseCasesContract
 } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {
   return {
@@ -76,7 +76,8 @@ describe('ConsoleDetailComponent', () => {
           provide: CONSOLE_USE_CASES,
           useValue: {
             getById: vi.fn().mockResolvedValue(makeConsole()),
-            delete: vi.fn().mockResolvedValue(undefined)
+            delete: vi.fn().mockResolvedValue(undefined),
+            updateSaleStatus: vi.fn().mockResolvedValue(undefined)
           } as Partial<ConsoleUseCasesContract>
         },
         {
@@ -129,6 +130,10 @@ describe('ConsoleDetailComponent', () => {
   describe('estado inicial', () => {
     it('console empieza en undefined', () => {
       expect(component.console()).toBeUndefined();
+    });
+
+    it('specs empieza en undefined', () => {
+      expect(component.specs()).toBeUndefined();
     });
   });
 
@@ -222,38 +227,39 @@ describe('ConsoleDetailComponent', () => {
     });
   });
 
-  describe('onSaveCompleted', () => {
-    it('actualiza la señal console con los nuevos valores de disponibilidad y cierra el formulario', () => {
-      component.console.set(makeConsole({ forSale: false, salePrice: null }));
-      component.showSaleForm.set(true);
+  describe('_fetchItem', () => {
+    it('delega en consoleUseCases.getById con userId e id', async () => {
+      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+      const expected = makeConsole();
 
-      component.onSaveCompleted({ forSale: true, salePrice: 200 });
+      const result = await (component as any)._fetchItem('user-1', 'console-uuid-1');
 
-      expect(component.console()?.forSale).toBe(true);
-      expect(component.console()?.salePrice).toBe(200);
-      expect(component.showSaleForm()).toBe(false);
-    });
-
-    it('pone salePrice a null cuando forSale es false', () => {
-      component.console.set(makeConsole({ forSale: true, salePrice: 200 }));
-      component.onSaveCompleted({ forSale: false, salePrice: null });
-      expect(component.console()?.salePrice).toBeNull();
+      expect(consoleUseCases.getById).toHaveBeenCalledWith('user-1', 'console-uuid-1');
+      expect(result).toEqual(expected);
     });
   });
 
-  describe('onLoanSaved', () => {
-    it('actualiza la señal console y desactiva showLoanForm', () => {
-      const updated = makeConsole({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      component.showLoanForm.set(true);
+  describe('_afterItemLoaded', () => {
+    it('llama a specsUseCases.getByModelId con el modelId de la consola', async () => {
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      const specs = { id: 'specs-1', cpu: 'AMD Zen 2' };
+      specsUseCases.getByModelId.mockResolvedValue(specs);
+      const consoleItem = makeConsole({ modelId: 'model-uuid-1' });
 
-      component.onLoanSaved(updated);
+      await (component as any)._afterItemLoaded(consoleItem);
 
-      expect(component.console()).toEqual(updated);
-      expect(component.showLoanForm()).toBe(false);
+      expect(specsUseCases.getByModelId).toHaveBeenCalledWith('model-uuid-1');
+      expect(component.specs()).toEqual(specs);
+    });
+
+    it('no llama a specsUseCases.getByModelId cuando modelId es null', async () => {
+      const specsUseCases = TestBed.inject(HARDWARE_CONSOLE_SPECS_USE_CASES as any) as any;
+      const consoleItem = makeConsole({ modelId: null as any });
+
+      await (component as any)._afterItemLoaded(consoleItem);
+
+      expect(specsUseCases.getByModelId).not.toHaveBeenCalled();
+      expect(component.specs()).toBeUndefined();
     });
   });
 });

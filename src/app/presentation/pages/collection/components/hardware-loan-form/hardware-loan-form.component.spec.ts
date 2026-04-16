@@ -10,7 +10,7 @@ import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConsoleModel } from '@/models/console/console.model';
 
 function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {

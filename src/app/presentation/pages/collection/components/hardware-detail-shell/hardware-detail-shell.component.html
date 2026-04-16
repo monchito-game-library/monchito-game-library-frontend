@@ -21,7 +21,7 @@
       </div>
     }
 
-    <!-- Chips de estado (venta / préstamo) -->
+    <!-- Status chips (for sale / on loan) -->
     @if (forSale() || activeLoanId()) {
       <div class="hardware-detail__status-chips">
         @if (forSale()) {
@@ -42,7 +42,7 @@
       </div>
     }
 
-    <!-- Body: formularios o datos -->
+    <!-- Body: forms or item data -->
     @if (showSaleForm()) {
       <app-sale-form
         [initialValues]="item()!"
@@ -59,11 +59,11 @@
         (saved)="loanSaved.emit($event)"
         (cancelled)="closeLoanClicked.emit()" />
     } @else {
-      <!-- Sección: datos del ítem -->
-      <section class="hardware-detail__section">
-        <h3 class="hardware-detail__section-title">{{ i18nPagePrefix() + '.sectionUser' | transloco }}</h3>
+      <!-- Section: item data -->
+      <section class="hw-detail__section">
+        <h3 class="hw-detail__section-title">{{ i18nPagePrefix() + '.sectionUser' | transloco }}</h3>
 
-        <!-- Slot para chips específicos del tipo (condición, región, compatibilidad, color) -->
+        <!-- Slot for entity-specific chips (condition, region, compatibility, color) -->
         <div class="hardware-detail__chips">
           <ng-content select="[hwChips]" />
         </div>
@@ -101,8 +101,8 @@
         </div>
 
         @if (notes()) {
-          <dl class="hardware-detail__dl">
-            <div class="hardware-detail__dl-row hardware-detail__dl-row--full">
+          <dl class="hw-detail__dl">
+            <div class="hw-detail__dl-row hw-detail__dl-row--full">
               <dt><mat-icon>notes</mat-icon> {{ i18nFieldPrefix() + '.notes' | transloco }}</dt>
               <dd>{{ notes() }}</dd>
             </div>
@@ -110,10 +110,10 @@
         }
       </section>
 
-      <!-- Slot para secciones extra (specs de consola, etc.) -->
+      <!-- Slot for extra sections (console specs, etc.) -->
       <ng-content select="[hwExtra]" />
 
-      <!-- Acciones -->
+      <!-- Actions -->
       <div class="hardware-detail__actions">
         <button mat-stroked-button type="button" (click)="editClicked.emit()">
           <mat-icon>edit</mat-icon>

@@ -17,7 +17,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, SoldItemModel, MarketItemType } from '@/models/market/market-item.model';
 import { MARKET_USE_CASES, MarketUseCasesContract } from '@/domain/use-cases/market/market.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
 import { marketUseCasesProvider } from '@/di/use-cases/market.use-cases.provider';
 import { SaleTab, SaleFilterType } from '@/types/sale-page.type';

@@ -20,8 +20,8 @@
   itemType="console"
   i18nPagePrefix="consoleDetailPage"
   i18nFieldPrefix="consolePage"
-  [saveFn]="consoleSaveFn"
-  [sellFn]="consoleSellFn"
+  [saveFn]="saveFn"
+  [sellFn]="sellFn"
   (backClicked)="onBack()"
   (editClicked)="onEdit()"
   (deleteClicked)="onDelete()"
@@ -50,21 +50,21 @@
 
   <!-- hwExtra: catalog specs section -->
   @if (specs()) {
-    <section class="console-detail__section" hwExtra>
-      <h3 class="console-detail__section-title">{{ 'consoleDetailPage.sectionCatalog' | transloco }}</h3>
+    <section class="hw-detail__section" hwExtra>
+      <h3 class="hw-detail__section-title">{{ 'consoleDetailPage.sectionCatalog' | transloco }}</h3>
 
-      <dl class="console-detail__dl">
+      <dl class="hw-detail__dl">
         @if (model()?.generation) {
-          <div class="console-detail__dl-row">
+          <div class="hw-detail__dl-row">
             <dt>{{ 'consoleDetailPage.generation' | transloco }}</dt>
             <dd>{{ model()!.generation }}ª gen.</dd>
           </div>
         }
-        <div class="console-detail__dl-row">
+        <div class="hw-detail__dl-row">
           <dt>{{ 'consoleDetailPage.launchYear' | transloco }}</dt>
           <dd>{{ specs()!.launchYear }}</dd>
         </div>
-        <div class="console-detail__dl-row">
+        <div class="hw-detail__dl-row">
           <dt>{{ 'consoleDetailPage.discontinuedYear' | transloco }}</dt>
           <dd>
             @if (specs()!.discontinuedYear) {
@@ -74,22 +74,22 @@
             }
           </dd>
         </div>
-        <div class="console-detail__dl-row">
+        <div class="hw-detail__dl-row">
           <dt>{{ 'consoleDetailPage.category' | transloco }}</dt>
           <dd>{{ 'consoleDetailPage.category_' + specs()!.category | transloco }}</dd>
         </div>
-        <div class="console-detail__dl-row">
+        <div class="hw-detail__dl-row">
           <dt>{{ 'consoleDetailPage.media' | transloco }}</dt>
           <dd>{{ 'consoleDetailPage.media_' + specs()!.media | transloco }}</dd>
         </div>
         @if (specs()!.videoResolution) {
-          <div class="console-detail__dl-row">
+          <div class="hw-detail__dl-row">
             <dt>{{ 'consoleDetailPage.videoResolution' | transloco }}</dt>
             <dd>{{ specs()!.videoResolution }}</dd>
           </div>
         }
         @if (specs()!.unitsSoldMillion !== null) {
-          <div class="console-detail__dl-row">
+          <div class="hw-detail__dl-row">
             <dt>{{ 'consoleDetailPage.unitsSoldMillion' | transloco }}</dt>
             <dd>{{ specs()!.unitsSoldMillion }}M</dd>
           </div>

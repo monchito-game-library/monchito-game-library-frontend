@@ -4,10 +4,12 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { SaleComponent } from './sale.component';
 import { MARKET_USE_CASES } from '@/domain/use-cases/market/market.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@jsverse/transloco';
 import { AvailableItemModel, SoldItemModel } from '@/models/market/market-item.model';
+import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockTransloco } from '@/testing/transloco.mock';
 
 function makeAvailable(overrides: Partial<AvailableItemModel> = {}): AvailableItemModel {
   return {
@@ -47,9 +49,6 @@ describe('SaleComponent', () => {
   const mockUserContext = {
     userId: vi.fn()
   };
-
-  const mockSnackBar = { open: vi.fn() };
-  const mockTransloco = { translate: vi.fn((k: string) => k) };
 
   beforeEach(() => {
     vi.clearAllMocks();

@@ -14,7 +14,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderModel } from '@/models/order/order.model';
 import { MemberCost } from '@/interfaces/orders/member-cost.interface';
-import { sortedMembers } from '@/shared/order-member.util';
+import { sortedMembers } from '@/shared/order-member/order-member.util';
 
 @Component({
   selector: 'app-order-cost-summary',

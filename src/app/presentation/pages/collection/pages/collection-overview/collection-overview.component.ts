@@ -21,7 +21,7 @@ import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 @Component({
   selector: 'app-collection-overview',

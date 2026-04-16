@@ -8,10 +8,9 @@ import {
   HARDWARE_CONSOLE_SPECS_USE_CASES,
   HardwareConsoleSpecsUseCasesContract
 } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
-import { HardwareLoanItem } from '@/pages/collection/components/hardware-loan-form/hardware-loan-form.component';
-import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
-import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base.component';
+import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
+import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
 
 @Component({
@@ -41,107 +40,66 @@ export class ConsoleDetailComponent extends HardwareDetailBaseComponent {
   protected readonly _i18nDeletedSnack = 'consolesPage.snack.deleted';
   protected readonly _i18nDeleteErrorSnack = 'consolesPage.snack.deleteError';
 
-  /**
-   * Saves the console's availability status (forSale + salePrice) via the use case.
-   * Passed as the saveFn input to SaleFormComponent.
-   *
-   * @param {SaleAvailabilityValues} v - Availability values from the form
-   */
-  readonly consoleSaveFn = async (v: SaleAvailabilityValues): Promise<void> => {
-    const c = this.console()!;
-    const sale: HardwareSaleStatusModel = {
-      forSale: v.forSale,
-      salePrice: v.forSale ? v.salePrice : null,
-      soldAt: c.soldAt,
-      soldPriceFinal: c.soldPriceFinal
-    };
-    await this._consoleUseCases.updateSaleStatus(this._userContext.requireUserId(), c.id, sale);
-  };
-
-  /**
-   * Registers the console as sold via the use case.
-   * Passed as the sellFn input to SaleFormComponent.
-   *
-   * @param {SaleSoldValues} v - Sold values from the form
-   */
-  readonly consoleSellFn = async (v: SaleSoldValues): Promise<void> => {
-    const c = this.console()!;
-    const sale: HardwareSaleStatusModel = {
-      forSale: false,
-      salePrice: null,
-      soldAt: v.soldAt,
-      soldPriceFinal: v.soldPriceFinal
-    };
-    await this._consoleUseCases.updateSaleStatus(this._userContext.requireUserId(), c.id, sale);
-  };
-
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id') ?? '';
-    await Promise.all([this._loadConsoleWithCatalog(id), this._loadStores()]);
+    await Promise.all([this._loadItemWithCatalog(id), this._loadStores()]);
   }
 
   /**
-   * Returns the UUID of the currently loaded console.
+   * Returns the currently loaded console entity.
    */
-  protected _getItemId(): string | undefined {
-    return this.console()?.id;
+  protected _getItem(): ConsoleModel | undefined {
+    return this.console();
   }
 
   /**
-   * Called after the sale form saves availability successfully.
-   * Updates the console signal with the new forSale/salePrice values and closes the form.
+   * Updates the console signal with the new entity value.
    *
-   * @param {SaleAvailabilityValues} values - Updated availability values from the form
+   * @param {HardwareItemModel} item - The new console entity value
    */
-  onSaveCompleted(values: SaleAvailabilityValues): void {
-    const c = this.console()!;
-    this.console.set({ ...c, forSale: values.forSale, salePrice: values.forSale ? values.salePrice : null });
-    this.showSaleForm.set(false);
+  protected _setItem(item: HardwareItemModel): void {
+    this.console.set(item as ConsoleModel);
   }
 
   /**
-   * Llamado cuando el formulario de préstamo completa una acción.
-   * Actualiza la señal de consola y cierra el formulario.
+   * Fetches a console by user and entity UUID from the use case.
    *
-   * @param {HardwareLoanItem} updated - Modelo con los nuevos valores de préstamo aplicados
+   * @param {string} userId - The authenticated user UUID
+   * @param {string} id - The console UUID to fetch
    */
-  onLoanSaved(updated: HardwareLoanItem): void {
-    this.console.set(updated as ConsoleModel);
-    this.showLoanForm.set(false);
+  protected async _fetchItem(userId: string, id: string): Promise<ConsoleModel | null | undefined> {
+    return this._consoleUseCases.getById(userId, id);
   }
 
   /**
-   * Elimina la consola mediante el use case específico.
+   * Updates the console sale status via the use case.
+   *
+   * @param {string} userId - The authenticated user UUID
+   * @param {string} id - The console UUID
+   * @param {HardwareSaleStatusModel} sale - The new sale status payload
+   */
+  protected async _updateSaleStatus(userId: string, id: string, sale: HardwareSaleStatusModel): Promise<void> {
+    await this._consoleUseCases.updateSaleStatus(userId, id, sale);
+  }
+
+  /**
+   * Deletes the console via the use case.
    */
   protected async _deleteItem(): Promise<void> {
     await this._consoleUseCases.delete(this._userContext.requireUserId(), this.console()!.id);
   }
 
   /**
-   * Carga la consola y todos los datos del catálogo asociados (marca, modelo, edición, specs).
+   * Loads the technical specs for the console after the item is set.
+   * Overrides the base no-op hook.
    *
-   * @param {string} id - UUID de la consola del usuario
+   * @param {HardwareItemModel} item - The loaded console entity
    */
-  private async _loadConsoleWithCatalog(id: string): Promise<void> {
-    this.loading.set(true);
-    try {
-      const c = await this._consoleUseCases.getById(this._userContext.requireUserId(), id);
-      if (!c) {
-        this._router.navigate([this._listRoute]);
-        return;
-      }
-      this.console.set(c);
-
-      const [specs] = await Promise.all([
-        c.modelId ? this._specsUseCases.getByModelId(c.modelId) : Promise.resolve(undefined),
-        this._loadBrandModelEdition(c.brandId, c.modelId, c.editionId)
-      ]);
-
-      this.specs.set(specs);
-    } catch {
-      this._router.navigate([this._listRoute]);
-    } finally {
-      this.loading.set(false);
-    }
+  protected override async _afterItemLoaded(item: HardwareItemModel): Promise<void> {
+    const console = item as ConsoleModel;
+    const specs = await (console.modelId
+      ? this._specsUseCases.getByModelId(console.modelId)
+      : Promise.resolve(undefined));
+    this.specs.set(specs);
   }
 }

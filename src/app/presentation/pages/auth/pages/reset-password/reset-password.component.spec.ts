@@ -5,13 +5,13 @@ import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { authBaseImports, authBaseProviders, authBaseSchemas } from '../../auth-spec.helpers';
 import { ResetPasswordComponent } from './reset-password.component';
+import { mockRouter } from '@/testing/router.mock';
 
 const mockAuthUseCases = {
   onPasswordRecovery: vi.fn(),
   updatePassword: vi.fn(),
   signOut: vi.fn()
 };
-const mockRouter = { navigate: vi.fn() };
 
 describe('ResetPasswordComponent', () => {
   let component: ResetPasswordComponent;

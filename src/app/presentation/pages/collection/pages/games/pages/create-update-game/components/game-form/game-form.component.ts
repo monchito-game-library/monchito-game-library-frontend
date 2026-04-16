@@ -52,16 +52,16 @@ import { GameStatus } from '@/types/game-status.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameCoverPositionDialogComponent } from '@/pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component';
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { selectOneValidator } from '@/shared/validators';
+import { selectOneValidator } from '@/shared/validators/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
-import { mapRawgPlatformToCode } from '@/shared/rawg-platform.utils';
+import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.utils';
 
 @Component({
   selector: 'app-game-form',

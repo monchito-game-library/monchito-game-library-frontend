@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from '@/guards/user.guard';
-import { canActivateAdmin } from '@/guards/admin.guard';
+import { canActivateUser } from '@/guards/user/user.guard';
+import { canActivateAdmin } from '@/guards/admin/admin.guard';
 import { userAdminRepositoryProvider } from '@/di/repositories/user-admin.repository.provider';
 import { userAdminUseCasesProvider } from '@/di/use-cases/user-admin.use-cases.provider';
 import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.repository.provider';

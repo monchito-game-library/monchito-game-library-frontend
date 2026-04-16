@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,6 +6,10 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { CreateUpdateControllerComponent } from './create-update-controller.component';
+import { HardwareFormShellComponent } from '@/pages/collection/components/hardware-form-shell/hardware-form-shell.component';
+
+@Component({ selector: 'app-hardware-form-shell', template: '', standalone: true })
+class HardwareFormShellStubComponent {}
 import { ControllerModel } from '@/models/controller/controller.model';
 import { StoreModel } from '@/models/store/store.model';
 import {
@@ -25,7 +29,7 @@ import {
   HARDWARE_EDITION_USE_CASES,
   HardwareEditionUseCasesContract
 } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeController(overrides: Partial<ControllerModel> = {}): ControllerModel {
   return {
@@ -121,6 +125,10 @@ describe('CreateUpdateControllerComponent — modo creación', () => {
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(CreateUpdateControllerComponent, {
+      remove: { imports: [HardwareFormShellComponent] },
+      add: { imports: [HardwareFormShellStubComponent] }
     });
 
     fixture = TestBed.createComponent(CreateUpdateControllerComponent);
@@ -294,6 +302,10 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
+    });
+    TestBed.overrideComponent(CreateUpdateControllerComponent, {
+      remove: { imports: [HardwareFormShellComponent] },
+      add: { imports: [HardwareFormShellStubComponent] }
     });
 
     fixture = TestBed.createComponent(CreateUpdateControllerComponent);

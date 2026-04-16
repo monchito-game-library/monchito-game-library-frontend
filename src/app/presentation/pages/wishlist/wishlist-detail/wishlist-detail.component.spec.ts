@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { WishlistDetailComponent } from './wishlist-detail.component';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeItem(overrides: Partial<WishlistItemModel> = {}): WishlistItemModel {
   return {

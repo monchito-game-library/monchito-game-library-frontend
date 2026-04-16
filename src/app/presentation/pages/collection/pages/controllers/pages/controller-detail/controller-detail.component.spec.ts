@@ -26,7 +26,7 @@ import {
   HARDWARE_EDITION_USE_CASES,
   HardwareEditionUseCasesContract
 } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 function makeController(overrides: Partial<ControllerModel> = {}): ControllerModel {
   return {
@@ -76,7 +76,8 @@ describe('ControllerDetailComponent', () => {
           provide: CONTROLLER_USE_CASES,
           useValue: {
             getById: vi.fn().mockResolvedValue(makeController()),
-            delete: vi.fn().mockResolvedValue(undefined)
+            delete: vi.fn().mockResolvedValue(undefined),
+            updateSaleStatus: vi.fn().mockResolvedValue(undefined)
           } as Partial<ControllerUseCasesContract>
         },
         {
@@ -214,38 +215,15 @@ describe('ControllerDetailComponent', () => {
     });
   });
 
-  describe('onSaveCompleted', () => {
-    it('actualiza la señal controller con los nuevos valores de disponibilidad y cierra el formulario', () => {
-      component.controller.set(makeController({ forSale: false, salePrice: null }));
-      component.showSaleForm.set(true);
+  describe('_fetchItem', () => {
+    it('delega en controllerUseCases.getById con userId e id', async () => {
+      const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+      const expected = makeController();
 
-      component.onSaveCompleted({ forSale: true, salePrice: 50 });
+      const result = await (component as any)._fetchItem('user-1', 'controller-uuid-1');
 
-      expect(component.controller()?.forSale).toBe(true);
-      expect(component.controller()?.salePrice).toBe(50);
-      expect(component.showSaleForm()).toBe(false);
-    });
-
-    it('pone salePrice a null cuando forSale es false', () => {
-      component.controller.set(makeController({ forSale: true, salePrice: 50 }));
-      component.onSaveCompleted({ forSale: false, salePrice: null });
-      expect(component.controller()?.salePrice).toBeNull();
-    });
-  });
-
-  describe('onLoanSaved', () => {
-    it('actualiza la señal controller y desactiva showLoanForm', () => {
-      const updated = makeController({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Ana',
-        activeLoanAt: '2024-06-01'
-      });
-      component.showLoanForm.set(true);
-
-      component.onLoanSaved(updated);
-
-      expect(component.controller()).toEqual(updated);
-      expect(component.showLoanForm()).toBe(false);
+      expect(controllerUseCases.getById).toHaveBeenCalledWith('user-1', 'controller-uuid-1');
+      expect(result).toEqual(expected);
     });
   });
 });

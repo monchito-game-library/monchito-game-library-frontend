@@ -8,7 +8,8 @@ import { CollectionOverviewComponent } from './collection-overview.component';
 import { GAME_USE_CASES } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES } from '@/domain/use-cases/console/console.use-cases.contract';
 import { CONTROLLER_USE_CASES } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { mockRouter } from '@/testing/router.mock';
 
 function makeGame(overrides: { price?: number | null } = {}): { price: number | null } {
   return {
@@ -55,10 +56,6 @@ describe('CollectionOverviewComponent', () => {
   const mockUserContext = {
     userId: signal<string | null>('user-1'),
     requireUserId: vi.fn().mockReturnValue('user-1')
-  };
-
-  const mockRouter = {
-    navigate: vi.fn()
   };
 
   beforeEach(() => {
