@@ -12,6 +12,7 @@ import { hardwareConsoleSpecsUseCasesProvider } from '@/di/use-cases/hardware-co
 export const hardwareManagementRoutes: Routes = [
   {
     path: '',
+    loadComponent: () => import('./hardware-management.component').then((m) => m.HardwareManagementComponent),
     providers: [
       hardwareBrandRepositoryProvider,
       hardwareModelRepositoryProvider,
