@@ -1,4 +1,4 @@
-<!-- Header de sección con toggle -->
+<!-- Section header with toggle -->
 <div
   class="order-detail-page__info-section-header"
   [class.order-detail-page__info-section-header--collapsed]="!sectionExpanded()"
@@ -17,8 +17,10 @@
         @if (m.avatarUrl) {
           <img
             class="order-detail-page__info-section-avatar"
-            [src]="m.avatarUrl"
+            [ngSrc]="m.avatarUrl"
             [alt]="m.displayName ?? m.email ?? ''"
+            width="28"
+            height="28"
             referrerpolicy="no-referrer" />
         } @else {
           <div class="order-detail-page__info-section-avatar order-detail-page__info-section-avatar--placeholder">
@@ -33,14 +35,14 @@
   </mat-icon>
 </div>
 
-<!-- Body colapsable -->
+<!-- Collapsible body -->
 <div
   class="order-detail-page__info-section-body"
   [class.order-detail-page__info-section-body--collapsed]="!sectionExpanded()">
   <div class="order-detail-page__info-section-body-inner">
-    <!-- Info (siempre visible, deshabilitada cuando se edita) -->
+    <!-- Info (always visible, disabled when editing) -->
     <div class="order-detail-page__info" [class.order-detail-page__info--disabled]="editingHeader()">
-      <!-- Col 1: datos del pedido -->
+      <!-- Col 1: order data -->
       <div class="order-detail-page__info-details">
         @if (order().orderDate) {
           <div class="order-detail-page__info-row">
@@ -84,7 +86,7 @@
         }
       </div>
 
-      <!-- Col 2: miembros -->
+      <!-- Col 2: members -->
       <div class="order-detail-page__members-sections">
         <div class="order-detail-page__members-section">
           @if (order().status === ORDER_STATUS.DRAFT && !allMembersReady(order().members)) {
@@ -97,8 +99,10 @@
               @if (m.avatarUrl) {
                 <img
                   class="order-detail-page__member-avatar"
-                  [src]="m.avatarUrl"
+                  [ngSrc]="m.avatarUrl"
                   [alt]="m.email ?? ''"
+                  width="32"
+                  height="32"
                   referrerpolicy="no-referrer" />
               } @else {
                 <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
@@ -118,7 +122,7 @@
         </div>
       </div>
 
-      <!-- Col 3: badge de estado -->
+      <!-- Col 3: status badge -->
       <div class="order-detail-page__info-status">
         <div class="order-detail-page__status-badge order-detail-page__status-badge--{{ order().status }}">
           {{ 'orders.status.' + order().status | transloco }}
@@ -126,7 +130,7 @@
       </div>
     </div>
 
-    <!-- Edit header form (animado con grid trick) -->
+    <!-- Edit header form (animated with grid trick) -->
     <div class="order-detail-page__form-expander" [class.order-detail-page__form-expander--expanded]="editingHeader()">
       <div class="order-detail-page__form-expander-inner">
         <div class="order-detail-page__edit-divider"></div>

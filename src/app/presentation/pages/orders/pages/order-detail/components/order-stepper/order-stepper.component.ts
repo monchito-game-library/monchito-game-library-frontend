@@ -12,11 +12,10 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { OrderModel } from '@/models/order/order.model';
@@ -33,12 +32,10 @@ import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.inter
     class: 'order-detail-page__section order-detail-page__section--lines order-detail-page__stepper',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, MatButton, MatIcon, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, MatButton, MatIcon, TranslocoPipe]
 })
 export class OrderStepperComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Set of productIds that have been explicitly clicked or auto-confirmed by the owner. */
   private readonly _confirmedSelections: WritableSignal<Set<string>> = signal<Set<string>>(new Set());
@@ -72,7 +69,7 @@ export class OrderStepperComponent {
   readonly stepSelections: WritableSignal<Map<string, number>> = signal<Map<string, number>>(new Map());
 
   constructor() {
-    // Re-initialise internal state whenever the steps input changes (e.g. on first load).
+    // Re-initialize internal state whenever the steps input changes (e.g. on first load).
     effect(() => {
       const steps = this.packSteps();
       this.currentStep.set(0);

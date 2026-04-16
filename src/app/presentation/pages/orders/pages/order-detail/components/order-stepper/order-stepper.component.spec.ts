@@ -104,6 +104,23 @@ describe('OrderStepperComponent', () => {
     return fixture.componentInstance;
   }
 
+  function getTotalAllocated(step: PackStepData, comp?: OrderStepperComponent): number {
+    const c = comp ?? createComponent(makeOrder(), [step]);
+    return c.getMemberAllocations(step).reduce((sum: number, m: MemberQty) => sum + m.qty, 0);
+  }
+
+  function createTwoStepFixtureWithSpy() {
+    const step1 = makeStep({ productId: 'p1' });
+    const step2 = makeStep({ productId: 'p2' });
+    const fixture = TestBed.createComponent(OrderStepperComponent);
+    fixture.componentRef.setInput('order', makeOrder());
+    fixture.componentRef.setInput('packSteps', [step1, step2]);
+    fixture.componentRef.setInput('editingHeader', false);
+    const spy = vi.spyOn(fixture.componentInstance.allPacksSelectedChange, 'emit');
+    fixture.detectChanges();
+    return { fixture, spy, step1, step2 };
+  }
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -193,22 +210,15 @@ describe('OrderStepperComponent', () => {
     });
 
     it('ajusta proporcionalamente cuando el step está confirmado', () => {
-      // p1 está auto-confirmado al iniciar (constructor effect)
-      const step = makeStep({ suggestions: [makeSuggestion(20)] });
-      const c = createComponent(makeOrder(), [step]);
-      const result = c.getMemberAllocations(step);
-      // qty: [10, 5] → proporcional sobre 20 unidades
-      const total = result.reduce((sum: number, m: MemberQty) => sum + m.qty, 0);
-      expect(total).toBe(20);
+      // p1 está auto-confirmado al iniciar (constructor effect); qty: [10, 5] → sobre 20 unidades
+      expect(getTotalAllocated(makeStep({ suggestions: [makeSuggestion(20)] }))).toBe(20);
     });
 
     it('las cantidades proporcionales suman exactamente totalUnits (Largest Remainder)', () => {
       const step = makeStep({ suggestions: [makeSuggestion(30)] });
       const c = createComponent(makeOrder(), [step]);
-      c.onSelectPackOption('p1', 0); // confirmamos con la primera sugerencia (30 unidades)
-      const result = c.getMemberAllocations(step);
-      const total = result.reduce((sum: number, m: MemberQty) => sum + m.qty, 0);
-      expect(total).toBe(30);
+      c.onSelectPackOption('p1', 0);
+      expect(getTotalAllocated(step, c)).toBe(30);
     });
 
     it('devuelve el breakdown sin modificar cuando el índice seleccionado está fuera de rango', () => {
@@ -228,11 +238,7 @@ describe('OrderStepperComponent', () => {
 
   describe('distributeProportionally (via getMemberAllocations)', () => {
     it('la suma de unidades asignadas es igual a totalUnits de la sugerencia', () => {
-      const step = makeStep({ suggestions: [makeSuggestion(20)] });
-      const c = createComponent(makeOrder(), [step]);
-      const result = c.getMemberAllocations(step);
-      const total = result.reduce((sum: number, m: MemberQty) => sum + m.qty, 0);
-      expect(total).toBe(20);
+      expect(getTotalAllocated(makeStep({ suggestions: [makeSuggestion(20)] }))).toBe(20);
     });
 
     it('cuando todas las cantidades son 0 devuelve todo a ceros', () => {
@@ -337,17 +343,8 @@ describe('OrderStepperComponent', () => {
 
   describe('allPacksSelectedChange output', () => {
     it('emite false inicialmente si sólo el primer step tiene sugerencias', () => {
-      // Con un solo step y auto-confirm del constructor, debería emitir true
-      // Verificamos el comportamiento con dos steps donde sólo el primero se auto-confirma
-      const step1 = makeStep({ productId: 'p1' });
-      const step2 = makeStep({ productId: 'p2' });
-      const fixture = TestBed.createComponent(OrderStepperComponent);
-      fixture.componentRef.setInput('order', makeOrder());
-      fixture.componentRef.setInput('packSteps', [step1, step2]);
-      fixture.componentRef.setInput('editingHeader', false);
-      const spy = vi.spyOn(fixture.componentInstance.allPacksSelectedChange, 'emit');
-      fixture.detectChanges();
-      // El último valor emitido debería ser false (p2 no está confirmado)
+      // Con dos steps, sólo el primero se auto-confirma → p2 sigue pendiente → false
+      const { spy } = createTwoStepFixtureWithSpy();
       const lastCall = spy.mock.calls[spy.mock.calls.length - 1];
       expect(lastCall[0]).toBe(false);
     });
@@ -366,18 +363,9 @@ describe('OrderStepperComponent', () => {
     });
 
     it('emite true al confirmar manualmente el step que faltaba', () => {
-      const step1 = makeStep({ productId: 'p1' });
-      const step2 = makeStep({ productId: 'p2' });
-      const fixture = TestBed.createComponent(OrderStepperComponent);
-      fixture.componentRef.setInput('order', makeOrder());
-      fixture.componentRef.setInput('packSteps', [step1, step2]);
-      fixture.componentRef.setInput('editingHeader', false);
-      const spy = vi.spyOn(fixture.componentInstance.allPacksSelectedChange, 'emit');
-      fixture.detectChanges();
-
+      const { fixture, spy } = createTwoStepFixtureWithSpy();
       fixture.componentInstance.onSelectPackOption('p2', 0);
       fixture.detectChanges();
-
       const lastCall = spy.mock.calls[spy.mock.calls.length - 1];
       expect(lastCall[0]).toBe(true);
     });

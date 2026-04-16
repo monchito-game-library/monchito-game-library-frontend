@@ -193,7 +193,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     const sortBy = this.sortBy();
     const direction = this.sortDirection();
     filtered = filtered.sort((a: GameListModel, b: GameListModel): number => {
-      let comparison: number;
+      let comparison = 0;
       switch (sortBy) {
         case 'title':
           comparison = a.title.localeCompare(b.title);

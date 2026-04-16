@@ -1,4 +1,4 @@
-<!-- Mi parte -->
+<!-- My part -->
 <div class="order-detail-page__cost-section">
   <div class="order-detail-page__cost-row" (click)="onToggleMyPart()">
     <div class="order-detail-page__cost-total-label">
@@ -35,7 +35,7 @@
 
 <div class="order-detail-page__cost-divider"></div>
 
-<!-- Total pedido -->
+<!-- Order total -->
 <div class="order-detail-page__cost-section">
   <div class="order-detail-page__cost-row" (click)="onToggleCostDetail()">
     <div class="order-detail-page__cost-total-label">
@@ -56,8 +56,10 @@
             @if (m.avatarUrl) {
               <img
                 class="order-detail-page__cost-member-avatar"
-                [src]="m.avatarUrl"
+                [ngSrc]="m.avatarUrl"
                 [alt]="m.email ?? ''"
+                width="24"
+                height="24"
                 referrerpolicy="no-referrer" />
             } @else {
               <div class="order-detail-page__cost-member-avatar order-detail-page__cost-member-avatar--placeholder">

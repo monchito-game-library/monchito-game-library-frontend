@@ -1,5 +1,5 @@
-// ─── Cadena flex para scroll de tabla ────────────────────────────────────────
-// :host = section--lines (flex:1, min-height:0, overflow:hidden vienen del padre)
+// ─── Flex chain for table scroll ─────────────────────────────────────────────
+// :host = section--lines (flex:1, min-height:0, overflow:hidden come from parent)
 :host {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   justify-content: space-between;
   margin-bottom: 1rem;
   flex-shrink: 0;
-  /* expand: recupera margen después de que el body se abra */
+  /* expand: restores margin after the body opens */
   transition: margin-bottom 0.3s ease 0.3s;
 
   &--collapsed {
@@ -25,18 +25,18 @@
   font-weight: 600;
 }
 
-// section-body: flex item que llena el espacio restante, Y grid container para la animación de colapso
+// section-body: flex item that fills remaining space, AND grid container for collapse animation
 .order-detail-page__section-body {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-rows: 1fr;
-  /* expand: abre después del fade-in del inner */
+  /* expand: opens after the inner fade-in */
   transition: grid-template-rows 0.45s ease 0.3s;
 
   &--collapsed {
     grid-template-rows: 0fr;
-    /* collapse: arranca a la vez que el form */
+    /* collapse: starts at the same time as the form */
     transition: grid-template-rows 0.45s ease;
 
     .order-detail-page__section-body-inner {
@@ -46,14 +46,14 @@
   }
 }
 
-// section-body-inner: flex container para propagar la cadena hasta table-wrapper
+// section-body-inner: flex container to propagate the chain down to table-wrapper
 .order-detail-page__section-body-inner {
   overflow: hidden;
   min-height: 0;
   display: flex;
   flex-direction: column;
   opacity: 1;
-  /* fade-in: espera a que el grid esté abierto */
+  /* fade-in: waits for the grid to be open */
   transition: opacity 0.25s ease 0.3s;
 }
 
@@ -76,7 +76,7 @@
   padding: 1rem 0;
 }
 
-// table-wrapper: último eslabón de la cadena, hace scroll real
+// table-wrapper: last link in the chain, enables real scroll
 .order-detail-page__table-wrapper {
   overflow-x: auto;
   overflow-y: auto;

@@ -24,8 +24,10 @@
                 @if (m.avatarUrl) {
                   <img
                     class="order-detail-page__stepper-member-avatar"
-                    [src]="m.avatarUrl"
+                    [ngSrc]="m.avatarUrl"
                     [alt]="m.email ?? ''"
+                    width="24"
+                    height="24"
                     referrerpolicy="no-referrer" />
                 } @else {
                   <div

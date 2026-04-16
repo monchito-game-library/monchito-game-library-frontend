@@ -72,7 +72,7 @@ describe('OrdersListComponent', () => {
     it('no llama a getAllForUser cuando userId es null', async () => {
       mockUserContext.userId.mockReturnValue(null);
 
-      await component.ngOnInit();
+      component.ngOnInit();
 
       expect(mockOrdersUseCases.getAllForUser).not.toHaveBeenCalled();
     });
@@ -80,7 +80,7 @@ describe('OrdersListComponent', () => {
     it('loading permanece false cuando userId es null', async () => {
       mockUserContext.userId.mockReturnValue(null);
 
-      await component.ngOnInit();
+      component.ngOnInit();
 
       expect(component.loading()).toBe(false);
     });
@@ -89,7 +89,7 @@ describe('OrdersListComponent', () => {
       mockUserContext.userId.mockReturnValue('user-1');
       mockOrdersUseCases.getAllForUser.mockResolvedValue([]);
 
-      await component.ngOnInit();
+      component.ngOnInit();
 
       expect(mockOrdersUseCases.getAllForUser).toHaveBeenCalledWith('user-1');
     });
@@ -99,7 +99,8 @@ describe('OrdersListComponent', () => {
       mockUserContext.userId.mockReturnValue('user-1');
       mockOrdersUseCases.getAllForUser.mockResolvedValue(mockOrders);
 
-      await component.ngOnInit();
+      component.ngOnInit();
+      await Promise.resolve();
 
       expect(component.orders()).toEqual(mockOrders);
     });
@@ -108,7 +109,8 @@ describe('OrdersListComponent', () => {
       mockUserContext.userId.mockReturnValue('user-1');
       mockOrdersUseCases.getAllForUser.mockResolvedValue([]);
 
-      await component.ngOnInit();
+      component.ngOnInit();
+      await Promise.resolve();
 
       expect(component.loading()).toBe(false);
     });

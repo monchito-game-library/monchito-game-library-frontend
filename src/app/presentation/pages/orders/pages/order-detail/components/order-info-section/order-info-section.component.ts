@@ -11,7 +11,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -38,6 +38,7 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     ReactiveFormsModule,
     DatePipe,
     DecimalPipe,
+    NgOptimizedImage,
     MatButton,
     MatButtonToggle,
     MatButtonToggleGroup,

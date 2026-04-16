@@ -8,7 +8,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -23,7 +23,7 @@ import { sortedMembers } from '@/shared/order-member/order-member.util';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'order-detail-page__section order-detail-page__cost-summary' },
-  imports: [DecimalPipe, MatIcon, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, MatIcon, TranslocoPipe]
 })
 export class OrderCostSummaryComponent {
   /** The order whose costs are being displayed. */
