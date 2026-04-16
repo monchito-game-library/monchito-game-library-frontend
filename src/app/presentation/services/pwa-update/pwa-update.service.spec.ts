@@ -89,6 +89,20 @@ describe('PwaUpdateService', () => {
     expect(checkForUpdateSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('llama a checkForUpdate cada 10 minutos mediante un intervalo', () => {
+    vi.useFakeTimers();
+    service.init();
+    expect(checkForUpdateSpy).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(10 * 60 * 1000);
+    expect(checkForUpdateSpy).toHaveBeenCalledTimes(2);
+
+    vi.advanceTimersByTime(10 * 60 * 1000);
+    expect(checkForUpdateSpy).toHaveBeenCalledTimes(3);
+
+    vi.useRealTimers();
+  });
+
   it('ignora eventos que no son VERSION_READY', () => {
     service.init();
     versionUpdates$.next({ type: 'VERSION_INSTALLING' });
