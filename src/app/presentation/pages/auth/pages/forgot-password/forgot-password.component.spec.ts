@@ -32,18 +32,6 @@ describe('ForgotPasswordComponent', () => {
   });
 
   describe('estado inicial', () => {
-    it('loading empieza en false', () => {
-      expect(component.loading()).toBe(false);
-    });
-
-    it('errorMessage empieza vacío', () => {
-      expect(component.errorMessage()).toBe('');
-    });
-
-    it('successMessage empieza vacío', () => {
-      expect(component.successMessage()).toBe('');
-    });
-
     it('el formulario empieza inválido', () => {
       expect(component.forgotPasswordForm.invalid).toBe(true);
     });

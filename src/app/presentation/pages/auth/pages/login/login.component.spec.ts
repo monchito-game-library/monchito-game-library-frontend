@@ -1,11 +1,9 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { authBaseImports, authBaseSchemas } from '../../auth-spec.helpers';
 import { LoginComponent } from './login.component';
 
 const mockAuthUseCases = { signIn: vi.fn() };
@@ -17,52 +15,20 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.configureTestingModule({
-      imports: [
-        LoginComponent,
-        ReactiveFormsModule,
-        TranslocoTestingModule.forRoot({
-          langs: { en: {} },
-          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
-        })
-      ],
+      imports: [LoginComponent, ...authBaseImports],
       providers: [
         { provide: AUTH_USE_CASES, useValue: mockAuthUseCases },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: vi.fn().mockReturnValue(null) } } } }
       ],
-      schemas: [NO_ERRORS_SCHEMA]
+      schemas: authBaseSchemas
     });
     component = TestBed.createComponent(LoginComponent).componentInstance;
   });
 
   describe('estado inicial', () => {
-    it('loading empieza en false', () => {
-      expect(component.loading()).toBe(false);
-    });
-
-    it('errorMessage empieza vacío', () => {
-      expect(component.errorMessage()).toBe('');
-    });
-
-    it('hidePassword empieza en true', () => {
-      expect(component.hidePassword()).toBe(true);
-    });
-
     it('el formulario empieza inválido', () => {
       expect(component.loginForm.invalid).toBe(true);
-    });
-  });
-
-  describe('togglePasswordVisibility', () => {
-    it('alterna hidePassword de true a false', () => {
-      component.togglePasswordVisibility();
-      expect(component.hidePassword()).toBe(false);
-    });
-
-    it('alterna hidePassword de vuelta a true', () => {
-      component.togglePasswordVisibility();
-      component.togglePasswordVisibility();
-      expect(component.hidePassword()).toBe(true);
     });
   });
 

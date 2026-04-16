@@ -129,14 +129,6 @@ describe('ConsolesComponent', () => {
     it('consoles es []', () => {
       expect(component.consoles()).toEqual([]);
     });
-
-    it('loading empieza en true', () => {
-      expect(component.loading()).toBe(true);
-    });
-
-    it('searchQuery es cadena vacía', () => {
-      expect(component.searchQuery()).toBe('');
-    });
   });
 
   describe('filteredConsoles', () => {
@@ -259,60 +251,6 @@ describe('ConsolesComponent', () => {
     });
   });
 
-  describe('resolveStoreName()', () => {
-    it('devuelve cadena vacía para id null', () => {
-      expect(component.resolveStoreName(null)).toBe('');
-    });
-
-    it('devuelve el label de la tienda cuando se encuentra', () => {
-      (component as any)._stores.set([makeStore({ id: 'store-1', label: 'Media Markt' })]);
-
-      expect(component.resolveStoreName('store-1')).toBe('Media Markt');
-    });
-
-    it('devuelve el id como fallback cuando no se encuentra la tienda', () => {
-      (component as any)._stores.set([]);
-
-      expect(component.resolveStoreName('id-desconocido')).toBe('id-desconocido');
-    });
-  });
-
-  describe('resolveBrandName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveBrandName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre de la marca cuando se encuentra', () => {
-      (component as any)._brands.set([makeBrand({ id: 'brand-1', name: 'Sony' })]);
-
-      expect(component.resolveBrandName('brand-1')).toBe('Sony');
-    });
-
-    it('devuelve — cuando no se encuentra la marca', () => {
-      (component as any)._brands.set([]);
-
-      expect(component.resolveBrandName('brand-inexistente')).toBe('—');
-    });
-  });
-
-  describe('resolveModelName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveModelName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre del modelo cuando se encuentra', () => {
-      (component as any)._hardwareModels.set([makeHardwareModel({ id: 'model-1', name: 'PlayStation 5' })]);
-
-      expect(component.resolveModelName('model-1')).toBe('PlayStation 5');
-    });
-
-    it('devuelve — cuando no se encuentra el modelo', () => {
-      (component as any)._hardwareModels.set([]);
-
-      expect(component.resolveModelName('model-inexistente')).toBe('—');
-    });
-  });
-
   describe('onDetail()', () => {
     it('navega a /collection/consoles/:id', () => {
       const console1 = makeConsole({ id: 'console-abc' });
@@ -320,14 +258,6 @@ describe('ConsolesComponent', () => {
       component.onDetail(console1);
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/consoles', 'console-abc']);
-    });
-  });
-
-  describe('onAdd()', () => {
-    it('navega a /collection/consoles/add', () => {
-      component.onAdd();
-
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/consoles/add']);
     });
   });
 

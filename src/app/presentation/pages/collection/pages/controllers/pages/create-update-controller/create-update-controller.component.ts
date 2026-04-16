@@ -1,15 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal
-} from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -19,33 +9,18 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
+import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base.component';
 import { ControllerForm, ControllerFormValue } from '@/interfaces/forms/controller-form.interface';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
-import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
-import {
-  HARDWARE_BRAND_USE_CASES,
-  HardwareBrandUseCasesContract
-} from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
-import {
-  HARDWARE_MODEL_USE_CASES,
-  HardwareModelUseCasesContract
-} from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
-import {
-  HARDWARE_EDITION_USE_CASES,
-  HardwareEditionUseCasesContract
-} from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
 import { availableControllerCompatibilities } from '@/constants/available-controller-compatibilities.constant';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { GameConditionType } from '@/types/game-condition.type';
@@ -74,20 +49,10 @@ import { ControllerCompatibilityType } from '@/types/controller-compatibility.ty
     TranslocoPipe
   ]
 })
-export class CreateUpdateControllerComponent implements OnInit {
-  private readonly _router: Router = inject(Router);
-  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
-  private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
-  private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
-  private readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
-  private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
 
-  private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
   private readonly _storeInput: Signal<string | null>;
   private readonly _brandInput: Signal<string | null>;
   private readonly _modelInput: Signal<string | null>;
@@ -99,24 +64,6 @@ export class CreateUpdateControllerComponent implements OnInit {
 
   /** GAME_CONDITION constant exposed to the template. */
   readonly GAME_CONDITION = GAME_CONDITION;
-
-  /** All hardware brands available for selection. */
-  readonly brands: WritableSignal<HardwareBrandModel[]> = signal<HardwareBrandModel[]>([]);
-
-  /** Hardware models filtered by the selected brand and type='controller'. */
-  readonly models: WritableSignal<HardwareModelModel[]> = signal<HardwareModelModel[]>([]);
-
-  /** Hardware editions filtered by the selected model. */
-  readonly editions: WritableSignal<HardwareEditionModel[]> = signal<HardwareEditionModel[]>([]);
-
-  /** True when editing an existing controller, false when creating. */
-  readonly isEditMode: WritableSignal<boolean> = signal<boolean>(false);
-
-  /** True while loading the controller data in edit mode. */
-  readonly loading: WritableSignal<boolean> = signal<boolean>(false);
-
-  /** True while the save operation is in progress. */
-  readonly saving: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Reactive form for the controller data. */
   readonly form: FormGroup<ControllerForm> = this._fb.group<ControllerForm>({
@@ -138,7 +85,7 @@ export class CreateUpdateControllerComponent implements OnInit {
   /** Stores filtered by the current autocomplete input value. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
     const input: string = this._storeInput()?.toString().toLowerCase() ?? '';
-    return this._storeModels().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(input));
+    return this.stores().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(input));
   });
 
   /** Brands filtered by the current autocomplete input value. */
@@ -153,7 +100,21 @@ export class CreateUpdateControllerComponent implements OnInit {
     return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(input));
   });
 
+  protected readonly _listRoute = '/collection/controllers';
+
+  /**
+   * Exposes the shared modelId and editionId form controls to the base class
+   * for use in the brand/model cascade handlers.
+   */
+  protected get _sharedFormControls(): { modelId: FormControl<string | null>; editionId: FormControl<string | null> } {
+    return {
+      modelId: this.form.controls.modelId,
+      editionId: this.form.controls.editionId
+    };
+  }
+
   constructor() {
+    super();
     this._storeInput = toSignal(this.form.controls.store.valueChanges, { initialValue: null });
     this._brandInput = toSignal(this.form.controls.brandId.valueChanges, { initialValue: null });
     this._modelInput = toSignal(this.form.controls.modelId.valueChanges, { initialValue: null });
@@ -169,36 +130,6 @@ export class CreateUpdateControllerComponent implements OnInit {
       await this._loadController(id);
     }
   }
-
-  /**
-   * Devuelve la etiqueta de la tienda a partir de su UUID para mostrarla en el autocomplete.
-   *
-   * @param {string | null} id - UUID de la tienda
-   */
-  displayStoreLabel = (id: string | null): string => {
-    const store: StoreModel | undefined = this._storeModels().find((s: StoreModel): boolean => s.id === id);
-    return store?.label ?? '';
-  };
-
-  /**
-   * Devuelve el nombre de la marca a partir de su UUID para mostrarla en el autocomplete.
-   *
-   * @param {string | null} id - UUID de la marca
-   */
-  displayBrandLabel = (id: string | null): string => {
-    const brand: HardwareBrandModel | undefined = this.brands().find((b: HardwareBrandModel): boolean => b.id === id);
-    return brand?.name ?? '';
-  };
-
-  /**
-   * Devuelve el nombre del modelo a partir de su UUID para mostrarlo en el autocomplete.
-   *
-   * @param {string | null} id - UUID del modelo
-   */
-  displayModelLabel = (id: string | null): string => {
-    const model: HardwareModelModel | undefined = this.models().find((m: HardwareModelModel): boolean => m.id === id);
-    return model?.name ?? '';
-  };
 
   /**
    * Valida el formulario y guarda el mando (creación o actualización).
@@ -271,7 +202,7 @@ export class CreateUpdateControllerComponent implements OnInit {
         );
       }
 
-      this._router.navigate(['/collection/controllers']);
+      this._router.navigate([this._listRoute]);
     } catch {
       this._snackBar.open(
         this._transloco.translate('controllerPage.snack.saveError'),
@@ -284,86 +215,15 @@ export class CreateUpdateControllerComponent implements OnInit {
   }
 
   /**
-   * Navega de vuelta a la lista de mandos sin guardar cambios.
-   */
-  onCancel(): void {
-    this._router.navigate(['/collection/controllers']);
-  }
-
-  /**
-   * Reacciona al cambio de marca: limpia modelo y edición, y carga los modelos de la nueva marca.
-   *
-   * @param {string | null} brandId - UUID de la marca seleccionada
-   */
-  async onBrandChange(brandId: string | null): Promise<void> {
-    this.form.controls.modelId.setValue(null);
-    this.form.controls.editionId.setValue(null);
-    this.models.set([]);
-    this.editions.set([]);
-    if (brandId) await this._loadModels(brandId);
-  }
-
-  /**
-   * Reacciona al cambio de modelo: limpia la edición y carga las ediciones del nuevo modelo.
-   *
-   * @param {string | null} modelId - UUID del modelo seleccionado
-   */
-  async onModelChange(modelId: string | null): Promise<void> {
-    this.form.controls.editionId.setValue(null);
-    this.editions.set([]);
-    if (modelId) {
-      this.form.controls.editionId.enable();
-      await this._loadEditions(modelId);
-    } else {
-      this.form.controls.editionId.disable();
-    }
-  }
-
-  /**
-   * Carga la lista de tiendas disponibles desde Supabase.
-   */
-  private async _loadStores(): Promise<void> {
-    try {
-      const stores: StoreModel[] = await this._storeUseCases.getAllStores();
-      this._storeModels.set(stores);
-    } catch {
-      // Silent failure: field falls back to free text
-    }
-  }
-
-  /**
-   * Carga todas las marcas de hardware disponibles.
-   */
-  private async _loadBrands(): Promise<void> {
-    try {
-      this.brands.set(await this._brandUseCases.getAll());
-    } catch {
-      // Silent failure
-    }
-  }
-
-  /**
    * Carga los modelos de mando de la marca indicada.
+   * Sobreescribe el método base para filtrar únicamente los de tipo 'controller'.
    *
    * @param {string} brandId - UUID de la marca
    */
-  private async _loadModels(brandId: string): Promise<void> {
+  protected override async _loadModels(brandId: string): Promise<void> {
     try {
       const all = await this._modelUseCases.getAllByBrand(brandId);
       this.models.set(all.filter((m: HardwareModelModel): boolean => m.type === 'controller'));
-    } catch {
-      // Silent failure
-    }
-  }
-
-  /**
-   * Carga las ediciones del modelo indicado.
-   *
-   * @param {string} modelId - UUID del modelo
-   */
-  private async _loadEditions(modelId: string): Promise<void> {
-    try {
-      this.editions.set(await this._editionUseCases.getAllByModel(modelId));
     } catch {
       // Silent failure
     }
@@ -380,7 +240,7 @@ export class CreateUpdateControllerComponent implements OnInit {
     try {
       const controller = await this._controllerUseCases.getById(this._userContext.requireUserId(), id);
       if (!controller) {
-        this._router.navigate(['/collection/controllers']);
+        this._router.navigate([this._listRoute]);
         return;
       }
       if (controller.brandId) {
@@ -408,7 +268,7 @@ export class CreateUpdateControllerComponent implements OnInit {
         this._transloco.translate('common.close'),
         { duration: 3000 }
       );
-      this._router.navigate(['/collection/controllers']);
+      this._router.navigate([this._listRoute]);
     } finally {
       this.loading.set(false);
     }

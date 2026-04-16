@@ -1,14 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal
-} from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -16,26 +6,15 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { HardwareListBaseComponent } from '@/abstract/hardware-list-base.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
-import { StoreModel } from '@/models/store/store.model';
 import {
   CONTROLLER_USE_CASES,
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
-import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
-import {
-  HARDWARE_BRAND_USE_CASES,
-  HardwareBrandUseCasesContract
-} from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
-import {
-  HARDWARE_MODEL_USE_CASES,
-  HardwareModelUseCasesContract
-} from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
-import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 
 @Component({
@@ -56,31 +35,16 @@ import { ListPageHeaderComponent } from '@/pages/collection/components/list-page
     ListPageHeaderComponent
   ]
 })
-export class ControllersComponent implements OnInit {
-  private readonly _router: Router = inject(Router);
+export class ControllersComponent extends HardwareListBaseComponent {
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
-  private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
-  private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
-  private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
-  private readonly _stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
-  private readonly _brands: WritableSignal<HardwareBrandModel[]> = signal<HardwareBrandModel[]>([]);
-  private readonly _hardwareModels: WritableSignal<HardwareModelModel[]> = signal<HardwareModelModel[]>([]);
-
-  /** Condition constant exposed to the template for comparisons. */
-  readonly GAME_CONDITION = GAME_CONDITION;
-
-  /** Text entered in the search input. */
-  readonly searchQuery: WritableSignal<string> = signal<string>('');
+  protected readonly _listRoute = '/collection/controllers/add';
+  protected readonly _detailRoute = '/collection/controllers';
 
   /** List of controllers owned by the user. */
   readonly controllers: WritableSignal<ControllerModel[]> = signal<ControllerModel[]>([]);
-
-  /** True while the initial data load is in progress. */
-  readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
   /** Controllers filtered by searchQuery against model name and brand name. */
   readonly filteredControllers: Signal<ControllerModel[]> = computed(() => {
@@ -99,39 +63,7 @@ export class ControllersComponent implements OnInit {
   );
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this._loadControllers(), this._loadStores(), this._loadCatalog()]);
-  }
-
-  /**
-   * Returns the store name for the given UUID.
-   * Falls back to the raw id for legacy data.
-   *
-   * @param {string | null} id - Store UUID
-   */
-  resolveStoreName(id: string | null): string {
-    if (!id) return '';
-    const store: StoreModel | undefined = this._stores().find((s: StoreModel): boolean => s.id === id);
-    return store?.label ?? id;
-  }
-
-  /**
-   * Returns the brand name for the given UUID.
-   *
-   * @param {string | null} id - Brand UUID
-   */
-  resolveBrandName(id: string | null): string {
-    if (!id) return '—';
-    return this._brands().find((b: HardwareBrandModel): boolean => b.id === id)?.name ?? '—';
-  }
-
-  /**
-   * Returns the model name for the given UUID.
-   *
-   * @param {string | null} id - Hardware model UUID
-   */
-  resolveModelName(id: string | null): string {
-    if (!id) return '—';
-    return this._hardwareModels().find((m: HardwareModelModel): boolean => m.id === id)?.name ?? '—';
+    await Promise.all([this._loadControllers(), this._loadStores(), this._loadCatalog('controller')]);
   }
 
   /**
@@ -140,42 +72,7 @@ export class ControllersComponent implements OnInit {
    * @param {ControllerModel} controller - Controller to display
    */
   onDetail(controller: ControllerModel): void {
-    this._router.navigate(['/collection/controllers', controller.id]);
-  }
-
-  /**
-   * Navigates to the controller creation form.
-   */
-  onAdd(): void {
-    this._router.navigate(['/collection/controllers/add']);
-  }
-
-  /**
-   * Loads controller brands and models from the catalogue to resolve names in the list.
-   */
-  private async _loadCatalog(): Promise<void> {
-    try {
-      const [brands, models] = await Promise.all([
-        this._brandUseCases.getAll(),
-        this._modelUseCases.getAllByType('controller')
-      ]);
-      this._brands.set(brands);
-      this._hardwareModels.set(models);
-    } catch {
-      // Silent failure: names will display '—'
-    }
-  }
-
-  /**
-   * Loads the list of available stores from Supabase.
-   */
-  private async _loadStores(): Promise<void> {
-    try {
-      const stores: StoreModel[] = await this._storeUseCases.getAllStores();
-      this._stores.set(stores);
-    } catch {
-      // Silent failure
-    }
+    this._router.navigate([this._detailRoute, controller.id]);
   }
 
   /**

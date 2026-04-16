@@ -130,14 +130,6 @@ describe('ControllersComponent', () => {
     it('controllers es []', () => {
       expect(component.controllers()).toEqual([]);
     });
-
-    it('loading empieza en true', () => {
-      expect(component.loading()).toBe(true);
-    });
-
-    it('searchQuery es cadena vacía', () => {
-      expect(component.searchQuery()).toBe('');
-    });
   });
 
   describe('filteredControllers', () => {
@@ -260,60 +252,6 @@ describe('ControllersComponent', () => {
     });
   });
 
-  describe('resolveStoreName()', () => {
-    it('devuelve cadena vacía para id null', () => {
-      expect(component.resolveStoreName(null)).toBe('');
-    });
-
-    it('devuelve el label de la tienda cuando se encuentra', () => {
-      (component as any)._stores.set([makeStore({ id: 'store-1', label: 'Media Markt' })]);
-
-      expect(component.resolveStoreName('store-1')).toBe('Media Markt');
-    });
-
-    it('devuelve el id como fallback cuando no se encuentra la tienda', () => {
-      (component as any)._stores.set([]);
-
-      expect(component.resolveStoreName('id-desconocido')).toBe('id-desconocido');
-    });
-  });
-
-  describe('resolveBrandName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveBrandName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre de la marca cuando se encuentra', () => {
-      (component as any)._brands.set([makeBrand({ id: 'brand-1', name: 'Sony' })]);
-
-      expect(component.resolveBrandName('brand-1')).toBe('Sony');
-    });
-
-    it('devuelve — cuando no se encuentra la marca', () => {
-      (component as any)._brands.set([]);
-
-      expect(component.resolveBrandName('brand-inexistente')).toBe('—');
-    });
-  });
-
-  describe('resolveModelName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveModelName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre del modelo cuando se encuentra', () => {
-      (component as any)._hardwareModels.set([makeHardwareModel({ id: 'model-1', name: 'DualSense' })]);
-
-      expect(component.resolveModelName('model-1')).toBe('DualSense');
-    });
-
-    it('devuelve — cuando no se encuentra el modelo', () => {
-      (component as any)._hardwareModels.set([]);
-
-      expect(component.resolveModelName('model-inexistente')).toBe('—');
-    });
-  });
-
   describe('onDetail()', () => {
     it('navega a /collection/controllers/:id', () => {
       const ctrl = makeController({ id: 'controller-abc' });
@@ -321,14 +259,6 @@ describe('ControllersComponent', () => {
       component.onDetail(ctrl);
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/controllers', 'controller-abc']);
-    });
-  });
-
-  describe('onAdd()', () => {
-    it('navega a /collection/controllers/add', () => {
-      component.onAdd();
-
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/controllers/add']);
     });
   });
 

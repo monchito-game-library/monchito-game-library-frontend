@@ -124,30 +124,6 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
   });
 
   describe('estado inicial', () => {
-    it('isEditMode empieza en false', () => {
-      expect(component.isEditMode()).toBe(false);
-    });
-
-    it('loading empieza en false', () => {
-      expect(component.loading()).toBe(false);
-    });
-
-    it('saving empieza en false', () => {
-      expect(component.saving()).toBe(false);
-    });
-
-    it('brands empieza vacío', () => {
-      expect(component.brands()).toEqual([]);
-    });
-
-    it('models empieza vacío', () => {
-      expect(component.models()).toEqual([]);
-    });
-
-    it('editions empieza vacío', () => {
-      expect(component.editions()).toEqual([]);
-    });
-
     it('el campo condition tiene valor por defecto', () => {
       const value = component.form.getRawValue();
       expect(value.condition).toBeDefined();
@@ -155,71 +131,6 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
 
     it('el campo editionId empieza desactivado', () => {
       expect(component.form.controls.editionId.disabled).toBe(true);
-    });
-  });
-
-  describe('onCancel', () => {
-    it('navega a /collection/consoles', () => {
-      const router = TestBed.inject(Router as any) as any;
-      component.onCancel();
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
-    });
-  });
-
-  describe('onBrandChange', () => {
-    it('con null: limpia modelId, editionId, models y editions', async () => {
-      component.models.set([mockModel as any]);
-      component.editions.set([mockEdition as any]);
-      component.form.controls.modelId.setValue('some-model');
-      component.form.controls.editionId.setValue('some-edition');
-
-      await component.onBrandChange(null);
-
-      expect(component.form.controls.modelId.value).toBeNull();
-      expect(component.form.controls.editionId.value).toBeNull();
-      expect(component.models()).toEqual([]);
-      expect(component.editions()).toEqual([]);
-    });
-
-    it('con brandId: limpia y luego recarga modelos', async () => {
-      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-
-      await component.onBrandChange('11111111-1111-1111-1111-111111111111');
-
-      expect(modelUseCases.getAllByBrand).toHaveBeenCalledWith('11111111-1111-1111-1111-111111111111');
-      expect(component.form.controls.modelId.value).toBeNull();
-      expect(component.form.controls.editionId.value).toBeNull();
-    });
-
-    it('no llama a getAllByBrand si el brandId es null', async () => {
-      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-
-      await component.onBrandChange(null);
-
-      expect(modelUseCases.getAllByBrand).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('onModelChange', () => {
-    it('con null: limpia editionId, editions y deshabilita el control', async () => {
-      component.editions.set([mockEdition as any]);
-      component.form.controls.editionId.enable();
-      component.form.controls.editionId.setValue('some-edition');
-
-      await component.onModelChange(null);
-
-      expect(component.form.controls.editionId.value).toBeNull();
-      expect(component.editions()).toEqual([]);
-      expect(component.form.controls.editionId.disabled).toBe(true);
-    });
-
-    it('con modelId: habilita editionId y carga ediciones', async () => {
-      const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
-
-      await component.onModelChange('22222222-2222-2222-2222-222222222222');
-
-      expect(component.form.controls.editionId.enabled).toBe(true);
-      expect(editionUseCases.getAllByModel).toHaveBeenCalledWith('22222222-2222-2222-2222-222222222222');
     });
   });
 

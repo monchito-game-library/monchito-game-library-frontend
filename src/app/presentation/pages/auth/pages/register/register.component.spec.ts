@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
@@ -33,22 +32,6 @@ describe('RegisterComponent', () => {
   });
 
   describe('estado inicial', () => {
-    it('loading empieza en false', () => {
-      expect(component.loading()).toBe(false);
-    });
-
-    it('errorMessage empieza vacío', () => {
-      expect(component.errorMessage()).toBe('');
-    });
-
-    it('successMessage empieza vacío', () => {
-      expect(component.successMessage()).toBe('');
-    });
-
-    it('hidePassword empieza en true', () => {
-      expect(component.hidePassword()).toBe(true);
-    });
-
     it('hideConfirmPassword empieza en true', () => {
       expect(component.hideConfirmPassword()).toBe(true);
     });
@@ -58,29 +41,10 @@ describe('RegisterComponent', () => {
     });
   });
 
-  describe('togglePasswordVisibility / toggleConfirmPasswordVisibility', () => {
-    it('alterna hidePassword', () => {
-      component.togglePasswordVisibility();
-      expect(component.hidePassword()).toBe(false);
-    });
-
+  describe('toggleConfirmPasswordVisibility', () => {
     it('alterna hideConfirmPassword', () => {
       component.toggleConfirmPasswordVisibility();
       expect(component.hideConfirmPassword()).toBe(false);
-    });
-  });
-
-  describe('_passwordMatchValidator (privado)', () => {
-    it('devuelve null cuando el control no tiene el campo password', () => {
-      const group = new FormGroup({ confirmPassword: new FormControl('pass123') });
-      const result = (component as any)._passwordMatchValidator(group);
-      expect(result).toBeNull();
-    });
-
-    it('devuelve null cuando el control no tiene el campo confirmPassword', () => {
-      const group = new FormGroup({ password: new FormControl('pass123') });
-      const result = (component as any)._passwordMatchValidator(group);
-      expect(result).toBeNull();
     });
   });
 

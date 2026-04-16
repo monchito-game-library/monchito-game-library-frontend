@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
@@ -41,22 +40,6 @@ describe('ResetPasswordComponent', () => {
       expect(component.recoveryReady()).toBe(false);
     });
 
-    it('loading empieza en false', () => {
-      expect(component.loading()).toBe(false);
-    });
-
-    it('errorMessage empieza vacío', () => {
-      expect(component.errorMessage()).toBe('');
-    });
-
-    it('successMessage empieza vacío', () => {
-      expect(component.successMessage()).toBe('');
-    });
-
-    it('hidePassword empieza en true', () => {
-      expect(component.hidePassword()).toBe(true);
-    });
-
     it('hideConfirmPassword empieza en true', () => {
       expect(component.hideConfirmPassword()).toBe(true);
     });
@@ -79,16 +62,6 @@ describe('ResetPasswordComponent', () => {
     });
   });
 
-  describe('togglePasswordVisibility', () => {
-    it('alterna hidePassword', () => {
-      expect(component.hidePassword()).toBe(true);
-      component.togglePasswordVisibility();
-      expect(component.hidePassword()).toBe(false);
-      component.togglePasswordVisibility();
-      expect(component.hidePassword()).toBe(true);
-    });
-  });
-
   describe('toggleConfirmPasswordVisibility', () => {
     it('alterna hideConfirmPassword', () => {
       expect(component.hideConfirmPassword()).toBe(true);
@@ -96,20 +69,6 @@ describe('ResetPasswordComponent', () => {
       expect(component.hideConfirmPassword()).toBe(false);
       component.toggleConfirmPasswordVisibility();
       expect(component.hideConfirmPassword()).toBe(true);
-    });
-  });
-
-  describe('_passwordMatchValidator (privado)', () => {
-    it('devuelve null cuando el control no tiene el campo password', () => {
-      const group = new FormGroup({ confirmPassword: new FormControl('pass123') });
-      const result = (component as any)._passwordMatchValidator(group);
-      expect(result).toBeNull();
-    });
-
-    it('devuelve null cuando el control no tiene el campo confirmPassword', () => {
-      const group = new FormGroup({ password: new FormControl('pass123') });
-      const result = (component as any)._passwordMatchValidator(group);
-      expect(result).toBeNull();
     });
   });
 

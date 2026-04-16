@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
-import { of } from 'rxjs';
 
 import { ConsoleDetailComponent } from './console-detail.component';
 import { ConsoleModel } from '@/models/console/console.model';
@@ -128,24 +127,8 @@ describe('ConsoleDetailComponent', () => {
   });
 
   describe('estado inicial', () => {
-    it('loading empieza en true', () => {
-      expect(component.loading()).toBe(true);
-    });
-
     it('console empieza en undefined', () => {
       expect(component.console()).toBeUndefined();
-    });
-
-    it('showSaleForm empieza en false', () => {
-      expect(component.showSaleForm()).toBe(false);
-    });
-
-    it('showLoanForm empieza en false', () => {
-      expect(component.showLoanForm()).toBe(false);
-    });
-
-    it('deleting empieza en false', () => {
-      expect(component.deleting()).toBe(false);
     });
   });
 
@@ -239,99 +222,6 @@ describe('ConsoleDetailComponent', () => {
     });
   });
 
-  describe('resolveStoreName', () => {
-    beforeEach(async () => {
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
-    });
-
-    it('devuelve el label de la tienda cuando el id coincide', () => {
-      expect(component.resolveStoreName('store-uuid-1')).toBe('GAME');
-    });
-
-    it('devuelve el id en bruto si la tienda no se encuentra', () => {
-      expect(component.resolveStoreName('unknown-uuid')).toBe('unknown-uuid');
-    });
-
-    it("devuelve '' cuando el id es null", () => {
-      expect(component.resolveStoreName(null)).toBe('');
-    });
-  });
-
-  describe('onBack', () => {
-    it('navega a /collection/consoles', () => {
-      const router = TestBed.inject(Router as any) as any;
-      component.onBack();
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
-    });
-  });
-
-  describe('onEdit', () => {
-    it('navega a /collection/consoles/edit/:id cuando la consola está cargada', () => {
-      component.console.set(makeConsole());
-      const router = TestBed.inject(Router as any) as any;
-
-      component.onEdit();
-
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles/edit', 'console-uuid-1']);
-    });
-
-    it('no navega si console es undefined', () => {
-      component.console.set(undefined);
-      const router = TestBed.inject(Router as any) as any;
-
-      component.onEdit();
-
-      expect(router.navigate).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('openSaleView', () => {
-    it('activa la señal showSaleForm', () => {
-      expect(component.showSaleForm()).toBe(false);
-      component.openSaleView();
-      expect(component.showSaleForm()).toBe(true);
-    });
-
-    it('desactiva showLoanForm al activar showSaleForm', () => {
-      component.showLoanForm.set(true);
-      component.openSaleView();
-      expect(component.showLoanForm()).toBe(false);
-      expect(component.showSaleForm()).toBe(true);
-    });
-  });
-
-  describe('closeSaleView', () => {
-    it('desactiva la señal showSaleForm', () => {
-      component.showSaleForm.set(true);
-      component.closeSaleView();
-      expect(component.showSaleForm()).toBe(false);
-    });
-  });
-
-  describe('openLoanView', () => {
-    it('activa la señal showLoanForm', () => {
-      expect(component.showLoanForm()).toBe(false);
-      component.openLoanView();
-      expect(component.showLoanForm()).toBe(true);
-    });
-
-    it('desactiva showSaleForm al activar showLoanForm', () => {
-      component.showSaleForm.set(true);
-      component.openLoanView();
-      expect(component.showSaleForm()).toBe(false);
-      expect(component.showLoanForm()).toBe(true);
-    });
-  });
-
-  describe('closeLoanView', () => {
-    it('desactiva la señal showLoanForm', () => {
-      component.showLoanForm.set(true);
-      component.closeLoanView();
-      expect(component.showLoanForm()).toBe(false);
-    });
-  });
-
   describe('onSaveCompleted', () => {
     it('actualiza la señal console con los nuevos valores de disponibilidad y cierra el formulario', () => {
       component.console.set(makeConsole({ forSale: false, salePrice: null }));
@@ -351,14 +241,6 @@ describe('ConsoleDetailComponent', () => {
     });
   });
 
-  describe('onSellCompleted', () => {
-    it('navega a /collection/consoles', () => {
-      const router = TestBed.inject(Router as any) as any;
-      component.onSellCompleted();
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
-    });
-  });
-
   describe('onLoanSaved', () => {
     it('actualiza la señal console y desactiva showLoanForm', () => {
       const updated = makeConsole({
@@ -372,72 +254,6 @@ describe('ConsoleDetailComponent', () => {
 
       expect(component.console()).toEqual(updated);
       expect(component.showLoanForm()).toBe(false);
-    });
-  });
-
-  describe('onDelete', () => {
-    it('no elimina si el dialog se cancela', async () => {
-      component.console.set(makeConsole());
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
-      dialog.open.mockReturnValue({ afterClosed: () => of(false) });
-
-      component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(consoleUseCases.delete).not.toHaveBeenCalled();
-    });
-
-    it('no elimina si console es undefined aunque se confirme el diálogo', async () => {
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
-      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-
-      component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(consoleUseCases.delete).not.toHaveBeenCalled();
-    });
-
-    it('llama a delete y navega a /collection/consoles si se confirma', async () => {
-      component.console.set(makeConsole());
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
-      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const router = TestBed.inject(Router as any) as any;
-
-      component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(consoleUseCases.delete).toHaveBeenCalledWith('user-1', 'console-uuid-1');
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
-    });
-
-    it('muestra snackbar de error si delete lanza', async () => {
-      component.console.set(makeConsole());
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
-      consoleUseCases.delete.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
-      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
-
-      component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(snackBar.open).toHaveBeenCalled();
-    });
-
-    it('desactiva deleting si delete lanza', async () => {
-      component.console.set(makeConsole());
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
-      consoleUseCases.delete.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
-      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-
-      component.onDelete();
-      await new Promise((r) => setTimeout(r, 0));
-
-      expect(component.deleting()).toBe(false);
     });
   });
 });

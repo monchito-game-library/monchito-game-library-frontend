@@ -73,21 +73,21 @@ export class CollectionOverviewComponent implements OnInit {
    * Navigates to the games section.
    */
   goToGames(): void {
-    this._router.navigate(['/collection/games']);
+    void this._router.navigate(['/collection/games']);
   }
 
   /**
    * Navigates to the consoles section.
    */
   goToConsoles(): void {
-    this._router.navigate(['/collection/consoles']);
+    void this._router.navigate(['/collection/consoles']);
   }
 
   /**
    * Navigates to the controllers section.
    */
   goToControllers(): void {
-    this._router.navigate(['/collection/controllers']);
+    void this._router.navigate(['/collection/controllers']);
   }
 
   /**
