@@ -26,21 +26,19 @@ export const hardwareManagementRoutes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () =>
-          import('./pages/brands/hardware-brands-management.component').then((m) => m.HardwareBrandsManagementComponent)
+        loadChildren: () =>
+          import('./pages/brands/hardware-brands-management.routes').then((m) => m.hardwareBrandsManagementRoutes)
       },
       {
         // Static segment 'models' must come before dynamic ':brandId' to avoid conflicts
         path: 'models/:modelId/editions',
-        loadComponent: () =>
-          import('./pages/editions/hardware-editions-management.component').then(
-            (m) => m.HardwareEditionsManagementComponent
-          )
+        loadChildren: () =>
+          import('./pages/editions/hardware-editions-management.routes').then((m) => m.hardwareEditionsManagementRoutes)
       },
       {
         path: ':brandId/models',
-        loadComponent: () =>
-          import('./pages/models/hardware-models-management.component').then((m) => m.HardwareModelsManagementComponent)
+        loadChildren: () =>
+          import('./pages/models/hardware-models-management.routes').then((m) => m.hardwareModelsManagementRoutes)
       }
     ]
   }
