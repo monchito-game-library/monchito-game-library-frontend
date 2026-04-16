@@ -21,13 +21,15 @@
 </app-hardware-form-shell>
 
 <ng-template #extraFieldsTpl>
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'consolePage.region' | transloco }}</mat-label>
-    <mat-select formControlName="region">
-      <mat-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</mat-option>
-      @for (region of availableRegions; track region.code) {
-        <mat-option [value]="region.code">{{ region.labelKey | transloco }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <ng-container [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'consolePage.region' | transloco }}</mat-label>
+      <mat-select formControlName="region">
+        <mat-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</mat-option>
+        @for (region of availableRegions; track region.code) {
+          <mat-option [value]="region.code">{{ region.labelKey | transloco }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
 </ng-template>

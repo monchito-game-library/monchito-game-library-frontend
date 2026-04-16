@@ -24,14 +24,14 @@
   <div class="hw-form__color-field">
     <label class="hw-form__color-label">{{ 'controllerPage.color' | transloco }}</label>
     <div class="hw-form__color-wrapper">
-      <input type="color" formControlName="color" class="hw-form__color-input" />
-      <span class="hw-form__color-preview" [style.background-color]="form.get('color')?.value"></span>
+      <input type="color" [formControl]="form.controls.color" class="hw-form__color-input" />
+      <span class="hw-form__color-preview" [style.background-color]="form.controls.color.value"></span>
     </div>
   </div>
 
   <mat-form-field appearance="outline">
     <mat-label>{{ 'controllerPage.compatibility' | transloco }}</mat-label>
-    <mat-select formControlName="compatibility">
+    <mat-select [formControl]="form.controls.compatibility">
       @for (compat of availableCompatibilities; track compat.code) {
         <mat-option [value]="compat.code">{{ compat.labelKey | transloco }}</mat-option>
       }

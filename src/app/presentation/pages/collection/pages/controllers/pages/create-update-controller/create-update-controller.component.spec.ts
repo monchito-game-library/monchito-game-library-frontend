@@ -67,70 +67,73 @@ const mockModel = {
 };
 const mockEdition = { id: 'edition-uuid-1', name: 'Midnight Black', modelId: '22222222-2222-2222-2222-222222222222' };
 
+function setupTestBed(controllerId: string | null): void {
+  vi.clearAllMocks();
+
+  TestBed.configureTestingModule({
+    imports: [
+      CreateUpdateControllerComponent,
+      TranslocoTestingModule.forRoot({
+        langs: { es: {} },
+        translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
+      })
+    ],
+    providers: [
+      {
+        provide: CONTROLLER_USE_CASES,
+        useValue: {
+          add: vi.fn().mockResolvedValue(undefined),
+          update: vi.fn().mockResolvedValue(undefined),
+          getById: vi.fn().mockResolvedValue(makeController())
+        } as Partial<ControllerUseCasesContract>
+      },
+      {
+        provide: STORE_USE_CASES,
+        useValue: {
+          getAllStores: vi.fn().mockResolvedValue([mockStore])
+        } as Partial<StoreUseCasesContract>
+      },
+      {
+        provide: HARDWARE_BRAND_USE_CASES,
+        useValue: {
+          getAll: vi.fn().mockResolvedValue([mockBrand])
+        } as Partial<HardwareBrandUseCasesContract>
+      },
+      {
+        provide: HARDWARE_MODEL_USE_CASES,
+        useValue: {
+          getAllByBrand: vi.fn().mockResolvedValue([mockModel]),
+          getById: vi.fn().mockResolvedValue(mockModel)
+        } as Partial<HardwareModelUseCasesContract>
+      },
+      {
+        provide: HARDWARE_EDITION_USE_CASES,
+        useValue: {
+          getAllByModel: vi.fn().mockResolvedValue([mockEdition])
+        } as Partial<HardwareEditionUseCasesContract>
+      },
+      { provide: UserContextService, useValue: { requireUserId: vi.fn().mockReturnValue('user-1') } },
+      { provide: MatSnackBar, useValue: { open: vi.fn() } },
+      { provide: Router, useValue: { navigate: vi.fn() } },
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(controllerId) } } }
+      }
+    ],
+    schemas: [NO_ERRORS_SCHEMA]
+  });
+  TestBed.overrideComponent(CreateUpdateControllerComponent, {
+    remove: { imports: [HardwareFormShellComponent] },
+    add: { imports: [HardwareFormShellStubComponent] }
+  });
+}
+
 describe('CreateUpdateControllerComponent — modo creación', () => {
   let component: CreateUpdateControllerComponent;
   let fixture: ComponentFixture<CreateUpdateControllerComponent>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
-    TestBed.configureTestingModule({
-      imports: [
-        CreateUpdateControllerComponent,
-        TranslocoTestingModule.forRoot({
-          langs: { es: {} },
-          translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
-        })
-      ],
-      providers: [
-        {
-          provide: CONTROLLER_USE_CASES,
-          useValue: {
-            add: vi.fn().mockResolvedValue(undefined),
-            update: vi.fn().mockResolvedValue(undefined),
-            getById: vi.fn().mockResolvedValue(makeController())
-          } as Partial<ControllerUseCasesContract>
-        },
-        {
-          provide: STORE_USE_CASES,
-          useValue: {
-            getAllStores: vi.fn().mockResolvedValue([mockStore])
-          } as Partial<StoreUseCasesContract>
-        },
-        {
-          provide: HARDWARE_BRAND_USE_CASES,
-          useValue: {
-            getAll: vi.fn().mockResolvedValue([mockBrand])
-          } as Partial<HardwareBrandUseCasesContract>
-        },
-        {
-          provide: HARDWARE_MODEL_USE_CASES,
-          useValue: {
-            getAllByBrand: vi.fn().mockResolvedValue([mockModel]),
-            getById: vi.fn().mockResolvedValue(mockModel)
-          } as Partial<HardwareModelUseCasesContract>
-        },
-        {
-          provide: HARDWARE_EDITION_USE_CASES,
-          useValue: {
-            getAllByModel: vi.fn().mockResolvedValue([mockEdition])
-          } as Partial<HardwareEditionUseCasesContract>
-        },
-        { provide: UserContextService, useValue: { requireUserId: vi.fn().mockReturnValue('user-1') } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: Router, useValue: { navigate: vi.fn() } },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(null) } } }
-        }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    });
-    TestBed.overrideComponent(CreateUpdateControllerComponent, {
-      remove: { imports: [HardwareFormShellComponent] },
-      add: { imports: [HardwareFormShellStubComponent] }
-    });
-
+    setupTestBed(null);
     fixture = TestBed.createComponent(CreateUpdateControllerComponent);
     component = fixture.componentInstance;
   });
@@ -158,8 +161,7 @@ describe('CreateUpdateControllerComponent — modo creación', () => {
 
   describe('ngOnInit — modo creación', () => {
     it('no activa isEditMode', async () => {
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
       expect(component.isEditMode()).toBe(false);
     });
 
@@ -167,8 +169,7 @@ describe('CreateUpdateControllerComponent — modo creación', () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(brandUseCases.getAll).toHaveBeenCalled();
       expect(storeUseCases.getAllStores).toHaveBeenCalled();
@@ -249,81 +250,21 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
   let fixture: ComponentFixture<CreateUpdateControllerComponent>;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
-    TestBed.configureTestingModule({
-      imports: [
-        CreateUpdateControllerComponent,
-        TranslocoTestingModule.forRoot({
-          langs: { es: {} },
-          translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
-        })
-      ],
-      providers: [
-        {
-          provide: CONTROLLER_USE_CASES,
-          useValue: {
-            add: vi.fn().mockResolvedValue(undefined),
-            update: vi.fn().mockResolvedValue(undefined),
-            getById: vi.fn().mockResolvedValue(makeController())
-          } as Partial<ControllerUseCasesContract>
-        },
-        {
-          provide: STORE_USE_CASES,
-          useValue: {
-            getAllStores: vi.fn().mockResolvedValue([mockStore])
-          } as Partial<StoreUseCasesContract>
-        },
-        {
-          provide: HARDWARE_BRAND_USE_CASES,
-          useValue: {
-            getAll: vi.fn().mockResolvedValue([mockBrand])
-          } as Partial<HardwareBrandUseCasesContract>
-        },
-        {
-          provide: HARDWARE_MODEL_USE_CASES,
-          useValue: {
-            getAllByBrand: vi.fn().mockResolvedValue([mockModel]),
-            getById: vi.fn().mockResolvedValue(mockModel)
-          } as Partial<HardwareModelUseCasesContract>
-        },
-        {
-          provide: HARDWARE_EDITION_USE_CASES,
-          useValue: {
-            getAllByModel: vi.fn().mockResolvedValue([mockEdition])
-          } as Partial<HardwareEditionUseCasesContract>
-        },
-        { provide: UserContextService, useValue: { requireUserId: vi.fn().mockReturnValue('user-1') } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: Router, useValue: { navigate: vi.fn() } },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('controller-uuid-1') } } }
-        }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    });
-    TestBed.overrideComponent(CreateUpdateControllerComponent, {
-      remove: { imports: [HardwareFormShellComponent] },
-      add: { imports: [HardwareFormShellStubComponent] }
-    });
-
+    setupTestBed('controller-uuid-1');
     fixture = TestBed.createComponent(CreateUpdateControllerComponent);
     component = fixture.componentInstance;
   });
 
   describe('ngOnInit — modo edición', () => {
     it('activa isEditMode', async () => {
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
       expect(component.isEditMode()).toBe(true);
     });
 
     it('carga el mando y parchea el formulario', async () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(controllerUseCases.getById).toHaveBeenCalledWith('user-1', 'controller-uuid-1');
     });
@@ -333,15 +274,13 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       controllerUseCases.getById.mockResolvedValue(null);
       const router = TestBed.inject(Router as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/collection/controllers']);
     });
 
     it('desactiva loading tras la carga', async () => {
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
       expect(component.loading()).toBe(false);
     });
   });
@@ -351,8 +290,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       component.form.controls.brandId.setValue('11111111-1111-1111-1111-111111111111');
       component.form.controls.modelId.setValue('22222222-2222-2222-2222-222222222222');
@@ -367,8 +305,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
     it('usa cadena vacía para brandId y modelId cuando son null en modo edición', async () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       component.form.controls.brandId.setValue(null);
       component.form.controls.modelId.setValue(null);
@@ -391,8 +328,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(snackBar.open).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/collection/controllers']);
@@ -405,8 +341,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       controllerUseCases.getById.mockResolvedValue({ ...makeController(), brandId: '' });
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(modelUseCases.getAllByBrand).not.toHaveBeenCalled();
     });
@@ -416,8 +351,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
       controllerUseCases.getById.mockResolvedValue({ ...makeController(), modelId: '' });
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(editionUseCases.getAllByModel).not.toHaveBeenCalled();
     });

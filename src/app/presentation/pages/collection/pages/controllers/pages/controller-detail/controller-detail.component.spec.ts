@@ -132,8 +132,7 @@ describe('ControllerDetailComponent', () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(controllerUseCases.getById).toHaveBeenCalledWith('user-1', 'controller-uuid-1');
       expect(storeUseCases.getAllStores).toHaveBeenCalled();
@@ -142,30 +141,21 @@ describe('ControllerDetailComponent', () => {
 
     it('desactiva loading tras la carga', async () => {
       expect(component.loading()).toBe(true);
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
       expect(component.loading()).toBe(false);
     });
 
-    it('navega a /collection/controllers si el mando no existe (null)', async () => {
+    it('navega a /collection/controllers si el mando no existe o hay error', async () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+      const router = TestBed.inject(Router as any) as any;
+
       controllerUseCases.getById.mockResolvedValue(null);
-      const router = TestBed.inject(Router as any) as any;
-
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
-
+      await component.ngOnInit();
       expect(router.navigate).toHaveBeenCalledWith(['/collection/controllers']);
-    });
 
-    it('navega a /collection/controllers si la carga falla', async () => {
-      const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+      vi.clearAllMocks();
       controllerUseCases.getById.mockRejectedValue(new Error('load error'));
-      const router = TestBed.inject(Router as any) as any;
-
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
-
+      await component.ngOnInit();
       expect(router.navigate).toHaveBeenCalledWith(['/collection/controllers']);
     });
 
@@ -173,8 +163,7 @@ describe('ControllerDetailComponent', () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
       controllerUseCases.getById.mockRejectedValue(new Error('fail'));
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(component.loading()).toBe(false);
     });
@@ -184,8 +173,7 @@ describe('ControllerDetailComponent', () => {
       route.snapshot.paramMap.get.mockReturnValueOnce(null);
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(controllerUseCases.getById).toHaveBeenCalledWith('user-1', '');
     });
@@ -196,8 +184,7 @@ describe('ControllerDetailComponent', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       controllerUseCases.getById.mockResolvedValue({ ...makeController(), brandId: '', modelId: '' });
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(brandUseCases.getById).not.toHaveBeenCalled();
       expect(modelUseCases.getById).not.toHaveBeenCalled();
@@ -208,8 +195,7 @@ describe('ControllerDetailComponent', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
       controllerUseCases.getById.mockResolvedValue(makeController({ editionId: 'edition-uuid-1' }));
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(editionUseCases.getById).toHaveBeenCalledWith('edition-uuid-1');
     });
