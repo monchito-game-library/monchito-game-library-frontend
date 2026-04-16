@@ -81,7 +81,7 @@ export class HardwareBrandsManagementComponent implements OnInit {
    * @param {HardwareBrandModel} brand - Brand to drill into
    */
   onOpenModels(brand: HardwareBrandModel): void {
-    this._router.navigate(['/management/hardware', brand.id, 'models']);
+    void this._router.navigate(['/management/hardware', brand.id, 'models']);
   }
 
   /**

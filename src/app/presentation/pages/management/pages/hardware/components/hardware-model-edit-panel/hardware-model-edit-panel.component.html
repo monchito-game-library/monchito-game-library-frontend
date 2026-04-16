@@ -9,7 +9,7 @@
   </div>
 
   <form [formGroup]="form" class="edit-panel__form">
-    <!-- Campos del modelo -->
+    <!-- Model fields -->
     <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionModel' | transloco }}</div>
     <div class="edit-panel__fields edit-panel__fields--model">
       <mat-form-field appearance="outline">
@@ -38,7 +38,7 @@
       </mat-form-field>
     </div>
 
-    <!-- Campos de specs (solo para consolas) -->
+    <!-- Specs fields (consoles only) -->
     @if (isConsole()) {
       <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionSpecs' | transloco }}</div>
       <div class="edit-panel__fields edit-panel__fields--specs">

@@ -157,7 +157,7 @@ export class ProtectorsManagementComponent implements OnInit {
   /**
    * Shows a confirmation dialog and permanently deletes the protector.
    *
-   * @param {ProtectorModel} protector - Protector a eliminar
+   * @param {ProtectorModel} protector - Protector to delete
    */
   onDeleteProtector(protector: ProtectorModel): void {
     const ref = this._dialog.open(ConfirmDialogComponent, {

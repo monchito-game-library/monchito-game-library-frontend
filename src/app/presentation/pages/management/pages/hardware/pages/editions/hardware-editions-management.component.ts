@@ -183,9 +183,9 @@ export class HardwareEditionsManagementComponent implements OnInit {
   onBack(): void {
     const brandId = this.model()?.brandId;
     if (brandId) {
-      this._router.navigate(['/management/hardware', brandId, 'models']);
+      void this._router.navigate(['/management/hardware', brandId, 'models']);
     } else {
-      this._router.navigate(['/management/hardware']);
+      void this._router.navigate(['/management/hardware']);
     }
   }
 
