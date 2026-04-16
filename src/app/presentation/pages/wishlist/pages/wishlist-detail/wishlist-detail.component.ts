@@ -8,7 +8,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { DecimalPipe, Location } from '@angular/common';
+import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -33,7 +33,16 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
   styleUrl: './wishlist-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatIcon, MatIconButton, MatButton, MatTooltip, MatProgressSpinner, TranslocoPipe]
+  imports: [
+    DecimalPipe,
+    NgOptimizedImage,
+    MatIcon,
+    MatIconButton,
+    MatButton,
+    MatTooltip,
+    MatProgressSpinner,
+    TranslocoPipe
+  ]
 })
 export class WishlistDetailComponent implements OnInit {
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
