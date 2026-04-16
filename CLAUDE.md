@@ -23,6 +23,7 @@
 - [Repositorios](#repositorios)
 - [Arquitectura de capas](#arquitectura-de-capas)
 - [Estructura de pages y components](#estructura-de-pages-y-components)
+- [Tests — mocks compartidos](#tests--mocks-compartidos)
 
 ---
 
@@ -313,3 +314,19 @@ game-list/
     ├── game-card/
     └── game-list-filters-sheet/
 ```
+
+## Tests — mocks compartidos
+
+Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar un mock inline en un spec, comprobar si ya existe aquí.**
+
+| Fichero | Exporta | Uso |
+|---|---|---|
+| `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
+| `dialog.mock.ts` | `mockDialog` | `{ provide: MatDialog, useValue: mockDialog }` |
+| `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
+| `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
+| `snack-bar.mock.ts` | `mockSnackBar` | `{ provide: MatSnackBar, useValue: mockSnackBar }` |
+| `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
+| `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
+
+Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
