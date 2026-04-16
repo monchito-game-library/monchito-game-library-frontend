@@ -1,0 +1,100 @@
+<div class="order-detail-page__stepper-topbar" [class.order-detail-page__stepper-topbar--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
+  <div class="order-detail-page__stepper-progress">
+    {{ 'orders.ready.step' | transloco: { current: currentStep() + 1, total: packSteps().length } }}
+  </div>
+</div>
+
+<div class="order-detail-page__section-body" [class.order-detail-page__section-body--collapsed]="editingHeader()">
+  <div class="order-detail-page__section-body-inner">
+    @if (packSteps()[currentStep()]; as step) {
+      <div class="order-detail-page__stepper-content">
+        <div class="order-detail-page__stepper-header">
+          <div class="order-detail-page__stepper-product-name">{{ step.productName }}</div>
+          <div class="order-detail-page__stepper-needed">
+            {{ 'orders.ready.needed' | transloco }}: <strong>{{ step.totalNeeded }}</strong>
+            {{ 'orders.ready.units' | transloco }}
+          </div>
+        </div>
+
+        @if (step.memberBreakdown.length > 0) {
+          <div class="order-detail-page__stepper-members">
+            @for (m of getMemberAllocations(step); track m.userId) {
+              <div class="order-detail-page__stepper-member-chip">
+                @if (m.avatarUrl) {
+                  <img
+                    class="order-detail-page__stepper-member-avatar"
+                    [ngSrc]="m.avatarUrl"
+                    [alt]="m.email ?? ''"
+                    width="24"
+                    height="24"
+                    referrerpolicy="no-referrer" />
+                } @else {
+                  <div
+                    class="order-detail-page__stepper-member-avatar order-detail-page__stepper-member-avatar--placeholder">
+                    <mat-icon>person</mat-icon>
+                  </div>
+                }
+                <span class="order-detail-page__stepper-member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
+                <span class="order-detail-page__stepper-member-qty">{{ m.qty }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        @if (step.suggestions.length === 0) {
+          <div class="order-detail-page__stepper-no-packs">{{ 'orders.ready.noPacks' | transloco }}</div>
+        } @else {
+          <div class="order-detail-page__stepper-options">
+            @for (suggestion of step.suggestions; track $index) {
+              <div
+                class="order-detail-page__pack-option"
+                [class.order-detail-page__pack-option--selected]="getStepSelection(step.productId) === $index"
+                (click)="onSelectPackOption(step.productId, $index)">
+                <div class="order-detail-page__pack-option-label">
+                  @if ($index === 0) {
+                    <div class="order-detail-page__pack-option-badge">
+                      {{ 'orders.ready.exact' | transloco }}
+                    </div>
+                  } @else {
+                    <div class="order-detail-page__pack-option-badge order-detail-page__pack-option-badge--suggestion">
+                      {{ 'orders.ready.suggestion' | transloco }}
+                    </div>
+                  }
+                </div>
+                <div class="order-detail-page__pack-option-breakdown">{{ formatBreakdown(suggestion) }}</div>
+                <div class="order-detail-page__pack-option-footer">
+                  <div class="order-detail-page__pack-option-units">
+                    {{ suggestion.totalUnits }} {{ 'orders.ready.units' | transloco }}
+                    @if (suggestion.totalUnits > step.totalNeeded) {
+                      <span class="order-detail-page__pack-option-excess">
+                        (+{{ suggestion.totalUnits - step.totalNeeded }} {{ 'orders.ready.extra' | transloco }})
+                      </span>
+                    }
+                  </div>
+                  <div class="order-detail-page__pack-option-cost">
+                    {{ suggestion.totalCost | number: '1.2-2' }} €
+                    <span class="order-detail-page__pack-option-unit-price">
+                      ({{ suggestion.unitPrice | number: '1.2-2' }} €/ud.)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <div class="order-detail-page__stepper-nav">
+      <button mat-stroked-button (click)="onPrevStep()" [disabled]="currentStep() === 0">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'orders.ready.prev' | transloco }}
+      </button>
+      <button mat-stroked-button (click)="onNextStep()" [disabled]="currentStep() === packSteps().length - 1">
+        {{ 'orders.ready.next' | transloco }}
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

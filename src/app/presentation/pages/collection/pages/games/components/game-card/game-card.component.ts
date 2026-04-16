@@ -24,7 +24,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameListModel } from '@/models/game/game-list.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
@@ -38,7 +39,16 @@ import { GameStatusOption } from '@/interfaces/game-status-option.interface';
   styleUrl: './game-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCard, MatIconButton, MatIcon, CurrencyPipe, NgOptimizedImage, TranslocoPipe, SkeletonComponent]
+  imports: [
+    MatCard,
+    MatIconButton,
+    MatIcon,
+    CurrencyPipe,
+    NgOptimizedImage,
+    TranslocoPipe,
+    SkeletonComponent,
+    BadgeChipComponent
+  ]
 })
 export class GameCardComponent {
   private readonly _router: Router = inject(Router);
@@ -160,7 +170,7 @@ export class GameCardComponent {
     const game: GameListModel = this.game();
     if (!game.uuid) return;
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent, any> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')

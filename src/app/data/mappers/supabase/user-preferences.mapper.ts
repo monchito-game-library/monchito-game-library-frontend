@@ -22,7 +22,7 @@ export function mapUserPreferences(dto: UserPreferencesDto, userId: string): Use
 /**
  * Maps the domain model to an insert/upsert payload for the user_preferences table.
  *
- * @param {UserPreferencesModel} model - Modelo de preferencias a mapear
+ * @param {UserPreferencesModel} model - User preferences model to map
  */
 export function mapUserPreferencesToInsertDto(model: UserPreferencesModel): UserPreferencesInsertDto {
   const dto: UserPreferencesInsertDto = {

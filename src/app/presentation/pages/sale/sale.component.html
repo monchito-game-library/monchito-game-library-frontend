@@ -3,7 +3,7 @@
     class="sale-page__tab-group"
     animationDuration="150ms"
     (selectedTabChange)="setTab($event.index === 0 ? 'available' : 'history')">
-    <!-- ─── Tab: En venta ─────────────────────────────────────────────────── -->
+    <!-- ─── Tab: For sale ─────────────────────────────────────────────────── -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon>sell</mat-icon>
@@ -11,7 +11,7 @@
       </ng-template>
 
       <div class="sale-page__tab-content">
-        <!-- Filtros de tipo -->
+        <!-- Type filters -->
         <div class="sale-page__filters">
           @for (
             filter of [
@@ -80,7 +80,7 @@
       </div>
     </mat-tab>
 
-    <!-- ─── Tab: Historial ────────────────────────────────────────────────── -->
+    <!-- ─── Tab: History ─────────────────────────────────────────────────── -->
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon>history</mat-icon>
@@ -88,7 +88,7 @@
       </ng-template>
 
       <div class="sale-page__tab-content">
-        <!-- Filtros de tipo -->
+        <!-- Type filters -->
         <div class="sale-page__filters">
           @for (
             filter of [

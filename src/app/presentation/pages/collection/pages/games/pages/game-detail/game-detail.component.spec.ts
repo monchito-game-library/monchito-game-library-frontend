@@ -13,7 +13,7 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { defaultGameCover } from '@/constants/game-library.constant';
 
 function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
@@ -403,26 +403,31 @@ describe('GameDetailComponent', () => {
     });
   });
 
-  describe('onSaleSaved', () => {
-    it('navega a /games cuando el juego queda vendido (soldAt presente)', () => {
-      const router = TestBed.inject(Router as any) as any;
-      const updated = makeGame({ forSale: false, salePrice: null, soldAt: '2024-06-01', soldPriceFinal: 28 });
+  describe('onSaveCompleted', () => {
+    it('actualiza la señal game con los nuevos valores de disponibilidad y cierra el formulario', () => {
+      const g = makeGame({ forSale: false, salePrice: null });
+      component.game.set(g);
       component.showSaleForm.set(true);
 
-      component.onSaleSaved(updated);
+      component.onSaveCompleted({ forSale: true, salePrice: 20 });
 
-      expect(router.navigate).toHaveBeenCalledWith(['/collection/games']);
-      expect(component.showSaleForm()).toBe(true);
+      expect(component.game()?.forSale).toBe(true);
+      expect(component.game()?.salePrice).toBe(20);
+      expect(component.showSaleForm()).toBe(false);
     });
 
-    it('actualiza la señal game y desactiva showSaleForm cuando no hay soldAt', () => {
-      const updated = makeGame({ forSale: true, salePrice: 20, soldAt: null, soldPriceFinal: null });
-      component.showSaleForm.set(true);
+    it('pone salePrice a null cuando forSale es false', () => {
+      component.game.set(makeGame({ forSale: true, salePrice: 50 }));
+      component.onSaveCompleted({ forSale: false, salePrice: null });
+      expect(component.game()?.salePrice).toBeNull();
+    });
+  });
 
-      component.onSaleSaved(updated);
-
-      expect(component.game()).toEqual(updated);
-      expect(component.showSaleForm()).toBe(false);
+  describe('onSellCompleted', () => {
+    it('navega a /collection/games', () => {
+      const router = TestBed.inject(Router as any) as any;
+      component.onSellCompleted();
+      expect(router.navigate).toHaveBeenCalledWith(['/collection/games']);
     });
   });
 

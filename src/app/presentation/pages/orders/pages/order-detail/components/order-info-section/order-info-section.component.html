@@ -1,0 +1,211 @@
+<!-- Section header with toggle -->
+<div
+  class="order-detail-page__info-section-header"
+  [class.order-detail-page__info-section-header--collapsed]="!sectionExpanded()"
+  (click)="onToggleSection()">
+  <div class="order-detail-page__info-section-header-left">
+    <div class="order-detail-page__section-title">{{ 'orders.header.members' | transloco }}</div>
+    @if (!sectionExpanded()) {
+      <div class="order-detail-page__status-badge order-detail-page__status-badge--{{ order().status }}">
+        {{ 'orders.status.' + order().status | transloco }}
+      </div>
+    }
+  </div>
+  @if (!sectionExpanded()) {
+    <div class="order-detail-page__info-section-avatars">
+      @for (m of sortedMembers(order().members); track m.id) {
+        @if (m.avatarUrl) {
+          <img
+            class="order-detail-page__info-section-avatar"
+            [ngSrc]="m.avatarUrl"
+            [alt]="m.displayName ?? m.email ?? ''"
+            width="28"
+            height="28"
+            referrerpolicy="no-referrer" />
+        } @else {
+          <div class="order-detail-page__info-section-avatar order-detail-page__info-section-avatar--placeholder">
+            <mat-icon>person</mat-icon>
+          </div>
+        }
+      }
+    </div>
+  }
+  <mat-icon class="order-detail-page__info-section-chevron">
+    {{ sectionExpanded() ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+</div>
+
+<!-- Collapsible body -->
+<div
+  class="order-detail-page__info-section-body"
+  [class.order-detail-page__info-section-body--collapsed]="!sectionExpanded()">
+  <div class="order-detail-page__info-section-body-inner">
+    <!-- Info (always visible, disabled when editing) -->
+    <div class="order-detail-page__info" [class.order-detail-page__info--disabled]="editingHeader()">
+      <!-- Col 1: order data -->
+      <div class="order-detail-page__info-details">
+        @if (order().orderDate) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.orderDate' | transloco }}</div>
+            <div>{{ order().orderDate | date: 'dd/MM/yyyy' }}</div>
+          </div>
+        }
+        @if (order().receivedDate) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.receivedDate' | transloco }}</div>
+            <div>{{ order().receivedDate | date: 'dd/MM/yyyy' }}</div>
+          </div>
+        }
+        @if (order().shippingCost !== null) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.shippingCost' | transloco }}</div>
+            <div>{{ order().shippingCost | number: '1.2-2' }} €</div>
+          </div>
+        }
+        @if (order().paypalFee !== null) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.paypalFee' | transloco }}</div>
+            <div>{{ order().paypalFee | number: '1.2-2' }} €</div>
+          </div>
+        }
+        @if (order().discountAmount !== null) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.discountAmount' | transloco }}</div>
+            @if (order().discountType === 'percentage') {
+              <div>-{{ order().discountAmount | number: '1.2-2' }}%</div>
+            } @else {
+              <div>-{{ order().discountAmount | number: '1.2-2' }} €</div>
+            }
+          </div>
+        }
+        @if (order().notes) {
+          <div class="order-detail-page__info-row">
+            <div class="order-detail-page__info-label">{{ 'orders.header.notes' | transloco }}</div>
+            <div>{{ order().notes }}</div>
+          </div>
+        }
+      </div>
+
+      <!-- Col 2: members -->
+      <div class="order-detail-page__members-sections">
+        <div class="order-detail-page__members-section">
+          @if (order().status === ORDER_STATUS.DRAFT && !allMembersReady(order().members)) {
+            <span class="order-detail-page__ready-hint">
+              {{ 'orders.header.waitingMembers' | transloco: readyCount(order().members) }}
+            </span>
+          }
+          @for (m of sortedMembers(order().members); track m.id) {
+            <div class="order-detail-page__member-row">
+              @if (m.avatarUrl) {
+                <img
+                  class="order-detail-page__member-avatar"
+                  [ngSrc]="m.avatarUrl"
+                  [alt]="m.email ?? ''"
+                  width="32"
+                  height="32"
+                  referrerpolicy="no-referrer" />
+              } @else {
+                <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
+                  <mat-icon>person</mat-icon>
+                </div>
+              }
+              <span class="order-detail-page__member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
+              @if (m.role === 'owner') {
+                <span class="order-detail-page__member-owner-badge">{{ 'orders.header.owner' | transloco }}</span>
+              } @else if (m.isReady && order().status === ORDER_STATUS.DRAFT) {
+                <span class="order-detail-page__member-ready-badge">{{ 'orders.header.ready' | transloco }}</span>
+              } @else if (order().status === ORDER_STATUS.DRAFT) {
+                <span class="order-detail-page__member-pending-badge">{{ 'orders.header.pending' | transloco }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Col 3: status badge -->
+      <div class="order-detail-page__info-status">
+        <div class="order-detail-page__status-badge order-detail-page__status-badge--{{ order().status }}">
+          {{ 'orders.status.' + order().status | transloco }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit header form (animated with grid trick) -->
+    <div class="order-detail-page__form-expander" [class.order-detail-page__form-expander--expanded]="editingHeader()">
+      <div class="order-detail-page__form-expander-inner">
+        <div class="order-detail-page__edit-divider"></div>
+        <form [formGroup]="headerForm" class="order-detail-page__edit-form">
+          <div class="order-detail-page__form-columns">
+            <!-- Left column -->
+            <div class="order-detail-page__form-col">
+              <mat-form-field appearance="outline" class="order-detail-page__form-field">
+                <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
+                <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+              </mat-form-field>
+
+              <div class="order-detail-page__form-costs-row">
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <mat-label>{{ 'orders.header.shippingCost' | transloco }}</mat-label>
+                  <input matInput type="number" formControlName="shippingCost" min="0" step="0.01" />
+                </mat-form-field>
+
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <mat-label>{{ 'orders.header.paypalFee' | transloco }}</mat-label>
+                  <input matInput type="number" formControlName="paypalFee" min="0" step="0.01" />
+                </mat-form-field>
+
+                <div class="order-detail-page__discount-row">
+                  <mat-form-field
+                    appearance="outline"
+                    subscriptSizing="dynamic"
+                    class="order-detail-page__form-field order-detail-page__form-field--grow">
+                    <mat-label>{{ 'orders.header.discountAmount' | transloco }}</mat-label>
+                    <input matInput type="number" formControlName="discountAmount" min="0" step="0.01" />
+                  </mat-form-field>
+                  <mat-button-toggle-group
+                    formControlName="discountType"
+                    class="order-detail-page__discount-type-toggle"
+                    hideSingleSelectionIndicator>
+                    <mat-button-toggle value="amount">€</mat-button-toggle>
+                    <mat-button-toggle value="percentage">%</mat-button-toggle>
+                  </mat-button-toggle-group>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right column -->
+            <div class="order-detail-page__form-col">
+              <mat-form-field
+                appearance="outline"
+                class="order-detail-page__form-field order-detail-page__form-field--full-height">
+                <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
+                <textarea
+                  matInput
+                  formControlName="notes"
+                  [placeholder]="'orders.header.notesPlaceholder' | transloco"
+                  rows="5"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    @if (editingHeader() || hidingActions()) {
+      <div class="order-detail-page__form-actions" [class.order-detail-page__form-actions--hiding]="hidingActions()">
+        <button mat-button type="button" (click)="onCancelEdit()">
+          {{ 'orders.header.cancel' | transloco }}
+        </button>
+        <button mat-flat-button type="button" (click)="onSaveHeader()" [disabled]="saving()">
+          {{ 'orders.header.save' | transloco }}
+        </button>
+      </div>
+    }
+  </div>
+</div>

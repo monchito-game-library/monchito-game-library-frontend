@@ -83,7 +83,7 @@
       <h1 class="wishlist-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
     </header>
     <p class="wishlist-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
-    <app-game-search-panel (gameSelected)="onMobileGameSelected($event)" />
+    <app-catalog-search-panel (gameSelected)="onMobileGameSelected($event)" />
   </div>
 }
 
@@ -112,7 +112,7 @@
       @if (pendingCatalogEntry(); as game) {
         <div class="wishlist-view__game-preview">
           @if (game.image_url) {
-            <img class="wishlist-view__game-cover" [src]="game.image_url" [alt]="game.title" width="48" height="64" />
+            <img class="wishlist-view__game-cover" [ngSrc]="game.image_url" [alt]="game.title" width="48" height="64" />
           }
           <div class="wishlist-view__game-info">
             <span class="wishlist-view__game-title">{{ game.title }}</span>

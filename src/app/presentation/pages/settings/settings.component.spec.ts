@@ -1,13 +1,13 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
-import { ThemeService } from '@/services/theme.service';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
-import { RawgSearchStateService } from '@/services/rawg-search-state.service';
+import { ThemeService } from '@/services/theme/theme.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
+import { RawgSearchStateService } from '@/services/rawg-search-state/rawg-search-state.service';
 import { USER_PREFERENCES_USE_CASES } from '@/domain/use-cases/user-preferences/user-preferences.use-cases.contract';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -266,7 +266,7 @@ describe('SettingsComponent', () => {
       expect((component as any)._focusTimer).not.toBeNull();
 
       component.ngOnDestroy();
-      expect((component as any)._focusTimer).not.toBeNull(); // timer stored but cancelled
+      expect((component as any)._focusTimer).not.toBeNull(); // timer stored but canceled
 
       vi.useRealTimers();
     });

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { canActivateUser } from '@/guards/user.guard';
+import { canActivateUser } from '@/guards/user/user.guard';
 
 export const settingsRoutes: Routes = [
   {

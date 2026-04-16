@@ -11,7 +11,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
-import { CropInteractionBase } from '@/abstract/crop-interaction.base';
+import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
 
 @Component({
   selector: 'app-avatar-crop-dialog',

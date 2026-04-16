@@ -11,7 +11,7 @@ import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';

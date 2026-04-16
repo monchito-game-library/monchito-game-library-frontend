@@ -35,7 +35,7 @@ export function mapConsole(dto: ConsoleDto): ConsoleModel {
 /**
  * Maps a ConsoleModel to a ConsoleInsertDto for Supabase inserts and updates.
  *
- * @param {string} userId - UUID del usuario autenticado
+ * @param {string} userId - UUID of the authenticated user
  * @param {ConsoleModel} model - Domain model to persist
  */
 export function mapConsoleToInsertDto(userId: string, model: ConsoleModel): ConsoleInsertDto {

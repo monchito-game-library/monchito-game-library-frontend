@@ -6,6 +6,7 @@ const prettier = require('eslint-config-prettier');
 const jsdoc = require('eslint-plugin-jsdoc');
 const cleanArchRule = require('./eslint-rules/clean-architecture-boundaries/index.js');
 const noInlineTypesRule = require('./eslint-rules/no-inline-types-in-layer/index.js');
+const noModuleConstRule = require('./eslint-rules/no-module-const-in-layer/index.js');
 
 // Angular lifecycle hooks that are exempt from the JSDoc requirement.
 const LIFECYCLE_HOOKS = [
@@ -39,7 +40,8 @@ module.exports = [
       '@typescript-eslint': tseslint,
       jsdoc,
       'clean-arch': { rules: { boundaries: cleanArchRule } },
-      'layer-types': { rules: { 'no-inline': noInlineTypesRule } }
+      'layer-types': { rules: { 'no-inline': noInlineTypesRule } },
+      'layer-consts': { rules: { 'no-module-const': noModuleConstRule } }
     },
     rules: {
       '@angular-eslint/directive-selector': [
@@ -193,6 +195,17 @@ module.exports = [
       // Configurable: restrictedPaths (default: ['src/app/presentation'])
       //               excludeFilePatterns (default: ['.spec.ts'])
       'layer-types/no-inline': [
+        'error',
+        {
+          restrictedPaths: ['src/app/presentation'],
+          excludeFilePatterns: ['.spec.ts']
+        }
+      ],
+
+      // Forbids module-level (top-level, outside any class or function) `const`
+      // declarations inside the presentation layer. Constants must live in
+      // src/app/entities/constants/ and be imported via @/constants/….
+      'layer-consts/no-module-const': [
         'error',
         {
           restrictedPaths: ['src/app/presentation'],

@@ -8,7 +8,7 @@ import {
   OutputEmitterRef,
   Signal
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -17,15 +17,13 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 
-const PRIORITY_RANGE = WISHLIST_PRIORITY_OPTIONS;
-
 @Component({
   selector: 'app-wishlist-card',
   templateUrl: './wishlist-card.component.html',
   styleUrl: './wishlist-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
 })
 export class WishlistCardComponent {
   /** Wishlist item to display. */
@@ -47,7 +45,7 @@ export class WishlistCardComponent {
   readonly ownClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
 
   /** Priority star range used to render the star icons. */
-  readonly priorityRange: number[] = PRIORITY_RANGE;
+  readonly priorityRange: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
   readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {

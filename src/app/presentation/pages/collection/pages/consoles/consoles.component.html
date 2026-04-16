@@ -1,114 +1,34 @@
-<div class="consoles">
-  <!-- Header: stats, búsqueda y botón de añadir -->
-  <app-list-page-header
-    [searchValue]="searchQuery()"
-    searchPlaceholder="consolesPage.search"
-    [showAddBtn]="consoles().length > 0"
-    (searchChange)="searchQuery.set($event)"
-    (addClick)="onAdd()">
-    <div class="consoles__stat">
-      <mat-icon>tv</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
-      } @else {
-        <span>{{ filteredConsoles().length }}</span>
-      }
-    </div>
-    <div class="consoles__stat-divider"></div>
-    <div class="consoles__stat">
-      <mat-icon>payments</mat-icon>
-      @if (loading()) {
-        <app-skeleton width="60px" height="12px" />
-      } @else {
-        <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-      }
-    </div>
-  </app-list-page-header>
+<app-hardware-list-shell
+  [loading]="loading()"
+  [items]="items()"
+  [filteredItems]="filteredItems()"
+  [totalSpent]="totalSpent()"
+  [searchQuery]="searchQuery()"
+  statIcon="tv"
+  emptyIcon="tv_off"
+  i18nPrefix="consolesPage"
+  [resolveModelName]="resolveModelName.bind(this)"
+  [resolveBrandName]="resolveBrandName.bind(this)"
+  [resolveStoreName]="resolveStoreName.bind(this)"
+  [cardHeaderTpl]="cardHeaderTpl"
+  [cardChipsTpl]="cardChipsTpl"
+  (searchChange)="searchQuery.set($event)"
+  (addClick)="onAdd()"
+  (detailClick)="onDetail($any($event))">
+</app-hardware-list-shell>
 
-  <!-- Content scrollable -->
-  <div class="consoles__content">
-    @if (loading()) {
-      <div class="consoles__loading">
-        <mat-progress-spinner diameter="48" mode="indeterminate" />
-        <p>{{ 'consolesPage.loading' | transloco }}</p>
-      </div>
-    } @else if (consoles().length === 0) {
-      <div class="consoles__empty">
-        <mat-icon class="consoles__empty-icon">tv_off</mat-icon>
-        <p class="consoles__empty-title">{{ 'consolesPage.empty.title' | transloco }}</p>
-        <p class="consoles__empty-subtitle">{{ 'consolesPage.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button (click)="onAdd()">
-          <mat-icon>add</mat-icon>
-          {{ 'consolesPage.empty.add' | transloco }}
-        </button>
-      </div>
-    } @else if (filteredConsoles().length === 0) {
-      <div class="consoles__no-results">
-        <mat-icon>search_off</mat-icon>
-        <p>{{ 'consolesPage.noResults' | transloco }}</p>
-      </div>
-    } @else {
-      <div class="consoles__grid">
-        @for (console of filteredConsoles(); track console.id) {
-          <button type="button" class="consoles__card" (click)="onDetail(console)">
-            <div class="consoles__card-header">
-              <mat-icon class="consoles__card-icon">tv</mat-icon>
-              <div class="consoles__card-titles">
-                <span class="consoles__card-model">{{ resolveModelName(console.modelId) }}</span>
-                <span class="consoles__card-brand">{{ resolveBrandName(console.brandId) }}</span>
-              </div>
-              <mat-icon class="consoles__card-chevron">chevron_right</mat-icon>
-            </div>
+<ng-template #cardHeaderTpl>
+  <mat-icon class="hw-list__card-icon">tv</mat-icon>
+</ng-template>
 
-            <div class="consoles__card-chips">
-              <span
-                class="consoles__chip"
-                [class.consoles__chip--new]="console.condition === GAME_CONDITION.NEW"
-                [class.consoles__chip--used]="console.condition !== GAME_CONDITION.NEW">
-                {{
-                  (console.condition === GAME_CONDITION.NEW
-                    ? 'consolesPage.condition.new'
-                    : 'consolesPage.condition.used'
-                  ) | transloco
-                }}
-              </span>
-              @if (console.region) {
-                <span class="consoles__chip consoles__chip--neutral">{{ console.region }}</span>
-              }
-            </div>
-
-            <div class="consoles__card-meta">
-              <div class="consoles__meta-row">
-                @if (console.price !== null) {
-                  <span class="consoles__meta-item">
-                    <mat-icon>payments</mat-icon>
-                    {{ console.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                  </span>
-                }
-                @if (console.purchaseDate) {
-                  <span class="consoles__meta-item">
-                    <mat-icon>calendar_today</mat-icon>
-                    {{ console.purchaseDate | date: 'dd/MM/yyyy' }}
-                  </span>
-                }
-              </div>
-              @if (console.store) {
-                <div class="consoles__meta-row">
-                  <span class="consoles__meta-item">
-                    <mat-icon>storefront</mat-icon>
-                    {{ resolveStoreName(console.store) }}
-                  </span>
-                </div>
-              }
-            </div>
-          </button>
-        }
-      </div>
-    }
-  </div>
-
-  <!-- FAB: solo mobile -->
-  <button mat-fab class="consoles__fab" [attr.aria-label]="'consolesPage.add' | transloco" (click)="onAdd()">
-    <mat-icon>add</mat-icon>
-  </button>
-</div>
+<ng-template #cardChipsTpl let-console>
+  <app-badge-chip
+    [label]="
+      (console.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
+        | transloco
+    "
+    [variant]="console.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+  @if (console.region) {
+    <app-badge-chip [label]="console.region" variant="neutral" />
+  }
+</ng-template>
