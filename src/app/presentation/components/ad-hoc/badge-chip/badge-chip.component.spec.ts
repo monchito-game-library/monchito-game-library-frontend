@@ -4,13 +4,11 @@ import { describe, beforeEach, expect, it } from 'vitest';
 import { BadgeChipComponent } from './badge-chip.component';
 
 describe('BadgeChipComponent', () => {
-  let component: BadgeChipComponent;
   let fixture: ComponentFixture<BadgeChipComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [BadgeChipComponent] });
     fixture = TestBed.createComponent(BadgeChipComponent);
-    component = fixture.componentInstance;
   });
 
   describe('label', () => {
