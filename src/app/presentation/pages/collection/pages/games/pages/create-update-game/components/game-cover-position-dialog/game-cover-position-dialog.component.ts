@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -19,7 +20,7 @@ import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
   styleUrl: './game-cover-position-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
+  imports: [NgOptimizedImage, MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
 })
 export class GameCoverPositionDialogComponent extends CropInteractionBase {
   private readonly _dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = inject(
