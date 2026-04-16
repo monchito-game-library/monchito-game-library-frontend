@@ -4,7 +4,7 @@ import { BadgeChipVariant } from '@/types/badge-chip-variant.type';
 
 @Component({
   selector: 'app-badge-chip',
-  template: `{{ label() }}`,
+  templateUrl: './badge-chip.component.html',
   styleUrl: './badge-chip.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
