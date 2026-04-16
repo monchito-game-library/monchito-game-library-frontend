@@ -189,78 +189,61 @@ describe('GameLoanFormComponent', () => {
       expect(component.saving()).toBe(false);
     });
 
-    it('muestra snackbar de error si createLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.createLoan.mockRejectedValue(new Error('loan error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+    describe('cuando createLoan lanza', () => {
+      beforeEach(() => {
+        const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+        gameUseCases.createLoan.mockRejectedValue(new Error('loan error'));
+        component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      });
 
-      await component.onLoan();
+      it('muestra snackbar de error', async () => {
+        const snackBar = TestBed.inject(MatSnackBar as any) as any;
+        await component.onLoan();
+        expect(snackBar.open).toHaveBeenCalled();
+      });
 
-      expect(snackBar.open).toHaveBeenCalled();
-    });
+      it('desactiva la señal saving', async () => {
+        await component.onLoan();
+        expect(component.saving()).toBe(false);
+      });
 
-    it('desactiva la señal saving si createLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.createLoan.mockRejectedValue(new Error('loan error'));
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
-
-      await component.onLoan();
-
-      expect(component.saving()).toBe(false);
-    });
-
-    it('no emite saved si createLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.createLoan.mockRejectedValue(new Error('loan error'));
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
-
-      await component.onLoan();
-
-      expect(hostComponent.onSaved).not.toHaveBeenCalled();
+      it('no emite saved', async () => {
+        await component.onLoan();
+        expect(hostComponent.onSaved).not.toHaveBeenCalled();
+      });
     });
   });
 
   describe('onReturn', () => {
+    function makeLoanedChild() {
+      const fixture = TestBed.createComponent(TestHostComponent);
+      fixture.componentInstance.game = makeGame({
+        activeLoanId: 'loan-1',
+        activeLoanTo: 'Juan',
+        activeLoanAt: '2024-06-01'
+      });
+      fixture.detectChanges();
+      const child = fixture.debugElement.query(By.directive(GameLoanFormComponent))
+        .componentInstance as GameLoanFormComponent;
+      return { child, hostChild: fixture.componentInstance };
+    }
+
     it('no llama a returnLoan si activeLoanId es null', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-
       await component.onReturn();
-
       expect(gameUseCases.returnLoan).not.toHaveBeenCalled();
     });
 
     it('llama a returnLoan con el loanId del juego', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
-
+      const { child } = makeLoanedChild();
       await child.onReturn();
-
       expect(gameUseCases.returnLoan).toHaveBeenCalledWith('loan-1');
     });
 
     it('emite saved con activeLoanId/To/At nulos tras la devolución', async () => {
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
-      const hostChild = newHostFixture.componentInstance;
-
+      const { child, hostChild } = makeLoanedChild();
       await child.onReturn();
-
       expect(hostChild.onSaved).toHaveBeenCalledWith(
         expect.objectContaining({ activeLoanId: null, activeLoanTo: null, activeLoanAt: null })
       );
@@ -268,112 +251,52 @@ describe('GameLoanFormComponent', () => {
 
     it('muestra snackbar de éxito tras la devolución', async () => {
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
-
+      const { child } = makeLoanedChild();
       await child.onReturn();
-
       expect(snackBar.open).toHaveBeenCalled();
     });
 
     it('activa la señal returning durante la operación', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
+      const { child } = makeLoanedChild();
       let returningDuringCall = false;
       gameUseCases.returnLoan.mockImplementation(async () => {
         returningDuringCall = child.returning();
       });
-
       await child.onReturn();
-
       expect(returningDuringCall).toBe(true);
     });
 
     it('desactiva la señal returning tras la operación exitosa', async () => {
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
-      });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
-
+      const { child } = makeLoanedChild();
       await child.onReturn();
-
       expect(child.returning()).toBe(false);
     });
 
-    it('muestra snackbar de error si returnLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.returnLoan.mockRejectedValue(new Error('return error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
+    describe('cuando returnLoan lanza', () => {
+      beforeEach(() => {
+        const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+        gameUseCases.returnLoan.mockRejectedValue(new Error('return error'));
       });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
 
-      await child.onReturn();
-
-      expect(snackBar.open).toHaveBeenCalled();
-    });
-
-    it('desactiva la señal returning si returnLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.returnLoan.mockRejectedValue(new Error('return error'));
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
+      it('muestra snackbar de error', async () => {
+        const snackBar = TestBed.inject(MatSnackBar as any) as any;
+        const { child } = makeLoanedChild();
+        await child.onReturn();
+        expect(snackBar.open).toHaveBeenCalled();
       });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
 
-      await child.onReturn();
-
-      expect(child.returning()).toBe(false);
-    });
-
-    it('no emite saved si returnLoan lanza', async () => {
-      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      gameUseCases.returnLoan.mockRejectedValue(new Error('return error'));
-      const newHostFixture = TestBed.createComponent(TestHostComponent);
-      newHostFixture.componentInstance.game = makeGame({
-        activeLoanId: 'loan-1',
-        activeLoanTo: 'Juan',
-        activeLoanAt: '2024-06-01'
+      it('desactiva la señal returning', async () => {
+        const { child } = makeLoanedChild();
+        await child.onReturn();
+        expect(child.returning()).toBe(false);
       });
-      newHostFixture.detectChanges();
-      const child = newHostFixture.debugElement.query(By.directive(GameLoanFormComponent))
-        .componentInstance as GameLoanFormComponent;
-      const hostChild = newHostFixture.componentInstance;
 
-      await child.onReturn();
-
-      expect(hostChild.onSaved).not.toHaveBeenCalled();
+      it('no emite saved', async () => {
+        const { child, hostChild } = makeLoanedChild();
+        await child.onReturn();
+        expect(hostChild.onSaved).not.toHaveBeenCalled();
+      });
     });
   });
 });
