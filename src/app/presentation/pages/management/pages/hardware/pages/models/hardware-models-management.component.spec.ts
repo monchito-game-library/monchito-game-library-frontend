@@ -4,10 +4,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
-import {
-  HardwareModelsManagementComponent,
-  HardwareModelEditPanelComponent
-} from './hardware-models-management.component';
+import { HardwareModelsManagementComponent } from './hardware-models-management.component';
+import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
 import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
@@ -358,15 +356,13 @@ describe('HardwareModelsManagementComponent', () => {
 
     it('llama a create si no hay modelo seleccionado (null)', async () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-      modelUseCases.create = vi
-        .fn()
-        .mockResolvedValue({
-          id: 'new-model-id',
-          name: 'PS5 Slim',
-          type: 'console',
-          generation: 9,
-          brandId: 'brand-uuid-1'
-        });
+      modelUseCases.create = vi.fn().mockResolvedValue({
+        id: 'new-model-id',
+        name: 'PS5 Slim',
+        type: 'console',
+        generation: 9,
+        brandId: 'brand-uuid-1'
+      });
       modelUseCases.getAllByBrand.mockResolvedValue([]);
       await component.ngOnInit(); // carga _brandId desde la ruta
       component.selectedModel.set(null);

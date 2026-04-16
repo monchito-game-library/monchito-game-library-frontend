@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  input,
-  OnInit,
-  output,
-  signal,
-  WritableSignal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -28,59 +15,7 @@ import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Edit panel component
-// ─────────────────────────────────────────────────────────────────────────────
-
-@Component({
-  selector: 'app-hardware-brand-edit-panel',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatError, MatInput, MatButton, MatIcon, TranslocoPipe],
-  templateUrl: './hardware-brand-edit-panel.component.html',
-  styleUrl: './hardware-brand-edit-panel.component.scss'
-})
-export class HardwareBrandEditPanelComponent {
-  private readonly _fb: FormBuilder = inject(FormBuilder);
-
-  /** The brand to edit, or null when creating a new one. */
-  readonly brand = input<HardwareBrandModel | null>(null);
-
-  /** Emitted when the user confirms the form. */
-  readonly saved = output<HardwareBrandFormResult>();
-
-  /** Emitted when the user cancels. */
-  readonly cancelled = output<void>();
-
-  /** Emitted when the user requests deletion. */
-  readonly deleted = output<void>();
-
-  readonly form = this._fb.group({
-    name: ['' as string, Validators.required]
-  });
-
-  constructor() {
-    effect(() => {
-      const b = this.brand();
-      this.form.patchValue({ name: b?.name ?? '' });
-      this.form.markAsPristine();
-      this.form.markAsUntouched();
-    });
-  }
-
-  /**
-   * Validates the form and emits the result.
-   */
-  onSave(): void {
-    if (this.form.invalid) return;
-    this.saved.emit({ name: this.form.getRawValue().name as string });
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Page component
-// ─────────────────────────────────────────────────────────────────────────────
+import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 
 /** Management page for hardware brands. Entry point of the hardware catalog drill-down. */
 @Component({

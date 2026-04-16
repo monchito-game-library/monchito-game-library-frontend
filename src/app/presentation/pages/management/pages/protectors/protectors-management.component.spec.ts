@@ -4,7 +4,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
-import { ProtectorsManagementComponent, ProtectorEditPanelComponent } from './protectors-management.component';
+import { ProtectorsManagementComponent } from './protectors-management.component';
+import { ProtectorEditPanelComponent } from './components/protector-edit-panel/protector-edit-panel.component';
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';

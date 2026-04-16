@@ -25,25 +25,26 @@ export const managementRoutes: Routes = [
       { path: '', redirectTo: 'stores', pathMatch: 'full' },
       {
         path: 'stores',
-        loadComponent: () => import('./stores/stores-management.component').then((m) => m.StoresManagementComponent)
+        loadChildren: () => import('./pages/stores/stores-management.routes').then((m) => m.storesManagementRoutes)
       },
       {
         path: 'users',
-        loadComponent: () => import('./users/users-management.component').then((m) => m.UsersManagementComponent)
+        loadChildren: () => import('./pages/users/users-management.routes').then((m) => m.usersManagementRoutes)
       },
       {
         path: 'audit-log',
-        loadComponent: () =>
-          import('./audit-log/audit-log-management.component').then((m) => m.AuditLogManagementComponent)
+        loadChildren: () =>
+          import('./pages/audit-log/audit-log-management.routes').then((m) => m.auditLogManagementRoutes)
       },
       {
         path: 'protectors',
-        loadComponent: () =>
-          import('./protectors/protectors-management.component').then((m) => m.ProtectorsManagementComponent)
+        loadChildren: () =>
+          import('./pages/protectors/protectors-management.routes').then((m) => m.protectorsManagementRoutes)
       },
       {
         path: 'hardware',
-        loadChildren: () => import('./hardware/hardware-management.routes').then((m) => m.hardwareManagementRoutes)
+        loadChildren: () =>
+          import('./pages/hardware/hardware-management.routes').then((m) => m.hardwareManagementRoutes)
       }
     ]
   }

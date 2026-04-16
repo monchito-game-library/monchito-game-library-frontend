@@ -4,10 +4,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
-import {
-  HardwareEditionsManagementComponent,
-  HardwareEditionEditPanelComponent
-} from './hardware-editions-management.component';
+import { HardwareEditionsManagementComponent } from './hardware-editions-management.component';
+import { HardwareEditionEditPanelComponent } from '../../components/hardware-edition-edit-panel/hardware-edition-edit-panel.component';
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';

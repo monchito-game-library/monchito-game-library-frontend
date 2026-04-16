@@ -4,7 +4,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
-import { StoresManagementComponent, StoreEditPanelComponent } from './stores-management.component';
+import { StoresManagementComponent } from './stores-management.component';
+import { StoreEditPanelComponent } from './components/store-edit-panel/store-edit-panel.component';
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';

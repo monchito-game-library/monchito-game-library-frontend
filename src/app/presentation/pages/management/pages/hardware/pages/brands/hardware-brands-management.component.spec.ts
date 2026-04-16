@@ -4,10 +4,8 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
-import {
-  HardwareBrandsManagementComponent,
-  HardwareBrandEditPanelComponent
-} from './hardware-brands-management.component';
+import { HardwareBrandsManagementComponent } from './hardware-brands-management.component';
+import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatDialog } from '@angular/material/dialog';

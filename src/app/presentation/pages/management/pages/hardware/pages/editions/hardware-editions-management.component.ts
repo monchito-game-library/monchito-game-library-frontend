@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  input,
-  OnInit,
-  output,
-  signal,
-  WritableSignal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -39,61 +26,9 @@ import { HardwareModelFormResult } from '@/interfaces/management/hardware-model-
 import { HARDWARE_MODEL_TYPE } from '@/constants/hardware-model.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { HardwareModelEditPanelComponent } from './hardware-models-management.component';
 import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Edit panel component
-// ─────────────────────────────────────────────────────────────────────────────
-
-@Component({
-  selector: 'app-hardware-edition-edit-panel',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatError, MatInput, MatButton, MatIcon, TranslocoPipe],
-  templateUrl: './hardware-edition-edit-panel.component.html',
-  styleUrl: './hardware-edition-edit-panel.component.scss'
-})
-export class HardwareEditionEditPanelComponent {
-  private readonly _fb: FormBuilder = inject(FormBuilder);
-
-  /** The edition to edit, or null when creating a new one. */
-  readonly edition = input<HardwareEditionModel | null>(null);
-
-  /** Emitted when the user confirms the form. */
-  readonly saved = output<HardwareEditionFormResult>();
-
-  /** Emitted when the user cancels. */
-  readonly cancelled = output<void>();
-
-  /** Emitted when the user requests deletion. */
-  readonly deleted = output<void>();
-
-  readonly form = this._fb.group({
-    name: ['' as string, Validators.required]
-  });
-
-  constructor() {
-    effect(() => {
-      const e = this.edition();
-      this.form.patchValue({ name: e?.name ?? '' });
-      this.form.markAsPristine();
-      this.form.markAsUntouched();
-    });
-  }
-
-  /**
-   * Validates the form and emits the result.
-   */
-  onSave(): void {
-    if (this.form.invalid) return;
-    this.saved.emit({ name: this.form.getRawValue().name as string });
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Page component
-// ─────────────────────────────────────────────────────────────────────────────
+import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
+import { HardwareEditionEditPanelComponent } from '../../components/hardware-edition-edit-panel/hardware-edition-edit-panel.component';
 
 /** Management page for hardware editions belonging to a specific model. */
 @Component({

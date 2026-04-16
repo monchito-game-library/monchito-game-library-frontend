@@ -1,22 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-  input,
-  OnInit,
-  output,
-  signal,
-  WritableSignal
-} from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -33,75 +18,7 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { StoreFormResult } from '@/interfaces/management/store-form-result.interface';
 import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Edit panel component (inline, below the page header)
-// ─────────────────────────────────────────────────────────────────────────────
-
-@Component({
-  selector: 'app-store-edit-panel',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatButton,
-    MatIcon,
-    TranslocoPipe
-  ],
-  templateUrl: './store-edit-panel.component.html',
-  styleUrl: './store-edit-panel.component.scss'
-})
-export class StoreEditPanelComponent {
-  private readonly _fb: FormBuilder = inject(FormBuilder);
-
-  /** The store to edit, or null when creating a new one. */
-  readonly store = input<StoreModel | null>(null);
-
-  /** Emitted when the user confirms the form. */
-  readonly saved = output<StoreFormResult>();
-
-  /** Emitted when the user cancels or closes the panel. */
-  readonly cancelled = output<void>();
-
-  /** Emitted when the user requests deletion of the current store. */
-  readonly deleted = output<void>();
-
-  readonly form = this._fb.group({
-    name: ['' as string, Validators.required],
-    formatHint: [null as GameFormatType | null]
-  });
-
-  constructor() {
-    effect(() => {
-      const s = this.store();
-      this.form.patchValue({ name: s?.label ?? '', formatHint: s?.formatHint ?? null });
-      this.form.markAsPristine();
-      this.form.markAsUntouched();
-    });
-  }
-
-  /**
-   * Validates the form and emits the result to the parent component.
-   */
-  onSave(): void {
-    if (this.form.invalid) return;
-    const raw = this.form.getRawValue();
-    this.saved.emit({
-      label: raw.name as string,
-      formatHint: raw.formatHint as GameFormatType | null
-    });
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Page component
-// ─────────────────────────────────────────────────────────────────────────────
+import { StoreEditPanelComponent } from './components/store-edit-panel/store-edit-panel.component';
 
 /** Page for managing the shared store catalog. */
 @Component({
@@ -164,7 +81,7 @@ export class StoresManagementComponent implements OnInit {
   /**
    * Persists the new or updated store and closes the panel.
    *
-   * @param {StoreFormResult} result - Resultado del formulario de tienda
+   * @param {StoreFormResult} result - Result from the store edit panel form
    */
   async onSaved(result: StoreFormResult): Promise<void> {
     const current = this.selectedStore();
