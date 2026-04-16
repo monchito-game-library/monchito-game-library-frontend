@@ -142,8 +142,7 @@ describe('ConsoleDetailComponent', () => {
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(consoleUseCases.getById).toHaveBeenCalledWith('user-1', 'console-uuid-1');
       expect(storeUseCases.getAllStores).toHaveBeenCalled();
@@ -152,30 +151,21 @@ describe('ConsoleDetailComponent', () => {
 
     it('desactiva loading tras la carga', async () => {
       expect(component.loading()).toBe(true);
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
       expect(component.loading()).toBe(false);
     });
 
-    it('navega a /collection/consoles si la consola no existe (null)', async () => {
+    it('navega a /collection/consoles si la consola no existe o hay error', async () => {
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+      const router = TestBed.inject(Router as any) as any;
+
       consoleUseCases.getById.mockResolvedValue(null);
-      const router = TestBed.inject(Router as any) as any;
-
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
-
+      await component.ngOnInit();
       expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
-    });
 
-    it('navega a /collection/consoles si la carga falla', async () => {
-      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+      vi.clearAllMocks();
       consoleUseCases.getById.mockRejectedValue(new Error('load error'));
-      const router = TestBed.inject(Router as any) as any;
-
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
-
+      await component.ngOnInit();
       expect(router.navigate).toHaveBeenCalledWith(['/collection/consoles']);
     });
 
@@ -183,8 +173,7 @@ describe('ConsoleDetailComponent', () => {
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
       consoleUseCases.getById.mockRejectedValue(new Error('fail'));
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(component.loading()).toBe(false);
     });
@@ -194,8 +183,7 @@ describe('ConsoleDetailComponent', () => {
       route.snapshot.paramMap.get.mockReturnValueOnce(null);
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(consoleUseCases.getById).toHaveBeenCalledWith('user-1', '');
     });
@@ -206,8 +194,7 @@ describe('ConsoleDetailComponent', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       consoleUseCases.getById.mockResolvedValue(makeConsole({ brandId: undefined, modelId: undefined }));
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(brandUseCases.getById).not.toHaveBeenCalled();
       expect(modelUseCases.getById).not.toHaveBeenCalled();
@@ -220,8 +207,7 @@ describe('ConsoleDetailComponent', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
       consoleUseCases.getById.mockResolvedValue(makeConsole({ editionId: 'edition-uuid-1' }));
 
-      component.ngOnInit();
-      await new Promise((r) => setTimeout(r, 0));
+      await component.ngOnInit();
 
       expect(editionUseCases.getById).toHaveBeenCalledWith('edition-uuid-1');
     });

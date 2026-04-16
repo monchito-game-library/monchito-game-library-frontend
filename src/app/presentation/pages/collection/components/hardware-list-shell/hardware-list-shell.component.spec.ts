@@ -113,14 +113,9 @@ describe('HardwareListShellComponent', () => {
       expect(spinner).not.toBeNull();
     });
 
-    it('no muestra el grid', () => {
-      const grid = fixture.debugElement.query(By.css('.hw-list__grid'));
-      expect(grid).toBeNull();
-    });
-
-    it('no muestra el empty state', () => {
-      const empty = fixture.debugElement.query(By.css('.hw-list__empty'));
-      expect(empty).toBeNull();
+    it('no muestra el grid ni el empty state', () => {
+      expect(fixture.debugElement.query(By.css('.hw-list__grid'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('.hw-list__empty'))).toBeNull();
     });
   });
 
@@ -175,14 +170,9 @@ describe('HardwareListShellComponent', () => {
       expect(noResults).not.toBeNull();
     });
 
-    it('no muestra el grid', () => {
-      const grid = fixture.debugElement.query(By.css('.hw-list__grid'));
-      expect(grid).toBeNull();
-    });
-
-    it('no muestra el empty state', () => {
-      const empty = fixture.debugElement.query(By.css('.hw-list__empty'));
-      expect(empty).toBeNull();
+    it('no muestra el grid ni el empty state', () => {
+      expect(fixture.debugElement.query(By.css('.hw-list__grid'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('.hw-list__empty'))).toBeNull();
     });
   });
 
