@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { SaleComponent } from './sale.component';
@@ -8,6 +9,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@jsverse/transloco';
 import { AvailableItemModel, SoldItemModel } from '@/models/market/market-item.model';
+import { mockRouter } from '@/testing/router.mock';
 import { mockSnackBar } from '@/testing/snack-bar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 
@@ -62,6 +64,7 @@ describe('SaleComponent', () => {
       providers: [
         { provide: MARKET_USE_CASES, useValue: mockMarketUseCases },
         { provide: UserContextService, useValue: mockUserContext },
+        { provide: Router, useValue: mockRouter },
         { provide: MatSnackBar, useValue: mockSnackBar },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
@@ -243,6 +246,23 @@ describe('SaleComponent', () => {
 
     it('devuelve "gamepad" para controller', () => {
       expect(component.typeIcon('controller')).toBe('gamepad');
+    });
+  });
+
+  describe('onItemClick', () => {
+    it('navega a /collection/games/:id para un juego', () => {
+      component.onItemClick('game', 'abc-123');
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection', 'games', 'abc-123']);
+    });
+
+    it('navega a /collection/consoles/:id para una consola', () => {
+      component.onItemClick('console', 'con-456');
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection', 'consoles', 'con-456']);
+    });
+
+    it('navega a /collection/controllers/:id para un mando', () => {
+      component.onItemClick('controller', 'ctrl-789');
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection', 'controllers', 'ctrl-789']);
     });
   });
 
