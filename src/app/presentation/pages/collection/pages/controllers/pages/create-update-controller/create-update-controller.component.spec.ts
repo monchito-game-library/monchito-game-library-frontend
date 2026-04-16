@@ -160,17 +160,13 @@ describe('CreateUpdateControllerComponent — modo creación', () => {
   });
 
   describe('ngOnInit — modo creación', () => {
-    it('no activa isEditMode', async () => {
-      await component.ngOnInit();
-      expect(component.isEditMode()).toBe(false);
-    });
-
-    it('carga marcas y tiendas', async () => {
+    it('no activa isEditMode y carga marcas y tiendas', async () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
 
       await component.ngOnInit();
 
+      expect(component.isEditMode()).toBe(false);
       expect(brandUseCases.getAll).toHaveBeenCalled();
       expect(storeUseCases.getAllStores).toHaveBeenCalled();
     });
