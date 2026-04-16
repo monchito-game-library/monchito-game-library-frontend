@@ -9,12 +9,11 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgOptimizedImage } from '@angular/common';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe, Location, NgOptimizedImage } from '@angular/common';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe, Location } from '@angular/common';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -28,8 +27,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -303,7 +300,7 @@ export class GameFormComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     void this._loadStores();
 
-    // Read catalog entry pre-loaded from the wishlist "I have this game" action
+    // Read catalog entry preloaded from the wishlist "I have this game" action
     const navState = this._router.lastSuccessfulNavigation()?.extras.state as
       | { catalogEntry?: GameCatalogDto; wishlistItemId?: string }
       | undefined;
@@ -312,7 +309,7 @@ export class GameFormComponent implements OnInit {
 
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) {
-      // Create mode — pre-load catalog entry from wishlist if available
+      // Create mode — preload catalog entry from wishlist if available
       if (this._pendingCatalogEntry) {
         this.selectGameFromSearch(this._pendingCatalogEntry);
       }
