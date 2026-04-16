@@ -38,17 +38,14 @@
       <div class="controller-detail__color-swatch" [style.background-color]="controller()?.color"></div>
       <span class="controller-detail__color-label">{{ controller()?.color }}</span>
     </div>
-    <span class="controller-detail__chip controller-detail__chip--compat">
-      {{ controller()?.compatibility }}
-    </span>
-    @if (controller()?.condition === GAME_CONDITION.NEW) {
-      <span class="controller-detail__chip controller-detail__chip--new">
-        {{ 'controllersPage.condition.new' | transloco }}
-      </span>
-    } @else {
-      <span class="controller-detail__chip controller-detail__chip--used">
-        {{ 'controllersPage.condition.used' | transloco }}
-      </span>
-    }
+    <app-badge-chip [label]="controller()?.compatibility ?? ''" variant="neutral" />
+    <app-badge-chip
+      [label]="
+        (controller()?.condition === GAME_CONDITION.NEW
+          ? 'controllersPage.condition.new'
+          : 'controllersPage.condition.used'
+        ) | transloco
+      "
+      [variant]="controller()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
   </ng-container>
 </app-hardware-detail-shell>

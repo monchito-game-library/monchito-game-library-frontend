@@ -22,14 +22,11 @@
 </ng-template>
 
 <ng-template #cardChipsTpl let-controller>
-  <span class="hw-list__chip hw-list__chip--neutral">{{ controller.compatibility }}</span>
-  <span
-    class="hw-list__chip"
-    [class.hw-list__chip--new]="controller.condition === GAME_CONDITION.NEW"
-    [class.hw-list__chip--used]="controller.condition !== GAME_CONDITION.NEW">
-    {{
+  <app-badge-chip [label]="controller.compatibility" variant="neutral" />
+  <app-badge-chip
+    [label]="
       (controller.condition === GAME_CONDITION.NEW ? 'controllersPage.condition.new' : 'controllersPage.condition.used')
         | transloco
-    }}
-  </span>
+    "
+    [variant]="controller.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
 </ng-template>

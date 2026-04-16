@@ -33,6 +33,7 @@ import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
+import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -49,7 +50,8 @@ import { GameLoanFormComponent } from './components/game-loan-form/game-loan-for
     MatProgressSpinner,
     TranslocoPipe,
     SaleFormComponent,
-    GameLoanFormComponent
+    GameLoanFormComponent,
+    BadgeChipComponent
   ]
 })
 export class GameDetailComponent implements OnInit {

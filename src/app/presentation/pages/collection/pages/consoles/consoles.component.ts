@@ -6,6 +6,7 @@ import { HardwareListBaseComponent } from '@/abstract/hardware-list-base/hardwar
 import { ConsoleModel } from '@/models/console/console.model';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
+import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
 
 @Component({
   selector: 'app-consoles',
@@ -13,7 +14,7 @@ import { HardwareListShellComponent } from '@/pages/collection/components/hardwa
   styleUrls: ['./consoles.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslocoPipe, HardwareListShellComponent]
+  imports: [MatIcon, TranslocoPipe, HardwareListShellComponent, BadgeChipComponent]
 })
 export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);

@@ -22,16 +22,13 @@
 </ng-template>
 
 <ng-template #cardChipsTpl let-console>
-  <span
-    class="hw-list__chip"
-    [class.hw-list__chip--new]="console.condition === GAME_CONDITION.NEW"
-    [class.hw-list__chip--used]="console.condition !== GAME_CONDITION.NEW">
-    {{
+  <app-badge-chip
+    [label]="
       (console.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
         | transloco
-    }}
-  </span>
+    "
+    [variant]="console.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
   @if (console.region) {
-    <span class="hw-list__chip hw-list__chip--neutral">{{ console.region }}</span>
+    <app-badge-chip [label]="console.region" variant="neutral" />
   }
 </ng-template>

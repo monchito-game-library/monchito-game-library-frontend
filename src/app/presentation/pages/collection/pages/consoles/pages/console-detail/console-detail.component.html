@@ -34,17 +34,14 @@
   (loanSaved)="onLoanSaved($event)">
   <!-- hwChips: condition + region chips -->
   <ng-container hwChips>
-    @if (console()?.condition === GAME_CONDITION.NEW) {
-      <span class="console-detail__chip console-detail__chip--new">
-        {{ 'consolesPage.condition.new' | transloco }}
-      </span>
-    } @else {
-      <span class="console-detail__chip console-detail__chip--used">
-        {{ 'consolesPage.condition.used' | transloco }}
-      </span>
-    }
+    <app-badge-chip
+      [label]="
+        (console()?.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
+          | transloco
+      "
+      [variant]="console()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
     @if (console()?.region) {
-      <span class="console-detail__chip console-detail__chip--neutral">{{ console()!.region }}</span>
+      <app-badge-chip [label]="console()!.region" variant="neutral" />
     }
   </ng-container>
 

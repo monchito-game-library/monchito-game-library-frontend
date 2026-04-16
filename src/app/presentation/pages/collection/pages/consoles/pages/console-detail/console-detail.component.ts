@@ -12,6 +12,7 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
+import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
 
 @Component({
   selector: 'app-console-detail',
@@ -19,7 +20,7 @@ import { HardwareDetailShellComponent } from '@/pages/collection/components/hard
   styleUrl: './console-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HardwareDetailShellComponent]
+  imports: [TranslocoPipe, HardwareDetailShellComponent, BadgeChipComponent]
 })
 export class ConsoleDetailComponent extends HardwareDetailBaseComponent {
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);

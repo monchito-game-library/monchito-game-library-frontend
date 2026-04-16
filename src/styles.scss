@@ -84,33 +84,6 @@ input[type='number'] {
   border: 1px solid var(--mat-sys-outline-variant);
 }
 
-.hw-list__chip {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 2px 0.5rem;
-  border-radius: 20px;
-  line-height: 1.4;
-
-  &--new {
-    background-color: var(--mat-sys-primary);
-    color: var(--mat-sys-on-primary);
-    font-weight: 600;
-  }
-
-  &--used {
-    background-color: var(--mat-sys-secondary-container);
-    color: var(--mat-sys-on-secondary-container);
-  }
-
-  &--neutral {
-    background-color: transparent;
-    color: var(--mat-sys-on-surface-variant);
-    border: 1px solid var(--mat-sys-outline-variant);
-  }
-}
-
 // ────────────────────────── Shared: hardware detail section / dl ──────────────────────────
 // Used by hardware-detail-shell (user data section) and console-detail (specs section via hwExtra slot).
 // Must live in global styles because ng-content projection retains the host component's encapsulation.
@@ -190,18 +163,4 @@ input[type='number'] {
     margin: 0 !important;
     border-radius: 0 !important;
   }
-}
-
-// ────────────────────────── Shared: platform chip ──────────────────────────
-.game-platform-chip {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.9);
-  padding: 2px 0.5rem;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
 }

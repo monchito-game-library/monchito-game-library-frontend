@@ -29,7 +29,7 @@
               </span>
             }
             @if (g.platform) {
-              <span class="game-detail__platform-chip game-platform-chip">{{ g.platform }}</span>
+              <app-badge-chip [label]="g.platform" variant="glass" />
             }
             @if (g.isFavorite) {
               <span class="game-detail__fav-chip">
