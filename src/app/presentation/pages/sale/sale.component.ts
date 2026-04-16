@@ -21,6 +21,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
 import { marketUseCasesProvider } from '@/di/use-cases/market.use-cases.provider';
 import { SaleFilterType, SaleTab } from '@/types/sale-page.type';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sale',
@@ -34,6 +35,7 @@ import { SaleFilterType, SaleTab } from '@/types/sale-page.type';
 export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
+  private readonly _router: Router = inject(Router);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
@@ -133,5 +135,20 @@ export class SaleComponent implements OnInit {
       controller: 'gamepad'
     };
     return icons[type];
+  }
+
+  /**
+   * Navigates to the detail page of the clicked item.
+   *
+   * @param {MarketItemType} type - Item type to determine the route segment
+   * @param {string} id - Item identifier
+   */
+  onItemClick(type: MarketItemType, id: string): void {
+    const segment: Record<MarketItemType, string> = {
+      game: 'games',
+      console: 'consoles',
+      controller: 'controllers'
+    };
+    void this._router.navigate(['/collection', segment[type], id]);
   }
 }

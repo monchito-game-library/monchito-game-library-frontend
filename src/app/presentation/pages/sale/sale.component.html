@@ -54,7 +54,7 @@
             </div>
             <div class="sale-page__list">
               @for (item of filteredAvailable(); track item.id) {
-                <div class="sale-page__item">
+                <div class="sale-page__item" role="button" (click)="onItemClick(item.itemType, item.id)">
                   <div class="sale-page__item-icon">
                     <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
                   </div>
@@ -131,7 +131,7 @@
             </div>
             <div class="sale-page__list">
               @for (item of filteredSold(); track item.id) {
-                <div class="sale-page__item">
+                <div class="sale-page__item" role="button" (click)="onItemClick(item.itemType, item.id)">
                   <div class="sale-page__item-icon">
                     <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
                   </div>

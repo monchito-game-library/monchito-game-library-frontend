@@ -188,6 +188,12 @@
   background: var(--mat-sys-surface-container);
   border-radius: 12px;
   border: 1px solid var(--mat-sys-outline-variant);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-high);
+  }
 }
 
 .sale-page__item-icon {
