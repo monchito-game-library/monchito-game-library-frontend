@@ -4,7 +4,26 @@
 
 - **Framework**: Vitest 4.1.0 vía `@angular/build:unit-test`
 - **Entorno DOM**: happy-dom 20.8.4
-- **Ejecutar tests**: `ng test` (una vez) / `ng test --watch` (watch mode)
+- **Ejecutar tests**: `npm test` (una vez) / `npm test -- --watch` (watch mode)
+- **Cobertura**: `npm run test:coverage` → informe HTML en `coverage/monchito-game-library/`
+
+---
+
+## Utilidades de test (`src/testing/`)
+
+Mocks centralizados reutilizables en `TestBed.providers`:
+
+| Fichero | Export | Uso típico |
+|---|---|---|
+| `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
+| `dialog.mock.ts` | `mockDialog` | `{ provide: MatDialog, useValue: mockDialog }` |
+| `snack-bar.mock.ts` | `mockSnackBar` | `{ provide: MatSnackBar, useValue: mockSnackBar }` |
+| `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
+| `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
+| `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
+| `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
+
+> Llama a `vi.clearAllMocks()` en `beforeEach` para reiniciar el estado entre tests. Si un mock devuelve un valor concreto por defecto (p.ej. `mockActivatedRoute.snapshot.paramMap.get` devuelve `null`), sobreescríbelo con `.mockReturnValue(...)` después del clear.
 
 ---
 
@@ -31,12 +50,16 @@
 | `supabase/console.mapper.spec.ts` | 17 | ✅ Cubierto |
 | `supabase/controller.mapper.spec.ts` | 13 | ✅ Cubierto |
 | `supabase/game.mapper.spec.ts` | 39 | ✅ Cubierto |
+| `supabase/hardware-brand.mapper.spec.ts` | 3 | ✅ Cubierto |
+| `supabase/hardware-console-specs.mapper.spec.ts` | 10 | ✅ Cubierto |
+| `supabase/hardware-edition.mapper.spec.ts` | 3 | ✅ Cubierto |
+| `supabase/hardware-model.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/store.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/user-preferences.mapper.spec.ts` | 8 | ✅ Cubierto |
 | `supabase/wishlist.mapper.spec.ts` | 8 | ✅ Cubierto |
 
-**Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined. El mapper de orders cubre mapeo de líneas, miembros, alocaciones y fechas opcionales.
+**Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined. El mapper de orders cubre mapeo de líneas, miembros, alocaciones y fechas opcionales. Los mappers de hardware cubren specs de consolas, ediciones, modelos y marcas.
 
 ---
 
@@ -49,8 +72,12 @@
 | `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
 | `console/console.use-cases.spec.ts` | 19 | ✅ Cubierto |
 | `controller/controller.use-cases.spec.ts` | 19 | ✅ Cubierto |
-| `market/market.use-cases.spec.ts` | 4 | ✅ Cubierto |
 | `game/game.use-cases.spec.ts` | 15 | ✅ Cubierto |
+| `hardware-brand/hardware-brand.use-cases.spec.ts` | 5 | ✅ Cubierto |
+| `hardware-console-specs/hardware-console-specs.use-cases.spec.ts` | 4 | ✅ Cubierto |
+| `hardware-edition/hardware-edition.use-cases.spec.ts` | 5 | ✅ Cubierto |
+| `hardware-model/hardware-model.use-cases.spec.ts` | 6 | ✅ Cubierto |
+| `market/market.use-cases.spec.ts` | 4 | ✅ Cubierto |
 | `orders/orders.use-cases.spec.ts` | 28 | ✅ Cubierto |
 | `protector/protector.use-cases.spec.ts` | 5 | ✅ Cubierto |
 | `store/store.use-cases.spec.ts` | 5 | ✅ Cubierto |
@@ -58,144 +85,9 @@
 | `user-preferences/user-preferences.use-cases.spec.ts` | 13 | ✅ Cubierto |
 | `wishlist/wishlist.use-cases.spec.ts` | 5 | ✅ Cubierto |
 
-**Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots. Orders cubre `getById`, `getAll`, `create`, `update`, `delete`, `addMember`, `setMemberReady`, `subscribeToOrderMembers`, `addLine`, `updateLine`, `deleteLine`, `setLinePackAndQty`, `getProducts`. Console y controller cubren además `updateSaleStatus`, `createLoan` y `returnLoan`.
+**Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots. Orders cubre `getById`, `getAll`, `create`, `update`, `delete`, `addMember`, `setMemberReady`, `subscribeToOrderMembers`, `addLine`, `updateLine`, `deleteLine`, `setLinePackAndQty`, `getProducts`. Console y controller cubren además `updateSaleStatus`, `createLoan` y `returnLoan`. Hardware use cases cubren CRUD de marcas, modelos, ediciones y specs de consola.
 
 **Patrón de test**: `TestBed.configureTestingModule` + token de repositorio mockeado con `vi.fn()`.
-
----
-
-### Capa de presentación — Guards (`src/app/presentation/guards`)
-
-| Fichero | Tests | Estado |
-|---|---|---|
-| `admin.guard.spec.ts` | 4 | ✅ Cubierto |
-| `desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
-| `user.guard.spec.ts` | 4 | ✅ Cubierto |
-
-**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px.
-
----
-
-### Capa de presentación — Servicios (`src/app/presentation/services`)
-
-| Fichero | Tests | Estado |
-|---|---|---|
-| `auth-state.service.spec.ts` | 19 | ✅ Cubierto |
-| `pwa-update.service.spec.ts` | 12 | ✅ Cubierto |
-| `theme.service.spec.ts` | 8 | ✅ Cubierto |
-| `user-context.service.spec.ts` | 11 | ✅ Cubierto |
-| `user-preferences.service.spec.ts` | 14 | ✅ Cubierto |
-
-**Qué se cubre**:
-- `ThemeService`: señal `isDarkMode`, métodos `setDarkTheme`/`setLightTheme`/`initTheme`.
-- `AuthStateService`: estado inicial, resolución asíncrona de sesión, `onAuthStateChange` y navegación al logout.
-- `UserContextService`: delegación a `AuthStateService`, URL de fallback de avatar (ui-avatars.com).
-- `UserPreferencesService`: valores iniciales de todos los signals, computed `isAdmin`, mutabilidad con `set()`.
-- `PwaUpdateService`: `checkForUpdate` en init y visibilitychange, detección de `VERSION_READY`, overlay en rutas seguras, diferimiento en rutas de formulario hasta la siguiente navegación segura.
-
----
-
-### Capa de presentación — Componentes (`src/app/presentation`)
-
-| Fichero | Tests | Estado |
-|---|---|---|
-| `ad-hoc/toggle-switch/toggle-switch.component.spec.ts` | 21 | ✅ Cubierto |
-| `ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
-| `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
-| `components/game-search-panel/game-search-panel.component.spec.ts` | 10 | ✅ Cubierto |
-| `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/auth/forgot-password/forgot-password.component.spec.ts` | 15 | ✅ Cubierto |
-| `pages/auth/login/login.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/auth/register/register.component.spec.ts` | 23 | ✅ Cubierto |
-| `pages/auth/reset-password/reset-password.component.spec.ts` | 26 | ✅ Cubierto |
-| `components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 20 | ✅ Cubierto |
-| `components/hardware-sale-form/hardware-sale-form.component.spec.ts` | 19 | ✅ Cubierto |
-| `pages/management/components/catalog-item-card/catalog-item-card.component.spec.ts` | 11 | ✅ Cubierto |
-| `pages/sale/sale.component.spec.ts` | 34 | ✅ Cubierto |
-| `pages/game-list/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/game-list/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 83 | ✅ Cubierto |
-| `pages/game-list/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/game-list/pages/game-detail/game-detail.component.spec.ts` | 38 | ✅ Cubierto |
-| `pages/game-list/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
-| `pages/game-list/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/game-list/game-list.component.spec.ts` | 69 | ✅ Cubierto |
-| `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 30 | ✅ Cubierto |
-| `pages/games/components/list-page-header/list-page-header.component.spec.ts` | 5 | ✅ Cubierto |
-| `pages/games/pages/consoles/consoles.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/games/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 35 | ✅ Cubierto |
-| `pages/games/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 20 | ✅ Cubierto |
-| `pages/games/pages/controllers/controllers.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/games/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 33 | ✅ Cubierto |
-| `pages/games/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 20 | ✅ Cubierto |
-| `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/management/audit-log/audit-log-management.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/management/hardware/hardware-brands-management.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/management/hardware/hardware-models-management.component.spec.ts` | 28 | ✅ Cubierto |
-| `pages/management/hardware/hardware-editions-management.component.spec.ts` | 27 | ✅ Cubierto |
-| `pages/management/protectors/protectors-management.component.spec.ts` | 37 | ✅ Cubierto |
-| `pages/management/stores/stores-management.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/management/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
-| `pages/orders/orders.component.spec.ts` | 11 | ✅ Cubierto |
-| `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/orders/order-create/order-create.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/orders/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 21 | ✅ Cubierto |
-| `pages/orders/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
-| `pages/orders/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/orders/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/orders/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/orders/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/orders/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
-| `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/wishlist/wishlist.component.spec.ts` | 36 | ✅ Cubierto |
-| `pages/wishlist/wishlist-detail/wishlist-detail.component.spec.ts` | — | ✅ Cubierto |
-
-**Qué se cubre**:
-- `OrdersComponent`: valores iniciales, `onCreateOrder`, `onOpenOrder`, estado de `loading` durante la carga.
-- `OrderSummaryCardComponent`: inputs básicos y renderizado.
-- `OrderCreateComponent`: formulario de creación, validación, `onSubmit`, `onCancel`.
-- `OrderInfoSectionComponent`: `onToggleSection` (expand/collapse), `startEditing` (parcheo de form, emit), `onCancelEdit` (hidingActions con fake timers), `onSaveHeader` (guard de `saving`, success, error, hidingActions con fake timers), `sortedMembers`, `readyCount`, `allMembersReady`.
-- `OrderCostSummaryComponent`: cálculo de subtotal por usuario, shipping, paypal fee, descuento (amount/%), total.
-- `OrderProductListComponent`: `visibleLines` (draft vs otros estados), `groupedLines` (agrupación y suma de cantidades).
-- `OrderStepperComponent`: inicialización de steps, `onSuggestionSelected`, `onStepConfirmed`, `onStepBack`, output `allPacksSelectedChange`.
-- `ReadyDialogComponent`: `canConfirm`, `getSelectedIndex`, `onSelectSuggestion`, `formatBreakdown`, `onConfirm` (sugerencia correcta), `onCancel`.
-- `AddEditLineDialogComponent`: modos add/edit, `canConfirm`, `onProductSelected`, `onConfirm`, `onCancel`.
-- `OrderInviteComponent`: carga de orden por token, unión al pedido (`onJoin`), estados de carga y error.
-- `ToggleSwitchComponent`: lógica CVA (`writeValue`, `registerOnChange`, `setDisabledState`), `onToggle`, output `changed`, `getIcon`.
-- `LoginComponent` / `RegisterComponent` / `ForgotPasswordComponent` / `ResetPasswordComponent`: validaciones de formulario, estados de `loading`, emisión de errores, integración con use cases. Para `RegisterComponent` y `ResetPasswordComponent` se cubren además las ramas early-return del validador privado `_passwordMatchValidator` invocándolo directamente vía `(component as any)._passwordMatchValidator(group)` con grupos sintéticos que carecen de uno de los controles.
-- `GameCardComponent`: señales computadas (`ratingStars`, `platinumIcon`, `isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`), método `onFlip`.
-- `WishlistCardComponent`: señal computada `storeLinks` (con y sin plataforma), outputs `editClicked`, `deleteClicked`, `ownClicked`.
-- `GameListComponent`: señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
-- `WishlistComponent`: señales `totalEstimatedSpend`, `itemsWithPrice`, `mobileCanConfirm`; flujo móvil (`onAddItem`, `onEditItem`, `onMobileGameSelected`, `onMobileBackToSearch`, `onMobileCancel`).
-- `SettingsComponent`: valores iniciales, `getDisplayName`/`getUserEmail`/`getAvatarUrl`, edición de nombre (`onEditName`, `onCancelEditName`, `onSaveName`), `toggleTheme`, `onSelectBanner`, `logout`.
-- `GameFormComponent`: valores iniciales, señal computada `coverImages` (con y sin `image_url`), `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store (con y sin valor previo seleccionado), `onCancel` (`location.back`), `hasChanges` en modo edición cuando el juego no fue encontrado (`_initialSnapshot = null`).
-- `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame` (dialog cancelado/confirmado, error); señales computadas `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`.
-- `SkeletonComponent`: valores por defecto de los tres inputs (`width`, `height`, `borderRadius`).
-- `AuthComponent` / `CreateAndUpdateGameComponent` / `ConfirmDialogComponent` / `ManagementComponent`: existencia y datos inyectados donde aplica.
-- `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
-- `GameSearchPanelComponent`: valores iniciales, `onSearchInput`, `onSelectGame`.
-- `GameCoverPositionDialogComponent`: parseo de `initialPosition` en constructor (sin posición inicial, con tres partes, con dos partes, con una parte), clamping de escala al máximo (`scale > 4 → 4`) y al mínimo (`scale < 1 → 1`), `onConfirm()`, `onCancel()`.
-- `AvatarCropDialogComponent`: existencia, `cropW`/`cropH`, `imageUrl`, `onCancel()`.
-- `WishlistItemDialogComponent`: modos add/edit, `canConfirm`, `onGameSelected`, `onChangGame`, `onConfirm`, `onCancel`.
-- `AuditLogManagementComponent`: valores iniciales, `getActionIcon`, `getActionLabel`.
-- `UsersManagementComponent`: valores iniciales, `isCurrentUser`, `getRoleLabel`, `onRoleChange` (skip si mismo rol).
-- `StoresManagementComponent`: valores iniciales, `onAddStore`, `onSelectStore`, `onClosePanel`, `getFormatHintLabel`.
-- `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`.
-- `AppComponent`: existencia, `isAuthenticated`, `isNavActive`, `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`.
-
----
-
-### Capa de presentación — Abstractas (`src/app/presentation/abstract`)
-
-| Fichero | Tests | Estado |
-|---|---|---|
-| `crop-interaction.base.spec.ts` | 29 | ✅ Cubierto |
-
-**Qué se cubre**: valores iniciales de signals, `onImageLoad` (cálculo de overflow según aspect ratio), drag con pointer events (inicio, movimiento, clamping, fin), zoom con rueda del ratón (min/max), touch de 1 dedo (pan) y 2 dedos (pinch-to-zoom), `onTouchEnd` con transición de 2 a 1 dedo.
-
-**Patrón de test**: subclase concreta `TestCropInteraction` que expone `_cropW`/`_cropH`; helpers `makePointerEvent`, `makeTouchEvent`, `makeImgEvent`.
 
 ---
 
@@ -209,6 +101,10 @@
 | `supabase-audit-log.repository.spec.ts` | 7 | ✅ Cubierto |
 | `supabase-console.repository.spec.ts` | 21 | ✅ Cubierto |
 | `supabase-controller.repository.spec.ts` | 21 | ✅ Cubierto |
+| `supabase-hardware-brand.repository.spec.ts` | 10 | ✅ Cubierto |
+| `supabase-hardware-console-specs.repository.spec.ts` | 6 | ✅ Cubierto |
+| `supabase-hardware-edition.repository.spec.ts` | 10 | ✅ Cubierto |
+| `supabase-hardware-model.repository.spec.ts` | 12 | ✅ Cubierto |
 | `supabase-market.repository.spec.ts` | 8 | ✅ Cubierto |
 | `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
 | `supabase-protector.repository.spec.ts` | 13 | ✅ Cubierto |
@@ -217,9 +113,213 @@
 | `supabase-wishlist.repository.spec.ts` | 12 | ✅ Cubierto |
 | `supabase-order.repository.spec.ts` | — | ⏳ Pendiente |
 
-**Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada. Console y controller cubren además `updateSaleStatus` (payload y manejo de error), `createLoan` (insert a `hardware_loans` + update en tabla principal, rama de error) y `returnLoan` (Promise.all con `returned_at` y limpieza de campos `active_loan_*`).
+**Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada. Console y controller cubren además `updateSaleStatus` (payload y manejo de error), `createLoan` (insert a `hardware_loans` + update en tabla principal, rama de error) y `returnLoan` (Promise.all con `returned_at` y limpieza de campos `active_loan_*`). Los repositorios de hardware (brand, edition, model, console-specs) cubren el CRUD básico con builder fluido.
 
 **Patrón de test**: `SUPABASE_CLIENT` `InjectionToken` provisto en `TestBed` con `useValue: mockSupabase` (objeto compartido de `supabase-mock.ts`). El cliente mock se inyecta directamente sin `vi.mock`. Builder fluido y thenable (`makeBuilder`). Para RAWG se usa `vi.spyOn(globalThis, 'fetch')`. Para cubrir ramas de campos privados se usa `(repo as any)._field = value`.
+
+---
+
+### Capa de presentación — Guards (`src/app/presentation/guards`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `admin/admin.guard.spec.ts` | 4 | ✅ Cubierto |
+| `desktop-only/desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
+| `user/user.guard.spec.ts` | 4 | ✅ Cubierto |
+
+**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px.
+
+---
+
+### Capa de presentación — Servicios (`src/app/presentation/services`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `auth-state/auth-state.service.spec.ts` | 19 | ✅ Cubierto |
+| `pwa-update/pwa-update.service.spec.ts` | 12 | ✅ Cubierto |
+| `rawg-search-state/rawg-search-state.service.spec.ts` | 6 | ✅ Cubierto |
+| `theme/theme.service.spec.ts` | 8 | ✅ Cubierto |
+| `user-context/user-context.service.spec.ts` | 11 | ✅ Cubierto |
+| `user-preferences-init/user-preferences-init.service.spec.ts` | 14 | ✅ Cubierto |
+| `user-preferences/user-preferences.service.spec.ts` | 14 | ✅ Cubierto |
+
+**Qué se cubre**:
+- `ThemeService`: señal `isDarkMode`, métodos `setDarkTheme`/`setLightTheme`/`initTheme`.
+- `AuthStateService`: estado inicial, resolución asíncrona de sesión, `onAuthStateChange` y navegación al logout.
+- `UserContextService`: delegación a `AuthStateService`, URL de fallback de avatar (ui-avatars.com).
+- `UserPreferencesService`: valores iniciales de todos los signals, computed `isAdmin`, mutabilidad con `set()`.
+- `UserPreferencesInitService`: inicialización de preferencias desde Supabase, valores por defecto cuando no existe registro.
+- `RawgSearchStateService`: valores iniciales de `rawgSearchResults`, `rawgSearchLoading` y `rawgSearchQuery`.
+- `PwaUpdateService`: `checkForUpdate` en init y visibilitychange, detección de `VERSION_READY`, overlay en rutas seguras, diferimiento en rutas de formulario hasta la siguiente navegación segura.
+
+---
+
+### Capa de presentación — Clases abstractas (`src/app/presentation/abstract`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `auth-base/auth-base.component.spec.ts` | 15 | ✅ Cubierto |
+| `crop-interaction-base/crop-interaction.base.spec.ts` | 29 | ✅ Cubierto |
+| `hardware-detail-base/hardware-detail-base.component.spec.ts` | 44 | ✅ Cubierto |
+| `hardware-form-base/hardware-form-base.component.spec.ts` | 41 | ✅ Cubierto |
+| `hardware-list-base/hardware-list-base.component.spec.ts` | 32 | ✅ Cubierto |
+
+**Qué se cubre**:
+- `CropInteractionBase`: valores iniciales de signals, `onImageLoad` (cálculo de overflow según aspect ratio), drag con pointer events (inicio, movimiento, clamping, fin), zoom con rueda del ratón (min/max), touch de 1 dedo (pan) y 2 dedos (pinch-to-zoom), `onTouchEnd` con transición de 2 a 1 dedo.
+- `HardwareDetailBase`: carga de ítem, estados de loading/error, acciones de préstamo/devolución/venta, signals derivados.
+- `HardwareFormBase`: inicialización de formulario en modo create/edit, validaciones, submit, cancelación.
+- `HardwareListBase`: carga de lista, filtros, selección, paginación.
+- `AuthBase`: lógica compartida de formularios de autenticación, manejo de errores.
+
+**Patrón de test**: subclase concreta (`TestXxxComponent`) que expone campos privados necesarios; helpers auxiliares (`makePointerEvent`, `makeTouchEvent`, `makeImgEvent`) para simular eventos del navegador.
+
+---
+
+### Capa de presentación — Componentes (`src/app/presentation`)
+
+#### Componentes compartidos
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `components/ad-hoc/badge-chip/badge-chip.component.spec.ts` | 5 | ✅ Cubierto |
+| `components/ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
+| `components/ad-hoc/toggle-switch/toggle-switch.component.spec.ts` | 21 | ✅ Cubierto |
+| `components/catalog-search-panel/catalog-search-panel.component.spec.ts` | 13 | ✅ Cubierto |
+| `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
+
+#### Auth (`pages/auth`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
+| `pages/auth/pages/forgot-password/forgot-password.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/auth/pages/login/login.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/auth/pages/register/register.component.spec.ts` | 23 | ✅ Cubierto |
+| `pages/auth/pages/reset-password/reset-password.component.spec.ts` | 26 | ✅ Cubierto |
+
+#### Colección (`pages/collection`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `pages/collection/collection.component.spec.ts` | 1 | ✅ Cubierto |
+| `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts` | 50 | ✅ Cubierto |
+| `pages/collection/components/hardware-form-shell/hardware-form-shell.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 20 | ✅ Cubierto |
+| `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 5 | ✅ Cubierto |
+| `pages/collection/components/sale-form/sale-form.component.spec.ts` | 28 | ✅ Cubierto |
+| `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 30 | ✅ Cubierto |
+| `pages/collection/pages/consoles/consoles.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 35 | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 20 | ✅ Cubierto |
+| `pages/collection/pages/controllers/controllers.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 33 | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 20 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 69 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 83 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 38 | ✅ Cubierto |
+
+#### Management (`pages/management`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/management/components/catalog-item-card/catalog-item-card.component.spec.ts` | 11 | ✅ Cubierto |
+| `pages/management/pages/audit-log/audit-log-management.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/pages/hardware/hardware-management.component.spec.ts` | 2 | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-brand-edit-panel/hardware-brand-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-edition-edit-panel/hardware-edition-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-model-edit-panel/hardware-model-edit-panel.component.spec.ts` | 11 | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/brands/hardware-brands-management.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/editions/hardware-editions-management.component.spec.ts` | 27 | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/models/hardware-models-management.component.spec.ts` | 28 | ✅ Cubierto |
+| `pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.spec.ts` | 19 | ✅ Cubierto |
+| `pages/management/pages/protectors/protectors-management.component.spec.ts` | 37 | ✅ Cubierto |
+| `pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/management/pages/stores/stores-management.component.spec.ts` | 26 | ✅ Cubierto |
+| `pages/management/pages/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
+
+#### Pedidos (`pages/orders`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `pages/orders/orders.component.spec.ts` | 11 | ✅ Cubierto |
+| `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/orders/pages/order-create/order-create.component.spec.ts` | 13 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/order-detail.component.spec.ts` | 89 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 21 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 22 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 13 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
+| `pages/orders/pages/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
+| `pages/orders/pages/orders-list/orders-list.component.spec.ts` | 16 | ✅ Cubierto |
+
+#### Venta, ajustes y wishlist
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `pages/sale/sale.component.spec.ts` | 34 | ✅ Cubierto |
+| `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
+| `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/wishlist/wishlist.component.spec.ts` | 36 | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts` | 23 | ✅ Cubierto |
+
+**Qué se cubre** (componentes):
+- `ToggleSwitchComponent`: lógica CVA (`writeValue`, `registerOnChange`, `setDisabledState`), `onToggle`, output `changed`, `getIcon`.
+- `BadgeChipComponent` / `SkeletonComponent`: inputs y valores por defecto.
+- `CatalogSearchPanelComponent`: valores iniciales, `onSearchInput`, `onSelectGame`.
+- `ConfirmDialogComponent`: existencia y datos inyectados.
+- `LoginComponent` / `RegisterComponent` / `ForgotPasswordComponent` / `ResetPasswordComponent`: validaciones de formulario, estados de `loading`, emisión de errores, integración con use cases. Para `RegisterComponent` y `ResetPasswordComponent` se cubren además las ramas early-return del validador privado `_passwordMatchValidator` invocándolo directamente vía `(component as any)._passwordMatchValidator(group)` con grupos sintéticos que carecen de uno de los controles.
+- `CollectionComponent`: existencia.
+- `HardwareDetailShell` / `HardwareFormShell` / `HardwareListShell`: shells que delegan en las clases abstractas; cubren los flujos completos a través de implementaciones concretas de consola y mando.
+- `HardwareLoanFormComponent` / `SaleFormComponent`: formularios de préstamo y venta con validaciones.
+- `ListPageHeaderComponent`: inputs y renderizado básico.
+- `CollectionOverviewComponent`: accesos a la colección (juegos/consolas/mandos), contadores.
+- `ConsolesComponent` / `ControllersComponent`: carga de lista, acciones de navegación.
+- `ConsoleDetailComponent` / `ControllerDetailComponent`: carga en paralelo, `goBack`, `editItem`, `deleteItem`, estado de venta/préstamo.
+- `CreateUpdateConsoleComponent` / `CreateUpdateControllerComponent`: modos create/edit, `onCancel`, existencia.
+- `GameCardComponent`: señales computadas (`ratingStars`, `platinumIcon`, `isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`), `onFlip`.
+- `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
+- `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
+- `GameCoverPositionDialogComponent`: parseo de `initialPosition` (sin posición, 3 partes, 2 partes, 1 parte), clamping de escala (max 4 / min 1), `onConfirm()`, `onCancel()`.
+- `GameFormComponent`: valores iniciales, `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store, `onCancel`, `hasChanges`.
+- `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame`; señales `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`.
+- `ManagementComponent` / `AuditLogManagementComponent` / `HardwareManagementComponent`: existencia, `getActionIcon`, `getActionLabel`.
+- `HardwareBrandEditPanel` / `HardwareEditionEditPanel` / `HardwareModelEditPanel` / `ProtectorEditPanel` / `StoreEditPanel`: paneles de edición inline con formulario y guardado.
+- `HardwareBrandsManagementComponent` / `HardwareEditionsManagementComponent` / `HardwareModelsManagementComponent`: listados de gestión con CRUD.
+- `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`.
+- `StoresManagementComponent`: valores iniciales, `onAddStore`, `onSelectStore`, `onClosePanel`, `getFormatHintLabel`.
+- `UsersManagementComponent`: valores iniciales, `isCurrentUser`, `getRoleLabel`, `onRoleChange` (skip si mismo rol).
+- `CatalogItemCardComponent`: inputs y slots de contenido.
+- `OrdersComponent` (shell): valores iniciales, `onCreateOrder`, `onOpenOrder`, estado de `loading`.
+- `OrderSummaryCardComponent`: inputs básicos.
+- `OrderCreateComponent`: formulario de creación, validación, `onSubmit`, `onCancel`.
+- `OrderDetailComponent`: `ngOnInit` (carga por id, status inicial), `selectingPacks`, `placingOrder`, `isOwner`, `nextStatus`/`prevStatus`, `onAdvanceStatus`, `onRegressStatus`, `onConfirmPacks`, `onToggleMemberReady`, `onShareInvitation`, `onDeleteOrder`, `onDeleteLine`, `onAddLine`, `onEditLine`, `onInfoEditingStarted`/`onInfoEditingEnded`, `onInfoHeaderSaved`, `onEditHeader`.
+- `OrderCostSummaryComponent`: cálculo de subtotal por usuario, shipping, paypal fee, descuento (amount/%), total.
+- `OrderInfoSectionComponent`: `onToggleSection`, `startEditing`, `onCancelEdit`, `onSaveHeader`, `sortedMembers`, `readyCount`, `allMembersReady`.
+- `OrderPlacingComponent`: columnas de tabla y totales; cobertura parcial (ver sección de lógica sin cobertura).
+- `OrderProductListComponent`: `visibleLines`, `groupedLines`.
+- `OrderStepperComponent`: inicialización de steps, selección de pack, auto-confirmación al navegar, `getMemberAllocations` (proporcional con Largest Remainder), output `allPacksSelectedChange`.
+- `ReadyDialogComponent`: `canConfirm`, `getSelectedIndex`, `onSelectSuggestion`, `formatBreakdown`, `onConfirm`, `onCancel`.
+- `AddEditLineDialogComponent`: modos add/edit, `canConfirm`, `onProductSelected`, `onConfirm`, `onCancel`.
+- `OrdersListComponent`: carga de lista, `onCreateOrder`, `onOpenOrder`, estados de carga.
+- `OrderInviteComponent`: carga de orden por token, unión al pedido (`onJoin`), estados de carga y error.
+- `SaleComponent`: flujo de venta de juego con formulario y confirmación.
+- `SettingsComponent`: valores iniciales, `getDisplayName`/`getUserEmail`/`getAvatarUrl`, edición de nombre (`onEditName`, `onCancelEditName`, `onSaveName`), `toggleTheme`, `onSelectBanner`, `logout`.
+- `AvatarCropDialogComponent`: existencia, `cropW`/`cropH`, `imageUrl`, `onCancel()`, `onConfirm()` (crop real con canvas mock).
+- `WishlistComponent`: señales `totalEstimatedSpend`, `itemsWithPrice`, `mobileCanConfirm`; flujo móvil (`onAddItem`, `onEditItem`, `onMobileGameSelected`, `onMobileBackToSearch`, `onMobileCancel`).
+- `WishlistCardComponent`: señal computada `storeLinks`, outputs `editClicked`, `deleteClicked`, `ownClicked`.
+- `WishlistItemDialogComponent`: modos add/edit, `canConfirm`, `onGameSelected`, `onChangGame`, `onConfirm`, `onCancel`.
+- `WishlistDetailComponent`: `storeLinks` (computed, con/sin plataforma), `ngOnInit` (state / fallback / notFound / error), `onBack`, `onEdit`, `onDelete` (cancel/confirm/success/error/null), `onOwn` (source rawg vs manual), `_userId` getter.
 
 ---
 
@@ -227,14 +327,26 @@
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `image-url.utils.spec.ts` | 8 | ✅ Cubierto |
-| `order-member.util.spec.ts` | 19 | ✅ Cubierto |
-| `pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
-| `validators.spec.ts` | 6 | ✅ Cubierto |
+| `image-url/image-url.utils.spec.ts` | 8 | ✅ Cubierto |
+| `order-member/order-member.util.spec.ts` | 19 | ✅ Cubierto |
+| `pack-optimizer/pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
+| `rawg-platform/rawg-platform.utils.spec.ts` | 12 | ✅ Cubierto |
+| `validators/validators.spec.ts` | 6 | ✅ Cubierto |
 
 **Qué se cubre**:
 - `pack-optimizer.util`: `optimizePacks` (casos de borde, pack único, múltiples packs, deduplicación, límite de 3 sugerencias, orden del breakdown, redondeo de costes) y `formatBreakdown`.
 - `order-member.util`: `sortedMembers` (owner primero), `readyCount`, `allMembersReady`.
+- `rawg-platform.utils`: normalización de nombres de plataformas RAWG.
+
+---
+
+### App component (`src/app`)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `app.component.spec.ts` | 27 | ✅ Cubierto |
+
+**Qué se cubre**: existencia, `isAuthenticated`, `isNavActive`, `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`.
 
 ---
 
@@ -243,18 +355,18 @@
 | Capa | Ficheros | Tests |
 |---|---|---|
 | Configuración | 1 | 3 |
-| Mappers | 9 | 157 |
-| Use Cases | 14 | 145 |
-| Repositorios | 13 (+1 pendiente) | 183 |
+| Mappers | 13 | 180 |
+| Use Cases | 17 | 169 |
+| Repositorios | 16 (+1 pendiente) | 228 |
 | Guards | 3 | 12 |
-| Servicios | 5 | 64 |
-| Componentes | 54 | 1451 |
-| Abstractas | 1 | 29 |
+| Servicios | 7 | 84 |
+| Abstractas | 5 | 161 |
 | App component | 1 | 27 |
-| Utilidades | 4 | 57 |
-| **Total** | **120** | **2098** |
+| Componentes | 66 | ~1300 |
+| Utilidades | 5 | 69 |
+| **Total** | **135** | **2233** |
 
-> Fuente autoritativa: `npm run test:coverage`.
+> Fuente autoritativa: `npm test`.
 
 ---
 
@@ -262,10 +374,10 @@
 
 | Métrica | Valor |
 |---|---|
-| Statements | ~96.6 % |
-| Branches | **96.34 %** (2738 / 2842) |
-| Functions | ~96.9 % |
-| Lines | ~97.3 % |
+| Statements | 97.89 % (4363 / 4457) |
+| Branches | **94.04 %** (2842 / 3022) |
+| Functions | 96.60 % (995 / 1030) |
+| Lines | 98.65 % (3594 / 3643) |
 
 ```bash
 npm run test:coverage
@@ -273,13 +385,13 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **96.34 % es el máximo alcanzable** para este proyecto con V8 coverage. Las 104 ramas restantes pertenecen a tres categorías de artefactos no testables descritos a continuación.
+> **El 94.04 % de ramas no es el máximo alcanzable.** Existe margen de mejora real en `order-detail.component.ts` (66.94 % branch coverage) y `order-placing.component.ts` (70.37 %). El resto de ramas sin cubrir pertenecen a las tres categorías de artefactos no testables descritas a continuación.
 
 ---
 
 ## Ramas sin cobertura — análisis exhaustivo
 
-Tras examinar el fichero `lcov.info` entrada a entrada (formato `BRDA:linea,bloque,rama,contador`), las 104 ramas sin cubrir se agrupan en tres categorías. **Ninguna corresponde a lógica de negocio real.**
+Tras examinar el fichero `lcov.info` entrada a entrada (formato `BRDA:linea,bloque,rama,contador`), las ramas sin cubrir se agrupan en cuatro categorías.
 
 ### Categoría 1 — Artefactos V8 en declaraciones de clase (~80 ramas)
 
@@ -332,12 +444,22 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 
 **Ficheros afectados**: cualquier componente con `computed()` que contenga `?.` o `??`.
 
+---
+
+### Categoría 4 — Lógica real con cobertura mejorable
+
+| Componente | Cobertura branches | Qué falta |
+|---|---|---|
+| `order-detail.component.ts` | 66.94 % | Ramas de error/edge en `_initForStatus`, flujos de `onEditHeader` y estados intermedios |
+| `order-placing.component.ts` | 70.37 % | Columnas condicionales y cálculos de tabla; cobertura parcial por ser presentación pura |
+
+---
+
 ## Lógica sin cobertura (deliberadamente no testeada)
 
 | Componente / método | Motivo |
 |---|---|
 | Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
 | `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. |
-| `order-placing.component.ts` | Componente de presentación pura (tabla de resumen de packs con URLs); toda su lógica son signals de input sin transformación. No tiene spec propio. |
 | `supabase-order.repository.ts` | Pendiente de spec. El repositorio se usa vía el contrato DI y los use cases lo mockean en sus tests. |
 | `supabase-console.repository.ts` / `supabase-controller.repository.ts` — segundo `await` dentro de `createLoan` | Tras crear el préstamo en `hardware_loans`, se actualiza la tabla principal con `active_loan_*`. Esta segunda llamada no lanza aunque falle (sin `if (error)` guard), por lo que no hay rama de error testable. Los assertions de `controllerBuilder.update` y `consoleBuilder.update` en `returnLoan` y `createLoan` verifican que se invoca, pero V8 marca la rama de rechazo de `Promise.all` como no cubierta porque no hay throw. |
