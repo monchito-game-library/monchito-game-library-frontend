@@ -30,5 +30,5 @@ export class ConfirmDialogComponent {
   data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(MAT_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically if needed. */
-  dialogRef: MatDialogRef<any, any> = inject(MatDialogRef<ConfirmDialogComponent>);
+  dialogRef: MatDialogRef<ConfirmDialogComponent> = inject(MatDialogRef<ConfirmDialogComponent>);
 }

@@ -1,7 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, ActivatedRoute, Router } from '@angular/router';
 import { NEVER } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -13,8 +12,8 @@ import { GAME_USE_CASES } from '@/domain/use-cases/game/game.use-cases.contract'
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
 import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,6 +33,44 @@ const mockCatalogDto: GameCatalogDto = {
   screenshots: []
 };
 
+/** Providers compartidos por todos los TestBed de esta spec. */
+function buildCommonProviders(opts: { catalogScreenshots?: string[] } = {}) {
+  return [
+    {
+      provide: GAME_USE_CASES,
+      useValue: {
+        getAllGamesForList: vi.fn(),
+        getGameForEdit: vi.fn(),
+        addGame: vi.fn(),
+        updateGame: vi.fn(),
+        deleteGame: vi.fn()
+      }
+    },
+    { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+    { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
+    {
+      provide: CATALOG_USE_CASES,
+      useValue: {
+        getScreenshots: vi.fn().mockResolvedValue([]),
+        searchBanners: vi.fn(),
+        getTopBanners: vi.fn(),
+        getAllGameScreenshots: vi.fn().mockResolvedValue(opts.catalogScreenshots ?? [])
+      }
+    },
+    {
+      provide: UserContextService,
+      useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+    },
+    { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
+    {
+      provide: TranslocoService,
+      useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
+    },
+    { provide: MatSnackBar, useValue: { open: vi.fn() } },
+    { provide: MatDialog, useValue: { open: vi.fn() } }
+  ];
+}
+
 describe('GameFormComponent', () => {
   let component: GameFormComponent;
   let fixture: ComponentFixture<GameFormComponent>;
@@ -43,42 +80,7 @@ describe('GameFormComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
-      providers: [
-        provideRouter([]),
-        provideAnimationsAsync('noop'),
-        {
-          provide: GAME_USE_CASES,
-          useValue: {
-            getAllGamesForList: vi.fn(),
-            getGameForEdit: vi.fn(),
-            addGame: vi.fn(),
-            updateGame: vi.fn(),
-            deleteGame: vi.fn()
-          }
-        },
-        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
-        {
-          provide: CATALOG_USE_CASES,
-          useValue: {
-            getScreenshots: vi.fn().mockResolvedValue([]),
-            searchBanners: vi.fn(),
-            getTopBanners: vi.fn(),
-            getAllGameScreenshots: vi.fn().mockResolvedValue([])
-          }
-        },
-        {
-          provide: UserContextService,
-          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
-        },
-        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
-        {
-          provide: TranslocoService,
-          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
-        },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
-      ],
+      providers: [provideRouter([]), ...buildCommonProviders()],
       schemas: [NO_ERRORS_SCHEMA]
     });
     TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
@@ -710,34 +712,9 @@ describe('GameFormComponent — ngOnInit', () => {
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
       providers: [
-        provideAnimationsAsync('noop'),
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(idParam) } } }
-        },
-        { provide: GAME_USE_CASES, useValue: gameUseCasesMock },
-        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
-        {
-          provide: CATALOG_USE_CASES,
-          useValue: {
-            getScreenshots: vi.fn().mockResolvedValue([]),
-            searchBanners: vi.fn(),
-            getTopBanners: vi.fn(),
-            getAllGameScreenshots: vi.fn().mockResolvedValue(['ss1.jpg'])
-          }
-        },
-        {
-          provide: UserContextService,
-          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
-        },
-        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
-        {
-          provide: TranslocoService,
-          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
-        },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(idParam) } } } },
+        ...buildCommonProviders({ catalogScreenshots: ['ss1.jpg'] }),
+        { provide: GAME_USE_CASES, useValue: gameUseCasesMock }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -841,52 +818,21 @@ describe('GameFormComponent — ngOnInit', () => {
   });
 });
 
-describe('GameFormComponent — constructor nav state', () => {
+describe('GameFormComponent — ngOnInit nav state', () => {
   function setupWithNavState(state: object) {
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
       providers: [
-        provideAnimationsAsync('noop'),
         {
           provide: Router,
           useValue: {
-            getCurrentNavigation: vi.fn().mockReturnValue({ extras: { state } }),
+            lastSuccessfulNavigation: vi.fn().mockReturnValue({ extras: { state } }),
+            navigate: vi.fn(),
             events: NEVER
           }
         },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue(null) } } } },
-        {
-          provide: GAME_USE_CASES,
-          useValue: {
-            getAllGamesForList: vi.fn(),
-            getGameForEdit: vi.fn(),
-            addGame: vi.fn(),
-            updateGame: vi.fn(),
-            deleteGame: vi.fn()
-          }
-        },
-        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
-        {
-          provide: CATALOG_USE_CASES,
-          useValue: {
-            getScreenshots: vi.fn().mockResolvedValue([]),
-            searchBanners: vi.fn(),
-            getTopBanners: vi.fn(),
-            getAllGameScreenshots: vi.fn().mockResolvedValue([])
-          }
-        },
-        {
-          provide: UserContextService,
-          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
-        },
-        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
-        {
-          provide: TranslocoService,
-          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
-        },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        ...buildCommonProviders()
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -894,13 +840,14 @@ describe('GameFormComponent — constructor nav state', () => {
     return fixture.componentInstance;
   }
 
-  it('establece _pendingWishlistItemId desde el navigation state', () => {
+  it('establece _pendingWishlistItemId desde el navigation state', async () => {
     vi.clearAllMocks();
     const component = setupWithNavState({ wishlistItemId: 'wl-item-1' });
+    await component.ngOnInit();
     expect((component as any)._pendingWishlistItemId).toBe('wl-item-1');
   });
 
-  it('establece _pendingCatalogEntry desde el navigation state', () => {
+  it('establece _pendingCatalogEntry desde el navigation state', async () => {
     vi.clearAllMocks();
     const catalogEntry = {
       rawg_id: 42,
@@ -917,117 +864,42 @@ describe('GameFormComponent — constructor nav state', () => {
       screenshots: []
     };
     const component = setupWithNavState({ catalogEntry });
+    await component.ngOnInit();
     expect((component as any)._pendingCatalogEntry).toEqual(catalogEntry);
   });
 });
 
 describe('GameFormComponent — constructor effect stores', () => {
-  it('reasigna el valor del store cuando stores carga con un store ya seleccionado', () => {
+  function setupEffectsBed() {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
       imports: [GameFormComponent],
-      providers: [
-        provideRouter([]),
-        provideAnimationsAsync('noop'),
-        {
-          provide: GAME_USE_CASES,
-          useValue: {
-            getAllGamesForList: vi.fn(),
-            getGameForEdit: vi.fn(),
-            addGame: vi.fn(),
-            updateGame: vi.fn(),
-            deleteGame: vi.fn()
-          }
-        },
-        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
-        {
-          provide: CATALOG_USE_CASES,
-          useValue: {
-            getScreenshots: vi.fn().mockResolvedValue([]),
-            searchBanners: vi.fn(),
-            getTopBanners: vi.fn(),
-            getAllGameScreenshots: vi.fn().mockResolvedValue([])
-          }
-        },
-        {
-          provide: UserContextService,
-          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
-        },
-        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
-        {
-          provide: TranslocoService,
-          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
-        },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
-      ],
+      providers: [provideRouter([]), ...buildCommonProviders()],
       schemas: [NO_ERRORS_SCHEMA]
     });
     TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
 
     const fixture = TestBed.createComponent(GameFormComponent);
-    const component = fixture.componentInstance;
+    return { fixture, component: fixture.componentInstance };
+  }
+
+  it('reasigna el valor del store cuando stores carga con un store ya seleccionado', () => {
+    const { component } = setupEffectsBed();
 
     component.form.controls.store.setValue('store-uuid', { emitEvent: false });
     (component as any)._storeModels.set([{ id: 'store-uuid', label: 'GameStop', formatHint: null }]);
-    TestBed.flushEffects();
+    TestBed.tick();
 
     expect(component.form.controls.store.value).toBe('store-uuid');
   });
 
   it('no reasigna el store cuando stores carga pero no hay store seleccionado (current es null)', () => {
-    vi.clearAllMocks();
-
-    TestBed.configureTestingModule({
-      imports: [GameFormComponent],
-      providers: [
-        provideRouter([]),
-        provideAnimationsAsync('noop'),
-        {
-          provide: GAME_USE_CASES,
-          useValue: {
-            getAllGamesForList: vi.fn(),
-            getGameForEdit: vi.fn(),
-            addGame: vi.fn(),
-            updateGame: vi.fn(),
-            deleteGame: vi.fn()
-          }
-        },
-        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
-        { provide: WISHLIST_USE_CASES, useValue: { deleteItem: vi.fn() } },
-        {
-          provide: CATALOG_USE_CASES,
-          useValue: {
-            getScreenshots: vi.fn().mockResolvedValue([]),
-            searchBanners: vi.fn(),
-            getTopBanners: vi.fn(),
-            getAllGameScreenshots: vi.fn().mockResolvedValue([])
-          }
-        },
-        {
-          provide: UserContextService,
-          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
-        },
-        { provide: UserPreferencesService, useValue: { allGames: signal([]) } },
-        {
-          provide: TranslocoService,
-          useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
-        },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    });
-    TestBed.overrideComponent(GameFormComponent, { set: { imports: [], template: '' } });
-
-    const fixture = TestBed.createComponent(GameFormComponent);
-    const component = fixture.componentInstance;
+    const { component } = setupEffectsBed();
 
     // store.value es null (modo creación, sin selección previa)
     (component as any)._storeModels.set([{ id: 'store-uuid', label: 'GameStop', formatHint: null }]);
-    TestBed.flushEffects();
+    TestBed.tick();
 
     expect(component.form.controls.store.value).toBeNull();
   });

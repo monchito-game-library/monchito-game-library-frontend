@@ -1,0 +1,137 @@
+<div class="hardware-detail">
+  @if (loading()) {
+    <div class="hardware-detail__loading">
+      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    </div>
+  } @else if (item()) {
+    <div class="hardware-detail__header">
+      <button mat-icon-button type="button" (click)="backClicked.emit()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="hardware-detail__header-titles">
+        <h2 class="hardware-detail__title">{{ model()?.name ?? '—' }}</h2>
+        <span class="hardware-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
+      </div>
+    </div>
+
+    @if (edition()) {
+      <div class="hardware-detail__edition">
+        <mat-icon>star</mat-icon>
+        {{ edition()!.name }}
+      </div>
+    }
+
+    <!-- Status chips (for sale / on loan) -->
+    @if (forSale() || activeLoanId()) {
+      <div class="hardware-detail__status-chips">
+        @if (forSale()) {
+          <span class="hardware-detail__status-chip hardware-detail__status-chip--sale">
+            <mat-icon>sell</mat-icon>
+            {{ 'hardwareSale.forSaleBadge' | transloco }}
+            @if (salePrice() !== null) {
+              · {{ salePrice() | currency: 'EUR' }}
+            }
+          </span>
+        }
+        @if (activeLoanId()) {
+          <span class="hardware-detail__status-chip hardware-detail__status-chip--loan">
+            <mat-icon>handshake</mat-icon>
+            {{ 'hardwareLoan.loanedBadge' | transloco }} {{ activeLoanTo() }}
+          </span>
+        }
+      </div>
+    }
+
+    <!-- Body: forms or item data -->
+    @if (showSaleForm()) {
+      <app-sale-form
+        [initialValues]="item()!"
+        i18nPrefix="hardwareSale"
+        [saveFn]="saveFn()"
+        [sellFn]="sellFn()"
+        (saveCompleted)="saveCompleted.emit($event)"
+        (sellCompleted)="sellCompleted.emit()"
+        (cancelled)="closeSaleClicked.emit()" />
+    } @else if (showLoanForm()) {
+      <app-hardware-loan-form
+        [item]="item()!"
+        [itemType]="itemType()"
+        (saved)="loanSaved.emit($event)"
+        (cancelled)="closeLoanClicked.emit()" />
+    } @else {
+      <!-- Section: item data -->
+      <section class="hw-detail__section">
+        <h3 class="hw-detail__section-title">{{ i18nPagePrefix() + '.sectionUser' | transloco }}</h3>
+
+        <!-- Slot for entity-specific chips (condition, region, compatibility, color) -->
+        <div class="hardware-detail__chips">
+          <ng-content select="[hwChips]" />
+        </div>
+
+        <div class="hardware-detail__purchase-row">
+          @if (price() !== null) {
+            <div class="hardware-detail__purchase-item">
+              <div class="hardware-detail__purchase-header">
+                <mat-icon>payments</mat-icon>
+                <span class="hardware-detail__purchase-label">{{ i18nFieldPrefix() + '.price' | transloco }}</span>
+              </div>
+              <span class="hardware-detail__purchase-value">{{ price() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </div>
+          }
+          @if (storeLabel()) {
+            <div class="hardware-detail__purchase-item">
+              <div class="hardware-detail__purchase-header">
+                <mat-icon>storefront</mat-icon>
+                <span class="hardware-detail__purchase-label">{{ i18nFieldPrefix() + '.store' | transloco }}</span>
+              </div>
+              <span class="hardware-detail__purchase-value">{{ storeLabel() }}</span>
+            </div>
+          }
+          @if (purchaseDate()) {
+            <div class="hardware-detail__purchase-item">
+              <div class="hardware-detail__purchase-header">
+                <mat-icon>calendar_today</mat-icon>
+                <span class="hardware-detail__purchase-label">{{
+                  i18nFieldPrefix() + '.purchaseDate' | transloco
+                }}</span>
+              </div>
+              <span class="hardware-detail__purchase-value">{{ purchaseDate() | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          }
+        </div>
+
+        @if (notes()) {
+          <dl class="hw-detail__dl">
+            <div class="hw-detail__dl-row hw-detail__dl-row--full">
+              <dt><mat-icon>notes</mat-icon> {{ i18nFieldPrefix() + '.notes' | transloco }}</dt>
+              <dd>{{ notes() }}</dd>
+            </div>
+          </dl>
+        }
+      </section>
+
+      <!-- Slot for extra sections (console specs, etc.) -->
+      <ng-content select="[hwExtra]" />
+
+      <!-- Actions -->
+      <div class="hardware-detail__actions">
+        <button mat-stroked-button type="button" (click)="editClicked.emit()">
+          <mat-icon>edit</mat-icon>
+          {{ 'gameCard.menu.edit' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
+          <mat-icon>sell</mat-icon>
+          {{ 'hardwareSale.manageBtn' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="openLoanClicked.emit()">
+          <mat-icon>handshake</mat-icon>
+          {{ activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco) }}
+        </button>
+        <button mat-stroked-button type="button" color="warn" (click)="deleteClicked.emit()" [disabled]="deleting()">
+          <mat-icon>delete</mat-icon>
+          {{ 'gameCard.menu.delete' | transloco }}
+        </button>
+      </div>
+    }
+  }
+</div>

@@ -2,7 +2,6 @@ import { ApplicationConfig, isDevMode, LOCALE_ID, provideZonelessChangeDetection
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
@@ -26,7 +25,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     { provide: LOCALE_ID, useValue: 'es' },
-    provideAnimationsAsync(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     provideHttpClient(),
     provideTransloco({

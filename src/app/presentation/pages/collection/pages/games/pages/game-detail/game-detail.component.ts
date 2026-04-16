@@ -23,14 +23,17 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
-import { GameSaleFormComponent } from './components/game-sale-form/game-sale-form.component';
+import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
+import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
+import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
+import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -46,8 +49,9 @@ import { GameLoanFormComponent } from './components/game-loan-form/game-loan-for
     MatButton,
     MatProgressSpinner,
     TranslocoPipe,
-    GameSaleFormComponent,
-    GameLoanFormComponent
+    SaleFormComponent,
+    GameLoanFormComponent,
+    BadgeChipComponent
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -124,6 +128,40 @@ export class GameDetailComponent implements OnInit {
     return rating !== null && rating !== undefined && rating % 2 !== 0;
   });
 
+  /**
+   * Saves the game's availability status (forSale + salePrice) via the use case.
+   * Passed as the saveFn input to SaleFormComponent.
+   *
+   * @param {SaleAvailabilityValues} v - Availability values from the form
+   */
+  readonly gameSaveFn = async (v: SaleAvailabilityValues): Promise<void> => {
+    const g = this.game()!;
+    const sale: GameSaleStatusModel = {
+      forSale: v.forSale,
+      salePrice: v.forSale ? v.salePrice : null,
+      soldAt: g.soldAt,
+      soldPriceFinal: g.soldPriceFinal
+    };
+    await this._gameUseCases.updateSaleStatus(this._userId, g.uuid, sale);
+  };
+
+  /**
+   * Registers the game as sold via the use case.
+   * Passed as the sellFn input to SaleFormComponent.
+   *
+   * @param {SaleSoldValues} v - Sold values from the form
+   */
+  readonly gameSellFn = async (v: SaleSoldValues): Promise<void> => {
+    const g = this.game()!;
+    const sale: GameSaleStatusModel = {
+      forSale: false,
+      salePrice: null,
+      soldAt: v.soldAt,
+      soldPriceFinal: v.soldPriceFinal
+    };
+    await this._gameUseCases.updateSaleStatus(this._userId, g.uuid, sale);
+  };
+
   ngOnInit(): void {
     const uuid = this._route.snapshot.paramMap.get('id');
     if (!uuid) {
@@ -180,18 +218,23 @@ export class GameDetailComponent implements OnInit {
   }
 
   /**
-   * Called when the sale form saves successfully.
-   * Updates the game signal and returns to the data view.
+   * Called after the sale form saves availability successfully.
+   * Updates the game signal with the new forSale/salePrice values and closes the form.
    *
-   * @param {GameEditModel} updated - Game model with the new sale values applied
+   * @param {SaleAvailabilityValues} values - Updated availability values from the form
    */
-  onSaleSaved(updated: GameEditModel): void {
-    if (updated.soldAt) {
-      void this._router.navigate(['/collection/games']);
-      return;
-    }
-    this.game.set(updated);
+  onSaveCompleted(values: SaleAvailabilityValues): void {
+    const g = this.game()!;
+    this.game.set({ ...g, forSale: values.forSale, salePrice: values.forSale ? values.salePrice : null });
     this.showSaleForm.set(false);
+  }
+
+  /**
+   * Called after the sale form registers the game as sold.
+   * Navigates to the games list since the game is no longer in the active collection.
+   */
+  onSellCompleted(): void {
+    void this._router.navigate(['/collection/games']);
   }
 
   /**

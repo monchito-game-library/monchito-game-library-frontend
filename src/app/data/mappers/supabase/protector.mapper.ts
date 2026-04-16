@@ -5,7 +5,7 @@ import { ProtectorCategory } from '@/types/protector-category.type';
 /**
  * Maps an order_products table row to the ProtectorModel domain model.
  *
- * @param {ProtectorDto} dto - DTO/modelo recibido para mapear
+ * @param {ProtectorDto} dto - Row from the order_products table
  */
 export function mapProtector(dto: ProtectorDto): ProtectorModel {
   return {
@@ -25,7 +25,7 @@ export function mapProtector(dto: ProtectorDto): ProtectorModel {
 /**
  * Maps a ProtectorModel to a ProtectorInsertDto for Supabase inserts.
  *
- * @param {Omit<ProtectorModel, 'id'>} model - DTO/modelo recibido para mapear
+ * @param {Omit<ProtectorModel, 'id'>} model - Protector model to map
  */
 export function mapProtectorToInsertDto(model: Omit<ProtectorModel, 'id'>): ProtectorInsertDto {
   return {

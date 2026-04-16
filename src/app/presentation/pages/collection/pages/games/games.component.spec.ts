@@ -7,11 +7,11 @@ import { GamesComponent } from './games.component';
 import { GameListModel } from '@/models/game/game-list.model';
 import { GAME_USE_CASES } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, NavigationEnd, provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 

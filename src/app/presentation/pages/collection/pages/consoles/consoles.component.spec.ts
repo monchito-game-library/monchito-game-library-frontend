@@ -10,11 +10,11 @@ import { CONSOLE_USE_CASES } from '@/domain/use-cases/console/console.use-cases.
 import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contract';
 import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConsoleModel } from '@/models/console/console.model';
-import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
-import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
-import { StoreModel } from '@/models/store/store.model';
+import { mockRouter } from '@/testing/router.mock';
+import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockUserContext } from '@/testing/user-context.mock';
 
 function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {
   return {
@@ -41,25 +41,6 @@ function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {
   };
 }
 
-function makeBrand(overrides: Partial<HardwareBrandModel> = {}): HardwareBrandModel {
-  return { id: 'brand-1', name: 'Sony', ...overrides };
-}
-
-function makeHardwareModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelModel {
-  return {
-    id: 'model-1',
-    brandId: 'brand-1',
-    name: 'PlayStation 5',
-    type: 'console',
-    generation: 9,
-    ...overrides
-  };
-}
-
-function makeStore(overrides: Partial<StoreModel> = {}): StoreModel {
-  return { id: 'store-1', label: 'Media Markt', formatHint: null, ...overrides };
-}
-
 describe('ConsolesComponent', () => {
   let component: ConsolesComponent;
   let fixture: ComponentFixture<ConsolesComponent>;
@@ -78,18 +59,6 @@ describe('ConsolesComponent', () => {
 
   const mockModelUseCases = {
     getAllByType: vi.fn()
-  };
-
-  const mockUserContext = {
-    requireUserId: vi.fn()
-  };
-
-  const mockRouter = {
-    navigate: vi.fn()
-  };
-
-  const mockSnackBar = {
-    open: vi.fn()
   };
 
   beforeEach(() => {
@@ -125,245 +94,28 @@ describe('ConsolesComponent', () => {
     component = fixture.componentInstance;
   });
 
-  describe('valores iniciales', () => {
-    it('consoles es []', () => {
-      expect(component.consoles()).toEqual([]);
-    });
-
-    it('loading empieza en true', () => {
-      expect(component.loading()).toBe(true);
-    });
-
-    it('searchQuery es cadena vacía', () => {
-      expect(component.searchQuery()).toBe('');
-    });
-  });
-
-  describe('filteredConsoles', () => {
-    it('con query vacía devuelve todas las consolas', () => {
-      const consoles = [makeConsole({ id: 'c-1' }), makeConsole({ id: 'c-2' })];
-      component.consoles.set(consoles);
-      component.searchQuery.set('');
-
-      expect(component.filteredConsoles()).toEqual(consoles);
-    });
-
-    it('con query filtra por nombre del modelo', () => {
-      const matchingConsole = makeConsole({ id: 'c-1', modelId: 'model-1', brandId: 'brand-1' });
-      const otherConsole = makeConsole({ id: 'c-2', modelId: 'model-2', brandId: 'brand-2' });
-      component.consoles.set([matchingConsole, otherConsole]);
-
-      (component as any)._hardwareModels.set([
-        makeHardwareModel({ id: 'model-1', name: 'PlayStation 5' }),
-        makeHardwareModel({ id: 'model-2', name: 'Xbox Series X' })
-      ]);
-      (component as any)._brands.set([
-        makeBrand({ id: 'brand-1', name: 'Sony' }),
-        makeBrand({ id: 'brand-2', name: 'Microsoft' })
-      ]);
-
-      component.searchQuery.set('playstation');
-
-      expect(component.filteredConsoles()).toEqual([matchingConsole]);
-    });
-
-    it('con query filtra por nombre de marca', () => {
-      const sonyConsole = makeConsole({ id: 'c-1', brandId: 'brand-1', modelId: 'model-1' });
-      const msConsole = makeConsole({ id: 'c-2', brandId: 'brand-2', modelId: 'model-2' });
-      component.consoles.set([sonyConsole, msConsole]);
-
-      (component as any)._brands.set([
-        makeBrand({ id: 'brand-1', name: 'Sony' }),
-        makeBrand({ id: 'brand-2', name: 'Microsoft' })
-      ]);
-      (component as any)._hardwareModels.set([
-        makeHardwareModel({ id: 'model-1', brandId: 'brand-1', name: 'PlayStation 5' }),
-        makeHardwareModel({ id: 'model-2', brandId: 'brand-2', name: 'Xbox Series X' })
-      ]);
-
-      component.searchQuery.set('microsoft');
-
-      expect(component.filteredConsoles()).toEqual([msConsole]);
-    });
-
-    it('la búsqueda es insensible a mayúsculas', () => {
-      const console1 = makeConsole({ id: 'c-1', modelId: 'model-1' });
-      component.consoles.set([console1]);
-      (component as any)._hardwareModels.set([makeHardwareModel({ id: 'model-1', name: 'PlayStation 5' })]);
-      (component as any)._brands.set([]);
-
-      component.searchQuery.set('PLAYSTATION');
-
-      expect(component.filteredConsoles()).toEqual([console1]);
-    });
-
-    it('con query que no coincide devuelve lista vacía', () => {
-      component.consoles.set([makeConsole()]);
-      (component as any)._hardwareModels.set([makeHardwareModel({ name: 'PlayStation 5' })]);
-      (component as any)._brands.set([makeBrand({ name: 'Sony' })]);
-
-      component.searchQuery.set('nintendo');
-
-      expect(component.filteredConsoles()).toEqual([]);
-    });
-
-    it('usa cadena vacía como nombre de modelo cuando el modelo no se encuentra en el catálogo', () => {
-      const consoleWithUnknownModel = makeConsole({ id: 'c-1', modelId: 'unknown-model', brandId: 'brand-1' });
-      component.consoles.set([consoleWithUnknownModel]);
-      (component as any)._hardwareModels.set([]);
-      (component as any)._brands.set([makeBrand({ id: 'brand-1', name: 'Sony' })]);
-
-      component.searchQuery.set('sony');
-
-      expect(component.filteredConsoles()).toEqual([consoleWithUnknownModel]);
-    });
-  });
-
-  describe('totalSpent', () => {
-    it('devuelve 0 cuando no hay consolas', () => {
-      component.consoles.set([]);
-
-      expect(component.totalSpent()).toBe(0);
-    });
-
-    it('suma los precios de las consolas filtradas', () => {
-      component.consoles.set([makeConsole({ price: 300 }), makeConsole({ id: 'c-2', price: 150 })]);
-      component.searchQuery.set('');
-
-      expect(component.totalSpent()).toBe(450);
-    });
-
-    it('trata precio null como 0', () => {
-      component.consoles.set([makeConsole({ price: null }), makeConsole({ id: 'c-2', price: 200 })]);
-      component.searchQuery.set('');
-
-      expect(component.totalSpent()).toBe(200);
-    });
-
-    it('solo suma las consolas que pasan el filtro', () => {
-      const sony = makeConsole({ id: 'c-1', price: 500, brandId: 'brand-1', modelId: 'model-1' });
-      const ms = makeConsole({ id: 'c-2', price: 400, brandId: 'brand-2', modelId: 'model-2' });
-      component.consoles.set([sony, ms]);
-      (component as any)._brands.set([
-        makeBrand({ id: 'brand-1', name: 'Sony' }),
-        makeBrand({ id: 'brand-2', name: 'Microsoft' })
-      ]);
-      (component as any)._hardwareModels.set([
-        makeHardwareModel({ id: 'model-1', brandId: 'brand-1', name: 'PlayStation 5' }),
-        makeHardwareModel({ id: 'model-2', brandId: 'brand-2', name: 'Xbox Series X' })
-      ]);
-
-      component.searchQuery.set('sony');
-
-      expect(component.totalSpent()).toBe(500);
-    });
-  });
-
-  describe('resolveStoreName()', () => {
-    it('devuelve cadena vacía para id null', () => {
-      expect(component.resolveStoreName(null)).toBe('');
-    });
-
-    it('devuelve el label de la tienda cuando se encuentra', () => {
-      (component as any)._stores.set([makeStore({ id: 'store-1', label: 'Media Markt' })]);
-
-      expect(component.resolveStoreName('store-1')).toBe('Media Markt');
-    });
-
-    it('devuelve el id como fallback cuando no se encuentra la tienda', () => {
-      (component as any)._stores.set([]);
-
-      expect(component.resolveStoreName('id-desconocido')).toBe('id-desconocido');
-    });
-  });
-
-  describe('resolveBrandName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveBrandName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre de la marca cuando se encuentra', () => {
-      (component as any)._brands.set([makeBrand({ id: 'brand-1', name: 'Sony' })]);
-
-      expect(component.resolveBrandName('brand-1')).toBe('Sony');
-    });
-
-    it('devuelve — cuando no se encuentra la marca', () => {
-      (component as any)._brands.set([]);
-
-      expect(component.resolveBrandName('brand-inexistente')).toBe('—');
-    });
-  });
-
-  describe('resolveModelName()', () => {
-    it('devuelve — para id null', () => {
-      expect(component.resolveModelName(null)).toBe('—');
-    });
-
-    it('devuelve el nombre del modelo cuando se encuentra', () => {
-      (component as any)._hardwareModels.set([makeHardwareModel({ id: 'model-1', name: 'PlayStation 5' })]);
-
-      expect(component.resolveModelName('model-1')).toBe('PlayStation 5');
-    });
-
-    it('devuelve — cuando no se encuentra el modelo', () => {
-      (component as any)._hardwareModels.set([]);
-
-      expect(component.resolveModelName('model-inexistente')).toBe('—');
-    });
-  });
-
-  describe('onDetail()', () => {
-    it('navega a /collection/consoles/:id', () => {
-      const console1 = makeConsole({ id: 'console-abc' });
-
-      component.onDetail(console1);
-
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/consoles', 'console-abc']);
-    });
-  });
-
-  describe('onAdd()', () => {
-    it('navega a /collection/consoles/add', () => {
-      component.onAdd();
-
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection/consoles/add']);
-    });
-  });
-
   describe('ngOnInit', () => {
-    it('carga consolas, tiendas y catálogo y pone loading a false', async () => {
+    it('llama a getAllForUser con el userId correcto y setea los items', async () => {
       mockConsoleUseCases.getAllForUser.mockResolvedValue([makeConsole()]);
-      mockStoreUseCases.getAllStores.mockResolvedValue([makeStore()]);
-      mockBrandUseCases.getAll.mockResolvedValue([makeBrand()]);
-      mockModelUseCases.getAllByType.mockResolvedValue([makeHardwareModel()]);
 
       await component.ngOnInit();
 
-      expect(component.consoles()).toHaveLength(1);
-      expect(component.loading()).toBe(false);
+      expect(mockConsoleUseCases.getAllForUser).toHaveBeenCalledWith('user-1');
+      expect(component.items()).toHaveLength(1);
     });
 
-    it('muestra snackbar y mantiene loading en false si _loadConsoles falla', async () => {
+    it('llama a _loadCatalog con tipo console', async () => {
+      await component.ngOnInit();
+
+      expect(mockModelUseCases.getAllByType).toHaveBeenCalledWith('console');
+    });
+
+    it('muestra snackbar y mantiene loading en false si la carga de consolas falla', async () => {
       mockConsoleUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
 
       await component.ngOnInit();
 
       expect(mockSnackBar.open).toHaveBeenCalled();
-      expect(component.loading()).toBe(false);
-    });
-
-    it('continúa aunque _loadStores falle (fallo silencioso)', async () => {
-      mockStoreUseCases.getAllStores.mockRejectedValue(new Error('store error'));
-
-      await expect(component.ngOnInit()).resolves.not.toThrow();
-      expect(component.loading()).toBe(false);
-    });
-
-    it('continúa aunque _loadCatalog falle (fallo silencioso)', async () => {
-      mockBrandUseCases.getAll.mockRejectedValue(new Error('catalog error'));
-
-      await expect(component.ngOnInit()).resolves.not.toThrow();
       expect(component.loading()).toBe(false);
     });
   });

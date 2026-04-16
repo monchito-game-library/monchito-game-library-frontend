@@ -15,9 +15,9 @@ import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { SlicePipe } from '@angular/common';
+import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
-import { GameSearchPanelComponent } from '@/components/game-search-panel/game-search-panel.component';
+import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
 import { WishlistItemForm } from '@/interfaces/forms/wishlist-item-form.interface';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
@@ -43,8 +43,9 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
     MatSelect,
     MatOption,
     MatIcon,
+    NgOptimizedImage,
     TranslocoPipe,
-    GameSearchPanelComponent,
+    CatalogSearchPanelComponent,
     SlicePipe
   ]
 })
@@ -87,7 +88,7 @@ export class WishlistItemDialogComponent {
    * Called when the user selects a game from the search panel.
    * Transitions from search view to form view and resets the platform selection.
    *
-   * @param {GameCatalogDto} game - Juego seleccionado del catálogo
+   * @param {GameCatalogDto} game - Game selected from the catalogue
    */
   onGameSelected(game: GameCatalogDto): void {
     this.selectedCatalogEntry.set(game);
@@ -108,9 +109,7 @@ export class WishlistItemDialogComponent {
    * In add mode the user must have selected a game first.
    */
   canConfirm(): boolean {
-    if (!this.form.valid) return false;
-    if (this.config.mode === 'add' && !this.selectedCatalogEntry()) return false;
-    return true;
+    return this.form.valid && (this.config.mode !== 'add' || !!this.selectedCatalogEntry());
   }
 
   /**

@@ -6,7 +6,7 @@
   @if (showSearch()) {
     <!-- Step 1 (add mode): search for a game -->
     <p class="wishlist-item-dialog__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
-    <app-game-search-panel (gameSelected)="onGameSelected($event)" />
+    <app-catalog-search-panel (gameSelected)="onGameSelected($event)" />
   } @else {
     <!-- Step 2 / edit mode: form fields -->
     @if (selectedCatalogEntry(); as game) {
@@ -15,7 +15,7 @@
         @if (game.image_url) {
           <img
             class="wishlist-item-dialog__game-cover"
-            [src]="game.image_url"
+            [ngSrc]="game.image_url"
             [alt]="game.title"
             width="56"
             height="74" />

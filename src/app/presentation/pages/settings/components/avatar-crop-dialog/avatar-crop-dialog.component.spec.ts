@@ -75,9 +75,8 @@ describe('AvatarCropDialogComponent', () => {
       };
       vi.spyOn(document, 'createElement').mockReturnValue(mockCanvas as unknown as HTMLElement);
 
-      // Simula imagen cargada con dimensiones reales
-      const fakeImg = { naturalWidth: 560, naturalHeight: 560 } as HTMLImageElement;
-      (component as any)._imgEl = fakeImg;
+      // Simulate loaded image with real dimensions
+      (component as any)._imgEl = { naturalWidth: 560, naturalHeight: 560 } as HTMLImageElement;
       (component as any)._overflowX = 0;
       (component as any)._overflowY = 0;
 

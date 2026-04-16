@@ -29,7 +29,7 @@
               </span>
             }
             @if (g.platform) {
-              <span class="game-detail__platform-chip">{{ g.platform }}</span>
+              <app-badge-chip [label]="g.platform!" variant="neutral" />
             }
             @if (g.isFavorite) {
               <span class="game-detail__fav-chip">
@@ -68,7 +68,14 @@
     <!-- Body -->
     <div class="game-detail__body">
       @if (showSaleForm()) {
-        <app-game-sale-form [game]="g" (saved)="onSaleSaved($event)" (cancelled)="closeSaleView()" />
+        <app-sale-form
+          [initialValues]="g"
+          i18nPrefix="gameDetail.sale"
+          [saveFn]="gameSaveFn"
+          [sellFn]="gameSellFn"
+          (saveCompleted)="onSaveCompleted($event)"
+          (sellCompleted)="onSellCompleted()"
+          (cancelled)="closeSaleView()" />
       } @else if (showLoanForm()) {
         <app-game-loan-form [game]="g" (saved)="onLoanSaved($event)" (cancelled)="closeLoanView()" />
       } @else {
@@ -124,7 +131,7 @@
                 </span>
                 <span class="game-detail__data-value game-detail__data-value--rating">
                   <span class="game-detail__stars">
-                    @for (s of ratingStars(); track $index) {
+                    @for (_ of ratingStars(); track $index) {
                       <mat-icon>star</mat-icon>
                     }
                     @if (hasHalfStar()) {

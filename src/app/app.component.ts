@@ -9,18 +9,19 @@ import {
   ViewChildren,
   WritableSignal
 } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
-import { ThemeService } from '@/services/theme.service';
-import { UserPreferencesService } from '@/services/user-preferences.service';
-import { UserPreferencesInitService } from '@/services/user-preferences-init.service';
+import { ThemeService } from '@/services/theme/theme.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
+import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
-import { PwaUpdateService } from '@/services/pwa-update.service';
+import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,16 @@ import { PwaUpdateService } from '@/services/pwa-update.service';
   styleUrls: ['./app.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, MatIcon, MatMenu, MatMenuTrigger, SkeletonComponent, TranslocoPipe]
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatIcon,
+    MatMenu,
+    MatMenuTrigger,
+    SkeletonComponent,
+    TranslocoPipe,
+    NgOptimizedImage
+  ]
 })
 export class AppComponent implements OnInit {
   private readonly _router: Router = inject(Router);

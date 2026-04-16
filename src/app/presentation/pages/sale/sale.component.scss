@@ -48,7 +48,7 @@
   overflow: hidden;
 }
 
-// ── Filtros de tipo ────────────────────────────────────────────────────────────
+// ── Type filters ───────────────────────────────────────────────────────────────
 
 .sale-page__filters {
   display: flex;
@@ -281,8 +281,7 @@
   }
 
   .sale-page__content {
-    padding: 1rem;
-    padding-bottom: calc(60px + 1rem);
+    padding: 1rem 1rem calc(60px + 1rem);
   }
 
   .sale-page__tab-label {

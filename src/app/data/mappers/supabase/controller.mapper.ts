@@ -36,7 +36,7 @@ export function mapController(dto: ControllerDto): ControllerModel {
 /**
  * Maps a ControllerModel to a ControllerInsertDto for Supabase inserts and updates.
  *
- * @param {string} userId - UUID del usuario autenticado
+ * @param {string} userId - UUID of the authenticated user
  * @param {ControllerModel} model - Domain model to persist
  */
 export function mapControllerToInsertDto(userId: string, model: ControllerModel): ControllerInsertDto {

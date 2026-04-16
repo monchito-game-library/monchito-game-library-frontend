@@ -1,0 +1,103 @@
+<div class="hw-list">
+  <!-- Header: stats, search and add button -->
+  <app-list-page-header
+    [searchValue]="searchQuery()"
+    [searchPlaceholder]="i18nPrefix() + '.search'"
+    [showAddBtn]="items().length > 0"
+    (searchChange)="searchChange.emit($event)"
+    (addClick)="addClick.emit()">
+    <!-- stat: item count -->
+    <div class="hw-list__stat">
+      <mat-icon>{{ statIcon() }}</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="24px" height="12px" />
+      } @else {
+        <span>{{ filteredItems().length }}</span>
+      }
+    </div>
+    <div class="hw-list__stat-divider"></div>
+    <!-- stat: total spent -->
+    <div class="hw-list__stat">
+      <mat-icon>payments</mat-icon>
+      @if (loading()) {
+        <app-skeleton width="60px" height="12px" />
+      } @else {
+        <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+      }
+    </div>
+  </app-list-page-header>
+
+  <!-- Scrollable content area -->
+  <div class="hw-list__content">
+    @if (loading()) {
+      <div class="hw-list__loading">
+        <mat-progress-spinner diameter="48" mode="indeterminate" />
+        <p>{{ i18nPrefix() + '.loading' | transloco }}</p>
+      </div>
+    } @else if (items().length === 0) {
+      <div class="hw-list__empty">
+        <mat-icon class="hw-list__empty-icon">{{ emptyIcon() }}</mat-icon>
+        <p class="hw-list__empty-title">{{ i18nPrefix() + '.empty.title' | transloco }}</p>
+        <p class="hw-list__empty-subtitle">{{ i18nPrefix() + '.empty.subtitle' | transloco }}</p>
+        <button mat-flat-button (click)="addClick.emit()">
+          <mat-icon>add</mat-icon>
+          {{ i18nPrefix() + '.empty.add' | transloco }}
+        </button>
+      </div>
+    } @else if (filteredItems().length === 0) {
+      <div class="hw-list__no-results">
+        <mat-icon>search_off</mat-icon>
+        <p>{{ i18nPrefix() + '.noResults' | transloco }}</p>
+      </div>
+    } @else {
+      <div class="hw-list__grid">
+        @for (item of filteredItems(); track item.id) {
+          <button type="button" class="hw-list__card" (click)="detailClick.emit(item)">
+            <div class="hw-list__card-header">
+              <ng-container [ngTemplateOutlet]="cardHeaderTpl()" [ngTemplateOutletContext]="{ $implicit: item }" />
+              <div class="hw-list__card-titles">
+                <span class="hw-list__card-model">{{ resolveModelName()(item.modelId) }}</span>
+                <span class="hw-list__card-brand">{{ resolveBrandName()(item.brandId) }}</span>
+              </div>
+              <mat-icon class="hw-list__card-chevron">chevron_right</mat-icon>
+            </div>
+
+            <div class="hw-list__card-chips">
+              <ng-container [ngTemplateOutlet]="cardChipsTpl()" [ngTemplateOutletContext]="{ $implicit: item }" />
+            </div>
+
+            <div class="hw-list__card-meta">
+              <div class="hw-list__meta-row">
+                @if (item.price !== null) {
+                  <span class="hw-list__meta-item">
+                    <mat-icon>payments</mat-icon>
+                    {{ item.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                  </span>
+                }
+                @if (item.purchaseDate) {
+                  <span class="hw-list__meta-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ item.purchaseDate | date: 'dd/MM/yyyy' }}
+                  </span>
+                }
+              </div>
+              @if (item.store) {
+                <div class="hw-list__meta-row">
+                  <span class="hw-list__meta-item">
+                    <mat-icon>storefront</mat-icon>
+                    {{ resolveStoreName()(item.store) }}
+                  </span>
+                </div>
+              }
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- FAB: mobile only -->
+  <button mat-fab class="hw-list__fab" [attr.aria-label]="i18nPrefix() + '.add' | transloco" (click)="addClick.emit()">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

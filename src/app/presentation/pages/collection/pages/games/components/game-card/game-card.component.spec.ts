@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { GameListModel } from '@/models/game/game-list.model';
 import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
-import { UserContextService } from '@/services/user-context.service';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { GameCardComponent } from './game-card.component';
 
 const mockGame: GameListModel = {
