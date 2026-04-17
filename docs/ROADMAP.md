@@ -11,6 +11,7 @@
 | [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta | ✅ Completado |
 | [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta | ✅ Completado |
 | [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta | ✅ Completado |
+| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ⏳ Pendiente |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
@@ -317,6 +318,53 @@ Campos: modelo (texto libre), edición (texto libre opcional), color (color pick
 - El FAB y el botón de "Añadir" en el estado vacío navegan a `/games/consoles/add` y `/games/controllers/add`.
 - Cada card en el listado añade botón de editar que navega a `edit/:id`.
 - Diálogo de confirmación en delete (ya implementado) se mantiene.
+
+---
+
+### Observabilidad — Sentry + Better Stack
+
+Integración de monitorización de errores y uptime para detectar problemas en producción antes de que los usuarios los reporten.
+
+#### Better Stack (Uptime)
+
+Monitor que comprueba cada minuto que la app en Vercel responde correctamente. Alerta por email si cae. No requiere cambios en el código — se configura íntegramente desde el panel de Better Stack.
+
+**Pasos:**
+1. Crear cuenta en Better Stack.
+2. Añadir monitor HTTP apuntando a `https://project-hohsa.vercel.app`.
+3. Configurar alerta al email del propietario.
+
+#### Sentry (Error tracking)
+
+Captura automática de errores JavaScript no manejados en producción, con stack traces reales gracias a los source maps.
+
+**Paquete:**
+```
+@sentry/angular@10.48.0
+```
+
+**Ficheros a modificar:**
+- `main.ts` — inicialización de Sentry con DSN desde variable de entorno
+- `src/app/app.config.ts` — registrar `ErrorHandler` de Sentry y tracing de rutas
+- `angular.json` — activar `sourceMap: { scripts: true }` en el build de producción
+
+**Variables de entorno a añadir en Vercel:**
+- `NG_APP_SENTRY_DSN` — DSN del proyecto Sentry
+- `SENTRY_AUTH_TOKEN` — token para subir source maps
+- `SENTRY_ORG` — slug de la organización en Sentry
+- `SENTRY_PROJECT` — slug del proyecto en Sentry
+
+**Integración Vercel ↔ Sentry:**
+Instalar la integración oficial desde el marketplace de Vercel (Settings → Integrations → Sentry). Genera automáticamente las variables de entorno y sube los source maps en cada deploy.
+
+**Plan de implementación:**
+1. Crear cuenta en Sentry y proyecto Angular.
+2. Instalar integración Sentry en Vercel.
+3. Instalar `@sentry/angular` con versión exacta.
+4. Inicializar Sentry en `main.ts`.
+5. Registrar `ErrorHandler` y tracing en `app.config.ts`.
+6. Activar source maps en `angular.json`.
+7. Verificar en el dashboard de Sentry que llegan errores de prueba.
 
 ---
 
