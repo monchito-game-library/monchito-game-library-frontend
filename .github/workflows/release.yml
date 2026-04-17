@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  tag:
+    name: Auto tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          LATEST=$(git tag --sort=version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | tail -1)
+          echo "tag=${LATEST:-v0.0.0}" >> "$GITHUB_OUTPUT"
+
+      - name: Determine bump type
+        id: bump
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          echo "commit: $COMMIT_MSG"
+
+          if echo "$COMMIT_MSG" | grep -qE '(\!:)|BREAKING CHANGE'; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif echo "$COMMIT_MSG" | grep -qE '^feat(\(.+\))?:'; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Calculate next version
+        id: next_version
+        run: |
+          LATEST="${{ steps.latest_tag.outputs.tag }}"
+          TYPE="${{ steps.bump.outputs.type }}"
+
+          MAJOR=$(echo "$LATEST" | cut -d. -f1 | tr -d 'v')
+          MINOR=$(echo "$LATEST" | cut -d. -f2)
+          PATCH=$(echo "$LATEST" | cut -d. -f3)
+
+          if [ "$TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0
+          elif [ "$TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1)); PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          echo "version=v${MAJOR}.${MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        run: |
+          VERSION="${{ steps.next_version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin "$VERSION"
+          echo "Tagged $VERSION"
