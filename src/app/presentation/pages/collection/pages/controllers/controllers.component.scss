@@ -5,3 +5,11 @@
   min-height: 0;
   overflow: hidden;
 }
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  :host {
+    padding-bottom: 60px;
+    box-sizing: border-box;
+  }
+}
