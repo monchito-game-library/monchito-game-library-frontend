@@ -16,6 +16,7 @@ import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/har
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.interface';
 import { mockRouter } from '@/testing/router.mock';
+import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { mockDialog } from '@/testing/dialog.mock';
 import { mockSnackBar } from '@/testing/snack-bar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
@@ -25,8 +26,6 @@ const mockStoreUseCases = { getAllStores: vi.fn() };
 const mockBrandUseCases = { getById: vi.fn() };
 const mockModelUseCases = { getById: vi.fn() };
 const mockEditionUseCases = { getById: vi.fn() };
-const mockActivatedRoute = { snapshot: { paramMap: { get: vi.fn() } } };
-
 function makeItem(overrides: Partial<HardwareItemModel> = {}): HardwareItemModel {
   return {
     id: 'item-123',

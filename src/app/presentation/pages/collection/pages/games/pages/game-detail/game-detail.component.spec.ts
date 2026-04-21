@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { mockLocation } from '@/testing/location.mock';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
@@ -85,7 +86,7 @@ describe('GameDetailComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn() } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: Location, useValue: { back: vi.fn() } },
+        { provide: Location, useValue: mockLocation },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('game-uuid-1') } } }
@@ -496,7 +497,7 @@ describe('GameDetailComponent', () => {
           { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
           { provide: MatSnackBar, useValue: { open: vi.fn() } },
           { provide: Router, useValue: { navigate: vi.fn() } },
-          { provide: Location, useValue: { back: vi.fn() } },
+          { provide: Location, useValue: mockLocation },
           {
             provide: ActivatedRoute,
             useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('game-uuid-1') } } }
