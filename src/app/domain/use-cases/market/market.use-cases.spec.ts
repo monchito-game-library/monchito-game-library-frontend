@@ -17,6 +17,8 @@ const availableItem: AvailableItemModel = {
   itemName: 'God of War',
   brandName: null,
   modelName: null,
+  detailLeft: null,
+  detailRight: null,
   salePrice: 39.99
 };
 
@@ -27,6 +29,8 @@ const soldItem: SoldItemModel = {
   itemName: 'PlayStation 5',
   brandName: 'Sony',
   modelName: null,
+  detailLeft: null,
+  detailRight: null,
   soldAt: '2024-01-15',
   soldPriceFinal: 350
 };

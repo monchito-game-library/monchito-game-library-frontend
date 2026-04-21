@@ -275,6 +275,25 @@ export abstract class HardwareDetailBaseComponent {
   }
 
   /**
+   * Reverts the sale, clearing soldAt and soldPriceFinal and returning the item to the active collection.
+   */
+  async undoSell(): Promise<void> {
+    const item = this._getItem();
+    if (!item) return;
+    try {
+      const sale: HardwareSaleStatusModel = { forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null };
+      await this._updateSaleStatus(this._userContext.requireUserId(), item.id, sale);
+      this._setItem({ ...item, forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null });
+    } catch {
+      this._snackBar.open(
+        this._transloco.translate('hardwareSale.snack.undoError'),
+        this._transloco.translate('common.close'),
+        { duration: 3000 }
+      );
+    }
+  }
+
+  /**
    * Activates the sale form view.
    */
   openSaleView(): void {

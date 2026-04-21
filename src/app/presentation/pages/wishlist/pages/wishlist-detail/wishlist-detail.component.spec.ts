@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { mockLocation } from '@/testing/location.mock';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -59,7 +60,7 @@ describe('WishlistDetailComponent', () => {
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: Location, useValue: { back: vi.fn() } },
+        { provide: Location, useValue: mockLocation },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('item-1') } } }

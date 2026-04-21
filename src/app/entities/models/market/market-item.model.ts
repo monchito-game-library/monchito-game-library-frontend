@@ -9,6 +9,8 @@ export interface AvailableItemModel {
   itemName: string;
   brandName: string | null;
   modelName: string | null;
+  detailLeft: string | null;
+  detailRight: string | null;
   salePrice: number | null;
 }
 
@@ -20,6 +22,8 @@ export interface SoldItemModel {
   itemName: string;
   brandName: string | null;
   modelName: string | null;
+  detailLeft: string | null;
+  detailRight: string | null;
   soldAt: string;
   soldPriceFinal: number | null;
 }

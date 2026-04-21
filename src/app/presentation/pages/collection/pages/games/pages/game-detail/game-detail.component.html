@@ -189,27 +189,66 @@
           </section>
         }
 
-        <!-- Actions footer -->
-        <div class="game-detail__actions">
-          <button mat-stroked-button (click)="editGame()">
-            <mat-icon>edit</mat-icon>
-            {{ 'gameCard.menu.edit' | transloco }}
-          </button>
-          <button mat-stroked-button (click)="openSaleView()">
-            <mat-icon>sell</mat-icon>
-            {{ 'gameDetail.sale.manageBtn' | transloco }}
-          </button>
-          @if (g.format === 'physical') {
-            <button mat-stroked-button (click)="openLoanView()">
-              <mat-icon>handshake</mat-icon>
-              {{ g.activeLoanId ? ('gameDetail.loan.returnBtn' | transloco) : ('gameDetail.loan.loanBtn' | transloco) }}
+        @if (!g.soldAt) {
+          <!-- Actions footer -->
+          <div class="game-detail__actions">
+            <button mat-stroked-button (click)="editGame()">
+              <mat-icon>edit</mat-icon>
+              {{ 'gameCard.menu.edit' | transloco }}
             </button>
-          }
-          <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
-            <mat-icon>delete</mat-icon>
-            {{ 'gameCard.menu.delete' | transloco }}
-          </button>
-        </div>
+            <button mat-stroked-button (click)="openSaleView()">
+              <mat-icon>sell</mat-icon>
+              {{ 'gameDetail.sale.manageBtn' | transloco }}
+            </button>
+            @if (g.format === 'physical') {
+              <button mat-stroked-button (click)="openLoanView()">
+                <mat-icon>handshake</mat-icon>
+                {{
+                  g.activeLoanId ? ('gameDetail.loan.returnBtn' | transloco) : ('gameDetail.loan.loanBtn' | transloco)
+                }}
+              </button>
+            }
+            <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
+              <mat-icon>delete</mat-icon>
+              {{ 'gameCard.menu.delete' | transloco }}
+            </button>
+          </div>
+        } @else {
+          <!-- Sale info section -->
+          <section class="game-detail__section">
+            <h2 class="game-detail__section-title">{{ 'gameDetail.sale.saleInfoSection' | transloco }}</h2>
+            <div class="game-detail__data-grid">
+              @if (g.soldPriceFinal !== null) {
+                <div class="game-detail__data-item">
+                  <span class="game-detail__data-label">
+                    <mat-icon>payments</mat-icon>
+                    {{ 'gameDetail.sale.soldPriceFinal' | transloco }}
+                  </span>
+                  <span class="game-detail__data-value">{{ g.soldPriceFinal | currency: 'EUR' }}</span>
+                </div>
+              }
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ 'gameDetail.sale.soldAt' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ g.soldAt | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sold item actions -->
+          <div class="game-detail__actions">
+            <button mat-stroked-button (click)="openSaleView()">
+              <mat-icon>edit</mat-icon>
+              {{ 'gameDetail.sale.editSaleBtn' | transloco }}
+            </button>
+            <button mat-stroked-button color="warn" (click)="undoSell()">
+              <mat-icon>undo</mat-icon>
+              {{ 'gameDetail.sale.undoSaleBtn' | transloco }}
+            </button>
+          </div>
+        }
       }
     </div>
   }

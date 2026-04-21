@@ -8,7 +8,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { CurrencyPipe, DecimalPipe, Location } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
@@ -43,6 +43,7 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
+    DatePipe,
     DecimalPipe,
     MatIcon,
     MatIconButton,
@@ -235,6 +236,21 @@ export class GameDetailComponent implements OnInit {
    */
   onSellCompleted(): void {
     void this._router.navigate(['/collection/games']);
+  }
+
+  /**
+   * Reverts the sale, clearing soldAt and soldPriceFinal and returning the game to the active collection.
+   */
+  async undoSell(): Promise<void> {
+    const g = this.game();
+    if (!g) return;
+    try {
+      const sale: GameSaleStatusModel = { forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null };
+      await this._gameUseCases.updateSaleStatus(this._userId, g.uuid, sale);
+      this.game.set({ ...g, forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null });
+    } catch {
+      this._snackBar.open(this._transloco.translate('gameDetail.sale.snack.undoError'), undefined, { duration: 3000 });
+    }
   }
 
   /**
