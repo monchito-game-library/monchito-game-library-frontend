@@ -60,10 +60,16 @@
                   </div>
                   <div class="sale-page__item-info">
                     <span class="sale-page__item-name">{{ item.itemName }}</span>
-                    @if (item.brandName) {
-                      <span class="sale-page__item-sub">{{ item.brandName }}</span>
+                    @if (item.detailLeft || item.detailRight) {
+                      <span class="sale-page__item-details">
+                        @if (item.detailLeft) {
+                          <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
+                        }
+                        @if (getDetailRight(item)) {
+                          <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
+                        }
+                      </span>
                     }
-                    <span class="sale-page__item-type-chip">{{ typeKey(item.itemType) | transloco }}</span>
                   </div>
                   <div class="sale-page__item-price">
                     @if (item.salePrice !== null) {
@@ -137,10 +143,16 @@
                   </div>
                   <div class="sale-page__item-info">
                     <span class="sale-page__item-name">{{ item.itemName }}</span>
-                    @if (item.brandName) {
-                      <span class="sale-page__item-sub">{{ item.brandName }}</span>
+                    @if (item.detailLeft || item.detailRight) {
+                      <span class="sale-page__item-details">
+                        @if (item.detailLeft) {
+                          <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
+                        }
+                        @if (getDetailRight(item)) {
+                          <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
+                        }
+                      </span>
                     }
-                    <span class="sale-page__item-type-chip">{{ typeKey(item.itemType) | transloco }}</span>
                   </div>
                   <div class="sale-page__item-right">
                     <span class="sale-page__item-sold-price">

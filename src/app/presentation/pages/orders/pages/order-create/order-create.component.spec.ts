@@ -9,6 +9,7 @@ import { OrderCreateComponent } from './order-create.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { mockRouter } from '@/testing/router.mock';
+import { mockActivatedRoute } from '@/testing/activated-route.mock';
 
 describe('OrderCreateComponent', () => {
   let component: OrderCreateComponent;
@@ -38,7 +39,7 @@ describe('OrderCreateComponent', () => {
         { provide: ORDERS_USE_CASES, useValue: mockOrdersUseCases },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn() } } } }
+        { provide: ActivatedRoute, useValue: mockActivatedRoute }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });

@@ -444,7 +444,66 @@ describe('HardwareDetailShellComponent', () => {
     });
   });
 
-  // ─── 9. Botón eliminar ────────────────────────────────────────────────────
+  // ─── 9. Estado vendido (soldAt) ───────────────────────────────────────────
+
+  describe('estado vendido (soldAt tiene valor)', () => {
+    beforeEach(() => {
+      setupComponent({ item: makeItem(), soldAt: '2024-07-15', soldPriceFinal: 200 });
+    });
+
+    it('oculta las acciones normales', () => {
+      const actions = fixture.debugElement.queryAll(By.css('.hardware-detail__actions'));
+      const normalActions = actions.find((a) => a.nativeElement.querySelectorAll('button').length === 4);
+      expect(normalActions).toBeUndefined();
+    });
+
+    it('muestra la sección de información de venta', () => {
+      const section = fixture.debugElement.query(By.css('.hw-detail__section'));
+      expect(section).not.toBeNull();
+    });
+
+    it('muestra el precio de venta final cuando soldPriceFinal no es null', () => {
+      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
+      const text = items.map((el) => el.nativeElement.textContent).join('');
+      expect(text).toContain('200');
+    });
+
+    it('oculta el precio de venta final cuando soldPriceFinal es null', () => {
+      setupComponent({ item: makeItem(), soldAt: '2024-07-15', soldPriceFinal: null });
+      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
+      expect(items).toHaveLength(1);
+    });
+
+    it('muestra la fecha de venta formateada', () => {
+      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
+      const text = items.map((el) => el.nativeElement.textContent).join('');
+      expect(text).toContain('15/07/2024');
+    });
+
+    it('emite undoSaleClicked al hacer click en el botón deshacer venta', () => {
+      const spy = vi.fn();
+      component.undoSaleClicked.subscribe(spy);
+
+      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
+      const undoBtn = actions.queryAll(By.css('button'))[1];
+      undoBtn.nativeElement.click();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('emite openSaleClicked al hacer click en el botón editar venta', () => {
+      const spy = vi.fn();
+      component.openSaleClicked.subscribe(spy);
+
+      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
+      const editBtn = actions.queryAll(By.css('button'))[0];
+      editBtn.nativeElement.click();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // ─── 10. Botón eliminar ──────────────────────────────────────────────────
 
   describe('botón eliminar', () => {
     it('está habilitado cuando deleting=false', () => {

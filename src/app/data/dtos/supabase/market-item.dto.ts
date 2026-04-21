@@ -9,6 +9,8 @@ export interface AvailableItemDto {
   item_name: string;
   brand_name: string | null;
   model_name: string | null;
+  detail_left: string | null;
+  detail_right: string | null;
   sale_price: number | null;
   created_at: string;
 }
@@ -21,6 +23,8 @@ export interface SoldItemDto {
   item_name: string;
   brand_name: string | null;
   model_name: string | null;
+  detail_left: string | null;
+  detail_right: string | null;
   sold_at: string;
   sold_price_final: number | null;
   created_at: string;

@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { mockLocation } from '@/testing/location.mock';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
@@ -72,7 +73,8 @@ describe('GameDetailComponent', () => {
           provide: GAME_USE_CASES,
           useValue: {
             getGameForEdit: vi.fn().mockResolvedValue(makeGame()),
-            deleteGame: vi.fn().mockResolvedValue(undefined)
+            deleteGame: vi.fn().mockResolvedValue(undefined),
+            updateSaleStatus: vi.fn().mockResolvedValue(undefined)
           } as Partial<GameUseCasesContract>
         },
         {
@@ -85,7 +87,7 @@ describe('GameDetailComponent', () => {
         { provide: MatDialog, useValue: { open: vi.fn() } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: Location, useValue: { back: vi.fn() } },
+        { provide: Location, useValue: mockLocation },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('game-uuid-1') } } }
@@ -466,6 +468,125 @@ describe('GameDetailComponent', () => {
     });
   });
 
+  describe('gameSaveFn', () => {
+    it('llama a updateSaleStatus con salePrice cuando forSale es true', async () => {
+      component.game.set(makeGame({ soldAt: null, soldPriceFinal: null }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: true, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: true,
+        salePrice: 30,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('llama a updateSaleStatus con salePrice null cuando forSale es false', async () => {
+      component.game.set(makeGame({ soldAt: null, soldPriceFinal: null }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: false, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('preserva soldAt y soldPriceFinal del juego existente', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 40 }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: true, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith(
+        'user-1',
+        'game-uuid-1',
+        expect.objectContaining({ soldAt: '2024-06-01', soldPriceFinal: 40 })
+      );
+    });
+  });
+
+  describe('gameSellFn', () => {
+    it('llama a updateSaleStatus con forSale false y los valores de venta', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSellFn({ soldAt: '2024-07-01', soldPriceFinal: 25 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: '2024-07-01',
+        soldPriceFinal: 25
+      });
+    });
+
+    it('llama a updateSaleStatus con soldPriceFinal null si no se proporciona', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSellFn({ soldAt: '2024-07-01', soldPriceFinal: null });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: '2024-07-01',
+        soldPriceFinal: null
+      });
+    });
+  });
+
+  describe('undoSell', () => {
+    it('no hace nada si game es null', async () => {
+      component.game.set(null);
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.undoSell();
+
+      expect(gameUseCases.updateSaleStatus).not.toHaveBeenCalled();
+    });
+
+    it('llama a updateSaleStatus con forSale false y campos de venta a null', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 35 }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.undoSell();
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('actualiza la señal game limpiando los campos de venta', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 35 }));
+
+      await component.undoSell();
+
+      expect(component.game()?.soldAt).toBeNull();
+      expect(component.game()?.soldPriceFinal).toBeNull();
+      expect(component.game()?.forSale).toBe(false);
+    });
+
+    it('muestra snackbar de error si updateSaleStatus lanza', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.updateSaleStatus.mockRejectedValue(new Error('undo error'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.undoSell();
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+  });
+
   describe('_userId — guard (userId null)', () => {
     let guardFixture: ComponentFixture<GameDetailComponent>;
     let guardComponent: GameDetailComponent;
@@ -485,7 +606,8 @@ describe('GameDetailComponent', () => {
             provide: GAME_USE_CASES,
             useValue: {
               getGameForEdit: vi.fn().mockResolvedValue(makeGame()),
-              deleteGame: vi.fn().mockResolvedValue(undefined)
+              deleteGame: vi.fn().mockResolvedValue(undefined),
+              updateSaleStatus: vi.fn().mockResolvedValue(undefined)
             } as Partial<GameUseCasesContract>
           },
           {
@@ -496,7 +618,7 @@ describe('GameDetailComponent', () => {
           { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
           { provide: MatSnackBar, useValue: { open: vi.fn() } },
           { provide: Router, useValue: { navigate: vi.fn() } },
-          { provide: Location, useValue: { back: vi.fn() } },
+          { provide: Location, useValue: mockLocation },
           {
             provide: ActivatedRoute,
             useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('game-uuid-1') } } }
