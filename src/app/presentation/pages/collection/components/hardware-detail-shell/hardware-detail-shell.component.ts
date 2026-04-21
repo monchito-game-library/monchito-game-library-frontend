@@ -147,6 +147,9 @@ export class HardwareDetailShellComponent {
   /** Emits when the item has been registered as sold. */
   readonly sellCompleted: OutputEmitterRef<void> = output<void>();
 
+  /** Emits when the user requests to undo the sale. */
+  readonly undoSaleClicked: OutputEmitterRef<void> = output<void>();
+
   /** Emits the updated item model after a loan action completes. */
   readonly loanSaved: OutputEmitterRef<HardwareLoanItem> = output<HardwareLoanItem>();
 }

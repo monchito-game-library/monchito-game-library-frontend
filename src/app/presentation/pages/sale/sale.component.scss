@@ -297,4 +297,9 @@
   .sale-page__filter-chip-label {
     display: none;
   }
+
+  .sale-page__item-details {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
 }
