@@ -3,6 +3,7 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .collection-overview {
@@ -120,8 +121,13 @@
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
+  :host {
+    padding-bottom: 60px;
+    box-sizing: border-box;
+  }
+
   .collection-overview {
-    padding: 1.5rem 1rem calc(60px + 0.75rem);
+    padding: 1.5rem 1rem 0.75rem;
 
     .collection-overview__total-amount {
       font-size: 1.75rem;
