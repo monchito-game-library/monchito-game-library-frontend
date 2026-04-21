@@ -41,7 +41,14 @@
       <!-- Cover -->
       <div class="wishlist-detail__cover-wrapper">
         @if (i.imageUrl) {
-          <img class="wishlist-detail__cover" [ngSrc]="i.imageUrl" [alt]="i.title" width="120" height="68" />
+          <img
+            class="wishlist-detail__cover"
+            [ngSrc]="i.imageUrl"
+            [alt]="i.title"
+            width="320"
+            height="180"
+            ngSrcset="1920w"
+            priority />
         } @else {
           <div class="wishlist-detail__cover wishlist-detail__cover--placeholder">
             <mat-icon>image_not_supported</mat-icon>

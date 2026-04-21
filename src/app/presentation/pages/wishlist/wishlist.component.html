@@ -49,10 +49,11 @@
       </div>
     } @else {
       <div class="wishlist-page__list">
-        @for (item of items(); track item.id) {
+        @for (item of items(); track item.id; let first = $first) {
           <app-wishlist-card
             [item]="item"
             [mobileMode]="isMobile()"
+            [priority]="first"
             (cardClicked)="onCardClicked($event)"
             (editClicked)="onEditItem($event)"
             (deleteClicked)="onDeleteItem($event)"
@@ -112,7 +113,13 @@
       @if (pendingCatalogEntry(); as game) {
         <div class="wishlist-view__game-preview">
           @if (game.image_url) {
-            <img class="wishlist-view__game-cover" [ngSrc]="game.image_url" [alt]="game.title" width="48" height="27" />
+            <img
+              class="wishlist-view__game-cover"
+              [ngSrc]="game.image_url"
+              [alt]="game.title"
+              width="48"
+              height="27"
+              ngSrcset="1920w" />
           }
           <div class="wishlist-view__game-info">
             <span class="wishlist-view__game-title">{{ game.title }}</span>

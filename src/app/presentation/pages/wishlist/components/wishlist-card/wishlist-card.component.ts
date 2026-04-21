@@ -32,6 +32,9 @@ export class WishlistCardComponent {
   /** When true, hides action buttons and store links and makes the whole card tappable. */
   readonly mobileMode: InputSignal<boolean> = input<boolean>(false);
 
+  /** When true, marks the cover image as LCP priority (should be true for the first card in the list). */
+  readonly priority: InputSignal<boolean> = input<boolean>(false);
+
   /** Emitted when the card is tapped in mobile mode. */
   readonly cardClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
 

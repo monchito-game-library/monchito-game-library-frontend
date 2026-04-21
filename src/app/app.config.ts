@@ -1,5 +1,5 @@
 import { ApplicationConfig, isDevMode, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
+import { IMAGE_LOADER, ImageLoaderConfig, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
@@ -30,6 +30,7 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
+    { provide: IMAGE_LOADER, useValue: (config: ImageLoaderConfig) => config.src },
     authRepositoryProvider,
     authUseCasesProvider,
     userPreferencesRepositoryProvider,

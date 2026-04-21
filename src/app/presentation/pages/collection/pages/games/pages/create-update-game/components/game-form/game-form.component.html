@@ -72,7 +72,7 @@
                 class="game-cover-panel__thumb"
                 [class.game-cover-panel__thumb--active]="selectedImageUrl() === img"
                 (click)="onSelectImage(img)">
-                <img [ngSrc]="img" width="72" height="48" alt="" />
+                <img [ngSrc]="img" width="72" height="48" ngSrcset="1920w" alt="" />
               </button>
             }
           </div>
