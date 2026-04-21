@@ -177,7 +177,7 @@ describe('SupabaseProtectorRepository', () => {
 
   describe('delete', () => {
     it('llama a delete y filtra por id', async () => {
-      const b = makeBuilder({ error: null });
+      const b = makeBuilder({ data: [{ id: 'p-1' }], error: null });
       mockSupabase.from.mockReturnValue(b);
 
       await repo.delete('p-1');
@@ -190,6 +190,12 @@ describe('SupabaseProtectorRepository', () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Delete failed' } }));
 
       await expect(repo.delete('p-1')).rejects.toThrow('Failed to delete protector');
+    });
+
+    it('lanza error si RLS bloquea el borrado (data vacío)', async () => {
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [], error: null }));
+
+      await expect(repo.delete('p-1')).rejects.toThrow('Delete blocked by RLS policy or row not found');
     });
   });
 });

@@ -658,6 +658,8 @@
       "activateConfirm": "Re-activate «{{ name }}»?",
       "deleteBtn": "Delete",
       "deleteConfirm": "Delete protector «{{ name }}»? This action is permanent and cannot be undone.",
+      "deleted": "Protector deleted successfully",
+      "deleteError": "Failed to delete protector",
       "packsTitle": "Available packs",
       "addPack": "Add pack",
       "removePack": "Remove pack",
@@ -679,7 +681,8 @@
         "user_role_change": "User role changed",
         "protector_create": "Protector created",
         "protector_update": "Protector updated",
-        "protector_toggle_active": "Protector toggled active"
+        "protector_toggle_active": "Protector toggled active",
+        "protector_delete": "Protector deleted"
       }
     },
     "users": {

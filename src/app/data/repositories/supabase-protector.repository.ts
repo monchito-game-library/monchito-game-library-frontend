@@ -85,7 +85,8 @@ export class SupabaseProtectorRepository implements ProtectorRepositoryContract 
    * @param {string} id - Protector UUID
    */
   async delete(id: string): Promise<void> {
-    const { error } = await this._supabase.from(this._table).delete().eq('id', id);
+    const { data, error } = await this._supabase.from(this._table).delete().eq('id', id).select();
     if (error) throw new Error(`Failed to delete protector: ${error.message}`);
+    if (!data || data.length === 0) throw new Error('Delete blocked by RLS policy or row not found');
   }
 }
