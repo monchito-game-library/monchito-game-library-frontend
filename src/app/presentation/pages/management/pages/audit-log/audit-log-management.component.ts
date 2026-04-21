@@ -48,7 +48,8 @@ export class AuditLogManagementComponent implements OnInit {
       'user.role_change': 'manage_accounts',
       'protector.create': 'add_box',
       'protector.update': 'edit',
-      'protector.toggle_active': 'toggle_on'
+      'protector.toggle_active': 'toggle_on',
+      'protector.delete': 'delete'
     };
     return iconMap[action] ?? 'history';
   }

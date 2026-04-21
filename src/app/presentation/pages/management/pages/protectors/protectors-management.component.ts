@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
@@ -32,6 +33,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
 })
 export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _protectorUseCases: ProtectorUseCasesContract = inject(PROTECTOR_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
@@ -168,15 +170,26 @@ export class ProtectorsManagementComponent implements OnInit {
     });
     ref.afterClosed().subscribe(async (confirmed: boolean) => {
       if (!confirmed) return;
-      await this._protectorUseCases.deleteProtector(protector.id);
-      void this._auditLogUseCases.log({
-        action: 'protector.delete',
-        entityType: 'protector',
-        entityId: protector.id,
-        description: protector.name
-      });
-      await this._loadProtectors();
-      this.onClosePanel();
+      try {
+        await this._protectorUseCases.deleteProtector(protector.id);
+        void this._auditLogUseCases.log({
+          action: 'protector.delete',
+          entityType: 'protector',
+          entityId: protector.id,
+          description: protector.name
+        });
+        this._snackBar.open(this._transloco.translate('management.products.deleted'), '', {
+          duration: 3000,
+          panelClass: ['snack-mobile']
+        });
+        await this._loadProtectors();
+        this.onClosePanel();
+      } catch {
+        this._snackBar.open(this._transloco.translate('management.products.deleteError'), '', {
+          duration: 4000,
+          panelClass: ['snack-mobile']
+        });
+      }
     });
   }
 

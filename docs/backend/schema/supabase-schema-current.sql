@@ -617,6 +617,17 @@ CREATE POLICY "Admins can update products"
     )
   );
 
+CREATE POLICY "Admins can delete products"
+  ON order_products FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_preferences
+      WHERE user_preferences.user_id = auth.uid()
+        AND user_preferences.role = 'admin'
+    )
+  );
+
 
 -- ============================================================
 -- 12. TABLA: orders
