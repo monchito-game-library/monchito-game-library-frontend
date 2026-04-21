@@ -367,13 +367,14 @@ CREATE POLICY "Users can delete from their wishlist"
 -- 7. TRIGGERS — updated_at automático
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
 DROP TRIGGER IF EXISTS trg_game_catalog_updated_at   ON game_catalog;
 CREATE TRIGGER trg_game_catalog_updated_at
@@ -396,21 +397,27 @@ CREATE TRIGGER trg_user_wishlist_updated_at
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Contadores automáticos en game_catalog
-CREATE OR REPLACE FUNCTION increment_game_users_count()
+CREATE OR REPLACE FUNCTION public.increment_game_users_count()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE game_catalog SET times_added_by_users = times_added_by_users + 1 WHERE id = NEW.game_catalog_id;
+  UPDATE public.game_catalog
+    SET times_added_by_users = times_added_by_users + 1
+  WHERE id = NEW.game_catalog_id;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
-CREATE OR REPLACE FUNCTION decrement_game_users_count()
+CREATE OR REPLACE FUNCTION public.decrement_game_users_count()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE game_catalog SET times_added_by_users = GREATEST(0, times_added_by_users - 1) WHERE id = OLD.game_catalog_id;
+  UPDATE public.game_catalog
+    SET times_added_by_users = GREATEST(0, times_added_by_users - 1)
+  WHERE id = OLD.game_catalog_id;
   RETURN OLD;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = '';
 
 DROP TRIGGER IF EXISTS trg_increment_users_on_insert ON user_games;
 CREATE TRIGGER trg_increment_users_on_insert
@@ -937,13 +944,14 @@ CREATE POLICY "Order owner can update allocations"
 -- Busca juegos en game_catalog por título, descripción, desarrollador o publisher.
 -- Devuelve columnas seleccionadas + score de relevancia, ordenado DESC.
 -- LIMIT interno: 50. Parámetro: search_query (TEXT).
-CREATE OR REPLACE FUNCTION search_game_catalog(search_query TEXT)
+CREATE OR REPLACE FUNCTION public.search_game_catalog(search_query TEXT)
 RETURNS TABLE (
   id UUID, rawg_id INTEGER, title TEXT, slug TEXT, image_url TEXT,
   released_date DATE, rating NUMERIC, metacritic_score INTEGER,
   platforms TEXT[], genres TEXT[], source TEXT, relevance INTEGER
 )
 LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = ''
 AS $$
 BEGIN
   RETURN QUERY
@@ -958,7 +966,7 @@ BEGIN
       WHEN LOWER(gc.description_raw) LIKE LOWER('%' || search_query || '%') THEN 50
       ELSE 10
     END AS relevance
-  FROM game_catalog gc
+  FROM public.game_catalog gc
   WHERE
     LOWER(gc.title) LIKE LOWER('%' || search_query || '%')
     OR LOWER(gc.description_raw) LIKE LOWER('%' || search_query || '%')
