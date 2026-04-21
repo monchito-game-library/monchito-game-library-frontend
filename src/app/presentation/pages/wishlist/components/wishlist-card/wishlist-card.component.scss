@@ -13,22 +13,25 @@
 
 .wishlist-card__cover-wrapper {
   flex-shrink: 0;
+  position: relative;
+  width: 72px;
+  height: 96px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-highest);
 }
 
 .wishlist-card__cover {
-  width: 72px;
-  height: 96px;
   object-fit: cover;
-  border-radius: 6px;
-  display: block;
+}
 
-  &--placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--mat-sys-surface-container-highest);
-    color: var(--mat-sys-on-surface-variant);
-  }
+.wishlist-card__cover--placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .wishlist-card__content {

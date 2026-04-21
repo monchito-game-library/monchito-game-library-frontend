@@ -23,12 +23,17 @@
   border-radius: 8px;
 }
 
-.wishlist-item-dialog__game-cover {
+.wishlist-item-dialog__game-cover-wrapper {
+  position: relative;
   width: 56px;
-  height: 74px;
-  object-fit: cover;
+  height: 32px;
   border-radius: 4px;
+  overflow: hidden;
   flex-shrink: 0;
+}
+
+.wishlist-item-dialog__game-cover {
+  object-fit: cover;
 }
 
 .wishlist-item-dialog__game-info {

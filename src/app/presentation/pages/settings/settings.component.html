@@ -28,7 +28,8 @@
               [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="80"
-              height="80" />
+              height="80"
+              priority />
             <div class="settings__avatar-overlay">
               <mat-icon>photo_camera</mat-icon>
             </div>
@@ -143,12 +144,12 @@
           </div>
         } @else if (rawgResults().length) {
           <div class="settings__banner-grid">
-            @for (banner of rawgResults(); track banner.imageUrl) {
+            @for (banner of rawgResults(); track banner.imageUrl; let first = $first) {
               <button
                 class="settings__banner-thumb"
                 [class.settings__banner-thumb--active]="bannerImageUrl() === banner.imageUrl"
                 (click)="onSelectBanner(banner.imageUrl)">
-                <img [ngSrc]="banner.imageUrl" [alt]="banner.title" width="88" height="58" />
+                <img [ngSrc]="banner.imageUrl" [alt]="banner.title" fill [priority]="first" />
                 @if (bannerImageUrl() === banner.imageUrl) {
                   <div class="settings__banner-thumb-check">
                     <mat-icon>check_circle</mat-icon>

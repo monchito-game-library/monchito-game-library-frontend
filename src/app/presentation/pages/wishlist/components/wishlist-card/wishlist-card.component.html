@@ -2,9 +2,9 @@
   <!-- Cover -->
   <div class="wishlist-card__cover-wrapper">
     @if (item().imageUrl) {
-      <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" width="72" height="96" />
+      <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
     } @else {
-      <div class="wishlist-card__cover wishlist-card__cover--placeholder">
+      <div class="wishlist-card__cover--placeholder">
         <mat-icon>image_not_supported</mat-icon>
       </div>
     }
