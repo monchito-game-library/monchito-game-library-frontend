@@ -231,21 +231,21 @@
   text-overflow: ellipsis;
 }
 
-.sale-page__item-sub {
-  font-size: 0.8125rem;
-  color: var(--mat-sys-on-surface-variant);
+.sale-page__item-details {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.25rem;
+  align-self: flex-start;
 }
 
-.sale-page__item-type-chip {
+.sale-page__item-detail-chip {
   display: inline-block;
-  margin-top: 0.25rem;
   font-size: 0.75rem;
   font-weight: 500;
   padding: 2px 0.5rem;
   border-radius: 20px;
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
-  align-self: flex-start;
 }
 
 .sale-page__item-price {
@@ -296,5 +296,10 @@
 
   .sale-page__filter-chip-label {
     display: none;
+  }
+
+  .sale-page__item-details {
+    flex-direction: column;
+    gap: 0.25rem;
   }
 }

@@ -12,6 +12,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
 import { TranslocoService } from '@jsverse/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
+import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
@@ -723,7 +724,7 @@ describe('GamesComponent — carga inicial', () => {
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: vi.fn() } } } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
         { provide: MatBottomSheet, useValue: { open: vi.fn() } }
       ],

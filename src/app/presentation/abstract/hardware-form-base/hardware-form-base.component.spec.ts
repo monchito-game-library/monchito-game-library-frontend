@@ -13,13 +13,13 @@ import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { HardwareFormBaseComponent } from './hardware-form-base.component';
 import { mockRouter } from '@/testing/router.mock';
+import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { mockSnackBar } from '@/testing/snack-bar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
-const mockActivatedRoute = { snapshot: { paramMap: { get: vi.fn() } } };
 const mockStoreUseCases = { getAllStores: vi.fn() };
 const mockBrandUseCases = { getAll: vi.fn() };
 const mockModelUseCases = { getAllByBrand: vi.fn() };

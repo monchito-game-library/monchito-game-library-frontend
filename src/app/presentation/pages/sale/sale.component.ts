@@ -16,6 +16,7 @@ import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
+import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { MARKET_USE_CASES, MarketUseCasesContract } from '@/domain/use-cases/market/market.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
@@ -115,12 +116,19 @@ export class SaleComponent implements OnInit {
   }
 
   /**
-   * Returns the i18n key for an item type chip label.
+   * Returns the translated detail-right label for the secondary info row.
+   * For games, translates the platform key (e.g. 'ps5' → 'PlayStation 5').
+   * For consoles and controllers, returns the brand name as-is.
    *
-   * @param {MarketItemType} type - Item type
+   * @param {AvailableItemModel | SoldItemModel} item
    */
-  typeKey(type: MarketItemType): string {
-    return `salePage.type.${type}`;
+  getDetailRight(item: AvailableItemModel | SoldItemModel): string | null {
+    if (!item.detailRight) return null;
+    if (item.itemType === 'game') {
+      const platform = availablePlatformsConstant.find((p) => p.code === item.detailRight);
+      return platform ? this._transloco.translate(platform.labelKey) : item.detailRight;
+    }
+    return item.detailRight;
   }
 
   /**

@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
+import { mockLocation } from '@/testing/location.mock';
 import { afterEach, describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -77,7 +78,7 @@ describe('WishlistComponent', () => {
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
-        { provide: Location, useValue: { back: vi.fn() } },
+        { provide: Location, useValue: mockLocation },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(of({ matches: false })) } },
         { provide: CATALOG_USE_CASES, useValue: { getGameDetails: vi.fn().mockResolvedValue({ platforms: [] }) } }
       ],

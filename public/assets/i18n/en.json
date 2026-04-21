@@ -744,11 +744,16 @@
       "soldWarning": "Once confirmed, the game will move to your sales history and disappear from your collection.",
       "saveBtn": "Save",
       "markAsSoldBtn": "Mark as sold",
+      "saleInfoSection": "Sale information",
+      "editSaleBtn": "Edit sale",
+      "undoSaleBtn": "Undo sale",
       "snack": {
         "saveError": "Error saving sale status",
         "saveSuccess": "Sale status updated",
         "soldSuccess": "Game marked as sold",
-        "soldError": "Error registering the sale"
+        "soldError": "Error registering the sale",
+        "undoSuccess": "Sale undone successfully",
+        "undoError": "Error undoing the sale"
       }
     }
   },
@@ -979,11 +984,16 @@
     "soldWarning": "Once confirmed, the item will move to history and will no longer appear in your collection.",
     "saveBtn": "Save",
     "markAsSoldBtn": "Mark as sold",
+    "saleInfoSection": "Sale information",
+    "editSaleBtn": "Edit sale",
+    "undoSaleBtn": "Undo sale",
     "snack": {
       "saveError": "Error saving sale status",
       "saveSuccess": "Sale status updated",
       "soldSuccess": "Item marked as sold",
-      "soldError": "Error registering sale"
+      "soldError": "Error registering sale",
+      "undoSuccess": "Sale undone successfully",
+      "undoError": "Error undoing the sale"
     }
   },
   "pwa": {

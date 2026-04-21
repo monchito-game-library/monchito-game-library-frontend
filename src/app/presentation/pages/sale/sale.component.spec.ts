@@ -21,6 +21,8 @@ function makeAvailable(overrides: Partial<AvailableItemModel> = {}): AvailableIt
     itemName: 'God of War',
     brandName: null,
     modelName: null,
+    detailLeft: null,
+    detailRight: null,
     salePrice: 39.99,
     ...overrides
   };
@@ -34,6 +36,8 @@ function makeSold(overrides: Partial<SoldItemModel> = {}): SoldItemModel {
     itemName: 'Spider-Man',
     brandName: null,
     modelName: null,
+    detailLeft: null,
+    detailRight: null,
     soldPriceFinal: 35,
     soldAt: '2024-01-15',
     ...overrides
@@ -221,17 +225,31 @@ describe('SaleComponent', () => {
     });
   });
 
-  describe('typeKey', () => {
-    it('devuelve la clave de traducción para game', () => {
-      expect(component.typeKey('game')).toBe('salePage.type.game');
+  describe('getDetailRight', () => {
+    it('devuelve null si detailRight es null', () => {
+      expect(component.getDetailRight(makeAvailable({ detailRight: null }))).toBeNull();
     });
 
-    it('devuelve la clave de traducción para console', () => {
-      expect(component.typeKey('console')).toBe('salePage.type.console');
+    it('para juegos traduce la plataforma si existe en el catálogo', () => {
+      const item = makeAvailable({ itemType: 'game', detailRight: 'PS5' });
+      const result = component.getDetailRight(item);
+      expect(mockTransloco.translate).toHaveBeenCalled();
+      expect(result).toBeTruthy();
     });
 
-    it('devuelve la clave de traducción para controller', () => {
-      expect(component.typeKey('controller')).toBe('salePage.type.controller');
+    it('para juegos devuelve el valor raw si la plataforma no está en el catálogo', () => {
+      const item = makeAvailable({ itemType: 'game', detailRight: 'UNKNOWN-PLATFORM' });
+      expect(component.getDetailRight(item)).toBe('UNKNOWN-PLATFORM');
+    });
+
+    it('para consolas devuelve detailRight sin traducir', () => {
+      const item = makeAvailable({ itemType: 'console', detailRight: 'Sony' });
+      expect(component.getDetailRight(item)).toBe('Sony');
+    });
+
+    it('para mandos devuelve detailRight sin traducir', () => {
+      const item = makeAvailable({ itemType: 'controller', detailRight: 'Microsoft' });
+      expect(component.getDetailRight(item)).toBe('Microsoft');
     });
   });
 

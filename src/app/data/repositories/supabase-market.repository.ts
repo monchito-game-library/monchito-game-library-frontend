@@ -32,6 +32,8 @@ export class SupabaseMarketRepository implements MarketRepositoryContract {
         itemName: dto.item_name,
         brandName: dto.brand_name,
         modelName: dto.model_name,
+        detailLeft: dto.detail_left,
+        detailRight: dto.detail_right,
         salePrice: dto.sale_price
       })
     );
@@ -58,6 +60,8 @@ export class SupabaseMarketRepository implements MarketRepositoryContract {
         itemName: dto.item_name,
         brandName: dto.brand_name,
         modelName: dto.model_name,
+        detailLeft: dto.detail_left,
+        detailRight: dto.detail_right,
         soldAt: dto.sold_at,
         soldPriceFinal: dto.sold_price_final
       })

@@ -113,25 +113,64 @@
       <!-- Slot for extra sections (console specs, etc.) -->
       <ng-content select="[hwExtra]" />
 
-      <!-- Actions -->
-      <div class="hardware-detail__actions">
-        <button mat-stroked-button type="button" (click)="editClicked.emit()">
-          <mat-icon>edit</mat-icon>
-          {{ 'gameCard.menu.edit' | transloco }}
-        </button>
-        <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
-          <mat-icon>sell</mat-icon>
-          {{ 'hardwareSale.manageBtn' | transloco }}
-        </button>
-        <button mat-stroked-button type="button" (click)="openLoanClicked.emit()">
-          <mat-icon>handshake</mat-icon>
-          {{ activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco) }}
-        </button>
-        <button mat-stroked-button type="button" color="warn" (click)="deleteClicked.emit()" [disabled]="deleting()">
-          <mat-icon>delete</mat-icon>
-          {{ 'gameCard.menu.delete' | transloco }}
-        </button>
-      </div>
+      @if (!soldAt()) {
+        <!-- Actions -->
+        <div class="hardware-detail__actions">
+          <button mat-stroked-button type="button" (click)="editClicked.emit()">
+            <mat-icon>edit</mat-icon>
+            {{ 'gameCard.menu.edit' | transloco }}
+          </button>
+          <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
+            <mat-icon>sell</mat-icon>
+            {{ 'hardwareSale.manageBtn' | transloco }}
+          </button>
+          <button mat-stroked-button type="button" (click)="openLoanClicked.emit()">
+            <mat-icon>handshake</mat-icon>
+            {{ activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco) }}
+          </button>
+          <button mat-stroked-button type="button" color="warn" (click)="deleteClicked.emit()" [disabled]="deleting()">
+            <mat-icon>delete</mat-icon>
+            {{ 'gameCard.menu.delete' | transloco }}
+          </button>
+        </div>
+      } @else {
+        <!-- Sale info section -->
+        <section class="hw-detail__section">
+          <h3 class="hw-detail__section-title">{{ 'hardwareSale.saleInfoSection' | transloco }}</h3>
+          <div class="hardware-detail__purchase-row">
+            @if (soldPriceFinal() !== null) {
+              <div class="hardware-detail__purchase-item">
+                <div class="hardware-detail__purchase-header">
+                  <mat-icon>payments</mat-icon>
+                  <span class="hardware-detail__purchase-label">{{ 'hardwareSale.soldPriceFinal' | transloco }}</span>
+                </div>
+                <span class="hardware-detail__purchase-value">{{
+                  soldPriceFinal() | currency: 'EUR' : 'symbol' : '1.2-2'
+                }}</span>
+              </div>
+            }
+            <div class="hardware-detail__purchase-item">
+              <div class="hardware-detail__purchase-header">
+                <mat-icon>calendar_today</mat-icon>
+                <span class="hardware-detail__purchase-label">{{ 'hardwareSale.soldAt' | transloco }}</span>
+              </div>
+              <span class="hardware-detail__purchase-value">{{ soldAt() | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sold item actions -->
+        <div class="hardware-detail__actions">
+          <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
+            <mat-icon>edit</mat-icon>
+            {{ 'hardwareSale.editSaleBtn' | transloco }}
+          </button>
+          <button mat-stroked-button type="button" color="warn" (click)="undoSaleClicked.emit()">
+            <mat-icon>undo</mat-icon>
+            {{ 'hardwareSale.undoSaleBtn' | transloco }}
+          </button>
+        </div>
+      }
     }
   }
 </div>
