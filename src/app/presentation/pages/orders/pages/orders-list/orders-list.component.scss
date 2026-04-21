@@ -73,10 +73,10 @@
 @media (max-width: 768px) {
   .orders-page {
     padding: 1rem 1rem calc(60px + 1rem);
-  }
 
-  .orders-page__fab {
-    bottom: calc(60px + 1rem);
-    right: 1rem;
+    .orders-page__fab {
+      bottom: calc(60px + 1rem);
+      right: 1rem;
+    }
   }
 }
