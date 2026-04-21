@@ -73,7 +73,8 @@ describe('GameDetailComponent', () => {
           provide: GAME_USE_CASES,
           useValue: {
             getGameForEdit: vi.fn().mockResolvedValue(makeGame()),
-            deleteGame: vi.fn().mockResolvedValue(undefined)
+            deleteGame: vi.fn().mockResolvedValue(undefined),
+            updateSaleStatus: vi.fn().mockResolvedValue(undefined)
           } as Partial<GameUseCasesContract>
         },
         {
@@ -467,6 +468,52 @@ describe('GameDetailComponent', () => {
     });
   });
 
+  describe('undoSell', () => {
+    it('no hace nada si game es null', async () => {
+      component.game.set(null);
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.undoSell();
+
+      expect(gameUseCases.updateSaleStatus).not.toHaveBeenCalled();
+    });
+
+    it('llama a updateSaleStatus con forSale false y campos de venta a null', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 35 }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.undoSell();
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('actualiza la señal game limpiando los campos de venta', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 35 }));
+
+      await component.undoSell();
+
+      expect(component.game()?.soldAt).toBeNull();
+      expect(component.game()?.soldPriceFinal).toBeNull();
+      expect(component.game()?.forSale).toBe(false);
+    });
+
+    it('muestra snackbar de error si updateSaleStatus lanza', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      gameUseCases.updateSaleStatus.mockRejectedValue(new Error('undo error'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.undoSell();
+
+      expect(snackBar.open).toHaveBeenCalled();
+    });
+  });
+
   describe('_userId — guard (userId null)', () => {
     let guardFixture: ComponentFixture<GameDetailComponent>;
     let guardComponent: GameDetailComponent;
@@ -486,7 +533,8 @@ describe('GameDetailComponent', () => {
             provide: GAME_USE_CASES,
             useValue: {
               getGameForEdit: vi.fn().mockResolvedValue(makeGame()),
-              deleteGame: vi.fn().mockResolvedValue(undefined)
+              deleteGame: vi.fn().mockResolvedValue(undefined),
+              updateSaleStatus: vi.fn().mockResolvedValue(undefined)
             } as Partial<GameUseCasesContract>
           },
           {

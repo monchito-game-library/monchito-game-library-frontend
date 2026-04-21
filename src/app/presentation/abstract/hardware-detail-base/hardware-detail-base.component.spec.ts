@@ -87,7 +87,7 @@ class TestHardwareDetailComponent extends HardwareDetailBaseComponent {
 
   // eslint-disable-next-line jsdoc/require-jsdoc
   protected async _updateSaleStatus(userId: string, id: string, sale: HardwareSaleStatusModel): Promise<void> {
-    this.updateSaleStatusSpy(userId, id, sale);
+    await this.updateSaleStatusSpy(userId, id, sale);
   }
 
   // eslint-disable-next-line jsdoc/require-jsdoc
@@ -469,6 +469,45 @@ describe('HardwareDetailBaseComponent', () => {
       expect(component.brand()).toBeUndefined();
       expect(component.model()).toBeUndefined();
       expect(component.edition()).toBeUndefined();
+    });
+  });
+
+  describe('undoSell', () => {
+    it('no hace nada si _getItem devuelve undefined', async () => {
+      await component.undoSell();
+      expect(component.updateSaleStatusSpy).not.toHaveBeenCalled();
+    });
+
+    it('llama a _updateSaleStatus con forSale false y campos de venta a null', async () => {
+      (component as any)._setItem(makeItem({ id: 'item-123', soldAt: '2024-06-01', soldPriceFinal: 150 }));
+
+      await component.undoSell();
+
+      expect(component.updateSaleStatusSpy).toHaveBeenCalledWith('user-1', 'item-123', {
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('actualiza la señal del ítem limpiando los campos de venta', async () => {
+      (component as any)._setItem(makeItem({ soldAt: '2024-06-01', soldPriceFinal: 150 }));
+
+      await component.undoSell();
+
+      expect(component.getItemSignal()?.soldAt).toBeNull();
+      expect(component.getItemSignal()?.soldPriceFinal).toBeNull();
+      expect(component.getItemSignal()?.forSale).toBe(false);
+    });
+
+    it('muestra snackbar de error si _updateSaleStatus lanza', async () => {
+      (component as any)._setItem(makeItem({ id: 'item-123' }));
+      component.updateSaleStatusSpy.mockRejectedValue(new Error('undo error'));
+
+      await component.undoSell();
+
+      expect(mockSnackBar.open).toHaveBeenCalled();
     });
   });
 
