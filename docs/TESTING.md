@@ -160,8 +160,8 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 |---|---|---|
 | `auth-base/auth-base.component.spec.ts` | 15 | ✅ Cubierto |
 | `crop-interaction-base/crop-interaction.base.spec.ts` | 29 | ✅ Cubierto |
-| `hardware-detail-base/hardware-detail-base.component.spec.ts` | 44 | ✅ Cubierto |
-| `hardware-form-base/hardware-form-base.component.spec.ts` | 41 | ✅ Cubierto |
+| `hardware-detail-base/hardware-detail-base.component.spec.ts` | 45 | ✅ Cubierto |
+| `hardware-form-base/hardware-form-base.component.spec.ts` | 34 | ✅ Cubierto |
 | `hardware-list-base/hardware-list-base.component.spec.ts` | 32 | ✅ Cubierto |
 
 **Qué se cubre**:
@@ -202,7 +202,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Fichero | Tests | Estado |
 |---|---|---|
 | `pages/collection/collection.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts` | 50 | ✅ Cubierto |
+| `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts` | 57 | ✅ Cubierto |
 | `pages/collection/components/hardware-form-shell/hardware-form-shell.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 20 | ✅ Cubierto |
@@ -217,11 +217,11 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 20 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 69 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 74 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 83 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 38 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 56 | ✅ Cubierto |
 
 #### Management (`pages/management`)
 
@@ -265,11 +265,11 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `pages/sale/sale.component.spec.ts` | 34 | ✅ Cubierto |
+| `pages/sale/sale.component.spec.ts` | 39 | ✅ Cubierto |
 | `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
 | `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/wishlist/wishlist.component.spec.ts` | 36 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 9 | ✅ Cubierto |
+| `pages/wishlist/wishlist.component.spec.ts` | 45 | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts` | 23 | ✅ Cubierto |
 
@@ -292,7 +292,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
 - `GameCoverPositionDialogComponent`: parseo de `initialPosition` (sin posición, 3 partes, 2 partes, 1 parte), clamping de escala (max 4 / min 1), `onConfirm()`, `onCancel()`.
 - `GameFormComponent`: valores iniciales, `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store, `onCancel`, `hasChanges`.
-- `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame`; señales `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`.
+- `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame`; señales `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`; `showSaleForm`/`showLoanForm` (toggle y desactivación cruzada), `onSaleFormClosed`, `onLoanFormClosed`; `onMarkForSale`, `onCancelSale`, `onSold` (incluyendo rama de error y `soldPriceFinal` null).
 - `ManagementComponent` / `AuditLogManagementComponent` / `HardwareManagementComponent`: existencia, `getActionIcon`, `getActionLabel`.
 - `HardwareBrandEditPanel` / `HardwareEditionEditPanel` / `HardwareModelEditPanel` / `ProtectorEditPanel` / `StoreEditPanel`: paneles de edición inline con formulario y guardado.
 - `HardwareBrandsManagementComponent` / `HardwareEditionsManagementComponent` / `HardwareModelsManagementComponent`: listados de gestión con CRUD.
@@ -317,7 +317,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `SettingsComponent`: valores iniciales, `getDisplayName`/`getUserEmail`/`getAvatarUrl`, edición de nombre (`onEditName`, `onCancelEditName`, `onSaveName`), `toggleTheme`, `onSelectBanner`, `logout`.
 - `AvatarCropDialogComponent`: existencia, `cropW`/`cropH`, `imageUrl`, `onCancel()`, `onConfirm()` (crop real con canvas mock).
 - `WishlistComponent`: señales `totalEstimatedSpend`, `itemsWithPrice`, `mobileCanConfirm`; flujo móvil (`onAddItem`, `onEditItem`, `onMobileGameSelected`, `onMobileBackToSearch`, `onMobileCancel`).
-- `WishlistCardComponent`: señal computada `storeLinks`, outputs `editClicked`, `deleteClicked`, `ownClicked`.
+- `WishlistCardComponent`: señal computada `storeLinks` (con y sin plataforma, limpieza de caracteres especiales); outputs `editClicked`, `deleteClicked`, `ownClicked`; `onCardClick` emite `cardClicked` solo cuando `mobileMode` es true.
 - `WishlistItemDialogComponent`: modos add/edit, `canConfirm`, `onGameSelected`, `onChangGame`, `onConfirm`, `onCancel`.
 - `WishlistDetailComponent`: `storeLinks` (computed, con/sin plataforma), `ngOnInit` (state / fallback / notFound / error), `onBack`, `onEdit`, `onDelete` (cancel/confirm/success/error/null), `onOwn` (source rawg vs manual), `_userId` getter.
 
@@ -344,9 +344,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `app.component.spec.ts` | 27 | ✅ Cubierto |
+| `app.component.spec.ts` | 24 | ✅ Cubierto |
 
-**Qué se cubre**: existencia, `isAuthenticated`, `isNavActive`, `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`.
+**Qué se cubre**: existencia, `isAuthenticated`, `isNavActive` (incluyendo rutas de edición), `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`, `onAvatarClick` (navega a /settings), inicialización de tema y PWA, actualización de `currentRoute` en NavigationEnd.
 
 ---
 
@@ -360,11 +360,11 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Repositorios | 16 (+1 pendiente) | 228 |
 | Guards | 3 | 12 |
 | Servicios | 7 | 84 |
-| Abstractas | 5 | 161 |
-| App component | 1 | 27 |
-| Componentes | 66 | ~1300 |
+| Abstractas | 5 | 155 |
+| App component | 1 | 24 |
+| Componentes | 66 | ~1336 |
 | Utilidades | 5 | 69 |
-| **Total** | **135** | **2233** |
+| **Total** | **135** | **2260** |
 
 > Fuente autoritativa: `npm test`.
 
