@@ -37,7 +37,7 @@
       <div class="search-result-card" (click)="onSelectGame(game)">
         <div class="search-result-card__cover">
           @if (game.image_url) {
-            <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" width="72" height="96" />
+            <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" width="72" height="41" />
           } @else {
             <div class="search-result-card__cover-placeholder">
               <mat-icon>videogame_asset</mat-icon>
