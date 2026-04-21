@@ -468,6 +468,79 @@ describe('GameDetailComponent', () => {
     });
   });
 
+  describe('gameSaveFn', () => {
+    it('llama a updateSaleStatus con salePrice cuando forSale es true', async () => {
+      component.game.set(makeGame({ soldAt: null, soldPriceFinal: null }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: true, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: true,
+        salePrice: 30,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('llama a updateSaleStatus con salePrice null cuando forSale es false', async () => {
+      component.game.set(makeGame({ soldAt: null, soldPriceFinal: null }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: false, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null
+      });
+    });
+
+    it('preserva soldAt y soldPriceFinal del juego existente', async () => {
+      component.game.set(makeGame({ soldAt: '2024-06-01', soldPriceFinal: 40 }));
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSaveFn({ forSale: true, salePrice: 30 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith(
+        'user-1',
+        'game-uuid-1',
+        expect.objectContaining({ soldAt: '2024-06-01', soldPriceFinal: 40 })
+      );
+    });
+  });
+
+  describe('gameSellFn', () => {
+    it('llama a updateSaleStatus con forSale false y los valores de venta', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSellFn({ soldAt: '2024-07-01', soldPriceFinal: 25 });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: '2024-07-01',
+        soldPriceFinal: 25
+      });
+    });
+
+    it('llama a updateSaleStatus con soldPriceFinal null si no se proporciona', async () => {
+      component.game.set(makeGame());
+      const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+
+      await component.gameSellFn({ soldAt: '2024-07-01', soldPriceFinal: null });
+
+      expect(gameUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'game-uuid-1', {
+        forSale: false,
+        salePrice: null,
+        soldAt: '2024-07-01',
+        soldPriceFinal: null
+      });
+    });
+  });
+
   describe('undoSell', () => {
     it('no hace nada si game es null', async () => {
       component.game.set(null);
