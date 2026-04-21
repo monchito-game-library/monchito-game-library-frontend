@@ -45,3 +45,7 @@ Cadena de requests en la carga inicial. Relacionado con el coste de arranque de 
 | 2026-04-12 | `public/robots.txt` válido                              | SEO (robots válido)              |
 | 2026-04-12 | `font-display: swap` en Material Icons                  | Performance (render blocking)    |
 | 2026-04-12 | Providers movidos a rutas lazy-loaded                   | Bundle 285 KB → **67 KB** (-76%) |
+| 2026-04-21 | `NgOptimizedImage` `fill` mode + `IMAGE_LOADER` passthrough en todas las imágenes RAWG | Elimina warnings NG02952/NG02960 |
+| 2026-04-21 | `priority` + `<link rel="preconnect">` para RAWG CDN y Supabase Storage | Elimina warnings NG02955/NG02956 (LCP) |
+| 2026-04-21 | Eliminado "Ajustes" de la barra de navegación inferior  | Reduce redundancia de navegación |
+| 2026-04-21 | Corregido doble pipe `\| transloco` en `confirm-dialog` | Traducciones rotas en diálogos de confirmación |
