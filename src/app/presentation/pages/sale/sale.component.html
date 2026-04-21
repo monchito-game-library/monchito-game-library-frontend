@@ -25,8 +25,9 @@
             <button
               class="sale-page__filter-chip"
               [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+              [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
               (click)="setFilter($any(filter[0]))">
-              <mat-icon>{{ filter[1] }}</mat-icon>
+              <mat-icon aria-hidden="true">{{ filter[1] }}</mat-icon>
               <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
             </button>
           }
@@ -36,7 +37,10 @@
         <div class="sale-page__content">
           @if (loading()) {
             <div class="sale-page__loading">
-              <mat-progress-spinner diameter="48" mode="indeterminate" />
+              <mat-progress-spinner
+                diameter="48"
+                mode="indeterminate"
+                [attr.aria-label]="'common.loading' | transloco" />
             </div>
           } @else if (filteredAvailable().length === 0) {
             <div class="sale-page__empty">
@@ -108,8 +112,9 @@
             <button
               class="sale-page__filter-chip"
               [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+              [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
               (click)="setFilter($any(filter[0]))">
-              <mat-icon>{{ filter[1] }}</mat-icon>
+              <mat-icon aria-hidden="true">{{ filter[1] }}</mat-icon>
               <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
             </button>
           }
@@ -119,7 +124,10 @@
         <div class="sale-page__content">
           @if (loading()) {
             <div class="sale-page__loading">
-              <mat-progress-spinner diameter="48" mode="indeterminate" />
+              <mat-progress-spinner
+                diameter="48"
+                mode="indeterminate"
+                [attr.aria-label]="'common.loading' | transloco" />
             </div>
           } @else if (filteredSold().length === 0) {
             <div class="sale-page__empty">

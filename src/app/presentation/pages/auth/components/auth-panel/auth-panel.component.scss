@@ -24,6 +24,7 @@
 .auth-panel {
   width: 100%;
   max-width: 420px;
+  min-height: 22rem;
   padding: 2.5rem 2rem;
   border-radius: 24px;
   background: color-mix(in srgb, var(--mat-sys-surface-container-high) 88%, transparent);
@@ -165,6 +166,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .auth-panel {
+    min-height: 20rem;
     padding: 2rem 1.25rem;
     border-radius: 20px;
   }
