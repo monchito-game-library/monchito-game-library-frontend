@@ -659,6 +659,8 @@
       "activateConfirm": "¿Volver a activar el producto «{{ name }}»?",
       "deleteBtn": "Eliminar",
       "deleteConfirm": "¿Eliminar el protector «{{ name }}»? Esta acción es permanente y no se puede deshacer.",
+      "deleted": "Protector eliminado correctamente",
+      "deleteError": "Error al eliminar el protector",
       "packsTitle": "Packs disponibles",
       "addPack": "Añadir pack",
       "removePack": "Eliminar pack",
@@ -680,7 +682,8 @@
         "user_role_change": "Rol de usuario cambiado",
         "protector_create": "Protector creado",
         "protector_update": "Protector actualizado",
-        "protector_toggle_active": "Protector activado/desactivado"
+        "protector_toggle_active": "Protector activado/desactivado",
+        "protector_delete": "Protector eliminado"
       }
     },
     "users": {
