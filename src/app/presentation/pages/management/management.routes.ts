@@ -7,6 +7,8 @@ import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.reposito
 import { auditLogUseCasesProvider } from '@/di/use-cases/audit-log.use-cases.provider';
 import { protectorRepositoryProvider } from '@/di/repositories/protector.repository.provider';
 import { protectorUseCasesProvider } from '@/di/use-cases/protector.use-cases.provider';
+import { storeRepositoryProvider } from '@/di/repositories/store.repository.provider';
+import { storeUseCasesProvider } from '@/di/use-cases/store.use-cases.provider';
 
 export const managementRoutes: Routes = [
   {
@@ -17,7 +19,9 @@ export const managementRoutes: Routes = [
       auditLogRepositoryProvider,
       auditLogUseCasesProvider,
       protectorRepositoryProvider,
-      protectorUseCasesProvider
+      protectorUseCasesProvider,
+      storeRepositoryProvider,
+      storeUseCasesProvider
     ],
     loadComponent: () => import('./management.component').then((m) => m.ManagementComponent),
     canActivate: [canActivateUser, canActivateAdmin],
