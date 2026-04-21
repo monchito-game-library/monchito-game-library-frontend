@@ -13,12 +13,9 @@
       <!-- Selected game preview (add mode only) -->
       <div class="wishlist-item-dialog__game-preview">
         @if (game.image_url) {
-          <img
-            class="wishlist-item-dialog__game-cover"
-            [ngSrc]="game.image_url"
-            [alt]="game.title"
-            width="56"
-            height="74" />
+          <div class="wishlist-item-dialog__game-cover-wrapper">
+            <img class="wishlist-item-dialog__game-cover" [ngSrc]="game.image_url" [alt]="game.title" fill />
+          </div>
         }
         <div class="wishlist-item-dialog__game-info">
           <span class="wishlist-item-dialog__game-title">{{ game.title }}</span>

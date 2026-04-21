@@ -95,14 +95,6 @@
             <span class="bottom-nav__label">{{ item.label | transloco }}</span>
           </a>
         }
-        <a
-          class="bottom-nav__item"
-          [class.bottom-nav__item--active]="isNavActive(settingsNavItem.route)"
-          [routerLink]="settingsNavItem.route"
-          [attr.aria-label]="settingsNavItem.label | transloco">
-          <mat-icon>{{ settingsNavItem.icon }}</mat-icon>
-          <span class="bottom-nav__label">{{ settingsNavItem.label | transloco }}</span>
-        </a>
         @if (isAdmin()) {
           @for (item of managementNavItems; track item.route) {
             <a
