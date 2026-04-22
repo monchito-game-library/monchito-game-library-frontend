@@ -9,6 +9,8 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+const sentryDsn = process.env.SENTRY_DSN || 'https://346eebf4b4c5378fa15fa4cd7617006b@o4511262696079360.ingest.de.sentry.io/4511262726357072';
+
 const prodContent = `export const environment = {
   production: true,
   supabase: {
@@ -18,6 +20,10 @@ const prodContent = `export const environment = {
   rawg: {
     apiUrl: 'https://api.rawg.io/api',
     apiKey: '${process.env.RAWG_API_KEY}'
+  },
+  sentry: {
+    dsn: '${sentryDsn}',
+    enabled: ${!!sentryDsn}
   }
 };
 `;
@@ -31,6 +37,10 @@ const devContent = `export const environment = {
   rawg: {
     apiUrl: 'https://api.rawg.io/api',
     apiKey: '${process.env.RAWG_API_KEY}'
+  },
+  sentry: {
+    dsn: '',
+    enabled: false
   }
 };
 `;

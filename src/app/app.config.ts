@@ -1,7 +1,15 @@
-import { ApplicationConfig, isDevMode, LOCALE_ID, provideZonelessChangeDetection } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  ErrorHandler,
+  isDevMode,
+  LOCALE_ID,
+  provideZonelessChangeDetection
+} from '@angular/core';
 import { IMAGE_LOADER, ImageLoaderConfig, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, Router, withInMemoryScrolling } from '@angular/router';
+import * as Sentry from '@sentry/angular';
 
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
@@ -12,6 +20,7 @@ import { userPreferencesRepositoryProvider } from '@/di/repositories/user-prefer
 import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
 import { userPreferencesUseCasesProvider } from '@/di/use-cases/user-preferences.use-cases.provider';
 import { provideServiceWorker } from '@angular/service-worker';
+import { environment } from '@/env';
 
 registerLocaleData(localeEs);
 
@@ -38,6 +47,13 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerImmediately'
-    })
+    }),
+    ...(environment.sentry.enabled
+      ? [
+          { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
+          { provide: Sentry.TraceService, deps: [Router] },
+          { provide: APP_INITIALIZER, useFactory: () => () => {}, deps: [Sentry.TraceService], multi: true }
+        ]
+      : [])
   ]
 };
