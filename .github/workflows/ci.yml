@@ -34,6 +34,10 @@ jobs:
             rawg: {
               apiUrl: 'https://api.rawg.io/api',
               apiKey: '${{ secrets.RAWG_API_KEY }}'
+            },
+            sentry: {
+              dsn: '',
+              enabled: false
             }
           };
           EOF
