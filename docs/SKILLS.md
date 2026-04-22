@@ -7,10 +7,47 @@ Los ficheros de definición viven en `.claude/commands/`.
 
 ## Índice
 
+- [Diseño y UI/UX (auto-activados)](#diseño-y-uiux-auto-activados)
 - [Workflow general](#workflow-general)
 - [Arquitectura y generación de código](#arquitectura-y-generación-de-código)
 - [Tests](#tests)
 - [Refactoring y mantenimiento](#refactoring-y-mantenimiento)
+
+---
+
+## Diseño y UI/UX (auto-activados)
+
+Skills que no se invocan con `/comando` — se activan automáticamente cuando el prompt contiene palabras clave relacionadas con su dominio. Los ficheros viven en `.claude/skills/`.
+
+---
+
+### `ui-ux-pro-max`
+
+**Ficheros:** `.claude/skills/ui-ux-pro-max/` (SKILL.md + data/ + scripts/)
+**Instalación:** ámbito de proyecto (no global). Para actualizar a la última versión publicada en npm:
+
+```bash
+npx uipro-cli update --ai claude
+```
+
+**Qué aporta:**
+- 67 estilos UI (glassmorphism, claymorphism, dark mode OLED, cyberpunk…)
+- 161 paletas de color especializadas por industria
+- 57 pairings de tipografías (Google Fonts)
+- 99 directrices UX + directrices específicas de Angular
+- Motor de búsqueda BM25 + generador de design systems
+
+**Se activa automáticamente con** palabras como: `diseño`, `UI`, `componente`, `color`, `tipografía`, `layout`, `card`, `formulario`, `dashboard`, `paleta`, `estilo`, `responsive`…
+
+**Para usarlo explícitamente**, describe lo que quieres construir o mejorar en lenguaje natural:
+
+```
+Mejora el diseño de las game-cards para que tengan más identidad gaming
+Elige una paleta de color más apropiada para la app
+Analiza el diseño completo de la página de wishlist y propón mejoras
+```
+
+**Audit realizado:** ver [Identidad visual y sistema de diseño](ROADMAP.md#identidad-visual-y-sistema-de-diseño) en el ROADMAP.
 
 ---
 
