@@ -37,10 +37,13 @@ Las siguientes variables deben estar configuradas en **Vercel → Settings → E
 | `SENTRY_AUTH_TOKEN` | Token para subida de source maps a Sentry | Integración Sentry ↔ Vercel |
 | `SENTRY_ORG` | Slug de la organización en Sentry (`espinilleitor`) | Integración Sentry ↔ Vercel |
 | `SENTRY_PROJECT` | Slug del proyecto en Sentry (`mochito-game-library`) | Integración Sentry ↔ Vercel |
+| `VERCEL_GIT_COMMIT_SHA` | SHA del commit desplegado — usado como `release` en Sentry | Sistema (Vercel) |
 
 > **Nota:** La `SUPABASE_ANON_KEY` está diseñada para ser pública — la seguridad real la gestiona Row Level Security (RLS) en Supabase.
 
 > **Nota:** Las variables `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` y `SENTRY_PROJECT` las genera automáticamente la integración Sentry instalada en Vercel (Settings → Integrations → Sentry). No hace falta crearlas a mano.
+
+> **Nota:** `VERCEL_GIT_COMMIT_SHA` es una variable de sistema que Vercel inyecta automáticamente en cada build. No requiere configuración manual.
 
 Ver [OBSERVABILITY.md](./OBSERVABILITY.md) para el detalle completo de la configuración de observabilidad.
 
