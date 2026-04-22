@@ -12,6 +12,7 @@
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
+| [Sign-in con OAuth (Google, Discord, GitLab)](#sign-in-con-oauth-google-discord-gitlab) | Media | ⏳ Pendiente |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
 | [Mejoras visuales de polish](#mejoras-visuales-de-polish) | Baja | 🔄 Parcial (8/10) |
@@ -637,6 +638,101 @@ Un mismo juego puede aparecer como sugerencia de varios candidatos. Priorizar lo
 - Cachear los resultados en memoria durante la sesión para no repetir llamadas a RAWG al navegar.
 - No guardar las recomendaciones en Supabase — se calculan en tiempo real cada vez.
 - RAWG puede no tener el endpoint `/suggested` para todos los juegos (juegos manuales o con poco dato). Ignorar silenciosamente los que fallen.
+
+---
+
+### Sign-in con OAuth (Google, Discord, GitLab)
+
+Permitir que los usuarios inicien sesión (y se registren) usando sus cuentas de Google, Discord o GitLab, sin necesidad de crear una contraseña. El flujo es una redirección al proveedor y vuelta a la app — Supabase gestiona el intercambio de tokens y la sesión resultante.
+
+#### Por qué
+
+Reduce la fricción de registro/login significativamente. La mayoría de usuarios de una app gaming ya tienen cuenta de Discord o Google. Es especialmente valioso en mobile donde escribir email + contraseña es tedioso.
+
+#### Flujo técnico
+
+1. El usuario hace clic en "Continuar con Google" (o Discord / GitLab).
+2. `supabase.auth.signInWithOAuth({ provider })` redirige al proveedor.
+3. El proveedor autentica y redirige de vuelta a la app con el token en la URL.
+4. Supabase intercepta el callback y establece la sesión.
+5. El `onAuthStateChange` ya existente detecta la sesión → la app navega al dashboard. No hay que cambiar la lógica post-login.
+
+#### Plan de implementación
+
+**Paso 0 — Configuración externa (Supabase dashboard)**
+
+- [ ] Activar provider **Google** en Supabase Auth → crear OAuth App en Google Cloud Console → pegar Client ID y Secret.
+- [ ] Activar provider **Discord** en Supabase Auth → crear OAuth App en Discord Developer Portal → pegar Client ID y Secret.
+- [ ] Activar provider **GitLab** en Supabase Auth → crear OAuth App en GitLab → pegar Client ID y Secret.
+- [ ] Añadir la URL de callback de Supabase como redirect URI en cada OAuth App (`https://<proyecto>.supabase.co/auth/v1/callback`).
+- [ ] Añadir `https://project-hohsa.vercel.app` como Site URL en Supabase Auth → URL Configuration.
+
+**Paso 1 — Tipo `OAuthProvider`**
+
+- [ ] Crear `src/app/entities/types/oauth-provider.type.ts`:
+  ```typescript
+  export type OAuthProvider = 'google' | 'discord' | 'gitlab';
+  ```
+
+**Paso 2 — Capa `domain` (contrato)**
+
+- [ ] Añadir al `AuthRepositoryContract` (`domain/repositories/auth.repository.contract.ts`):
+  ```typescript
+  signInWithOAuth(provider: OAuthProvider): Promise<void>;
+  ```
+
+**Paso 3 — Capa `data` (implementación)**
+
+- [ ] Implementar en `SupabaseAuthRepository`:
+  ```typescript
+  async signInWithOAuth(provider: OAuthProvider): Promise<void> {
+    const { error } = await this._supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: window.location.origin }
+    });
+    if (error) throw error;
+  }
+  ```
+- [ ] Añadir spec correspondiente en `supabase-auth.repository.spec.ts`.
+
+**Paso 4 — Capa `domain` (casos de uso)**
+
+- [ ] Añadir a `AuthUseCasesContract`:
+  ```typescript
+  signInWithOAuth(provider: OAuthProvider): Promise<AuthResult>;
+  ```
+- [ ] Implementar en `AuthUseCases` con try/catch → `AuthResult`.
+- [ ] Añadir spec en `auth.use-cases.spec.ts`.
+
+**Paso 5 — Capa `presentation` (UI)**
+
+- [ ] Añadir en `login.component.html` una sección separada "O continuar con" con tres botones, uno por proveedor.
+- [ ] Añadir los mismos botones en `register.component.html` (el registro OAuth crea la cuenta automáticamente).
+- [ ] Para los iconos de cada proveedor, usar SVG inline (los iconos de Google, Discord y GitLab no están en Material Icons). Guardar los SVG como assets o como constantes en el componente.
+- [ ] Añadir `onOAuthSignIn(provider: OAuthProvider): Promise<void>` en `LoginComponent` y `RegisterComponent`, delegando al use case.
+- [ ] En caso de error (proveedor no configurado, popup bloqueado, etc.), mostrar el `errorMessage` ya existente.
+
+**Paso 6 — i18n**
+
+- [ ] Añadir en `es.json` y `en.json` bajo `auth.login` y `auth.register`:
+  ```json
+  "orContinueWith": "O continuar con",
+  "continueWithGoogle": "Continuar con Google",
+  "continueWithDiscord": "Continuar con Discord",
+  "continueWithGitlab": "Continuar con GitLab"
+  ```
+
+**Paso 7 — Tests**
+
+- [ ] `supabase-auth.repository.spec.ts`: verificar que `signInWithOAuth('google')` llama a `supabase.auth.signInWithOAuth` con el provider correcto.
+- [ ] `auth.use-cases.spec.ts`: verificar que devuelve `{ success: true }` en caso exitoso y `{ success: false, error }` si falla.
+- [ ] `login.component.spec.ts`: verificar que `onOAuthSignIn('google')` llama al use case con `'google'`, y que los errores se reflejan en `errorMessage`.
+
+#### Consideraciones
+
+- El flujo OAuth implica una redirección completa del navegador — no es un popup. La app se recarga al volver del proveedor y el `onAuthStateChange` en `AppComponent` ya gestiona la sesión resultante.
+- En local (http://localhost:4200), hay que añadir `http://localhost:4200` como URL adicional en Supabase Auth → URL Configuration.
+- Si un usuario intenta registrarse con OAuth usando un email que ya existe como cuenta email/password, Supabase puede fusionar o rechazar según la configuración — conviene verificar el comportamiento en el dashboard.
 
 ---
 
