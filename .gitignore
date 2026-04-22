@@ -55,3 +55,7 @@ unlighthouse.config.ts
 .unlighthouse/
 lighthouse-reports/
 scripts/lighthouse.mts
+
+# Python
+__pycache__/
+*.pyc
