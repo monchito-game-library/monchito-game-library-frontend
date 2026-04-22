@@ -390,6 +390,8 @@
       "members": "miembros"
     },
     "ready": {
+      "dialogTitle": "Seleccionar packs",
+      "dialogIntro": "Elige la combinación de packs para cada producto del pedido.",
       "step": "Producto {{ current }} de {{ total }}",
       "needed": "Unidades pedidas",
       "units": "uds.",
@@ -867,7 +869,11 @@
     "edition": "Edición especial",
     "region": "Región",
     "regionNone": "Sin región",
-    "condition": "Estado",
+    "condition": {
+      "label": "Estado",
+      "new": "Nuevo",
+      "used": "Usado"
+    },
     "price": "Precio (€)",
     "store": "Tienda",
     "purchaseDate": "Fecha de compra",
@@ -890,7 +896,11 @@
     "edition": "Edición especial",
     "color": "Color",
     "compatibility": "Compatibilidad",
-    "condition": "Estado",
+    "condition": {
+      "label": "Estado",
+      "new": "Nuevo",
+      "used": "Usado"
+    },
     "price": "Precio (€)",
     "store": "Tienda",
     "purchaseDate": "Fecha de compra",
