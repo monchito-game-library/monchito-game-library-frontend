@@ -72,6 +72,7 @@
         matInput
         [type]="hideConfirmPassword() ? 'password' : 'text'"
         formControlName="confirmPassword"
+        [errorStateMatcher]="passwordMismatchMatcher"
         [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
         autocomplete="new-password" />
       <button
