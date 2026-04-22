@@ -105,7 +105,10 @@ describe('ControllerDetailComponent', () => {
             getById: vi.fn().mockResolvedValue(undefined)
           } as Partial<HardwareEditionUseCasesContract>
         },
-        { provide: UserContextService, useValue: { requireUserId: vi.fn().mockReturnValue('user-1') } },
+        {
+          provide: UserContextService,
+          useValue: { requireUserId: vi.fn().mockReturnValue('user-1'), userId: vi.fn().mockReturnValue('user-1') }
+        },
         { provide: MatDialog, useValue: { open: vi.fn() } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn() } },

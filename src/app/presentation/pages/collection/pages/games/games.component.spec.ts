@@ -616,12 +616,13 @@ describe('GamesComponent', () => {
 });
 
 describe('GamesComponent — _userId sin usuario autenticado', () => {
-  it('_loadGames muestra snackbar de error si userId es null', async () => {
+  it('_loadGames no carga datos ni muestra snackbar si userId es null', async () => {
     vi.clearAllMocks();
+    const mockGetAllGamesForList = vi.fn();
     TestBed.configureTestingModule({
       imports: [GamesComponent],
       providers: [
-        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn() } },
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: mockGetAllGamesForList } },
         { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
         {
           provide: UserContextService,
@@ -648,7 +649,8 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
 
     await (component as any)._loadGames(true);
 
-    expect(snackBar.open).toHaveBeenCalled();
+    expect(mockGetAllGamesForList).not.toHaveBeenCalled();
+    expect(snackBar.open).not.toHaveBeenCalled();
   });
 });
 

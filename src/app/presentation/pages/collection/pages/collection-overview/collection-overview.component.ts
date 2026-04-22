@@ -94,7 +94,8 @@ export class CollectionOverviewComponent implements OnInit {
    * Loads game, console and controller counts in parallel and updates the corresponding signals.
    */
   private async _loadCounts(): Promise<void> {
-    const userId: string = this._userContext.requireUserId();
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
 
     const [games, consoles, controllers] = await Promise.all([
       this._gameUseCases.getAllGamesForList(userId),

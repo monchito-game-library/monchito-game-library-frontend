@@ -29,7 +29,8 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
   readonly items: WritableSignal<ControllerModel[]> = signal<ControllerModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const userId: string = this._userContext.requireUserId();
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
     await Promise.all([
       this._loadItems(() => this._controllerUseCases.getAllForUser(userId)),
       this._loadStores(),
