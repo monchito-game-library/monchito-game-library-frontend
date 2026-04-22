@@ -38,9 +38,18 @@
 
 <!-- State: loading -->
 @if (loading()) {
-  <div class="game-list__loading">
-    <mat-spinner diameter="48" />
-    <p class="game-list__loading-text">{{ 'gameList.loading' | transloco }}</p>
+  <div class="game-list__skeleton" [style.--grid-cols]="columnCount()">
+    @for (n of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track n) {
+      <div class="game-list__skeleton-card">
+        <div class="game-list__skeleton-image">
+          <app-skeleton height="100%" />
+        </div>
+        <div class="game-list__skeleton-footer">
+          <app-skeleton width="70%" height="14px" />
+          <app-skeleton width="50%" height="12px" />
+        </div>
+      </div>
+    }
   </div>
 
   <!-- State: with games -->

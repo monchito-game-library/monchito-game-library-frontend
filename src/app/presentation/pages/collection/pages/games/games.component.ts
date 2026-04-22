@@ -17,7 +17,6 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -52,7 +51,6 @@ import { ListPageHeaderComponent } from '@/pages/collection/components/list-page
     MatButton,
     MatFabButton,
     MatIcon,
-    MatProgressSpinner,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
