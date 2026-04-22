@@ -18,6 +18,7 @@ import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -32,6 +33,8 @@ import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/co
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
+import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
+import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 
 @Component({
   selector: 'app-game-card',
@@ -43,6 +46,7 @@ import { GameStatusOption } from '@/interfaces/game-status-option.interface';
     MatCard,
     MatIconButton,
     MatIcon,
+    MatTooltip,
     CurrencyPipe,
     NgOptimizedImage,
     TranslocoPipe,
@@ -84,6 +88,9 @@ export class GameCardComponent {
   /** Whether the cover image has finished loading. */
   readonly imageLoaded: WritableSignal<boolean> = signal(false);
 
+  /** Dominant color extracted from the cover art, used for the hover glow and back-face tint. */
+  readonly dominantColor: WritableSignal<string> = signal('rgba(0, 0, 0, 0.25)');
+
   /** Platinum or hidden-trophy icon depending on platinum status. */
   readonly platinumIcon: Signal<string> = computed((): string =>
     this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath
@@ -124,6 +131,11 @@ export class GameCardComponent {
   /** CSS transform scale for the cover image. */
   readonly coverTransform: Signal<string> = computed((): string => `scale(${this._coverParts()[2]})`);
 
+  /** Brand accent color for the platform badge chip. Undefined for unknown platforms. */
+  readonly platformColor: Signal<string | undefined> = computed(
+    (): string | undefined => PLATFORM_COLORS[this.game().platform ?? '']
+  );
+
   /**
    * Star array for the rating display (0–5 stars mapped from the 0–10 rating).
    */
@@ -144,8 +156,29 @@ export class GameCardComponent {
       this.game();
       this.imageError.set(false);
       this.imageLoaded.set(false);
+      this.dominantColor.set('rgba(0, 0, 0, 0.25)');
     });
   }
+
+  /**
+   * Marks the image as loaded and triggers dominant color extraction via a CORS probe.
+   * Falls back silently if the image origin doesn't support CORS.
+   *
+   * @param {Event} event - The native load event from the img element
+   */
+  onImageLoaded = (event: Event): void => {
+    this.imageLoaded.set(true);
+    const img = event.target as HTMLImageElement;
+    const src = img.currentSrc || img.src;
+    if (!src) return;
+    const probe = new Image();
+    probe.crossOrigin = 'anonymous';
+    probe.onload = () => {
+      const color = extractDominantColor(probe);
+      if (color) this.dominantColor.set(color);
+    };
+    probe.src = src;
+  };
 
   /**
    * Toggles the card flip to show/hide the description on the back face.

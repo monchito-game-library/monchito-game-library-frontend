@@ -30,9 +30,23 @@
   <!-- Scrollable content area -->
   <div class="hw-list__content">
     @if (loading()) {
-      <div class="hw-list__loading">
-        <mat-progress-spinner diameter="48" mode="indeterminate" />
-        <p>{{ i18nPrefix() + '.loading' | transloco }}</p>
+      <div class="hw-list__grid">
+        @for (n of [0, 1, 2, 3, 4, 5]; track n) {
+          <div class="hw-list__card">
+            <div class="hw-list__card-header">
+              <app-skeleton width="32px" height="32px" borderRadius="var(--radius-full)" />
+              <div class="hw-list__card-titles">
+                <app-skeleton width="140px" height="16px" />
+                <app-skeleton width="90px" height="12px" borderRadius="4px" />
+              </div>
+            </div>
+            <div class="hw-list__card-chips">
+              <app-skeleton width="64px" height="22px" borderRadius="var(--radius-sm)" />
+              <app-skeleton width="48px" height="22px" borderRadius="var(--radius-sm)" />
+            </div>
+            <app-skeleton width="110px" height="12px" borderRadius="4px" />
+          </div>
+        }
       </div>
     } @else if (items().length === 0) {
       <div class="hw-list__empty">

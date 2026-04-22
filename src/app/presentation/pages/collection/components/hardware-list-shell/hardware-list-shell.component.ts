@@ -10,7 +10,6 @@ import {
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
@@ -39,7 +38,6 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
     MatButton,
     MatFabButton,
     MatIcon,
-    MatProgressSpinner,
     TranslocoPipe,
     SkeletonComponent,
     ListPageHeaderComponent
