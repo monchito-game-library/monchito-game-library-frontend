@@ -21,7 +21,7 @@
 }
 
 .order-detail-page__section-title {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .order-detail-page__stepper-progress {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--mat-sys-on-surface-variant);
 }
@@ -80,12 +80,12 @@
 }
 
 .order-detail-page__stepper-product-name {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
 }
 
 .order-detail-page__stepper-needed {
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   white-space: nowrap;
 }
@@ -128,12 +128,12 @@
 }
 
 .order-detail-page__stepper-member-name {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
 .order-detail-page__stepper-member-qty {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 700;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
@@ -150,7 +150,7 @@
 
 .order-detail-page__stepper-no-packs {
   color: var(--mat-sys-error);
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
 
 .order-detail-page__pack-option {
@@ -184,7 +184,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 1rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
@@ -196,7 +196,7 @@
 }
 
 .order-detail-page__pack-option-breakdown {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 500;
 }
 
@@ -207,7 +207,7 @@
 }
 
 .order-detail-page__pack-option-units {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -217,7 +217,7 @@
 }
 
 .order-detail-page__pack-option-cost {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
@@ -278,6 +278,6 @@
   }
 
   .order-detail-page__stepper-product-name {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
   }
 }

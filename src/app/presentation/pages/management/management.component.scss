@@ -28,7 +28,7 @@
 }
 
 .management__nav-title {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -42,10 +42,10 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 0.75rem;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   transition:
     background 150ms ease,
@@ -130,7 +130,7 @@
   .management__nav-item {
     flex-shrink: 0;
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     white-space: nowrap;
   }
 }

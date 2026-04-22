@@ -30,7 +30,7 @@
 
   .order-detail-page__title {
     flex: 1;
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
   }
 
@@ -72,7 +72,7 @@
   }
 
   .order-detail-page__section-title {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 600;
   }
 
@@ -121,7 +121,7 @@
     border-radius: 0.25rem;
     background: var(--mat-sys-surface);
     color: var(--mat-sys-on-surface);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     text-align: center;
 
     &:focus {
@@ -147,7 +147,7 @@
     }
 
     .order-detail-page__title {
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;

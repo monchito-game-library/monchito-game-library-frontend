@@ -24,7 +24,7 @@
 
   .orders-page__title {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
     color: var(--mat-sys-on-surface);
   }
@@ -51,7 +51,7 @@
 
     .orders-page__empty-text {
       margin: 0;
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
   }
 
@@ -65,7 +65,7 @@
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    z-index: 10;
+    z-index: var(--z-card);
   }
 }
 

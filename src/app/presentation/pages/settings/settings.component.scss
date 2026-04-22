@@ -16,7 +16,7 @@
 }
 
 .settings__title {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0 0 0.25rem;
   color: var(--mat-sys-on-surface);
@@ -37,7 +37,7 @@
   height: 80px;
   flex-shrink: 0;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   overflow: hidden;
 
   &:hover {
@@ -54,7 +54,7 @@
 .settings__avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   border: 2px solid var(--mat-sys-outline-variant);
   display: block;
@@ -82,14 +82,14 @@
 .settings__avatar-overlay {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: opacity 150ms ease;
-  color: #fff;
+  color: white;
 
   mat-icon {
     font-size: 22px;
@@ -107,7 +107,7 @@
 
 .settings__name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--text-base);
   color: var(--mat-sys-on-surface);
   white-space: nowrap;
   overflow: hidden;
@@ -115,7 +115,7 @@
 }
 
 .settings__email {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   white-space: nowrap;
   overflow: hidden;
@@ -123,7 +123,7 @@
 }
 
 .settings__avatar-hint {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--mat-sys-on-surface-variant);
   opacity: 0.85;
   margin-top: 4px;
@@ -147,7 +147,7 @@
   background: none;
   border: none;
   padding: 2px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--mat-sys-on-surface-variant);
   flex-shrink: 0;
@@ -155,9 +155,9 @@
   transition: opacity 150ms ease;
 
   mat-icon {
-    font-size: 0.9rem;
-    width: 0.9rem;
-    height: 0.9rem;
+    font-size: var(--text-sm);
+    width: var(--text-sm);
+    height: var(--text-sm);
   }
 
   &:hover {
@@ -166,12 +166,12 @@
 }
 
 .settings__name-input {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--mat-sys-on-surface);
   background: var(--mat-sys-surface-container-highest);
   border: 1px solid var(--mat-sys-primary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 2px 0.5rem;
   outline: none;
   min-width: 0;
@@ -186,15 +186,15 @@
   background: none;
   border: none;
   padding: 3px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 150ms ease;
 
   mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+    font-size: var(--text-base);
+    width: var(--text-base);
+    height: var(--text-base);
   }
 
   &--confirm {
@@ -223,7 +223,7 @@
 // ─── Section subtitles ────────────────────────────────────────────────────────
 
 .settings__section-subtitle {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -261,7 +261,7 @@
   height: 120px;
   background-size: cover;
   background-position: center;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   position: relative;
   overflow: hidden;
 
@@ -286,7 +286,7 @@
   justify-content: center;
   opacity: 0;
   transition: opacity 150ms ease;
-  color: #fff;
+  color: white;
 
   mat-icon {
     font-size: 26px;
@@ -315,7 +315,7 @@
 .settings__banner-placeholder {
   width: 100%;
   height: 120px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 2px dashed var(--mat-sys-outline-variant);
   display: flex;
   flex-direction: column;
@@ -335,7 +335,7 @@
   }
 
   span {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     opacity: 0.7;
   }
 }
@@ -369,7 +369,7 @@
   flex-shrink: 0;
   width: 88px;
   height: 58px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   cursor: pointer;
   border: 2px solid transparent;
@@ -410,7 +410,7 @@
 }
 
 .settings__banner-empty {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   text-align: center;
   padding: 1rem 0;
@@ -431,7 +431,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface);
 
   mat-icon {
@@ -449,11 +449,11 @@
 
 .settings__lang-btn {
   padding: 5px 1rem;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--mat-sys-outline-variant);
   background: transparent;
   color: var(--mat-sys-on-surface-variant);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   line-height: 1.4;

@@ -23,7 +23,7 @@
 }
 
 .stores-page__title {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0;
   color: var(--mat-sys-on-surface);
@@ -50,7 +50,7 @@
 }
 
 .stores-page__empty {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
   padding: 1rem 0;

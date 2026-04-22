@@ -8,7 +8,7 @@
 
 .ready-dialog__intro {
   color: var(--mat-sys-on-surface-variant);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .ready-dialog__line {
@@ -26,11 +26,11 @@
 
 .ready-dialog__line-name {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .ready-dialog__line-needed {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -65,11 +65,11 @@
 
 .ready-dialog__suggestion-breakdown {
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
 
 .ready-dialog__suggestion-units {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .ready-dialog__suggestion-cost {
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--mat-sys-primary);
 }
@@ -92,7 +92,7 @@
 }
 
 .ready-dialog__no-packs {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-error);
 }
 

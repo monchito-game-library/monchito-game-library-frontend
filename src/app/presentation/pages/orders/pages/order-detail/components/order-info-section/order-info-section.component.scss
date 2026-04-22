@@ -4,7 +4,7 @@
 }
 
 .order-detail-page__section-title {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .order-detail-page__member-name {
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
@@ -164,7 +164,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 1rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
@@ -175,7 +175,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 1rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-error-container);
   color: var(--mat-sys-on-error-container);
@@ -186,7 +186,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 1rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-tertiary-container);
   color: var(--mat-sys-on-tertiary-container);
@@ -194,7 +194,7 @@
 }
 
 .order-detail-page__ready-hint {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -202,7 +202,7 @@
   display: inline-block;
   padding: 2px 10px;
   border-radius: 1rem;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
@@ -237,7 +237,7 @@
 .order-detail-page__info-row {
   display: flex;
   gap: 0.75rem;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
 
 .order-detail-page__info-label {
@@ -327,7 +327,7 @@
   flex-shrink: 0;
 
   ::ng-deep .mat-button-toggle {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 500;
   }
 

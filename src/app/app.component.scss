@@ -19,7 +19,7 @@
     background-size: cover;
     background-position: center;
     pointer-events: none;
-    z-index: 0;
+    z-index: var(--z-base);
     transition: opacity 400ms ease;
     // Light mode: multiply blends colours over white backgrounds
     opacity: 0.22;
@@ -70,7 +70,7 @@
     gap: 0.25rem;
     width: 72px;
     padding: 0.75rem 0.25rem;
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     text-decoration: none;
     color: var(--mat-sys-on-surface-variant);
@@ -89,7 +89,7 @@
   }
 
   .nav-rail__label {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     text-align: center;
     line-height: 1;
@@ -120,7 +120,7 @@
   .nav-rail__avatar {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     border: 2px solid var(--mat-sys-outline-variant);
     object-fit: cover;
     transition: transform 0.2s ease;
@@ -161,7 +161,7 @@
   .app-topbar__title {
     flex: 1;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: var(--text-base);
     color: var(--mat-sys-on-surface);
   }
 
@@ -172,7 +172,7 @@
   .app-topbar__avatar {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     border: 2px solid var(--mat-sys-outline-variant);
     object-fit: cover;
     display: block;
@@ -217,7 +217,7 @@
   }
 
   .bottom-nav__label {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     font-weight: 500;
   }
 }
@@ -228,7 +228,7 @@
 ::ng-deep .mat-mdc-menu-panel {
   min-width: 280px !important;
   max-width: 280px !important;
-  border-radius: 20px !important;
+  border-radius: var(--radius-lg) !important;
   overflow: hidden !important;
   margin: 0.5rem !important;
 }
@@ -268,7 +268,7 @@
 .profile-menu__avatar {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   border: 3px solid rgba(255, 255, 255, 0.75);
   display: block;
@@ -282,15 +282,15 @@
 
 .profile-menu__name {
   font-weight: 600;
-  font-size: 0.9rem;
-  color: #fff;
+  font-size: var(--text-sm);
+  color: white;
   text-align: center;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
   display: block;
 }
 
 .profile-menu__email {
-  font-size: 0.73rem;
+  font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -310,13 +310,13 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 0.5rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  color: #fff;
-  font-size: 0.8rem;
+  color: white;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: background 150ms ease;
@@ -374,7 +374,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 200;
+    z-index: var(--z-nav);
   }
 }
 

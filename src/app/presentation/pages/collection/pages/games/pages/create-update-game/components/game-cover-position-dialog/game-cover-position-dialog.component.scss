@@ -1,7 +1,7 @@
 .cover-pos-dialog__preview {
   width: 240px;
   height: 320px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   margin: 0 auto;
   cursor: grab;
@@ -26,7 +26,7 @@
 
 .cover-pos-dialog__hint {
   text-align: center;
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--mat-sys-on-surface-variant);
   margin: 0.75rem 0 0;
 }

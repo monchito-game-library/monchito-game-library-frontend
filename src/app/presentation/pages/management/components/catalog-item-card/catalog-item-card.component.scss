@@ -3,7 +3,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface-container-low);
   cursor: pointer;
@@ -35,7 +35,7 @@
 }
 
 .catalog-item-card__name {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--mat-sys-on-surface);
   white-space: nowrap;
@@ -50,10 +50,10 @@
 }
 
 .catalog-item-card__chip {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   padding: 2px 0.5rem;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: var(--mat-sys-surface-variant);
   color: var(--mat-sys-on-surface-variant);
   font-family: monospace;

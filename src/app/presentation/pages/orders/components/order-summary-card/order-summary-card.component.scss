@@ -23,15 +23,15 @@
   }
 
   .order-card__title {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 600;
     color: var(--mat-sys-on-surface);
   }
 
   .order-card__status {
     padding: 2px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
     font-weight: 500;
     text-transform: capitalize;
 
@@ -41,18 +41,18 @@
     }
 
     &--ordered {
-      background: #e3f2fd;
-      color: #1565c0;
+      background: var(--color-status-ordered-bg);
+      color: var(--color-status-ordered-text);
     }
 
     &--shipped {
-      background: #fff8e1;
-      color: #f57f17;
+      background: var(--color-status-shipped-bg);
+      color: var(--color-status-shipped-text);
     }
 
     &--received {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: var(--color-status-received-bg);
+      color: var(--color-status-received-text);
     }
   }
 
@@ -61,7 +61,7 @@
     align-items: center;
     gap: 1rem;
     color: var(--mat-sys-on-surface-variant);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 
   .order-card__date,

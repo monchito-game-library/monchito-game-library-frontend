@@ -19,7 +19,7 @@
 }
 
 .order-detail-page__section-title {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -75,12 +75,12 @@
 }
 
 .order-placing__product-name {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
 }
 
 .order-placing__product-total {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -90,7 +90,7 @@
 }
 
 .order-placing__no-breakdown {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -107,7 +107,7 @@
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   background: var(--mat-sys-surface-container);
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
 
 .order-placing__pack-count {
@@ -122,7 +122,7 @@
 }
 
 .order-placing__pack-subtotal {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
