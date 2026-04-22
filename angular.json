@@ -51,7 +51,11 @@
                 }
               ],
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json",
+              "sourceMap": {
+                "scripts": true,
+                "hidden": true
+              }
             },
             "development": {
               "optimization": false,
@@ -83,7 +87,12 @@
             "include": [
               "src/**/*.spec.ts"
             ],
-            "coverageReporters": ["text", "html", "lcov", "json-summary"],
+            "coverageReporters": [
+              "text",
+              "html",
+              "lcov",
+              "json-summary"
+            ],
             "coverageExclude": [
               "**/*.html",
               "**/*.spec.ts",
