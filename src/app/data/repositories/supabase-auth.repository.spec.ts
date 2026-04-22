@@ -178,6 +178,8 @@ describe('SupabaseAuthRepository', () => {
 
   describe('onAuthStateChange', () => {
     it('registra el listener en supabase.auth', () => {
+      // Clear the constructor's early listener call before asserting
+      mockSupabase.auth.onAuthStateChange.mockClear();
       mockSupabase.auth.onAuthStateChange.mockImplementation(() => {});
       const callback = vi.fn();
 
@@ -269,6 +271,17 @@ describe('SupabaseAuthRepository', () => {
       captured!('SIGNED_IN');
 
       expect(callback).not.toHaveBeenCalled();
+    });
+
+    it('llama al callback inmediatamente si PASSWORD_RECOVERY ya fue detectado previamente', () => {
+      (repo as any)._passwordRecoveryDetected = true;
+      mockSupabase.auth.onAuthStateChange.mockClear();
+      const callback = vi.fn();
+
+      repo.onPasswordRecovery(callback);
+
+      expect(callback).toHaveBeenCalledOnce();
+      expect(mockSupabase.auth.onAuthStateChange).not.toHaveBeenCalled();
     });
   });
 });
