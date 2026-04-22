@@ -9,6 +9,18 @@ import { AuthRepositoryContract } from '@/domain/repositories/auth.repository.co
 export class SupabaseAuthRepository implements AuthRepositoryContract {
   private readonly _supabase: SupabaseClient = inject(SUPABASE_CLIENT);
 
+  /** True once Supabase has fired PASSWORD_RECOVERY, even before any component subscribes. */
+  private _passwordRecoveryDetected = false;
+
+  constructor() {
+    // Register early so PASSWORD_RECOVERY is never missed due to late component subscription.
+    this._supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        this._passwordRecoveryDetected = true;
+      }
+    });
+  }
+
   /**
    * Returns the authenticated user from the active session, or null if there is none.
    */
@@ -115,12 +127,20 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
 
   /**
    * Registers a listener that fires once when Supabase detects a PASSWORD_RECOVERY session.
+   * If the event already fired before the component subscribed, calls the callback immediately.
    *
    * @param {() => void} callback - Called when the recovery session is established
    */
   onPasswordRecovery(callback: () => void): void {
+    if (this._passwordRecoveryDetected) {
+      callback();
+      return;
+    }
     this._supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') callback();
+      if (event === 'PASSWORD_RECOVERY') {
+        this._passwordRecoveryDetected = true;
+        callback();
+      }
     });
   }
 
