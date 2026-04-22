@@ -110,9 +110,9 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 3rem;
-      width: 3rem;
-      height: 3rem;
+      font-size: var(--text-display);
+      width: var(--text-display);
+      height: var(--text-display);
     }
 
     span {
@@ -137,7 +137,7 @@
 
     &::-webkit-scrollbar-thumb {
       background: var(--mat-sys-outline-variant);
-      border-radius: 2px;
+      border-radius: var(--radius-xs);
     }
   }
 
@@ -157,7 +157,7 @@
     overflow: hidden;
     cursor: pointer;
     background: none;
-    transition: border-color 0.15s ease;
+    transition: border-color var(--transition-fast);
 
     img {
       width: 100%;
@@ -206,9 +206,9 @@
       gap: 0.25rem;
 
       mat-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
+        font-size: var(--text-sm);
+        width: var(--text-sm);
+        height: var(--text-sm);
         line-height: 1;
       }
     }

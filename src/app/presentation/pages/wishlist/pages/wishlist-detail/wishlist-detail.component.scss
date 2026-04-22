@@ -75,9 +75,9 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
+      font-size: var(--text-display);
+      width: var(--text-display);
+      height: var(--text-display);
     }
   }
 }
@@ -102,9 +102,9 @@
 }
 
 .wishlist-detail__star {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+  font-size: var(--text-xl);
+  width: var(--text-xl);
+  height: var(--text-xl);
   color: var(--mat-sys-outline);
 
   &--filled {
@@ -132,9 +132,9 @@
 }
 
 .wishlist-detail__price-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+  font-size: var(--text-lg);
+  width: var(--text-lg);
+  height: var(--text-lg);
 }
 
 .wishlist-detail__genres {

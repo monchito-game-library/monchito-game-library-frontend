@@ -11,7 +11,7 @@
     align-items: center;
     gap: 1rem;
     background: var(--mat-sys-surface-container);
-    border-radius: 1rem;
+    border-radius: var(--radius-md);
     padding: 2.5rem 2rem;
     max-width: 28rem;
     width: 100%;
@@ -19,9 +19,9 @@
   }
 
   .order-invite-page__icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
+    font-size: var(--text-display);
+    width: var(--text-display);
+    height: var(--text-display);
     color: var(--mat-sys-primary);
 
     &--error {
@@ -49,7 +49,7 @@
     gap: 0.75rem;
     width: 100%;
     background: var(--mat-sys-surface-variant);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-md);
     padding: 1rem 1.25rem;
   }
 
@@ -73,9 +73,9 @@
   }
 
   .order-invite-page__meta-icon {
-    font-size: 1.125rem;
-    width: 1.125rem;
-    height: 1.125rem;
+    font-size: var(--text-lg);
+    width: var(--text-lg);
+    height: var(--text-lg);
   }
 
   .order-invite-page__btn-content {
@@ -89,7 +89,7 @@
     color: var(--mat-sys-on-surface-variant);
     padding: 0.5rem 1rem;
     background: var(--mat-sys-surface-variant);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
   }
 }
 

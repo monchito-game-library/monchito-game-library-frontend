@@ -8,7 +8,7 @@
 
 | Mejora | Prioridad | Estado |
 |---|---|---|
-| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ⏳ Pendiente |
+| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ✅ Completado |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |

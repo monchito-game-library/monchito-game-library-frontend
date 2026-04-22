@@ -17,7 +17,7 @@
 
 .hardware-loan-form__title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--text-base);
   font-weight: 700;
 }
 
@@ -52,9 +52,9 @@
   color: var(--mat-sys-on-surface);
 
   mat-icon {
-    font-size: 1.125rem;
-    width: 1.125rem;
-    height: 1.125rem;
+    font-size: var(--text-lg);
+    width: var(--text-lg);
+    height: var(--text-lg);
     color: var(--mat-sys-outline);
   }
 }

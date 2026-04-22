@@ -48,13 +48,13 @@
   font-size: var(--text-sm);
   font-weight: 500;
   transition:
-    background 150ms ease,
-    color 150ms ease;
+    background var(--transition-fast),
+    color var(--transition-fast);
 
   mat-icon {
-    font-size: 1.2rem;
-    width: 1.2rem;
-    height: 1.2rem;
+    font-size: var(--text-lg);
+    width: var(--text-lg);
+    height: var(--text-lg);
     flex-shrink: 0;
   }
 

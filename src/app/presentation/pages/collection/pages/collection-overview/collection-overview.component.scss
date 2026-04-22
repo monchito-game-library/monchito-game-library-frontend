@@ -18,7 +18,7 @@
   box-sizing: border-box;
 
   .collection-overview__title {
-    font-size: 1.75rem;
+    font-size: var(--text-3xl);
     font-weight: 600;
     margin: 0;
   }
@@ -39,7 +39,7 @@
   }
 
   .collection-overview__total-amount {
-    font-size: 2rem;
+    font-size: var(--text-3xl);
     font-weight: 700;
     color: var(--mat-sys-primary);
     min-height: 2.5rem;
@@ -66,8 +66,8 @@
     border-radius: var(--radius-md);
     cursor: pointer;
     transition:
-      background-color 0.2s ease,
-      transform 0.15s ease;
+      background-color var(--transition-base),
+      transform var(--transition-fast);
     text-align: center;
 
     &:hover {
@@ -130,7 +130,7 @@
     padding: 1.5rem 1rem 0.75rem;
 
     .collection-overview__total-amount {
-      font-size: 1.75rem;
+      font-size: var(--text-3xl);
     }
 
     .collection-overview__grid {
@@ -143,13 +143,13 @@
     }
 
     .collection-overview__card-icon {
-      font-size: 2rem;
-      width: 2rem;
-      height: 2rem;
+      font-size: var(--text-3xl);
+      width: var(--text-3xl);
+      height: var(--text-3xl);
     }
 
     .collection-overview__card-title {
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
   }
 }

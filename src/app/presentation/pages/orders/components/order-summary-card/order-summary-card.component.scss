@@ -6,10 +6,10 @@
   padding: 1rem 1.25rem;
   background: var(--mat-sys-surface-container);
   border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s ease;
+  transition: background var(--transition-fast);
 
   &:hover {
     background: var(--mat-sys-surface-container-high);
@@ -71,9 +71,9 @@
     gap: 0.25rem;
 
     mat-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
   }
 }

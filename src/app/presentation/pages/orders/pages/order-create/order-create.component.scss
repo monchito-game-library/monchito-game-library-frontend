@@ -24,7 +24,7 @@
 
   .order-create-page__card {
     background: var(--mat-sys-surface-container);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
   }
 

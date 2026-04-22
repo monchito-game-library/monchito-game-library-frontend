@@ -41,9 +41,9 @@
     padding: 3rem 0;
 
     mat-icon {
-      font-size: 3rem;
-      width: 3rem;
-      height: 3rem;
+      font-size: var(--text-display);
+      width: var(--text-display);
+      height: var(--text-display);
       opacity: 0.4;
     }
 
@@ -65,9 +65,9 @@
   background: var(--mat-sys-surface-container-low);
   cursor: pointer;
   transition:
-    background 120ms ease,
-    border-color 120ms ease,
-    transform 120ms ease;
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
   flex-shrink: 0;
 
   &:hover {
@@ -99,9 +99,9 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
+      font-size: var(--text-2xl);
+      width: var(--text-2xl);
+      height: var(--text-2xl);
       opacity: 0.5;
     }
   }
@@ -152,9 +152,9 @@
     gap: 2px;
 
     mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
+      font-size: var(--text-sm);
+      width: var(--text-sm);
+      height: var(--text-sm);
       color: var(--color-rating);
     }
   }

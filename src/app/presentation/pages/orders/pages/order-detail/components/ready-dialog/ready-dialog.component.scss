@@ -45,7 +45,7 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   border: 2px solid var(--mat-sys-outline-variant);
   cursor: pointer;
   transition:
@@ -86,7 +86,7 @@
 
 .ready-dialog__suggestion-unit-price {
   font-weight: 400;
-  font-size: 0.8125rem;
+  font-size: var(--text-xs);
   color: var(--mat-sys-on-surface-variant);
   margin-left: 0.25rem;
 }

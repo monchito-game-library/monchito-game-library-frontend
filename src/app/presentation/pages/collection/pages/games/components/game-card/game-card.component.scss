@@ -10,12 +10,12 @@
   // perspective required for the 3D effect — cannot have overflow:hidden
   perspective: 1200px;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow-lg);
 
     .game-card__image {
       transform: scale(1.04);
@@ -170,8 +170,8 @@
     display: block;
     opacity: 0;
     transition:
-      opacity 200ms ease,
-      transform 0.3s ease;
+      opacity var(--transition-base),
+      transform var(--transition-slow);
 
     &--loaded {
       opacity: 1;
@@ -190,13 +190,13 @@
     align-items: center;
     justify-content: center;
     z-index: 3;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--shadow-sm);
 
     mat-icon {
       color: white;
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
+      font-size: var(--text-lg);
+      width: var(--text-lg);
+      height: var(--text-lg);
     }
   }
 
@@ -218,9 +218,9 @@
 
     mat-icon {
       color: white;
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
   }
 
@@ -263,9 +263,9 @@
 
     mat-icon {
       color: var(--color-platinum);
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
   }
 
@@ -286,9 +286,9 @@
     white-space: nowrap;
 
     mat-icon {
-      font-size: 12px;
-      width: 12px;
-      height: 12px;
+      font-size: var(--text-xs);
+      width: var(--text-xs);
+      height: var(--text-xs);
       flex-shrink: 0;
     }
   }
@@ -339,9 +339,9 @@
     cursor: default;
 
     mat-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
+      font-size: var(--text-sm);
+      width: var(--text-sm);
+      height: var(--text-sm);
     }
 
     &--rating {

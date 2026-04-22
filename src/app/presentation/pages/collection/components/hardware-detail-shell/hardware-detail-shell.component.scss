@@ -60,9 +60,9 @@
     font-style: italic;
 
     mat-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
       color: var(--mat-sys-tertiary);
     }
   }
@@ -83,15 +83,15 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-lg);
 
     mat-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
 
     &--sale {
@@ -130,9 +130,9 @@
     gap: 0.25rem;
 
     mat-icon {
-      font-size: 0.875rem;
-      width: 0.875rem;
-      height: 0.875rem;
+      font-size: var(--text-sm);
+      width: var(--text-sm);
+      height: var(--text-sm);
       color: var(--mat-sys-outline);
     }
   }

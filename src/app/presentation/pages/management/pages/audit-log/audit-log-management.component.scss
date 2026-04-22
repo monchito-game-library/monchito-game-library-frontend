@@ -58,9 +58,9 @@
   color: var(--mat-sys-on-surface-variant);
 
   .audit-log-empty__icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
+    font-size: var(--text-display);
+    width: var(--text-display);
+    height: var(--text-display);
     opacity: 0.4;
   }
 
