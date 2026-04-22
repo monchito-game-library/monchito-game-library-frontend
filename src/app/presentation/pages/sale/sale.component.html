@@ -44,7 +44,32 @@
             </div>
           } @else if (filteredAvailable().length === 0) {
             <div class="sale-page__empty">
-              <mat-icon>sell</mat-icon>
+              <svg class="sale-page__empty-svg" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  class="es-shape"
+                  d="M80 14 L130 64 C134 68 134 74 130 78 L88 120 C84 124 78 124 74 120 L24 70 C22 68 20 65 20 62 L22 30 C22 22 28 16 36 16 L68 14 C72 14 78 12 80 14 Z"
+                  stroke-width="3"
+                  stroke-linejoin="round" />
+                <circle class="es-accent" cx="50" cy="44" r="7" opacity="0.9" />
+                <line
+                  class="es-accent-stroke"
+                  x1="60"
+                  y1="76"
+                  x2="96"
+                  y2="112"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  opacity="0.4" />
+                <line
+                  class="es-accent-stroke"
+                  x1="74"
+                  y1="62"
+                  x2="110"
+                  y2="98"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  opacity="0.25" />
+              </svg>
               <p class="sale-page__empty-title">{{ 'salePage.available.empty.title' | transloco }}</p>
               <p class="sale-page__empty-subtitle">{{ 'salePage.available.empty.subtitle' | transloco }}</p>
             </div>
@@ -57,8 +82,12 @@
               <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
             </div>
             <div class="sale-page__list">
-              @for (item of filteredAvailable(); track item.id) {
-                <div class="sale-page__item" role="button" (click)="onItemClick(item.itemType, item.id)">
+              @for (item of filteredAvailable(); track item.id; let i = $index) {
+                <div
+                  class="sale-page__item"
+                  [style]="{ '--i': i }"
+                  role="button"
+                  (click)="onItemClick(item.itemType, item.id)">
                   <div class="sale-page__item-icon">
                     <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
                   </div>
@@ -131,7 +160,23 @@
             </div>
           } @else if (filteredSold().length === 0) {
             <div class="sale-page__empty">
-              <mat-icon>history</mat-icon>
+              <svg class="sale-page__empty-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle class="es-shape" cx="70" cy="70" r="50" stroke-width="3" />
+                <path class="es-ring" d="M38 70 A32 32 0 1 1 60 38" stroke-width="3" stroke-linecap="round" />
+                <path
+                  class="es-accent-stroke"
+                  d="M38 38 L38 70 L56 70"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <circle class="es-accent" cx="70" cy="70" r="4" opacity="0.8" />
+                <path
+                  class="es-accent-stroke"
+                  d="M70 42 L70 70 L88 70"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
               <p class="sale-page__empty-title">{{ 'salePage.history.empty.title' | transloco }}</p>
               <p class="sale-page__empty-subtitle">{{ 'salePage.history.empty.subtitle' | transloco }}</p>
             </div>
@@ -144,8 +189,12 @@
               <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
             </div>
             <div class="sale-page__list">
-              @for (item of filteredSold(); track item.id) {
-                <div class="sale-page__item" role="button" (click)="onItemClick(item.itemType, item.id)">
+              @for (item of filteredSold(); track item.id; let i = $index) {
+                <div
+                  class="sale-page__item"
+                  [style]="{ '--i': i }"
+                  role="button"
+                  (click)="onItemClick(item.itemType, item.id)">
                   <div class="sale-page__item-icon">
                     <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
                   </div>

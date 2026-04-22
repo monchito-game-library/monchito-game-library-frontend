@@ -54,4 +54,21 @@ describe('BadgeChipComponent', () => {
       expect(classList.contains('badge-chip--used')).toBe(true);
     });
   });
+
+  describe('bgColor', () => {
+    it('establece la variable CSS --chip-bg en el host cuando se proporciona bgColor', () => {
+      fixture.componentRef.setInput('label', 'PS5');
+      fixture.componentRef.setInput('bgColor', 'rgba(0, 52, 164, 0.82)');
+      fixture.detectChanges();
+      const value: string = fixture.nativeElement.style.getPropertyValue('--chip-bg');
+      expect(value).toBe('rgba(0, 52, 164, 0.82)');
+    });
+
+    it('no establece la variable CSS --chip-bg cuando bgColor es undefined', () => {
+      fixture.componentRef.setInput('label', 'PS5');
+      fixture.detectChanges();
+      const value: string = fixture.nativeElement.style.getPropertyValue('--chip-bg');
+      expect(value).toBe('');
+    });
+  });
 });

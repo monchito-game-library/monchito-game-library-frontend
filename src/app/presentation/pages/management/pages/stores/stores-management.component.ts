@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import {
@@ -27,7 +28,7 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoreEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe, CatalogItemCardComponent]
+  imports: [StoreEditPanelComponent, MatButton, MatIcon, TranslocoPipe, CatalogItemCardComponent, SkeletonComponent]
 })
 export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);

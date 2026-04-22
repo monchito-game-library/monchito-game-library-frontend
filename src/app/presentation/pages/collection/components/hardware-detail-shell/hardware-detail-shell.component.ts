@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputE
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -36,8 +37,8 @@ import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-
     MatIconButton,
     MatButton,
     MatIcon,
-    MatProgressSpinner,
     TranslocoPipe,
+    SkeletonComponent,
     HardwareLoanFormComponent,
     SaleFormComponent
   ]

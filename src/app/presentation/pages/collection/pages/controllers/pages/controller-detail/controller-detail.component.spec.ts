@@ -212,4 +212,34 @@ describe('ControllerDetailComponent', () => {
       expect(result).toEqual(expected);
     });
   });
+
+  describe('_getItem', () => {
+    it('devuelve el mando cargado', async () => {
+      await component.ngOnInit();
+      const item = (component as any)._getItem();
+      expect(item?.id).toBe('controller-uuid-1');
+    });
+  });
+
+  describe('_updateSaleStatus', () => {
+    it('delega en controllerUseCases.updateSaleStatus con userId, id y sale', async () => {
+      const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+      const sale = { forSale: true, salePrice: 59, soldAt: null, soldPriceFinal: null };
+
+      await (component as any)._updateSaleStatus('user-1', 'controller-uuid-1', sale);
+
+      expect(controllerUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'controller-uuid-1', sale);
+    });
+  });
+
+  describe('_deleteItem', () => {
+    it('delega en controllerUseCases.delete con userId e id del mando cargado', async () => {
+      await component.ngOnInit();
+      const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+
+      await (component as any)._deleteItem();
+
+      expect(controllerUseCases.delete).toHaveBeenCalledWith('user-1', 'controller-uuid-1');
+    });
+  });
 });

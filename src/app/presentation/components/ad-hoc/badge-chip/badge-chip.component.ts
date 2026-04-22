@@ -9,7 +9,8 @@ import { BadgeChipVariant } from '@/types/badge-chip-variant.type';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class]': '"badge-chip badge-chip--" + variant()'
+    '[class]': '"badge-chip badge-chip--" + variant()',
+    '[style.--chip-bg]': 'bgColor()'
   }
 })
 export class BadgeChipComponent {
@@ -18,4 +19,7 @@ export class BadgeChipComponent {
 
   /** Visual variant — controls color scheme and shape. Defaults to 'neutral'. */
   readonly variant: InputSignal<BadgeChipVariant> = input<BadgeChipVariant>('neutral');
+
+  /** Optional background color override (e.g. platform brand color). Only applied on the neutral variant. */
+  readonly bgColor: InputSignal<string | undefined> = input<string | undefined>(undefined);
 }

@@ -20,8 +20,20 @@
 
   <div class="protectors-grid-wrapper">
     @if (loading()) {
-      <div class="protectors-page__loading">
-        <mat-spinner diameter="40" />
+      <div class="protectors-skeleton">
+        @for (n of [0, 1, 2, 3, 4, 5]; track n) {
+          <div class="protectors-skeleton__card">
+            <div class="protectors-skeleton__header">
+              <app-skeleton width="55%" height="14px" />
+              <app-skeleton width="60px" height="20px" borderRadius="var(--radius-lg)" />
+            </div>
+            <app-skeleton width="70%" height="12px" />
+            <div class="protectors-skeleton__chips">
+              <app-skeleton width="48px" height="20px" borderRadius="var(--radius-sm)" />
+              <app-skeleton width="48px" height="20px" borderRadius="var(--radius-sm)" />
+            </div>
+          </div>
+        }
       </div>
     } @else if (protectors().length === 0) {
       <p class="protectors-page__empty">{{ 'management.products.empty' | transloco }}</p>

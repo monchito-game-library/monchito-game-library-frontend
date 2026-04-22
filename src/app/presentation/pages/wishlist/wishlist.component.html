@@ -33,13 +33,28 @@
     </header>
 
     @if (loading()) {
-      <div class="wishlist-page__loading">
-        <mat-progress-spinner mode="indeterminate" diameter="40" />
-        <p>{{ 'wishlist.loading' | transloco }}</p>
+      <div class="wishlist-page__list">
+        @for (n of [0, 1, 2, 3]; track n) {
+          <div class="wishlist-page__card-skeleton">
+            <app-skeleton width="72px" height="96px" borderRadius="var(--radius-sm)" />
+            <div class="wishlist-page__card-skeleton-body">
+              <app-skeleton width="180px" height="18px" />
+              <app-skeleton width="80px" height="14px" borderRadius="var(--radius-full)" />
+              <app-skeleton width="60px" height="14px" />
+            </div>
+          </div>
+        }
       </div>
     } @else if (items().length === 0) {
       <div class="wishlist-page__empty">
-        <mat-icon class="wishlist-page__empty-icon">bookmark_border</mat-icon>
+        <svg class="wishlist-page__empty-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            class="es-shape"
+            d="M24 14 H96 C102 14 106 18 106 24 V126 L60 100 L14 126 V24 C14 18 18 14 24 14 Z"
+            stroke-width="3"
+            stroke-linejoin="round" />
+          <path class="es-accent" d="M60 52 L64 62 H76 L66 70 L70 80 L60 72 L50 80 L54 70 L44 62 H56 Z" opacity="0.8" />
+        </svg>
         <p class="wishlist-page__empty-title">{{ 'wishlist.empty.title' | transloco }}</p>
         <p class="wishlist-page__empty-subtitle">{{ 'wishlist.empty.subtitle' | transloco }}</p>
         <button mat-flat-button type="button" (click)="onAddItem()">
@@ -49,11 +64,12 @@
       </div>
     } @else {
       <div class="wishlist-page__list">
-        @for (item of items(); track item.id; let first = $first) {
+        @for (item of items(); track item.id; let first = $first; let i = $index) {
           <app-wishlist-card
             [item]="item"
             [mobileMode]="isMobile()"
             [priority]="first"
+            [style]="{ '--i': i }"
             (cardClicked)="onCardClicked($event)"
             (editClicked)="onEditItem($event)"
             (deleteClicked)="onDeleteItem($event)"
@@ -105,8 +121,15 @@
     </header>
 
     @if (editPlatformsLoading()) {
-      <div class="wishlist-view__platforms-loading">
-        <mat-progress-spinner mode="indeterminate" diameter="40" />
+      <div class="wishlist-view__form">
+        <app-skeleton height="44px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="80px" borderRadius="var(--radius-sm)" />
+      </div>
+      <div class="wishlist-view__actions">
+        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
       </div>
     } @else {
       <!-- Selected game preview (add mode only) -->

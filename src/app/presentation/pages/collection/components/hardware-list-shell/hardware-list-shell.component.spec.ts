@@ -108,14 +108,16 @@ describe('HardwareListShellComponent', () => {
       setupComponent({ loading: true, items: [], filteredItems: [] });
     });
 
-    it('muestra el spinner', () => {
-      const spinner = fixture.debugElement.query(By.css('mat-progress-spinner'));
-      expect(spinner).not.toBeNull();
+    it('muestra el grid skeleton con 6 cards', () => {
+      const grid = fixture.debugElement.query(By.css('.hw-list__grid'));
+      expect(grid).not.toBeNull();
+      const cards = fixture.debugElement.queryAll(By.css('.hw-list__card'));
+      expect(cards).toHaveLength(6);
     });
 
-    it('no muestra el grid ni el empty state', () => {
-      expect(fixture.debugElement.query(By.css('.hw-list__grid'))).toBeNull();
+    it('no muestra el empty state ni el bloque no-results', () => {
       expect(fixture.debugElement.query(By.css('.hw-list__empty'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('.hw-list__no-results'))).toBeNull();
     });
   });
 

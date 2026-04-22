@@ -88,13 +88,13 @@ Lee `docs/BUGS.md` y `docs/ROADMAP.md` y propone la siguiente tarea según prior
 ---
 
 ### `/update-testing`
-Sincroniza los conteos de `docs/TESTING.md` con la salida real de `npm test`. Actualiza tablas y resumen final.
+Sincroniza los conteos de `docs/TESTING.md` con la salida real de `npm test`. Actualiza tablas, resumen final y sección "Cobertura actual" si los números han cambiado.
 
 ```
 /update-testing
 ```
 
-**Cuándo usarlo:** después de añadir o eliminar tests.
+**Cuándo usarlo:** después de añadir o eliminar tests a mano. `/improve-coverage` ya lo ejecuta internamente al terminar.
 
 ---
 
@@ -184,6 +184,17 @@ Migra una entidad que usa campos de texto libre (marca, modelo) a usar foreign k
 ---
 
 ## Tests
+
+### `/improve-coverage`
+Mejora la cobertura de tests hasta el máximo alcanzable. Genera el informe lcov, identifica los gaps reales (descartando los artefactos V8, código muerto y artefactos de Angular signals documentados en `docs/TESTING.md`), escribe los tests mínimos necesarios para cubrirlos, verifica que pasan y actualiza `TESTING.md`.
+
+```
+/improve-coverage
+```
+
+**Cuándo usarlo:** cuando se quiere subir la cobertura después de añadir funcionalidad nueva, o periódicamente para cerrar gaps en Categoría 4.
+
+---
 
 ### `/generate-mock-test-data <entidad>`
 Genera mocks tipados (`mockXxx`, `mockXxxList`) y una factory function (`createXxx(overrides?)`) en `src/testing/` para usar en specs. También genera el mock del DTO si existe.

@@ -541,6 +541,33 @@ describe('GamesComponent', () => {
     });
   });
 
+  describe('_columnCountFromWidth', () => {
+    it('devuelve 2 para width <= 600', () => {
+      expect((component as any)._columnCountFromWidth(600)).toBe(2);
+      expect((component as any)._columnCountFromWidth(400)).toBe(2);
+    });
+
+    it('devuelve 3 para width entre 601 y 900', () => {
+      expect((component as any)._columnCountFromWidth(900)).toBe(3);
+      expect((component as any)._columnCountFromWidth(700)).toBe(3);
+    });
+
+    it('devuelve 4 para width entre 901 y 1200', () => {
+      expect((component as any)._columnCountFromWidth(1200)).toBe(4);
+      expect((component as any)._columnCountFromWidth(1000)).toBe(4);
+    });
+
+    it('devuelve 5 para width entre 1201 y 1600', () => {
+      expect((component as any)._columnCountFromWidth(1600)).toBe(5);
+      expect((component as any)._columnCountFromWidth(1400)).toBe(5);
+    });
+
+    it('devuelve 6 para width mayor que 1600', () => {
+      expect((component as any)._columnCountFromWidth(1601)).toBe(6);
+      expect((component as any)._columnCountFromWidth(2560)).toBe(6);
+    });
+  });
+
   describe('ngOnDestroy', () => {
     it('se llama sin errores tras ngOnInit', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;

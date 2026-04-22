@@ -5,8 +5,17 @@
 
   <div class="audit-log-page__content">
     @if (loading()) {
-      <div class="audit-log-page__loading">
-        <mat-spinner diameter="40" />
+      <div class="audit-log-skeleton">
+        @for (n of [0, 1, 2, 3, 4]; track n) {
+          <div class="audit-log-skeleton__row">
+            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-full)" />
+            <div class="audit-log-skeleton__body">
+              <app-skeleton width="50%" height="14px" />
+              <app-skeleton width="30%" height="12px" />
+            </div>
+            <app-skeleton width="60px" height="12px" />
+          </div>
+        }
       </div>
     } @else if (entries().length === 0) {
       <div class="audit-log-empty">

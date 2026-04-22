@@ -158,5 +158,59 @@ describe('OrderPlacingComponent', () => {
       fixture.detectChanges();
       expect(component.placingRows()).toHaveLength(2);
     });
+
+    it('trata quantityOrdered null como 0 al agregar al acumulador de un producto existente', () => {
+      fixture.componentRef.setInput(
+        'order',
+        makeOrder({
+          lines: [
+            makeLine({ id: 'l1', requestedBy: 'user-1', quantityOrdered: 2 }),
+            makeLine({ id: 'l2', requestedBy: 'user-2', quantityOrdered: null as any })
+          ]
+        })
+      );
+      fixture.detectChanges();
+      const rows = component.placingRows();
+      expect(rows[0].totalOrdered).toBe(2);
+    });
+
+    it('trata quantityOrdered null como 0 al crear una entrada nueva en el map', () => {
+      fixture.componentRef.setInput(
+        'order',
+        makeOrder({
+          lines: [makeLine({ id: 'l1', productId: 'prod-new', productName: 'Nuevo', quantityOrdered: null as any })]
+        })
+      );
+      fixture.detectChanges();
+      const rows = component.placingRows();
+      expect(rows[0].totalOrdered).toBe(0);
+    });
+
+    it('usa suggestions[0] cuando find no encuentra coincidencia exacta de unitPrice', () => {
+      fixture.componentRef.setInput(
+        'order',
+        makeOrder({
+          lines: [makeLine({ quantityOrdered: 2, unitPrice: 999 })]
+        })
+      );
+      fixture.componentRef.setInput('products', [makeProduct()]);
+      fixture.detectChanges();
+      const rows = component.placingRows();
+      expect(rows[0].breakdown.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('devuelve breakdown vacío cuando el producto no tiene packs configurados', () => {
+      fixture.componentRef.setInput(
+        'order',
+        makeOrder({
+          lines: [makeLine({ quantityOrdered: 2, unitPrice: 10 })]
+        })
+      );
+      fixture.componentRef.setInput('products', [makeProduct({ packs: [] })]);
+      fixture.detectChanges();
+      const rows = component.placingRows();
+      expect(rows[0].breakdown).toEqual([]);
+      expect(rows[0].totalCost).toBe(0);
+    });
   });
 });

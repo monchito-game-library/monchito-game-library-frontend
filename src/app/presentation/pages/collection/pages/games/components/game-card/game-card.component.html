@@ -1,4 +1,4 @@
-<mat-card class="game-card">
+<mat-card class="game-card" [style.--dominant-glow]="dominantColor()">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
     <!-- FRONT FACE -->
     <div
@@ -15,21 +15,24 @@
           [ngSrc]="defaultImage()"
           [style.object-position]="coverObjectPosition()"
           [style.transform]="coverTransform()"
-          (load)="imageLoaded.set(true)"
+          (load)="onImageLoaded($event)"
           (error)="imageError.set(true)"
           fill
           alt="Game cover" />
 
         <!-- Status badge — top left -->
         @if (gameStatus()) {
-          <div class="game-card__status-badge" [style.background-color]="gameStatus()!.color">
+          <div
+            class="game-card__status-badge"
+            [style.background-color]="gameStatus()!.color"
+            [matTooltip]="gameStatus()!.labelKey | transloco">
             <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
           </div>
         }
 
         <!-- Favourite — top right -->
         @if (isFavorite()) {
-          <div class="game-card__favorite">
+          <div class="game-card__favorite" matTooltip="Favorito">
             <mat-icon>favorite</mat-icon>
           </div>
         }
@@ -38,15 +41,15 @@
         <div class="game-card__overlay">
           <div class="game-card__platform-row">
             @if (game().platform) {
-              <app-badge-chip [label]="game().platform!" variant="neutral" />
+              <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
             }
             @if (game().platinum) {
-              <span class="game-card__platinum-chip">
+              <span class="game-card__platinum-chip" matTooltip="Platinum">
                 <mat-icon>emoji_events</mat-icon>
               </span>
             }
             @if (isLoaned()) {
-              <span class="game-card__loan-chip">
+              <span class="game-card__loan-chip" [matTooltip]="game().activeLoanTo ?? ''">
                 <mat-icon>handshake</mat-icon>
                 {{ loanChipLabel() }}
               </span>

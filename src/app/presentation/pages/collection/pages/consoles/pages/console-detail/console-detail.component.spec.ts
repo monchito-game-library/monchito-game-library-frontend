@@ -248,4 +248,34 @@ describe('ConsoleDetailComponent', () => {
       expect(component.specs()).toBeUndefined();
     });
   });
+
+  describe('_getItem', () => {
+    it('devuelve la consola cargada', async () => {
+      await component.ngOnInit();
+      const item = (component as any)._getItem();
+      expect(item?.id).toBe('console-uuid-1');
+    });
+  });
+
+  describe('_updateSaleStatus', () => {
+    it('delega en consoleUseCases.updateSaleStatus con userId, id y sale', async () => {
+      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+      const sale = { forSale: true, salePrice: 199, soldAt: null, soldPriceFinal: null };
+
+      await (component as any)._updateSaleStatus('user-1', 'console-uuid-1', sale);
+
+      expect(consoleUseCases.updateSaleStatus).toHaveBeenCalledWith('user-1', 'console-uuid-1', sale);
+    });
+  });
+
+  describe('_deleteItem', () => {
+    it('delega en consoleUseCases.delete con userId e id de la consola cargada', async () => {
+      await component.ngOnInit();
+      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+
+      await (component as any)._deleteItem();
+
+      expect(consoleUseCases.delete).toHaveBeenCalledWith('user-1', 'console-uuid-1');
+    });
+  });
 });

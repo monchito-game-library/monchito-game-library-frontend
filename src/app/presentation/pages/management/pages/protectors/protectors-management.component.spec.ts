@@ -7,6 +7,7 @@ import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProtectorModel } from '@/models/protector/protector.model';
 
 function makeProtector(overrides: Partial<ProtectorModel> = {}): ProtectorModel {
@@ -180,6 +181,20 @@ describe('ProtectorsManagementComponent', () => {
 
       expect(protectorUseCases.deleteProtector).toHaveBeenCalledWith('prot-1');
       expect(component.panelOpen()).toBe(false);
+    });
+
+    it('muestra snackbar de error si deleteProtector lanza', async () => {
+      const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
+      protectorUseCases.deleteProtector.mockRejectedValue(new Error('delete error'));
+      const dialog = TestBed.inject(MatDialog as any) as any;
+      dialog.open.mockReturnValue({ afterClosed: () => of(true) });
+      const snackBar = TestBed.inject(MatSnackBar);
+      vi.spyOn(snackBar, 'open');
+
+      component.onDeleteProtector(makeProtector());
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(snackBar.open).toHaveBeenCalledWith(expect.any(String), '', expect.objectContaining({ duration: 4000 }));
     });
   });
 

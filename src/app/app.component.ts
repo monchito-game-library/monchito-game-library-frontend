@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
+  OnDestroy,
   OnInit,
   QueryList,
+  Signal,
   signal,
   ViewChildren,
   WritableSignal
@@ -40,13 +43,16 @@ import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
     NgOptimizedImage
   ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _themeService: ThemeService = inject(ThemeService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesInit: UserPreferencesInitService = inject(UserPreferencesInitService);
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
+  private readonly _mobileQuery: MediaQueryList = window.matchMedia('(max-width: 767px)');
+  private readonly _mobileAbort: AbortController = new AbortController();
+  private readonly _isMobile: WritableSignal<boolean> = signal(this._mobileQuery.matches);
 
   readonly userContext: UserContextService = inject(UserContextService);
 
@@ -55,7 +61,7 @@ export class AppComponent implements OnInit {
     { icon: 'sports_esports', label: 'nav.collection', route: '/collection' },
     { icon: 'bookmark', label: 'nav.wishlist', route: '/wishlist' },
     { icon: 'sell', label: 'nav.sale', route: '/sale' },
-    { icon: 'shopping_cart', label: 'nav.orders', route: '/orders' }
+    { icon: 'shopping_cart', label: 'nav.orders', route: '/orders', tabletOnly: true }
   ];
 
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
@@ -81,6 +87,22 @@ export class AppComponent implements OnInit {
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
 
+  /** Items visible in the bottom nav — filters tablet-only items on mobile. */
+  readonly bottomNavItems: Signal<NavItemInterface[]> = computed((): NavItemInterface[] => {
+    const isMobile = this._isMobile();
+    const items = [...this.navItems, ...(this.isAdmin() ? this.managementNavItems : [])];
+    return isMobile ? items.filter((item) => !item.tabletOnly) : items;
+  });
+
+  /** Index of the active item in the bottom-nav, used to position the sliding pill. */
+  readonly activeNavIndex: Signal<number> = computed((): number => {
+    const idx = this.bottomNavItems().findIndex((item) => this.isNavActive(item.route));
+    return Math.max(idx, 0);
+  });
+
+  /** Total number of visible bottom-nav items, used to size the pill. */
+  readonly navItemCount: Signal<number> = computed((): number => this.bottomNavItems().length);
+
   /** References to the profile menu triggers (rail + topbar). */
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
@@ -96,6 +118,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this._themeService.initTheme();
     this._pwaUpdate.init();
+    this._mobileQuery.addEventListener('change', (e) => this._isMobile.set((e as MediaQueryListEvent).matches), {
+      signal: this._mobileAbort.signal
+    });
 
     this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -104,6 +129,10 @@ export class AppComponent implements OnInit {
       });
 
     this.currentRoute.set(this._router.url);
+  }
+
+  ngOnDestroy(): void {
+    this._mobileAbort.abort();
   }
 
   /**

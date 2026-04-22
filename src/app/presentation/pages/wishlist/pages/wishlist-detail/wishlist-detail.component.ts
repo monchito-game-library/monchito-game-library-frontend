@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -26,6 +25,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-wishlist-detail',
@@ -40,8 +40,8 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
     MatIconButton,
     MatButton,
     MatTooltip,
-    MatProgressSpinner,
-    TranslocoPipe
+    TranslocoPipe,
+    SkeletonComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {
