@@ -23,5 +23,9 @@ export const environment = {
   rawg: {
     apiUrl: 'https://api.rawg.io/api',
     apiKey: 'TU_RAWG_API_KEY'
+  },
+  sentry: {
+    dsn: '',
+    enabled: false
   }
 };

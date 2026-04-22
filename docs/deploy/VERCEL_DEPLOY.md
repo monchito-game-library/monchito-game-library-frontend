@@ -28,13 +28,21 @@ El fichero `vercel.json` en la raíz del proyecto configura:
 
 Las siguientes variables deben estar configuradas en **Vercel → Settings → Environment Variables**:
 
-| Variable | Descripción |
-|---|---|
-| `SUPABASE_URL` | URL del proyecto de Supabase |
-| `SUPABASE_ANON_KEY` | Clave anónima pública de Supabase |
-| `RAWG_API_KEY` | API key de RAWG (rawg.io/apidocs) |
+| Variable | Descripción | Origen |
+|---|---|---|
+| `SUPABASE_URL` | URL del proyecto de Supabase | Manual |
+| `SUPABASE_ANON_KEY` | Clave anónima pública de Supabase | Manual |
+| `RAWG_API_KEY` | API key de RAWG (rawg.io/apidocs) | Manual |
+| `SENTRY_DSN` | DSN del proyecto Sentry (opcional — fallback hardcodeado en `set-env.js`) | Manual |
+| `SENTRY_AUTH_TOKEN` | Token para subida de source maps a Sentry | Integración Sentry ↔ Vercel |
+| `SENTRY_ORG` | Slug de la organización en Sentry (`espinilleitor`) | Integración Sentry ↔ Vercel |
+| `SENTRY_PROJECT` | Slug del proyecto en Sentry (`mochito-game-library`) | Integración Sentry ↔ Vercel |
 
 > **Nota:** La `SUPABASE_ANON_KEY` está diseñada para ser pública — la seguridad real la gestiona Row Level Security (RLS) en Supabase.
+
+> **Nota:** Las variables `SENTRY_AUTH_TOKEN`, `SENTRY_ORG` y `SENTRY_PROJECT` las genera automáticamente la integración Sentry instalada en Vercel (Settings → Integrations → Sentry). No hace falta crearlas a mano.
+
+Ver [OBSERVABILITY.md](./OBSERVABILITY.md) para el detalle completo de la configuración de observabilidad.
 
 ## Auto-deploy
 

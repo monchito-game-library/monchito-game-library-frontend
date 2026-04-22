@@ -8,7 +8,7 @@
 
 | Mejora | Prioridad | Estado |
 |---|---|---|
-| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ⏳ Pendiente |
+| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
 | [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ⏳ Pendiente |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
@@ -683,6 +683,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Observabilidad — Sentry + Better Stack~~ ✅
+
+`@sentry/angular` integrado en `main.ts` y `app.config.ts`. Captura automática de errores JavaScript no manejados en producción con `SentryErrorHandler`. Trazado de rutas con `TraceService` + `browserTracingIntegration`. Sentry solo se inicializa en producción (condicionado a `environment.sentry.enabled`). Source maps hidden activados en `angular.json` para stack traces legibles. `set-env.js` inyecta `SENTRY_DSN` en el build de Vercel. Integración Sentry ↔ Vercel configurada para subida automática de source maps en cada deploy. Better Stack configurado externamente como monitor HTTP de uptime.
+
+---
 
 ### ~~Préstamos de juegos~~ ✅
 
