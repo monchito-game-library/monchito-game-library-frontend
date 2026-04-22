@@ -142,10 +142,10 @@ export class GamesComponent implements OnInit, OnDestroy {
   readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('asc');
 
   /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
-  readonly columnCount: WritableSignal<number> = signal(4);
+  readonly columnCount: WritableSignal<number> = signal<number>(this._columnCountFromWidth(window.innerWidth));
 
   /** Whether the viewport is in mobile range (≤ 768px). */
-  readonly isMobile: WritableSignal<boolean> = signal(false);
+  readonly isMobile: WritableSignal<boolean> = signal<boolean>(window.innerWidth <= 768);
 
   /** Number of non-search filters currently active, shown as a badge on the mobile filter button. */
   readonly activeFilterCount: Signal<number> = computed((): number => {
@@ -342,6 +342,20 @@ export class GamesComponent implements OnInit, OnDestroy {
       clearAllFilters: () => this.clearAllFilters()
     };
     this._bottomSheet.open(GameListFiltersSheetComponent, { data });
+  }
+
+  /**
+   * Returns the column count for a given viewport width, matching the breakpoint thresholds
+   * used by BreakpointObserver so the skeleton renders with the correct grid from the start.
+   *
+   * @param {number} width - Viewport width in pixels
+   */
+  private _columnCountFromWidth(width: number): number {
+    if (width <= 600) return 2;
+    if (width <= 900) return 3;
+    if (width <= 1200) return 4;
+    if (width <= 1600) return 5;
+    return 6;
   }
 
   /**

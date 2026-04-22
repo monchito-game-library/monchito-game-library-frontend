@@ -51,8 +51,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
   private readonly _mobileQuery: MediaQueryList = window.matchMedia('(max-width: 767px)');
+  private readonly _mobileAbort: AbortController = new AbortController();
   private readonly _isMobile: WritableSignal<boolean> = signal(this._mobileQuery.matches);
-  private readonly _onMobileChange = (e: MediaQueryListEvent): void => this._isMobile.set(e.matches);
 
   readonly userContext: UserContextService = inject(UserContextService);
 
@@ -118,7 +118,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._themeService.initTheme();
     this._pwaUpdate.init();
-    this._mobileQuery.addEventListener('change', this._onMobileChange);
+    this._mobileQuery.addEventListener('change', (e) => this._isMobile.set((e as MediaQueryListEvent).matches), {
+      signal: this._mobileAbort.signal
+    });
 
     this._router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
@@ -130,7 +132,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._mobileQuery.removeEventListener('change', this._onMobileChange);
+    this._mobileAbort.abort();
   }
 
   /**
