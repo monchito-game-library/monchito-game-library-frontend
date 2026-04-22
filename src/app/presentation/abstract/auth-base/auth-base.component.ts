@@ -1,7 +1,17 @@
 import { inject, signal, WritableSignal } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroupDirective, NgForm, ValidationErrors } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
+
+/** ErrorStateMatcher that also marks confirmPassword as invalid when the parent group has passwordMismatch. */
+export class PasswordMismatchErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const controlInvalid = !!(control?.invalid && control?.touched);
+    const groupMismatch = !!(control?.parent?.hasError('passwordMismatch') && control?.touched);
+    return controlInvalid || groupMismatch;
+  }
+}
 
 /**
  * Abstract base class that encapsulates the shared state and helper methods
@@ -25,6 +35,9 @@ export abstract class AuthBaseComponent {
 
   /** Whether the password field is hidden. */
   readonly hidePassword: WritableSignal<boolean> = signal<boolean>(true);
+
+  /** ErrorStateMatcher used by confirmPassword fields to surface group-level passwordMismatch errors. */
+  readonly passwordMismatchMatcher = new PasswordMismatchErrorStateMatcher();
 
   /**
    * Toggles the password field visibility.

@@ -86,10 +86,10 @@
       <ng-container [ngTemplateOutlet]="extraFieldsTpl()" />
 
       <mat-form-field appearance="outline">
-        <mat-label>{{ i18nPrefix() + '.condition' | transloco }}</mat-label>
+        <mat-label>{{ i18nPrefix() + '.condition.label' | transloco }}</mat-label>
         <mat-select formControlName="condition">
-          <mat-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + 'sPage.condition.new' | transloco }}</mat-option>
-          <mat-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + 'sPage.condition.used' | transloco }}</mat-option>
+          <mat-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + '.condition.new' | transloco }}</mat-option>
+          <mat-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + '.condition.used' | transloco }}</mat-option>
         </mat-select>
       </mat-form-field>
 
