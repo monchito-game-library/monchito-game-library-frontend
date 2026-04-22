@@ -210,14 +210,14 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/components/sale-form/sale-form.component.spec.ts` | 28 | ✅ Cubierto |
 | `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 27 | ✅ Cubierto |
 | `pages/collection/pages/consoles/consoles.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 23 | ✅ Cubierto |
 | `pages/collection/pages/controllers/controllers.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 19 | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 12 | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 40 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 74 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 79 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 86 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
@@ -239,7 +239,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/management/pages/hardware/pages/editions/hardware-editions-management.component.spec.ts` | 32 | ✅ Cubierto |
 | `pages/management/pages/hardware/pages/models/hardware-models-management.component.spec.ts` | 34 | ✅ Cubierto |
 | `pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.spec.ts` | 19 | ✅ Cubierto |
-| `pages/management/pages/protectors/protectors-management.component.spec.ts` | 21 | ✅ Cubierto |
+| `pages/management/pages/protectors/protectors-management.component.spec.ts` | 22 | ✅ Cubierto |
 | `pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
 | `pages/management/pages/stores/stores-management.component.spec.ts` | 19 | ✅ Cubierto |
 | `pages/management/pages/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
@@ -255,7 +255,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts` | 7 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts` | 11 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 13 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
@@ -286,11 +286,11 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `ListPageHeaderComponent`: inputs y renderizado básico.
 - `CollectionOverviewComponent`: accesos a la colección (juegos/consolas/mandos), contadores.
 - `ConsolesComponent` / `ControllersComponent`: carga de lista, acciones de navegación.
-- `ConsoleDetailComponent` / `ControllerDetailComponent`: carga en paralelo, `goBack`, `editItem`, `deleteItem`, estado de venta/préstamo.
-- `CreateUpdateConsoleComponent` / `CreateUpdateControllerComponent`: modos create/edit, `onCancel`, existencia.
+- `ConsoleDetailComponent` / `ControllerDetailComponent`: carga en paralelo, `goBack`, `editItem`, `deleteItem`, estado de venta/préstamo; métodos protegidos `_getItem`, `_updateSaleStatus`, `_deleteItem`.
+- `CreateUpdateConsoleComponent` / `CreateUpdateControllerComponent`: modos create/edit, `onCancel`, existencia; señales `filteredStores`, `filteredBrands`, `filteredModels` (incluyendo filtrado por input).
 - `GameCardComponent`: señales computadas (`ratingStars`, `platinumIcon`, `isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`, `platformColor`, `dominantColor`), `onFlip`; `onImageLoaded` (probe Image con `crossOrigin anonymous`, actualización de `dominantColor`, rama null cuando canvas falla, fallback a `img.src`).
 - `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
-- `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`.
+- `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`; `_columnCountFromWidth` (todos los tramos de breakpoint incluyendo > 1600 px).
 - `GameCoverPositionDialogComponent`: parseo de `initialPosition` (sin posición, 3 partes, 2 partes, 1 parte), clamping de escala (max 4 / min 1), `onConfirm()`, `onCancel()`.
 - `GameFormComponent`: valores iniciales, `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store, `onCancel`, `hasChanges`.
 - `GameLoanFormComponent`: `isLoaned`, `ngOnInit` (parche de fecha), `onCancel`, `onLoan` (validación, `createLoan`, señal `saving`, emisión de `saved`, snackbar éxito/error), `onReturn` (guard de `activeLoanId`, `returnLoan`, emisión y snackbar).
@@ -298,7 +298,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `ManagementComponent` / `AuditLogManagementComponent` / `HardwareManagementComponent`: existencia, `getActionIcon`, `getActionLabel`.
 - `HardwareBrandEditPanel` / `HardwareEditionEditPanel` / `HardwareModelEditPanel` / `ProtectorEditPanel` / `StoreEditPanel`: paneles de edición inline con formulario y guardado.
 - `HardwareBrandsManagementComponent` / `HardwareEditionsManagementComponent` / `HardwareModelsManagementComponent`: listados de gestión con CRUD.
-- `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`.
+- `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`, `onDeleteProtector` (éxito y error).
 - `StoresManagementComponent`: valores iniciales, `onAddStore`, `onSelectStore`, `onClosePanel`, `getFormatHintLabel`.
 - `UsersManagementComponent`: valores iniciales, `isCurrentUser`, `getRoleLabel`, `onRoleChange` (skip si mismo rol).
 - `CatalogItemCardComponent`: inputs y slots de contenido.
@@ -308,7 +308,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `OrderDetailComponent`: `ngOnInit` (carga por id, status inicial), `selectingPacks`, `placingOrder`, `isOwner`, `nextStatus`/`prevStatus`, `onAdvanceStatus`, `onRegressStatus`, `onConfirmPacks`, `onToggleMemberReady`, `onShareInvitation`, `onDeleteOrder`, `onDeleteLine`, `onAddLine`, `onEditLine`, `onInfoEditingStarted`/`onInfoEditingEnded`, `onInfoHeaderSaved`, `onEditHeader`.
 - `OrderCostSummaryComponent`: cálculo de subtotal por usuario, shipping, paypal fee, descuento (amount/%), total.
 - `OrderInfoSectionComponent`: `onToggleSection`, `startEditing`, `onCancelEdit`, `onSaveHeader`, `sortedMembers`, `readyCount`, `allMembersReady`.
-- `OrderPlacingComponent`: columnas de tabla y totales; cobertura parcial (ver sección de lógica sin cobertura).
+- `OrderPlacingComponent`: agrupado de líneas por producto, `quantityOrdered` null en entrada nueva y acumulador existente, producto sin packs, fallback a `suggestions[0]` cuando el precio unitario no coincide.
 - `OrderProductListComponent`: `visibleLines`, `groupedLines`.
 - `OrderStepperComponent`: inicialización de steps, selección de pack, auto-confirmación al navegar, `getMemberAllocations` (proporcional con Largest Remainder), output `allPacksSelectedChange`.
 - `ReadyDialogComponent`: `canConfirm`, `getSelectedIndex`, `onSelectSuggestion`, `formatBreakdown`, `onConfirm`, `onCancel`.
@@ -348,9 +348,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `app.component.spec.ts` | 24 | ✅ Cubierto |
+| `app.component.spec.ts` | 31 | ✅ Cubierto |
 
-**Qué se cubre**: existencia, `isAuthenticated`, `isNavActive` (incluyendo rutas de edición), `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`, `onAvatarClick` (navega a /settings), inicialización de tema y PWA, actualización de `currentRoute` en NavigationEnd.
+**Qué se cubre**: existencia, `isAuthenticated`, `isNavActive` (incluyendo rutas de edición), `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`, `onAvatarClick` (navega a /settings), inicialización de tema y PWA, actualización de `currentRoute` en NavigationEnd; señales computadas `bottomNavItems` (con y sin admin, mobile vs desktop), `activeNavIndex`, `navItemCount`.
 
 ---
 
@@ -365,10 +365,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Guards | 3 | 12 |
 | Servicios | 7 | 84 |
 | Abstractas | 5 | 158 |
-| App component | 1 | 24 |
-| Componentes | 67 | ~1340 |
+| App component | 1 | 31 |
+| Componentes | 67 | ~1368 |
 | Utilidades | 6 | 84 |
-| **Total** | **136** | **2279** |
+| **Total** | **136** | **2314** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -378,10 +378,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 97.89 % (4363 / 4457) |
-| Branches | **94.04 %** (2842 / 3022) |
-| Functions | 96.60 % (995 / 1030) |
-| Lines | 98.65 % (3594 / 3643) |
+| Statements | 98.64 % (4519 / 4581) |
+| Branches | **94.50 %** (2906 / 3075) |
+| Functions | 98.56 % (1033 / 1048) |
+| Lines | 99.41 % (3724 / 3746) |
 
 ```bash
 npm run test:coverage
@@ -389,7 +389,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 94.04 % de ramas no es el máximo alcanzable.** Existe margen de mejora real en `order-detail.component.ts` (66.94 % branch coverage) y `order-placing.component.ts` (70.37 %). El resto de ramas sin cubrir pertenecen a las tres categorías de artefactos no testables descritas a continuación.
+> **El 94.50 % de ramas es cercano al máximo alcanzable.** El principal margen de mejora real restante está en `order-detail.component.ts` (66.94 % branch coverage). El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -416,7 +416,7 @@ La línea 12 es `export class FooComponent implements OnInit { ... }`. Por mucho
 
 ---
 
-### Categoría 2 — Código muerto / ramas inalcanzables (~15 ramas)
+### Categoría 2 — Código muerto / ramas inalcanzables (~20 ramas)
 
 Son ramas de condiciones cuyo lado `false` (o `true`) nunca puede ocurrir dado el contrato del código que las rodea.
 
@@ -426,12 +426,15 @@ Son ramas de condiciones cuyo lado `false` (o `true`) nunca puede ocurrir dado e
 | `game-form.component.ts` | 202 | `typeof platform.labelKey` | rama `false` | el objeto siempre tiene `labelKey` por construcción |
 | `game-form.component.ts` | 431, 434 | guards de validación de form | ramas imposibles | los controles se inicializan en el constructor; nunca son `null` |
 | `_passwordMatchValidator` (register / reset-password) | — | `if (!password \|\| !confirmPassword)` | rama `true` | las controls siempre existen; el validador solo se aplica al `FormGroup` que las crea |
+| `pack-optimizer.util.ts` | 25 | `_runDP(needed, sorted, 1)[0] ?? null` | rama `null` del `??` | `_runDP` siempre devuelve al menos un resultado para packs válidos; el array nunca está vacío |
+| `pack-optimizer.util.ts` | 35 | `if (!s) continue` | rama `true` | `exact` (al que `!s` protege) solo sería `null` si `_runDP` devolviera vacío (ver fila anterior) |
+| `pack-optimizer.util.ts` | 113 | `if (seen.has(key)) continue` | rama `true` | la misma combinación de packs no puede aparecer para dos valores distintos de `q` en el DP back-tracking determinista |
 
 > **Nota sobre `_passwordMatchValidator`**: aunque la rama `true` del guard es lógicamente inalcanzable en producción, sí se ha cubierto en los tests invocando el validador directamente con un `FormGroup` sintético al que le falta uno de los controles: `(component as any)._passwordMatchValidator(new FormGroup({ confirmPassword: new FormControl('') }))`. Esto cierra la rama en el spec pero no elimina las entradas V8 de los bloques adyacentes.
 
 ---
 
-### Categoría 3 — Artefactos de Angular signals compilados (~9 ramas)
+### Categoría 3 — Artefactos de Angular signals compilados (~15 ramas)
 
 Dentro de `computed()` y `effect()`, Angular compila las funciones a través de su propio scheduler. El optional chaining (`?.`) y el nullish coalescing (`??`) dentro de esas funciones generan entradas `BRDA` que V8 nunca marca como cubiertas aunque el código se ejecute, porque la rama se resuelve en el contexto del scheduler de Angular y no en el frame de ejecución normal del test.
 
@@ -446,6 +449,10 @@ readonly hasChanges = computed(() => {
 ```
 El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `rawg_id`, pero V8 no registra la rama "objeto existe → acceder a `rawg_id`" porque el compiled signal la ejecuta fuera del stack de instrumentación normal.
 
+**Otros ficheros afectados**:
+- `create-update-console.component.ts` líneas 69, 75, 81: `this._storeInput()?.toString().toLowerCase() ?? ''` y equivalentes para brand/model dentro de `filteredStores`, `filteredBrands`, `filteredModels` (todos `computed()`).
+- `create-update-controller.component.ts` líneas 76, 82, 88: mismo patrón.
+
 **Ficheros afectados**: cualquier componente con `computed()` que contenga `?.` o `??`.
 
 ---
@@ -455,7 +462,6 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 | Componente | Cobertura branches | Qué falta |
 |---|---|---|
 | `order-detail.component.ts` | 66.94 % | Ramas de error/edge en `_initForStatus`, flujos de `onEditHeader` y estados intermedios |
-| `order-placing.component.ts` | 70.37 % | Columnas condicionales y cálculos de tabla; cobertura parcial por ser presentación pura |
 
 ---
 
@@ -467,3 +473,8 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 | `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. |
 | `supabase-order.repository.ts` | Pendiente de spec. El repositorio se usa vía el contrato DI y los use cases lo mockean en sus tests. |
 | `supabase-console.repository.ts` / `supabase-controller.repository.ts` — segundo `await` dentro de `createLoan` | Tras crear el préstamo en `hardware_loans`, se actualiza la tabla principal con `active_loan_*`. Esta segunda llamada no lanza aunque falle (sin `if (error)` guard), por lo que no hay rama de error testable. Los assertions de `controllerBuilder.update` y `consoleBuilder.update` en `returnLoan` y `createLoan` verifican que se invoca, pero V8 marca la rama de rechazo de `Promise.all` como no cubierta porque no hay throw. |
+| `sale.component.ts` — línea 33 (`providers: [marketRepositoryProvider, marketUseCasesProvider]`) | La expresión del array de providers está en el `@Component` decorator. Angular Ivy la evalúa de forma diferida en la factory del componente; como el test reemplaza los providers con `TestBed.overrideComponent`, la expresión original nunca se ejecuta. Los providers conectan a Supabase y no se pueden instanciar en tests unitarios. |
+| `app.component.ts` — callback de `addEventListener('change', …)` en `_mobileQuery` | El listener se registra en `ngOnInit` pero solo se dispara cuando el viewport cambia de tamaño. En happy-dom, `window.matchMedia` devuelve un mock que no admite dispatch de `MediaQueryListEvent`. La función es un simple `this._isMobile.set(e.matches)` sin lógica propia. |
+| `app.component.ts` — `@ViewChildren(MatMenuTrigger) menuTriggers` (línea 107) | Propiedad decorada con `@ViewChildren`. Angular genera un setter interno que se llama durante la inicialización de la vista; con `template: ''` en los tests no hay view children que satisfacer. V8 registra el setter como no ejecutado. Artefacto del compilador Angular. |
+| `catalog-item-card.component.ts` — `CatalogItemCardComponent_click_HostBindingHandler` | Función generada por el compilador Angular para el host binding `'(click)': 'cardClick.emit()'`. Los tests despachan un click nativo sobre `fixture.nativeElement` y el spy se activa, pero V8 no instrumenta correctamente las funciones de host binding generadas por Ivy. Artefacto del compilador. |
+| `settings.component.ts` — función anónima `anonymous_15` | Callback anónimo de una suscripción RxJS en el componente de ajustes. La función es uno de los callbacks de subscribe que se ejecuta solo bajo condiciones específicas no reproducidas en los tests actuales. |
