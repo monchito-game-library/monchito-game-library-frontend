@@ -44,8 +44,13 @@
 
   <div class="editions-grid-wrapper">
     @if (loading()) {
-      <div class="editions-page__loading">
-        <mat-spinner diameter="40" />
+      <div class="editions-skeleton">
+        @for (n of [0, 1, 2, 3, 4, 5]; track n) {
+          <div class="editions-skeleton__card">
+            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-sm)" />
+            <app-skeleton width="60%" height="14px" />
+          </div>
+        }
       </div>
     } @else if (editions().length === 0) {
       <p class="editions-page__empty">{{ 'management.hardware.editions.empty' | transloco }}</p>

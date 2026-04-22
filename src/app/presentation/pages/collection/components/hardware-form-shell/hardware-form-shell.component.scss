@@ -23,7 +23,7 @@
   }
 
   .hw-form__title {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     font-weight: 600;
     margin: 0;
     color: var(--mat-sys-on-surface);
@@ -55,7 +55,7 @@
   }
 
   .hw-form__color-label {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--mat-sys-on-surface-variant);
     font-weight: 500;
   }
@@ -70,7 +70,7 @@
     width: 3rem;
     height: 3rem;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     padding: 0;
     background: transparent;
@@ -81,14 +81,14 @@
 
     &::-webkit-color-swatch {
       border: 2px solid var(--mat-sys-outline-variant);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
     }
   }
 
   .hw-form__color-preview {
     width: 1.5rem;
     height: 1.5rem;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     border: 2px solid var(--mat-sys-outline-variant);
     flex-shrink: 0;
   }

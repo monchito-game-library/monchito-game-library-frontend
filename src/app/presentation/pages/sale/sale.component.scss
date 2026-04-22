@@ -65,23 +65,23 @@
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
   border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: transparent;
   color: var(--mat-sys-on-surface-variant);
   font-family: inherit;
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   transition:
-    background 0.15s,
-    color 0.15s,
-    border-color 0.15s;
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
 
   mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+    font-size: var(--text-base);
+    width: var(--text-base);
+    height: var(--text-base);
   }
 
   &--active {
@@ -120,25 +120,43 @@
   padding: 3rem 1.5rem;
   text-align: center;
   color: var(--mat-sys-on-surface-variant);
+}
 
-  mat-icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
-    opacity: 0.4;
-  }
+.sale-page__empty-svg {
+  width: 120px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.es-shape {
+  fill: var(--mat-sys-surface-variant);
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-ring {
+  fill: none;
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-accent {
+  fill: var(--mat-sys-primary);
+}
+
+.es-accent-stroke {
+  stroke: var(--mat-sys-primary);
+  fill: none;
 }
 
 .sale-page__empty-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--mat-sys-on-surface);
 }
 
 .sale-page__empty-subtitle {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 // ── Summary bar ───────────────────────────────────────────────────────────────
@@ -149,21 +167,21 @@
   gap: 0.5rem;
   padding: 0.75rem 1rem;
   background: var(--mat-sys-surface-container);
-  border-radius: 12px;
-  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   flex-shrink: 0;
 
   mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+    font-size: var(--text-base);
+    width: var(--text-base);
+    height: var(--text-base);
     color: var(--mat-sys-primary);
   }
 }
 
 .sale-page__summary-count {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--mat-sys-on-surface);
 }
@@ -180,16 +198,29 @@
   gap: 0.5rem;
 }
 
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .sale-page__item {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 1rem;
   background: var(--mat-sys-surface-container);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--mat-sys-outline-variant);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background var(--transition-fast);
+  animation: cardIn 280ms ease both;
+  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
 
   &:hover {
     background: var(--mat-sys-surface-container-high);
@@ -202,14 +233,14 @@
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--mat-sys-surface-container-high);
   flex-shrink: 0;
 
   mat-icon {
-    font-size: 1.25rem;
-    width: 1.25rem;
-    height: 1.25rem;
+    font-size: var(--text-xl);
+    width: var(--text-xl);
+    height: var(--text-xl);
     color: var(--mat-sys-on-surface-variant);
   }
 }
@@ -223,7 +254,7 @@
 }
 
 .sale-page__item-name {
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--mat-sys-on-surface);
   white-space: nowrap;
@@ -240,23 +271,23 @@
 
 .sale-page__item-detail-chip {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   padding: 2px 0.5rem;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   background: var(--mat-sys-surface-container-high);
   color: var(--mat-sys-on-surface-variant);
 }
 
 .sale-page__item-price {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--mat-sys-primary);
   flex-shrink: 0;
 }
 
 .sale-page__item-no-price {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   font-weight: 400;
 }
@@ -270,13 +301,13 @@
 }
 
 .sale-page__item-sold-price {
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--mat-sys-primary);
 }
 
 .sale-page__item-date {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--mat-sys-on-surface-variant);
 }
 

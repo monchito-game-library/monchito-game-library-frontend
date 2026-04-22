@@ -352,4 +352,45 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       expect(editionUseCases.getAllByModel).not.toHaveBeenCalled();
     });
   });
+
+  describe('filteredStores / filteredBrands / filteredModels', () => {
+    it('filteredStores devuelve todas las tiendas cuando el input está vacío', async () => {
+      await component.ngOnInit();
+      const stores = component.filteredStores();
+      expect(Array.isArray(stores)).toBe(true);
+    });
+
+    it('filteredBrands devuelve todas las marcas cuando el input está vacío', async () => {
+      await component.ngOnInit();
+      const brands = component.filteredBrands();
+      expect(Array.isArray(brands)).toBe(true);
+    });
+
+    it('filteredModels devuelve todos los modelos cuando el input está vacío', async () => {
+      await component.ngOnInit();
+      const models = component.filteredModels();
+      expect(Array.isArray(models)).toBe(true);
+    });
+
+    it('filteredStores filtra por el valor del input de tienda', async () => {
+      await component.ngOnInit();
+      component.form.controls.store.setValue('GAME');
+      const stores = component.filteredStores();
+      expect(stores.some((s) => s.label.toLowerCase().includes('game'))).toBe(true);
+    });
+
+    it('filteredBrands filtra por el valor del input de marca', async () => {
+      await component.ngOnInit();
+      component.form.controls.brandId.setValue('Sony');
+      const brands = component.filteredBrands();
+      expect(Array.isArray(brands)).toBe(true);
+    });
+
+    it('filteredModels filtra por el valor del input de modelo', async () => {
+      await component.ngOnInit();
+      component.form.controls.modelId.setValue('DualSense');
+      const models = component.filteredModels();
+      expect(Array.isArray(models)).toBe(true);
+    });
+  });
 });

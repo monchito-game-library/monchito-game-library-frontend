@@ -13,8 +13,19 @@
   </div>
 
   @if (loading()) {
-    <div class="hw-form__loading">
-      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    <div class="hw-form__form">
+      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton class="hw-form__field--full" height="80px" borderRadius="var(--radius-sm)" />
+      <div class="hw-form__footer">
+        <app-skeleton width="100px" height="36px" borderRadius="var(--radius-sm)" />
+        <app-skeleton width="80px" height="36px" borderRadius="var(--radius-sm)" />
+      </div>
     </div>
   } @else {
     <form [formGroup]="form()" (ngSubmit)="submitClick.emit()" class="hw-form__form">

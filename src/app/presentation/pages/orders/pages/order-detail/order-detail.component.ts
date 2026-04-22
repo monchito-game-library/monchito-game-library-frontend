@@ -13,7 +13,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -39,6 +38,7 @@ import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/ad
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { allMembersReady } from '@/shared/order-member/order-member.util';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -51,8 +51,8 @@ import { allMembersReady } from '@/shared/order-member/order-member.util';
     MatButton,
     MatIconButton,
     MatIcon,
-    MatProgressSpinner,
     MatTooltip,
+    SkeletonComponent,
     TranslocoPipe,
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,

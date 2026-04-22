@@ -30,8 +30,22 @@
 
   <!-- ─── Loading ─────────────────────────────────────────────────────────── -->
   @if (loading()) {
-    <div class="wishlist-detail__loading">
-      <mat-progress-spinner mode="indeterminate" diameter="40" />
+    <div class="wishlist-detail__content">
+      <div class="wishlist-detail__cover-wrapper">
+        <app-skeleton width="100%" height="180px" borderRadius="var(--radius-sm)" />
+      </div>
+      <app-skeleton width="80%" height="24px" />
+      <div class="wishlist-detail__meta">
+        <app-skeleton width="120px" height="20px" />
+        <app-skeleton width="60px" height="20px" borderRadius="var(--radius-full)" />
+      </div>
+      <app-skeleton width="80px" height="18px" />
+      <div class="wishlist-detail__genres">
+        @for (n of [0, 1, 2]; track n) {
+          <app-skeleton width="64px" height="20px" borderRadius="var(--radius-full)" />
+        }
+      </div>
+      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
     </div>
   }
 

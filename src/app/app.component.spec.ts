@@ -219,6 +219,53 @@ describe('AppComponent', () => {
       expect(spy).toHaveBeenCalledWith(['/settings']);
     });
   });
+
+  describe('bottomNavItems', () => {
+    it('devuelve los items de navegación cuando isAdmin es false', () => {
+      mockUserPrefsState.isAdmin.set(false);
+      const items = component.bottomNavItems();
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+    });
+
+    it('incluye items de gestión cuando isAdmin es true', () => {
+      mockUserPrefsState.isAdmin.set(true);
+      const items = component.bottomNavItems();
+      expect(items.some((i) => i.route === '/management')).toBe(true);
+    });
+
+    it('filtra items tabletOnly cuando isMobile es true', () => {
+      (component as any)._isMobile.set(true);
+      mockUserPrefsState.isAdmin.set(false);
+      const items = component.bottomNavItems();
+      expect(items.every((i) => !i.tabletOnly)).toBe(true);
+    });
+
+    it('incluye items tabletOnly cuando isMobile es false', () => {
+      (component as any)._isMobile.set(false);
+      mockUserPrefsState.isAdmin.set(false);
+      const items = component.bottomNavItems();
+      expect(items.some((i) => i.tabletOnly)).toBe(true);
+    });
+  });
+
+  describe('activeNavIndex', () => {
+    it('devuelve un índice >= 0', () => {
+      component.currentRoute.set('/collection');
+      expect(component.activeNavIndex()).toBeGreaterThanOrEqual(0);
+    });
+
+    it('devuelve 0 cuando ninguna ruta coincide', () => {
+      component.currentRoute.set('/ruta-desconocida');
+      expect(component.activeNavIndex()).toBe(0);
+    });
+  });
+
+  describe('navItemCount', () => {
+    it('devuelve el número total de items de navegación', () => {
+      expect(component.navItemCount()).toBeGreaterThan(0);
+    });
+  });
 });
 
 describe('AppComponent — router subscription (NavigationEnd)', () => {

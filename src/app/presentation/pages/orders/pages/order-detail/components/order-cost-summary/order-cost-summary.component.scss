@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   cursor: pointer;
   user-select: none;
 }
@@ -34,16 +34,16 @@
 }
 
 .order-detail-page__cost-chevron {
-  font-size: 1.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  font-size: var(--text-xl);
+  width: var(--text-xl);
+  height: var(--text-xl);
   color: var(--mat-sys-on-surface-variant);
 }
 
 .order-detail-page__cost-detail-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   padding-left: 0.5rem;
 
@@ -73,7 +73,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   padding-left: 0.5rem;
 
@@ -91,7 +91,7 @@
 .order-detail-page__cost-member-avatar {
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   flex-shrink: 0;
 
@@ -103,9 +103,9 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
   }
 }

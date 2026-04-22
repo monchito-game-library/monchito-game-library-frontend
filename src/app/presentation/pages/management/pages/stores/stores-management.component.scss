@@ -23,7 +23,7 @@
 }
 
 .stores-page__title {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0;
   color: var(--mat-sys-on-surface);
@@ -43,14 +43,25 @@
   box-sizing: border-box;
 }
 
-.stores-page__loading {
+.stores-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.stores-skeleton__card {
   display: flex;
-  justify-content: center;
-  padding: 2rem 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
 }
 
 .stores-page__empty {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
   padding: 1rem 0;

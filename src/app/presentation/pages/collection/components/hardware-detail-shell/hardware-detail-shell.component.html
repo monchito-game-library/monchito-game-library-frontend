@@ -1,7 +1,31 @@
 <div class="hardware-detail">
   @if (loading()) {
-    <div class="hardware-detail__loading">
-      <mat-progress-spinner diameter="48" mode="indeterminate" />
+    <div class="hardware-detail__header">
+      <button mat-icon-button type="button" (click)="backClicked.emit()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="hardware-detail__header-titles">
+        <app-skeleton width="160px" height="20px" />
+        <app-skeleton width="100px" height="14px" />
+      </div>
+    </div>
+    <div class="hardware-detail__chips">
+      <app-skeleton width="72px" height="24px" borderRadius="var(--radius-full)" />
+      <app-skeleton width="56px" height="24px" borderRadius="var(--radius-full)" />
+      <app-skeleton width="64px" height="24px" borderRadius="var(--radius-full)" />
+    </div>
+    <div class="hardware-detail__purchase-row">
+      @for (n of [0, 1, 2]; track n) {
+        <div class="hardware-detail__purchase-item">
+          <app-skeleton width="80px" height="12px" />
+          <app-skeleton width="60px" height="18px" />
+        </div>
+      }
+    </div>
+    <div class="hardware-detail__actions">
+      @for (n of [0, 1, 2, 3]; track n) {
+        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
+      }
     </div>
   } @else if (item()) {
     <div class="hardware-detail__header">

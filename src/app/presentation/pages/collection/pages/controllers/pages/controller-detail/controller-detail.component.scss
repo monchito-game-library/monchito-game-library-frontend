@@ -16,12 +16,12 @@
 .controller-detail__color-swatch {
   width: 2rem;
   height: 2rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   border: 2px solid var(--mat-sys-outline-variant);
   flex-shrink: 0;
 }
 
 .controller-detail__color-label {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }

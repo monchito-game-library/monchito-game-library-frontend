@@ -24,6 +24,7 @@ import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 /**
  * Presentational shell component that renders the shared form layout for hardware
@@ -53,7 +54,8 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
     MatAutocomplete,
     MatAutocompleteTrigger,
     MatProgressSpinner,
-    TranslocoPipe
+    TranslocoPipe,
+    SkeletonComponent
   ]
 })
 export class HardwareFormShellComponent {

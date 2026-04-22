@@ -29,6 +29,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
+import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
@@ -128,6 +129,11 @@ export class GameDetailComponent implements OnInit {
     const rating = this.game()?.personalRating;
     return rating !== null && rating !== undefined && rating % 2 !== 0;
   });
+
+  /** Brand accent color for the platform badge chip. */
+  readonly platformColor: Signal<string | undefined> = computed(
+    (): string | undefined => PLATFORM_COLORS[this.game()?.platform ?? '']
+  );
 
   /**
    * Saves the game's availability status (forSale + salePrice) via the use case.

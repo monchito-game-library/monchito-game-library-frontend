@@ -4,7 +4,7 @@
 }
 
 .order-detail-page__section-title {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -47,7 +47,7 @@
 .order-detail-page__info-section-avatar {
   width: 1.75rem;
   height: 1.75rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   border: 2px solid var(--mat-sys-outline-variant);
   flex-shrink: 0;
@@ -60,9 +60,9 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 1rem;
-      width: 1rem;
-      height: 1rem;
+      font-size: var(--text-base);
+      width: var(--text-base);
+      height: var(--text-base);
     }
   }
 }
@@ -136,7 +136,7 @@
 .order-detail-page__member-avatar {
   width: 2rem;
   height: 2rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   flex-shrink: 0;
 
@@ -148,23 +148,23 @@
     color: var(--mat-sys-on-surface-variant);
 
     mat-icon {
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
+      font-size: var(--text-xl);
+      width: var(--text-xl);
+      height: var(--text-xl);
     }
   }
 }
 
 .order-detail-page__member-name {
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
 .order-detail-page__member-owner-badge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 1rem;
-  font-size: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
@@ -174,8 +174,8 @@
 .order-detail-page__member-pending-badge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 1rem;
-  font-size: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-error-container);
   color: var(--mat-sys-on-error-container);
@@ -185,8 +185,8 @@
 .order-detail-page__member-ready-badge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 1rem;
-  font-size: 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
   font-weight: 600;
   background: var(--mat-sys-tertiary-container);
   color: var(--mat-sys-on-tertiary-container);
@@ -194,15 +194,15 @@
 }
 
 .order-detail-page__ready-hint {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
 .order-detail-page__status-badge {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 1rem;
-  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
   font-weight: 500;
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
@@ -237,7 +237,7 @@
 .order-detail-page__info-row {
   display: flex;
   gap: 0.75rem;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
 
 .order-detail-page__info-label {
@@ -258,7 +258,7 @@
 
     .order-detail-page__form-expander-inner {
       opacity: 1;
-      transition: opacity 0.3s ease 0.2s;
+      transition: opacity var(--transition-slow) 0.2s;
     }
   }
 }
@@ -267,7 +267,7 @@
   overflow: hidden;
   min-height: 0;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-base);
 }
 
 .order-detail-page__edit-divider {
@@ -327,7 +327,7 @@
   flex-shrink: 0;
 
   ::ng-deep .mat-button-toggle {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 500;
   }
 

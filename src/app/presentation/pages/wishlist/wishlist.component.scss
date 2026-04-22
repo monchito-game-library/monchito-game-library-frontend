@@ -31,7 +31,7 @@
 
 .wishlist-page__title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--mat-sys-on-surface);
 }
@@ -46,14 +46,14 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
 .wishlist-page__stat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
+  font-size: var(--text-base);
+  width: var(--text-base);
+  height: var(--text-base);
 }
 
 .wishlist-page__loading {
@@ -74,16 +74,34 @@
   text-align: center;
 }
 
-.wishlist-page__empty-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
-  color: var(--mat-sys-outline);
+.wishlist-page__empty-svg {
+  width: 100px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.es-shape {
+  fill: var(--mat-sys-surface-variant);
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-ring {
+  fill: none;
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-accent {
+  fill: var(--mat-sys-primary);
+}
+
+.es-accent-stroke {
+  stroke: var(--mat-sys-primary);
+  fill: none;
 }
 
 .wishlist-page__empty-title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
@@ -92,10 +110,41 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .wishlist-page__list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.wishlist-page__card-skeleton {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: var(--mat-sys-surface-container);
+  border-radius: var(--radius-md);
+}
+
+.wishlist-page__card-skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+app-wishlist-card {
+  animation: cardIn 280ms ease both;
+  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
 }
 
 .wishlist-page__fab {
@@ -124,13 +173,13 @@
 
 .wishlist-view__title {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
 .wishlist-view__hint {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   flex-shrink: 0;
 }
@@ -141,7 +190,7 @@
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
   background: var(--mat-sys-surface-container);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -149,7 +198,7 @@
   width: 48px;
   height: 64px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -163,14 +212,14 @@
 
 .wishlist-view__game-title {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .wishlist-view__game-year {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -190,7 +239,7 @@
 }
 
 .wishlist-view__label {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   min-width: 80px;
 }
@@ -224,8 +273,8 @@
 
 .wishlist-view__platform-chip {
   padding: 3px 0.75rem;
-  border-radius: 100px;
-  font-size: 0.8125rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
   border: 1px solid var(--mat-sys-outline-variant);
   background: transparent;
   color: var(--mat-sys-on-surface-variant);
@@ -268,7 +317,7 @@
   }
 
   .wishlist-page__title {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
   }
 
   .wishlist-page__header-add-btn {
@@ -280,7 +329,7 @@
     position: fixed;
     bottom: calc(60px + 16px);
     right: 16px;
-    z-index: 10;
+    z-index: var(--z-card);
   }
 
   .wishlist-view {

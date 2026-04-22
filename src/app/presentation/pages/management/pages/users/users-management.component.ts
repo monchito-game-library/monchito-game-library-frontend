@@ -6,6 +6,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
@@ -26,7 +28,7 @@ import { UserRoleType } from '@/types/user-role.type';
   styleUrl: './users-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, MatSelect, MatOption, TranslocoPipe, NgOptimizedImage]
+  imports: [MatIcon, MatProgressSpinner, MatSelect, MatOption, TranslocoPipe, NgOptimizedImage, SkeletonComponent]
 })
 export class UsersManagementComponent implements OnInit {
   private readonly _userAdminUseCases: UserAdminUseCasesContract = inject(USER_ADMIN_USE_CASES);
