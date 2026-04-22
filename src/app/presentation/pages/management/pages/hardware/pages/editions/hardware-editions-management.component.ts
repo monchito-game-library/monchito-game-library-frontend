@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import {
   HARDWARE_MODEL_USE_CASES,
@@ -44,8 +45,8 @@ import { HardwareEditionEditPanelComponent } from '../../components/hardware-edi
     MatButton,
     MatIconButton,
     MatIcon,
-    MatProgressSpinner,
-    TranslocoPipe
+    TranslocoPipe,
+    SkeletonComponent
   ]
 })
 export class HardwareEditionsManagementComponent implements OnInit {

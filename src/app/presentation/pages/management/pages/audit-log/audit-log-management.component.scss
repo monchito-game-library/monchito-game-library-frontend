@@ -42,10 +42,28 @@
   gap: 1.5rem;
 }
 
-.audit-log-page__loading {
+.audit-log-skeleton {
   display: flex;
-  justify-content: center;
-  padding: 2rem 0;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 800px;
+}
+
+.audit-log-skeleton__row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.audit-log-skeleton__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
 }
 
 .audit-log-empty {
