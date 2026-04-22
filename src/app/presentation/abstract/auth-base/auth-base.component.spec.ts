@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
 import { authBaseImports, authBaseProviders, authBaseSchemas } from '@/pages/auth/auth-spec.helpers';
-import { AuthBaseComponent } from './auth-base.component';
+import { AuthBaseComponent, PasswordMismatchErrorStateMatcher } from './auth-base.component';
 import { mockRouter } from '@/testing/router.mock';
 
 @Component({ selector: 'app-test-auth', template: '', standalone: true })
@@ -121,5 +121,63 @@ describe('AuthBaseComponent', () => {
       const result = (component as any)._passwordMatchValidator(group);
       expect(result).toEqual({ passwordMismatch: true });
     });
+  });
+
+  describe('passwordMismatchMatcher expuesto', () => {
+    it('es una instancia de PasswordMismatchErrorStateMatcher', () => {
+      expect(component.passwordMismatchMatcher).toBeInstanceOf(PasswordMismatchErrorStateMatcher);
+    });
+  });
+});
+
+describe('PasswordMismatchErrorStateMatcher', () => {
+  let matcher: PasswordMismatchErrorStateMatcher;
+
+  beforeEach(() => {
+    matcher = new PasswordMismatchErrorStateMatcher();
+  });
+
+  it('devuelve false cuando el control es null', () => {
+    expect(matcher.isErrorState(null, null)).toBe(false);
+  });
+
+  it('devuelve false cuando el control es válido y no está touched', () => {
+    const control = new FormControl('abc');
+    expect(matcher.isErrorState(control, null)).toBe(false);
+  });
+
+  it('devuelve false cuando el control es inválido pero no está touched', () => {
+    const control = new FormControl('', { validators: [] });
+    control.setErrors({ required: true });
+    expect(matcher.isErrorState(control, null)).toBe(false);
+  });
+
+  it('devuelve true cuando el control es inválido y está touched', () => {
+    const control = new FormControl('');
+    control.setErrors({ required: true });
+    control.markAsTouched();
+    expect(matcher.isErrorState(control, null)).toBe(true);
+  });
+
+  it('devuelve false cuando el grupo padre tiene passwordMismatch pero el control no está touched', () => {
+    const group = new FormGroup({ confirmPassword: new FormControl('abc') });
+    group.setErrors({ passwordMismatch: true });
+    const control = group.get('confirmPassword') as FormControl;
+    expect(matcher.isErrorState(control, null)).toBe(false);
+  });
+
+  it('devuelve true cuando el grupo padre tiene passwordMismatch y el control está touched', () => {
+    const group = new FormGroup({ confirmPassword: new FormControl('abc') });
+    group.setErrors({ passwordMismatch: true });
+    const control = group.get('confirmPassword') as FormControl;
+    control.markAsTouched();
+    expect(matcher.isErrorState(control, null)).toBe(true);
+  });
+
+  it('devuelve false cuando el grupo padre no tiene errores y el control es válido y touched', () => {
+    const group = new FormGroup({ confirmPassword: new FormControl('abc') });
+    const control = group.get('confirmPassword') as FormControl;
+    control.markAsTouched();
+    expect(matcher.isErrorState(control, null)).toBe(false);
   });
 });

@@ -105,7 +105,8 @@
       "rating": "My Rating (0-10)",
       "ratingPlaceholder": "8.5",
       "format": "Format",
-      "formatNone": "Not specified"
+      "formatNone": "Not specified",
+      "priority": "Priority"
     },
     "formats": {
       "digital": "Digital",
@@ -389,6 +390,8 @@
       "members": "members"
     },
     "ready": {
+      "dialogTitle": "Select packs",
+      "dialogIntro": "Choose the pack combination for each product in the order.",
       "step": "Product {{ current }} of {{ total }}",
       "needed": "Units needed",
       "units": "units",
@@ -866,7 +869,11 @@
     "edition": "Special edition",
     "region": "Region",
     "regionNone": "No region",
-    "condition": "Condition",
+    "condition": {
+      "label": "Condition",
+      "new": "New",
+      "used": "Used"
+    },
     "price": "Price (€)",
     "store": "Store",
     "purchaseDate": "Purchase date",
@@ -889,7 +896,11 @@
     "edition": "Special edition",
     "color": "Color",
     "compatibility": "Compatibility",
-    "condition": "Condition",
+    "condition": {
+      "label": "Condition",
+      "new": "New",
+      "used": "Used"
+    },
     "price": "Price (€)",
     "store": "Store",
     "purchaseDate": "Purchase date",
