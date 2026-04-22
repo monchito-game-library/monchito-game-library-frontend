@@ -48,12 +48,25 @@
   }
 }
 
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .game-list__row {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   gap: 1.25rem;
   padding: 0.75rem 1.5rem;
   box-sizing: border-box;
+  animation: cardIn 280ms ease both;
+  animation-delay: calc(min(var(--i, 0), 8) * 60ms);
 
   &:first-child {
     padding-top: 1.5rem;
@@ -90,12 +103,29 @@
   text-align: center;
 }
 
-.game-list__empty-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
-  color: var(--mat-sys-outline);
+.game-list__empty-svg {
+  width: 140px;
+  height: auto;
   margin-bottom: 0.5rem;
+}
+
+.es-shape {
+  fill: var(--mat-sys-surface-variant);
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-ring {
+  fill: none;
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-accent {
+  fill: var(--mat-sys-primary);
+}
+
+.es-accent-stroke {
+  stroke: var(--mat-sys-primary);
+  fill: none;
 }
 
 .game-list__empty-title {

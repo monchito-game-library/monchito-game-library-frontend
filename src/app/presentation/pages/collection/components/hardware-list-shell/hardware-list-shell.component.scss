@@ -61,11 +61,29 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-.hw-list__empty-icon {
-  font-size: 3rem;
-  width: 3rem;
-  height: 3rem;
-  color: var(--mat-sys-outline);
+.hw-list__empty-svg {
+  width: 140px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.es-shape {
+  fill: var(--mat-sys-surface-variant);
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-ring {
+  fill: none;
+  stroke: var(--mat-sys-outline-variant);
+}
+
+.es-accent {
+  fill: var(--mat-sys-primary);
+}
+
+.es-accent-stroke {
+  stroke: var(--mat-sys-primary);
+  fill: none;
 }
 
 .hw-list__empty-title {
@@ -106,6 +124,17 @@
   gap: 1rem;
 }
 
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hw-list__card {
   background-color: var(--mat-sys-surface-container);
   border-radius: var(--radius-md);
@@ -118,6 +147,8 @@
   cursor: pointer;
   width: 100%;
   transition: background-color 0.15s ease;
+  animation: cardIn 280ms ease both;
+  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
 
   &:hover {
     background-color: var(--mat-sys-surface-container-high);

@@ -83,7 +83,13 @@
       </div>
 
       <!-- Bottom Navigation — mobile only -->
-      <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
+      <nav
+        class="bottom-nav"
+        role="navigation"
+        [attr.aria-label]="'nav.aria.bottomNav' | transloco"
+        [style.--active-i]="activeNavIndex()"
+        [style.--nav-count]="navItemCount()">
+        <div class="bottom-nav__pill" aria-hidden="true"></div>
         @for (item of navItems; track item.route) {
           <a
             class="bottom-nav__item"

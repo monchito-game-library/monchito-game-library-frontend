@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   inject,
   OnInit,
   QueryList,
+  Signal,
   signal,
   ViewChildren,
   WritableSignal
@@ -80,6 +82,18 @@ export class AppComponent implements OnInit {
 
   /** Current route URL. */
   readonly currentRoute: WritableSignal<string> = signal('');
+
+  /** Index of the active item in the bottom-nav, used to position the sliding pill. */
+  readonly activeNavIndex: Signal<number> = computed((): number => {
+    const allItems = [...this.navItems, ...(this.isAdmin() ? this.managementNavItems : [])];
+    const idx = allItems.findIndex((item) => this.isNavActive(item.route));
+    return Math.max(idx, 0);
+  });
+
+  /** Total number of visible bottom-nav items, used to size the pill. */
+  readonly navItemCount: Signal<number> = computed((): number => {
+    return this.navItems.length + (this.isAdmin() ? this.managementNavItems.length : 0);
+  });
 
   /** References to the profile menu triggers (rail + topbar). */
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
