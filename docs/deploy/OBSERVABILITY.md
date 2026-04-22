@@ -10,16 +10,17 @@ Monitorización de errores en producción y uptime de la app.
 
 - Errores JavaScript no manejados en producción (vía `SentryErrorHandler`).
 - Trazas de navegación entre rutas (vía `TraceService` + `browserTracingIntegration`).
+- Sesiones de usuario, tasa de crashes y adopción por deploy (Release Health).
 - Solo activo en producción — nunca en desarrollo local.
 
 ### Configuración técnica
 
 | Fichero | Qué hace |
 |---|---|
-| `src/main.ts` | Llama a `Sentry.init()` antes del bootstrap si `environment.sentry.enabled` es `true` |
+| `src/main.ts` | Llama a `Sentry.init()` con DSN, release y tracing si `environment.sentry.enabled` es `true` |
 | `src/app/app.config.ts` | Registra `ErrorHandler`, `TraceService` y `APP_INITIALIZER` condicionados al mismo flag |
 | `angular.json` | Source maps hidden en producción (`sourceMap: { scripts: true, hidden: true }`) |
-| `scripts/set-env.js` | Inyecta `SENTRY_DSN` en `environment.prod.ts` durante el build de Vercel |
+| `scripts/set-env.js` | Inyecta `SENTRY_DSN` y `VERCEL_GIT_COMMIT_SHA` (como `release`) durante el build de Vercel |
 
 ### Dashboard
 
@@ -27,6 +28,7 @@ Monitorización de errores en producción y uptime de la app.
 - **Proyecto:** `mochito-game-library`
 - **Issues** → errores capturados agrupados por tipo con stack trace legible.
 - **Performance** → trazas de navegación, tiempo de carga por ruta.
+- **Releases** → cada deploy aparece identificado por su commit SHA; muestra tasa de crashes, sesiones activas y adopción por versión.
 
 ### Cómo verificar que funciona
 
