@@ -5,8 +5,16 @@
 
   <div class="users-page__content">
     @if (loading()) {
-      <div class="users-page__loading">
-        <mat-spinner diameter="40" />
+      <div class="users-page__skeleton">
+        @for (n of [0, 1, 2, 3]; track n) {
+          <div class="users-page__skeleton-row">
+            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-full)" />
+            <div class="users-page__skeleton-info">
+              <app-skeleton width="200px" height="14px" />
+            </div>
+            <app-skeleton width="120px" height="32px" borderRadius="var(--radius-sm)" />
+          </div>
+        }
       </div>
     } @else {
       <div class="users-list">

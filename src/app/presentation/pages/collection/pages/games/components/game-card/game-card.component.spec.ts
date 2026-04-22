@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { describe, beforeEach, expect, it, vi } from 'vitest';
+import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -301,6 +301,134 @@ describe('GameCardComponent — computed signals', () => {
 
       expect(gameUseCases.deleteGame).toHaveBeenCalledWith('user-1', mockGame.uuid);
       expect(spy).toHaveBeenCalledWith(mockGame.id);
+    });
+  });
+
+  describe('platformColor', () => {
+    it('devuelve el color de marca de PS5', () => {
+      expect(component.platformColor()).toBe('rgba(0, 52, 164, 0.82)');
+    });
+
+    it('devuelve undefined para una plataforma desconocida', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', { ...mockGame, platform: 'UNKNOWN_PLATFORM' });
+      fixture2.detectChanges();
+      expect(fixture2.componentInstance.platformColor()).toBeUndefined();
+    });
+
+    it('devuelve undefined cuando platform es null', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', { ...mockGame, platform: null });
+      fixture2.detectChanges();
+      expect(fixture2.componentInstance.platformColor()).toBeUndefined();
+    });
+  });
+
+  describe('dominantColor', () => {
+    it('tiene el valor inicial por defecto rgba(0, 0, 0, 0.25)', () => {
+      expect(component.dominantColor()).toBe('rgba(0, 0, 0, 0.25)');
+    });
+
+    it('se resetea al valor por defecto cuando cambia el juego', () => {
+      const fixture2 = TestBed.createComponent(GameCardComponent);
+      fixture2.componentRef.setInput('game', mockGame);
+      fixture2.detectChanges();
+      fixture2.componentInstance.dominantColor.set('rgba(100, 150, 200, 0.75)');
+
+      fixture2.componentRef.setInput('game', { ...mockGame, title: 'Otro juego' });
+      fixture2.detectChanges();
+
+      expect(fixture2.componentInstance.dominantColor()).toBe('rgba(0, 0, 0, 0.25)');
+    });
+  });
+
+  describe('onImageLoaded', () => {
+    let mockCtx: any;
+
+    let mockCanvas: any;
+    let mockProbe: { crossOrigin: string; src: string; onload: (() => void) | null };
+    let origImage: typeof Image;
+    let imageCalled: boolean;
+
+    const W = 50;
+    const H = 67;
+
+    function makePixelData(r: number, g: number, b: number): ImageData {
+      const data = new Uint8ClampedArray(W * H * 4);
+      for (let i = 0; i < W * H; i++) {
+        data[i * 4] = r;
+        data[i * 4 + 1] = g;
+        data[i * 4 + 2] = b;
+        data[i * 4 + 3] = 255;
+      }
+      return { data, width: W, height: H } as unknown as ImageData;
+    }
+
+    beforeEach(() => {
+      origImage = globalThis.Image;
+      imageCalled = false;
+      mockProbe = { crossOrigin: '', src: '', onload: null };
+      // Regular function (not arrow) so it works with `new`; returns mockProbe so
+      // property assignments on the returned instance are visible in the test.
+
+      globalThis.Image = function () {
+        imageCalled = true;
+        return mockProbe;
+      } as any;
+
+      mockCtx = { drawImage: vi.fn(), getImageData: vi.fn() };
+      mockCanvas = { width: 0, height: 0, getContext: vi.fn(() => mockCtx) };
+      const origCreate = document.createElement.bind(document);
+      vi.spyOn(document, 'createElement').mockImplementation((tag: string) =>
+        tag === 'canvas' ? (mockCanvas as HTMLCanvasElement) : origCreate(tag as 'div')
+      );
+
+      mockCtx.getImageData.mockReturnValue(makePixelData(100, 150, 200));
+    });
+
+    afterEach(() => {
+      globalThis.Image = origImage;
+      vi.restoreAllMocks();
+    });
+
+    it('marca imageLoaded como true', () => {
+      const event = { target: { currentSrc: 'http://example.com/img.jpg', src: '' } } as unknown as Event;
+      component.onImageLoaded(event);
+      expect(component.imageLoaded()).toBe(true);
+    });
+
+    it('asigna crossOrigin anonymous y la URL al probe', () => {
+      const event = { target: { currentSrc: 'http://example.com/img.jpg', src: '' } } as unknown as Event;
+      component.onImageLoaded(event);
+      expect(mockProbe.crossOrigin).toBe('anonymous');
+      expect(mockProbe.src).toBe('http://example.com/img.jpg');
+    });
+
+    it('usa img.src como fallback cuando currentSrc está vacío', () => {
+      const event = { target: { currentSrc: '', src: 'http://fallback.com/img.jpg' } } as unknown as Event;
+      component.onImageLoaded(event);
+      expect(mockProbe.src).toBe('http://fallback.com/img.jpg');
+    });
+
+    it('actualiza dominantColor con el color extraído al cargar el probe', () => {
+      const event = { target: { currentSrc: 'http://example.com/img.jpg', src: '' } } as unknown as Event;
+      component.onImageLoaded(event);
+      mockProbe.onload!();
+      expect(component.dominantColor()).toBe('rgba(100, 150, 200, 0.75)');
+    });
+
+    it('no actualiza dominantColor cuando getContext devuelve null (extractDominantColor → null)', () => {
+      mockCanvas.getContext.mockReturnValue(null);
+      const event = { target: { currentSrc: 'http://example.com/img.jpg', src: '' } } as unknown as Event;
+      component.onImageLoaded(event);
+      mockProbe.onload!();
+      expect(component.dominantColor()).toBe('rgba(0, 0, 0, 0.25)');
+    });
+
+    it('no crea el probe cuando no hay src', () => {
+      const event = { target: { currentSrc: '', src: '' } } as unknown as Event;
+      component.onImageLoaded(event);
+      expect(imageCalled).toBe(false);
     });
   });
 });

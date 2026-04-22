@@ -3,11 +3,11 @@ import { DecimalPipe } from '@angular/common';
 
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
@@ -29,7 +29,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   styleUrl: './protectors-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProtectorEditPanelComponent, MatButton, MatIcon, MatProgressSpinner, TranslocoPipe, DecimalPipe]
+  imports: [ProtectorEditPanelComponent, MatButton, MatIcon, TranslocoPipe, DecimalPipe, SkeletonComponent]
 })
 export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);

@@ -7,6 +7,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { AuthStateService } from '@/services/auth-state/auth-state.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
@@ -17,7 +18,16 @@ import { OrderInvitationModel } from '@/models/order/order-invitation.model';
   styleUrl: './order-invite.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatProgressSpinner, MatIcon, TranslocoPipe, DatePipe, RouterLink, NgTemplateOutlet]
+  imports: [
+    MatButton,
+    MatProgressSpinner,
+    MatIcon,
+    TranslocoPipe,
+    DatePipe,
+    RouterLink,
+    NgTemplateOutlet,
+    SkeletonComponent
+  ]
 })
 export class OrderInviteComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

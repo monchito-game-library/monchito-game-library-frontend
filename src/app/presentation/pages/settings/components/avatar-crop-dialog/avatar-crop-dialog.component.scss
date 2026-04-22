@@ -22,7 +22,7 @@
   flex-shrink: 0;
 
   &--round {
-    border-radius: 50%;
+    border-radius: var(--radius-full);
   }
 
   &--grabbing {
@@ -40,7 +40,7 @@
 }
 
 .crop-dialog__hint {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--mat-sys-on-surface-variant);
   text-align: center;
   margin: 0.75rem 0 0;

@@ -9,8 +9,9 @@
         {{ 'orders.invite.loginBtn' | transloco }}
       </button>
     } @else if (loading()) {
-      <mat-progress-spinner mode="indeterminate" diameter="48" />
-      <div class="order-invite-page__message">{{ 'orders.invite.loading' | transloco }}</div>
+      <app-skeleton width="48px" height="48px" borderRadius="var(--radius-full)" />
+      <app-skeleton width="160px" height="20px" />
+      <app-skeleton width="220px" height="14px" />
     } @else if (invalid()) {
       <mat-icon class="order-invite-page__icon order-invite-page__icon--error">link_off</mat-icon>
       <div class="order-invite-page__title">{{ 'orders.invite.invalidTitle' | transloco }}</div>

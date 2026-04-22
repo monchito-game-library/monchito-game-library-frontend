@@ -21,7 +21,6 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -36,6 +35,7 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -51,7 +51,6 @@ import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/c
     MatButton,
     MatFabButton,
     MatIconButton,
-    MatProgressSpinner,
     MatFormField,
     MatLabel,
     MatError,
@@ -61,7 +60,8 @@ import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/c
     MatIcon,
     TranslocoPipe,
     WishlistCardComponent,
-    CatalogSearchPanelComponent
+    CatalogSearchPanelComponent,
+    SkeletonComponent
   ]
 })
 export class WishlistComponent implements OnInit {

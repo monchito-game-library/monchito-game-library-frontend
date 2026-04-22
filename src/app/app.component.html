@@ -83,29 +83,22 @@
       </div>
 
       <!-- Bottom Navigation — mobile only -->
-      <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
-        @for (item of navItems; track item.route) {
+      <nav
+        class="bottom-nav"
+        role="navigation"
+        [attr.aria-label]="'nav.aria.bottomNav' | transloco"
+        [style.--active-i]="activeNavIndex()"
+        [style.--nav-count]="navItemCount()">
+        <div class="bottom-nav__pill" aria-hidden="true"></div>
+        @for (item of bottomNavItems(); track item.route) {
           <a
             class="bottom-nav__item"
             [class.bottom-nav__item--active]="isNavActive(item.route)"
-            [class.bottom-nav__item--tablet-only]="item.route === '/orders'"
             [routerLink]="item.route"
             [attr.aria-label]="item.label | transloco">
             <mat-icon>{{ item.icon }}</mat-icon>
             <span class="bottom-nav__label">{{ item.label | transloco }}</span>
           </a>
-        }
-        @if (isAdmin()) {
-          @for (item of managementNavItems; track item.route) {
-            <a
-              class="bottom-nav__item"
-              [class.bottom-nav__item--active]="isNavActive(item.route)"
-              [routerLink]="item.route"
-              [attr.aria-label]="item.label | transloco">
-              <mat-icon>{{ item.icon }}</mat-icon>
-              <span class="bottom-nav__label">{{ item.label | transloco }}</span>
-            </a>
-          }
         }
       </nav>
     </main>

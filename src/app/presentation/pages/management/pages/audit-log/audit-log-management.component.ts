@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 import { DatePipe } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import {
   AUDIT_LOG_USE_CASES,
@@ -18,7 +19,7 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, TranslocoPipe, DatePipe]
+  imports: [MatIcon, TranslocoPipe, DatePipe, SkeletonComponent]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);

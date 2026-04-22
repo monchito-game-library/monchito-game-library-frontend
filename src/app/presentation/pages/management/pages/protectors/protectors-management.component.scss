@@ -23,7 +23,7 @@
 }
 
 .protectors-page__title {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0;
   color: var(--mat-sys-on-surface);
@@ -43,14 +43,37 @@
   box-sizing: border-box;
 }
 
-.protectors-page__loading {
+.protectors-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.protectors-skeleton__card {
   display: flex;
-  justify-content: center;
-  padding: 2rem 0;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.protectors-skeleton__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.protectors-skeleton__chips {
+  display: flex;
+  gap: 0.25rem;
 }
 
 .protectors-page__empty {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--mat-sys-on-surface-variant);
   margin: 0;
   padding: 1rem 0;
@@ -68,14 +91,14 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface-container-low);
   position: relative;
   cursor: pointer;
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &:hover {
     border-color: var(--mat-sys-outline);
@@ -99,7 +122,7 @@
   }
 
   .protector-card__name {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     font-weight: 500;
     color: var(--mat-sys-on-surface);
     flex: 1;
@@ -108,10 +131,10 @@
   }
 
   .protector-card__category-chip {
-    font-size: 0.68rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     padding: 2px 0.5rem;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     white-space: nowrap;
     flex-shrink: 0;
     text-transform: uppercase;
@@ -134,7 +157,7 @@
   }
 
   .protector-card__price-hint {
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--mat-sys-on-surface-variant);
 
     strong {
@@ -153,8 +176,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0;
-    font-size: 0.7rem;
-    border-radius: 4px;
+    font-size: var(--text-xs);
+    border-radius: var(--radius-sm);
     border: 1px solid var(--mat-sys-outline-variant);
     font-family: monospace;
     overflow: hidden;
@@ -175,17 +198,17 @@
 
   .protector-card__notes {
     margin: 0;
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--mat-sys-on-surface-variant);
     font-style: italic;
     line-height: 1.4;
   }
 
   .protector-card__inactive-badge {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     padding: 2px 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     background: var(--mat-sys-error-container);
     color: var(--mat-sys-on-error-container);
     align-self: flex-start;

@@ -30,7 +30,7 @@
 
   .order-detail-page__title {
     flex: 1;
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     font-weight: 600;
   }
 
@@ -46,7 +46,7 @@
 
   .order-detail-page__section {
     background: var(--mat-sys-surface-container);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
 
     &--editing {
@@ -72,7 +72,7 @@
   }
 
   .order-detail-page__section-title {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 600;
   }
 
@@ -118,10 +118,10 @@
     width: 4rem;
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--mat-sys-outline-variant);
-    border-radius: 0.25rem;
+    border-radius: var(--radius-xs);
     background: var(--mat-sys-surface);
     color: var(--mat-sys-on-surface);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     text-align: center;
 
     &:focus {
@@ -132,6 +132,13 @@
 
   .order-detail-page__stepper {
     gap: 1rem;
+  }
+
+  .order-detail-page__skeleton-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
   }
 }
 
@@ -147,7 +154,7 @@
     }
 
     .order-detail-page__title {
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;

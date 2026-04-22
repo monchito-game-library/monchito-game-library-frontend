@@ -8,12 +8,13 @@
 
 | Mejora | Prioridad | Estado |
 |---|---|---|
-| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ⏳ Pendiente |
+| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ✅ Completado |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
+| [Mejoras visuales de polish](#mejoras-visuales-de-polish) | Baja | 🔄 Parcial (8/10) |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
 | [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
 | [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ✅ Completado |
@@ -700,6 +701,133 @@ La función haría lo siguiente:
 - **Juegos manuales:** los registros con `source = 'manual'` no se tocan — no tienen `rawg_id`.
 - **RAWG API key:** debe estar configurada como variable de entorno en Supabase (no en el frontend).
 - La función vive en `supabase/functions/sync-rawg-metadata/index.ts` (directorio estándar de Edge Functions).
+
+---
+
+## Mejoras visuales de polish
+
+Mejoras puramente visuales detectadas mediante análisis del estado actual de la app. No añaden funcionalidad nueva — elevan la calidad percibida y la coherencia del sistema de diseño. Todas son independientes entre sí y pueden implementarse en cualquier orden.
+
+---
+
+### Ítem 1 — Color dinámico por plataforma
+
+Cada consola tiene colores de marca reconocibles (PS5 azul, Xbox verde, Switch rojo, PC gris). Aplicar un accent color diferente al chip de plataforma en los cards haría la biblioteca más rica e identificable de un vistazo.
+
+**Implementación:** mapa `PLATFORM_COLORS` con `color` y `bg` por plataforma → custom properties inline `[style.--platform-color]` en el chip.
+
+**Ficheros afectados:** `game-card`, `wishlist-card`, chips de plataforma.
+
+---
+
+### Ítem 2 — Dominant color extraction en covers
+
+Extraer el color dominante de la portada y usarlo como gradiente sutil en el back-face del flip card. Crea una experiencia visualmente "viva" sin cambiar la estructura.
+
+**Implementación:** `canvas.getContext('2d').drawImage()` → muestreo de píxeles → color dominante → CSS variable inyectada en el card. Solo se calcula una vez y se cachea por juego.
+
+**Ficheros afectados:** `game-card.component.ts/scss`.
+
+---
+
+### Ítem 3 — Skeleton loading consistente
+
+El componente `skeleton` existe pero no se usa en todas las listas (consolas, mandos, wishlist). Auditar y asegurar que todas las listas muestran skeleton mientras cargan.
+
+**Implementación:** revisar cada page con listado (`consoles`, `controllers`, `wishlist`) y añadir el skeleton si falta.
+
+**Ficheros afectados:** pages de consolas, mandos y wishlist.
+
+---
+
+### Ítem 4 — Scrollbar personalizado
+
+Con cuatro líneas de CSS (`scrollbar-width: thin` + `scrollbar-color`) alineadas a la paleta violet, los paneles con scroll se verían mucho más cuidados.
+
+**Implementación:**
+
+```scss
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mat-sys-primary) transparent;
+}
+```
+
+**Fichero afectado:** `styles.scss`.
+
+---
+
+### Ítem 5 — Animaciones de entrada escalonadas (stagger)
+
+Al navegar a una lista, los cards entran con un pequeño delay progresivo (`nth-child(n) → animation-delay: n * 40ms`). Hace que la página se "construya" visualmente en lugar de aparecer todo de golpe.
+
+**Implementación:** Angular Animations con `query(':enter', stagger(40, animate(...)))` en los listados.
+
+**Ficheros afectados:** `game-list`, `consoles-list`, `controllers-list`.
+
+---
+
+### Ítem 6 — Transición dark/light mode suave
+
+El cambio de tema actualmente es brusco. Con una transición CSS en `:root` queda fluido.
+
+**Implementación:**
+
+```scss
+:root {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+```
+
+**Fichero afectado:** `styles.scss`.
+
+---
+
+### Ítem 7 — Metacritic badge con color semántico
+
+En lugar de mostrar solo el número, un badge color-coded al estilo de la web de Metacritic: verde (≥75), amarillo (50–74), rojo (<50).
+
+**Implementación:** pipe o computed que devuelve `'green' | 'yellow' | 'red'` según el score → clase CSS `--metacritic-green/yellow/red`.
+
+**Ficheros afectados:** `game-detail`, `game-card` (si muestra score).
+
+---
+
+### Ítem 8 — Focus visible mejorado
+
+Asegurar que todos los elementos interactivos tienen un `focus-visible` outline coherente con la paleta violet. Mejora accesibilidad y estética a la vez.
+
+**Implementación:**
+
+```scss
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+```
+
+**Fichero afectado:** `styles.scss`.
+
+---
+
+### Ítem 9 — Tooltips en chips de estado
+
+Un tooltip en cada chip (préstamo activo, en venta, platinum, favorito) que explique su significado. Útil para usuarios nuevos y añade polish sin ruido visual.
+
+**Implementación:** `matTooltip` de Angular Material en cada chip. El texto puede salir de las constantes de traducción existentes.
+
+**Ficheros afectados:** `game-card`, `badge-chip`.
+
+---
+
+### Ítem 10 — Micro-animación en bottom nav al cambiar tab
+
+Un pequeño translate vertical (`translateY(-2px)`) en el icono activo del bottom nav refuerza el feedback táctil en mobile sin ser intrusivo.
+
+**Implementación:** clase `--active` con `transform: translateY(-2px)` y `transition: transform 150ms ease`.
+
+**Fichero afectado:** `bottom-nav.component.scss` (o equivalente).
 
 ---
 
