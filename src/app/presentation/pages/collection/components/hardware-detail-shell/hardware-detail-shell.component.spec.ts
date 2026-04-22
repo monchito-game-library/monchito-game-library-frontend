@@ -145,14 +145,16 @@ describe('HardwareDetailShellComponent', () => {
       setupComponent({ loading: true });
     });
 
-    it('muestra el spinner', () => {
-      const spinner = fixture.debugElement.query(By.css('mat-progress-spinner'));
-      expect(spinner).not.toBeNull();
+    it('muestra los skeletons de carga', () => {
+      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
+      expect(skeletons.length).toBeGreaterThan(0);
     });
 
-    it('no muestra el header principal', () => {
+    it('muestra el header de navegación con botón de vuelta', () => {
       const header = fixture.debugElement.query(By.css('.hardware-detail__header'));
-      expect(header).toBeNull();
+      expect(header).not.toBeNull();
+      const btn = header.query(By.css('button'));
+      expect(btn).not.toBeNull();
     });
 
     it('no muestra la sección de datos', () => {

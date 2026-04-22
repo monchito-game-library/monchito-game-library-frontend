@@ -4,8 +4,17 @@
   </div>
 
   @if (loading()) {
-    <div class="orders-page__loading">
-      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    <div class="orders-page__list">
+      @for (n of [0, 1, 2]; track n) {
+        <div class="orders-page__card-skeleton">
+          <div class="orders-page__card-skeleton-row">
+            <app-skeleton width="180px" height="18px" />
+            <app-skeleton width="60px" height="18px" borderRadius="var(--radius-full)" />
+          </div>
+          <app-skeleton width="120px" height="14px" />
+          <app-skeleton width="80px" height="14px" />
+        </div>
+      }
     </div>
   } @else if (orders().length === 0) {
     <div class="orders-page__empty">

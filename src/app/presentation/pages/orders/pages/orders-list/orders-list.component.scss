@@ -91,6 +91,21 @@
     gap: 1rem;
   }
 
+  .orders-page__card-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: var(--mat-sys-surface-container);
+  }
+
+  .orders-page__card-skeleton-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   app-order-summary-card {
     animation: cardIn 280ms ease both;
     animation-delay: calc(min(var(--i, 0), 12) * 40ms);

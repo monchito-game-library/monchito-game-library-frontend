@@ -132,15 +132,15 @@ describe('HardwareFormShellComponent', () => {
   // ─── Estado de carga ─────────────────────────────────────────────────────
 
   describe('estado de carga', () => {
-    it('muestra el spinner y oculta el formulario cuando loading es true', async () => {
+    it('muestra los skeletons del formulario y oculta el formulario cuando loading es true', async () => {
       host.loading = true;
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const spinner = fixture.debugElement.query(By.css('mat-progress-spinner[diameter="48"]'));
+      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
       const form = fixture.debugElement.query(By.css('form'));
 
-      expect(spinner).toBeTruthy();
+      expect(skeletons.length).toBeGreaterThan(0);
       expect(form).toBeNull();
     });
 

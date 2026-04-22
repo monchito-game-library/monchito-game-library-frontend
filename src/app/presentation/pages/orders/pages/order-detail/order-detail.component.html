@@ -1,7 +1,26 @@
 <div class="order-detail-page">
   @if (loading()) {
-    <div class="order-detail-page__loading">
-      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    <div class="order-detail-page__title-row">
+      <button mat-icon-button routerLink="/orders" [attr.aria-label]="'orders.backToList' | transloco">
+        <mat-icon>close</mat-icon>
+      </button>
+      <app-skeleton width="200px" height="20px" />
+    </div>
+    <div class="order-detail-page__section">
+      <app-skeleton width="100px" height="14px" />
+      <div class="order-detail-page__skeleton-rows">
+        @for (n of [0, 1, 2, 3]; track n) {
+          <app-skeleton height="16px" />
+        }
+      </div>
+    </div>
+    <div class="order-detail-page__section">
+      <app-skeleton width="80px" height="14px" />
+      <div class="order-detail-page__skeleton-rows">
+        @for (n of [0, 1, 2]; track n) {
+          <app-skeleton height="44px" borderRadius="var(--radius-sm)" />
+        }
+      </div>
     </div>
   } @else if (order(); as ord) {
     <!-- Header -->

@@ -133,6 +133,13 @@
   .order-detail-page__stepper {
     gap: 1rem;
   }
+
+  .order-detail-page__skeleton-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
