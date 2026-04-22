@@ -265,8 +265,8 @@ input[type='number'] {
 }
 
 // ────────────────────────── Route transitions ──────────────────────────────────────
-router-outlet + * {
-  animation: routeFadeIn 220ms ease-out both;
+.app-content router-outlet + * {
+  animation: routeFadeIn 220ms ease-out backwards;
 }
 
 @keyframes routeFadeIn {
