@@ -37,7 +37,8 @@ jobs:
             },
             sentry: {
               dsn: '',
-              enabled: false
+              enabled: false,
+              release: ''
             }
           };
           EOF

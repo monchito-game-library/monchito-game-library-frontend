@@ -26,6 +26,7 @@ export const environment = {
   },
   sentry: {
     dsn: '',
-    enabled: false
+    enabled: false,
+    release: ''
   }
 };

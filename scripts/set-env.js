@@ -10,6 +10,7 @@ if (missing.length > 0) {
 }
 
 const sentryDsn = process.env.SENTRY_DSN || 'https://346eebf4b4c5378fa15fa4cd7617006b@o4511262696079360.ingest.de.sentry.io/4511262726357072';
+const sentryRelease = process.env.VERCEL_GIT_COMMIT_SHA || '';
 
 const prodContent = `export const environment = {
   production: true,
@@ -23,7 +24,8 @@ const prodContent = `export const environment = {
   },
   sentry: {
     dsn: '${sentryDsn}',
-    enabled: ${!!sentryDsn}
+    enabled: ${!!sentryDsn},
+    release: '${sentryRelease}'
   }
 };
 `;
@@ -40,7 +42,8 @@ const devContent = `export const environment = {
   },
   sentry: {
     dsn: '',
-    enabled: false
+    enabled: false,
+    release: ''
   }
 };
 `;
