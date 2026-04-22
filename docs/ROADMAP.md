@@ -8,17 +8,161 @@
 
 | Mejora | Prioridad | Estado |
 |---|---|---|
-| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
-| [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ⏳ Pendiente |
+| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ⏳ Pendiente |
 | [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
 | [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
 | [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
+| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
+| [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ✅ Completado |
 | [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta | ✅ Completado |
 | [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta | ✅ Completado |
 | [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta | ✅ Completado |
+
+---
+
+## Muy alta prioridad
+
+### Identidad visual y sistema de diseño
+
+Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión estable en `master`. La app tiene una base sólida (MD3, espaciado consistente, dark mode, card flip 3D) pero acumula inconsistencias visuales típicas de crecimiento incremental. Este bloque aborda la identidad de marca y los sistemas de diseño fundamentales.
+
+#### Contexto del audit
+
+- **Herramienta:** `ui-ux-pro-max` v2.5.0 instalado en `.claude/skills/ui-ux-pro-max/`
+- **Tipo de producto detectado:** Gaming / entertainment / personal collection
+- **Estilo recomendado:** Dark Mode (OLED) o Cyberpunk UI
+- **Paleta recomendada para gaming:** primary `#7C3AED` (violeta), CTA `#F43F5E` (rosa-rojo), bg `#0F0F23`
+
+---
+
+#### Ítem 1 — Paleta de color
+
+**Problema:** `mat.$spring-green-palette` es genérica y no transmite identidad gaming. Los usuarios de apps de colección de videojuegos esperan un color primario con más energía y personalidad.
+
+**Opciones (de menor a mayor cambio):**
+
+| Opción | Material token | Descripción |
+|---|---|---|
+| A (recomendada) | `mat.$violet-palette` | Una línea en `styles.scss`, cambio global instantáneo |
+| B | `mat.$deep-purple-palette` | Más oscuro y saturado, también válido |
+| C | Paleta custom gaming | `#7C3AED` primary, `#F43F5E` CTA, `#0F0F23` bg — fuera de Material tokens |
+
+**Fichero afectado:** `src/styles.scss` (una línea)
+
+**Impacto:** cambia a la vez botones, FAB, chips activos, nav-rail active state, checkboxes, sliders y todos los elementos que consumen `--mat-sys-primary`.
+
+---
+
+#### Ítem 2 — Escala tipográfica
+
+**Problema:** 14 tamaños de fuente distintos en uso, desde `0.6rem` hasta `1.5rem`. No hay jerarquía clara ni tokens compartidos, lo que dificulta el mantenimiento.
+
+**Tamaños actuales a eliminar:** `0.65rem`, `0.7rem`, `0.72rem`, `0.8125rem`, `0.9rem`, `0.9375rem`, `1.1rem`
+
+**Escala propuesta (6 tokens en `styles.scss`):**
+
+```scss
+:root {
+  --text-xs:   0.75rem;   // Labels, badges, chips
+  --text-sm:   0.875rem;  // Texto secundario, metadata
+  --text-base: 1rem;      // Texto principal
+  --text-lg:   1.125rem;  // Subtítulos de sección
+  --text-xl:   1.375rem;  // Títulos de página
+  --text-2xl:  1.75rem;   // Solo casos destacados
+}
+```
+
+**Ficheros afectados:** todos los SCSS de componentes y páginas — búsqueda global de `font-size` y sustitución por el token más próximo.
+
+---
+
+#### Ítem 3 — Escala de border-radius
+
+**Problema:** 8 valores distintos en uso (`4px`, `6px`, `8px`, `10px`, `12px`, `16px`, `20px`, `50%`) sin sistema definido.
+
+**Tokens propuestos (en `styles.scss`):**
+
+```scss
+:root {
+  --radius-sm:   6px;     // Chips, badges pequeños
+  --radius-md:   12px;    // Cards, dialogs, inputs
+  --radius-lg:   20px;    // Bottom sheets, modales grandes
+  --radius-full: 9999px;  // Avatares, FABs, toggles
+}
+```
+
+**Ficheros afectados:** todos los SCSS con `border-radius` hardcodeado — búsqueda global y sustitución por el token más próximo.
+
+---
+
+#### Ítem 4 — Escala de z-index
+
+**Problema:** valores de `z-index` dispersos por el código (ej. `z-index: 200` en bottom-nav) sin escala documentada. Dificulta detectar conflictos de superposición.
+
+**Escala propuesta (en `styles.scss`):**
+
+```scss
+:root {
+  --z-base:    0;
+  --z-card:    10;
+  --z-dropdown: 20;
+  --z-sticky:  30;
+  --z-overlay: 40;
+  --z-modal:   50;
+  --z-toast:   60;
+  --z-nav:     70;
+}
+```
+
+**Ficheros afectados:** `app.component.scss` y cualquier componente con `z-index` hardcodeado.
+
+---
+
+#### Ítem 5 — Colores hardcodeados
+
+**Problema:** varios colores con hex fijos que rompen el sistema de theming — no respetan el toggle light/dark ni los tokens MD3.
+
+**Lista completa identificada:**
+
+| Color | Hex | Ubicación | Sustitución sugerida |
+|---|---|---|---|
+| Platino | `#ffd700` | `game-card` | `--color-platinum: #ffd700` (custom property) |
+| Rating stars | `#ffc107` | `game-card`, `wishlist-card` | `--color-rating: #ffc107` |
+| Favoritos | `#ff6b6b`, `#ee5a6f` | `game-card` | `--color-favorite-start/end` |
+| Digital copy | `#002d6e`, `#0050c8` | `game-card` | `--color-digital-start/end` |
+| Préstamo | `#1565c0`, `#0d47a1` | `game-card` | `--color-loan-start/end` |
+| Pedido recibido | `#e8f5e9`, `#2e7d32` | `orders` | `--color-status-received-bg/text` |
+| Pedido enviado | `#fff8e1`, `#f57f17` | `orders` | `--color-status-shipped-bg/text` |
+| Pedido ordenado | `#e3f2fd`, `#1565c0` | `orders` | `--color-status-ordered-bg/text` |
+| Metacritic | `#6ab04c` | game detail | `--color-metacritic` |
+
+**Fichero destino:** definir todas en `styles.scss` bajo un bloque `:root { /* Colores semánticos */ }`.
+
+---
+
+#### Ítem 6 — Tipografía de headings (opcional, fase 2)
+
+Evaluar sustituir `Outfit` solo en headings (`h1`–`h3`, títulos de página) por una fuente más expresiva para un contexto gaming. Candidatas:
+
+- **[Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk)** — técnica, moderna, buena en dark mode
+- **[Syne](https://fonts.google.com/specimen/Syne)** — más editorial, marcada personalidad
+
+`Outfit` se mantendría para el body. Este ítem se aborda solo si los ítems 1–5 quedan bien integrados.
+
+---
+
+#### Plan de implementación
+
+| Fase | Ítems | Complejidad |
+|---|---|---|
+| 1 | Paleta de color (ítem 1) | Pequeña — 1 línea |
+| 2 | Tokens z-index + border-radius (ítems 3 y 4) | Pequeña — definir en styles.scss + búsqueda global |
+| 3 | Escala tipográfica (ítem 2) | Media — sustitución en todos los SCSS |
+| 4 | Colores hardcodeados (ítem 5) | Media — búsqueda global + definir custom properties |
+| 5 | Tipografía headings (ítem 6) | Pequeña — solo si fases anteriores quedan bien |
 
 ---
 
@@ -369,25 +513,9 @@ Instalar la integración oficial desde el marketplace de Vercel (Settings → In
 
 ---
 
-### Mejora de diseño con ui-ux-pro-max-skill
+### ~~Mejora de diseño con ui-ux-pro-max-skill~~ ✅
 
-Skill de Claude Code que genera sistemas de diseño completos a partir de una descripción en lenguaje natural. Pendiente de analizar e instalar para evaluar si puede mejorar la UI/UX de la app.
-
-**Repositorio:** https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-
-**Qué ofrece:**
-- 67 estilos UI (Glassmorphism, Minimalism, Claymorphism…)
-- 161 paletas de color con códigos hex y guía de mood
-- 57 combinaciones de tipografías (Google Fonts)
-- Reglas de diseño específicas por industria
-- Soporte para Angular entre otros frameworks
-
-**Pasos previos:**
-1. Clonar el repositorio y leer las instrucciones reales de instalación.
-2. Evaluar si el skill es compatible con la configuración actual de Claude Code.
-3. Instalarlo en `.claude/commands/` del proyecto o globalmente en `~/.claude/commands/`.
-4. Probar con una descripción de la app para ver las recomendaciones generadas.
-5. Decidir qué partes del sistema de diseño actual mejorar o sustituir.
+Skill instalado en `.claude/skills/ui-ux-pro-max/` (proyecto local, no global). Audit completo ejecutado sobre `master` — resultado documentado en [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) como bloque de muy alta prioridad.
 
 ---
 
@@ -683,6 +811,12 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 ## Completado
+
+### ~~Mejora de diseño con ui-ux-pro-max-skill~~ ✅
+
+Skill `ui-ux-pro-max` v2.5.0 instalado en `.claude/skills/ui-ux-pro-max/` (ámbito de proyecto, no global). Audit completo de UI/UX ejecutado sobre `master`: análisis de paleta, tipografía, border-radius, z-index, colores hardcodeados e identidad visual. Resultados documentados y priorizados en [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño).
+
+---
 
 ### ~~Observabilidad — Sentry + Better Stack~~ ✅
 
