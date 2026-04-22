@@ -7,6 +7,7 @@ import { environment } from '@/env';
 if (environment.sentry.enabled) {
   Sentry.init({
     dsn: environment.sentry.dsn,
+    release: environment.sentry.release,
     environment: 'production',
     integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 0.1,
