@@ -321,10 +321,9 @@ export class GameFormComponent implements OnInit {
     this.loading.set(true);
 
     try {
-      const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(
-        this._userContext.requireUserId(),
-        this._gameUuid
-      );
+      const userId: string | null = this._userContext.userId();
+      if (!userId) return;
+      const game: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(userId, this._gameUuid);
       if (game) {
         this._gameId = game.id;
         this._saleData = {
