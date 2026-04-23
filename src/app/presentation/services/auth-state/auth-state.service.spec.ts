@@ -16,7 +16,8 @@ const mockAuthUseCases: AuthUseCasesContract = {
   resetPassword: vi.fn(),
   updateDisplayName: vi.fn(),
   updatePassword: vi.fn(),
-  onPasswordRecovery: vi.fn()
+  onPasswordRecovery: vi.fn(),
+  signInWithOAuth: vi.fn()
 };
 
 const fakeUser: AuthUserModel = {

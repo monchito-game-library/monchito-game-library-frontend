@@ -7,7 +7,7 @@ import { authBaseImports, authBaseProviders, authBaseSchemas } from '../../auth-
 import { RegisterComponent } from './register.component';
 import { mockRouter } from '@/testing/router.mock';
 
-const mockAuthUseCases = { signUp: vi.fn() };
+const mockAuthUseCases = { signUp: vi.fn(), signInWithOAuth: vi.fn() };
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -189,6 +189,40 @@ describe('RegisterComponent', () => {
       });
 
       await component.onSubmit();
+
+      expect(component.loading()).toBe(false);
+    });
+  });
+
+  describe('onOAuthSignIn', () => {
+    it('llama a signInWithOAuth con el provider correcto', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
+
+      await component.onOAuthSignIn('google');
+
+      expect(mockAuthUseCases.signInWithOAuth).toHaveBeenCalledWith('google');
+    });
+
+    it('establece errorMessage cuando el proveedor falla', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: false, error: 'Provider not enabled' });
+
+      await component.onOAuthSignIn('discord');
+
+      expect(component.errorMessage()).toBe('Provider not enabled');
+    });
+
+    it('usa la clave de traducción como fallback cuando no hay mensaje de error', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: false });
+
+      await component.onOAuthSignIn('twitch');
+
+      expect(component.errorMessage()).toBe('auth.register.oauthFailed');
+    });
+
+    it('loading vuelve a false tras completar', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
+
+      await component.onOAuthSignIn('google');
 
       expect(component.loading()).toBe(false);
     });

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 
 import { AUTH_REPOSITORY, AuthRepositoryContract } from '@/domain/repositories/auth.repository.contract';
 import { AuthUserModel } from '@/models/auth/auth-user.model';
+import { OAuthProvider } from '@/types/oauth-provider.type';
 import { AuthResult, AuthUseCasesContract } from './auth.use-cases.contract';
 
 @Injectable()
@@ -107,5 +108,20 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
    */
   onPasswordRecovery(callback: () => void): void {
     this._repo.onPasswordRecovery(callback);
+  }
+
+  /**
+   * Initiates an OAuth sign-in flow. Redirects the browser to the provider's auth page.
+   * Returns { success: false, error } if the redirect cannot be initiated.
+   *
+   * @param {OAuthProvider} provider - OAuth provider to use
+   */
+  async signInWithOAuth(provider: OAuthProvider): Promise<AuthResult> {
+    try {
+      await this._repo.signInWithOAuth(provider);
+      return { success: true };
+    } catch (error: unknown) {
+      return { success: false, error: error instanceof Error ? error.message : 'OAuth sign-in failed' };
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { AuthUserModel } from '@/models/auth/auth-user.model';
+import { OAuthProvider } from '@/types/oauth-provider.type';
 
 /** Contract for the authentication repository. */
 export interface AuthRepositoryContract {
@@ -67,6 +68,14 @@ export interface AuthRepositoryContract {
    * @param {() => void} callback - Called once the recovery session is ready
    */
   onPasswordRecovery(callback: () => void): void;
+
+  /**
+   * Initiates an OAuth sign-in flow by redirecting to the provider's auth page.
+   * On success, the browser redirects back and Supabase establishes the session.
+   *
+   * @param {OAuthProvider} provider - OAuth provider to use
+   */
+  signInWithOAuth(provider: OAuthProvider): Promise<void>;
 }
 
 /** InjectionToken for AuthRepositoryContract. */
