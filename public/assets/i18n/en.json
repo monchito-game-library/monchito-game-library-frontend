@@ -485,6 +485,10 @@
     "logout": "Logout",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithDiscord": "Continue with Discord",
+    "continueWithTwitch": "Continue with Twitch",
     "login": {
       "title": "Sign In",
       "email": "Email",
@@ -499,7 +503,8 @@
       "forgotPassword": "Forgot your password?",
       "noAccount": "Don't have an account?",
       "register": "Register here",
-      "loginFailed": "Login failed"
+      "loginFailed": "Login failed",
+      "oauthFailed": "Failed to sign in with provider"
     },
     "register": {
       "title": "Create Account",
@@ -523,7 +528,8 @@
       "hasAccount": "Already have an account?",
       "login": "Sign in here",
       "successMessage": "Account created! Please check your email to verify your account.",
-      "registrationFailed": "Registration failed"
+      "registrationFailed": "Registration failed",
+      "oauthFailed": "Failed to sign in with provider"
     },
     "forgotPassword": {
       "title": "Reset Password",

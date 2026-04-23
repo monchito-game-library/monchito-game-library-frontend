@@ -485,6 +485,10 @@
     "logout": "Cerrar sesión",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
+    "orContinueWith": "O continuar con",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithDiscord": "Continuar con Discord",
+    "continueWithTwitch": "Continuar con Twitch",
     "login": {
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
@@ -499,7 +503,8 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "noAccount": "¿No tienes una cuenta?",
       "register": "Regístrate aquí",
-      "loginFailed": "Error al iniciar sesión"
+      "loginFailed": "Error al iniciar sesión",
+      "oauthFailed": "Error al iniciar sesión con el proveedor"
     },
     "register": {
       "title": "Crear cuenta",
@@ -523,7 +528,8 @@
       "hasAccount": "¿Ya tienes una cuenta?",
       "login": "Inicia sesión aquí",
       "successMessage": "¡Cuenta creada! Revisa tu correo para verificar tu cuenta.",
-      "registrationFailed": "Error al crear la cuenta"
+      "registrationFailed": "Error al crear la cuenta",
+      "oauthFailed": "Error al iniciar sesión con el proveedor"
     },
     "forgotPassword": {
       "title": "Recuperar contraseña",

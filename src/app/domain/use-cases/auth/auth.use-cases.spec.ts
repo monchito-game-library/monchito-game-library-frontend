@@ -21,7 +21,8 @@ const mockRepo: AuthRepositoryContract = {
   onAuthStateChange: vi.fn(),
   updateDisplayName: vi.fn(),
   updatePassword: vi.fn(),
-  onPasswordRecovery: vi.fn()
+  onPasswordRecovery: vi.fn(),
+  signInWithOAuth: vi.fn()
 };
 
 describe('AuthUseCasesImpl', () => {
@@ -179,6 +180,30 @@ describe('AuthUseCasesImpl', () => {
       useCases.onPasswordRecovery(callback);
 
       expect(mockRepo.onPasswordRecovery).toHaveBeenCalledWith(callback);
+    });
+  });
+
+  describe('signInWithOAuth', () => {
+    it('devuelve { success: true } cuando el repositorio resuelve', async () => {
+      vi.mocked(mockRepo.signInWithOAuth).mockResolvedValue();
+      const result = await useCases.signInWithOAuth('google');
+
+      expect(result).toEqual({ success: true });
+      expect(mockRepo.signInWithOAuth).toHaveBeenCalledWith('google');
+    });
+
+    it('devuelve { success: false, error } cuando el repositorio lanza un Error', async () => {
+      vi.mocked(mockRepo.signInWithOAuth).mockRejectedValue(new Error('Provider not enabled'));
+      const result = await useCases.signInWithOAuth('discord');
+
+      expect(result).toEqual({ success: false, error: 'Provider not enabled' });
+    });
+
+    it('devuelve mensaje genérico cuando el repositorio lanza un valor no Error', async () => {
+      vi.mocked(mockRepo.signInWithOAuth).mockRejectedValue('unexpected');
+      const result = await useCases.signInWithOAuth('twitch');
+
+      expect(result).toEqual({ success: false, error: 'OAuth sign-in failed' });
     });
   });
 });

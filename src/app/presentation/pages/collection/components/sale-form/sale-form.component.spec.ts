@@ -142,6 +142,12 @@ describe('SaleFormComponent', () => {
       expect(mockSaveFn).toHaveBeenCalledWith({ forSale: false, salePrice: null });
     });
 
+    it('pone salePrice a null cuando forSale es true pero salePrice es null', async () => {
+      component.form.patchValue({ forSale: true, salePrice: null });
+      await component.onSave();
+      expect(mockSaveFn).toHaveBeenCalledWith({ forSale: true, salePrice: null });
+    });
+
     it('emite saveCompleted con los valores de disponibilidad tras éxito', async () => {
       const spy = vi.fn();
       component.saveCompleted.subscribe(spy);
