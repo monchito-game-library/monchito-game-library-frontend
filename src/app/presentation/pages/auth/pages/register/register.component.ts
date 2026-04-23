@@ -9,6 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
+import { OAuthProvider } from '@/types/oauth-provider.type';
 import { AuthPanelComponent } from '@/pages/auth/components/auth-panel/auth-panel.component';
 import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
 
@@ -53,6 +54,21 @@ export class RegisterComponent extends AuthBaseComponent {
     },
     { validators: this._passwordMatchValidator }
   );
+
+  /**
+   * Inicia el flujo OAuth con el proveedor indicado y muestra el error si falla.
+   *
+   * @param {OAuthProvider} provider - Proveedor OAuth seleccionado
+   */
+  async onOAuthSignIn(provider: OAuthProvider): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    const result: AuthResult = await this._authUseCases.signInWithOAuth(provider);
+    this.loading.set(false);
+    if (!result.success) {
+      this._setError(result.error, 'auth.register.oauthFailed');
+    }
+  }
 
   /**
    * Toggles the confirm-password field visibility.

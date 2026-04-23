@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { AuthUserModel } from '@/models/auth/auth-user.model';
+import { OAuthProvider } from '@/types/oauth-provider.type';
 
 export interface AuthResult {
   success: boolean;
@@ -70,6 +71,14 @@ export interface AuthUseCasesContract {
    * @param {() => void} callback - Called once the recovery session is ready
    */
   onPasswordRecovery(callback: () => void): void;
+
+  /**
+   * Initiates an OAuth sign-in flow. Redirects the browser to the provider's auth page.
+   * Returns { success: false, error } if the redirect cannot be initiated.
+   *
+   * @param {OAuthProvider} provider - OAuth provider to use
+   */
+  signInWithOAuth(provider: OAuthProvider): Promise<AuthResult>;
 }
 
 export const AUTH_USE_CASES = new InjectionToken<AuthUseCasesContract>('AUTH_USE_CASES');

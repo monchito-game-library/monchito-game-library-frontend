@@ -4,6 +4,7 @@ import { Session, SupabaseClient, User } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '@/data/config/supabase.config';
 import { AuthUserModel } from '@/models/auth/auth-user.model';
 import { AuthRepositoryContract } from '@/domain/repositories/auth.repository.contract';
+import { OAuthProvider } from '@/types/oauth-provider.type';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseAuthRepository implements AuthRepositoryContract {
@@ -62,7 +63,10 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
 
     const { error: prefsError } = await this._supabase
       .from('user_preferences')
-      .insert({ user_id: data.user.id, theme: 'light', language: 'es', role: 'user' });
+      .upsert(
+        { user_id: data.user.id, theme: 'light', language: 'es', role: 'user' },
+        { onConflict: 'user_id', ignoreDuplicates: true }
+      );
     if (prefsError)
       throw new Error(`Registration succeeded but failed to create user preferences: ${prefsError.message}`);
 
@@ -145,6 +149,19 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   }
 
   /**
+   * Initiates an OAuth sign-in flow by redirecting to the provider's auth page.
+   *
+   * @param {OAuthProvider} provider - OAuth provider to use
+   */
+  async signInWithOAuth(provider: OAuthProvider): Promise<void> {
+    const { error } = await this._supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: window.location.origin }
+    });
+    if (error) throw new Error(error.message);
+  }
+
+  /**
    * Maps a Supabase User object to the domain AuthUserModel.
    *
    * @param {User} user - Objeto usuario de Supabase Auth
@@ -153,7 +170,8 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
     return {
       id: user.id,
       email: user.email ?? null,
-      displayName: user.user_metadata?.['display_name'] ?? user.email?.split('@')[0] ?? null,
+      displayName:
+        user.user_metadata?.['display_name'] ?? user.user_metadata?.['full_name'] ?? user.email?.split('@')[0] ?? null,
       avatarUrl: user.user_metadata?.['avatar_url'] ?? null
     };
   }

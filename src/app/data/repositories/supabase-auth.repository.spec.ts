@@ -52,8 +52,17 @@ describe('SupabaseAuthRepository', () => {
       expect(result!.avatarUrl).toBeNull();
     });
 
-    it('usa el prefijo del email como displayName cuando no hay display_name en metadata', async () => {
-      const userWithoutDisplayName = { id: 'user-3', email: 'test@example.com', user_metadata: {} };
+    it('usa full_name de metadata como displayName para usuarios OAuth', async () => {
+      const oauthUser = { id: 'user-3', email: 'test@gmail.com', user_metadata: { full_name: 'Juan García' } };
+      mockSupabase.auth.getSession.mockResolvedValue({ data: { session: { user: oauthUser } } });
+
+      const result = await repo.getSession();
+
+      expect(result!.displayName).toBe('Juan García');
+    });
+
+    it('usa el prefijo del email como displayName cuando no hay display_name ni full_name en metadata', async () => {
+      const userWithoutDisplayName = { id: 'user-4', email: 'test@example.com', user_metadata: {} };
       mockSupabase.auth.getSession.mockResolvedValue({
         data: { session: { user: userWithoutDisplayName } }
       });
@@ -61,6 +70,19 @@ describe('SupabaseAuthRepository', () => {
       const result = await repo.getSession();
 
       expect(result!.displayName).toBe('test');
+    });
+
+    it('display_name tiene prioridad sobre full_name', async () => {
+      const userWithBoth = {
+        id: 'user-5',
+        email: 'test@example.com',
+        user_metadata: { display_name: 'Nombre Personalizado', full_name: 'Nombre OAuth' }
+      };
+      mockSupabase.auth.getSession.mockResolvedValue({ data: { session: { user: userWithBoth } } });
+
+      const result = await repo.getSession();
+
+      expect(result!.displayName).toBe('Nombre Personalizado');
     });
   });
 
@@ -92,7 +114,7 @@ describe('SupabaseAuthRepository', () => {
 
   describe('signUp', () => {
     beforeEach(() => {
-      mockSupabase.from.mockReturnValue({ insert: vi.fn().mockResolvedValue({ error: null }) });
+      mockSupabase.from.mockReturnValue({ upsert: vi.fn().mockResolvedValue({ error: null }) });
     });
 
     it('registra con displayName explícito', async () => {
@@ -131,10 +153,10 @@ describe('SupabaseAuthRepository', () => {
       await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow('Registration failed');
     });
 
-    it('lanza error cuando falla el insert de user_preferences', async () => {
+    it('lanza error cuando falla el upsert de user_preferences', async () => {
       mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
       mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockResolvedValue({ error: { message: 'DB constraint violation' } })
+        upsert: vi.fn().mockResolvedValue({ error: { message: 'DB constraint violation' } })
       });
 
       await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow(
@@ -243,6 +265,31 @@ describe('SupabaseAuthRepository', () => {
       mockSupabase.auth.updateUser.mockResolvedValue({ error: { message: 'Password too weak' } });
 
       await expect(repo.updatePassword('weak')).rejects.toThrow('Password too weak');
+    });
+  });
+
+  describe('signInWithOAuth', () => {
+    it('llama a auth.signInWithOAuth con el provider y redirectTo correcto', async () => {
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue({ error: null });
+
+      await repo.signInWithOAuth('google');
+
+      expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+      });
+    });
+
+    it('funciona con provider twitch', async () => {
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue({ error: null });
+
+      await expect(repo.signInWithOAuth('twitch')).resolves.toBeUndefined();
+    });
+
+    it('lanza error si signInWithOAuth falla', async () => {
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue({ error: { message: 'Provider not enabled' } });
+
+      await expect(repo.signInWithOAuth('google')).rejects.toThrow('Provider not enabled');
     });
   });
 
