@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { firstValueFrom, Observable } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { AuthStateService } from '@/services/auth-state/auth-state.service';
@@ -43,5 +44,43 @@ describe('canActivatePublic', () => {
 
     expect(result).toBe(false);
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
+  });
+
+  function setupDeferredGuard(authenticated: boolean): {
+    loadingSignal: ReturnType<typeof signal<boolean>>;
+    promise: Promise<boolean>;
+  } {
+    const loadingSignal = signal<boolean>(true);
+    const deferredAuthState: Partial<AuthStateService> = {
+      loading: loadingSignal.asReadonly(),
+      isAuthenticated: vi.fn().mockReturnValue(authenticated)
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthStateService, useValue: deferredAuthState },
+        { provide: Router, useValue: mockRouter }
+      ]
+    });
+
+    const result = TestBed.runInInjectionContext(() => canActivatePublic({} as any, {} as any));
+    const promise = firstValueFrom(result as Observable<boolean>);
+    return { loadingSignal, promise };
+  }
+
+  it('devuelve Observable que resuelve false cuando loading cambia a false y el usuario está autenticado', async () => {
+    const { loadingSignal, promise } = setupDeferredGuard(true);
+    loadingSignal.set(false);
+    TestBed.tick();
+    expect(await promise).toBe(false);
+    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
+  });
+
+  it('devuelve Observable que resuelve true cuando loading cambia a false y el usuario no está autenticado', async () => {
+    const { loadingSignal, promise } = setupDeferredGuard(false);
+    loadingSignal.set(false);
+    TestBed.tick();
+    expect(await promise).toBe(true);
+    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 });

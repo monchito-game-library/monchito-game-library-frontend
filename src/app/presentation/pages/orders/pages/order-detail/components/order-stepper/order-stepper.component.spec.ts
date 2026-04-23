@@ -337,6 +337,33 @@ describe('OrderStepperComponent', () => {
       await new Promise((r) => setTimeout(r, 0));
       expect(mockUseCases.updateLine).not.toHaveBeenCalled();
     });
+
+    it('trata quantityNeeded null como 0 al calcular cantidades para updateLine', async () => {
+      const orderWithNullQty = makeOrder({
+        lines: [
+          {
+            id: 'l1',
+            orderId: 'order-1',
+            productId: 'p1',
+            requestedBy: 'user-owner',
+            quantityNeeded: null,
+            productName: 'BoxA',
+            productCategory: 'box',
+            productUrl: null,
+            unitPrice: 5,
+            packChosen: null,
+            quantityOrdered: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          }
+        ]
+      });
+      const c = createComponent(orderWithNullQty, [makeStep({ lineIds: ['l1'] })]);
+      c.onSelectPackOption('p1', 0);
+      await new Promise((r) => setTimeout(r, 0));
+      expect(mockUseCases.updateLine).toHaveBeenCalled();
+    });
   });
 
   // ── allPacksSelectedChange output ──────────────────────────────────────────

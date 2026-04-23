@@ -293,6 +293,24 @@ describe('SupabaseAuthRepository', () => {
     });
   });
 
+  describe('constructor — registro temprano de onAuthStateChange', () => {
+    it('registra _passwordRecoveryDetected=true cuando el callback del constructor recibe PASSWORD_RECOVERY', () => {
+      const constructorCallback = mockSupabase.auth.onAuthStateChange.mock.calls[0][0] as (event: string) => void;
+
+      constructorCallback('PASSWORD_RECOVERY');
+
+      expect((repo as any)._passwordRecoveryDetected).toBe(true);
+    });
+
+    it('no modifica _passwordRecoveryDetected para otros eventos en el callback del constructor', () => {
+      const constructorCallback = mockSupabase.auth.onAuthStateChange.mock.calls[0][0] as (event: string) => void;
+
+      constructorCallback('SIGNED_IN');
+
+      expect((repo as any)._passwordRecoveryDetected).toBe(false);
+    });
+  });
+
   describe('onPasswordRecovery', () => {
     it('llama al callback cuando el evento es PASSWORD_RECOVERY', () => {
       let captured: ((event: string) => void) | null = null;

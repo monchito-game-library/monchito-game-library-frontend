@@ -414,6 +414,96 @@ describe('OrderDetailComponent', () => {
       await component.onAdvanceStatus();
       expect(mockOrdersUseCases.update).toHaveBeenCalledWith('order-1', { status: 'selecting_packs' });
     });
+
+    it('muestra snackbar y restablece saving cuando _onAdvanceToSelectingPacks lanza un error', async () => {
+      component.order.set(makeOrder({ status: 'draft' }));
+      mockOrdersUseCases.getProducts.mockResolvedValue([]);
+      mockOrdersUseCases.update.mockRejectedValue(new Error('network error'));
+      await component.onAdvanceStatus();
+      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(component.saving()).toBe(false);
+    });
+  });
+
+  // ── _initStepper / _initForStatus ────────────────────────────────────────────
+
+  describe('_initStepper via _loadOrder', () => {
+    it('inicializa packSteps cuando el order está en selecting_packs y el usuario es propietario', async () => {
+      const lineData = {
+        id: 'line-1',
+        orderId: 'order-1',
+        productId: 'prod-1',
+        productName: 'Product 1',
+        productCategory: 'box' as const,
+        productUrl: null,
+        requestedBy: 'user-1',
+        quantityNeeded: 2,
+        quantityOrdered: null,
+        unitPrice: 10,
+        packChosen: null,
+        notes: null,
+        createdAt: '2024-01-01',
+        allocations: []
+      };
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [lineData],
+        members: [
+          {
+            id: 'm-1',
+            orderId: 'order-1',
+            userId: 'user-1',
+            displayName: 'User 1',
+            email: 'u@test.com',
+            avatarUrl: null,
+            role: 'owner' as const,
+            isReady: false,
+            joinedAt: '2024-01-01'
+          }
+        ]
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+      mockOrdersUseCases.getProducts.mockResolvedValue([]);
+
+      await (component as any)._loadOrder();
+
+      expect(component.packSteps().length).toBe(1);
+      expect(component.packSteps()[0].productId).toBe('prod-1');
+      expect(component.packSteps()[0].totalNeeded).toBe(2);
+    });
+
+    it('agrupa líneas del mismo producto en un único step', async () => {
+      const makeLineData = (id: string, qty: number) => ({
+        id,
+        orderId: 'order-1',
+        productId: 'prod-1',
+        productName: 'Product 1',
+        productCategory: 'box' as const,
+        productUrl: null,
+        requestedBy: 'user-1',
+        quantityNeeded: qty,
+        quantityOrdered: null,
+        unitPrice: 10,
+        packChosen: null,
+        notes: null,
+        createdAt: '2024-01-01',
+        allocations: []
+      });
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [makeLineData('l1', 1), makeLineData('l2', 3)],
+        members: []
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+      mockOrdersUseCases.getProducts.mockResolvedValue([]);
+
+      await (component as any)._loadOrder();
+
+      expect(component.packSteps().length).toBe(1);
+      expect(component.packSteps()[0].totalNeeded).toBe(4);
+    });
   });
 
   // ── onRegressStatus ──────────────────────────────────────────────────────────
