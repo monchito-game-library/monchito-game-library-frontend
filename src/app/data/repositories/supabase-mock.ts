@@ -12,6 +12,7 @@ export const mockSupabase = {
   auth: {
     getSession: vi.fn(),
     signInWithPassword: vi.fn(),
+    signInWithOAuth: vi.fn(),
     signUp: vi.fn(),
     signOut: vi.fn(),
     resetPasswordForEmail: vi.fn(),

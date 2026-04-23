@@ -28,8 +28,14 @@ export class UserPreferencesInitService {
    */
   async loadPreferences(userId: string): Promise<void> {
     try {
-      const prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
-      if (!prefs) return;
+      let prefs: UserPreferencesModel | null = await this._userPreferencesUseCases.loadPreferences(userId);
+
+      if (!prefs) {
+        // First sign-in via OAuth — no user_preferences record yet. Create defaults so
+        // the app works correctly immediately and settings are persisted from this session on.
+        await this._userPreferencesUseCases.savePreferences(userId, 'light', 'es');
+        return;
+      }
 
       if (prefs.theme === 'dark') {
         this._themeService.setDarkTheme();

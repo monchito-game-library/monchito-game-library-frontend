@@ -18,7 +18,8 @@ const mockTransloco: Partial<TranslocoService> = {
 };
 
 const mockUserPreferencesUseCases = {
-  loadPreferences: vi.fn()
+  loadPreferences: vi.fn(),
+  savePreferences: vi.fn()
 };
 
 describe('UserPreferencesInitService', () => {
@@ -56,6 +57,7 @@ describe('UserPreferencesInitService', () => {
   describe('loadPreferences', () => {
     it('establece preferencesLoaded=true cuando no hay preferencias guardadas', async () => {
       mockUserPreferencesUseCases.loadPreferences.mockResolvedValue(null);
+      mockUserPreferencesUseCases.savePreferences.mockResolvedValue(undefined);
 
       await service.loadPreferences('user-1');
 
@@ -80,14 +82,33 @@ describe('UserPreferencesInitService', () => {
       expect(mockTransloco.setActiveLang).not.toHaveBeenCalled();
     });
 
-    it('no aplica ningún ajuste adicional cuando las preferencias son null', async () => {
+    it('crea preferencias por defecto cuando el usuario no tiene ninguna (primer login OAuth)', async () => {
       mockUserPreferencesUseCases.loadPreferences.mockResolvedValue(null);
+      mockUserPreferencesUseCases.savePreferences.mockResolvedValue(undefined);
+
+      await service.loadPreferences('user-1');
+
+      expect(mockUserPreferencesUseCases.savePreferences).toHaveBeenCalledWith('user-1', 'light', 'es');
+    });
+
+    it('no aplica tema ni idioma cuando las preferencias son null (usa los defaults de la app)', async () => {
+      mockUserPreferencesUseCases.loadPreferences.mockResolvedValue(null);
+      mockUserPreferencesUseCases.savePreferences.mockResolvedValue(undefined);
 
       await service.loadPreferences('user-1');
 
       expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
       expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
       expect(mockTransloco.setActiveLang).not.toHaveBeenCalled();
+    });
+
+    it('establece preferencesLoaded=true aunque savePreferences falle', async () => {
+      mockUserPreferencesUseCases.loadPreferences.mockResolvedValue(null);
+      mockUserPreferencesUseCases.savePreferences.mockRejectedValue(new Error('Network error'));
+
+      await service.loadPreferences('user-1');
+
+      expect(mockUserPrefsState.preferencesLoaded()).toBe(true);
     });
 
     it('aplica tema oscuro cuando theme es "dark"', async () => {

@@ -6,7 +6,14 @@ import { TranslocoService } from '@jsverse/transloco';
 
 /** ErrorStateMatcher that also marks confirmPassword as invalid when the parent group has passwordMismatch. */
 export class PasswordMismatchErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  /**
+   * Returns true when the control itself is invalid and touched, or when the parent group
+   * has a passwordMismatch error and the control has been touched.
+   *
+   * @param {FormControl | null} control - The form control to evaluate
+   * @param {FormGroupDirective | NgForm | null} _form - Unused — required by the interface
+   */
+  isErrorState(control: FormControl | null, _form: FormGroupDirective | NgForm | null): boolean {
     const controlInvalid = !!(control?.invalid && control?.touched);
     const groupMismatch = !!(control?.parent?.hasError('passwordMismatch') && control?.touched);
     return controlInvalid || groupMismatch;

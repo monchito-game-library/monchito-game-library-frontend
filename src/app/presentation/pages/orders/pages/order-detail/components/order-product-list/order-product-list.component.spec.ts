@@ -198,5 +198,12 @@ describe('OrderProductListComponent', () => {
       const c = createComponent(order);
       expect(c.groupedLines()).toEqual([]);
     });
+
+    it('trata quantityOrdered null como 0 en la primera aparición de un producto', () => {
+      const lines = [makeLine({ id: 'l1', quantityOrdered: null })];
+      const order = makeOrder({ lines });
+      const c = createComponent(order);
+      expect(c.groupedLines()[0].quantityOrdered).toBe(0);
+    });
   });
 });

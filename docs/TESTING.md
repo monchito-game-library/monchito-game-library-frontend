@@ -68,7 +68,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Fichero | Tests | Estado |
 |---|---|---|
 | `audit-log/audit-log.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `auth/auth.use-cases.spec.ts` | 18 | ✅ Cubierto |
+| `auth/auth.use-cases.spec.ts` | 21 | ✅ Cubierto |
 | `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
 | `console/console.use-cases.spec.ts` | 10 | ✅ Cubierto |
 | `controller/controller.use-cases.spec.ts` | 10 | ✅ Cubierto |
@@ -97,7 +97,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 |---|---|---|
 | `rawg.repository.spec.ts` | 20 | ✅ Cubierto |
 | `supabase.repository.spec.ts` | 43 | ✅ Cubierto |
-| `supabase-auth.repository.spec.ts` | 25 | ✅ Cubierto |
+| `supabase-auth.repository.spec.ts` | 27 | ✅ Cubierto |
 | `supabase-audit-log.repository.spec.ts` | 8 | ✅ Cubierto |
 | `supabase-console.repository.spec.ts` | 17 | ✅ Cubierto |
 | `supabase-controller.repository.spec.ts` | 17 | ✅ Cubierto |
@@ -126,8 +126,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `admin/admin.guard.spec.ts` | 4 | ✅ Cubierto |
 | `desktop-only/desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
 | `user/user.guard.spec.ts` | 4 | ✅ Cubierto |
+| `public/public.guard.spec.ts` | 4 | ✅ Cubierto |
 
-**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px.
+**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px. `canActivatePublic` cubre la redirección a `/collection` cuando el usuario ya está autenticado (loading=false y loading=true→false).
 
 ---
 
@@ -140,7 +141,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `rawg-search-state/rawg-search-state.service.spec.ts` | 6 | ✅ Cubierto |
 | `theme/theme.service.spec.ts` | 8 | ✅ Cubierto |
 | `user-context/user-context.service.spec.ts` | 13 | ✅ Cubierto |
-| `user-preferences-init/user-preferences-init.service.spec.ts` | 14 | ✅ Cubierto |
+| `user-preferences-init/user-preferences-init.service.spec.ts` | 17 | ✅ Cubierto |
 | `user-preferences/user-preferences.service.spec.ts` | 11 | ✅ Cubierto |
 
 **Qué se cubre**:
@@ -193,8 +194,8 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 |---|---|---|
 | `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
 | `pages/auth/pages/forgot-password/forgot-password.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/auth/pages/login/login.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/auth/pages/register/register.component.spec.ts` | 15 | ✅ Cubierto |
+| `pages/auth/pages/login/login.component.spec.ts` | 16 | ✅ Cubierto |
+| `pages/auth/pages/register/register.component.spec.ts` | 19 | ✅ Cubierto |
 | `pages/auth/pages/reset-password/reset-password.component.spec.ts` | 20 | ✅ Cubierto |
 
 #### Colección (`pages/collection`)
@@ -207,7 +208,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 20 | ✅ Cubierto |
 | `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 5 | ✅ Cubierto |
-| `pages/collection/components/sale-form/sale-form.component.spec.ts` | 28 | ✅ Cubierto |
+| `pages/collection/components/sale-form/sale-form.component.spec.ts` | 29 | ✅ Cubierto |
 | `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 27 | ✅ Cubierto |
 | `pages/collection/pages/consoles/consoles.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 15 | ✅ Cubierto |
@@ -251,13 +252,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/orders/orders.component.spec.ts` | 2 | ✅ Cubierto |
 | `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/orders/pages/order-create/order-create.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/order-detail.component.spec.ts` | 79 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/order-detail.component.spec.ts` | 82 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts` | 11 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 14 | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/orders/pages/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/orders/pages/orders-list/orders-list.component.spec.ts` | 16 | ✅ Cubierto |
@@ -362,13 +363,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Mappers | 13 | 190 |
 | Use Cases | 17 | 151 |
 | Repositorios | 16 (+1 pendiente) | 233 |
-| Guards | 3 | 12 |
+| Guards | 4 | 16 |
 | Servicios | 7 | 84 |
 | Abstractas | 5 | 158 |
 | App component | 1 | 31 |
-| Componentes | 67 | ~1368 |
+| Componentes | 67 | ~1380 |
 | Utilidades | 6 | 84 |
-| **Total** | **136** | **2314** |
+| **Total** | **137** | **2353** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -378,10 +379,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 98.64 % (4519 / 4581) |
-| Branches | **94.50 %** (2906 / 3075) |
-| Functions | 98.56 % (1033 / 1048) |
-| Lines | 99.41 % (3724 / 3746) |
+| Statements | 99.07 % (4583 / 4626) |
+| Branches | **95.31 %** (2953 / 3098) |
+| Functions | 99.05 % (1048 / 1058) |
+| Lines | 99.86 % (3787 / 3792) |
 
 ```bash
 npm run test:coverage
@@ -389,7 +390,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 94.50 % de ramas es cercano al máximo alcanzable.** El principal margen de mejora real restante está en `order-detail.component.ts` (66.94 % branch coverage). El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.31 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -461,7 +462,7 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 
 | Componente | Cobertura branches | Qué falta |
 |---|---|---|
-| `order-detail.component.ts` | 66.94 % | Ramas de error/edge en `_initForStatus`, flujos de `onEditHeader` y estados intermedios |
+| `order-detail.component.ts` | 84.3 % (102/121) | Callbacks realtime (`subscribeToOrderMembers`/`subscribeToOrderLines` lines 135/139), `@ViewChild` setter (line 65). `_initStepper` y `_onAdvanceToSelectingPacks` ya cubiertos. |
 
 ---
 
