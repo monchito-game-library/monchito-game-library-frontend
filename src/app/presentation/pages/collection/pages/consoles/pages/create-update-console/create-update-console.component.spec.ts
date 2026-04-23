@@ -108,7 +108,10 @@ function setupTestBed(consoleId: string | null): void {
           getAllByModel: vi.fn().mockResolvedValue([mockEdition])
         } as Partial<HardwareEditionUseCasesContract>
       },
-      { provide: UserContextService, useValue: { requireUserId: vi.fn().mockReturnValue('user-1') } },
+      {
+        provide: UserContextService,
+        useValue: { requireUserId: vi.fn().mockReturnValue('user-1'), userId: vi.fn().mockReturnValue('user-1') }
+      },
       { provide: MatSnackBar, useValue: { open: vi.fn() } },
       { provide: Router, useValue: { navigate: vi.fn() } },
       {

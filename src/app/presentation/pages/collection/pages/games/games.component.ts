@@ -384,9 +384,12 @@ export class GamesComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
+
     this.loading.set(true);
     try {
-      const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(this._userContext.requireUserId());
+      const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(userId);
       this.allGames.set(data);
       this._userPreferencesState.allGames.set(data);
     } catch {

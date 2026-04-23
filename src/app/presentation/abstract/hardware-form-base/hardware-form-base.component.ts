@@ -216,9 +216,11 @@ export abstract class HardwareFormBaseComponent {
    * @param {string} id - Hardware item UUID
    */
   protected async _loadHardwareForEdit(id: string): Promise<unknown> {
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return null;
     this.loading.set(true);
     try {
-      const item = await this._fetchHardware(this._userContext.requireUserId(), id);
+      const item = await this._fetchHardware(userId, id);
       if (!item) {
         void this._router.navigate([this._listRoute]);
         return null;

@@ -212,9 +212,11 @@ export abstract class HardwareDetailBaseComponent {
    * @param {string} id - The entity UUID to load
    */
   protected async _loadItemWithCatalog(id: string): Promise<void> {
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
     this.loading.set(true);
     try {
-      const item = await this._fetchItem(this._userContext.requireUserId(), id);
+      const item = await this._fetchItem(userId, id);
       if (!item) {
         void this._router.navigate([this._listRoute]);
         return;

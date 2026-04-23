@@ -27,7 +27,8 @@ export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
   readonly items: WritableSignal<ConsoleModel[]> = signal<ConsoleModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const userId: string = this._userContext.requireUserId();
+    const userId: string | null = this._userContext.userId();
+    if (!userId) return;
     await Promise.all([
       this._loadItems(() => this._consoleUseCases.getAllForUser(userId)),
       this._loadStores(),
