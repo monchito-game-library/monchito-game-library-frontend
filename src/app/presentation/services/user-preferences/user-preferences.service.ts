@@ -26,6 +26,9 @@ export class UserPreferencesService {
   /** Cached game collection for the list view — set on first load to avoid duplicate fetches. */
   readonly allGames: WritableSignal<GameListModel[]> = signal([]);
 
+  /** Last scroll offset of the game list CDK viewport — persisted across navigation to/from detail. */
+  readonly gameListScrollOffset: WritableSignal<number> = signal(0);
+
   /** Current user role, defaulting to 'user' until preferences are loaded. */
   readonly role: WritableSignal<UserRoleType> = signal<UserRoleType>('user');
 
