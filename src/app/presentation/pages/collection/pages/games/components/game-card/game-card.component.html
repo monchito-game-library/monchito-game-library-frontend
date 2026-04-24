@@ -39,20 +39,31 @@
 
         <!-- Gradient overlay with title, platform, platinum, price and flip -->
         <div class="game-card__overlay">
-          <div class="game-card__platform-row">
-            @if (game().platform) {
-              <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
-            }
-            @if (game().platinum) {
-              <span class="game-card__platinum-chip" matTooltip="Platinum">
-                <mat-icon>emoji_events</mat-icon>
-              </span>
-            }
-            @if (isLoaned()) {
-              <span class="game-card__loan-chip" [matTooltip]="game().activeLoanTo ?? ''">
-                <mat-icon>handshake</mat-icon>
-                {{ loanChipLabel() }}
-              </span>
+          <div class="game-card__chips-area">
+            <div class="game-card__platform-row">
+              @if (game().platform) {
+                <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
+              }
+              @if (game().platinum) {
+                <span class="game-card__platinum-chip" matTooltip="Platinum">
+                  <mat-icon>emoji_events</mat-icon>
+                </span>
+              }
+            </div>
+            @if (isLoaned() || game().forSale) {
+              <div class="game-card__status-chips">
+                @if (isLoaned()) {
+                  <span class="game-card__loan-chip" [matTooltip]="game().activeLoanTo ?? ''">
+                    <mat-icon>handshake</mat-icon>
+                    <span class="game-card__loan-name">{{ loanChipLabel() }}</span>
+                  </span>
+                }
+                @if (game().forSale) {
+                  <span class="game-card__sale-chip" matTooltip="En venta">
+                    <mat-icon>sell</mat-icon>
+                  </span>
+                }
+              </div>
             }
           </div>
           <p class="game-card__title">{{ game().title }}</p>

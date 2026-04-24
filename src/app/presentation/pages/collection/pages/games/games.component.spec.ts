@@ -55,7 +55,10 @@ describe('GamesComponent', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -316,41 +319,6 @@ describe('GamesComponent', () => {
     });
   });
 
-  describe('trackByRowIndex', () => {
-    it('devuelve el índice de fila recibido', () => {
-      expect(component.trackByRowIndex(0)).toBe(0);
-      expect(component.trackByRowIndex(5)).toBe(5);
-    });
-  });
-
-  describe('gameRows', () => {
-    it('agrupa los juegos en filas de columnCount elementos', () => {
-      component.allGames.set([
-        makeGame({ title: 'A' }),
-        makeGame({ title: 'B' }),
-        makeGame({ title: 'C' }),
-        makeGame({ title: 'D' }),
-        makeGame({ title: 'E' })
-      ]);
-      component.columnCount.set(3);
-      const rows = component.gameRows();
-      expect(rows).toHaveLength(2);
-      expect(rows[0]).toHaveLength(3);
-      expect(rows[1]).toHaveLength(2);
-    });
-
-    it('devuelve una sola fila si hay menos juegos que columnas', () => {
-      component.allGames.set([makeGame({ title: 'A' }), makeGame({ title: 'B' })]);
-      component.columnCount.set(4);
-      expect(component.gameRows()).toHaveLength(1);
-    });
-
-    it('devuelve vacío si no hay juegos', () => {
-      component.allGames.set([]);
-      expect(component.gameRows()).toEqual([]);
-    });
-  });
-
   describe('ownedCount', () => {
     it('refleja el número de juegos filtrados', () => {
       component.allGames.set([
@@ -522,25 +490,6 @@ describe('GamesComponent', () => {
     });
   });
 
-  describe('rowItemSize', () => {
-    it('devuelve un número positivo para la altura de la fila', () => {
-      const size = component.rowItemSize();
-      expect(size).toBeGreaterThan(0);
-    });
-
-    it('cambia según columnCount e isMobile', () => {
-      component.columnCount.set(2);
-      component.isMobile.set(true);
-      const sizeMobile = component.rowItemSize();
-
-      component.columnCount.set(6);
-      component.isMobile.set(false);
-      const sizeDesktop = component.rowItemSize();
-
-      expect(sizeMobile).toBeGreaterThan(sizeDesktop);
-    });
-  });
-
   describe('_columnCountFromWidth', () => {
     it('devuelve 2 para width <= 600', () => {
       expect((component as any)._columnCountFromWidth(600)).toBe(2);
@@ -633,7 +582,10 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
             })
           }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -671,7 +623,10 @@ describe('GamesComponent — breakpoint observer', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -749,7 +704,10 @@ describe('GamesComponent — carga inicial', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
@@ -773,5 +731,114 @@ describe('GamesComponent — carga inicial', () => {
 
   it('loading queda en false tras la carga', () => {
     expect(component.loading()).toBe(false);
+  });
+});
+
+describe('GamesComponent — scroll restoration', () => {
+  let component: GamesComponent;
+  let scrollOffsetSignal: ReturnType<typeof signal<number>>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    scrollOffsetSignal = signal<number>(0);
+
+    TestBed.configureTestingModule({
+      imports: [GamesComponent],
+      providers: [
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: scrollOffsetSignal }
+        },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    TestBed.overrideComponent(GamesComponent, { set: { imports: [], template: '' } });
+    const fixture = TestBed.createComponent(GamesComponent);
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+  });
+
+  describe('_onViewportScroll', () => {
+    it('guarda el scrollTop cuando el target tiene la clase game-list__grid', () => {
+      const el = document.createElement('div');
+      el.classList.add('game-list__grid');
+      Object.defineProperty(el, 'scrollTop', { value: 500, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onViewportScroll(event);
+
+      expect(scrollOffsetSignal()).toBe(500);
+    });
+
+    it('no actualiza el offset cuando el target no tiene la clase game-list__grid', () => {
+      const el = document.createElement('div');
+      el.classList.add('other-class');
+      Object.defineProperty(el, 'scrollTop', { value: 500, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onViewportScroll(event);
+
+      expect(scrollOffsetSignal()).toBe(0);
+    });
+  });
+
+  describe('_restoreScrollPosition', () => {
+    it('no llama a requestAnimationFrame cuando el offset es 0', () => {
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame');
+
+      (component as any)._restoreScrollPosition();
+
+      expect(rafSpy).not.toHaveBeenCalled();
+      rafSpy.mockRestore();
+    });
+
+    it('llama a requestAnimationFrame cuando el offset es positivo', () => {
+      scrollOffsetSignal.set(300);
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+
+      expect(rafSpy).toHaveBeenCalled();
+      rafSpy.mockRestore();
+      rafCb!(0);
+    });
+
+    it('asigna scrollTop al contenedor cuando el rAF se ejecuta y _scrollContainer está disponible', () => {
+      scrollOffsetSignal.set(300);
+
+      const mockEl = { scrollTop: 0 };
+      (component as any)._scrollContainer = { nativeElement: mockEl };
+
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+      rafCb!(0);
+
+      expect(mockEl.scrollTop).toBe(300);
+      rafSpy.mockRestore();
+    });
   });
 });

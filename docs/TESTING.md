@@ -163,7 +163,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `crop-interaction-base/crop-interaction.base.spec.ts` | 33 | ✅ Cubierto |
 | `hardware-detail-base/hardware-detail-base.component.spec.ts` | 45 | ✅ Cubierto |
 | `hardware-form-base/hardware-form-base.component.spec.ts` | 34 | ✅ Cubierto |
-| `hardware-list-base/hardware-list-base.component.spec.ts` | 31 | ✅ Cubierto |
+| `hardware-list-base/hardware-list-base.component.spec.ts` | 38 | ✅ Cubierto |
 
 **Qué se cubre**:
 - `CropInteractionBase`: valores iniciales de signals, `onImageLoad` (cálculo de overflow según aspect ratio), drag con pointer events (inicio, movimiento, clamping, fin), zoom con rueda del ratón (min/max), touch de 1 dedo (pan) y 2 dedos (pinch-to-zoom), `onTouchEnd` con transición de 2 a 1 dedo.
@@ -218,7 +218,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 25 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 40 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 79 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 78 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 86 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
@@ -365,11 +365,11 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Repositorios | 16 (+1 pendiente) | 233 |
 | Guards | 4 | 16 |
 | Servicios | 7 | 84 |
-| Abstractas | 5 | 158 |
+| Abstractas | 5 | 165 |
 | App component | 1 | 31 |
-| Componentes | 67 | ~1380 |
+| Componentes | 67 | ~1379 |
 | Utilidades | 6 | 84 |
-| **Total** | **137** | **2353** |
+| **Total** | **137** | **2359** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -379,10 +379,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.07 % (4583 / 4626) |
-| Branches | **95.31 %** (2953 / 3098) |
-| Functions | 99.05 % (1048 / 1058) |
-| Lines | 99.86 % (3787 / 3792) |
+| Statements | 98.94 % (4608 / 4657) |
+| Branches | **95.15 %** (2966 / 3117) |
+| Functions | 99.05 % (1053 / 1063) |
+| Lines | 99.86 % (3810 / 3815) |
 
 ```bash
 npm run test:coverage
