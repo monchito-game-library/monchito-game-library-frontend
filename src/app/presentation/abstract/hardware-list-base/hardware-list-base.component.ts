@@ -1,4 +1,4 @@
-import { computed, Directive, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Directive, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@jsverse/transloco';
@@ -17,6 +17,7 @@ import {
   HardwareModelUseCasesContract
 } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
+import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 
 /**
@@ -31,12 +32,13 @@ import { GAME_CONDITION } from '@/constants/game-condition.constant';
 @Directive()
 export abstract class HardwareListBaseComponent<
   T extends { id: string; modelId: string | null; brandId: string | null; price: number | null }
-> {
+> implements OnDestroy {
   protected readonly _router: Router = inject(Router);
   protected readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   protected readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
+  protected readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   protected readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
@@ -82,6 +84,41 @@ export abstract class HardwareListBaseComponent<
   readonly totalSpent: Signal<number> = computed((): number =>
     this.filteredItems().reduce((acc: number, item: T): number => acc + (item.price ?? 0), 0)
   );
+
+  /** Signal in UserPreferencesService where this list persists its scroll offset. */
+  protected abstract readonly _scrollOffsetSignal: WritableSignal<number>;
+
+  private readonly _onHwListScroll = (e: Event): void => {
+    const t = e.target as HTMLElement;
+    if (t.classList.contains('hw-list__content')) {
+      this._scrollOffsetSignal.set(t.scrollTop);
+    }
+  };
+
+  /**
+   * Registers the scroll listener that persists the list position in real time.
+   * Call at the very start of ngOnInit so events are captured from the first render.
+   */
+  protected _initScrollRestoration(): void {
+    document.addEventListener('scroll', this._onHwListScroll, { capture: true, passive: true });
+  }
+
+  /**
+   * Restores the scroll position saved before the last navigation away from this list.
+   * Call after data has finished loading so the container is in the DOM.
+   */
+  protected _restoreScrollPosition(): void {
+    const offset: number = this._scrollOffsetSignal();
+    if (offset <= 0) return;
+    requestAnimationFrame(() => {
+      const el = document.querySelector('.hw-list__content') as HTMLElement | null;
+      if (el) el.scrollTop = offset;
+    });
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('scroll', this._onHwListScroll, true);
+  }
 
   abstract ngOnInit(): Promise<void>;
 

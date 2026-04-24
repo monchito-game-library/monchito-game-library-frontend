@@ -54,19 +54,11 @@
 
   <!-- State: with games -->
 } @else if (filteredGames().length > 0) {
-  <cdk-virtual-scroll-viewport
-    class="game-list__viewport"
-    [itemSize]="rowItemSize()"
-    [style.--grid-cols]="columnCount()">
-    <div
-      *cdkVirtualFor="let row of gameRows(); trackBy: trackByRowIndex; let i = index"
-      class="game-list__row"
-      [style]="{ '--i': i }">
-      @for (game of row; track game.id) {
-        <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
-      }
-    </div>
-  </cdk-virtual-scroll-viewport>
+  <div #scrollContainer class="game-list__grid" [style.--grid-cols]="columnCount()">
+    @for (game of filteredGames(); track game.id) {
+      <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
+    }
+  </div>
 
   <!-- State: no filter results -->
 } @else if (allGames().length > 0) {

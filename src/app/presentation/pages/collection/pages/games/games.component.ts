@@ -1,10 +1,9 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
-  Injector,
   OnDestroy,
   OnInit,
   Signal,
@@ -15,7 +14,6 @@ import {
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -50,7 +48,6 @@ import { ListPageHeaderComponent } from '@/pages/collection/components/list-page
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    ScrollingModule,
     MatButton,
     MatFabButton,
     MatIcon,
@@ -71,32 +68,19 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
-  private readonly _injector: Injector = inject(Injector);
   private _bpSubscription?: Subscription;
 
-  @ViewChild(CdkVirtualScrollViewport)
-  private _viewport?: CdkVirtualScrollViewport;
+  // Saves scroll position on each scroll event so it survives the browser resetting
+  // scrollTop to 0 when the element is detached from the DOM during navigation.
+  private readonly _onViewportScroll = (e: Event): void => {
+    const t = e.target as HTMLElement;
+    if (t.classList.contains('game-list__grid')) {
+      this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
+    }
+  };
 
-  /**
-   * Row height in px computed from the current viewport width and column count.
-   * Recalculates whenever columnCount or isMobile change, keeping CDK virtual
-   * scroll in sync with the actual rendered row height and eliminating blank
-   * space at the bottom of the list on all screen sizes.
-   */
-  readonly rowItemSize: Signal<number> = computed((): number => {
-    const cols = this.columnCount();
-    const isMobile = this.isMobile();
-    const screenWidth = window.innerWidth;
-    const gapPx = isMobile ? 12 : 20; // game-list.component.scss: gap 0.75rem / 1.25rem
-    const paddingPx = isMobile ? 12 : 24; // game-list.component.scss: padding 0.75rem / 1.5rem each side
-    const rowVerticalPx = 20; // game-list.component.scss: padding-top + padding-bottom (0.625rem × 2)
-    const footerPx = isMobile ? 36 : 44; // game-card.component.scss: .game-card__footer min-height
-    const navRailWidth = isMobile ? 0 : 88; // nav rail hidden on mobile
-    const availableWidth = screenWidth - navRailWidth - 2 * paddingPx - (cols - 1) * gapPx;
-    const cardWidth = availableWidth / cols;
-    const imageHeight = cardWidth * (4 / 3); // aspect-ratio: 3 / 4
-    return Math.ceil(imageHeight + footerPx + rowVerticalPx);
-  });
+  @ViewChild('scrollContainer')
+  private _scrollContainer?: ElementRef<HTMLElement>;
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -220,17 +204,6 @@ export class GamesComponent implements OnInit, OnDestroy {
     return filtered;
   });
 
-  /** Games grouped into rows for the virtual scroll grid. */
-  readonly gameRows: Signal<GameListModel[][]> = computed((): GameListModel[][] => {
-    const games = this.filteredGames();
-    const cols = this.columnCount();
-    const rows: GameListModel[][] = [];
-    for (let i = 0; i < games.length; i += cols) {
-      rows.push(games.slice(i, i + cols));
-    }
-    return rows;
-  });
-
   /** Total number of games in the filtered list. */
   readonly ownedCount: Signal<number> = computed((): number => this.filteredGames().length);
 
@@ -248,13 +221,12 @@ export class GamesComponent implements OnInit, OnDestroy {
     void this._loadStores();
 
     // Show cache immediately if available while reloading from Supabase
+    document.addEventListener('scroll', this._onViewportScroll, { capture: true, passive: true });
+
     const cached = this._userPreferencesState.allGames();
     if (cached.length > 0) {
       this.allGames.set(cached);
       this.loading.set(false);
-      // Schedule scroll restoration after the first DOM render (cache render).
-      // afterNextRender guarantees @ViewChild is resolved before we call scrollTo.
-      this._restoreScrollPosition();
     }
 
     // Always force a refresh on mount to reflect sales, loans or any change
@@ -262,6 +234,11 @@ export class GamesComponent implements OnInit, OnDestroy {
     // the component is destroyed on navigation and NavigationEnd can fire before
     // the subscription is registered after to await.
     await this._loadGames(true);
+
+    // Scroll restoration runs after _loadGames so the viewport exists (loading=false).
+    // The offset was saved in real-time by _onViewportScroll, so it survives the
+    // skeleton phase even though the browser resets scrollTop on DOM detachment.
+    this._restoreScrollPosition();
 
     this._bpSubscription = this._breakpointObserver
       .observe([
@@ -283,7 +260,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._bpSubscription?.unsubscribe();
-    this._userPreferencesState.gameListScrollOffset.set(this._viewport?.measureScrollOffset() ?? 0);
+    document.removeEventListener('scroll', this._onViewportScroll, true);
   }
 
   /**
@@ -311,13 +288,6 @@ export class GamesComponent implements OnInit, OnDestroy {
       { duration: 2000 }
     );
   }
-
-  /**
-   * Tracking function for virtual scroll rows.
-   *
-   * @param {number} index - Row index in the virtual scroll viewport
-   */
-  trackByRowIndex = (index: number): number => index;
 
   /**
    * Updates the search term from the value emitted by the header.
@@ -388,12 +358,13 @@ export class GamesComponent implements OnInit, OnDestroy {
   private _restoreScrollPosition(): void {
     const offset: number = this._userPreferencesState.gameListScrollOffset();
     if (offset <= 0) return;
-    afterNextRender(
-      () => {
-        this._viewport?.scrollTo({ top: offset });
-      },
-      { injector: this._injector }
-    );
+    // One rAF is enough: Angular has updated the DOM and the browser can compute
+    // the container height before applying scrollTop.
+    requestAnimationFrame(() => {
+      if (this._scrollContainer) {
+        this._scrollContainer.nativeElement.scrollTop = offset;
+      }
+    });
   }
 
   /**
@@ -413,11 +384,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
 
-    // Show skeleton only on first load; when data is already visible, refresh silently
-    // so the CDK viewport is never destroyed and its scroll position is preserved.
-    if (this.allGames().length === 0) {
-      this.loading.set(true);
-    }
+    this.loading.set(true);
     try {
       const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(userId);
       this.allGames.set(data);
