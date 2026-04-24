@@ -24,11 +24,13 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
   protected readonly _listRoute = '/collection/controllers/add';
   protected readonly _detailRoute = '/collection/controllers';
   protected readonly _i18nLoadError = 'controllersPage.snack.loadError';
+  protected readonly _scrollOffsetSignal = this._userPreferencesState.controllersScrollOffset;
 
   /** List of controllers owned by the user. */
   readonly items: WritableSignal<ControllerModel[]> = signal<ControllerModel[]>([]);
 
   async ngOnInit(): Promise<void> {
+    this._initScrollRestoration();
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
     await Promise.all([
@@ -36,5 +38,6 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
       this._loadStores(),
       this._loadCatalog('controller')
     ]);
+    this._restoreScrollPosition();
   }
 }

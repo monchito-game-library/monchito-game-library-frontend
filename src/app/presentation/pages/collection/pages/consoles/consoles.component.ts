@@ -22,11 +22,13 @@ export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
   protected readonly _listRoute = '/collection/consoles/add';
   protected readonly _detailRoute = '/collection/consoles';
   protected readonly _i18nLoadError = 'consolesPage.snack.loadError';
+  protected readonly _scrollOffsetSignal = this._userPreferencesState.consolesScrollOffset;
 
   /** List of consoles owned by the user. */
   readonly items: WritableSignal<ConsoleModel[]> = signal<ConsoleModel[]>([]);
 
   async ngOnInit(): Promise<void> {
+    this._initScrollRestoration();
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
     await Promise.all([
@@ -34,5 +36,6 @@ export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
       this._loadStores(),
       this._loadCatalog('console')
     ]);
+    this._restoreScrollPosition();
   }
 }

@@ -32,6 +32,7 @@ class TestHardwareListComponent extends HardwareListBaseComponent<TestItem> {
   protected readonly _listRoute = '/test/add';
   protected readonly _detailRoute = '/test/detail';
   protected readonly _i18nLoadError = 'test.loadError';
+  protected readonly _scrollOffsetSignal: WritableSignal<number> = signal<number>(0);
 
   readonly items: WritableSignal<TestItem[]> = signal<TestItem[]>([]);
 
@@ -352,6 +353,102 @@ describe('HardwareListBaseComponent', () => {
       await expect((component as any)._loadStores()).resolves.toBeUndefined();
 
       expect((component as any)._stores()).toHaveLength(0);
+    });
+  });
+
+  describe('_onHwListScroll', () => {
+    it('guarda el scrollTop cuando el target tiene la clase hw-list__content', () => {
+      const el = document.createElement('div');
+      el.classList.add('hw-list__content');
+      Object.defineProperty(el, 'scrollTop', { value: 350, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onHwListScroll(event);
+
+      expect((component as any)._scrollOffsetSignal()).toBe(350);
+    });
+
+    it('no actualiza el offset cuando el target no tiene la clase hw-list__content', () => {
+      const el = document.createElement('div');
+      el.classList.add('other-class');
+      Object.defineProperty(el, 'scrollTop', { value: 350, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onHwListScroll(event);
+
+      expect((component as any)._scrollOffsetSignal()).toBe(0);
+    });
+  });
+
+  describe('_initScrollRestoration', () => {
+    it('registra el listener de scroll en documento con capture y passive', () => {
+      const spy = vi.spyOn(document, 'addEventListener');
+
+      (component as any)._initScrollRestoration();
+
+      expect(spy).toHaveBeenCalledWith('scroll', expect.any(Function), { capture: true, passive: true });
+      spy.mockRestore();
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('elimina el listener de scroll del documento', () => {
+      const spy = vi.spyOn(document, 'removeEventListener');
+
+      component.ngOnDestroy();
+
+      expect(spy).toHaveBeenCalledWith('scroll', expect.any(Function), true);
+      spy.mockRestore();
+    });
+  });
+
+  describe('_restoreScrollPosition', () => {
+    it('no llama a requestAnimationFrame cuando el offset es 0 o negativo', () => {
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame');
+
+      (component as any)._restoreScrollPosition();
+
+      expect(rafSpy).not.toHaveBeenCalled();
+      rafSpy.mockRestore();
+    });
+
+    it('llama a requestAnimationFrame y asigna scrollTop cuando el offset es positivo', () => {
+      (component as any)._scrollOffsetSignal.set(400);
+
+      const contentEl = document.createElement('div');
+      contentEl.classList.add('hw-list__content');
+      document.body.appendChild(contentEl);
+
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+      rafCb!(0);
+
+      expect(contentEl.scrollTop).toBe(400);
+
+      document.body.removeChild(contentEl);
+      rafSpy.mockRestore();
+    });
+
+    it('no lanza error si no hay elemento hw-list__content en el DOM cuando se ejecuta el rAF', () => {
+      (component as any)._scrollOffsetSignal.set(400);
+
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+      expect(() => rafCb!(0)).not.toThrow();
+
+      rafSpy.mockRestore();
     });
   });
 });
