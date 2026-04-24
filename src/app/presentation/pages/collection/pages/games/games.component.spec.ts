@@ -55,7 +55,10 @@ describe('GamesComponent', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -316,41 +319,6 @@ describe('GamesComponent', () => {
     });
   });
 
-  describe('trackByRowIndex', () => {
-    it('devuelve el índice de fila recibido', () => {
-      expect(component.trackByRowIndex(0)).toBe(0);
-      expect(component.trackByRowIndex(5)).toBe(5);
-    });
-  });
-
-  describe('gameRows', () => {
-    it('agrupa los juegos en filas de columnCount elementos', () => {
-      component.allGames.set([
-        makeGame({ title: 'A' }),
-        makeGame({ title: 'B' }),
-        makeGame({ title: 'C' }),
-        makeGame({ title: 'D' }),
-        makeGame({ title: 'E' })
-      ]);
-      component.columnCount.set(3);
-      const rows = component.gameRows();
-      expect(rows).toHaveLength(2);
-      expect(rows[0]).toHaveLength(3);
-      expect(rows[1]).toHaveLength(2);
-    });
-
-    it('devuelve una sola fila si hay menos juegos que columnas', () => {
-      component.allGames.set([makeGame({ title: 'A' }), makeGame({ title: 'B' })]);
-      component.columnCount.set(4);
-      expect(component.gameRows()).toHaveLength(1);
-    });
-
-    it('devuelve vacío si no hay juegos', () => {
-      component.allGames.set([]);
-      expect(component.gameRows()).toEqual([]);
-    });
-  });
-
   describe('ownedCount', () => {
     it('refleja el número de juegos filtrados', () => {
       component.allGames.set([
@@ -522,25 +490,6 @@ describe('GamesComponent', () => {
     });
   });
 
-  describe('rowItemSize', () => {
-    it('devuelve un número positivo para la altura de la fila', () => {
-      const size = component.rowItemSize();
-      expect(size).toBeGreaterThan(0);
-    });
-
-    it('cambia según columnCount e isMobile', () => {
-      component.columnCount.set(2);
-      component.isMobile.set(true);
-      const sizeMobile = component.rowItemSize();
-
-      component.columnCount.set(6);
-      component.isMobile.set(false);
-      const sizeDesktop = component.rowItemSize();
-
-      expect(sizeMobile).toBeGreaterThan(sizeDesktop);
-    });
-  });
-
   describe('_columnCountFromWidth', () => {
     it('devuelve 2 para width <= 600', () => {
       expect((component as any)._columnCountFromWidth(600)).toBe(2);
@@ -633,7 +582,10 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
             })
           }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -671,7 +623,10 @@ describe('GamesComponent — breakpoint observer', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
@@ -749,7 +704,10 @@ describe('GamesComponent — carga inicial', () => {
           provide: UserContextService,
           useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: UserPreferencesService, useValue: { allGames: signal<GameListModel[]>([]) } },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },

@@ -32,6 +32,7 @@ class TestHardwareListComponent extends HardwareListBaseComponent<TestItem> {
   protected readonly _listRoute = '/test/add';
   protected readonly _detailRoute = '/test/detail';
   protected readonly _i18nLoadError = 'test.loadError';
+  protected readonly _scrollOffsetSignal: WritableSignal<number> = signal<number>(0);
 
   readonly items: WritableSignal<TestItem[]> = signal<TestItem[]>([]);
 
