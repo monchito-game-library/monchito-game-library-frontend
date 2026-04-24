@@ -7,13 +7,12 @@ import {
   OnInit,
   Signal,
   signal,
-  ViewChild,
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -70,9 +69,6 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
   private _bpSubscription?: Subscription;
-
-  @ViewChild(CdkVirtualScrollViewport)
-  private _viewport?: CdkVirtualScrollViewport;
 
   /**
    * Row height in px computed from the current viewport width and column count.
@@ -256,7 +252,6 @@ export class GamesComponent implements OnInit, OnDestroy {
     // the component is destroyed on navigation and NavigationEnd can fire before
     // the subscription is registered after to await.
     await this._loadGames(true);
-    this._restoreScrollPosition();
 
     this._bpSubscription = this._breakpointObserver
       .observe([
@@ -278,7 +273,6 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._bpSubscription?.unsubscribe();
-    this._userPreferencesState.gameListScrollOffset.set(this._viewport?.measureScrollOffset() ?? 0);
   }
 
   /**
@@ -377,19 +371,6 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Scrolls the CDK viewport back to the offset saved before the last navigation.
-   * Runs inside a setTimeout so Angular has time to re-render the viewport after
-   * the loading state is cleared before we attempt to set scrollTop.
-   */
-  private _restoreScrollPosition(): void {
-    const offset: number = this._userPreferencesState.gameListScrollOffset();
-    if (offset <= 0) return;
-    setTimeout(() => {
-      this._viewport?.scrollTo({ top: offset });
-    });
-  }
-
-  /**
    * Loads the user's game collection, using the shared cache on first load.
    * Pass forceRefresh=true to always fetch from Supabase (after edits or deletions).
    *
@@ -406,7 +387,11 @@ export class GamesComponent implements OnInit, OnDestroy {
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
 
-    this.loading.set(true);
+    // Show skeleton only on first load; when data is already visible, refresh silently
+    // so the CDK viewport is never destroyed and its scroll position is preserved.
+    if (this.allGames().length === 0) {
+      this.loading.set(true);
+    }
     try {
       const data: GameListModel[] = await this._gameUseCases.getAllGamesForList(userId);
       this.allGames.set(data);
