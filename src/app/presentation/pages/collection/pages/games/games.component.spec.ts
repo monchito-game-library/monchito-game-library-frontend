@@ -733,3 +733,112 @@ describe('GamesComponent — carga inicial', () => {
     expect(component.loading()).toBe(false);
   });
 });
+
+describe('GamesComponent — scroll restoration', () => {
+  let component: GamesComponent;
+  let scrollOffsetSignal: ReturnType<typeof signal<number>>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    scrollOffsetSignal = signal<number>(0);
+
+    TestBed.configureTestingModule({
+      imports: [GamesComponent],
+      providers: [
+        { provide: GAME_USE_CASES, useValue: { getAllGamesForList: vi.fn().mockResolvedValue([]) } },
+        { provide: STORE_USE_CASES, useValue: { getAllStores: vi.fn().mockResolvedValue([]) } },
+        {
+          provide: UserContextService,
+          useValue: { userId: signal<string | null>('user-1'), requireUserId: vi.fn().mockReturnValue('user-1') }
+        },
+        {
+          provide: UserPreferencesService,
+          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: scrollOffsetSignal }
+        },
+        { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
+        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    TestBed.overrideComponent(GamesComponent, { set: { imports: [], template: '' } });
+    const fixture = TestBed.createComponent(GamesComponent);
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+  });
+
+  describe('_onViewportScroll', () => {
+    it('guarda el scrollTop cuando el target tiene la clase game-list__grid', () => {
+      const el = document.createElement('div');
+      el.classList.add('game-list__grid');
+      Object.defineProperty(el, 'scrollTop', { value: 500, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onViewportScroll(event);
+
+      expect(scrollOffsetSignal()).toBe(500);
+    });
+
+    it('no actualiza el offset cuando el target no tiene la clase game-list__grid', () => {
+      const el = document.createElement('div');
+      el.classList.add('other-class');
+      Object.defineProperty(el, 'scrollTop', { value: 500, configurable: true });
+      const event = new Event('scroll');
+      Object.defineProperty(event, 'target', { value: el, configurable: true });
+
+      (component as any)._onViewportScroll(event);
+
+      expect(scrollOffsetSignal()).toBe(0);
+    });
+  });
+
+  describe('_restoreScrollPosition', () => {
+    it('no llama a requestAnimationFrame cuando el offset es 0', () => {
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame');
+
+      (component as any)._restoreScrollPosition();
+
+      expect(rafSpy).not.toHaveBeenCalled();
+      rafSpy.mockRestore();
+    });
+
+    it('llama a requestAnimationFrame cuando el offset es positivo', () => {
+      scrollOffsetSignal.set(300);
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+
+      expect(rafSpy).toHaveBeenCalled();
+      rafSpy.mockRestore();
+      rafCb!(0);
+    });
+
+    it('asigna scrollTop al contenedor cuando el rAF se ejecuta y _scrollContainer está disponible', () => {
+      scrollOffsetSignal.set(300);
+
+      const mockEl = { scrollTop: 0 };
+      (component as any)._scrollContainer = { nativeElement: mockEl };
+
+      let rafCb: FrameRequestCallback | undefined;
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafCb = cb;
+        return 0;
+      });
+
+      (component as any)._restoreScrollPosition();
+      rafCb!(0);
+
+      expect(mockEl.scrollTop).toBe(300);
+      rafSpy.mockRestore();
+    });
+  });
+});
