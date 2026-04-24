@@ -1,18 +1,21 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
+  Injector,
   OnDestroy,
   OnInit,
   Signal,
   signal,
+  ViewChild,
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -68,7 +71,11 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _injector: Injector = inject(Injector);
   private _bpSubscription?: Subscription;
+
+  @ViewChild(CdkVirtualScrollViewport)
+  private _viewport?: CdkVirtualScrollViewport;
 
   /**
    * Row height in px computed from the current viewport width and column count.
@@ -245,6 +252,9 @@ export class GamesComponent implements OnInit, OnDestroy {
     if (cached.length > 0) {
       this.allGames.set(cached);
       this.loading.set(false);
+      // Schedule scroll restoration after the first DOM render (cache render).
+      // afterNextRender guarantees @ViewChild is resolved before we call scrollTo.
+      this._restoreScrollPosition();
     }
 
     // Always force a refresh on mount to reflect sales, loans or any change
@@ -273,6 +283,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._bpSubscription?.unsubscribe();
+    this._userPreferencesState.gameListScrollOffset.set(this._viewport?.measureScrollOffset() ?? 0);
   }
 
   /**
@@ -368,6 +379,21 @@ export class GamesComponent implements OnInit, OnDestroy {
     } catch {
       // Intentionally empty catch: filter will simply show no store options
     }
+  }
+
+  /**
+   * Schedules scroll restoration after the next DOM render via afterNextRender,
+   * ensuring @ViewChild is resolved and the CDK viewport is mounted before scrolling.
+   */
+  private _restoreScrollPosition(): void {
+    const offset: number = this._userPreferencesState.gameListScrollOffset();
+    if (offset <= 0) return;
+    afterNextRender(
+      () => {
+        this._viewport?.scrollTo({ top: offset });
+      },
+      { injector: this._injector }
+    );
   }
 
   /**
