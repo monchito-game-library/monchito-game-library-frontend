@@ -32,18 +32,19 @@
 .list-page-header__filter-btn {
   position: relative;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .list-page-header__filter-badge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: -4px;
+  right: -2px;
   min-width: 16px;
   height: 16px;
   padding: 0 0.25rem;
-  border-radius: var(--radius-sm);
-  background: var(--mat-sys-error);
-  color: var(--mat-sys-on-error);
+  border-radius: var(--radius-full);
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
   font-size: var(--text-xs);
   font-weight: 700;
   line-height: 16px;
