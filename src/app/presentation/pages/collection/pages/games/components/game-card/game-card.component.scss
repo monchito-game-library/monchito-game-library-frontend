@@ -253,10 +253,22 @@
     gap: 0.5rem;
   }
 
+  .game-card__chips-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .game-card__platform-row {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .game-card__status-chips {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   .game-card__platinum-chip {
@@ -285,16 +297,36 @@
     color: white;
     background: linear-gradient(135deg, var(--color-loan-start), var(--color-loan-end));
     border: 1px solid rgba(255, 255, 255, 0.2);
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 
     mat-icon {
       font-size: var(--text-xs);
       width: var(--text-xs);
       height: var(--text-xs);
       flex-shrink: 0;
+    }
+  }
+
+  .game-card__loan-name {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .game-card__sale-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 0.4rem;
+    border-radius: var(--radius-sm);
+    color: white;
+    background: linear-gradient(135deg, var(--color-sale-start), var(--color-sale-end));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    mat-icon {
+      font-size: var(--text-xs);
+      width: var(--text-xs);
+      height: var(--text-xs);
     }
   }
 
@@ -372,6 +404,25 @@
 
     .game-card__price {
       font-size: var(--text-sm);
+    }
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 550px ──────────────────────────
+@media (max-width: 550px) {
+  .game-card {
+    .game-card__chips-area {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    .game-card__loan-name {
+      display: none;
+    }
+
+    .game-card__loan-chip {
+      padding: 2px 0.3rem;
     }
   }
 }
