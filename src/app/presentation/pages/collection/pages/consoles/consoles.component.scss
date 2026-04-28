@@ -6,6 +6,28 @@
   overflow: hidden;
 }
 
+// SVG icons via mask-image — the SVGs use white strokes/fills on transparent
+// background; luminance mask-mode treats white as fully visible.
+.hw-list__card-icon {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-mode: luminance;
+
+  &--home {
+    mask-image: url('/assets/images/console-home.svg');
+  }
+
+  &--handheld {
+    mask-image: url('/assets/images/console-portable.svg');
+  }
+}
+
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   :host {

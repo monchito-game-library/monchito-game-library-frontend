@@ -95,7 +95,8 @@ describe('SupabaseHardwareModelRepository', () => {
         brandId: 'brand-1',
         name: 'PlayStation 5',
         type: 'console',
-        generation: null
+        generation: null,
+        category: null
       });
 
       expect(b.insert).toHaveBeenCalled();
@@ -105,9 +106,9 @@ describe('SupabaseHardwareModelRepository', () => {
     it('lanza error si insert falla', async () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'insert failed' } }));
 
-      await expect(repo.create({ brandId: 'brand-1', name: 'PS5', type: 'console', generation: null })).rejects.toThrow(
-        'Failed to create hardware model'
-      );
+      await expect(
+        repo.create({ brandId: 'brand-1', name: 'PS5', type: 'console', generation: null, category: null })
+      ).rejects.toThrow('Failed to create hardware model');
     });
   });
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { selectOneValidator, validDateValidator } from '@/shared/validators/validators';
+import { ratingStepValidator, selectOneValidator, validDateValidator } from '@/shared/validators/validators';
 
 describe('selectOneValidator', () => {
   const allowed = ['PS5', 'PS4', 'SWITCH'] as const;
@@ -71,5 +71,35 @@ describe('validDateValidator', () => {
 
   it('devuelve null para el límite superior del año válido (9999)', () => {
     expect(validDateValidator({ value: '9999-12-31' })).toBeNull();
+  });
+});
+
+describe('ratingStepValidator', () => {
+  it('devuelve null para un entero', () => {
+    expect(ratingStepValidator({ value: 8 })).toBeNull();
+  });
+
+  it('devuelve null para un decimal de un dígito', () => {
+    expect(ratingStepValidator({ value: 7.5 })).toBeNull();
+  });
+
+  it('devuelve null para 0', () => {
+    expect(ratingStepValidator({ value: 0 })).toBeNull();
+  });
+
+  it('devuelve null para 10', () => {
+    expect(ratingStepValidator({ value: 10 })).toBeNull();
+  });
+
+  it('devuelve null cuando el valor es null', () => {
+    expect(ratingStepValidator({ value: null })).toBeNull();
+  });
+
+  it('devuelve { invalidStep: true } para dos decimales', () => {
+    expect(ratingStepValidator({ value: 2.95 })).toEqual({ invalidStep: true });
+  });
+
+  it('devuelve { invalidStep: true } para tres decimales', () => {
+    expect(ratingStepValidator({ value: 7.123 })).toEqual({ invalidStep: true });
   });
 });

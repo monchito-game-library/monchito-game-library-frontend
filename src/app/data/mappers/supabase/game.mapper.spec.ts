@@ -10,7 +10,6 @@ const baseDto: UserGameListDto = {
   price: 59.99,
   store: 'GAME',
   user_platform: 'PS5',
-  platinum: false,
   description: null,
   user_notes: null,
   status: 'playing',
@@ -33,7 +32,6 @@ describe('mapGameList', () => {
     expect(result.price).toBe(59.99);
     expect(result.store).toBe('GAME');
     expect(result.platform).toBe('PS5');
-    expect(result.platinum).toBe(false);
     expect(result.status).toBe('playing');
     expect(result.personalRating).toBe(9);
     expect(result.format).toBe('physical');
@@ -97,10 +95,6 @@ describe('mapGameList', () => {
     expect(mapGameList({ ...baseDto, image_url: null }).imageUrl).toBeUndefined();
   });
 
-  it('aplica fallback ?? false cuando platinum es null', () => {
-    expect(mapGameList({ ...baseDto, platinum: null as unknown as boolean }).platinum).toBe(false);
-  });
-
   it('aplica fallback ?? false cuando is_favorite es null', () => {
     expect(mapGameList({ ...baseDto, is_favorite: null as unknown as boolean }).isFavorite).toBe(false);
   });
@@ -129,14 +123,12 @@ const baseFullDto: UserGameFullDto = {
   user_platform: 'PS5',
   condition: 'new',
   purchased_date: null,
-  platinum: false,
   status: 'playing',
   personal_rating: 9,
   edition: null,
   format: 'physical',
   started_date: null,
   completed_date: null,
-  platinum_date: null,
   description: 'catalog desc',
   user_notes: 'my note',
   is_favorite: true,
@@ -163,7 +155,6 @@ describe('mapGame', () => {
     expect(result.title).toBe('God of War');
     expect(result.price).toBe(59.99);
     expect(result.store).toBe('GAME');
-    expect(result.platinum).toBe(false);
     expect(result.status).toBe('playing');
     expect(result.personalRating).toBe(9);
     expect(result.format).toBe('physical');
@@ -227,7 +218,6 @@ describe('mapGame', () => {
     const dto = {
       ...baseFullDto,
       condition: null,
-      platinum: null as any,
       image_url: null,
       personal_rating: null,
       format: null,
@@ -240,7 +230,6 @@ describe('mapGame', () => {
     const result = mapGame(dto);
 
     expect(result.condition).toBe('new');
-    expect(result.platinum).toBe(false);
     expect(result.imageUrl).toBeUndefined();
     expect(result.personalRating).toBeNull();
     expect(result.format).toBeNull();
@@ -265,7 +254,6 @@ const baseEditDto: UserGameEditDto = {
   store: 'GAME',
   user_platform: 'PS5',
   condition: 'new',
-  platinum: false,
   user_notes: 'my note',
   description: 'catalog desc',
   status: 'playing',
@@ -290,7 +278,6 @@ describe('mapGameEdit', () => {
     expect(result.title).toBe('God of War');
     expect(result.price).toBe(59.99);
     expect(result.store).toBe('GAME');
-    expect(result.platinum).toBe(false);
     expect(result.status).toBe('playing');
     expect(result.personalRating).toBe(9);
     expect(result.format).toBe('physical');
@@ -376,17 +363,15 @@ describe('mapGameEdit', () => {
     expect(mapGameEdit({ ...baseEditDto, for_sale: undefined as any }).forSale).toBe(false);
   });
 
-  it('aplica fallbacks ?? para condition, platinum y store cuando son null', () => {
+  it('aplica fallbacks ?? para condition y store cuando son null', () => {
     const dto = {
       ...baseEditDto,
       condition: null,
-      platinum: null as any,
       store: null
     } as unknown as UserGameEditDto;
     const result = mapGameEdit(dto);
 
     expect(result.condition).toBe('new');
-    expect(result.platinum).toBe(false);
     expect(result.store).toBeNull();
   });
 });
@@ -401,7 +386,6 @@ const baseGameModel: GameModel = {
   store: 'GAME',
   platform: 'PS5',
   condition: 'new',
-  platinum: false,
   description: 'notas',
   status: 'playing',
   personalRating: 9,
@@ -427,7 +411,6 @@ describe('mapGameToInsertDto', () => {
     expect(result.store).toBe('GAME');
     expect(result.platform).toBe('PS5');
     expect(result.condition).toBe('new');
-    expect(result.platinum).toBe(false);
     expect(result.status).toBe('playing');
     expect(result.personal_rating).toBe(9);
     expect(result.format).toBe('physical');

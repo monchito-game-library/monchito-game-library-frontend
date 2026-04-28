@@ -16,7 +16,8 @@ const baseModel: Omit<HardwareModelModel, 'id'> = {
   brandId: 'brand-1',
   name: 'PlayStation 5',
   type: 'console',
-  generation: 9
+  generation: 9,
+  category: null
 };
 
 describe('mapHardwareModel', () => {
@@ -26,7 +27,8 @@ describe('mapHardwareModel', () => {
       brandId: 'brand-1',
       name: 'PlayStation 5',
       type: 'console',
-      generation: 9
+      generation: 9,
+      category: null
     });
   });
 
@@ -38,6 +40,25 @@ describe('mapHardwareModel', () => {
   it('mapea type controller correctamente', () => {
     const dto: HardwareModelDto = { ...baseDto, type: 'controller' };
     expect(mapHardwareModel(dto).type).toBe('controller');
+  });
+
+  it('extrae category del objeto hardware_console_specs (relación 1:1)', () => {
+    const dto: HardwareModelDto = { ...baseDto, hardware_console_specs: { category: 'portable' } };
+    expect(mapHardwareModel(dto).category).toBe('portable');
+  });
+
+  it('extrae category home correctamente', () => {
+    const dto: HardwareModelDto = { ...baseDto, hardware_console_specs: { category: 'home' } };
+    expect(mapHardwareModel(dto).category).toBe('home');
+  });
+
+  it('devuelve category null cuando hardware_console_specs es null', () => {
+    const dto: HardwareModelDto = { ...baseDto, hardware_console_specs: null };
+    expect(mapHardwareModel(dto).category).toBeNull();
+  });
+
+  it('devuelve category null cuando hardware_console_specs no está presente', () => {
+    expect(mapHardwareModel(baseDto).category).toBeNull();
   });
 
   it('no incluye campos de timestamps en el modelo resultante', () => {

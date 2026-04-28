@@ -540,7 +540,6 @@ describe('GameFormComponent', () => {
 
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
       component.form.controls.condition.setValue(null as any);
-      component.form.controls.platinum.setValue(null as any);
       component.form.controls.status.setValue(null as any);
       component.form.controls.format.setValue(null);
       component.form.controls.is_favorite.setValue(null as any);
@@ -551,7 +550,6 @@ describe('GameFormComponent', () => {
 
       const call = (gameUseCases.addGame as any).mock.calls[0][1];
       expect(call.condition).toBe('new');
-      expect(call.platinum).toBe(false);
       expect(call.status).toBe('backlog');
       expect(call.format).toBeNull();
       expect(call.isFavorite).toBe(false);
@@ -683,7 +681,6 @@ describe('GameFormComponent — ngOnInit', () => {
     store: null,
     platform: 'PS5' as any,
     condition: 'new' as any,
-    platinum: false,
     description: '',
     status: 'playing' as any,
     personalRating: 9,

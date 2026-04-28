@@ -19,8 +19,6 @@ export interface GameEditModel {
   platform: PlatformType | null;
   /** Physical condition of the game copy. */
   condition: GameConditionType;
-  /** Whether the user has earned the platinum trophy. */
-  platinum: boolean;
   /** Personal notes. */
   description: string;
   /** Current tracking status. */

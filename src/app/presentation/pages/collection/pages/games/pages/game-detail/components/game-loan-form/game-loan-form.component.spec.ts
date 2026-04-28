@@ -20,7 +20,6 @@ function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
     store: 'store-uuid-1',
     platform: 'PS5',
     condition: 'new',
-    platinum: false,
     description: 'Notas del juego',
     status: 'playing',
     personalRating: 8,

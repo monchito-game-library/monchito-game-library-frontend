@@ -18,6 +18,7 @@ function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelMo
     name: 'PlayStation 5',
     type: 'console',
     generation: 9,
+    category: null,
     ...overrides
   };
 }
@@ -358,6 +359,7 @@ describe('HardwareModelsManagementComponent', () => {
         name: 'PS5 Slim',
         type: 'console',
         generation: 9,
+        category: null,
         brandId: 'brand-uuid-1'
       });
       modelUseCases.getAllByBrand.mockResolvedValue([]);

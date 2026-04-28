@@ -61,7 +61,14 @@
       <div class="models-grid">
         @for (model of models(); track model.id) {
           <app-catalog-item-card
-            [icon]="model.type === 'console' ? 'tv' : 'gamepad'"
+            [icon]="model.type === 'console' ? '' : 'gamepad'"
+            [svgIcon]="
+              model.type === 'console'
+                ? model.category === 'portable'
+                  ? 'assets/images/console-portable.svg'
+                  : 'assets/images/console-home.svg'
+                : null
+            "
             [name]="model.name"
             [chips]="getModelChips(model)"
             [selected]="selectedModel()?.id === model.id"

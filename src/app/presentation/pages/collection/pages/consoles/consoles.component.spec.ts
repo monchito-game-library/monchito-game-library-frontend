@@ -12,6 +12,7 @@ import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hard
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConsoleModel } from '@/models/console/console.model';
+import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { mockRouter } from '@/testing/router.mock';
 import { mockSnackBar } from '@/testing/snack-bar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
@@ -117,6 +118,43 @@ describe('ConsolesComponent', () => {
 
       expect(mockSnackBar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
+    });
+  });
+
+  describe('resolveCategory', () => {
+    const makeModel = (overrides: Partial<HardwareModelModel> = {}): HardwareModelModel => ({
+      id: 'model-1',
+      brandId: 'brand-1',
+      name: 'PlayStation Portable',
+      type: 'console',
+      generation: null,
+      category: 'portable',
+      ...overrides
+    });
+
+    it('devuelve la category del modelo cuando el modelId existe en el catálogo', async () => {
+      mockModelUseCases.getAllByType.mockResolvedValue([makeModel({ category: 'home' })]);
+      await component.ngOnInit();
+
+      expect(component.resolveCategory('model-1')).toBe('home');
+    });
+
+    it('devuelve portable para un modelo portátil', async () => {
+      mockModelUseCases.getAllByType.mockResolvedValue([makeModel({ category: 'portable' })]);
+      await component.ngOnInit();
+
+      expect(component.resolveCategory('model-1')).toBe('portable');
+    });
+
+    it('devuelve null cuando el modelId no existe en el catálogo', async () => {
+      mockModelUseCases.getAllByType.mockResolvedValue([makeModel()]);
+      await component.ngOnInit();
+
+      expect(component.resolveCategory('unknown-id')).toBeNull();
+    });
+
+    it('devuelve null cuando modelId es null', () => {
+      expect(component.resolveCategory(null)).toBeNull();
     });
   });
 });

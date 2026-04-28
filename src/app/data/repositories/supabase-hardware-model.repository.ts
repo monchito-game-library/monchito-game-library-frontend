@@ -20,7 +20,11 @@ export class SupabaseHardwareModelRepository implements HardwareModelRepositoryC
    * @param {string} brandId - Parent brand UUID
    */
   async getAllByBrand(brandId: string): Promise<HardwareModelModel[]> {
-    const { data, error } = await this._supabase.from(this._table).select('*').eq('brand_id', brandId).order('name');
+    const { data, error } = await this._supabase
+      .from(this._table)
+      .select('*, hardware_console_specs(category)')
+      .eq('brand_id', brandId)
+      .order('name');
     if (error) throw new Error(`Failed to fetch hardware models: ${error.message}`);
     return (data as HardwareModelDto[]).map(mapHardwareModel);
   }
@@ -31,7 +35,11 @@ export class SupabaseHardwareModelRepository implements HardwareModelRepositoryC
    * @param {HardwareModelType} type - 'console' or 'controller'
    */
   async getAllByType(type: HardwareModelType): Promise<HardwareModelModel[]> {
-    const { data, error } = await this._supabase.from(this._table).select('*').eq('type', type).order('name');
+    const { data, error } = await this._supabase
+      .from(this._table)
+      .select('*, hardware_console_specs(category)')
+      .eq('type', type)
+      .order('name');
     if (error) throw new Error(`Failed to fetch hardware models by type: ${error.message}`);
     return (data as HardwareModelDto[]).map(mapHardwareModel);
   }

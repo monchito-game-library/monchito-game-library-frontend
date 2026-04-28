@@ -209,7 +209,8 @@ export class HardwareModelsManagementComponent implements OnInit {
         brandId: this._brandId,
         name: result.name,
         type: result.type,
-        generation: result.generation
+        generation: result.generation,
+        category: null
       });
       modelId = created.id;
     }

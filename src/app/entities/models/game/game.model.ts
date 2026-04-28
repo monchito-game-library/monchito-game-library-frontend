@@ -17,8 +17,6 @@ export interface GameModel {
   store: string | null;
   /** Physical condition of the game copy. */
   condition: GameConditionType;
-  /** Whether the user has earned the platinum trophy. */
-  platinum: boolean;
   /** Personal notes or description. */
   description: string;
   /** Platform the game belongs to. Null if not yet assigned. */
