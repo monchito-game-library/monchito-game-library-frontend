@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -69,6 +69,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
   private _bpSubscription?: Subscription;
+  private _searchDebounce?: Subscription;
+  private readonly _searchInput$ = new Subject<string>();
 
   // Saves scroll position on each scroll event so it survives the browser resetting
   // scrollTop to 0 when the element is detached from the DOM during navigation.
@@ -218,6 +220,10 @@ export class GamesComponent implements OnInit, OnDestroy {
   );
 
   async ngOnInit(): Promise<void> {
+    this._searchDebounce = this._searchInput$
+      .pipe(debounceTime(300))
+      .subscribe((value: string) => this.searchTerm.set(value));
+
     void this._loadStores();
 
     // Show cache immediately if available while reloading from Supabase
@@ -260,6 +266,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._bpSubscription?.unsubscribe();
+    this._searchDebounce?.unsubscribe();
     document.removeEventListener('scroll', this._onViewportScroll, true);
   }
 
@@ -295,7 +302,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    * @param {string} value - New value of the search input
    */
   onSearchInput(value: string): void {
-    this.searchTerm.set(value.trim());
+    this._searchInput$.next(value.trim());
   }
 
   /**

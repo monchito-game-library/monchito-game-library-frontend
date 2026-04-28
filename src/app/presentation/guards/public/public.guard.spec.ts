@@ -83,4 +83,36 @@ describe('canActivatePublic', () => {
     expect(await promise).toBe(true);
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
+
+  describe('oauth_return_url en sessionStorage (redirect post-OAuth)', () => {
+    afterEach(() => {
+      sessionStorage.removeItem('oauth_return_url');
+    });
+
+    it('navega a la URL pendiente de sessionStorage cuando el usuario está autenticado', () => {
+      sessionStorage.setItem('oauth_return_url', '/orders/invite/token123');
+      vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(true);
+
+      runGuard();
+
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/orders/invite/token123');
+    });
+
+    it('elimina oauth_return_url de sessionStorage después de navegar', () => {
+      sessionStorage.setItem('oauth_return_url', '/orders/invite/token123');
+      vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(true);
+
+      runGuard();
+
+      expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
+    });
+
+    it('navega a /collection cuando no hay oauth_return_url en sessionStorage', () => {
+      vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(true);
+
+      runGuard();
+
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
+    });
+  });
 });

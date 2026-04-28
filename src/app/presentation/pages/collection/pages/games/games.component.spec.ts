@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NEVER, Subject } from 'rxjs';
+import { debounceTime, NEVER, Subject } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GamesComponent } from './games.component';
@@ -419,14 +419,30 @@ describe('GamesComponent', () => {
   });
 
   describe('onSearchInput', () => {
-    it('actualiza searchTerm con el valor recibido (trim)', () => {
+    it('no actualiza searchTerm de forma inmediata (está debounced)', () => {
       component.onSearchInput('  god of war  ');
-      expect(component.searchTerm()).toBe('god of war');
+      expect(component.searchTerm()).toBe('');
+    });
+
+    it('actualiza searchTerm con el valor trimmed tras el debounce (300ms)', () => {
+      vi.useFakeTimers();
+      try {
+        // Inicializar la subscripción de debounce directamente sin ngOnInit (evita render del template)
+        (component as any)._searchDebounce = (component as any)._searchInput$
+          .pipe(debounceTime(300))
+          .subscribe((v: string) => component.searchTerm.set(v));
+
+        component.onSearchInput('  god of war  ');
+        expect(component.searchTerm()).toBe('');
+        vi.advanceTimersByTime(300);
+        expect(component.searchTerm()).toBe('god of war');
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('acepta cadena vacía sin lanzar error', () => {
       expect(() => component.onSearchInput('')).not.toThrow();
-      expect(component.searchTerm()).toBe('');
     });
   });
 
