@@ -8,7 +8,7 @@
 
 | Bug | Componente | Prioridad |
 |---|---|---|
-| [Imagen RAWG compartida entre copias del mismo juego](#imagen-rawg-compartida-entre-copias-del-mismo-juego) | `SupabaseGameRepository` | Alta |
+| ~~[Imagen RAWG compartida entre copias del mismo juego](#imagen-rawg-compartida-entre-copias-del-mismo-juego)~~ | `SupabaseGameRepository` | ✅ Resuelto |
 | ~~[Flujo de venta de juegos no elimina el juego de la colección](#flujo-de-venta-de-juegos-no-elimina-el-juego-de-la-colección)~~ | `GameDetailComponent` | ✅ Resuelto |
 | ~~[Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile)~~ | `WishlistComponent` | ✅ Resuelto |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
@@ -16,7 +16,7 @@
 
 ---
 
-## Imagen RAWG compartida entre copias del mismo juego
+## ~~Imagen RAWG compartida entre copias del mismo juego~~
 
 **Componente:** `SupabaseGameRepository`
 **Fichero:** `src/app/data/repositories/supabase.repository.ts`

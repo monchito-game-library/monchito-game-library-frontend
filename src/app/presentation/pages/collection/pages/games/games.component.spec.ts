@@ -444,6 +444,22 @@ describe('GamesComponent', () => {
     it('acepta cadena vacía sin lanzar error', () => {
       expect(() => component.onSearchInput('')).not.toThrow();
     });
+
+    it('la suscripción de debounce creada en ngOnInit actualiza searchTerm tras 300ms', () => {
+      vi.useFakeTimers();
+      try {
+        const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
+        gameUseCases.getAllGamesForList.mockResolvedValue([]);
+        void component.ngOnInit();
+
+        (component as any)._searchInput$.next('halo');
+        vi.advanceTimersByTime(300);
+
+        expect(component.searchTerm()).toBe('halo');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 
   describe('ngOnInit', () => {

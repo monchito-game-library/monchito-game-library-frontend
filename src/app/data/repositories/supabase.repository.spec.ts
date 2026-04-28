@@ -369,6 +369,26 @@ describe('SupabaseRepository', () => {
       activeLoanAt: null
     };
 
+    it('guarda custom_image_url en user_games (no toca game_catalog.image_url)', async () => {
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
+      const viewBuilder = makeBuilder({ data: viewRecord, error: null });
+      const userGameUpdateBuilder = makeBuilder({ error: null });
+
+      mockSupabase.from.mockReturnValueOnce(viewBuilder).mockReturnValueOnce(userGameUpdateBuilder);
+
+      await repo.updateGameForUser('user-1', {
+        ...baseGameModel,
+        uuid: 'some-uuid',
+        imageUrl: 'https://cdn.example.com/screenshot.jpg'
+      });
+
+      expect(userGameUpdateBuilder.update).toHaveBeenCalledWith(
+        expect.objectContaining({ custom_image_url: 'https://cdn.example.com/screenshot.jpg' })
+      );
+      // game_catalog should NOT have been touched (only 2 from() calls total)
+      expect(mockSupabase.from).toHaveBeenCalledTimes(2);
+    });
+
     it('lanza error cuando uuid es undefined', async () => {
       await expect(repo.updateGameForUser('user-1', baseGameModel)).rejects.toThrow('uuid is missing');
     });
@@ -400,13 +420,9 @@ describe('SupabaseRepository', () => {
     it('actualiza el juego sin catalogEntry (con rawg_id existente)', async () => {
       const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
-      const catalogUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
-      mockSupabase.from
-        .mockReturnValueOnce(viewBuilder)
-        .mockReturnValueOnce(catalogUpdateBuilder)
-        .mockReturnValueOnce(userGameUpdateBuilder);
+      mockSupabase.from.mockReturnValueOnce(viewBuilder).mockReturnValueOnce(userGameUpdateBuilder);
 
       await repo.updateGameForUser('user-1', { ...baseGameModel, uuid: 'some-uuid' });
 
@@ -417,13 +433,11 @@ describe('SupabaseRepository', () => {
       const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-1' }, error: null });
-      const catalogUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(viewBuilder)
         .mockReturnValueOnce(catalogLookupBuilder)
-        .mockReturnValueOnce(catalogUpdateBuilder)
         .mockReturnValueOnce(userGameUpdateBuilder);
 
       const catalogEntry = {

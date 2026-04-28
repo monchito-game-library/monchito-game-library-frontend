@@ -305,5 +305,15 @@ describe('CollectionOverviewComponent', () => {
       expect(component.consolesCount()).toBe(0);
       expect(component.controllersCount()).toBe(0);
     });
+
+    it('no carga datos cuando userId es null', async () => {
+      mockUserContext.userId.set(null);
+
+      await component.ngOnInit();
+
+      expect(mockGameUseCases.getAllGamesForList).not.toHaveBeenCalled();
+      expect(mockConsoleUseCases.getAllForUser).not.toHaveBeenCalled();
+      expect(mockControllerUseCases.getAllForUser).not.toHaveBeenCalled();
+    });
   });
 });

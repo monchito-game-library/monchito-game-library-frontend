@@ -802,6 +802,14 @@ describe('GameFormComponent — ngOnInit', () => {
     expect(component.formatValue()).toBe('physical');
   });
 
+  it('modo edición — usa "physical" como fallback cuando el juego tiene format null', async () => {
+    setup('game-uuid', { ...editGame, format: null });
+    await component.ngOnInit();
+
+    expect(component.form.controls.format.value).toBe('physical');
+    expect(component.formatValue()).toBe('physical');
+  });
+
   it('modo edición — juego con imageUrl pero sin rawgId no llama a _loadScreenshots', async () => {
     setup('game-uuid', { ...editGame, rawgId: null });
     await component.ngOnInit();
