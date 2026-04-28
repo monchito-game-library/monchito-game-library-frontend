@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <!--
+    CONSOLE
+    El mando cubre la consola desde x=12 hasta x=328, por eso el borde inferior
+    solo se dibuja en el tramo visible (x=328 → 498).
+    Así el mando-contorno no tapa ninguna línea de la consola.
+
+    Sub-path 1: parte derecha del perímetro
+      (12,140) → diagonal izq → top → diagonal dcha → lado dcho → borde inf visible
+    Sub-path 2: lado izquierdo
+      (12,270) → (12,140)
+  -->
+  <path d="
+    M12 140 L70 18 L440 18 L498 140 L498 270 L328 270
+    M12 270 L12 140
+  " stroke="white" stroke-width="14" stroke-linejoin="round"/>
+
+  <!-- Divisor cara superior / cara frontal (dibujado una sola vez) -->
+  <line x1="12"  y1="140" x2="498" y2="140"
+        stroke="white" stroke-width="14"/>
+
+  <!-- Ranura de disco -->
+  <line x1="46"  y1="208" x2="266" y2="208"
+        stroke="white" stroke-width="13" stroke-linecap="round"/>
+
+  <!-- Botón circular -->
+  <circle cx="446" cy="208" r="27"
+          stroke="white" stroke-width="13"/>
+
+
+  <!--
+    MANDO — contorno puro (fill="none"), dibujado encima de la consola.
+    Ancho = 65 % del ancho de consola: 486 × 0.65 ≈ 316 px  →  x: 12 → 328
+    Top en y=252 (solapando 18 px con la consola), lo que conecta visualmente
+    el mando con el cuerpo de la consola.
+    Al no haber borde inferior de consola entre x=12-328, el solapamiento es limpio.
+  -->
+  <path d="
+    M  96 252
+    C  66 252  12 272  12 312
+    C  12 364  14 418  34 448
+    C  48 466  80 468  98 454
+    C 114 442 120 418 138 408
+    C 152 400 164 396 170 396
+    C 176 396 188 400 202 408
+    C 220 418 226 442 242 454
+    C 260 468 292 466 306 448
+    C 326 418 328 364 328 312
+    C 328 272 274 252 244 252
+    C 222 252 198 262 170 262
+    C 142 262 118 252  96 252 Z
+  " stroke="white" stroke-width="14"/>
+
+  <!-- D-pad — centro (76, 352) -->
+  <line x1="76" y1="330" x2="76" y2="374"
+        stroke="white" stroke-width="13" stroke-linecap="round"/>
+  <line x1="54" y1="352" x2="98" y2="352"
+        stroke="white" stroke-width="13" stroke-linecap="round"/>
+
+  <!-- Analógico derecho — centro (268, 352) -->
+  <circle cx="268" cy="352" r="24"
+          stroke="white" stroke-width="13"/>
+
+</svg>

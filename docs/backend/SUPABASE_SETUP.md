@@ -65,14 +65,12 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 | `condition` | TEXT | `'new'` \| `'used'` |
 | `format` | TEXT | `'physical'` \| `'digital'` \| NULL |
 | `purchased_date` | DATE | |
-| `platinum` | BOOLEAN | Default FALSE |
 | `status` | TEXT | `wishlist` / `backlog` / `playing` / `completed` / `platinum` / `abandoned` / `owned` |
-| `personal_rating` | NUMERIC(2,1) | 0.0–10.0 |
+| `personal_rating` | NUMERIC(3,1) | 0.0–10.0 |
 | `personal_review` | TEXT | |
 | `edition` | TEXT | Edición del ejemplar (ej: 'Deluxe Edition', 'GOTY') |
 | `started_date` | DATE | |
 | `completed_date` | DATE | |
-| `platinum_date` | DATE | |
 | `description` | TEXT | Notas personales |
 | `tags_personal` | TEXT[] | |
 | `is_favorite` | BOOLEAN | Default FALSE |

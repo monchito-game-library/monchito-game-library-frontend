@@ -14,8 +14,11 @@ import { MatIcon } from '@angular/material/icon';
   }
 })
 export class CatalogItemCardComponent {
-  /** Material Icons name displayed on the left. */
+  /** Material Icons name displayed on the left. Used when svgIcon is not provided. */
   readonly icon = input<string>('');
+
+  /** Path to an SVG asset used instead of a mat-icon (e.g. 'assets/images/console-home.svg'). */
+  readonly svgIcon = input<string | null>(null);
 
   /** Main text of the card. */
   readonly name = input<string>('');

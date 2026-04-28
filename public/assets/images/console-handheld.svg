@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Left joycon -->
+  <rect x="16" y="150" width="90" height="252" rx="32"
+        stroke="white" stroke-width="14"/>
+  <!-- Left joycon — analogue stick -->
+  <circle cx="61" cy="213" r="24"
+        stroke="white" stroke-width="12"/>
+  <!-- Left joycon — d-pad (4 filled dots) -->
+  <circle cx="61" cy="318" r="8" fill="white"/>
+  <circle cx="40" cy="339" r="8" fill="white"/>
+  <circle cx="82" cy="339" r="8" fill="white"/>
+  <circle cx="61" cy="360" r="8" fill="white"/>
+
+  <!-- Main device body -->
+  <rect x="106" y="150" width="300" height="252" rx="14"
+        stroke="white" stroke-width="14"/>
+  <!-- Left divider -->
+  <line x1="106" y1="164" x2="106" y2="388"
+        stroke="white" stroke-width="14"/>
+  <!-- Right divider -->
+  <line x1="406" y1="164" x2="406" y2="388"
+        stroke="white" stroke-width="14"/>
+  <!-- Screen -->
+  <rect x="132" y="176" width="248" height="200" rx="8"
+        stroke="white" stroke-width="12"/>
+
+  <!-- Right joycon (detached, floating up-right) -->
+  <rect x="416" y="72" width="88" height="252" rx="32"
+        stroke="white" stroke-width="14"/>
+  <!-- Right joycon — face buttons (4 filled dots) -->
+  <circle cx="460" cy="157" r="8" fill="white"/>
+  <circle cx="439" cy="178" r="8" fill="white"/>
+  <circle cx="481" cy="178" r="8" fill="white"/>
+  <circle cx="460" cy="199" r="8" fill="white"/>
+  <!-- Right joycon — analogue stick -->
+  <circle cx="460" cy="265" r="24"
+        stroke="white" stroke-width="12"/>
+</svg>
