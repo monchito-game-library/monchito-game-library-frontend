@@ -1,6 +1,7 @@
 import { Component, NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -72,6 +73,7 @@ describe('GameLoanFormComponent', () => {
         })
       ],
       providers: [
+        provideNativeDateAdapter(),
         {
           provide: GAME_USE_CASES,
           useValue: {
@@ -114,7 +116,7 @@ describe('GameLoanFormComponent', () => {
 
   describe('ngOnInit', () => {
     it('parchea la fecha de préstamo con el día de hoy', () => {
-      expect(component.form.controls.loanedAt.value).toBe(component.todayIso);
+      expect(component.form.controls.loanedAt.value).toEqual(component.today);
     });
   });
 
@@ -128,7 +130,7 @@ describe('GameLoanFormComponent', () => {
   describe('onLoan', () => {
     it('no llama a createLoan si el formulario es inválido', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      component.form.patchValue({ loanedTo: null, loanedAt: null });
+      component.form.patchValue({ loanedTo: null, loanedAt: null as unknown as Date });
 
       await component.onLoan();
 
@@ -137,7 +139,7 @@ describe('GameLoanFormComponent', () => {
 
     it('llama a createLoan con los datos del formulario', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -149,7 +151,7 @@ describe('GameLoanFormComponent', () => {
     });
 
     it('emite saved con el modelo actualizado tras crear el préstamo', async () => {
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -160,7 +162,7 @@ describe('GameLoanFormComponent', () => {
 
     it('muestra snackbar de éxito tras crear el préstamo', async () => {
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -174,7 +176,7 @@ describe('GameLoanFormComponent', () => {
         savingDuringCall = component.saving();
         return 'loan-uuid-1';
       });
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -182,7 +184,7 @@ describe('GameLoanFormComponent', () => {
     });
 
     it('desactiva la señal saving tras la operación exitosa', async () => {
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -193,7 +195,7 @@ describe('GameLoanFormComponent', () => {
       beforeEach(() => {
         const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
         gameUseCases.createLoan.mockRejectedValue(new Error('loan error'));
-        component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+        component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
       });
 
       it('muestra snackbar de error', async () => {

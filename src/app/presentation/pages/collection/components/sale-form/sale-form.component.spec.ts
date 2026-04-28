@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
@@ -34,7 +35,7 @@ describe('SaleFormComponent', () => {
           translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
         })
       ],
-      providers: [{ provide: MatSnackBar, useValue: snackBar }],
+      providers: [provideNativeDateAdapter(), { provide: MatSnackBar, useValue: snackBar }],
       schemas: [NO_ERRORS_SCHEMA]
     });
 
@@ -66,7 +67,7 @@ describe('SaleFormComponent', () => {
       const raw = f.componentInstance.form.getRawValue();
       expect(raw.forSale).toBe(true);
       expect(raw.salePrice).toBe(50);
-      expect(raw.soldAt).toBe('2024-06-01');
+      expect(raw.soldAt).toEqual(new Date('2024-06-01T00:00:00'));
       expect(raw.soldPriceFinal).toBe(45);
     });
   });
@@ -95,27 +96,27 @@ describe('SaleFormComponent', () => {
 
   describe('canMarkAsSold (getter)', () => {
     it('devuelve false cuando soldPriceFinal es null', () => {
-      component.form.patchValue({ soldPriceFinal: null, soldAt: '2024-06-01' });
+      component.form.patchValue({ soldPriceFinal: null, soldAt: new Date('2024-06-01T00:00:00') });
       expect(component.canMarkAsSold).toBe(false);
     });
 
     it('devuelve false cuando soldPriceFinal es 0', () => {
-      component.form.patchValue({ soldPriceFinal: 0, soldAt: '2024-06-01' });
+      component.form.patchValue({ soldPriceFinal: 0, soldAt: new Date('2024-06-01T00:00:00') });
       expect(component.canMarkAsSold).toBe(false);
     });
 
     it('devuelve false cuando soldAt es null', () => {
-      component.form.patchValue({ soldPriceFinal: 100, soldAt: null });
+      component.form.patchValue({ soldPriceFinal: 100, soldAt: null as unknown as Date });
       expect(component.canMarkAsSold).toBe(false);
     });
 
     it('devuelve true cuando soldPriceFinal > 0 y soldAt válido', () => {
-      component.form.patchValue({ soldPriceFinal: 100, soldAt: '2024-06-01' });
+      component.form.patchValue({ soldPriceFinal: 100, soldAt: new Date('2024-06-01T00:00:00') });
       expect(component.canMarkAsSold).toBe(true);
     });
 
     it('devuelve false cuando soldAt es inválido', () => {
-      component.form.patchValue({ soldPriceFinal: 100, soldAt: 'fecha-invalida' });
+      component.form.patchValue({ soldPriceFinal: 100, soldAt: new Date('invalid') });
       expect(component.canMarkAsSold).toBe(false);
     });
   });
@@ -198,13 +199,13 @@ describe('SaleFormComponent', () => {
 
   describe('onMarkAsSold', () => {
     it('no llama a sellFn si canMarkAsSold es false', async () => {
-      component.form.patchValue({ soldPriceFinal: null, soldAt: null });
+      component.form.patchValue({ soldPriceFinal: null, soldAt: null as unknown as Date });
       await component.onMarkAsSold();
       expect(mockSellFn).not.toHaveBeenCalled();
     });
 
     it('llama a sellFn con soldAt y soldPriceFinal del formulario', async () => {
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(mockSellFn).toHaveBeenCalledWith({ soldAt: '2024-06-15', soldPriceFinal: 200 });
     });
@@ -212,13 +213,13 @@ describe('SaleFormComponent', () => {
     it('emite sellCompleted tras éxito', async () => {
       const spy = vi.fn();
       component.sellCompleted.subscribe(spy);
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(spy).toHaveBeenCalledWith({ soldAt: '2024-06-15', soldPriceFinal: 200 });
     });
 
     it('muestra snackbar de éxito tras marcar como vendido', async () => {
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(snackBar.open).toHaveBeenCalled();
     });
@@ -228,14 +229,14 @@ describe('SaleFormComponent', () => {
       mockSellFn.mockImplementation(async () => {
         sellingDuringCall = component.selling();
       });
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(sellingDuringCall).toBe(true);
     });
 
     it('muestra snackbar de error y desactiva selling si sellFn lanza', async () => {
       mockSellFn.mockRejectedValueOnce(new Error('fail'));
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(snackBar.open).toHaveBeenCalled();
       expect(component.selling()).toBe(false);
@@ -245,7 +246,7 @@ describe('SaleFormComponent', () => {
       const spy = vi.fn();
       component.sellCompleted.subscribe(spy);
       mockSellFn.mockRejectedValueOnce(new Error('fail'));
-      component.form.patchValue({ soldPriceFinal: 200, soldAt: '2024-06-15' });
+      component.form.patchValue({ soldPriceFinal: 200, soldAt: new Date('2024-06-15T00:00:00') });
       await component.onMarkAsSold();
       expect(spy).not.toHaveBeenCalled();
     });

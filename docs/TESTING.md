@@ -212,10 +212,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 28 | ✅ Cubierto |
 | `pages/collection/pages/consoles/consoles.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 15 | ✅ Cubierto |
-| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 23 | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/collection/pages/controllers/controllers.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 40 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/collection/pages/games/games.component.spec.ts` | 80 | ✅ Cubierto |
@@ -261,7 +261,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/orders/pages/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/orders/pages/orders-list/orders-list.component.spec.ts` | 16 | ✅ Cubierto |
+| `pages/orders/pages/orders-list/orders-list.component.spec.ts` | 11 | ✅ Cubierto |
 
 #### Venta, ajustes y wishlist
 
@@ -330,6 +330,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
+| `datepicker-field-click/datepicker-field-click.directive.spec.ts` | 2 | ✅ Cubierto |
 | `dominant-color/dominant-color.util.spec.ts` | 6 | ✅ Cubierto |
 | `image-url/image-url.utils.spec.ts` | 8 | ✅ Cubierto |
 | `order-member/order-member.util.spec.ts` | 19 | ✅ Cubierto |
@@ -367,9 +368,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Servicios | 7 | 86 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 67 | ~1395 |
-| Utilidades | 6 | 84 |
-| **Total** | **137** | **2379** |
+| Componentes | 67 | ~1397 |
+| Utilidades | 7 | 86 |
+| **Total** | **138** | **2383** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -379,10 +380,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.01 % (4628 / 4674) |
-| Branches | **95.32 %** (2978 / 3124) |
-| Functions | 99.06 % (1055 / 1065) |
-| Lines | 99.86 % (3828 / 3833) |
+| Statements | 99.01 % (4640 / 4686) |
+| Branches | **95.27 %** (3002 / 3151) |
+| Functions | 99.06 % (1058 / 1068) |
+| Lines | 99.86 % (3835 / 3840) |
 
 ```bash
 npm run test:coverage
@@ -390,7 +391,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.32 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.27 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -430,6 +431,9 @@ Son ramas de condiciones cuyo lado `false` (o `true`) nunca puede ocurrir dado e
 | `pack-optimizer.util.ts` | 25 | `_runDP(needed, sorted, 1)[0] ?? null` | rama `null` del `??` | `_runDP` siempre devuelve al menos un resultado para packs válidos; el array nunca está vacío |
 | `pack-optimizer.util.ts` | 35 | `if (!s) continue` | rama `true` | `exact` (al que `!s` protege) solo sería `null` si `_runDP` devolviera vacío (ver fila anterior) |
 | `pack-optimizer.util.ts` | 113 | `if (seen.has(key)) continue` | rama `true` | la misma combinación de packs no puede aparecer para dos valores distintos de `q` en el DP back-tracking determinista |
+| `hardware-loan-form.component.ts` | 127 | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | `loanedAt` es campo `required`; `onLoan()` tiene guard `if (this.form.invalid) return` que impide llegar a esta línea con valor null |
+| `game-loan-form.component.ts` | 112 | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | mismo motivo que `hardware-loan-form`: campo requerido con guard de formulario inválido |
+| `sale-form.component.ts` | 182 | `raw.soldAt ? raw.soldAt.toLocaleDateString('sv-SE') : null` | rama `false` (soldAt null) | `onMarkAsSold()` tiene guard `if (!this.canMarkAsSold) return` y `canMarkAsSold` exige `soldAt !== null` |
 
 > **Nota sobre `_passwordMatchValidator`**: aunque la rama `true` del guard es lógicamente inalcanzable en producción, sí se ha cubierto en los tests invocando el validador directamente con un `FormGroup` sintético al que le falta uno de los controles: `(component as any)._passwordMatchValidator(new FormGroup({ confirmPassword: new FormControl('') }))`. Esto cierra la rama en el spec pero no elimina las entradas V8 de los bloques adyacentes.
 

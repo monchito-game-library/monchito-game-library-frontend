@@ -55,9 +55,14 @@
             [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="hardware-loan-form__field">
+        <mat-form-field
+          appearance="outline"
+          class="hardware-loan-form__field"
+          [appDatepickerFieldClick]="loanedAtPicker">
           <mat-label>{{ 'hardwareLoan.loanedAt' | transloco }}</mat-label>
-          <input matInput type="date" formControlName="loanedAt" />
+          <input matInput [matDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
+          <mat-datepicker-toggle matIconSuffix [for]="loanedAtPicker"></mat-datepicker-toggle>
+          <mat-datepicker #loanedAtPicker></mat-datepicker>
         </mat-form-field>
 
         <button

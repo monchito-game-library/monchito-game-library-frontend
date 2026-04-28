@@ -113,9 +113,11 @@
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" [appDatepickerFieldClick]="purchaseDatePicker">
         <mat-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</mat-label>
-        <input matInput type="date" formControlName="purchaseDate" />
+        <input matInput [matDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
+        <mat-datepicker-toggle matIconSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #purchaseDatePicker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="hw-form__field--full">

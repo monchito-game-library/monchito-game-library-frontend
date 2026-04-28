@@ -16,8 +16,11 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
+
+import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -53,6 +56,10 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatOption,
     MatAutocomplete,
     MatAutocompleteTrigger,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    DatepickerFieldClickDirective,
     MatProgressSpinner,
     TranslocoPipe,
     SkeletonComponent
