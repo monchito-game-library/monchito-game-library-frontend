@@ -349,6 +349,9 @@ export class GameFormComponent implements OnInit {
           },
           { emitEvent: false }
         );
+        // Emit format separately so the toSignal-based formatValue signal updates.
+        // onlySelf: true prevents the parent FormGroup from emitting, keeping _formVersion intact.
+        this.form.controls.format.setValue(game.format ?? 'physical', { emitEvent: true, onlySelf: true });
         this._formatTouchedByUser = false;
 
         this._coverPosition.set(game.coverPosition ?? null);

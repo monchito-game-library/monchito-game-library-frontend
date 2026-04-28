@@ -8,10 +8,49 @@
 
 | Bug | Componente | Prioridad |
 |---|---|---|
+| ~~[Imagen RAWG compartida entre copias del mismo juego](#imagen-rawg-compartida-entre-copias-del-mismo-juego)~~ | `SupabaseGameRepository` | ✅ Resuelto |
 | ~~[Flujo de venta de juegos no elimina el juego de la colección](#flujo-de-venta-de-juegos-no-elimina-el-juego-de-la-colección)~~ | `GameDetailComponent` | ✅ Resuelto |
 | ~~[Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile)~~ | `WishlistComponent` | ✅ Resuelto |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
 | ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
+
+---
+
+## ~~Imagen RAWG compartida entre copias del mismo juego~~
+
+**Componente:** `SupabaseGameRepository`
+**Fichero:** `src/app/data/repositories/supabase.repository.ts`
+
+**Descripción:**
+Si el usuario tiene dos copias del mismo juego (por ejemplo una física y una digital con el mismo título y `rawg_id`), al cambiar la imagen de portada en una de ellas (seleccionando un screenshot diferente) la imagen cambia también en la otra. El cambio debería afectar solo al juego editado.
+
+**Pasos para reproducir:**
+1. Añadir el mismo juego dos veces — uno digital y otro físico (mismo título, misma plataforma, mismo rawg_id).
+2. Editar el juego digital y seleccionar un screenshot diferente como portada.
+3. Guardar y volver al listado.
+4. Observar que el juego físico también muestra el screenshot nuevo.
+
+**Causa:**
+La imagen de portada (`image_url`) está almacenada en `game_catalog`, que es una tabla compartida. Dos copias del mismo juego de RAWG apuntan al mismo `game_catalog_id`. Cuando el repositorio actualiza `image_url` en `game_catalog`, el cambio afecta a todas las copias del usuario que comparten ese catálogo.
+
+```typescript
+// supabase.repository.ts — updateGameForUser()
+await this._supabase
+  .from(this._catalogTable)
+  .update({ image_url: updated.imageUrl })
+  .eq('id', gameCatalogId);  // ← actualiza el catálogo compartido
+```
+
+**Solución requerida:**
+Mover la imagen personalizada del usuario de `game_catalog` a `user_games`. Requiere una migración de base de datos:
+
+```sql
+ALTER TABLE user_games ADD COLUMN custom_image_url TEXT;
+```
+
+Y actualizar la vista `user_games_full` para que use `COALESCE(user_games.custom_image_url, game_catalog.image_url) AS image_url`.
+
+El repositorio deberá guardar la imagen seleccionada en `user_games.custom_image_url` en lugar de en `game_catalog.image_url`. La imagen en `game_catalog` pasaría a ser solo de lectura (datos canónicos de RAWG, sin edición por usuario).
 
 ---
 

@@ -144,5 +144,33 @@ describe('LoginComponent', () => {
 
       expect(component.loading()).toBe(false);
     });
+
+    it('persiste returnUrl en sessionStorage antes del redirect OAuth', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
+      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/token123');
+
+      await component.onOAuthSignIn('google');
+
+      expect(sessionStorage.getItem('oauth_return_url')).toBe('/orders/invite/token123');
+      sessionStorage.removeItem('oauth_return_url');
+    });
+
+    it('no persiste nada en sessionStorage cuando no hay returnUrl', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
+      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue(null);
+
+      await component.onOAuthSignIn('google');
+
+      expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
+    });
+
+    it('limpia sessionStorage cuando el OAuth falla', async () => {
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: false, error: 'Error' });
+      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/token123');
+
+      await component.onOAuthSignIn('google');
+
+      expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
+    });
   });
 });
