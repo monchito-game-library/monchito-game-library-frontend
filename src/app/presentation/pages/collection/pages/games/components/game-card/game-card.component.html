@@ -37,17 +37,12 @@
           </div>
         }
 
-        <!-- Gradient overlay with title, platform, platinum, price and flip -->
+        <!-- Gradient overlay with title, platform, price and flip -->
         <div class="game-card__overlay">
           <div class="game-card__chips-area">
             <div class="game-card__platform-row">
               @if (game().platform) {
                 <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
-              }
-              @if (game().platinum) {
-                <span class="game-card__platinum-chip" matTooltip="Platinum">
-                  <mat-icon>emoji_events</mat-icon>
-                </span>
               }
             </div>
             @if (isLoaned() || game().forSale) {
@@ -72,11 +67,6 @@
           }
           <div class="game-card__footer">
             <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
-            @if (personalRating() !== null) {
-              <span class="game-card__stat game-card__stat--rating">
-                <mat-icon>star</mat-icon>{{ personalRating() }}/10
-              </span>
-            }
           </div>
           @if (game().description) {
             <button

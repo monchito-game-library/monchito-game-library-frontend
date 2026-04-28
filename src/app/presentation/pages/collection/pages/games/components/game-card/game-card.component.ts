@@ -29,7 +29,7 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameListModel } from '@/models/game/game-list.model';
-import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
+import { defaultGameCover } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
@@ -91,18 +91,10 @@ export class GameCardComponent {
   /** Dominant color extracted from the cover art, used for the hover glow and back-face tint. */
   readonly dominantColor: WritableSignal<string> = signal('rgba(0, 0, 0, 0.25)');
 
-  /** Platinum or hidden-trophy icon depending on platinum status. */
-  readonly platinumIcon: Signal<string> = computed((): string =>
-    this.game().platinum ? imagePlatinumPath : imageTrophyHiddenPath
-  );
-
   /** Status option for the current game. */
   readonly gameStatus: Signal<GameStatusOption | undefined> = computed(() =>
     this._statuses.find((s) => s.code === this.game().status)
   );
-
-  /** Personal rating (0–10). */
-  readonly personalRating: Signal<number | null> = computed(() => this.game().personalRating);
 
   /** Edition of the game copy. */
   readonly edition: Signal<string | null> = computed(() => this.game().edition);
@@ -135,15 +127,6 @@ export class GameCardComponent {
   readonly platformColor: Signal<string | undefined> = computed(
     (): string | undefined => PLATFORM_COLORS[this.game().platform ?? '']
   );
-
-  /**
-   * Star array for the rating display (0–5 stars mapped from the 0–10 rating).
-   */
-  readonly ratingStars: Signal<number[]> = computed(() => {
-    const rating = this.personalRating();
-    if (rating === null) return [];
-    return Array(Math.floor(rating / 2)).fill(1);
-  });
 
   /** Whether the card is currently showing its back face (description). */
   readonly isFlipped: WritableSignal<boolean> = signal<boolean>(false);

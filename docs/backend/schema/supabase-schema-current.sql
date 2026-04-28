@@ -149,13 +149,12 @@ CREATE TABLE IF NOT EXISTS user_games (
   format         TEXT CHECK (format IN ('physical', 'digital')),
 
   -- Estado y progreso
-  platinum BOOLEAN DEFAULT FALSE,
   status   TEXT    DEFAULT 'backlog' CHECK (status IN (
     'wishlist', 'backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'
   )),
 
   -- Valoración personal
-  personal_rating  NUMERIC(2,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
+  personal_rating  NUMERIC(3,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
   personal_review  TEXT,
 
   -- Edición del ejemplar (ej: 'Deluxe Edition', 'GOTY Edition')
@@ -164,7 +163,6 @@ CREATE TABLE IF NOT EXISTS user_games (
   -- Fechas de tracking
   started_date   DATE,
   completed_date DATE,
-  platinum_date  DATE,
 
   -- Notas y etiquetas personales
   description   TEXT,
@@ -193,7 +191,6 @@ CREATE INDEX IF NOT EXISTS idx_user_games_game_catalog_id     ON user_games(game
 CREATE INDEX IF NOT EXISTS idx_user_games_platform            ON user_games(platform);
 CREATE INDEX IF NOT EXISTS idx_user_games_status              ON user_games(status);
 CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
-CREATE INDEX IF NOT EXISTS idx_user_games_platinum       ON user_games(platinum)     WHERE platinum = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_for_sale       ON user_games(for_sale)     WHERE for_sale = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at)      WHERE sold_at IS NOT NULL;
 
@@ -468,7 +465,6 @@ SELECT
   ug.purchased_date,
   ug.format,
   ug.status,
-  ug.platinum,
   ug.personal_rating,
   ug.personal_review,
   ug.edition,

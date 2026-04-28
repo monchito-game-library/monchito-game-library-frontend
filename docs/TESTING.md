@@ -49,7 +49,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `rawg/rawg.mapper.spec.ts` | 19 | ✅ Cubierto |
 | `supabase/console.mapper.spec.ts` | 19 | ✅ Cubierto |
 | `supabase/controller.mapper.spec.ts` | 15 | ✅ Cubierto |
-| `supabase/game.mapper.spec.ts` | 45 | ✅ Cubierto |
+| `supabase/game.mapper.spec.ts` | 44 | ✅ Cubierto |
 | `supabase/hardware-brand.mapper.spec.ts` | 3 | ✅ Cubierto |
 | `supabase/hardware-console-specs.mapper.spec.ts` | 10 | ✅ Cubierto |
 | `supabase/hardware-edition.mapper.spec.ts` | 3 | ✅ Cubierto |
@@ -216,7 +216,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/controllers/controllers.component.spec.ts` | 3 | ✅ Cubierto |
 | `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 40 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 34 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/collection/pages/games/games.component.spec.ts` | 80 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
@@ -289,7 +289,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `ConsolesComponent` / `ControllersComponent`: carga de lista, acciones de navegación.
 - `ConsoleDetailComponent` / `ControllerDetailComponent`: carga en paralelo, `goBack`, `editItem`, `deleteItem`, estado de venta/préstamo; métodos protegidos `_getItem`, `_updateSaleStatus`, `_deleteItem`.
 - `CreateUpdateConsoleComponent` / `CreateUpdateControllerComponent`: modos create/edit, `onCancel`, existencia; señales `filteredStores`, `filteredBrands`, `filteredModels` (incluyendo filtrado por input).
-- `GameCardComponent`: señales computadas (`ratingStars`, `platinumIcon`, `isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`, `platformColor`, `dominantColor`), `onFlip`; `onImageLoaded` (probe Image con `crossOrigin anonymous`, actualización de `dominantColor`, rama null cuando canvas falla, fallback a `img.src`).
+- `GameCardComponent`: señales computadas (`isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`, `platformColor`, `dominantColor`), `onFlip`; `onImageLoaded` (probe Image con `crossOrigin anonymous`, actualización de `dominantColor`, rama null cuando canvas falla, fallback a `img.src`).
 - `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
 - `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`; `_columnCountFromWidth` (todos los tramos de breakpoint incluyendo > 1600 px).
 - `GameCoverPositionDialogComponent`: parseo de `initialPosition` (sin posición, 3 partes, 2 partes, 1 parte), clamping de escala (max 4 / min 1), `onConfirm()`, `onCancel()`.
@@ -336,7 +336,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `order-member/order-member.util.spec.ts` | 19 | ✅ Cubierto |
 | `pack-optimizer/pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
 | `rawg-platform/rawg-platform.utils.spec.ts` | 12 | ✅ Cubierto |
-| `validators/validators.spec.ts` | 15 | ✅ Cubierto |
+| `validators/validators.spec.ts` | 22 | ✅ Cubierto |
 
 **Qué se cubre**:
 - `dominant-color.util`: `extractDominantColor` (promedio de píxeles válidos, filtrado near-black/near-white, fallback a promedio total cuando < 50 píxeles válidos, null cuando `getContext` falla o `drawImage` lanza error CORS).

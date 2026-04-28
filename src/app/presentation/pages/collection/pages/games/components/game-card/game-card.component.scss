@@ -271,21 +271,6 @@
     gap: 0.25rem;
   }
 
-  .game-card__platinum-chip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-
-    mat-icon {
-      color: var(--color-platinum);
-      font-size: var(--text-base);
-      width: var(--text-base);
-      height: var(--text-base);
-    }
-  }
-
   .game-card__loan-chip {
     display: inline-flex;
     align-items: center;
@@ -364,30 +349,6 @@
     font-weight: 700;
     color: white;
     white-space: nowrap;
-  }
-
-  .game-card__stat {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    font-size: var(--text-xs);
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
-    cursor: default;
-
-    mat-icon {
-      font-size: var(--text-sm);
-      width: var(--text-sm);
-      height: var(--text-sm);
-    }
-
-    &--rating {
-      color: var(--color-rating);
-
-      mat-icon {
-        color: var(--color-rating);
-      }
-    }
   }
 }
 

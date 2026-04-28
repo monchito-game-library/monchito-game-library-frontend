@@ -104,20 +104,6 @@
   }
 }
 
-.game-detail__platinum-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  mat-icon {
-    color: var(--color-platinum);
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
-  }
-}
-
 .game-detail__sale-chip {
   display: inline-flex;
   align-items: center;

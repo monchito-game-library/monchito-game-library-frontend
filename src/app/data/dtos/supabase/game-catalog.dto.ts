@@ -56,7 +56,6 @@ export interface UserGameDto {
   platform: string | null;
   condition: 'new' | 'used' | null;
   purchased_date: string | null;
-  platinum: boolean;
   status: GameStatus;
   personal_rating: number | null;
   personal_review?: string | null;
@@ -64,7 +63,6 @@ export interface UserGameDto {
   format: 'digital' | 'physical' | null;
   started_date: string | null;
   completed_date: string | null;
-  platinum_date: string | null;
   description: string | null | undefined;
   tags_personal?: string[];
   is_favorite: boolean;
@@ -123,7 +121,6 @@ export interface UserGameEditDto {
   store: string | null;
   user_platform: string | null;
   condition: 'new' | 'used' | null;
-  platinum: boolean;
   user_notes: string | null;
   description: string | null | undefined;
   status: string;
@@ -157,7 +154,6 @@ export interface UserGameListDto {
   price: number | null;
   store: string | null;
   user_platform: string | null;
-  platinum: boolean;
   description: string | null | undefined;
   user_notes: string | null;
   status: string;

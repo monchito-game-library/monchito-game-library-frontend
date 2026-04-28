@@ -16,8 +16,6 @@ export interface GameListModel {
   store: string | null;
   /** Platform the game belongs to. Null if not yet assigned. */
   platform: PlatformType | null;
-  /** Whether the user has earned the platinum trophy. */
-  platinum: boolean;
   /** Personal notes or description. Shown on the card back face. */
   description: string;
   /** Cover image URL. */

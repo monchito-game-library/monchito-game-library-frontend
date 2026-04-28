@@ -95,7 +95,6 @@
       "platform": "Plataforma",
       "priority": "Prioridad",
       "status": "Estado",
-      "platinum": "Platino",
       "is_favorite": "Favorito",
       "for_sale": "A la venta",
       "sale_price": "Precio de venta deseado",
@@ -138,6 +137,7 @@
       "invalidOption": "Selecciona una opción válida de la lista",
       "ratingMin": "La valoración mínima es 0",
       "ratingMax": "La valoración máxima es 10",
+      "ratingStep": "Solo se admite un decimal (ej: 7.5)",
       "duplicate": "Ya tienes este juego con la misma plataforma, formato y edición",
       "saveFailed": "Error al guardar el juego. Inténtalo de nuevo"
     },

@@ -213,6 +213,7 @@
           <input
             matInput
             formControlName="personal_rating"
+            [errorStateMatcher]="dirtyMatcher"
             type="number"
             min="0"
             max="10"
@@ -223,6 +224,8 @@
             <mat-error>{{ 'gameForm.errors.ratingMin' | transloco }}</mat-error>
           } @else if (form.controls.personal_rating.hasError('max')) {
             <mat-error>{{ 'gameForm.errors.ratingMax' | transloco }}</mat-error>
+          } @else if (form.controls.personal_rating.hasError('invalidStep')) {
+            <mat-error>{{ 'gameForm.errors.ratingStep' | transloco }}</mat-error>
           }
         </mat-form-field>
 
@@ -242,10 +245,6 @@
                 (changed)="onFormatChange($event ? 'digital' : 'physical')"
                 icon="album"
                 iconChecked="cloud" />
-            </div>
-            <div class="game-form__toggle-row">
-              <span class="game-form__toggle-label">{{ 'gameForm.fields.platinum' | transloco }}</span>
-              <app-toggle-switch formControlName="platinum" icon="emoji_events" iconChecked="emoji_events" />
             </div>
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>

@@ -22,7 +22,6 @@ function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
     price: null,
     store: null,
     platform: null,
-    platinum: false,
     description: '',
     status: 'backlog',
     personalRating: null,
