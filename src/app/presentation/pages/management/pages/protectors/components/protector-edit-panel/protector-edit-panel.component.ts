@@ -69,6 +69,9 @@ export class ProtectorEditPanelComponent {
         this.packsArray.removeAt(0, { emitEvent: false });
       }
       (p?.packs ?? []).forEach((pack) => this.packsArray.push(this._buildPackGroup(pack), { emitEvent: false }));
+      if (!p) {
+        this.addPack();
+      }
       this.form.markAsPristine();
       this.form.markAsUntouched();
     });

@@ -11,6 +11,11 @@ export const authBaseImports = [
   })
 ];
 
-export const authBaseProviders = [{ provide: ActivatedRoute, useValue: { snapshot: { params: {} } } }];
+export const authBaseProviders = [
+  {
+    provide: ActivatedRoute,
+    useValue: { snapshot: { params: {}, queryParamMap: { get: () => null } } }
+  }
+];
 
 export const authBaseSchemas = [NO_ERRORS_SCHEMA];

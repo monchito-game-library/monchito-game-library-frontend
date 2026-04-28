@@ -131,6 +131,7 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
     format: model.format,
     is_favorite: model.isFavorite,
     cover_position: model.coverPosition ?? null,
+    custom_image_url: model.imageUrl ?? null,
     for_sale: model.forSale ?? false,
     sale_price: model.salePrice ?? null,
     sold_at: model.soldAt ?? null,
