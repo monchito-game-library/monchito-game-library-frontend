@@ -88,13 +88,6 @@ export abstract class HardwareListBaseComponent<
   /** Signal in UserPreferencesService where this list persists its scroll offset. */
   protected abstract readonly _scrollOffsetSignal: WritableSignal<number>;
 
-  private readonly _onHwListScroll = (e: Event): void => {
-    const t = e.target as HTMLElement;
-    if (t.classList.contains('hw-list__content')) {
-      this._scrollOffsetSignal.set(t.scrollTop);
-    }
-  };
-
   /**
    * Registers the scroll listener that persists the list position in real time.
    * Call at the very start of ngOnInit so events are captured from the first render.
@@ -169,6 +162,13 @@ export abstract class HardwareListBaseComponent<
   onDetail(item: T): void {
     void this._router.navigate([this._detailRoute, item.id]);
   }
+
+  private readonly _onHwListScroll = (e: Event): void => {
+    const t = e.target as HTMLElement;
+    if (t.classList.contains('hw-list__content')) {
+      this._scrollOffsetSignal.set(t.scrollTop);
+    }
+  };
 
   /**
    * Loads hardware brands and models from the catalogue to resolve names in the list.

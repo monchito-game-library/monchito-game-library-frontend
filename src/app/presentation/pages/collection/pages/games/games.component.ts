@@ -68,18 +68,9 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
   private _searchDebounce?: Subscription;
-  private readonly _searchInput$ = new Subject<string>();
-
-  // Saves scroll position on each scroll event so it survives the browser resetting
-  // scrollTop to 0 when the element is detached from the DOM during navigation.
-  private readonly _onViewportScroll = (e: Event): void => {
-    const t = e.target as HTMLElement;
-    if (t.classList.contains('game-list__grid')) {
-      this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
-    }
-  };
 
   @ViewChild('scrollContainer')
   private _scrollContainer?: ElementRef<HTMLElement>;
@@ -331,6 +322,15 @@ export class GamesComponent implements OnInit, OnDestroy {
     };
     this._bottomSheet.open(GameListFiltersSheetComponent, { data });
   }
+
+  // Saves scroll position on each scroll event so it survives the browser resetting
+  // scrollTop to 0 when the element is detached from the DOM during navigation.
+  private readonly _onViewportScroll = (e: Event): void => {
+    const t = e.target as HTMLElement;
+    if (t.classList.contains('game-list__grid')) {
+      this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
+    }
+  };
 
   /**
    * Returns the column count for a given viewport width, matching the breakpoint thresholds
