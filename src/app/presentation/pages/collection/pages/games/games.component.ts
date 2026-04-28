@@ -39,6 +39,7 @@ import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/co
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 import { GameListSortField } from '@/types/game-list-sort-field.type';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
+import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 @Component({
   selector: 'app-games',
@@ -68,6 +69,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
   private _searchDebounce?: Subscription;
@@ -91,25 +93,25 @@ export class GamesComponent implements OnInit, OnDestroy {
   readonly allGames: WritableSignal<GameListModel[]> = signal<GameListModel[]>([]);
 
   /** Current value of the title search input. */
-  readonly searchTerm: WritableSignal<string> = signal('');
+  readonly searchTerm: WritableSignal<string> = this._filtersService.searchTerm;
 
   /** Currently selected platform filter, or empty string for no filter. */
-  readonly selectedConsole: WritableSignal<'' | PlatformType> = signal<PlatformType | ''>('');
+  readonly selectedConsole: WritableSignal<'' | PlatformType> = this._filtersService.selectedConsole;
 
   /** Currently selected store filter, or empty string for no filter. */
-  readonly selectedStore: WritableSignal<string> = signal('');
+  readonly selectedStore: WritableSignal<string> = this._filtersService.selectedStore;
 
   /** Currently selected status filter, or empty string for no filter. */
-  readonly selectedStatus: WritableSignal<string> = signal('');
+  readonly selectedStatus: WritableSignal<string> = this._filtersService.selectedStatus;
 
   /** Currently selected format filter, or empty string for no filter. */
-  readonly selectedFormat: WritableSignal<'' | GameFormatType> = signal<'' | GameFormatType>('');
+  readonly selectedFormat: WritableSignal<'' | GameFormatType> = this._filtersService.selectedFormat;
 
   /** Whether only favourite games are shown. */
-  readonly onlyFavorites: WritableSignal<boolean> = signal(false);
+  readonly onlyFavorites: WritableSignal<boolean> = this._filtersService.onlyFavorites;
 
   /** Whether only loaned games are shown. */
-  readonly onlyLoaned: WritableSignal<boolean> = signal(false);
+  readonly onlyLoaned: WritableSignal<boolean> = this._filtersService.onlyLoaned;
 
   /** Icon shown in the total-games stat, changes based on the active format filter. */
   readonly formatFilterIcon: Signal<string> = computed((): string => {
@@ -120,10 +122,10 @@ export class GamesComponent implements OnInit, OnDestroy {
   });
 
   /** Field used to sort the game list. */
-  readonly sortBy: WritableSignal<GameListSortField> = signal('title');
+  readonly sortBy: WritableSignal<GameListSortField> = this._filtersService.sortBy;
 
   /** Sort direction applied to the current sort field. */
-  readonly sortDirection: WritableSignal<'asc' | 'desc'> = signal('asc');
+  readonly sortDirection: WritableSignal<'asc' | 'desc'> = this._filtersService.sortDirection;
 
   /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
   readonly columnCount: WritableSignal<number> = signal<number>(this._columnCountFromWidth(window.innerWidth));
@@ -265,13 +267,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    * Clears all active filters.
    */
   clearAllFilters(): void {
-    this.searchTerm.set('');
-    this.selectedConsole.set('');
-    this.selectedStore.set('');
-    this.selectedStatus.set('');
-    this.selectedFormat.set('');
-    this.onlyFavorites.set(false);
-    this.onlyLoaned.set(false);
+    this._filtersService.clearAllFilters();
   }
 
   /**

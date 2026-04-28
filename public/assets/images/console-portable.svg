@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+
+  <!-- Outer device body (portrait rounded rect) -->
+  <rect x="72" y="16" width="358" height="480" rx="44"
+        stroke="white" stroke-width="14"/>
+
+  <!--
+    Screen frame — rounded corners on TL, TR, BL;
+    diagonal cut on the bottom-right (classic Game Boy style).
+    Path goes clockwise from TL corner.
+  -->
+  <path d="
+    M100 66
+    Q100 48 118 48
+    L382 48
+    Q400 48 400 66
+    L400 228
+    L366 268
+    L118 268
+    Q100 268 100 250
+    Z
+  " stroke="white" stroke-width="12"/>
+
+  <!-- Screen fill (the inner screen area — filled white) -->
+  <rect x="132" y="80" width="210" height="146" fill="white"/>
+
+  <!--
+    D-pad — two overlapping filled rectangles forming a cross.
+    Center at (183, 358).
+  -->
+  <!-- vertical bar -->
+  <rect x="166" y="312" width="34" height="92" rx="8" fill="white"/>
+  <!-- horizontal bar -->
+  <rect x="140" y="340" width="92" height="34" rx="8" fill="white"/>
+
+  <!-- Button A (upper-right) — outline only -->
+  <circle cx="348" cy="326" r="24" stroke="white" stroke-width="12"/>
+
+  <!-- Button B (lower-left of A) — outline only -->
+  <circle cx="306" cy="370" r="24" stroke="white" stroke-width="12"/>
+
+</svg>

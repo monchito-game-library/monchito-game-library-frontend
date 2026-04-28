@@ -15,6 +15,7 @@ import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
   return {
@@ -62,7 +63,8 @@ describe('GamesComponent', () => {
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -621,7 +623,8 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -662,7 +665,8 @@ describe('GamesComponent — breakpoint observer', () => {
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(bpSubject.asObservable()) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -744,7 +748,8 @@ describe('GamesComponent — carga inicial', () => {
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -791,7 +796,8 @@ describe('GamesComponent — scroll restoration', () => {
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } }
+        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });

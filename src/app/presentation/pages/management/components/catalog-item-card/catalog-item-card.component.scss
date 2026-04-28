@@ -24,6 +24,17 @@
 .catalog-item-card__icon {
   color: var(--mat-sys-primary);
   flex-shrink: 0;
+
+  &--svg {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-mode: luminance;
+  }
 }
 
 .catalog-item-card__info {
