@@ -19,6 +19,7 @@ import { authRepositoryProvider } from '@/di/repositories/auth.repository.provid
 import { userPreferencesRepositoryProvider } from '@/di/repositories/user-preferences.repository.provider';
 import { authUseCasesProvider } from '@/di/use-cases/auth.use-cases.provider';
 import { userPreferencesUseCasesProvider } from '@/di/use-cases/user-preferences.use-cases.provider';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { provideServiceWorker } from '@angular/service-worker';
 import { environment } from '@/env';
 
@@ -27,7 +28,9 @@ registerLocaleData(localeEs);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
+    provideNativeDateAdapter(),
     { provide: LOCALE_ID, useValue: 'es' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     provideHttpClient(),
     provideTransloco({

@@ -282,6 +282,15 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
       await component.ngOnInit();
       expect(component.loading()).toBe(false);
     });
+
+    it('parchea purchaseDate como null cuando el mando no tiene fecha de compra', async () => {
+      const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+      controllerUseCases.getById.mockResolvedValue(makeController({ purchaseDate: null }));
+
+      await component.ngOnInit();
+
+      expect(component.form.controls.purchaseDate.value).toBeNull();
+    });
   });
 
   describe('onSubmit — modo edición', () => {

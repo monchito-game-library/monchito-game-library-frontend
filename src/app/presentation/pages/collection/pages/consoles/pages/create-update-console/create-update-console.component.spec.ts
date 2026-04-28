@@ -297,6 +297,15 @@ describe('CreateUpdateConsoleComponent — modo edición', () => {
 
       expect(editionUseCases.getAllByModel).not.toHaveBeenCalled();
     });
+
+    it('parchea purchaseDate como null cuando la consola no tiene fecha de compra', async () => {
+      const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
+      consoleUseCases.getById.mockResolvedValue(makeConsole({ purchaseDate: null }));
+
+      await component.ngOnInit();
+
+      expect(component.form.controls.purchaseDate.value).toBeNull();
+    });
   });
 
   describe('onSubmit — modo edición', () => {

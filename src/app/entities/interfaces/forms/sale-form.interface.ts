@@ -25,7 +25,7 @@ export interface SaleFormValue {
   forSale: boolean;
   salePrice: number | null;
   soldPriceFinal: number | null;
-  soldAt: string | null;
+  soldAt: Date | null;
 }
 
 /** Typed reactive form for the sale status. */
@@ -33,5 +33,5 @@ export interface SaleForm {
   forSale: FormControl<boolean>;
   salePrice: FormControl<number | null>;
   soldPriceFinal: FormControl<number | null>;
-  soldAt: FormControl<string | null>;
+  soldAt: FormControl<Date | null>;
 }

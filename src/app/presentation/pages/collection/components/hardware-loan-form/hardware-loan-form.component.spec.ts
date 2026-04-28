@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
@@ -64,6 +65,7 @@ describe('HardwareLoanFormComponent', () => {
         })
       ],
       providers: [
+        provideNativeDateAdapter(),
         { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
         { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -86,10 +88,9 @@ describe('HardwareLoanFormComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('inicializa loanedAt con la fecha de hoy en formato ISO', () => {
+    it('inicializa loanedAt con la fecha de hoy', () => {
       fixture.detectChanges();
-      const todayIso = new Date().toISOString().slice(0, 10);
-      expect(component.form.getRawValue().loanedAt).toBe(todayIso);
+      expect(component.form.getRawValue().loanedAt).toEqual(component.today);
     });
 
     it('loanedTo comienza vacío (null)', () => {
@@ -139,7 +140,7 @@ describe('HardwareLoanFormComponent', () => {
   describe('onLoan', () => {
     it('marca los campos como touched y no llama al use case si el formulario es inválido', async () => {
       fixture.detectChanges();
-      component.form.patchValue({ loanedTo: null, loanedAt: null });
+      component.form.patchValue({ loanedTo: null, loanedAt: null as unknown as Date });
 
       await component.onLoan();
 
@@ -149,7 +150,7 @@ describe('HardwareLoanFormComponent', () => {
 
     it('llama a createLoan con los datos correctos cuando el formulario es válido', async () => {
       fixture.detectChanges();
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -167,7 +168,7 @@ describe('HardwareLoanFormComponent', () => {
       fixture.detectChanges();
       const savedSpy = vi.fn();
       component.saved.subscribe(savedSpy);
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -181,7 +182,7 @@ describe('HardwareLoanFormComponent', () => {
     it('muestra snackbar de éxito tras crear el préstamo', async () => {
       fixture.detectChanges();
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -192,7 +193,7 @@ describe('HardwareLoanFormComponent', () => {
       fixture.detectChanges();
       (mockConsoleUseCases.createLoan as any).mockRejectedValueOnce(new Error('loan error'));
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -202,7 +203,7 @@ describe('HardwareLoanFormComponent', () => {
     it('desactiva saving al finalizar aunque haya error', async () => {
       fixture.detectChanges();
       (mockConsoleUseCases.createLoan as any).mockRejectedValueOnce(new Error('fail'));
-      component.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -212,7 +213,7 @@ describe('HardwareLoanFormComponent', () => {
     it('usa el use case de controller cuando itemType es controller', async () => {
       fixture.componentRef.setInput('itemType', 'controller');
       fixture.detectChanges();
-      component.form.patchValue({ loanedTo: 'Ana', loanedAt: '2024-06-01' });
+      component.form.patchValue({ loanedTo: 'Ana', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
 
@@ -316,6 +317,7 @@ describe('HardwareLoanFormComponent', () => {
           })
         ],
         providers: [
+          provideNativeDateAdapter(),
           { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
           { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -356,6 +358,7 @@ describe('HardwareLoanFormComponent', () => {
           })
         ],
         providers: [
+          provideNativeDateAdapter(),
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
           { provide: MatSnackBar, useValue: { open: vi.fn() } },
           { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
@@ -371,7 +374,7 @@ describe('HardwareLoanFormComponent', () => {
 
     it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta crear un préstamo', async () => {
       guardFixture.detectChanges();
-      guardComponent.form.patchValue({ loanedTo: 'Juan', loanedAt: '2024-06-01' });
+      guardComponent.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
 
       await guardComponent.onLoan();

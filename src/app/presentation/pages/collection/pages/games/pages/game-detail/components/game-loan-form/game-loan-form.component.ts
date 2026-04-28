@@ -16,10 +16,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -32,7 +35,21 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   styleUrl: './game-loan-form.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatButton, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, TranslocoPipe]
+  imports: [
+    ReactiveFormsModule,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatSuffix,
+    MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    DatepickerFieldClickDirective,
+    TranslocoPipe
+  ]
 })
 export class GameLoanFormComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
@@ -56,17 +73,17 @@ export class GameLoanFormComponent implements OnInit {
   /** Whether the game currently has an active loan. */
   readonly isLoaned: Signal<boolean> = computed(() => this.game().activeLoanId !== null);
 
-  /** Today's date in YYYY-MM-DD format, used as default for the loan date. */
-  readonly todayIso: string = new Date().toISOString().slice(0, 10);
+  /** Today's date, used as default for the loan date. */
+  readonly today: Date = new Date();
 
   /** Reactive form for the loan fields. */
   readonly form: FormGroup<GameLoanForm> = new FormGroup<GameLoanForm>({
     loanedTo: new FormControl<string | null>(null, Validators.required),
-    loanedAt: new FormControl<string | null>(null, Validators.required)
+    loanedAt: new FormControl<Date | null>(null, Validators.required)
   });
 
   ngOnInit(): void {
-    this.form.patchValue({ loanedAt: this.todayIso });
+    this.form.patchValue({ loanedAt: this.today });
   }
 
   /**
@@ -92,7 +109,7 @@ export class GameLoanFormComponent implements OnInit {
     const loan: GameLoanStatusModel = {
       userGameId: g.uuid,
       loanedTo: raw.loanedTo!,
-      loanedAt: raw.loanedAt!
+      loanedAt: raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''
     };
 
     this.saving.set(true);

@@ -67,7 +67,7 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
     condition: this._fb.nonNullable.control<GameConditionType>(GAME_CONDITION.USED),
     price: this._fb.control<number | null>(null),
     store: this._fb.control<string | null>(null),
-    purchaseDate: this._fb.control<string | null>(null),
+    purchaseDate: this._fb.control<Date | null>(null),
     notes: this._fb.control<string | null>(null)
   });
 
@@ -151,7 +151,7 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
       condition: value.condition,
       price: value.price,
       store: value.store,
-      purchaseDate: value.purchaseDate,
+      purchaseDate: value.purchaseDate ? value.purchaseDate.toLocaleDateString('sv-SE') : null,
       notes: value.notes,
       createdAt: '',
       forSale: false,
@@ -196,7 +196,7 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
       condition: controller.condition,
       price: controller.price,
       store: controller.store,
-      purchaseDate: controller.purchaseDate,
+      purchaseDate: controller.purchaseDate ? new Date(controller.purchaseDate + 'T00:00:00') : null,
       notes: controller.notes
     });
   }

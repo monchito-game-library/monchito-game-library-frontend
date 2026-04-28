@@ -69,10 +69,12 @@
         <span matTextSuffix>€</span>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="sale-form__field">
+      <mat-form-field appearance="outline" class="sale-form__field" [appDatepickerFieldClick]="soldAtPicker">
         <mat-label>{{ i18nPrefix() + '.soldAt' | transloco }}</mat-label>
-        <input matInput type="date" min="1000-01-01" max="9999-12-31" formControlName="soldAt" />
-        @if (form.controls.soldAt.hasError('invalidDate')) {
+        <input matInput [matDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
+        <mat-datepicker-toggle matIconSuffix [for]="soldAtPicker"></mat-datepicker-toggle>
+        <mat-datepicker #soldAtPicker></mat-datepicker>
+        @if (form.controls.soldAt.hasError('matDatepickerParse')) {
           <mat-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</mat-error>
         }
       </mat-form-field>
