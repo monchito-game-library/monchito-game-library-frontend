@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareListBaseComponent } from '@/abstract/hardware-list-base/hardware-list-base.component';
@@ -16,7 +15,7 @@ import { ConsoleSpecsCategoryType } from '@/types/console-specs-category.type';
   styleUrls: ['./consoles.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslocoPipe, HardwareListShellComponent, BadgeChipComponent]
+  imports: [TranslocoPipe, HardwareListShellComponent, BadgeChipComponent]
 })
 export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);

@@ -53,7 +53,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `supabase/hardware-brand.mapper.spec.ts` | 3 | ✅ Cubierto |
 | `supabase/hardware-console-specs.mapper.spec.ts` | 10 | ✅ Cubierto |
 | `supabase/hardware-edition.mapper.spec.ts` | 3 | ✅ Cubierto |
-| `supabase/hardware-model.mapper.spec.ts` | 7 | ✅ Cubierto |
+| `supabase/hardware-model.mapper.spec.ts` | 11 | ✅ Cubierto |
 | `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/store.mapper.spec.ts` | 7 | ✅ Cubierto |
 | `supabase/user-preferences.mapper.spec.ts` | 8 | ✅ Cubierto |
@@ -210,7 +210,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/collection/components/sale-form/sale-form.component.spec.ts` | 29 | ✅ Cubierto |
 | `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 28 | ✅ Cubierto |
-| `pages/collection/pages/consoles/consoles.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/collection/pages/consoles/consoles.component.spec.ts` | 7 | ✅ Cubierto |
 | `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 15 | ✅ Cubierto |
 | `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/collection/pages/controllers/controllers.component.spec.ts` | 3 | ✅ Cubierto |
@@ -219,6 +219,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 34 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/collection/pages/games/games.component.spec.ts` | 80 | ✅ Cubierto |
+| `pages/collection/pages/games/services/games-filter.service.spec.ts` | 11 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 89 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
@@ -286,12 +287,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `HardwareLoanFormComponent` / `SaleFormComponent`: formularios de préstamo y venta con validaciones.
 - `ListPageHeaderComponent`: inputs y renderizado básico.
 - `CollectionOverviewComponent`: accesos a la colección (juegos/consolas/mandos), contadores.
-- `ConsolesComponent` / `ControllersComponent`: carga de lista, acciones de navegación.
+- `ConsolesComponent` / `ControllersComponent`: carga de lista, acciones de navegación; `resolveCategory` (home, portable, null).
 - `ConsoleDetailComponent` / `ControllerDetailComponent`: carga en paralelo, `goBack`, `editItem`, `deleteItem`, estado de venta/préstamo; métodos protegidos `_getItem`, `_updateSaleStatus`, `_deleteItem`.
 - `CreateUpdateConsoleComponent` / `CreateUpdateControllerComponent`: modos create/edit, `onCancel`, existencia; señales `filteredStores`, `filteredBrands`, `filteredModels` (incluyendo filtrado por input).
 - `GameCardComponent`: señales computadas (`isDigital`, `defaultImage`, `coverObjectPosition`, `coverTransform`, `platformColor`, `dominantColor`), `onFlip`; `onImageLoaded` (probe Image con `crossOrigin anonymous`, actualización de `dominantColor`, rama null cuando canvas falla, fallback a `img.src`).
 - `GameListFiltersSheetComponent`: existencia, `consoles`/`gameStatuses`, `close()`, `onClearAll()`.
 - `GamesComponent` (game-list): señales `filteredGames` (búsqueda, plataforma, store, estado, formato, favoritos, orden), `gameRows`, `ownedCount`, `platinumCount`, `totalPrice`, `activeFilterCount`, `formatFilterIcon`, `clearAllFilters`, `onSearchInput`; `_columnCountFromWidth` (todos los tramos de breakpoint incluyendo > 1600 px).
+- `GamesFilterService`: valores iniciales de los 9 signals, `clearAllFilters` (resetea filtros, preserva sortBy/sortDirection).
 - `GameCoverPositionDialogComponent`: parseo de `initialPosition` (sin posición, 3 partes, 2 partes, 1 parte), clamping de escala (max 4 / min 1), `onConfirm()`, `onCancel()`.
 - `GameFormComponent`: valores iniciales, `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store, `onCancel`, `hasChanges`.
 - `GameLoanFormComponent`: `isLoaned`, `ngOnInit` (parche de fecha), `onCancel`, `onLoan` (validación, `createLoan`, señal `saving`, emisión de `saved`, snackbar éxito/error), `onReturn` (guard de `activeLoanId`, `returnLoan`, emisión y snackbar).
@@ -370,7 +372,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | App component | 1 | 31 |
 | Componentes | 67 | ~1397 |
 | Utilidades | 7 | 86 |
-| **Total** | **138** | **2383** |
+| **Total** | **139** | **2402** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -380,10 +382,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.01 % (4640 / 4686) |
-| Branches | **95.27 %** (3002 / 3151) |
-| Functions | 99.06 % (1058 / 1068) |
-| Lines | 99.86 % (3835 / 3840) |
+| Statements | 99.00 % (4656 / 4703) |
+| Branches | **95.18 %** (3005 / 3157) |
+| Functions | 98.97 % (1059 / 1070) |
+| Lines | 99.84 % (3849 / 3855) |
 
 ```bash
 npm run test:coverage
