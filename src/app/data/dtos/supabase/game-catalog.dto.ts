@@ -69,6 +69,7 @@ export interface UserGameDto {
   tags_personal?: string[];
   is_favorite: boolean;
   cover_position: string | null;
+  custom_image_url?: string | null;
   for_sale: boolean;
   sale_price: number | null;
   sold_at: string | null;

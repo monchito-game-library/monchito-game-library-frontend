@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -68,16 +68,9 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
-
-  // Saves scroll position on each scroll event so it survives the browser resetting
-  // scrollTop to 0 when the element is detached from the DOM during navigation.
-  private readonly _onViewportScroll = (e: Event): void => {
-    const t = e.target as HTMLElement;
-    if (t.classList.contains('game-list__grid')) {
-      this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
-    }
-  };
+  private _searchDebounce?: Subscription;
 
   @ViewChild('scrollContainer')
   private _scrollContainer?: ElementRef<HTMLElement>;
@@ -218,6 +211,10 @@ export class GamesComponent implements OnInit, OnDestroy {
   );
 
   async ngOnInit(): Promise<void> {
+    this._searchDebounce = this._searchInput$
+      .pipe(debounceTime(300))
+      .subscribe((value: string) => this.searchTerm.set(value));
+
     void this._loadStores();
 
     // Show cache immediately if available while reloading from Supabase
@@ -260,6 +257,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._bpSubscription?.unsubscribe();
+    this._searchDebounce?.unsubscribe();
     document.removeEventListener('scroll', this._onViewportScroll, true);
   }
 
@@ -295,7 +293,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    * @param {string} value - New value of the search input
    */
   onSearchInput(value: string): void {
-    this.searchTerm.set(value.trim());
+    this._searchInput$.next(value.trim());
   }
 
   /**
@@ -324,6 +322,15 @@ export class GamesComponent implements OnInit, OnDestroy {
     };
     this._bottomSheet.open(GameListFiltersSheetComponent, { data });
   }
+
+  // Saves scroll position on each scroll event so it survives the browser resetting
+  // scrollTop to 0 when the element is detached from the DOM during navigation.
+  private readonly _onViewportScroll = (e: Event): void => {
+    const t = e.target as HTMLElement;
+    if (t.classList.contains('game-list__grid')) {
+      this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
+    }
+  };
 
   /**
    * Returns the column count for a given viewport width, matching the breakpoint thresholds

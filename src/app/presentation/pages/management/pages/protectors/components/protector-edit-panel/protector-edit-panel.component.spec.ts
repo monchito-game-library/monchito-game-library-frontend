@@ -33,14 +33,14 @@ describe('ProtectorEditPanelComponent — template real', () => {
     expect(component).toBeTruthy();
   });
 
-  it('muestra la sección de packs vacía cuando no hay packs', () => {
-    expect(component.packsArray.length).toBe(0);
+  it('muestra 1 pack vacío por defecto al crear', () => {
+    expect(component.packsArray.length).toBe(1);
   });
 
   it('renderiza packs cuando se añaden', () => {
     component.addPack();
     fixture.detectChanges();
-    expect(component.packsArray.length).toBe(1);
+    expect(component.packsArray.length).toBe(2);
   });
 
   it('renderiza modo edición cuando se pasa un protector por input (activo)', () => {
@@ -120,9 +120,9 @@ describe('ProtectorEditPanelComponent', () => {
 
   it('se crea correctamente', () => expect(component).toBeTruthy());
 
-  it('form inicial: name vacío, category "box", notes null, packs vacío', () => {
+  it('form inicial: name vacío, category "box", notes null, 1 pack por defecto', () => {
     expect(component.form.getRawValue()).toMatchObject({ name: '', category: 'box', notes: null });
-    expect(component.packsArray.length).toBe(0);
+    expect(component.packsArray.length).toBe(1);
   });
 
   describe('cuando se pasa un protector por input', () => {
@@ -166,16 +166,17 @@ describe('ProtectorEditPanelComponent', () => {
   });
 
   describe('addPack / removePack', () => {
-    it('addPack añade un pack al array', () => {
-      component.addPack();
+    it('addPack añade un pack al array (empieza con 1 por defecto)', () => {
       expect(component.packsArray.length).toBe(1);
+      component.addPack();
+      expect(component.packsArray.length).toBe(2);
     });
 
     it('removePack elimina el pack en el índice dado', () => {
       component.addPack();
       component.addPack();
       component.removePack(0);
-      expect(component.packsArray.length).toBe(1);
+      expect(component.packsArray.length).toBe(2);
     });
   });
 
@@ -190,6 +191,7 @@ describe('ProtectorEditPanelComponent', () => {
   describe('onSave', () => {
     it('no emite si no hay packs', () => {
       const spy = vi.spyOn(component.saved, 'emit');
+      component.removePack(0); // elimina el pack por defecto para llegar al estado vacío
       component.form.patchValue({ name: 'BigBen', category: 'box' });
       component.onSave();
       expect(spy).not.toHaveBeenCalled();
@@ -207,7 +209,6 @@ describe('ProtectorEditPanelComponent', () => {
     it('emite el resultado correcto si el form es válido y hay packs', () => {
       const spy = vi.spyOn(component.saved, 'emit');
       component.form.patchValue({ name: 'BigBen', category: 'console', notes: null });
-      component.addPack();
       component
         .asFormGroup(component.packsArray.at(0))
         .patchValue({ quantity: 5, price: 19.99, url: 'https://example.com' });
@@ -223,7 +224,6 @@ describe('ProtectorEditPanelComponent', () => {
     it('convierte url vacía a null al emitir', () => {
       const spy = vi.spyOn(component.saved, 'emit');
       component.form.patchValue({ name: 'BigBen', category: 'console', notes: null });
-      component.addPack();
       component.asFormGroup(component.packsArray.at(0)).patchValue({ quantity: 1, price: 5, url: '' });
       component.onSave();
       const result = spy.mock.calls[0][0] as any;
@@ -233,7 +233,6 @@ describe('ProtectorEditPanelComponent', () => {
     it('incluye notes cuando tiene valor', () => {
       const spy = vi.spyOn(component.saved, 'emit');
       component.form.patchValue({ name: 'BigBen', category: 'console', notes: 'Protetor de lujo' });
-      component.addPack();
       component.asFormGroup(component.packsArray.at(0)).patchValue({ quantity: 1, price: 5, url: '' });
       component.onSave();
       const result = spy.mock.calls[0][0] as any;

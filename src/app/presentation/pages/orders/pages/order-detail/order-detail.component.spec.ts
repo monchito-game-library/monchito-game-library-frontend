@@ -788,6 +788,17 @@ describe('OrderDetailComponent', () => {
       expect(mockOrdersUseCases.addLine).not.toHaveBeenCalled();
     });
 
+    it('no llama a getProducts cuando los productos ya están cargados', async () => {
+      const product = { id: 'p1', name: 'Product 1', category: 'cat', notes: null, packs: [] };
+      component.products.set([product]);
+      component.order.set(makeOrder());
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+
+      await component.onAddLine();
+
+      expect(mockOrdersUseCases.getProducts).not.toHaveBeenCalled();
+    });
+
     it('does nothing when userId is null', async () => {
       mockUserContext.userId.mockReturnValue(null);
       mockOrdersUseCases.getProducts.mockResolvedValue([]);
@@ -844,6 +855,16 @@ describe('OrderDetailComponent', () => {
       mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
       await component.onEditLine(line);
       expect(mockOrdersUseCases.updateLine).not.toHaveBeenCalled();
+    });
+
+    it('no llama a getProducts cuando los productos ya están cargados', async () => {
+      const product = { id: 'p1', name: 'Product 1', category: 'cat', notes: null, packs: [] };
+      component.products.set([product]);
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+
+      await component.onEditLine(line);
+
+      expect(mockOrdersUseCases.getProducts).not.toHaveBeenCalled();
     });
 
     it('updates line and shows snackbar on success', async () => {

@@ -150,16 +150,12 @@ export class SupabaseRepository implements GameRepositoryContract {
     let gameCatalogId = viewRecord.game_catalog_id;
     if (catalogEntry) {
       gameCatalogId = await this._getOrCreateGameCatalog(updated.title, catalogEntry);
-      await this._supabase
-        .from(this._catalogTable)
-        .update({ image_url: updated.imageUrl ?? catalogEntry.image_url ?? null })
-        .eq('id', gameCatalogId);
-    } else {
-      const catalogUpdate: Record<string, unknown> = {};
-      if (!viewRecord.rawg_id) catalogUpdate['title'] = updated.title;
-      catalogUpdate['image_url'] = updated.imageUrl ?? null;
-      await this._supabase.from(this._catalogTable).update(catalogUpdate).eq('id', gameCatalogId);
+    } else if (!viewRecord.rawg_id) {
+      // Only update the title for manual (non-RAWG) catalog entries
+      await this._supabase.from(this._catalogTable).update({ title: updated.title }).eq('id', gameCatalogId);
     }
+    // Image is stored in user_games.custom_image_url (via mapGameToInsertDto),
+    // not in game_catalog.image_url, so copies of the same game stay independent.
 
     const userGameRecord: UserGameInsertDto = {
       game_catalog_id: gameCatalogId,

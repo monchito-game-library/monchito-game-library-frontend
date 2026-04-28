@@ -786,6 +786,30 @@ describe('GameFormComponent — ngOnInit', () => {
     expect(component.selectedImageUrl()).toBeNull();
   });
 
+  it('modo edición — formatValue signal refleja el formato del juego cargado (digital)', async () => {
+    setup('game-uuid', { ...editGame, format: 'digital' });
+    await component.ngOnInit();
+
+    expect(component.form.controls.format.value).toBe('digital');
+    expect(component.formatValue()).toBe('digital');
+  });
+
+  it('modo edición — formatValue signal refleja el formato del juego cargado (physical)', async () => {
+    setup('game-uuid', { ...editGame, format: 'physical' });
+    await component.ngOnInit();
+
+    expect(component.form.controls.format.value).toBe('physical');
+    expect(component.formatValue()).toBe('physical');
+  });
+
+  it('modo edición — usa "physical" como fallback cuando el juego tiene format null', async () => {
+    setup('game-uuid', { ...editGame, format: null });
+    await component.ngOnInit();
+
+    expect(component.form.controls.format.value).toBe('physical');
+    expect(component.formatValue()).toBe('physical');
+  });
+
   it('modo edición — juego con imageUrl pero sin rawgId no llama a _loadScreenshots', async () => {
     setup('game-uuid', { ...editGame, rawgId: null });
     await component.ngOnInit();

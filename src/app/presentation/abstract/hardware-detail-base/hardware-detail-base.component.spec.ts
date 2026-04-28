@@ -112,6 +112,7 @@ describe('HardwareDetailBaseComponent', () => {
     mockModelUseCases.getById.mockResolvedValue(undefined);
     mockEditionUseCases.getById.mockResolvedValue(undefined);
     mockUserContext.requireUserId.mockReturnValue('user-1');
+    mockUserContext.userId.mockReturnValue('user-1');
 
     TestBed.configureTestingModule({
       imports: [TestHardwareDetailComponent],
@@ -330,6 +331,16 @@ describe('HardwareDetailBaseComponent', () => {
   });
 
   describe('_loadItemWithCatalog', () => {
+    it('retorna sin cargar cuando userId es null', async () => {
+      const fetchSpy = vi.spyOn(component as any, '_fetchItem');
+      mockUserContext.userId.mockReturnValue(null);
+
+      await (component as any)._loadItemWithCatalog('item-123');
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
+
     it('carga el ítem, llama a _loadBrandModelEdition y desactiva loading en caso de éxito', async () => {
       const item = makeItem({ brandId: 'brand-1', modelId: 'model-1', editionId: null });
       component.fetchResult = item;

@@ -66,6 +66,7 @@ describe('HardwareFormBaseComponent', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUserContext.userId.mockReturnValue('user-1');
     TestBed.configureTestingModule({
       imports: [TestHardwareFormComponent, ReactiveFormsModule],
       providers: [
@@ -321,6 +322,15 @@ describe('HardwareFormBaseComponent', () => {
   // ─── _loadHardwareForEdit ─────────────────────────────────────────────────
 
   describe('_loadHardwareForEdit', () => {
+    it('devuelve null inmediatamente cuando userId es null', async () => {
+      mockUserContext.userId.mockReturnValue(null);
+
+      const result = await (component as any)._loadHardwareForEdit('item-1');
+
+      expect(result).toBeNull();
+      expect(component.loading()).toBe(false);
+    });
+
     it('devuelve el item cuando _fetchHardware resuelve con un objeto', async () => {
       const item = { id: 'item-1', name: 'Test Item' };
       component.fetchHardwareResult = item;
