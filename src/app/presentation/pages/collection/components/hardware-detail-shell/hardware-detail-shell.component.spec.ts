@@ -44,7 +44,15 @@ function makeBrand(overrides: Partial<HardwareBrandModel> = {}): HardwareBrandMo
 }
 
 function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelModel {
-  return { id: 'model-1', name: 'PlayStation 5', brandId: 'brand-1', type: 'console', generation: null, ...overrides };
+  return {
+    id: 'model-1',
+    name: 'PlayStation 5',
+    brandId: 'brand-1',
+    type: 'console',
+    generation: null,
+    category: null,
+    ...overrides
+  };
 }
 
 function makeEdition(overrides: Partial<HardwareEditionModel> = {}): HardwareEditionModel {

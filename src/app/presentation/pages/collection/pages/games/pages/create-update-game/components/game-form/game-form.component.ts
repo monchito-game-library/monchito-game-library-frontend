@@ -52,7 +52,7 @@ import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-di
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { selectOneValidator } from '@/shared/validators/validators';
+import { DirtyErrorStateMatcher, ratingStepValidator, selectOneValidator } from '@/shared/validators/validators';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { AvailableConditionInterface } from '@/interfaces/available-condition.interface';
@@ -141,6 +141,9 @@ export class GameFormComponent implements OnInit {
   /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
+  /** Shows mat-error while typing (dirty), without waiting for blur. */
+  readonly dirtyMatcher = new DirtyErrorStateMatcher();
+
   /** Reactive form for creating or editing a game entry. */
   readonly form = this._fb.group({
     title: ['', Validators.required],
@@ -154,10 +157,9 @@ export class GameFormComponent implements OnInit {
       ]
     ],
     condition: 'new' as GameConditionType,
-    platinum: false,
     description: '',
     status: ['backlog' as GameStatus],
-    personal_rating: [null as number | null, [Validators.min(0), Validators.max(10)]],
+    personal_rating: [null as number | null, [Validators.min(0), Validators.max(10), ratingStepValidator]],
     edition: [null as string | null],
     format: ['physical' as GameFormatType | null],
     is_favorite: [false]
@@ -339,7 +341,6 @@ export class GameFormComponent implements OnInit {
             store: game.store,
             platform: game.platform,
             condition: game.condition,
-            platinum: game.platinum,
             description: game.description,
             status: game.status,
             personal_rating: game.personalRating,
@@ -417,7 +418,6 @@ export class GameFormComponent implements OnInit {
         store: raw.store ?? null,
         platform: raw.platform ?? null,
         condition: raw.condition ?? 'new',
-        platinum: raw.platinum ?? false,
         description: (raw.description ?? '').trim(),
         status: raw.status ?? 'backlog',
         personalRating: raw.personal_rating ?? null,

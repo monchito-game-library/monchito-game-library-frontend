@@ -55,7 +55,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     let all: UserGameListDto[] = [];
     let from = 0;
     const select =
-      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
 
     while (true) {
       const { data, error } = await this._supabase
@@ -205,7 +205,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     const { data, error } = await this._supabase
       .from(this._viewName)
       .select(
-        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,platinum,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at'
+        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at'
       )
       .eq('user_id', userId)
       .eq('id', uuid)
@@ -223,7 +223,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    */
   async getSoldGames(userId: string): Promise<GameListModel[]> {
     const select =
-      'id,title,price,store,user_platform,platinum,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
 
     const { data, error } = await this._supabase
       .from(this._viewName)

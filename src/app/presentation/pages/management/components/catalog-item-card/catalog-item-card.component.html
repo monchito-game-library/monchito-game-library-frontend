@@ -1,4 +1,11 @@
-<mat-icon class="catalog-item-card__icon">{{ icon() }}</mat-icon>
+@if (svgIcon()) {
+  <span
+    class="catalog-item-card__icon catalog-item-card__icon--svg"
+    [style.mask-image]="'url(' + svgIcon() + ')'"
+    aria-hidden="true"></span>
+} @else {
+  <mat-icon class="catalog-item-card__icon">{{ icon() }}</mat-icon>
+}
 
 <div class="catalog-item-card__info">
   <span class="catalog-item-card__name">{{ name() }}</span>

@@ -158,14 +158,14 @@ describe('HardwareFormBaseComponent', () => {
 
     it('devuelve el nombre del modelo cuando el id coincide', () => {
       component.models.set([
-        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null }
+        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null, category: null }
       ]);
       expect(component.displayModelLabel('model-1')).toBe('Model One');
     });
 
     it('devuelve cadena vacía cuando el id no coincide con ningún modelo', () => {
       component.models.set([
-        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null }
+        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null, category: null }
       ]);
       expect(component.displayModelLabel('unknown-id')).toBe('');
     });
@@ -185,7 +185,7 @@ describe('HardwareFormBaseComponent', () => {
   describe('onBrandChange', () => {
     it('con brandId null: resetea modelId y editionId, limpia models y editions y no llama a _loadModels', async () => {
       component.models.set([
-        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null }
+        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null, category: null }
       ]);
       component.editions.set([{ id: 'edition-1', modelId: 'model-1', name: 'Edition One' }]);
       component.form.controls.modelId.setValue('model-1');
@@ -288,7 +288,9 @@ describe('HardwareFormBaseComponent', () => {
 
   describe('_loadModels', () => {
     it('establece los modelos en la señal cuando la llamada es exitosa', async () => {
-      const models = [{ id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null }];
+      const models = [
+        { id: 'model-1', brandId: 'brand-1', name: 'Model One', type: 'console', generation: null, category: null }
+      ];
       mockModelUseCases.getAllByBrand.mockResolvedValue(models);
 
       await (component as any)._loadModels('brand-1');
@@ -298,8 +300,15 @@ describe('HardwareFormBaseComponent', () => {
 
     it('filtra los modelos por _hardwareModelType y excluye los de otro tipo', async () => {
       const models = [
-        { id: 'model-1', brandId: 'brand-1', name: 'Console Model', type: 'console', generation: null },
-        { id: 'model-2', brandId: 'brand-1', name: 'Controller Model', type: 'controller', generation: null }
+        { id: 'model-1', brandId: 'brand-1', name: 'Console Model', type: 'console', generation: null, category: null },
+        {
+          id: 'model-2',
+          brandId: 'brand-1',
+          name: 'Controller Model',
+          type: 'controller',
+          generation: null,
+          category: null
+        }
       ];
       mockModelUseCases.getAllByBrand.mockResolvedValue(models);
 
@@ -307,7 +316,7 @@ describe('HardwareFormBaseComponent', () => {
 
       // TestHardwareFormComponent tiene _hardwareModelType = 'console'
       expect(component.models()).toEqual([
-        { id: 'model-1', brandId: 'brand-1', name: 'Console Model', type: 'console', generation: null }
+        { id: 'model-1', brandId: 'brand-1', name: 'Console Model', type: 'console', generation: null, category: null }
       ]);
     });
 

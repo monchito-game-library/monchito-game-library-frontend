@@ -1,3 +1,22 @@
+import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+
+/**
+ * Shows mat-error as soon as the control is dirty (while typing),
+ * without waiting for blur/touched.
+ */
+export class DirtyErrorStateMatcher implements ErrorStateMatcher {
+  /**
+   * Returns true when the control is invalid and has been modified (dirty) or blurred (touched).
+   *
+   * @param {FormControl | null} control - The form control to evaluate.
+   * @param {FormGroupDirective | NgForm | null} _form - The parent form (unused).
+   */
+  isErrorState(control: FormControl | null, _form: FormGroupDirective | NgForm | null): boolean {
+    return !!(control?.invalid && (control.dirty || control.touched));
+  }
+}
+
 /**
  * Returns a validator that checks whether the control's value is one of the
  * allowed options. Useful for select fields backed by a fixed set of values.
@@ -17,6 +36,20 @@ export function selectOneValidator<T>(allowed: readonly T[]): (control: { value:
   return (control) => {
     return allowed.includes(control.value) ? null : { invalidOption: true };
   };
+}
+
+/**
+ * Validates that the control's value has at most one decimal place (step 0.1).
+ * Returns `null` when valid or the value is null, `{ invalidStep: true }` otherwise.
+ *
+ * @example
+ * new FormControl<number | null>(null, ratingStepValidator)
+ */
+export function ratingStepValidator(control: { value: number | null }): null | { invalidStep: true } {
+  const val = control.value;
+  if (val === null) return null;
+  const decimals = (val.toString().split('.')[1] ?? '').length;
+  return decimals <= 1 ? null : { invalidStep: true };
 }
 
 /**

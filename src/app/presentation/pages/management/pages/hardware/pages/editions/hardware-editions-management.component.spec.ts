@@ -23,6 +23,7 @@ function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelMo
     name: 'PlayStation 5',
     type: 'console',
     generation: 9,
+    category: null,
     ...overrides
   };
 }

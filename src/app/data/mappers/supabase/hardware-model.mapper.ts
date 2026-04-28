@@ -1,5 +1,6 @@
 import { HardwareModelDto, HardwareModelInsertDto } from '@/dtos/supabase/hardware-model.dto';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { ConsoleSpecsCategoryType } from '@/types/console-specs-category.type';
 import { HardwareModelType } from '@/types/hardware-model.type';
 
 /**
@@ -13,7 +14,8 @@ export function mapHardwareModel(dto: HardwareModelDto): HardwareModelModel {
     brandId: dto.brand_id,
     name: dto.name,
     type: dto.type as HardwareModelType,
-    generation: dto.generation ?? null
+    generation: dto.generation ?? null,
+    category: (dto.hardware_console_specs?.category ?? null) as ConsoleSpecsCategoryType | null
   };
 }
 

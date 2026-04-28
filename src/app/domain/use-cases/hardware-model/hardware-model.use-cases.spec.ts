@@ -21,7 +21,8 @@ const modelModel = {
   brandId: 'brand-1',
   name: 'PlayStation 5',
   type: 'console' as const,
-  generation: 9
+  generation: 9,
+  category: null
 };
 
 describe('HardwareModelUseCasesImpl', () => {
@@ -64,7 +65,13 @@ describe('HardwareModelUseCasesImpl', () => {
 
   it('create delega en repo.create con los parámetros correctos', async () => {
     vi.mocked(mockRepo.create).mockResolvedValue(modelModel);
-    const input = { brandId: 'brand-1', name: 'PlayStation 5', type: 'console' as const, generation: null };
+    const input = {
+      brandId: 'brand-1',
+      name: 'PlayStation 5',
+      type: 'console' as const,
+      generation: null,
+      category: null as null
+    };
 
     const result = await useCases.create(input);
 

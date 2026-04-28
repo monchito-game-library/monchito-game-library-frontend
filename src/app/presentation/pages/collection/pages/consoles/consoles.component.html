@@ -17,8 +17,12 @@
   (detailClick)="onDetail($any($event))">
 </app-hardware-list-shell>
 
-<ng-template #cardHeaderTpl>
-  <mat-icon class="hw-list__card-icon">tv</mat-icon>
+<ng-template #cardHeaderTpl let-console>
+  @if (resolveCategory(console.modelId) === 'portable') {
+    <span class="hw-list__card-icon hw-list__card-icon--handheld" aria-hidden="true"></span>
+  } @else {
+    <span class="hw-list__card-icon hw-list__card-icon--home" aria-hidden="true"></span>
+  }
 </ng-template>
 
 <ng-template #cardChipsTpl let-console>

@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { GameListModel } from '@/models/game/game-list.model';
-import { defaultGameCover, imagePlatinumPath, imageTrophyHiddenPath } from '@/constants/game-library.constant';
+import { defaultGameCover } from '@/constants/game-library.constant';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { GameCardComponent } from './game-card.component';
 
@@ -19,7 +19,6 @@ const mockGame: GameListModel = {
   price: 59.99,
   store: 'GAME',
   platform: 'PS5',
-  platinum: false,
   description: '',
   imageUrl: 'https://example.com/gow.jpg',
   status: 'playing',
@@ -66,50 +65,6 @@ describe('GameCardComponent — computed signals', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('game', mockGame);
     fixture.detectChanges();
-  });
-
-  describe('ratingStars', () => {
-    it('devuelve 4 estrellas para rating 8', () => {
-      expect(component.ratingStars()).toHaveLength(4);
-    });
-
-    it('devuelve 5 estrellas para rating 10', () => {
-      const fixture2 = TestBed.createComponent(GameCardComponent);
-      fixture2.componentRef.setInput('game', { ...mockGame, personalRating: 10 });
-      fixture2.detectChanges();
-
-      expect(fixture2.componentInstance.ratingStars()).toHaveLength(5);
-    });
-
-    it('devuelve array vacío cuando personalRating es null', () => {
-      const fixture2 = TestBed.createComponent(GameCardComponent);
-      fixture2.componentRef.setInput('game', { ...mockGame, personalRating: null });
-      fixture2.detectChanges();
-
-      expect(fixture2.componentInstance.ratingStars()).toEqual([]);
-    });
-
-    it('redondea hacia abajo (rating 7 → 3 estrellas)', () => {
-      const fixture2 = TestBed.createComponent(GameCardComponent);
-      fixture2.componentRef.setInput('game', { ...mockGame, personalRating: 7 });
-      fixture2.detectChanges();
-
-      expect(fixture2.componentInstance.ratingStars()).toHaveLength(3);
-    });
-  });
-
-  describe('platinumIcon', () => {
-    it('devuelve la ruta del icono platinum cuando platinum es true', () => {
-      const fixture2 = TestBed.createComponent(GameCardComponent);
-      fixture2.componentRef.setInput('game', { ...mockGame, platinum: true });
-      fixture2.detectChanges();
-
-      expect(fixture2.componentInstance.platinumIcon()).toBe(imagePlatinumPath);
-    });
-
-    it('devuelve la ruta del trofeo oculto cuando platinum es false', () => {
-      expect(component.platinumIcon()).toBe(imageTrophyHiddenPath);
-    });
   });
 
   describe('isDigital', () => {
