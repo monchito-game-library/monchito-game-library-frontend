@@ -264,6 +264,25 @@ input[type='number'] {
   }
 }
 
+// ────────────────────────── Datepicker ──────────────────────────
+.mat-datepicker-content .mat-calendar-content {
+  padding: 0 1rem 1rem 1rem;
+}
+
+.mat-datepicker-toggle {
+  pointer-events: none;
+}
+
+.mat-mdc-form-field:has(.mat-datepicker-input[readonly]) {
+  .mat-mdc-text-field-wrapper {
+    cursor: pointer;
+  }
+}
+
+.mat-datepicker-input[readonly] {
+  cursor: pointer;
+}
+
 // ────────────────────────── Snackbar: mobile full-width ──────────────────────────
 @media (max-width: 600px) {
   .snack-mobile {

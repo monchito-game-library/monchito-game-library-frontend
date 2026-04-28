@@ -12,7 +12,7 @@ export interface ControllerFormValue {
   condition: GameConditionType;
   price: number | null;
   store: string | null;
-  purchaseDate: string | null;
+  purchaseDate: Date | null;
   notes: string | null;
 }
 
@@ -25,6 +25,6 @@ export interface ControllerForm {
   condition: FormControl<GameConditionType>;
   price: FormControl<number | null>;
   store: FormControl<string | null>;
-  purchaseDate: FormControl<string | null>;
+  purchaseDate: FormControl<Date | null>;
   notes: FormControl<string | null>;
 }
