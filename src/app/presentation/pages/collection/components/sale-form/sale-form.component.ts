@@ -16,7 +16,10 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+
+import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -28,7 +31,6 @@ import {
   SaleFormValue,
   SaleSoldValues
 } from '@/interfaces/forms/sale-form.interface';
-import { validDateValidator } from '@/shared/validators/validators';
 
 @Component({
   selector: 'app-sale-form',
@@ -46,6 +48,10 @@ import { validDateValidator } from '@/shared/validators/validators';
     MatLabel,
     MatSuffix,
     MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    DatepickerFieldClickDirective,
     MatSlideToggle,
     MatDivider,
     TranslocoPipe
@@ -100,7 +106,7 @@ export class SaleFormComponent implements OnInit {
     forSale: new FormControl<boolean>(false, { nonNullable: true }),
     salePrice: new FormControl<number | null>(null),
     soldPriceFinal: new FormControl<number | null>(null),
-    soldAt: new FormControl<string | null>(null, validDateValidator)
+    soldAt: new FormControl<Date | null>(null)
   });
 
   ngOnInit(): void {
@@ -109,7 +115,7 @@ export class SaleFormComponent implements OnInit {
       forSale: v.forSale,
       salePrice: v.salePrice,
       soldPriceFinal: v.soldPriceFinal,
-      soldAt: v.soldAt
+      soldAt: v.soldAt ? new Date(v.soldAt + 'T00:00:00') : null
     });
   }
 
@@ -125,9 +131,8 @@ export class SaleFormComponent implements OnInit {
    */
   get canMarkAsSold(): boolean {
     const { soldPriceFinal, soldAt }: SaleFormValue = this.form.getRawValue();
-    return (
-      soldPriceFinal !== null && soldPriceFinal > 0 && !!soldAt && !this.form.controls.soldAt.hasError('invalidDate')
-    );
+    const isValidDate = soldAt instanceof Date && !isNaN(soldAt.getTime());
+    return soldPriceFinal !== null && soldPriceFinal > 0 && isValidDate;
   }
 
   /**
@@ -174,7 +179,7 @@ export class SaleFormComponent implements OnInit {
     if (!this.canMarkAsSold) return;
     const raw: SaleFormValue = this.form.getRawValue();
     const values: SaleSoldValues = {
-      soldAt: raw.soldAt,
+      soldAt: raw.soldAt ? raw.soldAt.toLocaleDateString('sv-SE') : null,
       soldPriceFinal: raw.soldPriceFinal
     };
 

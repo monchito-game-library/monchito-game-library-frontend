@@ -16,10 +16,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -39,7 +42,21 @@ export type { HardwareLoanItem };
   styleUrl: './hardware-loan-form.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatButton, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, TranslocoPipe]
+  imports: [
+    ReactiveFormsModule,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatSuffix,
+    MatInput,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    DatepickerFieldClickDirective,
+    TranslocoPipe
+  ]
 })
 export class HardwareLoanFormComponent implements OnInit {
   private readonly _consoleUseCases: ConsoleUseCasesContract | null = inject(CONSOLE_USE_CASES, { optional: true });
@@ -71,17 +88,17 @@ export class HardwareLoanFormComponent implements OnInit {
   /** Whether the item currently has an active loan. */
   readonly isLoaned: Signal<boolean> = computed(() => this.item().activeLoanId !== null);
 
-  /** Today's date in YYYY-MM-DD format, used as default for the loan date. */
-  readonly todayIso: string = new Date().toISOString().slice(0, 10);
+  /** Today's date, used as default for the loan date. */
+  readonly today: Date = new Date();
 
   /** Reactive form for the loan fields. */
   readonly form: FormGroup<HardwareLoanForm> = new FormGroup<HardwareLoanForm>({
     loanedTo: new FormControl<string | null>(null, Validators.required),
-    loanedAt: new FormControl<string | null>(null, Validators.required)
+    loanedAt: new FormControl<Date | null>(null, Validators.required)
   });
 
   ngOnInit(): void {
-    this.form.patchValue({ loanedAt: this.todayIso });
+    this.form.patchValue({ loanedAt: this.today });
   }
 
   /**
@@ -107,7 +124,7 @@ export class HardwareLoanFormComponent implements OnInit {
       userItemId: it.id,
       itemType: this.itemType(),
       loanedTo: raw.loanedTo!,
-      loanedAt: raw.loanedAt!
+      loanedAt: raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''
     };
 
     this.saving.set(true);
