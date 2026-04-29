@@ -702,9 +702,44 @@
       "roleMember": "Miembro",
       "roleAdmin": "Administrador",
       "roleOwner": "Propietario",
-      "changeRoleConfirm": "¿Cambiar el rol de «{{ name }}» a {{ role }}?",
       "changeRoleSuccess": "Rol actualizado correctamente.",
-      "changeRoleError": "No se pudo actualizar el rol."
+      "changeRoleError": "No se pudo actualizar el rol.",
+      "empty": "Sin usuarios para el filtro seleccionado.",
+      "registered": "Registrado {{ ago }}",
+      "hero": {
+        "aria": "Tu cuenta como propietario",
+        "eyebrow": "Tu cuenta",
+        "subtitle": "Único usuario que puede gestionar roles",
+        "registered": "Registrado {{ ago }}"
+      },
+      "stats": {
+        "aria": "Resumen de usuarios",
+        "total": "Total",
+        "admins": "Administradores",
+        "members": "Miembros"
+      },
+      "filter": {
+        "aria": "Filtrar por rol",
+        "all": "Todos",
+        "admins": "Administradores",
+        "members": "Miembros"
+      },
+      "section": {
+        "admins": "Administradores",
+        "members": "Miembros"
+      },
+      "action": {
+        "promote": "Hacer admin",
+        "demote": "Quitar admin"
+      },
+      "promote": {
+        "title": "Promocionar a admin",
+        "message": "¿Quieres dar permisos de administrador a {{ email }}?"
+      },
+      "demote": {
+        "title": "Quitar permisos de admin",
+        "message": "¿Quieres retirar los permisos de administrador a {{ email }}?"
+      }
     }
   },
   "gameDetail": {

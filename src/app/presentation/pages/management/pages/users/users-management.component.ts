@@ -1,14 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { MatButton } from '@angular/material/button';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { firstValueFrom } from 'rxjs';
+
+import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 
 import {
   USER_ADMIN_USE_CASES,
@@ -18,9 +30,11 @@ import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
 } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
-import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserAdminModel } from '@/models/user-admin/user-admin.model';
 import { UserRoleType } from '@/types/user-role.type';
+import { RoleFilterType } from '@/types/role-filter.type';
+import { UserStatsInterface } from '@/interfaces/management/user-stats.interface';
+import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
 
 @Component({
   selector: 'app-users-management',
@@ -28,39 +42,135 @@ import { UserRoleType } from '@/types/user-role.type';
   styleUrl: './users-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, MatSelect, MatOption, TranslocoPipe, NgOptimizedImage, SkeletonComponent]
+  imports: [MatIcon, MatProgressSpinner, MatButton, TranslocoPipe, NgOptimizedImage, SkeletonComponent]
 })
 export class UsersManagementComponent implements OnInit {
   private readonly _userAdminUseCases: UserAdminUseCasesContract = inject(USER_ADMIN_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
-  private readonly _userContext: UserContextService = inject(UserContextService);
+  private readonly _dialog: MatDialog = inject(MatDialog);
 
   /** Whether the user list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
 
-  /** Whether a role change is in progress (tracks user ID currently being updated). */
+  /** ID of the user whose role is currently being updated, or null when idle. */
   readonly updatingUserId: WritableSignal<string | null> = signal(null);
 
-  /** All registered users with their current role. */
+  /** All registered users with their current role, as returned by the RPC. */
   readonly users: WritableSignal<UserAdminModel[]> = signal([]);
 
-  /** Role options selectable from the UI — `owner` is excluded (assigned manually in Supabase). */
-  readonly roles: UserRoleType[] = ['member', 'admin'];
+  /** Active role filter applied to the lists. */
+  readonly activeFilter: WritableSignal<RoleFilterType> = signal('all');
+
+  /** Available filter chips shown in the toolbar. */
+  readonly filters: ReadonlyArray<{ id: RoleFilterType; labelKey: string }> = [
+    { id: 'all', labelKey: 'management.users.filter.all' },
+    { id: 'admin', labelKey: 'management.users.filter.admins' },
+    { id: 'member', labelKey: 'management.users.filter.members' }
+  ];
+
+  /** Owner row extracted from the loaded users — rendered as hero, never in the list. */
+  readonly ownerUser: Signal<UserAdminModel | null> = computed((): UserAdminModel | null => {
+    return this.users().find((user) => user.role === 'owner') ?? null;
+  });
+
+  /** All admins, ordered by registration date (oldest first → most senior first). */
+  readonly admins: Signal<UserAdminModel[]> = computed((): UserAdminModel[] => {
+    return this.users()
+      .filter((user) => user.role === 'admin')
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  });
+
+  /** All members, ordered by registration date (newest first → most recent on top). */
+  readonly members: Signal<UserAdminModel[]> = computed((): UserAdminModel[] => {
+    return this.users()
+      .filter((user) => user.role === 'member')
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  });
+
+  /** Aggregated counters shown in the stats strip (excludes the owner row). */
+  readonly stats: Signal<UserStatsInterface> = computed((): UserStatsInterface => {
+    const adminCount = this.admins().length;
+    const memberCount = this.members().length;
+    return { total: adminCount + memberCount, admins: adminCount, members: memberCount };
+  });
+
+  /** Admins visible after applying the active filter. */
+  readonly visibleAdmins: Signal<UserAdminModel[]> = computed((): UserAdminModel[] => {
+    return this.activeFilter() === 'member' ? [] : this.admins();
+  });
+
+  /** Members visible after applying the active filter. */
+  readonly visibleMembers: Signal<UserAdminModel[]> = computed((): UserAdminModel[] => {
+    return this.activeFilter() === 'admin' ? [] : this.members();
+  });
+
+  /** True when the active filter leaves both sections empty (used to render an empty state). */
+  readonly hasNoVisibleUsers: Signal<boolean> = computed((): boolean => {
+    return this.visibleAdmins().length === 0 && this.visibleMembers().length === 0;
+  });
 
   async ngOnInit(): Promise<void> {
     await this._loadUsers();
   }
 
   /**
-   * Changes the role of a user and reloads the list on success.
+   * Switches the active filter to the given value.
    *
-   * @param {UserAdminModel} user - The user to update
-   * @param {UserRoleType} newRole - The new role to assign
+   * @param {RoleFilterType} filter - Filter to apply
    */
-  async onRoleChange(user: UserAdminModel, newRole: UserRoleType): Promise<void> {
-    if (newRole === user.role) return;
+  onFilterChange(filter: RoleFilterType): void {
+    this.activeFilter.set(filter);
+  }
+
+  /**
+   * Opens a confirmation dialog and toggles the user's role between member and admin.
+   *
+   * @param {UserAdminModel} user - The user whose role will be toggled
+   */
+  async onTogglePromotion(user: UserAdminModel): Promise<void> {
+    if (user.role === 'owner') return;
+    const newRole: UserRoleType = user.role === 'admin' ? 'member' : 'admin';
+    const titleKey = newRole === 'admin' ? 'management.users.promote.title' : 'management.users.demote.title';
+    const messageKey = newRole === 'admin' ? 'management.users.promote.message' : 'management.users.demote.message';
+
+    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this._transloco.translate(titleKey),
+        message: this._transloco.translate(messageKey, { email: user.email })
+      } satisfies ConfirmDialogInterface
+    });
+
+    const confirmed: boolean = await firstValueFrom(dialogRef.afterClosed());
+    if (!confirmed) return;
+    await this._applyRoleChange(user, newRole);
+  }
+
+  /**
+   * Returns a localized "registered X ago" string for the given user.
+   *
+   * @param {UserAdminModel} user - User whose registration date is formatted
+   */
+  getRegistrationLabel(user: UserAdminModel): string {
+    const lang = (this._transloco.getActiveLang() === 'en' ? 'en' : 'es') as 'es' | 'en';
+    return formatRelativeTime(user.createdAt, lang);
+  }
+
+  /**
+   * Returns the localized label for the owner badge.
+   */
+  getOwnerLabel(): string {
+    return this._transloco.translate('management.users.roleOwner');
+  }
+
+  /**
+   * Performs the role change against the use case, updates local state and shows a snackbar.
+   *
+   * @param {UserAdminModel} user - User being updated
+   * @param {UserRoleType} newRole - Target role to assign
+   */
+  private async _applyRoleChange(user: UserAdminModel, newRole: UserRoleType): Promise<void> {
     this.updatingUserId.set(user.userId);
     try {
       await this._userAdminUseCases.setUserRole(user.userId, newRole);
@@ -69,7 +179,7 @@ export class UsersManagementComponent implements OnInit {
         action: 'user.role_change',
         entityType: 'user',
         entityId: user.userId,
-        description: `${user.email}: ${this.getRoleLabel(user.role)} → ${this.getRoleLabel(newRole)}`
+        description: `${user.email}: ${user.role} → ${newRole}`
       });
       this._snackBar.open(this._transloco.translate('management.users.changeRoleSuccess'), '', {
         duration: 3000,
@@ -83,24 +193,6 @@ export class UsersManagementComponent implements OnInit {
     } finally {
       this.updatingUserId.set(null);
     }
-  }
-
-  /**
-   * Returns the display name for a role.
-   *
-   * @param {UserRoleType} role - Role to resolve
-   */
-  getRoleLabel(role: UserRoleType): string {
-    return this._transloco.translate(`management.users.role${role.charAt(0).toUpperCase() + role.slice(1)}`);
-  }
-
-  /**
-   * Returns whether a user row belongs to the currently authenticated admin.
-   *
-   * @param {string} userId - User ID to check
-   */
-  isCurrentUser(userId: string): boolean {
-    return this._userContext.userId() === userId;
   }
 
   /**
