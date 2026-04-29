@@ -37,12 +37,12 @@ describe('SupabaseUserAdminRepository', () => {
       expect(result[0].role).toBe('admin');
     });
 
-    it('usa "user" como rol por defecto cuando role es null', async () => {
+    it('usa "member" como rol por defecto cuando role es null', async () => {
       mockSupabase.rpc.mockResolvedValue({ data: [{ ...userRow, role: null }], error: null });
 
       const result = await repo.getAllUsers();
 
-      expect(result[0].role).toBe('user');
+      expect(result[0].role).toBe('member');
     });
 
     it('lanza el error cuando el RPC falla', async () => {
@@ -69,7 +69,7 @@ describe('SupabaseUserAdminRepository', () => {
       const dbError = new Error('Forbidden');
       mockSupabase.rpc.mockResolvedValue({ error: dbError });
 
-      await expect(repo.setUserRole('u-1', 'user')).rejects.toThrow('Forbidden');
+      await expect(repo.setUserRole('u-1', 'member')).rejects.toThrow('Forbidden');
     });
   });
 });

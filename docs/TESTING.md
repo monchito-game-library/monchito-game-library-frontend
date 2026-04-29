@@ -109,9 +109,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
 | `supabase-protector.repository.spec.ts` | 16 | ✅ Cubierto |
 | `supabase-store.repository.spec.ts` | 9 | ✅ Cubierto |
+| `supabase-order.repository.spec.ts` | 39 | ✅ Cubierto |
 | `supabase-user-admin.repository.spec.ts` | 5 | ✅ Cubierto |
 | `supabase-wishlist.repository.spec.ts` | 14 | ✅ Cubierto |
-| `supabase-order.repository.spec.ts` | — | ⏳ Pendiente |
 
 **Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada. Console y controller cubren además `updateSaleStatus` (payload y manejo de error), `createLoan` (insert a `hardware_loans` + update en tabla principal, rama de error) y `returnLoan` (Promise.all con `returned_at` y limpieza de campos `active_loan_*`). Los repositorios de hardware (brand, edition, model, console-specs) cubren el CRUD básico con builder fluido.
 
@@ -123,12 +123,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `admin/admin.guard.spec.ts` | 4 | ✅ Cubierto |
+| `admin/admin.guard.spec.ts` | 5 | ✅ Cubierto |
 | `desktop-only/desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
+| `owner/owner.guard.spec.ts` | 5 | ✅ Cubierto |
 | `user/user.guard.spec.ts` | 4 | ✅ Cubierto |
 | `public/public.guard.spec.ts` | 7 | ✅ Cubierto |
 
-**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px. `canActivatePublic` cubre la redirección a `/collection` cuando el usuario ya está autenticado (loading=false y loading=true→false).
+**Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px. `canActivatePublic` cubre la redirección a `/collection` cuando el usuario ya está autenticado (loading=false y loading=true→false). `canActivateOwner` cubre los caminos sincrónico y asíncrono (preferences cargadas vs en proceso) para los tres roles posibles (`owner`, `admin`, `member`), redirigiendo a `/management` cuando el usuario no es owner.
 
 ---
 
@@ -142,13 +143,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `theme/theme.service.spec.ts` | 8 | ✅ Cubierto |
 | `user-context/user-context.service.spec.ts` | 13 | ✅ Cubierto |
 | `user-preferences-init/user-preferences-init.service.spec.ts` | 16 | ✅ Cubierto |
-| `user-preferences/user-preferences.service.spec.ts` | 11 | ✅ Cubierto |
+| `user-preferences/user-preferences.service.spec.ts` | 15 | ✅ Cubierto |
 
 **Qué se cubre**:
 - `ThemeService`: señal `isDarkMode`, métodos `setDarkTheme`/`setLightTheme`/`initTheme`.
 - `AuthStateService`: estado inicial, resolución asíncrona de sesión, `onAuthStateChange` y navegación al logout.
 - `UserContextService`: delegación a `AuthStateService`, URL de fallback de avatar (ui-avatars.com).
-- `UserPreferencesService`: valores iniciales de todos los signals, computed `isAdmin`, mutabilidad con `set()`.
+- `UserPreferencesService`: valores iniciales de todos los signals, computed `isAdmin` (member/admin/owner) e `isOwner`, mutabilidad con `set()`.
 - `UserPreferencesInitService`: inicialización de preferencias desde Supabase, valores por defecto cuando no existe registro.
 - `RawgSearchStateService`: valores iniciales de `rawgSearchResults`, `rawgSearchLoading` y `rawgSearchQuery`.
 - `PwaUpdateService`: `checkForUpdate` en init y visibilitychange, detección de `VERSION_READY`, overlay en rutas seguras, diferimiento en rutas de formulario hasta la siguiente navegación segura.
@@ -193,6 +194,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Fichero | Tests | Estado |
 |---|---|---|
 | `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
+| `pages/auth/components/auth-panel/auth-panel.component.spec.ts` | 1 | ✅ Cubierto |
 | `pages/auth/pages/forgot-password/forgot-password.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/auth/pages/login/login.component.spec.ts` | 19 | ✅ Cubierto |
 | `pages/auth/pages/register/register.component.spec.ts` | 22 | ✅ Cubierto |
@@ -230,7 +232,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `pages/management/management.component.spec.ts` | 3 | ✅ Cubierto |
+| `pages/management/management.component.spec.ts` | 6 | ✅ Cubierto |
 | `pages/management/components/catalog-item-card/catalog-item-card.component.spec.ts` | 13 | ✅ Cubierto |
 | `pages/management/pages/audit-log/audit-log-management.component.spec.ts` | 7 | ✅ Cubierto |
 | `pages/management/pages/hardware/hardware-management.component.spec.ts` | 2 | ✅ Cubierto |
@@ -244,7 +246,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/management/pages/protectors/protectors-management.component.spec.ts` | 22 | ✅ Cubierto |
 | `pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
 | `pages/management/pages/stores/stores-management.component.spec.ts` | 19 | ✅ Cubierto |
-| `pages/management/pages/users/users-management.component.spec.ts` | 16 | ✅ Cubierto |
+| `pages/management/pages/users/users-management.component.spec.ts` | 30 | ✅ Cubierto |
 
 #### Pedidos (`pages/orders`)
 
@@ -298,12 +300,12 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `GameFormComponent`: valores iniciales, `coverImages`, `openSearchMode`/`closeSearchMode`, `selectGameFromSearch`, `clearSelectedGame`, `filteredStores`, modo edición con/sin `rawgId`, efecto de re-sincronización de store, `onCancel`, `hasChanges`.
 - `GameLoanFormComponent`: `isLoaned`, `ngOnInit` (parche de fecha), `onCancel`, `onLoan` (validación, `createLoan`, señal `saving`, emisión de `saved`, snackbar éxito/error), `onReturn` (guard de `activeLoanId`, `returnLoan`, emisión y snackbar).
 - `GameDetailComponent`: `ngOnInit` (carga en paralelo, loading, redirección si null, error con snackbar), `goBack`, `editGame`, `deleteGame`; señales `coverUrl`, `gameStatus`, `storeName`, `formatKey`, `conditionKey`, `ratingStars`, `hasHalfStar`; `showSaleForm`/`showLoanForm` (toggle y desactivación cruzada), `onSaleFormClosed`, `onLoanFormClosed`; `onMarkForSale`, `onCancelSale`, `onSold` (incluyendo rama de error y `soldPriceFinal` null).
-- `ManagementComponent` / `AuditLogManagementComponent` / `HardwareManagementComponent`: existencia, `getActionIcon`, `getActionLabel`.
+- `ManagementComponent`: filtra la entrada `users` del sidebar según `isOwner` (4 secciones para no-owner, 5 para owner). `AuditLogManagementComponent` / `HardwareManagementComponent`: existencia, `getActionIcon`, `getActionLabel`.
 - `HardwareBrandEditPanel` / `HardwareEditionEditPanel` / `HardwareModelEditPanel` / `ProtectorEditPanel` / `StoreEditPanel`: paneles de edición inline con formulario y guardado.
 - `HardwareBrandsManagementComponent` / `HardwareEditionsManagementComponent` / `HardwareModelsManagementComponent`: listados de gestión con CRUD.
 - `ProtectorsManagementComponent`: valores iniciales, `onAddProtector`, `onSelectProtector`, `onClosePanel`, `getCategoryLabel`, `getMinUnitPrice`, `onDeleteProtector` (éxito y error).
 - `StoresManagementComponent`: valores iniciales, `onAddStore`, `onSelectStore`, `onClosePanel`, `getFormatHintLabel`.
-- `UsersManagementComponent`: valores iniciales, `isCurrentUser`, `getRoleLabel`, `onRoleChange` (skip si mismo rol).
+- `UsersManagementComponent`: valores iniciales (incluido `activeFilter='all'` y los 3 chips), computed `ownerUser`/`admins`/`members`/`stats`/`visibleAdmins`/`visibleMembers`/`hasNoVisibleUsers`; ordenación por antigüedad; filtros (todos/admins/members) incluyendo el caso vacío; `onTogglePromotion` con confirmación (skip si owner, copy promote/demote, confirm/cancel del dialog, actualización local del rol, snackbar de error, reset de `updatingUserId`); `getRegistrationLabel` con locales `'es'` y `'en'`; `getOwnerLabel`; `_loadUsers` con éxito y error.
 - `CatalogItemCardComponent`: inputs y slots de contenido.
 - `OrdersComponent` (shell): valores iniciales, `onCreateOrder`, `onOpenOrder`, estado de `loading`.
 - `OrderSummaryCardComponent`: inputs básicos.
@@ -338,6 +340,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `order-member/order-member.util.spec.ts` | 19 | ✅ Cubierto |
 | `pack-optimizer/pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
 | `rawg-platform/rawg-platform.utils.spec.ts` | 12 | ✅ Cubierto |
+| `relative-time/relative-time.util.spec.ts` | 8 | ✅ Cubierto |
 | `validators/validators.spec.ts` | 22 | ✅ Cubierto |
 
 **Qué se cubre**:
@@ -345,6 +348,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 - `pack-optimizer.util`: `optimizePacks` (casos de borde, pack único, múltiples packs, deduplicación, límite de 3 sugerencias, orden del breakdown, redondeo de costes) y `formatBreakdown`.
 - `order-member.util`: `sortedMembers` (owner primero), `readyCount`, `allMembersReady`.
 - `rawg-platform.utils`: normalización de nombres de plataformas RAWG.
+- `relative-time.util`: `formatRelativeTime` con `Intl.RelativeTimeFormat`. Cubre cadenas vacías para fechas inválidas, los rangos segundos/minutos/horas/días/meses/años en español, y respeto al locale `'en'`.
 
 ---
 
@@ -365,14 +369,14 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Configuración | 1 | 3 |
 | Mappers | 13 | 190 |
 | Use Cases | 17 | 154 |
-| Repositorios | 16 (+1 pendiente) | 242 |
-| Guards | 4 | 19 |
-| Servicios | 7 | 86 |
+| Repositorios | 17 | 281 |
+| Guards | 5 | 25 |
+| Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 67 | ~1397 |
-| Utilidades | 7 | 86 |
-| **Total** | **139** | **2402** |
+| Componentes | 69 | 1434 |
+| Utilidades | 8 | 94 |
+| **Total** | **143** | **2477** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -382,10 +386,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.00 % (4656 / 4703) |
-| Branches | **95.18 %** (3005 / 3157) |
-| Functions | 98.97 % (1059 / 1070) |
-| Lines | 99.84 % (3849 / 3855) |
+| Statements | 99.03 % (4817 / 4864) |
+| Branches | **95.34 %** (3115 / 3267) |
+| Functions | 99.01 % (1102 / 1113) |
+| Lines | 99.84 % (3978 / 3984) |
 
 ```bash
 npm run test:coverage
@@ -393,7 +397,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.27 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.34 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -478,7 +482,6 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 |---|---|
 | Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
 | `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. |
-| `supabase-order.repository.ts` | Pendiente de spec. El repositorio se usa vía el contrato DI y los use cases lo mockean en sus tests. |
 | `supabase-console.repository.ts` / `supabase-controller.repository.ts` — segundo `await` dentro de `createLoan` | Tras crear el préstamo en `hardware_loans`, se actualiza la tabla principal con `active_loan_*`. Esta segunda llamada no lanza aunque falle (sin `if (error)` guard), por lo que no hay rama de error testable. Los assertions de `controllerBuilder.update` y `consoleBuilder.update` en `returnLoan` y `createLoan` verifican que se invoca, pero V8 marca la rama de rechazo de `Promise.all` como no cubierta porque no hay throw. |
 | `sale.component.ts` — línea 33 (`providers: [marketRepositoryProvider, marketUseCasesProvider]`) | La expresión del array de providers está en el `@Component` decorator. Angular Ivy la evalúa de forma diferida en la factory del componente; como el test reemplaza los providers con `TestBed.overrideComponent`, la expresión original nunca se ejecuta. Los providers conectan a Supabase y no se pueden instanciar en tests unitarios. |
 | `app.component.ts` — callback de `addEventListener('change', …)` en `_mobileQuery` | El listener se registra en `ngOnInit` pero solo se dispara cuando el viewport cambia de tamaño. En happy-dom, `window.matchMedia` devuelve un mock que no admite dispatch de `MediaQueryListEvent`. La función es un simple `this._isMobile.set(e.matches)` sin lógica propia. |

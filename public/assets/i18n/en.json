@@ -699,11 +699,47 @@
       "title": "Users",
       "loadError": "Failed to load users.",
       "roleLabel": "Role",
-      "roleUser": "User",
+      "roleMember": "Member",
       "roleAdmin": "Administrator",
-      "changeRoleConfirm": "Change the role of «{{ name }}» to {{ role }}?",
+      "roleOwner": "Owner",
       "changeRoleSuccess": "Role updated successfully.",
-      "changeRoleError": "Failed to update role."
+      "changeRoleError": "Failed to update role.",
+      "empty": "No users match the selected filter.",
+      "registered": "Registered {{ ago }}",
+      "hero": {
+        "aria": "Your owner account",
+        "eyebrow": "Your account",
+        "subtitle": "Only user who can manage roles",
+        "registered": "Registered {{ ago }}"
+      },
+      "stats": {
+        "aria": "Users summary",
+        "total": "Total",
+        "admins": "Administrators",
+        "members": "Members"
+      },
+      "filter": {
+        "aria": "Filter by role",
+        "all": "All",
+        "admins": "Administrators",
+        "members": "Members"
+      },
+      "section": {
+        "admins": "Administrators",
+        "members": "Members"
+      },
+      "action": {
+        "promote": "Make admin",
+        "demote": "Remove admin"
+      },
+      "promote": {
+        "title": "Promote to admin",
+        "message": "Do you want to grant administrator permissions to {{ email }}?"
+      },
+      "demote": {
+        "title": "Remove admin permissions",
+        "message": "Do you want to revoke administrator permissions from {{ email }}?"
+      }
     }
   },
   "gameDetail": {

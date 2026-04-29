@@ -7,6 +7,7 @@ const jsdoc = require('eslint-plugin-jsdoc');
 const cleanArchRule = require('./eslint-rules/clean-architecture-boundaries/index.js');
 const noInlineTypesRule = require('./eslint-rules/no-inline-types-in-layer/index.js');
 const noModuleConstRule = require('./eslint-rules/no-module-const-in-layer/index.js');
+const requireSpecFileRule = require('./eslint-rules/require-spec-file/index.js');
 
 // Angular lifecycle hooks that are exempt from the JSDoc requirement.
 const LIFECYCLE_HOOKS = [
@@ -41,7 +42,8 @@ module.exports = [
       jsdoc,
       'clean-arch': { rules: { boundaries: cleanArchRule } },
       'layer-types': { rules: { 'no-inline': noInlineTypesRule } },
-      'layer-consts': { rules: { 'no-module-const': noModuleConstRule } }
+      'layer-consts': { rules: { 'no-module-const': noModuleConstRule } },
+      'spec-coverage': { rules: { 'require-spec-file': requireSpecFileRule } }
     },
     rules: {
       '@angular-eslint/directive-selector': [
@@ -212,6 +214,14 @@ module.exports = [
           excludeFilePatterns: ['.spec.ts']
         }
       ],
+
+      // Requires a sibling .spec.ts file for every .ts file with testable
+      // behaviour (components, services, guards, repositories, use-cases,
+      // mappers, utils, directives, pipes, resolvers, abstract bases).
+      // Pure type/interface/DTO/model/contract/provider/route/config/module
+      // files, test helpers (.helpers., -mock.) and framework boilerplate
+      // (transloco-loader, main, polyfills, index barrels) are exempt.
+      'spec-coverage/require-spec-file': 'error',
 
       ...prettier.rules
     }

@@ -38,9 +38,9 @@ describe('mapUserPreferences', () => {
     expect(mapUserPreferences({ ...baseDto, banner_url: null }, 'u').bannerUrl).toBeNull();
   });
 
-  it('asigna role user por defecto cuando role es null', () => {
+  it('asigna role member por defecto cuando role es null', () => {
     const result = mapUserPreferences({ ...baseDto, role: null as unknown as string }, 'u');
-    expect(result.role).toBe('user');
+    expect(result.role).toBe('member');
   });
 });
 
@@ -51,7 +51,7 @@ describe('mapUserPreferencesToInsertDto', () => {
     language: 'en',
     avatarUrl: 'https://example.com/avatar.jpg',
     bannerUrl: null,
-    role: 'user'
+    role: 'member'
   };
 
   it('mapea los campos básicos al DTO', () => {
