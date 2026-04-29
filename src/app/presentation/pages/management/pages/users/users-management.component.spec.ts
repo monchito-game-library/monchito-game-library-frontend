@@ -41,7 +41,8 @@ describe('UsersManagementComponent', () => {
     it('loading es false', () => expect(component.loading()).toBe(false));
     it('updatingUserId es null', () => expect(component.updatingUserId()).toBeNull());
     it('users es []', () => expect(component.users()).toEqual([]));
-    it('roles expone "user" y "admin"', () => expect(component.roles).toEqual(['user', 'admin']));
+    it('roles expone "member" y "admin" (owner se gestiona desde Supabase)', () =>
+      expect(component.roles).toEqual(['member', 'admin']));
   });
 
   describe('isCurrentUser', () => {
@@ -60,17 +61,22 @@ describe('UsersManagementComponent', () => {
       expect(mockTransloco.translate).toHaveBeenCalledWith('management.users.roleAdmin');
     });
 
-    it('delega en TranslocoService con la clave correcta para "user"', () => {
-      component.getRoleLabel('user');
-      expect(mockTransloco.translate).toHaveBeenCalledWith('management.users.roleUser');
+    it('delega en TranslocoService con la clave correcta para "member"', () => {
+      component.getRoleLabel('member');
+      expect(mockTransloco.translate).toHaveBeenCalledWith('management.users.roleMember');
+    });
+
+    it('delega en TranslocoService con la clave correcta para "owner"', () => {
+      component.getRoleLabel('owner');
+      expect(mockTransloco.translate).toHaveBeenCalledWith('management.users.roleOwner');
     });
   });
 
   describe('onRoleChange', () => {
     it('no llama a setUserRole si el rol no cambia', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
-      const user = { userId: 'user-2', role: 'user', email: 'test@example.com' } as any;
-      await component.onRoleChange(user, 'user');
+      const user = { userId: 'user-2', role: 'member', email: 'test@example.com' } as any;
+      await component.onRoleChange(user, 'member');
       expect(useCases.setUserRole).not.toHaveBeenCalled();
     });
 
@@ -78,7 +84,7 @@ describe('UsersManagementComponent', () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.setUserRole.mockResolvedValue(undefined);
       component.users.set([
-        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+        { userId: 'user-2', email: 'b@c.com', role: 'member', avatarUrl: null, displayName: null } as any
       ]);
 
       await component.onRoleChange(component.users()[0], 'admin');
@@ -93,7 +99,7 @@ describe('UsersManagementComponent', () => {
       useCases.setUserRole.mockResolvedValue(undefined);
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
       component.users.set([
-        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+        { userId: 'user-2', email: 'b@c.com', role: 'member', avatarUrl: null, displayName: null } as any
       ]);
 
       await component.onRoleChange(component.users()[0], 'admin');
@@ -106,7 +112,7 @@ describe('UsersManagementComponent', () => {
       useCases.setUserRole.mockRejectedValue(new Error('fail'));
       const snackBar = TestBed.inject(MatSnackBar as any) as any;
       component.users.set([
-        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any
+        { userId: 'user-2', email: 'b@c.com', role: 'member', avatarUrl: null, displayName: null } as any
       ]);
 
       await component.onRoleChange(component.users()[0], 'admin');
@@ -119,13 +125,13 @@ describe('UsersManagementComponent', () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.setUserRole.mockResolvedValue(undefined);
       component.users.set([
-        { userId: 'user-2', email: 'b@c.com', role: 'user', avatarUrl: null, displayName: null } as any,
-        { userId: 'user-3', email: 'c@d.com', role: 'user', avatarUrl: null, displayName: null } as any
+        { userId: 'user-2', email: 'b@c.com', role: 'member', avatarUrl: null, displayName: null } as any,
+        { userId: 'user-3', email: 'c@d.com', role: 'member', avatarUrl: null, displayName: null } as any
       ]);
 
       await component.onRoleChange(component.users()[0], 'admin');
 
-      expect(component.users()[1].role).toBe('user');
+      expect(component.users()[1].role).toBe('member');
     });
   });
 
@@ -148,7 +154,7 @@ describe('UsersManagementComponent', () => {
 
     it('carga usuarios y pone loading a false', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
-      const mockUsers = [{ userId: 'u1', email: 'a@b.com', role: 'user', avatarUrl: null, displayName: null }];
+      const mockUsers = [{ userId: 'u1', email: 'a@b.com', role: 'member', avatarUrl: null, displayName: null }];
       useCases.getAllUsers.mockResolvedValue(mockUsers);
 
       await component.ngOnInit();

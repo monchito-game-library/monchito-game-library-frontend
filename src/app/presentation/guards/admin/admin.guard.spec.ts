@@ -9,10 +9,10 @@ import { canActivateAdmin } from './admin.guard';
 import { mockRouter } from '@/testing/router.mock';
 
 function buildMockPreferences(isAdmin: boolean, loaded: boolean): Partial<UserPreferencesService> {
-  const role = signal<'admin' | 'user'>(isAdmin ? 'admin' : 'user');
+  const role = signal<'admin' | 'member' | 'owner'>(isAdmin ? 'admin' : 'member');
   return {
     preferencesLoaded: signal(loaded),
-    isAdmin: computed(() => role() === 'admin')
+    isAdmin: computed(() => role() === 'admin' || role() === 'owner')
   };
 }
 
@@ -49,18 +49,21 @@ describe('canActivateAdmin', () => {
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
   });
 
-  function setupObservableGuard(role: 'admin' | 'user'): {
+  function setupObservableGuard(role: 'admin' | 'member' | 'owner'): {
     loadedSignal: ReturnType<typeof signal<boolean>>;
     promise: Promise<boolean>;
   } {
     const loadedSignal = signal<boolean>(false);
-    const roleSignal = signal<'admin' | 'user'>(role);
+    const roleSignal = signal<'admin' | 'member' | 'owner'>(role);
 
     TestBed.configureTestingModule({
       providers: [
         {
           provide: UserPreferencesService,
-          useValue: { preferencesLoaded: loadedSignal.asReadonly(), isAdmin: computed(() => roleSignal() === 'admin') }
+          useValue: {
+            preferencesLoaded: loadedSignal.asReadonly(),
+            isAdmin: computed(() => roleSignal() === 'admin' || roleSignal() === 'owner')
+          }
         },
         { provide: Router, useValue: mockRouter }
       ]
@@ -78,8 +81,15 @@ describe('canActivateAdmin', () => {
     expect(await promise).toBe(true);
   });
 
+  it('devuelve Observable que resuelve true cuando preferencesLoaded cambia y el usuario es owner', async () => {
+    const { loadedSignal, promise } = setupObservableGuard('owner');
+    loadedSignal.set(true);
+    TestBed.tick();
+    expect(await promise).toBe(true);
+  });
+
   it('devuelve Observable que resuelve false y redirige cuando preferencesLoaded cambia y no es admin', async () => {
-    const { loadedSignal, promise } = setupObservableGuard('user');
+    const { loadedSignal, promise } = setupObservableGuard('member');
     loadedSignal.set(true);
     TestBed.tick();
     expect(await promise).toBe(false);

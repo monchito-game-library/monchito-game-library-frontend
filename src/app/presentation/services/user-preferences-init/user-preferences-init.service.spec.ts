@@ -117,7 +117,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -132,7 +132,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -147,7 +147,7 @@ describe('UserPreferencesInitService', () => {
         language: 'es',
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -161,7 +161,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -175,7 +175,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: 'https://cdn.example.com/avatar.jpg',
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -189,7 +189,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -203,7 +203,7 @@ describe('UserPreferencesInitService', () => {
         language: null,
         avatarUrl: null,
         bannerUrl: 'https://cdn.example.com/banner.jpg',
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');
@@ -231,7 +231,7 @@ describe('UserPreferencesInitService', () => {
         language: 'en',
         avatarUrl: null,
         bannerUrl: null,
-        role: 'user'
+        role: 'member'
       });
 
       await service.loadPreferences('user-1');

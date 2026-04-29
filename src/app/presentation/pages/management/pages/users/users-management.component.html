@@ -38,6 +38,8 @@
             <div class="user-card__role">
               @if (updatingUserId() === user.userId) {
                 <mat-spinner diameter="20" />
+              } @else if (user.role === 'owner') {
+                <span class="user-card__role-badge user-card__role-badge--owner">{{ getRoleLabel(user.role) }}</span>
               } @else {
                 <mat-select
                   [value]="user.role"

@@ -46,8 +46,8 @@ export class UsersManagementComponent implements OnInit {
   /** All registered users with their current role. */
   readonly users: WritableSignal<UserAdminModel[]> = signal([]);
 
-  /** Available role options. */
-  readonly roles: UserRoleType[] = ['user', 'admin'];
+  /** Role options selectable from the UI — `owner` is excluded (assigned manually in Supabase). */
+  readonly roles: UserRoleType[] = ['member', 'admin'];
 
   async ngOnInit(): Promise<void> {
     await this._loadUsers();

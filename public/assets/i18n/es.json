@@ -699,8 +699,9 @@
       "title": "Usuarios",
       "loadError": "No se pudieron cargar los usuarios.",
       "roleLabel": "Rol",
-      "roleUser": "Usuario",
+      "roleMember": "Miembro",
       "roleAdmin": "Administrador",
+      "roleOwner": "Propietario",
       "changeRoleConfirm": "¿Cambiar el rol de «{{ name }}» a {{ role }}?",
       "changeRoleSuccess": "Rol actualizado correctamente.",
       "changeRoleError": "No se pudo actualizar el rol."

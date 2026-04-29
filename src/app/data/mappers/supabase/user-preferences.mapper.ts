@@ -15,7 +15,7 @@ export function mapUserPreferences(dto: UserPreferencesDto, userId: string): Use
     language: dto.language,
     avatarUrl: dto.avatar_url ?? null,
     bannerUrl: dto.banner_url ?? null,
-    role: (dto.role ?? 'user') as UserRoleType
+    role: (dto.role ?? 'member') as UserRoleType
   };
 }
 

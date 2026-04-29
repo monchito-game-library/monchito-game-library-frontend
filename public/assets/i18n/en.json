@@ -699,8 +699,9 @@
       "title": "Users",
       "loadError": "Failed to load users.",
       "roleLabel": "Role",
-      "roleUser": "User",
+      "roleMember": "Member",
       "roleAdmin": "Administrator",
+      "roleOwner": "Owner",
       "changeRoleConfirm": "Change the role of «{{ name }}» to {{ role }}?",
       "changeRoleSuccess": "Role updated successfully.",
       "changeRoleError": "Failed to update role."

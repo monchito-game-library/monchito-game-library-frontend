@@ -18,11 +18,11 @@ describe('UserPreferencesService', () => {
     it('bannerImageUrl es null', () => expect(service.bannerImageUrl()).toBeNull());
     it('preferencesLoaded es false', () => expect(service.preferencesLoaded()).toBe(false));
     it('allGames es []', () => expect(service.allGames()).toEqual([]));
-    it('role es "user"', () => expect(service.role()).toBe('user'));
+    it('role es "member"', () => expect(service.role()).toBe('member'));
   });
 
   describe('isAdmin (computed)', () => {
-    it('es false cuando role es "user"', () => {
+    it('es false cuando role es "member"', () => {
       expect(service.isAdmin()).toBe(false);
     });
 
@@ -31,10 +31,31 @@ describe('UserPreferencesService', () => {
       expect(service.isAdmin()).toBe(true);
     });
 
-    it('vuelve a false al cambiar role de "admin" a "user"', () => {
+    it('es true cuando role se cambia a "owner" (owner hereda permisos de admin)', () => {
+      service.role.set('owner');
+      expect(service.isAdmin()).toBe(true);
+    });
+
+    it('vuelve a false al cambiar role de "admin" a "member"', () => {
       service.role.set('admin');
-      service.role.set('user');
+      service.role.set('member');
       expect(service.isAdmin()).toBe(false);
+    });
+  });
+
+  describe('isOwner (computed)', () => {
+    it('es false cuando role es "member"', () => {
+      expect(service.isOwner()).toBe(false);
+    });
+
+    it('es false cuando role es "admin"', () => {
+      service.role.set('admin');
+      expect(service.isOwner()).toBe(false);
+    });
+
+    it('es true cuando role es "owner"', () => {
+      service.role.set('owner');
+      expect(service.isOwner()).toBe(true);
     });
   });
 

@@ -20,7 +20,7 @@ const preferencesDto = {
   language: 'es',
   avatar_url: null,
   banner_url: null,
-  role: 'user'
+  role: 'member'
 };
 
 describe('SupabasePreferencesRepository', () => {
@@ -60,7 +60,7 @@ describe('SupabasePreferencesRepository', () => {
       const b = makeBuilder({ error: null });
       mockSupabase.from.mockReturnValue(b);
 
-      await repo.savePreferences({ userId: 'user-1', theme: 'dark', language: 'es', role: 'user' });
+      await repo.savePreferences({ userId: 'user-1', theme: 'dark', language: 'es', role: 'member' });
 
       expect(b.upsert).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('SupabasePreferencesRepository', () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'Upsert failed' } }));
 
       await expect(
-        repo.savePreferences({ userId: 'user-1', theme: 'light', language: 'en', role: 'user' })
+        repo.savePreferences({ userId: 'user-1', theme: 'light', language: 'en', role: 'member' })
       ).rejects.toThrow('Failed to save preferences');
     });
   });

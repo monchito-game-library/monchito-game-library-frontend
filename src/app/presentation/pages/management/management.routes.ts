@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { canActivateUser } from '@/guards/user/user.guard';
 import { canActivateAdmin } from '@/guards/admin/admin.guard';
+import { canActivateOwner } from '@/guards/owner/owner.guard';
 import { userAdminRepositoryProvider } from '@/di/repositories/user-admin.repository.provider';
 import { userAdminUseCasesProvider } from '@/di/use-cases/user-admin.use-cases.provider';
 import { auditLogRepositoryProvider } from '@/di/repositories/audit-log.repository.provider';
@@ -33,6 +34,7 @@ export const managementRoutes: Routes = [
       },
       {
         path: 'users',
+        canActivate: [canActivateOwner],
         loadChildren: () => import('./pages/users/users-management.routes').then((m) => m.usersManagementRoutes)
       },
       {
