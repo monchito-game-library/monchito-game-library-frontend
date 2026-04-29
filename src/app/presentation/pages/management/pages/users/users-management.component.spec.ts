@@ -210,6 +210,12 @@ describe('UsersManagementComponent', () => {
       const result = component.getRegistrationLabel({ createdAt: 'invalid' } as any);
       expect(result).toBe('');
     });
+
+    it('usa el locale "en" cuando getActiveLang devuelve "en"', () => {
+      mockTransloco.getActiveLang.mockReturnValue('en');
+      const result = component.getRegistrationLabel({ createdAt: '2025-12-01T00:00:00Z' } as any);
+      expect(result.length).toBeGreaterThan(0);
+    });
   });
 
   describe('getOwnerLabel', () => {
