@@ -212,12 +212,17 @@ CREATE TABLE IF NOT EXISTS user_preferences (
   language   TEXT DEFAULT 'es'    CHECK (language IN ('es', 'en')),
   avatar_url TEXT,               -- URL pública del bucket 'avatars'
   banner_url TEXT,               -- URL del banner (bucket 'banners' o URL externa RAWG)
-  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin'))
+  role       TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('member', 'admin', 'owner'))
 );
 
 -- Nota: user_preferences NO tiene columnas created_at ni updated_at en producción.
--- El campo `role` debe modificarse via el RPC set_user_role (SECURITY DEFINER).
--- El cliente nunca envía `role` en el payload de upsert.
+-- Roles:
+--   • member — usuario estándar.
+--   • admin  — gestiona stores, protectors, hardware (catálogos compartidos).
+--   • owner  — único; hereda todos los permisos de admin y, además, es el único
+--              que puede modificar roles ajenos (asciende/desciende a admin).
+-- El campo `role` solo se modifica via el RPC set_user_role (SECURITY DEFINER),
+-- que valida que el caller es owner. El cliente nunca envía `role` en upsert.
 
 
 -- ============================================================
@@ -594,7 +599,7 @@ CREATE POLICY "Admins can read all products"
     EXISTS (
       SELECT 1 FROM user_preferences
       WHERE user_preferences.user_id = auth.uid()
-        AND user_preferences.role = 'admin'
+        AND user_preferences.role IN ('admin', 'owner')
     )
   );
 
@@ -605,7 +610,7 @@ CREATE POLICY "Admins can insert products"
     EXISTS (
       SELECT 1 FROM user_preferences
       WHERE user_preferences.user_id = auth.uid()
-        AND user_preferences.role = 'admin'
+        AND user_preferences.role IN ('admin', 'owner')
     )
   );
 
@@ -616,7 +621,7 @@ CREATE POLICY "Admins can update products"
     EXISTS (
       SELECT 1 FROM user_preferences
       WHERE user_preferences.user_id = auth.uid()
-        AND user_preferences.role = 'admin'
+        AND user_preferences.role IN ('admin', 'owner')
     )
   );
 
@@ -627,7 +632,7 @@ CREATE POLICY "Admins can delete products"
     EXISTS (
       SELECT 1 FROM user_preferences
       WHERE user_preferences.user_id = auth.uid()
-        AND user_preferences.role = 'admin'
+        AND user_preferences.role IN ('admin', 'owner')
     )
   );
 
@@ -977,12 +982,25 @@ END;
 $$;
 
 -- Actualiza (o crea) el rol de un usuario en user_preferences via UPSERT.
+-- Solo el owner puede invocarla y solo puede asignar 'member' o 'admin' (nunca 'owner').
+-- El owner se asigna manualmente desde Supabase para evitar lockouts y owners duplicados.
 -- Parámetros: target_user_id, new_role.
 CREATE OR REPLACE FUNCTION set_user_role(target_user_id UUID, new_role TEXT)
 RETURNS VOID
 LANGUAGE plpgsql SECURITY DEFINER
 AS $$
+DECLARE
+  caller_role TEXT;
 BEGIN
+  SELECT role INTO caller_role FROM public.user_preferences WHERE user_id = auth.uid();
+  IF caller_role IS DISTINCT FROM 'owner' THEN
+    RAISE EXCEPTION 'Forbidden: only the owner can change user roles';
+  END IF;
+
+  IF new_role NOT IN ('member', 'admin') THEN
+    RAISE EXCEPTION 'Invalid role: only member or admin can be assigned via this function';
+  END IF;
+
   INSERT INTO public.user_preferences (user_id, role)
   VALUES (target_user_id, new_role)
   ON CONFLICT (user_id)
@@ -1080,7 +1098,7 @@ $$;
 -- 18. HARDWARE CATALOG (brands → models → editions → specs)
 --     Catálogo global gestionado por admins.
 --     Lectura: todos los usuarios autenticados.
---     Escritura: solo role = 'admin' en user_preferences.
+--     Escritura: solo admins y owner (role IN ('admin', 'owner')).
 -- ============================================================
 
 CREATE TABLE hardware_brands (
@@ -1094,13 +1112,13 @@ CREATE POLICY "Authenticated users can read brands"
   ON hardware_brands FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "Admins can insert brands"
   ON hardware_brands FOR INSERT TO authenticated
-  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can update brands"
   ON hardware_brands FOR UPDATE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can delete brands"
   ON hardware_brands FOR DELETE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 
 
 CREATE TABLE hardware_models (
@@ -1118,13 +1136,13 @@ CREATE POLICY "Authenticated users can read models"
   ON hardware_models FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "Admins can insert models"
   ON hardware_models FOR INSERT TO authenticated
-  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can update models"
   ON hardware_models FOR UPDATE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can delete models"
   ON hardware_models FOR DELETE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 
 
 CREATE TABLE hardware_editions (
@@ -1140,13 +1158,13 @@ CREATE POLICY "Authenticated users can read editions"
   ON hardware_editions FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "Admins can insert editions"
   ON hardware_editions FOR INSERT TO authenticated
-  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can update editions"
   ON hardware_editions FOR UPDATE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 CREATE POLICY "Admins can delete editions"
   ON hardware_editions FOR DELETE TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 
 
 -- Especificaciones técnicas de consolas (1:1 con hardware_models donde type = 'console').
@@ -1167,8 +1185,8 @@ CREATE POLICY "Authenticated users can read console specs"
   ON hardware_console_specs FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "Admins can manage console specs"
   ON hardware_console_specs FOR ALL TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
-  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 
 
 -- Especificaciones técnicas de mandos (1:1 con hardware_models donde type = 'controller').
@@ -1183,8 +1201,8 @@ CREATE POLICY "Authenticated users can read controller specs"
   ON hardware_controller_specs FOR SELECT TO authenticated USING (TRUE);
 CREATE POLICY "Admins can manage controller specs"
   ON hardware_controller_specs FOR ALL TO authenticated
-  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'))
-  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')))
+  WITH CHECK (EXISTS (SELECT 1 FROM user_preferences WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
 
 
 -- ============================================================

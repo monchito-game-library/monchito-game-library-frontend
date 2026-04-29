@@ -20,7 +20,7 @@ export class SupabaseUserAdminRepository implements UserAdminRepositoryContract 
     return (data as UserAdminRpcDto[]).map((row) => ({
       userId: row.user_id,
       email: row.email,
-      role: (row.role ?? 'user') as UserRoleType,
+      role: (row.role ?? 'member') as UserRoleType,
       avatarUrl: row.avatar_url ?? null,
       createdAt: row.created_at
     }));

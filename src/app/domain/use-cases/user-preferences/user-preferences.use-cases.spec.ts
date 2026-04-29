@@ -52,7 +52,7 @@ describe('UserPreferencesUseCasesImpl', () => {
         userId: 'user-1',
         theme: 'dark',
         language: 'es',
-        role: 'user'
+        role: 'member'
       });
     });
   });

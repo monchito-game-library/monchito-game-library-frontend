@@ -1,5 +1,6 @@
 /** User role codes. */
 export const USER_ROLE = {
-  USER: 'user',
-  ADMIN: 'admin'
+  MEMBER: 'member',
+  ADMIN: 'admin',
+  OWNER: 'owner'
 } as const;

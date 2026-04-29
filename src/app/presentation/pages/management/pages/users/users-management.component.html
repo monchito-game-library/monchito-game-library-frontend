@@ -5,55 +5,205 @@
 
   <div class="users-page__content">
     @if (loading()) {
-      <div class="users-page__skeleton">
-        @for (n of [0, 1, 2, 3]; track n) {
+      <!-- Hero skeleton -->
+      <div class="users-page__skeleton-hero">
+        <app-skeleton width="72px" height="72px" borderRadius="var(--radius-full)" />
+        <div class="users-page__skeleton-hero-info">
+          <app-skeleton width="80px" height="12px" />
+          <app-skeleton width="240px" height="20px" />
+          <app-skeleton width="180px" height="14px" />
+        </div>
+      </div>
+
+      <!-- Stats skeleton -->
+      <div class="users-page__skeleton-stats">
+        @for (n of [0, 1, 2]; track n) {
+          <app-skeleton height="72px" borderRadius="var(--radius-md)" />
+        }
+      </div>
+
+      <!-- List skeleton -->
+      <div class="users-page__skeleton-list">
+        @for (n of [0, 1, 2]; track n) {
           <div class="users-page__skeleton-row">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-full)" />
+            <app-skeleton width="40px" height="40px" borderRadius="var(--radius-full)" />
             <div class="users-page__skeleton-info">
               <app-skeleton width="200px" height="14px" />
+              <app-skeleton width="120px" height="12px" />
             </div>
-            <app-skeleton width="120px" height="32px" borderRadius="var(--radius-sm)" />
+            <app-skeleton width="120px" height="36px" borderRadius="var(--radius-sm)" />
           </div>
         }
       </div>
     } @else {
-      <div class="users-list">
-        @for (user of users(); track user.userId) {
-          <div class="user-card" [class.user-card--current]="isCurrentUser(user.userId)">
-            <div class="user-card__avatar">
-              @if (user.avatarUrl) {
-                <img [ngSrc]="user.avatarUrl" width="36" height="36" alt="" class="user-card__avatar-img" />
-              } @else {
+      <!-- Hero del owner -->
+      @if (ownerUser(); as owner) {
+        <section class="owner-hero" [attr.aria-label]="'management.users.hero.aria' | transloco">
+          <div class="owner-hero__avatar-wrap">
+            @if (owner.avatarUrl) {
+              <img class="owner-hero__avatar" [ngSrc]="owner.avatarUrl" width="72" height="72" [alt]="owner.email" />
+            } @else {
+              <div class="owner-hero__avatar owner-hero__avatar--fallback">
                 <mat-icon>person</mat-icon>
-              }
-            </div>
-
-            <div class="user-card__info">
-              <span class="user-card__email">{{ user.email }}</span>
-              @if (isCurrentUser(user.userId)) {
-                <span class="user-card__you-badge">tú</span>
-              }
-            </div>
-
-            <div class="user-card__role">
-              @if (updatingUserId() === user.userId) {
-                <mat-spinner diameter="20" />
-              } @else {
-                <mat-select
-                  [value]="user.role"
-                  [disabled]="isCurrentUser(user.userId)"
-                  class="user-card__role-select"
-                  [class.user-card__role-select--admin]="user.role === 'admin'"
-                  (selectionChange)="onRoleChange(user, $event.value)">
-                  @for (role of roles; track role) {
-                    <mat-option [value]="role">{{ getRoleLabel(role) }}</mat-option>
-                  }
-                </mat-select>
-              }
-            </div>
+              </div>
+            }
           </div>
+
+          <div class="owner-hero__body">
+            <span class="owner-hero__eyebrow">{{ 'management.users.hero.eyebrow' | transloco }}</span>
+            <div class="owner-hero__identity">
+              <span class="owner-hero__email">{{ owner.email }}</span>
+              <span class="owner-hero__badge">{{ getOwnerLabel() }}</span>
+            </div>
+            <p class="owner-hero__subtitle">
+              {{ 'management.users.hero.subtitle' | transloco }}
+              <span class="owner-hero__sep" aria-hidden="true"> · </span>
+              <span class="owner-hero__registered">
+                {{ 'management.users.hero.registered' | transloco: { ago: getRegistrationLabel(owner) } }}
+              </span>
+            </p>
+          </div>
+        </section>
+      }
+
+      <!-- Stats -->
+      <section class="users-stats" [attr.aria-label]="'management.users.stats.aria' | transloco">
+        <div class="users-stats__card">
+          <span class="users-stats__label">{{ 'management.users.stats.total' | transloco }}</span>
+          <span class="users-stats__value">{{ stats().total }}</span>
+        </div>
+        <div class="users-stats__card users-stats__card--admins">
+          <span class="users-stats__label">{{ 'management.users.stats.admins' | transloco }}</span>
+          <span class="users-stats__value">{{ stats().admins }}</span>
+        </div>
+        <div class="users-stats__card users-stats__card--members">
+          <span class="users-stats__label">{{ 'management.users.stats.members' | transloco }}</span>
+          <span class="users-stats__value">{{ stats().members }}</span>
+        </div>
+      </section>
+
+      <!-- Toolbar de filtros -->
+      <nav class="users-toolbar" [attr.aria-label]="'management.users.filter.aria' | transloco">
+        @for (filter of filters; track filter.id) {
+          <button
+            type="button"
+            class="users-toolbar__chip"
+            [class.users-toolbar__chip--active]="activeFilter() === filter.id"
+            (click)="onFilterChange(filter.id)">
+            {{ filter.labelKey | transloco }}
+          </button>
         }
-      </div>
+      </nav>
+
+      <!-- Empty state cuando el filtro no devuelve resultados -->
+      @if (hasNoVisibleUsers()) {
+        <div class="users-empty">
+          <mat-icon class="users-empty__icon">group_off</mat-icon>
+          <p class="users-empty__text">{{ 'management.users.empty' | transloco }}</p>
+        </div>
+      }
+
+      <!-- Sección administradores -->
+      @if (visibleAdmins().length > 0) {
+        <section class="users-section" [attr.aria-label]="'management.users.section.admins' | transloco">
+          <header class="users-section__header">
+            <h2 class="users-section__title">{{ 'management.users.section.admins' | transloco }}</h2>
+            <span class="users-section__count">{{ visibleAdmins().length }}</span>
+          </header>
+
+          <div class="users-list">
+            @for (user of visibleAdmins(); track user.userId) {
+              <article class="user-card" [class.user-card--admin]="true">
+                <div class="user-card__avatar">
+                  @if (user.avatarUrl) {
+                    <img
+                      [ngSrc]="user.avatarUrl"
+                      width="40"
+                      height="40"
+                      [alt]="user.email"
+                      class="user-card__avatar-img" />
+                  } @else {
+                    <mat-icon>person</mat-icon>
+                  }
+                </div>
+
+                <div class="user-card__info">
+                  <span class="user-card__email">{{ user.email }}</span>
+                  <span class="user-card__meta">
+                    {{ 'management.users.registered' | transloco: { ago: getRegistrationLabel(user) } }}
+                  </span>
+                </div>
+
+                <div class="user-card__action">
+                  @if (updatingUserId() === user.userId) {
+                    <mat-spinner diameter="20" />
+                  } @else {
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      class="user-card__action-btn user-card__action-btn--demote"
+                      (click)="onTogglePromotion(user)">
+                      <mat-icon>person_remove</mat-icon>
+                      <span>{{ 'management.users.action.demote' | transloco }}</span>
+                    </button>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Sección miembros -->
+      @if (visibleMembers().length > 0) {
+        <section class="users-section" [attr.aria-label]="'management.users.section.members' | transloco">
+          <header class="users-section__header">
+            <h2 class="users-section__title">{{ 'management.users.section.members' | transloco }}</h2>
+            <span class="users-section__count">{{ visibleMembers().length }}</span>
+          </header>
+
+          <div class="users-list">
+            @for (user of visibleMembers(); track user.userId) {
+              <article class="user-card">
+                <div class="user-card__avatar">
+                  @if (user.avatarUrl) {
+                    <img
+                      [ngSrc]="user.avatarUrl"
+                      width="40"
+                      height="40"
+                      [alt]="user.email"
+                      class="user-card__avatar-img" />
+                  } @else {
+                    <mat-icon>person</mat-icon>
+                  }
+                </div>
+
+                <div class="user-card__info">
+                  <span class="user-card__email">{{ user.email }}</span>
+                  <span class="user-card__meta">
+                    {{ 'management.users.registered' | transloco: { ago: getRegistrationLabel(user) } }}
+                  </span>
+                </div>
+
+                <div class="user-card__action">
+                  @if (updatingUserId() === user.userId) {
+                    <mat-spinner diameter="20" />
+                  } @else {
+                    <button
+                      mat-flat-button
+                      type="button"
+                      class="user-card__action-btn user-card__action-btn--promote"
+                      (click)="onTogglePromotion(user)">
+                      <mat-icon>person_add</mat-icon>
+                      <span>{{ 'management.users.action.promote' | transloco }}</span>
+                    </button>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
     }
   </div>
 </div>

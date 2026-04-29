@@ -64,7 +64,7 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
     const { error: prefsError } = await this._supabase
       .from('user_preferences')
       .upsert(
-        { user_id: data.user.id, theme: 'light', language: 'es', role: 'user' },
+        { user_id: data.user.id, theme: 'light', language: 'es', role: 'member' },
         { onConflict: 'user_id', ignoreDuplicates: true }
       );
     if (prefsError)
