@@ -35,9 +35,12 @@ export class UserPreferencesService {
   /** Last scroll offset of the controllers list — persisted across navigation to/from detail. */
   readonly controllersScrollOffset: WritableSignal<number> = signal(0);
 
-  /** Current user role, defaulting to 'user' until preferences are loaded. */
-  readonly role: WritableSignal<UserRoleType> = signal<UserRoleType>('user');
+  /** Current user role, defaulting to 'member' until preferences are loaded. */
+  readonly role: WritableSignal<UserRoleType> = signal<UserRoleType>('member');
 
-  /** Whether the current user has the admin role. */
-  readonly isAdmin: Signal<boolean> = computed((): boolean => this.role() === 'admin');
+  /** Whether the current user can access management areas (admin or owner). */
+  readonly isAdmin: Signal<boolean> = computed((): boolean => this.role() === 'admin' || this.role() === 'owner');
+
+  /** Whether the current user is the owner — only one exists; can manage other users' roles. */
+  readonly isOwner: Signal<boolean> = computed((): boolean => this.role() === 'owner');
 }

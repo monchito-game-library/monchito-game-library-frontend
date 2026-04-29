@@ -47,11 +47,11 @@ describe('UserAdminUseCasesImpl', () => {
     expect(mockRepo.setUserRole).toHaveBeenCalledWith('u-1', 'admin');
   });
 
-  it('setUserRole acepta role user', async () => {
+  it('setUserRole acepta role member', async () => {
     vi.mocked(mockRepo.setUserRole).mockResolvedValue();
 
-    await useCases.setUserRole('u-2', 'user');
+    await useCases.setUserRole('u-2', 'member');
 
-    expect(mockRepo.setUserRole).toHaveBeenCalledWith('u-2', 'user');
+    expect(mockRepo.setUserRole).toHaveBeenCalledWith('u-2', 'member');
   });
 });
