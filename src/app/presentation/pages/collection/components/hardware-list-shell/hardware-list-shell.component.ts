@@ -8,7 +8,7 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -35,7 +35,6 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    MatButton,
     MatFabButton,
     MatIcon,
     TranslocoPipe,

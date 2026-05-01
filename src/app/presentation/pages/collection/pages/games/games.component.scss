@@ -72,6 +72,16 @@
   min-height: 0;
 }
 
+.game-list__list {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
 // ─── Loading state ────────────────────────────────────────────────────────────
 
 .game-list__skeleton {
