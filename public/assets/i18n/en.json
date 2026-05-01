@@ -232,7 +232,8 @@
       "onlyFavorites": "Favourites only",
       "onlyForSale": "For sale only",
       "onlyLoaned": "Loaned only",
-      "clearFilters": "Clear filters"
+      "clearFilters": "Clear filters",
+      "toggleViewMode": "Toggle view (grid / list)"
     }
   },
   "settings": {

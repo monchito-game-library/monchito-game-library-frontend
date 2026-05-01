@@ -11,6 +11,17 @@
     <input matInput [value]="searchValue()" (input)="searchChange.emit($any($event.target).value)" />
   </mat-form-field>
 
+  @if (showViewModeBtn()) {
+    <button
+      class="list-page-header__view-btn"
+      mat-icon-button
+      type="button"
+      (click)="viewModeToggle.emit()"
+      [attr.aria-label]="'gameList.aria.toggleViewMode' | transloco">
+      <mat-icon>{{ viewMode() === 'grid' ? 'view_list' : 'view_module' }}</mat-icon>
+    </button>
+  }
+
   @if (showFilterBtn()) {
     <button
       class="list-page-header__filter-btn"

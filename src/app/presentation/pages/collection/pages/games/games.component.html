@@ -11,9 +11,12 @@
       searchPlaceholder="gameList.filters.title"
       [showAddBtn]="allGames().length > 0"
       [showFilterBtn]="true"
+      [showViewModeBtn]="allGames().length > 0"
+      [viewMode]="viewMode()"
       [filterCount]="activeFilterCount()"
       (searchChange)="onSearchInput($event)"
       (filterClick)="openFilters()"
+      (viewModeToggle)="onToggleViewMode()"
       (addClick)="onAdd()">
       <div class="game-list__stat">
         <mat-icon>{{ formatFilterIcon() }}</mat-icon>
@@ -62,13 +65,21 @@
         }
       </div>
 
-      <!-- State: with games -->
+      <!-- State: with games (grid or compact list) -->
     } @else if (filteredGames().length > 0) {
-      <div #scrollContainer class="game-list__grid" [style.--grid-cols]="columnCount()">
-        @for (game of filteredGames(); track game.id) {
-          <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
-        }
-      </div>
+      @if (viewMode() === 'grid') {
+        <div #scrollContainer class="game-list__grid" [style.--grid-cols]="columnCount()">
+          @for (game of filteredGames(); track game.id) {
+            <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
+          }
+        </div>
+      } @else {
+        <div #scrollContainer class="game-list__list">
+          @for (game of filteredGames(); track game.id) {
+            <app-game-row [game]="game" (gameDeleted)="onGameDeleted()" />
+          }
+        </div>
+      }
 
       <!-- State: no filter results -->
     } @else if (allGames().length > 0) {

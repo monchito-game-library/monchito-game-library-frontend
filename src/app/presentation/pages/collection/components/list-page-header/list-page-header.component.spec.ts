@@ -56,5 +56,13 @@ describe('ListPageHeaderComponent', () => {
     it('showAddBtn es true por defecto', () => {
       expect(component.showAddBtn()).toBe(true);
     });
+
+    it('showViewModeBtn es false por defecto', () => {
+      expect(component.showViewModeBtn()).toBe(false);
+    });
+
+    it('viewMode es "grid" por defecto', () => {
+      expect(component.viewMode()).toBe('grid');
+    });
   });
 });

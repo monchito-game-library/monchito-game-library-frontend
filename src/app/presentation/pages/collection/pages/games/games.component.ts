@@ -36,10 +36,12 @@ import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
+import { GameRowComponent } from '@/pages/collection/pages/games/components/game-row/game-row.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
+import { GameListViewMode } from '@/types/game-list-view-mode.type';
 import { GameListSortField } from '@/types/game-list-sort-field.type';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
@@ -64,7 +66,8 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     SkeletonComponent,
     ListPageHeaderComponent,
     GameListFiltersBarComponent,
-    GameListFiltersSheetComponent
+    GameListFiltersSheetComponent,
+    GameRowComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {
@@ -143,6 +146,9 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   /** Whether the viewport is in mobile range (≤ 768px). */
   readonly isMobile: WritableSignal<boolean> = signal<boolean>(window.innerWidth <= 768);
+
+  /** Current layout mode (cards grid or compact list), proxied to the user preferences service. */
+  readonly viewMode: WritableSignal<GameListViewMode> = this._userPreferencesState.gameListViewMode;
 
   /** Number of non-search filters currently active, shown as a badge on the mobile filter button. */
   readonly activeFilterCount: Signal<number> = computed((): number => {
@@ -325,6 +331,14 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Toggles the layout between cards grid and compact list. The choice is persisted
+   * in `UserPreferencesService.gameListViewMode` and survives navigation.
+   */
+  onToggleViewMode(): void {
+    this.viewMode.update((m: GameListViewMode): GameListViewMode => (m === 'grid' ? 'list' : 'grid'));
+  }
+
+  /**
    * Opens the filters panel: a right-side drawer on desktop and a bottom sheet on mobile.
    * The same sheet component is reused in both contexts; mutations are reflected live in the list.
    */
@@ -338,9 +352,10 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   // Saves scroll position on each scroll event so it survives the browser resetting
   // scrollTop to 0 when the element is detached from the DOM during navigation.
+  // Captures both grid and list view containers since the user can toggle between them.
   private readonly _onViewportScroll = (e: Event): void => {
     const t = e.target as HTMLElement;
-    if (t.classList.contains('game-list__grid')) {
+    if (t.classList.contains('game-list__grid') || t.classList.contains('game-list__list')) {
       this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
     }
   };
