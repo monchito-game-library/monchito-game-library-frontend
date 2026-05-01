@@ -1,5 +1,6 @@
 import { computed, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { GameListModel } from '@/models/game/game-list.model';
+import { GameListViewMode } from '@/types/game-list-view-mode.type';
 import { UserRoleType } from '@/types/user-role.type';
 
 /**
@@ -28,6 +29,9 @@ export class UserPreferencesService {
 
   /** Last scroll offset of the game list CDK viewport — persisted across navigation to/from detail. */
   readonly gameListScrollOffset: WritableSignal<number> = signal(0);
+
+  /** Layout mode for the game list: cards grid (default) or compact list. */
+  readonly gameListViewMode: WritableSignal<GameListViewMode> = signal<GameListViewMode>('grid');
 
   /** Last scroll offset of the consoles list — persisted across navigation to/from detail. */
   readonly consolesScrollOffset: WritableSignal<number> = signal(0);

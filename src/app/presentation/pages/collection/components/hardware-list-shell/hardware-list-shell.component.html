@@ -3,7 +3,8 @@
   <app-list-page-header
     [searchValue]="searchQuery()"
     [searchPlaceholder]="i18nPrefix() + '.search'"
-    [showAddBtn]="items().length > 0"
+    [showAddBtn]="true"
+    [disabled]="loading()"
     (searchChange)="searchChange.emit($event)"
     (addClick)="addClick.emit()">
     <!-- stat: item count -->
@@ -65,10 +66,6 @@
         </svg>
         <p class="hw-list__empty-title">{{ i18nPrefix() + '.empty.title' | transloco }}</p>
         <p class="hw-list__empty-subtitle">{{ i18nPrefix() + '.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button (click)="addClick.emit()">
-          <mat-icon>add</mat-icon>
-          {{ i18nPrefix() + '.empty.add' | transloco }}
-        </button>
       </div>
     } @else if (filteredItems().length === 0) {
       <div class="hw-list__no-results">

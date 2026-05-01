@@ -57,7 +57,11 @@ describe('GamesComponent', () => {
         },
         {
           provide: UserPreferencesService,
-          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+          useValue: {
+            allGames: signal<GameListModel[]>([]),
+            gameListScrollOffset: signal<number>(0),
+            gameListViewMode: signal<'grid' | 'list'>('grid')
+          }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -504,6 +508,27 @@ describe('GamesComponent', () => {
     });
   });
 
+  describe('onToggleViewMode', () => {
+    it('cambia de grid a list', () => {
+      component.viewMode.set('grid');
+      component.onToggleViewMode();
+      expect(component.viewMode()).toBe('list');
+    });
+
+    it('cambia de list a grid', () => {
+      component.viewMode.set('list');
+      component.onToggleViewMode();
+      expect(component.viewMode()).toBe('grid');
+    });
+
+    it('persiste en UserPreferencesService.gameListViewMode', () => {
+      const prefs = TestBed.inject(UserPreferencesService);
+      component.viewMode.set('grid');
+      component.onToggleViewMode();
+      expect(prefs.gameListViewMode()).toBe('list');
+    });
+  });
+
   describe('openFilters', () => {
     it('en mobile abre el bottom sheet con el data correcto', () => {
       const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
@@ -629,7 +654,11 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
         },
         {
           provide: UserPreferencesService,
-          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+          useValue: {
+            allGames: signal<GameListModel[]>([]),
+            gameListScrollOffset: signal<number>(0),
+            gameListViewMode: signal<'grid' | 'list'>('grid')
+          }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -671,7 +700,11 @@ describe('GamesComponent — breakpoint observer', () => {
         },
         {
           provide: UserPreferencesService,
-          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+          useValue: {
+            allGames: signal<GameListModel[]>([]),
+            gameListScrollOffset: signal<number>(0),
+            gameListViewMode: signal<'grid' | 'list'>('grid')
+          }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -753,7 +786,11 @@ describe('GamesComponent — carga inicial', () => {
         },
         {
           provide: UserPreferencesService,
-          useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: signal<number>(0) }
+          useValue: {
+            allGames: signal<GameListModel[]>([]),
+            gameListScrollOffset: signal<number>(0),
+            gameListViewMode: signal<'grid' | 'list'>('grid')
+          }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },

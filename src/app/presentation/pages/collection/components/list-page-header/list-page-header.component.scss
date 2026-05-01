@@ -29,6 +29,10 @@
   max-width: 1000px;
 }
 
+.list-page-header__view-btn {
+  flex-shrink: 0;
+}
+
 .list-page-header__filter-btn {
   position: relative;
   flex-shrink: 0;
@@ -74,5 +78,9 @@
 
   .list-page-header__filter-btn {
     display: none;
+  }
+
+  .list-page-header__view-btn {
+    display: flex;
   }
 }
