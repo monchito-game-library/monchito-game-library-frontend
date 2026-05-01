@@ -82,7 +82,15 @@ describe('AuthUseCasesImpl', () => {
       const result = await useCases.signUp('new@example.com', 'pass', 'Nombre');
 
       expect(result).toEqual({ success: true });
-      expect(mockRepo.signUp).toHaveBeenCalledWith('new@example.com', 'pass', 'Nombre');
+      expect(mockRepo.signUp).toHaveBeenCalledWith('new@example.com', 'pass', 'Nombre', undefined);
+    });
+
+    it('propaga returnUrl al repositorio cuando se proporciona', async () => {
+      vi.mocked(mockRepo.signUp).mockResolvedValue(mockUser);
+
+      await useCases.signUp('new@example.com', 'pass', 'Nombre', '/orders/invite/abc');
+
+      expect(mockRepo.signUp).toHaveBeenCalledWith('new@example.com', 'pass', 'Nombre', '/orders/invite/abc');
     });
 
     it('devuelve { success: false, error } cuando el repositorio lanza', async () => {

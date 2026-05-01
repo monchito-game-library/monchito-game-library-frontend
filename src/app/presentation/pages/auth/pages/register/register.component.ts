@@ -87,6 +87,10 @@ export class RegisterComponent extends AuthBaseComponent {
 
   /**
    * Validates the form, executes registration and redirects to login on success.
+   * Si la URL trae `returnUrl` (típicamente porque el usuario llegó al registro
+   * desde una invitación), se propaga al `signUp` (lo usa para `emailRedirectTo`)
+   * y se preserva en la navegación posterior a `/auth/login` para que tras hacer
+   * login el guard lo respete.
    */
   async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) {
@@ -99,13 +103,14 @@ export class RegisterComponent extends AuthBaseComponent {
     this.successMessage.set('');
 
     const { displayName, email, password } = this.registerForm.value;
-    const result: AuthResult = await this._authUseCases.signUp(email!, password!, displayName!);
+    const returnUrl: string | null = this._route.snapshot.queryParamMap.get('returnUrl');
+    const result: AuthResult = await this._authUseCases.signUp(email!, password!, displayName!, returnUrl);
 
     this.loading.set(false);
 
     if (result.success) {
       this._setSuccess('auth.register.successMessage');
-      this._scheduleNavigation(['/auth/login'], 3000);
+      this._scheduleNavigation(['/auth/login'], 3000, returnUrl ? { queryParams: { returnUrl } } : undefined);
     } else {
       this._setError(result.error, 'auth.register.registrationFailed');
     }

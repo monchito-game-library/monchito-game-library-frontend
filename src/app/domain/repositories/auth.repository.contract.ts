@@ -18,13 +18,16 @@ export interface AuthRepositoryContract {
   signIn(email: string, password: string): Promise<AuthUserModel>;
 
   /**
-   * Creates a new user account.
+   * Creates a new user account. La fila en `user_preferences` la crea el trigger
+   * `handle_new_user` de Supabase, no este método.
    *
    * @param {string} email - Dirección de email del usuario
    * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
+   * @param {string | null} [returnUrl] - Ruta absoluta (ej. `/orders/invite/abc`) a la que redirigir
+   *   tras la confirmación del email. Se usa para construir `emailRedirectTo`.
    */
-  signUp(email: string, password: string, displayName?: string): Promise<AuthUserModel>;
+  signUp(email: string, password: string, displayName?: string, returnUrl?: string | null): Promise<AuthUserModel>;
 
   /**
    * Signs out the current user.

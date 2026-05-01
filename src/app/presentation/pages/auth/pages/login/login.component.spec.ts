@@ -9,21 +9,30 @@ import { mockRouter } from '@/testing/router.mock';
 
 const mockAuthUseCases = { signIn: vi.fn(), signInWithOAuth: vi.fn() };
 
+/** Crea el componente configurando ActivatedRoute con el returnUrl indicado. */
+function createComponent(returnUrl: string | null = null): LoginComponent {
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    imports: [LoginComponent, ...authBaseImports],
+    providers: [
+      { provide: AUTH_USE_CASES, useValue: mockAuthUseCases },
+      { provide: Router, useValue: mockRouter },
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { queryParamMap: { get: vi.fn().mockReturnValue(returnUrl) } } }
+      }
+    ],
+    schemas: authBaseSchemas
+  });
+  return TestBed.createComponent(LoginComponent).componentInstance;
+}
+
 describe('LoginComponent', () => {
   let component: LoginComponent;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    TestBed.configureTestingModule({
-      imports: [LoginComponent, ...authBaseImports],
-      providers: [
-        { provide: AUTH_USE_CASES, useValue: mockAuthUseCases },
-        { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: vi.fn().mockReturnValue(null) } } } }
-      ],
-      schemas: authBaseSchemas
-    });
-    component = TestBed.createComponent(LoginComponent).componentInstance;
+    component = createComponent();
   });
 
   describe('estado inicial', () => {
@@ -72,6 +81,16 @@ describe('LoginComponent', () => {
       await component.onSubmit();
 
       expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
+    });
+
+    it('navega al returnUrl tras login exitoso cuando viene en query params', async () => {
+      component = createComponent('/orders/invite/abc');
+      mockAuthUseCases.signIn.mockResolvedValue({ success: true });
+      component.loginForm.setValue({ email: 'test@test.com', password: 'secret123' });
+
+      await component.onSubmit();
+
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/orders/invite/abc');
     });
 
     it('llama a signIn con el email y password del formulario', async () => {
@@ -146,8 +165,8 @@ describe('LoginComponent', () => {
     });
 
     it('persiste returnUrl en sessionStorage antes del redirect OAuth', async () => {
+      component = createComponent('/orders/invite/token123');
       mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
-      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/token123');
 
       await component.onOAuthSignIn('google');
 
@@ -157,7 +176,6 @@ describe('LoginComponent', () => {
 
     it('no persiste nada en sessionStorage cuando no hay returnUrl', async () => {
       mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
-      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue(null);
 
       await component.onOAuthSignIn('google');
 
@@ -165,12 +183,23 @@ describe('LoginComponent', () => {
     });
 
     it('limpia sessionStorage cuando el OAuth falla', async () => {
+      component = createComponent('/orders/invite/token123');
       mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: false, error: 'Error' });
-      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/token123');
 
       await component.onOAuthSignIn('google');
 
       expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
+    });
+  });
+
+  describe('returnUrl', () => {
+    it('expone null cuando el query param no está presente', () => {
+      expect(component.returnUrl).toBeNull();
+    });
+
+    it('expone el valor del query param cuando está presente', () => {
+      component = createComponent('/orders/invite/abc');
+      expect(component.returnUrl).toBe('/orders/invite/abc');
     });
   });
 });

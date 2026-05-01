@@ -46,10 +46,11 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
    * @param {string} email - Dirección de email del usuario
    * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
+   * @param {string | null} [returnUrl] - Ruta a la que redirigir tras confirmar el email
    */
-  async signUp(email: string, password: string, displayName?: string): Promise<AuthResult> {
+  async signUp(email: string, password: string, displayName?: string, returnUrl?: string | null): Promise<AuthResult> {
     try {
-      await this._repo.signUp(email, password, displayName);
+      await this._repo.signUp(email, password, displayName, returnUrl);
       return { success: true };
     } catch (error: unknown) {
       return { success: false, error: error instanceof Error ? error.message : 'Registration failed' };
