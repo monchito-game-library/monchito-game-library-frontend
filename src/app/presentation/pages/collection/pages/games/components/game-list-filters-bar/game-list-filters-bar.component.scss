@@ -1,0 +1,98 @@
+:host {
+  display: contents;
+}
+
+.filters-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--mat-sys-surface-container);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  flex-shrink: 0;
+}
+
+.filters-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--radius-full);
+  background-color: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--mat-sys-surface-container-highest);
+    border-color: var(--mat-sys-outline);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 2px;
+  }
+}
+
+.filters-bar__chip-icon,
+.filters-bar__chip-close {
+  font-size: var(--text-base);
+  width: var(--text-base);
+  height: var(--text-base);
+}
+
+.filters-bar__chip-close {
+  color: var(--mat-sys-on-surface-variant);
+  border-radius: var(--radius-full);
+  padding: 0.125rem;
+  transition: background-color 0.15s ease;
+
+  .filters-bar__chip:hover & {
+    background-color: var(--mat-sys-surface-container);
+    color: var(--mat-sys-on-surface);
+  }
+}
+
+.filters-bar__chip-label {
+  line-height: 1;
+}
+
+.filters-bar__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--mat-sys-error);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--mat-sys-error) 8%, transparent);
+  }
+
+  mat-icon {
+    font-size: var(--text-base);
+    width: var(--text-base);
+    height: var(--text-base);
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 820px ──────────────────────────
+@media (max-width: 820px) {
+  .filters-bar__chips {
+    padding: 0.5rem 1rem;
+  }
+}

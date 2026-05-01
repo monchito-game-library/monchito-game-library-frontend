@@ -8,6 +8,7 @@ import {
   OnInit,
   Signal,
   signal,
+  viewChild,
   ViewChild,
   WritableSignal
 } from '@angular/core';
@@ -18,6 +19,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -36,6 +38,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
+import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 import { GameListSortField } from '@/types/game-list-sort-field.type';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
@@ -51,12 +54,17 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     CurrencyPipe,
     MatButton,
     MatFabButton,
+    MatDrawer,
+    MatDrawerContainer,
+    MatDrawerContent,
     MatIcon,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
     SkeletonComponent,
-    ListPageHeaderComponent
+    ListPageHeaderComponent,
+    GameListFiltersBarComponent,
+    GameListFiltersSheetComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {
@@ -76,6 +84,9 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   @ViewChild('scrollContainer')
   private _scrollContainer?: ElementRef<HTMLElement>;
+
+  /** Reference to the desktop filters drawer; toggled by openFilters() in non-mobile viewports. */
+  readonly filtersDrawer = viewChild<MatDrawer>('filtersDrawer');
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -212,6 +223,20 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0)
   );
 
+  /** Bundle of writable signals shared with the desktop filters bar and the mobile filters sheet. */
+  readonly filtersData: GameListFiltersSheetData = {
+    selectedConsole: this.selectedConsole,
+    selectedStore: this.selectedStore,
+    selectedStatus: this.selectedStatus,
+    selectedFormat: this.selectedFormat,
+    onlyFavorites: this.onlyFavorites,
+    onlyLoaned: this.onlyLoaned,
+    sortBy: this.sortBy,
+    sortDirection: this.sortDirection,
+    stores: this.stores,
+    clearAllFilters: (): void => this.clearAllFilters()
+  };
+
   async ngOnInit(): Promise<void> {
     this._searchDebounce = this._searchInput$
       .pipe(debounceTime(300))
@@ -300,23 +325,15 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Opens the filters bottom sheet on mobile, passing the active filter signals as shared state.
-   * Changes made inside the sheet are reflected immediately in the list.
+   * Opens the filters panel: a right-side drawer on desktop and a bottom sheet on mobile.
+   * The same sheet component is reused in both contexts; mutations are reflected live in the list.
    */
-  openFiltersSheet(): void {
-    const data: GameListFiltersSheetData = {
-      selectedConsole: this.selectedConsole,
-      selectedStore: this.selectedStore,
-      selectedStatus: this.selectedStatus,
-      selectedFormat: this.selectedFormat,
-      onlyFavorites: this.onlyFavorites,
-      onlyLoaned: this.onlyLoaned,
-      sortBy: this.sortBy,
-      sortDirection: this.sortDirection,
-      stores: this.stores,
-      clearAllFilters: () => this.clearAllFilters()
-    };
-    this._bottomSheet.open(GameListFiltersSheetComponent, { data });
+  openFilters(): void {
+    if (this.isMobile()) {
+      this._bottomSheet.open(GameListFiltersSheetComponent, { data: this.filtersData });
+      return;
+    }
+    void this.filtersDrawer()?.toggle();
   }
 
   // Saves scroll position on each scroll event so it survives the browser resetting

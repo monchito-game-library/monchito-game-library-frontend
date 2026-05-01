@@ -1,0 +1,27 @@
+@if (activeChips().length > 0) {
+  <div class="filters-bar__chips">
+    @for (chip of activeChips(); track chip.key) {
+      <button
+        type="button"
+        class="filters-bar__chip"
+        (click)="chip.onRemove()"
+        [attr.aria-label]="'gameList.aria.clearFilters' | transloco">
+        @if (chip.icon) {
+          <mat-icon class="filters-bar__chip-icon" [style.color]="chip.iconColor || null">
+            {{ chip.icon }}
+          </mat-icon>
+        }
+        @if (chip.labelKey) {
+          <span class="filters-bar__chip-label">{{ chip.labelKey | transloco }}</span>
+        } @else {
+          <span class="filters-bar__chip-label">{{ chip.label }}</span>
+        }
+        <mat-icon class="filters-bar__chip-close">close</mat-icon>
+      </button>
+    }
+    <button type="button" class="filters-bar__clear" (click)="data().clearAllFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      <span>{{ 'gameList.empty.clearFilters' | transloco }}</span>
+    </button>
+  </div>
+}
