@@ -9,6 +9,7 @@ const config: KnipConfig = {
     'scripts/**/*.{js,mts}'
   ],
   project: ['src/**/*.ts', 'eslint-rules/**/*.js'],
+  ignoreExportsUsedInFile: true,
   ignoreDependencies: [
     // Used by Angular CLI / builder internally, not imported in source
     '@angular-devkit/build-angular',
