@@ -504,18 +504,30 @@ describe('GamesComponent', () => {
     });
   });
 
-  describe('openFiltersSheet', () => {
-    it('abre la hoja de filtros con el data correcto', () => {
+  describe('openFilters', () => {
+    it('en mobile abre el bottom sheet con el data correcto', () => {
       const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
-      component.openFiltersSheet();
+      component.isMobile.set(true);
+      component.openFilters();
       expect(bottomSheet.open).toHaveBeenCalled();
+    });
+
+    it('en desktop hace toggle del drawer', () => {
+      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const drawerToggleSpy = vi.fn().mockResolvedValue('open');
+      vi.spyOn(component, 'filtersDrawer').mockReturnValue({ toggle: drawerToggleSpy } as any);
+      component.isMobile.set(false);
+      component.openFilters();
+      expect(drawerToggleSpy).toHaveBeenCalledOnce();
+      expect(bottomSheet.open).not.toHaveBeenCalled();
     });
 
     it('la función clearAllFilters del data limpia los filtros', () => {
       const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      component.isMobile.set(true);
       component.searchTerm.set('zelda');
       component.selectedConsole.set('PS5');
-      component.openFiltersSheet();
+      component.openFilters();
       const data = bottomSheet.open.mock.calls[0][1].data;
       data.clearAllFilters();
       expect(component.searchTerm()).toBe('');
