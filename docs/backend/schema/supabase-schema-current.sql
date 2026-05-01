@@ -393,6 +393,31 @@ CREATE TRIGGER trg_user_preferences_updated_at
   BEFORE UPDATE ON user_preferences
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- Crea automáticamente la fila de user_preferences cuando Supabase Auth inserta un usuario nuevo.
+-- Necesario porque tanto el flujo de signUp con email como el callback OAuth (Google, Discord, …)
+-- terminan en INSERT INTO auth.users; sin este trigger los nuevos usuarios no tendrían fila en
+-- user_preferences hasta hacer un upsert manual desde el cliente, que con email-confirm activado
+-- falla por RLS (auth.uid() es NULL antes de confirmar el email).
+-- El role debe ser uno de los permitidos por el CHECK ('member', 'admin', 'owner').
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  INSERT INTO public.user_preferences (user_id, theme, language, role)
+  VALUES (NEW.id, 'light', 'es', 'member')
+  ON CONFLICT (user_id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 DROP TRIGGER IF EXISTS trg_user_wishlist_updated_at  ON user_wishlist;
 CREATE TRIGGER trg_user_wishlist_updated_at
   BEFORE UPDATE ON user_wishlist

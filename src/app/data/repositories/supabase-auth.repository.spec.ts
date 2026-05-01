@@ -113,17 +113,15 @@ describe('SupabaseAuthRepository', () => {
   });
 
   describe('signUp', () => {
-    beforeEach(() => {
-      mockSupabase.from.mockReturnValue({ upsert: vi.fn().mockResolvedValue({ error: null }) });
-    });
-
     it('registra con displayName explícito', async () => {
       mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
 
       const result = await repo.signUp('test@example.com', 'pass', 'Test User');
 
       expect(mockSupabase.auth.signUp).toHaveBeenCalledWith(
-        expect.objectContaining({ options: { data: { display_name: 'Test User' } } })
+        expect.objectContaining({
+          options: expect.objectContaining({ data: { display_name: 'Test User' } })
+        })
       );
       expect(result.id).toBe('user-1');
     });
@@ -134,7 +132,35 @@ describe('SupabaseAuthRepository', () => {
       await repo.signUp('test@example.com', 'pass');
 
       expect(mockSupabase.auth.signUp).toHaveBeenCalledWith(
-        expect.objectContaining({ options: { data: { display_name: 'test' } } })
+        expect.objectContaining({
+          options: expect.objectContaining({ data: { display_name: 'test' } })
+        })
+      );
+    });
+
+    it('usa window.location.origin como emailRedirectTo cuando no hay returnUrl', async () => {
+      mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
+
+      await repo.signUp('test@example.com', 'pass');
+
+      expect(mockSupabase.auth.signUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.objectContaining({ emailRedirectTo: window.location.origin })
+        })
+      );
+    });
+
+    it('compone emailRedirectTo a partir del returnUrl cuando se proporciona', async () => {
+      mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
+
+      await repo.signUp('test@example.com', 'pass', 'Test User', '/orders/invite/abc');
+
+      expect(mockSupabase.auth.signUp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          options: expect.objectContaining({
+            emailRedirectTo: `${window.location.origin}/orders/invite/abc`
+          })
+        })
       );
     });
 
@@ -153,15 +179,13 @@ describe('SupabaseAuthRepository', () => {
       await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow('Registration failed');
     });
 
-    it('lanza error cuando falla el upsert de user_preferences', async () => {
+    it('no toca user_preferences (lo crea el trigger handle_new_user)', async () => {
       mockSupabase.auth.signUp.mockResolvedValue({ data: { user: fakeUser }, error: null });
-      mockSupabase.from.mockReturnValue({
-        upsert: vi.fn().mockResolvedValue({ error: { message: 'DB constraint violation' } })
-      });
+      mockSupabase.from.mockClear();
 
-      await expect(repo.signUp('test@example.com', 'pass')).rejects.toThrow(
-        'Registration succeeded but failed to create user preferences: DB constraint violation'
-      );
+      await repo.signUp('test@example.com', 'pass');
+
+      expect(mockSupabase.from).not.toHaveBeenCalled();
     });
   });
 

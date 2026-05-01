@@ -42,6 +42,9 @@ export class LoginComponent extends AuthBaseComponent {
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
 
+  /** returnUrl recibido por query param. Se propaga al link de registro y al éxito de signIn. */
+  readonly returnUrl: string | null = this._route.snapshot.queryParamMap.get('returnUrl');
+
   /** Reactive login form with email and password fields. */
   readonly loginForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -58,9 +61,8 @@ export class LoginComponent extends AuthBaseComponent {
   async onOAuthSignIn(provider: OAuthProvider): Promise<void> {
     this.loading.set(true);
     this.errorMessage.set('');
-    const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl');
-    if (returnUrl) {
-      sessionStorage.setItem('oauth_return_url', returnUrl);
+    if (this.returnUrl) {
+      sessionStorage.setItem('oauth_return_url', this.returnUrl);
     }
     const result: AuthResult = await this._authUseCases.signInWithOAuth(provider);
     this.loading.set(false);
@@ -88,8 +90,7 @@ export class LoginComponent extends AuthBaseComponent {
     this.loading.set(false);
 
     if (result.success) {
-      const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/collection';
-      void this._router.navigateByUrl(returnUrl);
+      void this._router.navigateByUrl(this.returnUrl ?? '/collection');
     } else {
       this._setError(result.error, 'auth.login.loginFailed');
     }

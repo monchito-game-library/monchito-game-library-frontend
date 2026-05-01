@@ -25,6 +25,9 @@ describe('RegisterComponent', () => {
       schemas: authBaseSchemas
     });
     component = TestBed.createComponent(RegisterComponent).componentInstance;
+    // Reset del mock compartido de ActivatedRoute (las pruebas que necesitan returnUrl
+    // lo sobreescriben puntualmente; este reset evita fugas entre tests).
+    (component as any)._route.snapshot.queryParamMap.get = () => null;
   });
 
   afterEach(() => {
@@ -117,7 +120,22 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(mockAuthUseCases.signUp).toHaveBeenCalledWith('a@b.com', 'pass123', 'Alice');
+      expect(mockAuthUseCases.signUp).toHaveBeenCalledWith('a@b.com', 'pass123', 'Alice', null);
+    });
+
+    it('propaga returnUrl al signUp cuando viene en query params', async () => {
+      mockAuthUseCases.signUp.mockResolvedValue({ success: true });
+      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/abc');
+      component.registerForm.setValue({
+        displayName: 'Alice',
+        email: 'a@b.com',
+        password: 'pass123',
+        confirmPassword: 'pass123'
+      });
+
+      await component.onSubmit();
+
+      expect(mockAuthUseCases.signUp).toHaveBeenCalledWith('a@b.com', 'pass123', 'Alice', '/orders/invite/abc');
     });
 
     it('establece successMessage tras un registro exitoso', async () => {
@@ -148,6 +166,24 @@ describe('RegisterComponent', () => {
 
       vi.advanceTimersByTime(3000);
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login']);
+    });
+
+    it('preserva returnUrl al navegar a /auth/login tras el éxito', async () => {
+      mockAuthUseCases.signUp.mockResolvedValue({ success: true });
+      (component as any)._route.snapshot.queryParamMap.get = vi.fn().mockReturnValue('/orders/invite/abc');
+      component.registerForm.setValue({
+        displayName: 'Alice',
+        email: 'a@b.com',
+        password: 'pass123',
+        confirmPassword: 'pass123'
+      });
+
+      await component.onSubmit();
+      vi.advanceTimersByTime(3000);
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login'], {
+        queryParams: { returnUrl: '/orders/invite/abc' }
+      });
     });
 
     it('establece errorMessage cuando el registro falla', async () => {
