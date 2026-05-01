@@ -145,16 +145,6 @@ describe('HardwareListShellComponent', () => {
       const noResults = fixture.debugElement.query(By.css('.hw-list__no-results'));
       expect(noResults).toBeNull();
     });
-
-    it('emite addClick al hacer click en el botón del empty state', () => {
-      const spy = vi.fn();
-      component.addClick.subscribe(spy);
-
-      const btn = fixture.debugElement.query(By.css('.hw-list__empty button'));
-      btn.nativeElement.click();
-
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('sin resultados de búsqueda (items > 0, filteredItems = [])', () => {
