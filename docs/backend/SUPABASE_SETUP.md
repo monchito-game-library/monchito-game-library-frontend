@@ -116,11 +116,17 @@ Configuración personal de cada usuario.
 | `language` | TEXT | `'es'` \| `'en'` |
 | `avatar_url` | TEXT | URL pública del bucket `avatars` |
 | `banner_url` | TEXT | URL pública del bucket `banners` o URL RAWG |
-| `role` | TEXT | `'user'` \| `'admin'` — modificable via el RPC `set_user_role` |
+| `role` | TEXT NOT NULL | `'member'` \| `'admin'` \| `'owner'`. Default: `'member'`. Modificable solo via el RPC `set_user_role` (que valida que el caller es `'owner'`) |
 
 **RLS:** Solo el propio usuario.
 
 > **Nota:** `user_preferences` **no tiene** columnas `created_at` ni `updated_at` en producción.
+
+> **Trigger automático `on_auth_user_created`** (sobre `auth.users`, función `handle_new_user`):
+> crea la fila inicial de `user_preferences` con `role = 'member'` cuando Supabase Auth inserta
+> un usuario nuevo (signUp con email o callback OAuth). El cliente NO debe insertar manualmente
+> esta fila — con email-confirm activado, `auth.uid()` es `NULL` durante el signUp y la RLS
+> rechaza el upsert. Ver `docs/backend/schema/supabase-schema-current.sql` para la definición.
 
 ---
 

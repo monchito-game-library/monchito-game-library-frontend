@@ -35,8 +35,9 @@ export interface AuthUseCasesContract {
    * @param {string} email - Dirección de email del usuario
    * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName]
+   * @param {string | null} [returnUrl] - Ruta a la que redirigir tras confirmar el email
    */
-  signUp(email: string, password: string, displayName?: string): Promise<AuthResult>;
+  signUp(email: string, password: string, displayName?: string, returnUrl?: string | null): Promise<AuthResult>;
 
   /**
    * Signs out the current user.

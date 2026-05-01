@@ -1,7 +1,7 @@
 import { inject, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroupDirective, NgForm, ValidationErrors } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 
 /** ErrorStateMatcher that also marks confirmPassword as invalid when the parent group has passwordMismatch. */
@@ -77,9 +77,13 @@ export abstract class AuthBaseComponent {
    *
    * @param {string[]} path - Route segments to navigate to
    * @param {number} ms - Delay in milliseconds
+   * @param {NavigationExtras} [extras] - Extras de navegación (ej. queryParams). Si se omite,
+   *   no se pasa el segundo argumento a `router.navigate` para no contaminar tests existentes.
    */
-  protected _scheduleNavigation(path: string[], ms: number): void {
-    setTimeout(() => void this._router.navigate(path), ms);
+  protected _scheduleNavigation(path: string[], ms: number, extras?: NavigationExtras): void {
+    setTimeout(() => {
+      void (extras ? this._router.navigate(path, extras) : this._router.navigate(path));
+    }, ms);
   }
 
   /**
