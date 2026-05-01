@@ -1059,6 +1059,61 @@ BEGIN
 END;
 $$;
 
+-- Borra un usuario y todos sus datos asociados.
+-- Solo el owner puede invocarla. No permite auto-borrado ni borrar a otro owner.
+-- Limpia explícitamente las tablas con FK a auth.users que NO tienen ON DELETE CASCADE
+-- (orders, order_*, game_catalog.added_by_user_id, stores.created_by) y delega el resto en
+-- las CASCADE existentes (user_games, user_preferences, user_wishlist, user_consoles,
+-- user_controllers).
+--
+-- Nota: los archivos en Storage (avatars, banners) NO se borran aquí; quedan huérfanos y
+-- deben limpiarse aparte si fuese necesario.
+CREATE OR REPLACE FUNCTION delete_user_cascade(target_user_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql SECURITY DEFINER
+AS $$
+DECLARE
+  caller_role TEXT;
+  target_role TEXT;
+BEGIN
+  -- Solo el owner puede invocar este RPC
+  SELECT role INTO caller_role FROM public.user_preferences WHERE user_id = auth.uid();
+  IF caller_role IS DISTINCT FROM 'owner' THEN
+    RAISE EXCEPTION 'Forbidden: only the owner can delete users';
+  END IF;
+
+  -- No permitir auto-borrado (evita lockout)
+  IF target_user_id = auth.uid() THEN
+    RAISE EXCEPTION 'Forbidden: the owner cannot delete themselves';
+  END IF;
+
+  -- No permitir borrar a otro owner
+  SELECT role INTO target_role FROM public.user_preferences WHERE user_id = target_user_id;
+  IF target_role = 'owner' THEN
+    RAISE EXCEPTION 'Forbidden: cannot delete another owner';
+  END IF;
+
+  -- Pedidos donde el target es owner: cascadea a order_members, order_lines,
+  -- order_invitations y order_line_allocations vía sus FKs ON DELETE CASCADE a orders.id.
+  DELETE FROM public.orders WHERE owner_id = target_user_id;
+
+  -- En pedidos de OTROS usuarios el target puede aparecer como member, autor de líneas,
+  -- destinatario de allocations o usuario que aceptó una invitación. Limpiar:
+  DELETE FROM public.order_line_allocations WHERE user_id      = target_user_id;
+  DELETE FROM public.order_members          WHERE user_id      = target_user_id;
+  UPDATE public.order_lines       SET requested_by = NULL WHERE requested_by = target_user_id;
+  UPDATE public.order_invitations SET used_by      = NULL WHERE used_by      = target_user_id;
+
+  -- Anular referencias en catálogos compartidos (sin CASCADE)
+  UPDATE public.game_catalog SET added_by_user_id = NULL WHERE added_by_user_id = target_user_id;
+  UPDATE public.stores       SET created_by       = NULL WHERE created_by       = target_user_id;
+
+  -- Borrar el usuario de auth.users (cascadea user_games, user_preferences, user_wishlist,
+  -- user_consoles, user_controllers).
+  DELETE FROM auth.users WHERE id = target_user_id;
+END;
+$$;
+
 -- Devuelve los miembros de un pedido con datos de auth.users
 -- (email, avatar_url) que no están en la tabla order_members.
 CREATE OR REPLACE FUNCTION get_order_members_info(p_order_id UUID)

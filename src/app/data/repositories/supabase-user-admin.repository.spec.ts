@@ -72,4 +72,23 @@ describe('SupabaseUserAdminRepository', () => {
       await expect(repo.setUserRole('u-1', 'member')).rejects.toThrow('Forbidden');
     });
   });
+
+  describe('deleteUser', () => {
+    it('llama al RPC delete_user_cascade con el userId', async () => {
+      mockSupabase.rpc.mockResolvedValue({ error: null });
+
+      await repo.deleteUser('u-1');
+
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('delete_user_cascade', {
+        target_user_id: 'u-1'
+      });
+    });
+
+    it('lanza el error cuando el RPC falla', async () => {
+      const dbError = new Error('Forbidden: only the owner can delete users');
+      mockSupabase.rpc.mockResolvedValue({ error: dbError });
+
+      await expect(repo.deleteUser('u-1')).rejects.toThrow('Forbidden');
+    });
+  });
 });

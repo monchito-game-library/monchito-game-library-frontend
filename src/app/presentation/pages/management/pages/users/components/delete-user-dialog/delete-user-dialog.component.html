@@ -1,0 +1,37 @@
+<h2 mat-dialog-title class="delete-user-dialog__title">
+  <mat-icon class="delete-user-dialog__title-icon">warning</mat-icon>
+  <span>{{ 'management.users.delete.title' | transloco }}</span>
+</h2>
+
+<mat-dialog-content class="delete-user-dialog__content">
+  <p class="delete-user-dialog__warning">
+    {{ 'management.users.delete.warning' | transloco: { email: data.email } }}
+  </p>
+
+  <ul class="delete-user-dialog__bullets">
+    <li>{{ 'management.users.delete.bullets.games' | transloco }}</li>
+    <li>{{ 'management.users.delete.bullets.wishlist' | transloco }}</li>
+    <li>{{ 'management.users.delete.bullets.hardware' | transloco }}</li>
+    <li>{{ 'management.users.delete.bullets.orders' | transloco }}</li>
+  </ul>
+
+  <p class="delete-user-dialog__irreversible">
+    {{ 'management.users.delete.irreversible' | transloco }}
+  </p>
+
+  <form [formGroup]="form" class="delete-user-dialog__form" (ngSubmit)="onConfirm()">
+    <mat-form-field appearance="outline" class="delete-user-dialog__field">
+      <mat-label>{{ 'management.users.delete.field.label' | transloco }}</mat-label>
+      <input matInput type="email" autocomplete="off" formControlName="emailConfirmation" [placeholder]="data.email" />
+      <mat-hint>{{ 'management.users.delete.field.hint' | transloco }}</mat-hint>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="delete-user-dialog__actions">
+  <button mat-button mat-dialog-close type="button">{{ 'common.cancel' | transloco }}</button>
+  <button mat-flat-button color="warn" type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
+    <mat-icon>delete_forever</mat-icon>
+    <span>{{ 'management.users.delete.confirm' | transloco }}</span>
+  </button>
+</mat-dialog-actions>

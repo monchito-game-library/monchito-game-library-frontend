@@ -730,7 +730,8 @@
       },
       "action": {
         "promote": "Make admin",
-        "demote": "Remove admin"
+        "demote": "Remove admin",
+        "delete": "Delete user"
       },
       "promote": {
         "title": "Promote to admin",
@@ -739,6 +740,24 @@
       "demote": {
         "title": "Remove admin permissions",
         "message": "Do you want to revoke administrator permissions from {{ email }}?"
+      },
+      "delete": {
+        "title": "Delete user",
+        "warning": "You are about to permanently delete the account of {{ email }} and all associated data:",
+        "bullets": {
+          "games": "Their game collection and wishlist.",
+          "wishlist": "Their wishlists and notes.",
+          "hardware": "Their registered consoles and controllers.",
+          "orders": "Orders they have created and their participation in others' orders."
+        },
+        "irreversible": "This action cannot be undone.",
+        "field": {
+          "label": "User email",
+          "hint": "Type the email exactly to confirm"
+        },
+        "confirm": "Delete permanently",
+        "success": "User {{ email }} deleted.",
+        "error": "Could not delete the user."
       }
     }
   },
