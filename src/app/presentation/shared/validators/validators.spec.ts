@@ -1,6 +1,12 @@
+import { FormControl } from '@angular/forms';
 import { describe, expect, it } from 'vitest';
 
-import { ratingStepValidator, selectOneValidator, validDateValidator } from '@/shared/validators/validators';
+import {
+  DirtyErrorStateMatcher,
+  ratingStepValidator,
+  selectOneValidator,
+  validDateValidator
+} from '@/shared/validators/validators';
 
 describe('selectOneValidator', () => {
   const allowed = ['PS5', 'PS4', 'SWITCH'] as const;
@@ -71,6 +77,37 @@ describe('validDateValidator', () => {
 
   it('devuelve null para el límite superior del año válido (9999)', () => {
     expect(validDateValidator({ value: '9999-12-31' })).toBeNull();
+  });
+});
+
+describe('DirtyErrorStateMatcher', () => {
+  const matcher = new DirtyErrorStateMatcher();
+
+  it('devuelve false cuando control es null', () => {
+    expect(matcher.isErrorState(null, null)).toBe(false);
+  });
+
+  it('devuelve false cuando el control es válido aunque esté dirty', () => {
+    const control = new FormControl('value');
+    control.markAsDirty();
+    expect(matcher.isErrorState(control, null)).toBe(false);
+  });
+
+  it('devuelve false cuando el control es inválido pero pristine y untouched', () => {
+    const control = new FormControl('', () => ({ required: true }));
+    expect(matcher.isErrorState(control, null)).toBe(false);
+  });
+
+  it('devuelve true cuando el control es inválido y dirty', () => {
+    const control = new FormControl('', () => ({ required: true }));
+    control.markAsDirty();
+    expect(matcher.isErrorState(control, null)).toBe(true);
+  });
+
+  it('devuelve true cuando el control es inválido y touched', () => {
+    const control = new FormControl('', () => ({ required: true }));
+    control.markAsTouched();
+    expect(matcher.isErrorState(control, null)).toBe(true);
   });
 });
 

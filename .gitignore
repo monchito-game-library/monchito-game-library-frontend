@@ -48,6 +48,8 @@ Thumbs.db
 
 # Environment variables
 /src/environments/environment.ts
+.env
+.env.local
 /src/environments/environment.prod.ts
 
 # Unlighthouse (contiene credenciales)
