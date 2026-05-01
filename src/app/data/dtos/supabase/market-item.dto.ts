@@ -1,5 +1,4 @@
-/** Item type discriminator used in market views. */
-export type MarketItemType = 'game' | 'console' | 'controller';
+import { MarketItemType } from '@/models/market/market-item.model';
 
 /** Row from the available_items view (for_sale = true, not yet sold). */
 export interface AvailableItemDto {
