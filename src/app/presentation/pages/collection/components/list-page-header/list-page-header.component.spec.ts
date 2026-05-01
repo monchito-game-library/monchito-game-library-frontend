@@ -64,5 +64,9 @@ describe('ListPageHeaderComponent', () => {
     it('viewMode es "grid" por defecto', () => {
       expect(component.viewMode()).toBe('grid');
     });
+
+    it('disabled es false por defecto', () => {
+      expect(component.disabled()).toBe(false);
+    });
   });
 });

@@ -23,6 +23,9 @@ export class ListPageHeaderComponent {
   /** When true, shows the add button in the header. */
   readonly showAddBtn = input<boolean>(true);
 
+  /** When true, all controls (search, filter, view-mode, add) render as disabled. */
+  readonly disabled = input<boolean>(false);
+
   /** When true, shows the filter button (opens a side panel). */
   readonly showFilterBtn = input<boolean>(false);
 

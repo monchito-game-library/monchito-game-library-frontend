@@ -8,7 +8,11 @@
   <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-page-header__search">
     <mat-label>{{ searchPlaceholder() | transloco }}</mat-label>
     <mat-icon matPrefix>search</mat-icon>
-    <input matInput [value]="searchValue()" (input)="searchChange.emit($any($event.target).value)" />
+    <input
+      matInput
+      [value]="searchValue()"
+      [disabled]="disabled()"
+      (input)="searchChange.emit($any($event.target).value)" />
   </mat-form-field>
 
   @if (showViewModeBtn()) {
@@ -16,6 +20,7 @@
       class="list-page-header__view-btn"
       mat-icon-button
       type="button"
+      [disabled]="disabled()"
       (click)="viewModeToggle.emit()"
       [attr.aria-label]="'gameList.aria.toggleViewMode' | transloco">
       <mat-icon>{{ viewMode() === 'grid' ? 'view_list' : 'view_module' }}</mat-icon>
@@ -26,6 +31,7 @@
     <button
       class="list-page-header__filter-btn"
       mat-icon-button
+      [disabled]="disabled()"
       (click)="filterClick.emit()"
       [attr.aria-label]="'gameList.filters.filters' | transloco">
       <mat-icon>tune</mat-icon>
@@ -36,7 +42,12 @@
   }
 
   @if (showAddBtn()) {
-    <button mat-flat-button color="primary" class="list-page-header__add-btn" (click)="addClick.emit()">
+    <button
+      mat-flat-button
+      color="primary"
+      class="list-page-header__add-btn"
+      [disabled]="disabled()"
+      (click)="addClick.emit()">
       <mat-icon>add</mat-icon>
       {{ 'nav.add' | transloco }}
     </button>

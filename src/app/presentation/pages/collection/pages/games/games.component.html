@@ -9,11 +9,12 @@
     <app-list-page-header
       [searchValue]="searchTerm()"
       searchPlaceholder="gameList.filters.title"
-      [showAddBtn]="allGames().length > 0"
+      [showAddBtn]="true"
       [showFilterBtn]="true"
       [showViewModeBtn]="true"
       [viewMode]="viewMode()"
       [filterCount]="activeFilterCount()"
+      [disabled]="loading()"
       (searchChange)="onSearchInput($event)"
       (filterClick)="openFilters()"
       (viewModeToggle)="onToggleViewMode()"
@@ -118,10 +119,6 @@
         </svg>
         <p class="game-list__empty-title">{{ 'gameList.empty.emptyCollection' | transloco }}</p>
         <p class="game-list__empty-subtitle">{{ 'gameList.empty.emptyCollectionSubtitle' | transloco }}</p>
-        <button mat-flat-button routerLink="/collection/games/add">
-          <mat-icon>add_circle</mat-icon>
-          {{ 'gameList.empty.addGame' | transloco }}
-        </button>
       </div>
     }
   </mat-drawer-content>
