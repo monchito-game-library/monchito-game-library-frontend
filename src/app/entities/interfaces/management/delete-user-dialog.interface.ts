@@ -6,11 +6,6 @@ export interface DeleteUserDialogInterface {
   email: string;
 }
 
-/** Reactive form value for the delete-user confirmation dialog. */
-export interface DeleteUserDialogFormValue {
-  emailConfirmation: string | null;
-}
-
 /** Reactive form definition for the delete-user confirmation dialog. */
 export interface DeleteUserDialogForm {
   emailConfirmation: FormControl<string | null>;

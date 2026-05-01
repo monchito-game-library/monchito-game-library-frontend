@@ -96,8 +96,10 @@
             "coverageExclude": [
               "**/*.html",
               "**/*.spec.ts",
+              "**/*-spec.helpers.ts",
               "src/main.ts",
-              "src/environments/**"
+              "src/environments/**",
+              "src/testing/**"
             ],
             "coverageThresholds": {
               "statements": 80,

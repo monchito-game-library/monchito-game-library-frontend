@@ -66,6 +66,7 @@ describe('ControllersComponent', () => {
     vi.clearAllMocks();
 
     mockUserContext.requireUserId.mockReturnValue('user-1');
+    mockUserContext.userId.mockReturnValue('user-1');
     mockControllerUseCases.getAllForUser.mockResolvedValue([]);
     mockStoreUseCases.getAllStores.mockResolvedValue([]);
     mockBrandUseCases.getAll.mockResolvedValue([]);

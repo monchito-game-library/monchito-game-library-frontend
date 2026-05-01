@@ -254,6 +254,79 @@ describe('OrderDetailComponent', () => {
       expect(mockOrdersUseCases.subscribeToOrderLines).toHaveBeenCalledWith('order-1', expect.any(Function));
     });
 
+    it('recarga silenciosamente al disparar el callback de subscribeToOrderMembers', async () => {
+      let memberCallback: (() => void) | null = null;
+      mockOrdersUseCases.subscribeToOrderMembers.mockImplementation((_id: string, cb: () => void) => {
+        memberCallback = cb;
+        return () => {};
+      });
+      component.ngOnInit();
+      await Promise.resolve();
+      mockOrdersUseCases.getById.mockClear();
+
+      memberCallback!();
+      await Promise.resolve();
+
+      expect(mockOrdersUseCases.getById).toHaveBeenCalledWith('order-1');
+    });
+
+    it('recarga silenciosamente al disparar el callback de subscribeToOrderLines', async () => {
+      let linesCallback: (() => void) | null = null;
+      mockOrdersUseCases.subscribeToOrderLines.mockImplementation((_id: string, cb: () => void) => {
+        linesCallback = cb;
+        return () => {};
+      });
+      component.ngOnInit();
+      await Promise.resolve();
+      mockOrdersUseCases.getById.mockClear();
+
+      linesCallback!();
+      await Promise.resolve();
+
+      expect(mockOrdersUseCases.getById).toHaveBeenCalledWith('order-1');
+    });
+
+    it('ignora silenciosamente el error del recargado en realtime', async () => {
+      let memberCallback: (() => void) | null = null;
+      mockOrdersUseCases.subscribeToOrderMembers.mockImplementation((_id: string, cb: () => void) => {
+        memberCallback = cb;
+        return () => {};
+      });
+      component.ngOnInit();
+      await Promise.resolve();
+      mockSnackBar.open.mockClear();
+      mockOrdersUseCases.getById.mockRejectedValueOnce(new Error('realtime error'));
+
+      memberCallback!();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(mockSnackBar.open).not.toHaveBeenCalled();
+    });
+
+    it('usa cadena vacía cuando paramMap no devuelve id', () => {
+      mockRoute.snapshot.paramMap.get.mockReturnValueOnce(null);
+      component.ngOnInit();
+      expect((component as any)._orderId).toBe('');
+    });
+
+    it('no llama a getById cuando _orderId es cadena vacía', async () => {
+      mockRoute.snapshot.paramMap.get.mockReturnValueOnce(null);
+      component.ngOnInit();
+      await Promise.resolve();
+      expect(mockOrdersUseCases.getById).not.toHaveBeenCalled();
+    });
+  });
+
+  // ── _loadOrderSilent ─────────────────────────────────────────────────────────
+
+  describe('_loadOrderSilent()', () => {
+    it('no llama a getById cuando _orderId es cadena vacía', async () => {
+      (component as any)._orderId = '';
+      await (component as any)._loadOrderSilent();
+      expect(mockOrdersUseCases.getById).not.toHaveBeenCalled();
+    });
+
     it('sets loading to false after successful load', async () => {
       component.ngOnInit();
       await new Promise((r) => setTimeout(r, 0));
@@ -503,6 +576,219 @@ describe('OrderDetailComponent', () => {
 
       expect(component.packSteps().length).toBe(1);
       expect(component.packSteps()[0].totalNeeded).toBe(4);
+    });
+
+    it('no llama a getProducts cuando ya están cargados antes de inicializar el stepper', async () => {
+      const product = { id: 'prod-1', name: 'Product 1', category: 'cat', notes: null, packs: [] };
+      component.products.set([product]);
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [
+          {
+            id: 'line-1',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: 2,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          }
+        ]
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+
+      await (component as any)._loadOrder();
+
+      expect(mockOrdersUseCases.getProducts).not.toHaveBeenCalled();
+    });
+
+    it('genera step con suggestions vacías cuando totalNeeded es 0', async () => {
+      const product = {
+        id: 'prod-1',
+        name: 'Product 1',
+        category: 'cat',
+        notes: null,
+        packs: [{ url: 'https://example.com', price: 1, quantity: 1 }]
+      };
+      component.products.set([product]);
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [
+          {
+            id: 'line-1',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: 0,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          }
+        ]
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+
+      await (component as any)._loadOrder();
+
+      expect(component.packSteps()[0].suggestions).toEqual([]);
+      expect(component.packSteps()[0].totalNeeded).toBe(0);
+    });
+
+    it('genera step con suggestions vacías cuando el producto no está en el catálogo', async () => {
+      component.products.set([]);
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [
+          {
+            id: 'line-1',
+            orderId: 'order-1',
+            productId: 'prod-not-found',
+            productName: 'Missing',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: 2,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          }
+        ]
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+      mockOrdersUseCases.getProducts.mockResolvedValue([]);
+
+      await (component as any)._loadOrder();
+
+      expect(component.packSteps()[0].suggestions).toEqual([]);
+    });
+
+    it('omite del breakdown las líneas con requestedBy null o quantityNeeded null y suma cuando un usuario tiene varias', async () => {
+      component.products.set([]);
+      const selectingOrder = makeOrder({
+        status: 'selecting_packs',
+        ownerId: 'user-1',
+        lines: [
+          {
+            id: 'line-0',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: null,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          },
+          {
+            id: 'line-1',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: null,
+            quantityNeeded: 5,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          },
+          {
+            id: 'line-2',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: 2,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          },
+          {
+            id: 'line-3',
+            orderId: 'order-1',
+            productId: 'prod-1',
+            productName: 'Product 1',
+            productCategory: 'box' as const,
+            productUrl: null,
+            requestedBy: 'user-1',
+            quantityNeeded: 3,
+            quantityOrdered: null,
+            unitPrice: 10,
+            packChosen: null,
+            notes: null,
+            createdAt: '2024-01-01',
+            allocations: []
+          }
+        ],
+        members: [
+          {
+            id: 'm-1',
+            orderId: 'order-1',
+            userId: 'user-1',
+            displayName: 'User 1',
+            email: 'u@test.com',
+            avatarUrl: null,
+            role: 'owner' as const,
+            isReady: false,
+            joinedAt: '2024-01-01'
+          }
+        ]
+      });
+      mockOrdersUseCases.getById.mockResolvedValue(selectingOrder);
+
+      await (component as any)._loadOrder();
+
+      const step = component.packSteps()[0];
+      expect(step.memberBreakdown.length).toBe(1);
+      expect(step.memberBreakdown[0].userId).toBe('user-1');
+      expect(step.memberBreakdown[0].qty).toBe(5);
+    });
+  });
+
+  // ── _onAdvanceToSelectingPacks con productos cacheados ───────────────────────
+
+  describe('_onAdvanceToSelectingPacks() con productos cacheados', () => {
+    it('no llama a getProducts cuando ya hay productos cargados', async () => {
+      component.order.set(makeOrder({ status: 'draft' }));
+      component.products.set([{ id: 'p1', name: 'P', category: 'c', notes: null, packs: [] }]);
+      mockOrdersUseCases.update.mockResolvedValue(undefined);
+      mockOrdersUseCases.getById.mockResolvedValue(makeOrder({ status: 'selecting_packs' }));
+
+      await component.onAdvanceStatus();
+
+      expect(mockOrdersUseCases.getProducts).not.toHaveBeenCalled();
     });
   });
 

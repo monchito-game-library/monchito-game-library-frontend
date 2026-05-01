@@ -1527,3 +1527,43 @@ ALTER VIEW sold_items SET (security_invoker = true);
 --   - Política RLS: solo el propio usuario puede subir/borrar
 --   - Naming: {user_id}  (un fichero por usuario, upsert)
 -- ============================================================
+
+
+-- ============================================================
+-- 25. TABLA: admin_audit_log
+--     Registro inmutable de acciones administrativas (gestión de
+--     stores, protectors, hardware catalog y users). Se inserta
+--     desde el cliente con la identidad del usuario autenticado;
+--     solo admin/owner pueden leerlo.
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+  id                 UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  performed_by       UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  performed_by_email TEXT,
+  action             TEXT         NOT NULL,
+  entity_type        TEXT         NOT NULL,
+  entity_id          TEXT,
+  description        TEXT         NOT NULL,
+  created_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_audit_log_created_at
+  ON admin_audit_log (created_at DESC);
+
+ALTER TABLE admin_audit_log ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admins can read audit log"
+  ON admin_audit_log FOR SELECT TO authenticated
+  USING (EXISTS (SELECT 1 FROM user_preferences
+                 WHERE user_id = auth.uid() AND role IN ('admin', 'owner')));
+
+-- INSERT permitido a cualquier authenticated siempre que registre su propia
+-- identidad. La restricción real (solo admin/owner) la aplica el frontend
+-- (rutas guardadas por canActivateAdmin/Owner); aquí se evita una segunda
+-- consulta a user_preferences por cada inserción.
+CREATE POLICY "Authenticated users can insert their own audit log entries"
+  ON admin_audit_log FOR INSERT TO authenticated
+  WITH CHECK (performed_by = auth.uid());
+-- ============================================================
+
