@@ -293,7 +293,7 @@ describe('SupabaseAuthRepository', () => {
   });
 
   describe('signInWithOAuth', () => {
-    it('llama a auth.signInWithOAuth con el provider y redirectTo correcto', async () => {
+    it('usa window.location.origin como redirectTo cuando no hay returnUrl', async () => {
       mockSupabase.auth.signInWithOAuth.mockResolvedValue({ error: null });
 
       await repo.signInWithOAuth('google');
@@ -301,6 +301,17 @@ describe('SupabaseAuthRepository', () => {
       expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
         options: { redirectTo: window.location.origin }
+      });
+    });
+
+    it('compone redirectTo a partir del returnUrl cuando se proporciona', async () => {
+      mockSupabase.auth.signInWithOAuth.mockResolvedValue({ error: null });
+
+      await repo.signInWithOAuth('google', '/orders/invite/abc');
+
+      expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/orders/invite/abc` }
       });
     });
 

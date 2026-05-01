@@ -132,12 +132,21 @@ describe('LoginComponent', () => {
   });
 
   describe('onOAuthSignIn', () => {
-    it('llama a signInWithOAuth con el provider correcto', async () => {
+    it('llama a signInWithOAuth con el provider y returnUrl null cuando no hay query param', async () => {
       mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
 
       await component.onOAuthSignIn('google');
 
-      expect(mockAuthUseCases.signInWithOAuth).toHaveBeenCalledWith('google');
+      expect(mockAuthUseCases.signInWithOAuth).toHaveBeenCalledWith('google', null);
+    });
+
+    it('propaga el returnUrl al signInWithOAuth cuando viene en query params', async () => {
+      component = createComponent('/orders/invite/token123');
+      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
+
+      await component.onOAuthSignIn('google');
+
+      expect(mockAuthUseCases.signInWithOAuth).toHaveBeenCalledWith('google', '/orders/invite/token123');
     });
 
     it('establece errorMessage cuando el proveedor falla', async () => {
@@ -162,33 +171,6 @@ describe('LoginComponent', () => {
       await component.onOAuthSignIn('google');
 
       expect(component.loading()).toBe(false);
-    });
-
-    it('persiste returnUrl en sessionStorage antes del redirect OAuth', async () => {
-      component = createComponent('/orders/invite/token123');
-      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
-
-      await component.onOAuthSignIn('google');
-
-      expect(sessionStorage.getItem('oauth_return_url')).toBe('/orders/invite/token123');
-      sessionStorage.removeItem('oauth_return_url');
-    });
-
-    it('no persiste nada en sessionStorage cuando no hay returnUrl', async () => {
-      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: true });
-
-      await component.onOAuthSignIn('google');
-
-      expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
-    });
-
-    it('limpia sessionStorage cuando el OAuth falla', async () => {
-      component = createComponent('/orders/invite/token123');
-      mockAuthUseCases.signInWithOAuth.mockResolvedValue({ success: false, error: 'Error' });
-
-      await component.onOAuthSignIn('google');
-
-      expect(sessionStorage.getItem('oauth_return_url')).toBeNull();
     });
   });
 
