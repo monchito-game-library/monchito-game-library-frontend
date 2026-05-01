@@ -78,8 +78,9 @@ export interface AuthUseCasesContract {
    * Returns { success: false, error } if the redirect cannot be initiated.
    *
    * @param {OAuthProvider} provider - OAuth provider to use
+   * @param {string | null} [returnUrl] - Ruta a la que redirigir tras el callback OAuth
    */
-  signInWithOAuth(provider: OAuthProvider): Promise<AuthResult>;
+  signInWithOAuth(provider: OAuthProvider, returnUrl?: string | null): Promise<AuthResult>;
 }
 
 export const AUTH_USE_CASES = new InjectionToken<AuthUseCasesContract>('AUTH_USE_CASES');

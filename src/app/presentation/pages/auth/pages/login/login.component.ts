@@ -53,21 +53,17 @@ export class LoginComponent extends AuthBaseComponent {
 
   /**
    * Inicia el flujo OAuth con el proveedor indicado y muestra el error si falla.
-   * Si hay un returnUrl activo, lo persiste en sessionStorage para que el guard
-   * pueda recuperarlo tras la recarga completa del navegador que hace el callback OAuth.
+   * El `returnUrl` viaja como parte del `redirectTo` que recibe Supabase, por lo que el
+   * navegador aterriza directamente en el destino tras el callback (sin sessionStorage).
    *
    * @param {OAuthProvider} provider - Proveedor OAuth seleccionado
    */
   async onOAuthSignIn(provider: OAuthProvider): Promise<void> {
     this.loading.set(true);
     this.errorMessage.set('');
-    if (this.returnUrl) {
-      sessionStorage.setItem('oauth_return_url', this.returnUrl);
-    }
-    const result: AuthResult = await this._authUseCases.signInWithOAuth(provider);
+    const result: AuthResult = await this._authUseCases.signInWithOAuth(provider, this.returnUrl);
     this.loading.set(false);
     if (!result.success) {
-      sessionStorage.removeItem('oauth_return_url');
       this._setError(result.error, 'auth.login.oauthFailed');
     }
   }

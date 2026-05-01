@@ -152,13 +152,18 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
 
   /**
    * Initiates an OAuth sign-in flow by redirecting to the provider's auth page.
+   * Si se proporciona `returnUrl`, se usa para construir el `redirectTo` absoluto del callback,
+   * de modo que el navegador aterrice directamente en el destino (ej. `/orders/invite/abc`)
+   * tras la autenticación, sin depender de almacenamiento intermedio.
    *
    * @param {OAuthProvider} provider - OAuth provider to use
+   * @param {string | null} [returnUrl] - Ruta absoluta a la que redirigir tras el callback
    */
-  async signInWithOAuth(provider: OAuthProvider): Promise<void> {
+  async signInWithOAuth(provider: OAuthProvider, returnUrl?: string | null): Promise<void> {
+    const redirectTo: string = returnUrl ? `${window.location.origin}${returnUrl}` : window.location.origin;
     const { error } = await this._supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: window.location.origin }
+      options: { redirectTo }
     });
     if (error) throw new Error(error.message);
   }
