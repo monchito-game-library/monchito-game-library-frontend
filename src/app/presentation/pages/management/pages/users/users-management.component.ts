@@ -12,15 +12,18 @@ import { NgOptimizedImage } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
+import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
 import {
   USER_ADMIN_USE_CASES,
@@ -30,6 +33,7 @@ import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
 } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
+import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserAdminModel } from '@/models/user-admin/user-admin.model';
 import { UserRoleType } from '@/types/user-role.type';
 import { RoleFilterType } from '@/types/role-filter.type';
@@ -42,11 +46,21 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   styleUrl: './users-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatProgressSpinner, MatButton, TranslocoPipe, NgOptimizedImage, SkeletonComponent]
+  imports: [
+    MatIcon,
+    MatProgressSpinner,
+    MatButton,
+    MatIconButton,
+    MatTooltip,
+    TranslocoPipe,
+    NgOptimizedImage,
+    SkeletonComponent
+  ]
 })
 export class UsersManagementComponent implements OnInit {
   private readonly _userAdminUseCases: UserAdminUseCasesContract = inject(USER_ADMIN_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
+  private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
   private readonly _dialog: MatDialog = inject(MatDialog);
@@ -56,6 +70,9 @@ export class UsersManagementComponent implements OnInit {
 
   /** ID of the user whose role is currently being updated, or null when idle. */
   readonly updatingUserId: WritableSignal<string | null> = signal(null);
+
+  /** ID of the user that is currently being deleted, or null when idle. */
+  readonly deletingUserId: WritableSignal<string | null> = signal(null);
 
   /** All registered users with their current role, as returned by the RPC. */
   readonly users: WritableSignal<UserAdminModel[]> = signal([]);
@@ -148,6 +165,36 @@ export class UsersManagementComponent implements OnInit {
   }
 
   /**
+   * Opens a confirmation dialog (requires typing the user's email) and, if confirmed,
+   * permanently deletes the user via the use case. Refreshes the local list and
+   * shows a snackbar with the result.
+   *
+   * @param {UserAdminModel} user - The user to delete
+   */
+  async onDeleteUser(user: UserAdminModel): Promise<void> {
+    if (user.role === 'owner') return;
+    if (user.userId === this._userContext.userId()) return;
+
+    const dialogRef: MatDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
+      data: { email: user.email } satisfies DeleteUserDialogInterface,
+      autoFocus: false
+    });
+
+    const confirmed: boolean | undefined = await firstValueFrom(dialogRef.afterClosed());
+    if (!confirmed) return;
+    await this._applyDelete(user);
+  }
+
+  /**
+   * Returns true when the given user is the currently authenticated user.
+   *
+   * @param {UserAdminModel} user - User to compare against the active session
+   */
+  isSelf(user: UserAdminModel): boolean {
+    return user.userId === this._userContext.userId();
+  }
+
+  /**
    * Returns a localized "registered X ago" string for the given user.
    *
    * @param {UserAdminModel} user - User whose registration date is formatted
@@ -192,6 +239,37 @@ export class UsersManagementComponent implements OnInit {
       });
     } finally {
       this.updatingUserId.set(null);
+    }
+  }
+
+  /**
+   * Performs the user deletion against the use case, removes the row from the local
+   * list on success, logs the action to the audit log and shows a snackbar.
+   *
+   * @param {UserAdminModel} user - User being deleted
+   */
+  private async _applyDelete(user: UserAdminModel): Promise<void> {
+    this.deletingUserId.set(user.userId);
+    try {
+      await this._userAdminUseCases.deleteUser(user.userId);
+      this.users.update((list) => list.filter((u) => u.userId !== user.userId));
+      void this._auditLogUseCases.log({
+        action: 'user.delete',
+        entityType: 'user',
+        entityId: user.userId,
+        description: `${user.email} (${user.role})`
+      });
+      this._snackBar.open(this._transloco.translate('management.users.delete.success', { email: user.email }), '', {
+        duration: 3000,
+        panelClass: ['snack-mobile']
+      });
+    } catch {
+      this._snackBar.open(this._transloco.translate('management.users.delete.error'), '', {
+        duration: 4000,
+        panelClass: ['snack-mobile']
+      });
+    } finally {
+      this.deletingUserId.set(null);
     }
   }
 

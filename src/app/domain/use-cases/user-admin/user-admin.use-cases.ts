@@ -27,4 +27,13 @@ export class UserAdminUseCasesImpl implements UserAdminUseCasesContract {
   async setUserRole(userId: string, role: UserRoleType): Promise<void> {
     return this._repository.setUserRole(userId, role);
   }
+
+  /**
+   * Permanently deletes a user and all their associated data.
+   *
+   * @param {string} userId - UUID of the user to delete
+   */
+  async deleteUser(userId: string): Promise<void> {
+    return this._repository.deleteUser(userId);
+  }
 }

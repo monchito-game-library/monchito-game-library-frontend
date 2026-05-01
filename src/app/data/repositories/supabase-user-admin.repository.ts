@@ -39,4 +39,18 @@ export class SupabaseUserAdminRepository implements UserAdminRepositoryContract 
     });
     if (error) throw error;
   }
+
+  /**
+   * Calls the SECURITY DEFINER function to permanently delete a user along with all
+   * their associated data. The RPC enforces that the caller is the owner, that the
+   * target is not the caller, and that the target is not another owner.
+   *
+   * @param {string} userId - UUID of the user to delete
+   */
+  async deleteUser(userId: string): Promise<void> {
+    const { error } = await this._supabase.rpc('delete_user_cascade', {
+      target_user_id: userId
+    });
+    if (error) throw error;
+  }
 }
