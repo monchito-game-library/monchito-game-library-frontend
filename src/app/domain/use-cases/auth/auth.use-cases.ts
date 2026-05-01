@@ -116,10 +116,11 @@ export class AuthUseCasesImpl implements AuthUseCasesContract {
    * Returns { success: false, error } if the redirect cannot be initiated.
    *
    * @param {OAuthProvider} provider - OAuth provider to use
+   * @param {string | null} [returnUrl] - Ruta a la que redirigir tras el callback OAuth
    */
-  async signInWithOAuth(provider: OAuthProvider): Promise<AuthResult> {
+  async signInWithOAuth(provider: OAuthProvider, returnUrl?: string | null): Promise<AuthResult> {
     try {
-      await this._repo.signInWithOAuth(provider);
+      await this._repo.signInWithOAuth(provider, returnUrl);
       return { success: true };
     } catch (error: unknown) {
       return { success: false, error: error instanceof Error ? error.message : 'OAuth sign-in failed' };

@@ -74,11 +74,14 @@ export interface AuthRepositoryContract {
 
   /**
    * Initiates an OAuth sign-in flow by redirecting to the provider's auth page.
-   * On success, the browser redirects back and Supabase establishes the session.
+   * On success, the browser redirects back y Supabase establece la sesión.
+   * Si se proporciona `returnUrl`, se usa para construir el `redirectTo` absoluto del callback,
+   * de modo que el navegador aterrice directamente en el destino tras la autenticación.
    *
    * @param {OAuthProvider} provider - OAuth provider to use
+   * @param {string | null} [returnUrl] - Ruta absoluta a la que redirigir tras el callback OAuth
    */
-  signInWithOAuth(provider: OAuthProvider): Promise<void>;
+  signInWithOAuth(provider: OAuthProvider, returnUrl?: string | null): Promise<void>;
 }
 
 /** InjectionToken for AuthRepositoryContract. */

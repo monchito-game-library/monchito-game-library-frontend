@@ -197,7 +197,15 @@ describe('AuthUseCasesImpl', () => {
       const result = await useCases.signInWithOAuth('google');
 
       expect(result).toEqual({ success: true });
-      expect(mockRepo.signInWithOAuth).toHaveBeenCalledWith('google');
+      expect(mockRepo.signInWithOAuth).toHaveBeenCalledWith('google', undefined);
+    });
+
+    it('propaga returnUrl al repositorio cuando se proporciona', async () => {
+      vi.mocked(mockRepo.signInWithOAuth).mockResolvedValue();
+
+      await useCases.signInWithOAuth('google', '/orders/invite/abc');
+
+      expect(mockRepo.signInWithOAuth).toHaveBeenCalledWith('google', '/orders/invite/abc');
     });
 
     it('devuelve { success: false, error } cuando el repositorio lanza un Error', async () => {

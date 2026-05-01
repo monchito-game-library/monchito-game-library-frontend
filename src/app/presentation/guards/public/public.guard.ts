@@ -11,9 +11,9 @@ import { AuthStateService } from '@/services/auth-state/auth-state.service';
  * so that OAuth callbacks — which reload the app before the session is set — are handled
  * correctly.
  *
- * After an OAuth callback the browser reloads to the app root and the returnUrl query
- * param is lost. The login/register components persist it to sessionStorage before the
- * redirect. This guard reads it back and uses it instead of the default /collection.
+ * Para flujos con returnUrl (invitaciones, etc.) tanto el OAuth como la confirmación de email
+ * pasan el destino real como `redirectTo` / `emailRedirectTo`, por lo que el navegador aterriza
+ * directamente allí y este guard solo necesita el fallback a `/collection`.
  */
 export const canActivatePublic: CanActivateFn = () => {
   const authState: AuthStateService = inject(AuthStateService);
@@ -21,13 +21,7 @@ export const canActivatePublic: CanActivateFn = () => {
 
   const redirectIfAuthenticated = (): boolean => {
     if (authState.isAuthenticated()) {
-      const pendingUrl = sessionStorage.getItem('oauth_return_url');
-      if (pendingUrl) {
-        sessionStorage.removeItem('oauth_return_url');
-        void router.navigateByUrl(pendingUrl);
-      } else {
-        void router.navigateByUrl('/collection');
-      }
+      void router.navigateByUrl('/collection');
       return false;
     }
     return true;
