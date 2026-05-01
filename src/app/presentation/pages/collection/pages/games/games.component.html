@@ -9,11 +9,15 @@
     <app-list-page-header
       [searchValue]="searchTerm()"
       searchPlaceholder="gameList.filters.title"
-      [showAddBtn]="allGames().length > 0"
+      [showAddBtn]="true"
       [showFilterBtn]="true"
+      [showViewModeBtn]="true"
+      [viewMode]="viewMode()"
       [filterCount]="activeFilterCount()"
+      [disabled]="loading()"
       (searchChange)="onSearchInput($event)"
       (filterClick)="openFilters()"
+      (viewModeToggle)="onToggleViewMode()"
       (addClick)="onAdd()">
       <div class="game-list__stat">
         <mat-icon>{{ formatFilterIcon() }}</mat-icon>
@@ -62,13 +66,21 @@
         }
       </div>
 
-      <!-- State: with games -->
+      <!-- State: with games (grid or compact list) -->
     } @else if (filteredGames().length > 0) {
-      <div #scrollContainer class="game-list__grid" [style.--grid-cols]="columnCount()">
-        @for (game of filteredGames(); track game.id) {
-          <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
-        }
-      </div>
+      @if (viewMode() === 'grid') {
+        <div #scrollContainer class="game-list__grid" [style.--grid-cols]="columnCount()">
+          @for (game of filteredGames(); track game.id) {
+            <app-game-card [game]="game" (gameDeleted)="onGameDeleted()" />
+          }
+        </div>
+      } @else {
+        <div #scrollContainer class="game-list__list">
+          @for (game of filteredGames(); track game.id) {
+            <app-game-row [game]="game" (gameDeleted)="onGameDeleted()" />
+          }
+        </div>
+      }
 
       <!-- State: no filter results -->
     } @else if (allGames().length > 0) {
@@ -107,10 +119,6 @@
         </svg>
         <p class="game-list__empty-title">{{ 'gameList.empty.emptyCollection' | transloco }}</p>
         <p class="game-list__empty-subtitle">{{ 'gameList.empty.emptyCollectionSubtitle' | transloco }}</p>
-        <button mat-flat-button routerLink="/collection/games/add">
-          <mat-icon>add_circle</mat-icon>
-          {{ 'gameList.empty.addGame' | transloco }}
-        </button>
       </div>
     }
   </mat-drawer-content>

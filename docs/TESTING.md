@@ -207,9 +207,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/collection.component.spec.ts` | 1 | ✅ Cubierto |
 | `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts` | 57 | ✅ Cubierto |
 | `pages/collection/components/hardware-form-shell/hardware-form-shell.component.spec.ts` | 16 | ✅ Cubierto |
-| `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 25 | ✅ Cubierto |
+| `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 24 | ✅ Cubierto |
 | `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 6 | ✅ Cubierto |
+| `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 9 | ✅ Cubierto |
 | `pages/collection/components/sale-form/sale-form.component.spec.ts` | 29 | ✅ Cubierto |
 | `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 28 | ✅ Cubierto |
 | `pages/collection/pages/consoles/consoles.component.spec.ts` | 7 | ✅ Cubierto |
@@ -221,7 +221,8 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 34 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 81 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-row/game-row.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 84 | ✅ Cubierto |
 | `pages/collection/pages/games/services/games-filter.service.spec.ts` | 11 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 89 | ✅ Cubierto |
@@ -378,9 +379,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 71 | 1477 |
+| Componentes | 72 | 1499 |
 | Utilidades | 8 | 106 |
-| **Total** | **145** | **2541** |
+| **Total** | **146** | **2563** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -390,10 +391,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.16 % (4891 / 4932) |
-| Branches | **95.76 %** (3187 / 3328) |
-| Functions | 99.38 % (1126 / 1133) |
-| Lines | 99.92 % (4034 / 4037) |
+| Statements | 99.15 % (4938 / 4980) |
+| Branches | **95.78 %** (3226 / 3368) |
+| Functions | 99.38 % (1138 / 1145) |
+| Lines | 99.92 % (4072 / 4075) |
 
 ```bash
 npm run test:coverage
@@ -401,7 +402,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.76 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.78 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 

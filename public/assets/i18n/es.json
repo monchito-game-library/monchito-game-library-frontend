@@ -232,7 +232,8 @@
       "onlyFavorites": "Solo favoritos",
       "onlyForSale": "Solo en venta",
       "onlyLoaned": "Solo prestados",
-      "clearFilters": "Limpiar filtros"
+      "clearFilters": "Limpiar filtros",
+      "toggleViewMode": "Cambiar vista (cuadrícula / lista)"
     }
   },
   "settings": {
