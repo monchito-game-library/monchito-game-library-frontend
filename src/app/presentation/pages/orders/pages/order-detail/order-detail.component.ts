@@ -341,8 +341,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    */
   async onDeleteLine(lineId: string): Promise<void> {
     const dialogData: ConfirmDialogInterface = {
-      title: 'orders.lines.deleteTitle',
-      message: 'orders.lines.deleteMessage'
+      title: this._transloco.translate('orders.lines.deleteTitle'),
+      message: this._transloco.translate('orders.lines.deleteMessage')
     };
 
     const confirmed: boolean | undefined = await lastValueFrom(
@@ -418,8 +418,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   async onDeleteOrder(): Promise<void> {
     const ord: OrderModel | null = this.order();
     const dialogData: ConfirmDialogInterface = {
-      title: 'orders.header.deleteTitle',
-      message: `orders.header.deleteMessage`
+      title: this._transloco.translate('orders.header.deleteTitle'),
+      message: this._transloco.translate('orders.header.deleteMessage')
     };
 
     const confirmed: boolean | undefined = await lastValueFrom(
