@@ -22,6 +22,7 @@
 | [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta | ✅ Completado |
 | [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta | ✅ Completado |
 | [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta | ✅ Completado |
+| [Eliminación de usuarios desde gestión owner](#eliminación-de-usuarios-desde-gestión-owner) | Alta | ✅ Completado |
 
 ---
 
@@ -465,6 +466,24 @@ Campos: modelo (texto libre), edición (texto libre opcional), color (color pick
 - El FAB y el botón de "Añadir" en el estado vacío navegan a `/games/consoles/add` y `/games/controllers/add`.
 - Cada card en el listado añade botón de editar que navega a `edit/:id`.
 - Diálogo de confirmación en delete (ya implementado) se mantiene.
+
+---
+
+### Eliminación de usuarios desde gestión owner ✅ completado
+
+Solo el `owner` puede eliminar usuarios desde `/management/users`. La acción borra permanentemente la cuenta y todos los datos asociados, evitando tener que entrar a Supabase a hacerlo a mano.
+
+#### RPC `delete_user_cascade(target_user_id UUID)`
+
+Función `SECURITY DEFINER` en Supabase que valida que el caller es owner, que no se está auto-borrando y que el target no es otro owner. Limpia explícitamente las tablas con FK a `auth.users` que **no** tienen `ON DELETE CASCADE` (`orders`, `order_members`, `order_lines`, `order_invitations`, `order_line_allocations`, `game_catalog.added_by_user_id`, `stores.created_by`) y delega el resto en las CASCADE existentes (`user_games`, `user_preferences`, `user_wishlist`, `user_consoles`, `user_controllers`). Termina con `DELETE FROM auth.users`.
+
+#### UI
+
+Botón de eliminar (icon `delete`, color warn) en cada card de admin/member dentro de `users-management`. Oculto en el propio usuario y nunca disponible para el owner. Abre un dialog dedicado (`DeleteUserDialogComponent`) que **exige escribir el email exacto del usuario** antes de habilitar el botón de confirmar — protección contra clics accidentales en una acción irreversible. Tras el éxito, registra una entrada en `admin_audit_log` con acción `user.delete` y refresca el listado.
+
+#### Storage huérfano (deuda técnica conocida)
+
+Los archivos en los buckets `avatars` / `banners` no se borran en este flujo. Quedan huérfanos hasta que se implemente una limpieza dedicada (job batch o ampliación del RPC con la extensión `storage`).
 
 ---
 
