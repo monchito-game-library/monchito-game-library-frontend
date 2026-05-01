@@ -61,4 +61,53 @@ describe('GameListFiltersSheetComponent', () => {
       expect(mockSheetRef.dismiss).toHaveBeenCalledOnce();
     });
   });
+
+  describe('modo embebido (drawer)', () => {
+    let embeddedComponent: GameListFiltersSheetComponent;
+    let embeddedFixture: ComponentFixture<GameListFiltersSheetComponent>;
+    let inputData: any;
+
+    beforeEach(() => {
+      inputData = {
+        selectedConsole: signal(''),
+        selectedStore: signal(''),
+        selectedStatus: signal(''),
+        selectedFormat: signal(''),
+        onlyFavorites: signal(false),
+        onlyLoaned: signal(false),
+        sortBy: signal('title'),
+        sortDirection: signal('asc'),
+        stores: signal([]),
+        clearAllFilters: vi.fn()
+      };
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [GameListFiltersSheetComponent]
+      });
+      TestBed.overrideComponent(GameListFiltersSheetComponent, { set: { imports: [], template: '' } });
+      embeddedFixture = TestBed.createComponent(GameListFiltersSheetComponent);
+      embeddedFixture.componentRef.setInput('dataInput', inputData);
+      embeddedComponent = embeddedFixture.componentInstance;
+    });
+
+    it('close emite el evento closed cuando no hay sheetRef', () => {
+      const emitSpy = vi.fn();
+      embeddedComponent.closed.subscribe(emitSpy);
+      embeddedComponent.close();
+      expect(emitSpy).toHaveBeenCalledOnce();
+    });
+
+    it('data resuelve al dataInput cuando no hay sheetData', () => {
+      expect(embeddedComponent.data()).toBe(inputData);
+    });
+
+    it('onClearAll usa el dataInput y emite closed', () => {
+      const emitSpy = vi.fn();
+      embeddedComponent.closed.subscribe(emitSpy);
+      embeddedComponent.onClearAll();
+      expect(inputData.clearAllFilters).toHaveBeenCalledOnce();
+      expect(emitSpy).toHaveBeenCalledOnce();
+    });
+  });
 });

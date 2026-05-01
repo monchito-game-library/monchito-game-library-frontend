@@ -6,6 +6,26 @@
   overflow: hidden;
 }
 
+// ─── Drawer container ─────────────────────────────────────────────────────────
+
+.game-list__container {
+  flex: 1;
+  min-height: 0;
+  background-color: transparent;
+}
+
+.game-list__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-list__filters-drawer {
+  width: 22rem;
+  max-width: 90vw;
+}
+
 // ─── Projected stats ──────────────────────────────────────────────────────────
 
 .game-list__stat {

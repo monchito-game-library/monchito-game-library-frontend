@@ -219,8 +219,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 12 | ✅ Cubierto |
 | `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 26 | ✅ Cubierto |
 | `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 34 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 80 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component.spec.ts` | 17 | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 9 | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts` | 81 | ✅ Cubierto |
 | `pages/collection/pages/games/services/games-filter.service.spec.ts` | 11 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 89 | ✅ Cubierto |
@@ -377,9 +378,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 70 | 1456 |
+| Componentes | 71 | 1477 |
 | Utilidades | 8 | 106 |
-| **Total** | **144** | **2520** |
+| **Total** | **145** | **2541** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -389,10 +390,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.13 % (4839 / 4881) |
-| Branches | **95.65 %** (3148 / 3291) |
-| Functions | 99.37 % (1114 / 1121) |
-| Lines | 99.92 % (3988 / 3991) |
+| Statements | 99.16 % (4891 / 4932) |
+| Branches | **95.76 %** (3187 / 3328) |
+| Functions | 99.38 % (1126 / 1133) |
+| Lines | 99.92 % (4034 / 4037) |
 
 ```bash
 npm run test:coverage
@@ -400,7 +401,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.65 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.76 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 

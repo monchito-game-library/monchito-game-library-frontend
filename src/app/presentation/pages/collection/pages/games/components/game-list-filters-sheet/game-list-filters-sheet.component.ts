@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, Signal } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -35,10 +35,21 @@ import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.i
   ]
 })
 export class GameListFiltersSheetComponent {
-  private readonly _sheetRef: MatBottomSheetRef<GameListFiltersSheetComponent> = inject(MatBottomSheetRef);
+  private readonly _sheetRef: MatBottomSheetRef<GameListFiltersSheetComponent> | null = inject(MatBottomSheetRef, {
+    optional: true
+  });
+  private readonly _sheetData: GameListFiltersSheetData | null = inject(MAT_BOTTOM_SHEET_DATA, { optional: true });
 
-  /** Filter state injected from game-list — mutations are reflected live in the list. */
-  readonly data: GameListFiltersSheetData = inject(MAT_BOTTOM_SHEET_DATA);
+  /** Filter state passed when the component is rendered embedded (e.g. inside a drawer). */
+  readonly dataInput = input<GameListFiltersSheetData | null>(null);
+
+  /** Emitted when the user dismisses the panel; used by the drawer host to close itself. */
+  readonly closed = output<void>();
+
+  /** Filter state in use (resolved from BottomSheet DI when opened as sheet, otherwise from input). */
+  readonly data: Signal<GameListFiltersSheetData> = computed(
+    (): GameListFiltersSheetData => (this._sheetData ?? this.dataInput()) as GameListFiltersSheetData
+  );
 
   /** Available platform options for the console filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -47,17 +58,22 @@ export class GameListFiltersSheetComponent {
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
 
   /**
-   * Closes the bottom sheet without making changes.
+   * Closes the panel: dismisses the bottom sheet when injected as one,
+   * otherwise emits `closed` so the embedding host (drawer) can close itself.
    */
   close(): void {
-    this._sheetRef.dismiss();
+    if (this._sheetRef) {
+      this._sheetRef.dismiss();
+      return;
+    }
+    this.closed.emit();
   }
 
   /**
-   * Clears all active filters and closes the sheet.
+   * Clears all active filters and closes the panel.
    */
   onClearAll(): void {
-    this.data.clearAllFilters();
-    this._sheetRef.dismiss();
+    this.data().clearAllFilters();
+    this.close();
   }
 }
