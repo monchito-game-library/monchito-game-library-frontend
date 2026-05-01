@@ -45,31 +45,33 @@ export class SupabaseAuthRepository implements AuthRepositoryContract {
   }
 
   /**
-   * Creates a new user account.
+   * Creates a new user account. Si se proporciona `returnUrl`, se construye un
+   * `emailRedirectTo` absoluto que lleva al usuario a esa ruta tras confirmar el email.
+   * La fila en `user_preferences` la crea el trigger `handle_new_user` (SECURITY DEFINER)
+   * en cuanto Supabase Auth inserta la fila en `auth.users`, así que no hace falta upsert manual.
    *
    * @param {string} email - Dirección de email del usuario
    * @param {string} password - Contraseña en texto plano
    * @param {string} [displayName] - Falls back to the email local part if not provided.
+   * @param {string | null} [returnUrl] - Ruta absoluta (ej. `/orders/invite/abc`) a la que redirigir
+   *   tras la confirmación del email
    */
-  async signUp(email: string, password: string, displayName?: string): Promise<AuthUserModel> {
+  async signUp(
+    email: string,
+    password: string,
+    displayName?: string,
+    returnUrl?: string | null
+  ): Promise<AuthUserModel> {
+    const emailRedirectTo: string = returnUrl ? `${window.location.origin}${returnUrl}` : window.location.origin;
     const { data, error } = await this._supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { display_name: displayName ?? email.split('@')[0] }
+        data: { display_name: displayName ?? email.split('@')[0] },
+        emailRedirectTo
       }
     });
     if (error || !data.user) throw new Error(error?.message ?? 'Registration failed');
-
-    const { error: prefsError } = await this._supabase
-      .from('user_preferences')
-      .upsert(
-        { user_id: data.user.id, theme: 'light', language: 'es', role: 'member' },
-        { onConflict: 'user_id', ignoreDuplicates: true }
-      );
-    if (prefsError)
-      throw new Error(`Registration succeeded but failed to create user preferences: ${prefsError.message}`);
-
     return this._mapUser(data.user);
   }
 
