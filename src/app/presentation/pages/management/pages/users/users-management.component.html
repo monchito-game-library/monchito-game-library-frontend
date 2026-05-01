@@ -135,7 +135,7 @@
                 </div>
 
                 <div class="user-card__action">
-                  @if (updatingUserId() === user.userId) {
+                  @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <mat-spinner diameter="20" />
                   } @else {
                     <button
@@ -146,6 +146,18 @@
                       <mat-icon>person_remove</mat-icon>
                       <span>{{ 'management.users.action.demote' | transloco }}</span>
                     </button>
+                    @if (!isSelf(user)) {
+                      <button
+                        mat-icon-button
+                        type="button"
+                        color="warn"
+                        class="user-card__action-delete"
+                        [attr.aria-label]="'management.users.action.delete' | transloco"
+                        [matTooltip]="'management.users.action.delete' | transloco"
+                        (click)="onDeleteUser(user)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    }
                   }
                 </div>
               </article>
@@ -186,7 +198,7 @@
                 </div>
 
                 <div class="user-card__action">
-                  @if (updatingUserId() === user.userId) {
+                  @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <mat-spinner diameter="20" />
                   } @else {
                     <button
@@ -197,6 +209,18 @@
                       <mat-icon>person_add</mat-icon>
                       <span>{{ 'management.users.action.promote' | transloco }}</span>
                     </button>
+                    @if (!isSelf(user)) {
+                      <button
+                        mat-icon-button
+                        type="button"
+                        color="warn"
+                        class="user-card__action-delete"
+                        [attr.aria-label]="'management.users.action.delete' | transloco"
+                        [matTooltip]="'management.users.action.delete' | transloco"
+                        (click)="onDeleteUser(user)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    }
                   }
                 </div>
               </article>

@@ -9,7 +9,8 @@ import { UserAdminUseCasesImpl } from './user-admin.use-cases';
 
 const mockRepo: UserAdminRepositoryContract = {
   getAllUsers: vi.fn(),
-  setUserRole: vi.fn()
+  setUserRole: vi.fn(),
+  deleteUser: vi.fn()
 };
 
 describe('UserAdminUseCasesImpl', () => {
@@ -53,5 +54,20 @@ describe('UserAdminUseCasesImpl', () => {
     await useCases.setUserRole('u-2', 'member');
 
     expect(mockRepo.setUserRole).toHaveBeenCalledWith('u-2', 'member');
+  });
+
+  it('deleteUser delega en repo.deleteUser con el userId', async () => {
+    vi.mocked(mockRepo.deleteUser).mockResolvedValue();
+
+    await useCases.deleteUser('u-3');
+
+    expect(mockRepo.deleteUser).toHaveBeenCalledWith('u-3');
+  });
+
+  it('deleteUser propaga el error del repositorio', async () => {
+    const repoError = new Error('Forbidden');
+    vi.mocked(mockRepo.deleteUser).mockRejectedValue(repoError);
+
+    await expect(useCases.deleteUser('u-3')).rejects.toThrow('Forbidden');
   });
 });

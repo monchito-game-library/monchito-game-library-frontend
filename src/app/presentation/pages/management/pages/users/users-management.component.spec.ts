@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { UsersManagementComponent } from './users-management.component';
 import { USER_ADMIN_USE_CASES } from '@/domain/use-cases/user-admin/user-admin.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
+import { UserContextService } from '@/services/user-context/user-context.service';
 
 const mockUsers = [
   { userId: 'u-owner', email: 'owner@test.com', role: 'owner', avatarUrl: null, createdAt: '2024-01-01T00:00:00Z' },
@@ -23,6 +24,7 @@ describe('UsersManagementComponent', () => {
   let fixture: ComponentFixture<UsersManagementComponent>;
   let mockTransloco: { translate: ReturnType<typeof vi.fn>; getActiveLang: ReturnType<typeof vi.fn> };
   let mockDialog: { open: ReturnType<typeof vi.fn> };
+  let mockUserContext: { userId: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,15 +35,21 @@ describe('UsersManagementComponent', () => {
     mockDialog = {
       open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<MatDialogRef<unknown>>)
     };
+    mockUserContext = { userId: vi.fn(() => 'u-owner') };
 
     TestBed.configureTestingModule({
       imports: [UsersManagementComponent],
       providers: [
         {
           provide: USER_ADMIN_USE_CASES,
-          useValue: { getAllUsers: vi.fn().mockResolvedValue([]), setUserRole: vi.fn().mockResolvedValue(undefined) }
+          useValue: {
+            getAllUsers: vi.fn().mockResolvedValue([]),
+            setUserRole: vi.fn().mockResolvedValue(undefined),
+            deleteUser: vi.fn().mockResolvedValue(undefined)
+          }
         },
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn().mockResolvedValue(undefined) } },
+        { provide: UserContextService, useValue: mockUserContext },
         { provide: TranslocoService, useValue: mockTransloco },
         { provide: MatSnackBar, useValue: { open: vi.fn() } },
         { provide: MatDialog, useValue: mockDialog }
@@ -197,6 +205,119 @@ describe('UsersManagementComponent', () => {
       await component.onTogglePromotion(member);
 
       expect(component.updatingUserId()).toBeNull();
+    });
+  });
+
+  describe('isSelf', () => {
+    it('devuelve true cuando el userId coincide con el del UserContext', () => {
+      mockUserContext.userId.mockReturnValue('u-admin1');
+      const admin: any = mockUsers[1];
+      expect(component.isSelf(admin)).toBe(true);
+    });
+
+    it('devuelve false cuando el userId no coincide', () => {
+      mockUserContext.userId.mockReturnValue('u-owner');
+      const admin: any = mockUsers[1];
+      expect(component.isSelf(admin)).toBe(false);
+    });
+  });
+
+  describe('onDeleteUser', () => {
+    it('no abre el dialog cuando el usuario es owner', async () => {
+      const owner: any = mockUsers[0];
+      await component.onDeleteUser(owner);
+      expect(mockDialog.open).not.toHaveBeenCalled();
+    });
+
+    it('no abre el dialog cuando el usuario es el propio caller', async () => {
+      mockUserContext.userId.mockReturnValue('u-admin1');
+      const self: any = mockUsers[1];
+      await component.onDeleteUser(self);
+      expect(mockDialog.open).not.toHaveBeenCalled();
+    });
+
+    it('abre el dialog con el email del usuario destino', async () => {
+      const member: any = mockUsers[3];
+      await component.onDeleteUser(member);
+      expect(mockDialog.open).toHaveBeenCalled();
+      const config = mockDialog.open.mock.calls[0][1];
+      expect(config.data.email).toBe('mem1@test.com');
+    });
+
+    it('si el usuario cancela el dialog, no llama a deleteUser', async () => {
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(false) } as any);
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+
+      await component.onDeleteUser(member);
+
+      expect(useCases.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it('cuando el usuario confirma, llama a deleteUser con el userId', async () => {
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+
+      await component.onDeleteUser(member);
+
+      expect(useCases.deleteUser).toHaveBeenCalledWith('u-mem1');
+    });
+
+    it('elimina el usuario de la lista local al confirmar con éxito', async () => {
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+
+      await component.onDeleteUser(member);
+
+      expect(component.users().some((u) => u.userId === 'u-mem1')).toBe(false);
+      expect(component.users()).toHaveLength(mockUsers.length - 1);
+    });
+
+    it('registra una entrada en el audit log al borrar con éxito', async () => {
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+      const auditLog = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
+
+      await component.onDeleteUser(member);
+
+      expect(auditLog.log).toHaveBeenCalledWith(expect.objectContaining({ action: 'user.delete', entityId: 'u-mem1' }));
+    });
+
+    it('muestra snackbar de éxito al borrar correctamente', async () => {
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+
+      await component.onDeleteUser(member);
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(mockTransloco.translate).toHaveBeenCalledWith('management.users.delete.success', {
+        email: 'mem1@test.com'
+      });
+    });
+
+    it('muestra snackbar de error y NO modifica la lista si deleteUser falla', async () => {
+      const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
+      useCases.deleteUser.mockRejectedValue(new Error('fail'));
+      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+
+      await component.onDeleteUser(member);
+
+      expect(snackBar.open).toHaveBeenCalled();
+      expect(component.users()).toHaveLength(mockUsers.length);
+    });
+
+    it('resetea deletingUserId a null tras la operación', async () => {
+      const member: any = mockUsers[3];
+      component.users.set(mockUsers);
+
+      await component.onDeleteUser(member);
+
+      expect(component.deletingUserId()).toBeNull();
     });
   });
 

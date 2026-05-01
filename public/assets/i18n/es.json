@@ -730,7 +730,8 @@
       },
       "action": {
         "promote": "Hacer admin",
-        "demote": "Quitar admin"
+        "demote": "Quitar admin",
+        "delete": "Eliminar usuario"
       },
       "promote": {
         "title": "Promocionar a admin",
@@ -739,6 +740,24 @@
       "demote": {
         "title": "Quitar permisos de admin",
         "message": "¿Quieres retirar los permisos de administrador a {{ email }}?"
+      },
+      "delete": {
+        "title": "Eliminar usuario",
+        "warning": "Vas a eliminar permanentemente la cuenta de {{ email }} y todos sus datos asociados:",
+        "bullets": {
+          "games": "Su colección de juegos y wishlist.",
+          "wishlist": "Sus listas de deseos y notas.",
+          "hardware": "Sus consolas y mandos registrados.",
+          "orders": "Los pedidos que haya creado y su participación en otros pedidos."
+        },
+        "irreversible": "Esta acción no se puede deshacer.",
+        "field": {
+          "label": "Email del usuario",
+          "hint": "Escribe el email exactamente para confirmar"
+        },
+        "confirm": "Eliminar definitivamente",
+        "success": "Usuario {{ email }} eliminado.",
+        "error": "No se pudo eliminar el usuario."
       }
     }
   },
