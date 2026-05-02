@@ -327,8 +327,8 @@ export class GameDetailComponent implements OnInit {
 
     const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'gameCard.dialog.delete.title',
-        message: 'gameCard.dialog.delete.message'
+        title: this._transloco.translate('gameCard.dialog.delete.title'),
+        message: this._transloco.translate('gameCard.dialog.delete.message')
       } satisfies ConfirmDialogInterface
     });
 
