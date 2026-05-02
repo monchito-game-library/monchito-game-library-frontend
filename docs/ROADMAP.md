@@ -16,7 +16,7 @@
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
 | [Mejoras visuales de polish](#mejoras-visuales-de-polish) | Baja | 🔄 Parcial (8/10) |
-| [Plan de UI/UX 2026](#plan-de-uiux-2026) | Alta | 🔄 Parcial (3/10) |
+| [Plan de UI/UX 2026](#plan-de-uiux-2026) | Alta | 🔄 Parcial (5/10 + A5 descartada) |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
 | [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
 | [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ✅ Completado |
@@ -960,25 +960,25 @@ Hoy el detalle muestra hasta 4 botones inline (Edit, Manage sale, Loan, Delete) 
 
 ---
 
-#### A5. Profile menu accesible desde topbar mobile ⏳ pendiente
+#### A5. Profile menu accesible desde topbar mobile ⛔ descartada
 
-Hoy en mobile el avatar del topbar abre `/settings` directo. En desktop abre el menú de perfil completo (banner, identidad, settings, logout). Unificar: en mobile el avatar también abre el menú de perfil. Sin esto, en mobile no se puede hacer logout sin pasar por settings primero.
-
-**Ficheros afectados:** `app.component.html`, posiblemente `profile-menu` si se extrae a componente propio.
+**Motivo del descarte:** se evaluó tras A4 y se rechazó. El argumento original era "logout no accesible en mobile sin pasar por settings", pero `/settings` ya tiene un botón de logout visible (`settings.component.html`). Replicar el menú de perfil flotante (banner + identidad + acciones) en el topbar mobile no aporta valor: el patrón estándar mobile es navegar a una pantalla completa de cuenta (Spotify, Twitter, GitHub mobile, iOS Settings). Una card flotante en mobile con un avatar pequeño como ancla queda inferior en UX.
 
 ---
 
-#### A6. Centralizar breakpoints y `--bottom-nav-height` ⏳ pendiente
+#### A6. Centralizar breakpoints y `--bottom-nav-height` ✅ completado
 
-Hoy `BreakpointObserver` en game-list y `@media` estáticas en game-detail se desincronizan. Crear constantes `BREAKPOINTS` (mobile 768, tablet 1024, desktop 1280) expuestas como tokens CSS y valores TS. Mover el hardcoded `60px` del bottom-nav a una variable CSS `--bottom-nav-height` consumida con `calc()` desde wishlist, game-list FABs y demás.
+Constantes `BREAKPOINTS` y `GAME_GRID_BREAKPOINTS` en `entities/constants/breakpoints.constant.ts`. Tokens CSS espejo (`--bp-*`) y `--bottom-nav-height: 60px` autoritativa en `:root`. 24 ficheros SCSS migrados de `60px` hardcoded a `var(--bottom-nav-height)`. Aprovechado para añadir más columnas en pantallas ultra-wide (7 cols ≤2560, 8 cols >2560) y un fix del aspect-ratio del skeleton vía padding-top hack.
 
-**Ficheros afectados:** `styles.scss`, varios componentes con `@media` o cálculos sobre 60px.
+**PR:** [#111](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/111)
 
 ---
 
 ### Fase B — Modelo obra/copia
 
-#### B1. Tabla `user_works` y agrupación de copias ⏳ pendiente
+#### B1. Tabla `user_works` y agrupación de copias ⏳ pendiente — [plan detallado](./plans/work-copy-model.md)
+
+> Antes de implementar, leer **`docs/plans/work-copy-model.md`** que detalla schema SQL, backfill, capas afectadas, plan de coexistencia y decisiones pendientes.
 
 Hoy dos copias del mismo juego (físico + digital) son dos `user_games` independientes que comparten `rawg_id` pero no se "saben" entre sí. Esto permite estados imposibles (dos platinos del mismo juego) y separa coste real (35 € disco + 70 € digital) sin contexto.
 
