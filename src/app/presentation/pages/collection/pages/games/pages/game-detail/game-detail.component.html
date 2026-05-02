@@ -5,10 +5,23 @@
       <mat-spinner diameter="48" />
     </div>
   } @else if (game(); as g) {
-    <!-- Hero — full-width cover with gradient overlay -->
-    <div class="game-detail__hero" [style.background-image]="'url(' + coverUrl() + ')'">
+    <!-- Hero — three layers: blurred backdrop, contained cover image, and the gradient overlay
+         carrying the topbar + chips + title. The cover is shown whole (object-fit: contain) so no
+         part of the artwork is cropped; the blurred backdrop fills the wide horizontal area. -->
+    <div class="game-detail__hero">
+      <div class="game-detail__hero-backdrop" [style.--dominant]="dominantColor()"></div>
+      <div class="game-detail__hero-cover-wrap">
+        <img
+          class="game-detail__hero-cover"
+          [src]="coverUrl()"
+          [style.object-position]="coverObjectPosition()"
+          [style.transform]="coverTransform()"
+          crossorigin="anonymous"
+          alt=""
+          aria-hidden="true" />
+      </div>
       <div class="game-detail__hero-overlay">
-        <!-- Back button -->
+        <!-- Topbar: back on the left, contextual kebab on the right -->
         <div class="game-detail__topbar">
           <button
             mat-icon-button
@@ -17,6 +30,65 @@
             [attr.aria-label]="'common.back' | transloco">
             <mat-icon>arrow_back</mat-icon>
           </button>
+
+          @if (!showSaleForm() && !showLoanForm()) {
+            <div class="game-detail__topbar-actions">
+              @if (!g.soldAt) {
+                <button
+                  type="button"
+                  class="game-detail__topbar-edit-btn"
+                  (click)="editGame()"
+                  [attr.aria-label]="'gameCard.menu.edit' | transloco">
+                  <mat-icon>edit</mat-icon>
+                  <span class="game-detail__topbar-edit-label">
+                    {{ 'gameCard.menu.edit' | transloco }}
+                  </span>
+                </button>
+              }
+              <button
+                mat-icon-button
+                class="game-detail__topbar-menu-btn"
+                [matMenuTriggerFor]="contextMenu"
+                [attr.aria-label]="
+                  (g.soldAt ? 'gameDetail.aria.soldActions' : 'gameDetail.aria.moreActions') | transloco
+                ">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #contextMenu="matMenu">
+                @if (g.soldAt) {
+                  <button mat-menu-item (click)="openSaleView()">
+                    <mat-icon>edit</mat-icon>
+                    <span>{{ 'gameDetail.sale.editSaleBtn' | transloco }}</span>
+                  </button>
+                  <button mat-menu-item (click)="undoSell()">
+                    <mat-icon>undo</mat-icon>
+                    <span>{{ 'gameDetail.sale.undoSaleBtn' | transloco }}</span>
+                  </button>
+                } @else {
+                  <button mat-menu-item (click)="openSaleView()">
+                    <mat-icon>sell</mat-icon>
+                    <span>{{ 'gameDetail.sale.manageBtn' | transloco }}</span>
+                  </button>
+                  @if (g.format === 'physical') {
+                    <button mat-menu-item (click)="openLoanView()">
+                      <mat-icon>handshake</mat-icon>
+                      <span>
+                        {{
+                          g.activeLoanId
+                            ? ('gameDetail.loan.returnBtn' | transloco)
+                            : ('gameDetail.loan.loanBtn' | transloco)
+                        }}
+                      </span>
+                    </button>
+                  }
+                  <button mat-menu-item (click)="deleteGame()" [disabled]="deleting()">
+                    <mat-icon>delete</mat-icon>
+                    <span>{{ 'gameCard.menu.delete' | transloco }}</span>
+                  </button>
+                }
+              </mat-menu>
+            </div>
+          }
         </div>
 
         <!-- Bottom: chips, title, edition -->
@@ -62,6 +134,21 @@
 
     <!-- Body -->
     <div class="game-detail__body">
+      @if (g.soldAt && !showSaleForm() && !showLoanForm()) {
+        <!-- Sold banner — collapsed summary; actions live in the topbar kebab next to the back button -->
+        <div class="game-detail__sold-banner">
+          <mat-icon class="game-detail__sold-banner-icon">sell</mat-icon>
+          <span class="game-detail__sold-banner-text">
+            <strong>{{ 'gameDetail.sale.soldBannerPrefix' | transloco }}</strong>
+            {{ g.soldAt | date: 'dd/MM/yyyy' }}
+            @if (g.soldPriceFinal !== null) {
+              <span>{{ 'gameDetail.sale.soldBannerJoiner' | transloco }}</span>
+              <strong>{{ g.soldPriceFinal | currency: 'EUR' }}</strong>
+            }
+          </span>
+        </div>
+      }
+
       @if (showSaleForm()) {
         <app-sale-form
           [initialValues]="g"
@@ -182,67 +269,6 @@
               </div>
             }
           </section>
-        }
-
-        @if (!g.soldAt) {
-          <!-- Actions footer -->
-          <div class="game-detail__actions">
-            <button mat-stroked-button (click)="editGame()">
-              <mat-icon>edit</mat-icon>
-              {{ 'gameCard.menu.edit' | transloco }}
-            </button>
-            <button mat-stroked-button (click)="openSaleView()">
-              <mat-icon>sell</mat-icon>
-              {{ 'gameDetail.sale.manageBtn' | transloco }}
-            </button>
-            @if (g.format === 'physical') {
-              <button mat-stroked-button (click)="openLoanView()">
-                <mat-icon>handshake</mat-icon>
-                {{
-                  g.activeLoanId ? ('gameDetail.loan.returnBtn' | transloco) : ('gameDetail.loan.loanBtn' | transloco)
-                }}
-              </button>
-            }
-            <button mat-stroked-button color="warn" (click)="deleteGame()" [disabled]="deleting()">
-              <mat-icon>delete</mat-icon>
-              {{ 'gameCard.menu.delete' | transloco }}
-            </button>
-          </div>
-        } @else {
-          <!-- Sale info section -->
-          <section class="game-detail__section">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.sale.saleInfoSection' | transloco }}</h2>
-            <div class="game-detail__data-grid">
-              @if (g.soldPriceFinal !== null) {
-                <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
-                    <mat-icon>payments</mat-icon>
-                    {{ 'gameDetail.sale.soldPriceFinal' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.soldPriceFinal | currency: 'EUR' }}</span>
-                </div>
-              }
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ 'gameDetail.sale.soldAt' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ g.soldAt | date: 'dd/MM/yyyy' }}</span>
-              </div>
-            </div>
-          </section>
-
-          <!-- Sold item actions -->
-          <div class="game-detail__actions">
-            <button mat-stroked-button (click)="openSaleView()">
-              <mat-icon>edit</mat-icon>
-              {{ 'gameDetail.sale.editSaleBtn' | transloco }}
-            </button>
-            <button mat-stroked-button color="warn" (click)="undoSell()">
-              <mat-icon>undo</mat-icon>
-              {{ 'gameDetail.sale.undoSaleBtn' | transloco }}
-            </button>
-          </div>
         }
       }
     </div>

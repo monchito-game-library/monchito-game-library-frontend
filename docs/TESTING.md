@@ -228,7 +228,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 89 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
 | `pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 56 | ✅ Cubierto |
+| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 62 | ✅ Cubierto |
 
 #### Management (`pages/management`)
 
@@ -379,9 +379,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 72 | 1499 |
+| Componentes | 72 | 1505 |
 | Utilidades | 8 | 106 |
-| **Total** | **146** | **2563** |
+| **Total** | **146** | **2569** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -391,10 +391,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.15 % (4938 / 4980) |
-| Branches | **95.78 %** (3226 / 3368) |
-| Functions | 99.38 % (1138 / 1145) |
-| Lines | 99.92 % (4072 / 4075) |
+| Statements | 99.08 % (4960 / 5006) |
+| Branches | **95.68 %** (3239 / 3385) |
+| Functions | 99.30 % (1143 / 1151) |
+| Lines | 99.87 % (4092 / 4097) |
 
 ```bash
 npm run test:coverage
@@ -402,7 +402,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.78 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.68 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -492,3 +492,4 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 | `app.component.ts` — `@ViewChildren(MatMenuTrigger) menuTriggers` (línea 107) | Propiedad decorada con `@ViewChildren`. Angular genera un setter interno que se llama durante la inicialización de la vista; con `template: ''` en los tests no hay view children que satisfacer. V8 registra el setter como no ejecutado. Artefacto del compilador Angular. |
 | `catalog-item-card.component.ts` — `CatalogItemCardComponent_click_HostBindingHandler` | Función generada por el compilador Angular para el host binding `'(click)': 'cardClick.emit()'`. Los tests despachan un click nativo sobre `fixture.nativeElement` y el spy se activa, pero V8 no instrumenta correctamente las funciones de host binding generadas por Ivy. Artefacto del compilador. |
 | `settings.component.ts` — función anónima `anonymous_15` | Callback anónimo de una suscripción RxJS en el componente de ajustes. La función es uno de los callbacks de subscribe que se ejecuta solo bajo condiciones específicas no reproducidas en los tests actuales. |
+| `game-detail.component.ts` — callback `probe.onload` (líneas 178-179) y `if (color) ...` | El effect del constructor crea un `new Image()` para muestrear el color dominante de la portada. En tests no hay un canvas real ni una imagen que dispare `onload`; los assertions en happy-dom no permiten controlar el ciclo de carga. La rama del `if (color)` (color truthy / null) tampoco se cubre sin mockear el constructor `Image` global, lo cual añadiría más fragilidad al spec que valor real. |
