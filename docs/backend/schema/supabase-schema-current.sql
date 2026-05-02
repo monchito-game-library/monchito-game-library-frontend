@@ -593,7 +593,7 @@ SELECT
   gc.title,
   gc.slug,
   gc.description,
-  gc.image_url,
+  COALESCE(ug.custom_image_url, gc.image_url) AS image_url,
   gc.released_date,
   gc.rating          AS rawg_rating,
   gc.metacritic_score,
