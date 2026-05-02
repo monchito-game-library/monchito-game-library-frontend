@@ -13,8 +13,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -48,7 +49,9 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
     DecimalPipe,
     MatIcon,
     MatIconButton,
-    MatButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatProgressSpinner,
     TranslocoPipe,
     SaleFormComponent,

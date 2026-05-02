@@ -811,6 +811,8 @@
       "saveBtn": "Guardar",
       "markAsSoldBtn": "Marcar como vendido",
       "saleInfoSection": "Información de la venta",
+      "soldBannerPrefix": "Vendido el",
+      "soldBannerJoiner": "por",
       "editSaleBtn": "Editar venta",
       "undoSaleBtn": "Deshacer venta",
       "snack": {
@@ -821,6 +823,10 @@
         "undoSuccess": "Venta deshecha correctamente",
         "undoError": "Error al deshacer la venta"
       }
+    },
+    "aria": {
+      "moreActions": "Más acciones",
+      "soldActions": "Acciones del juego vendido"
     }
   },
   "collectionOverview": {
