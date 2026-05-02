@@ -8,7 +8,7 @@ import { SupabaseWorkRepository } from './supabase-work.repository';
 
 function makeBuilder(result: { data?: unknown; error: { message: string } | null }) {
   const b: any = {};
-  for (const m of ['select', 'eq', 'order', 'update', 'single']) {
+  for (const m of ['select', 'eq', 'is', 'order', 'update', 'single']) {
     b[m] = vi.fn().mockReturnValue(b);
   }
   b.then = (resolve: any, reject?: any) => Promise.resolve(result).then(resolve, reject);

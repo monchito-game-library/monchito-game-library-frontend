@@ -40,7 +40,8 @@ export class SupabaseWorkRepository implements WorkRepositoryContract {
   }
 
   /**
-   * Returns all user_games copies that belong to the given work.
+   * Returns all active user_games copies that belong to the given work
+   * (excluyendo las vendidas, que viven en el listado de "Vendidos").
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {string} workId - UUID de la obra
@@ -51,6 +52,7 @@ export class SupabaseWorkRepository implements WorkRepositoryContract {
       .select('*')
       .eq('user_id', userId)
       .eq('work_id', workId)
+      .is('sold_at', null)
       .order('created_at', { ascending: true });
 
     if (error) throw new Error(`Failed to fetch copies for work: ${error.message}`);
