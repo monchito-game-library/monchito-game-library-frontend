@@ -58,6 +58,9 @@ unlighthouse.config.ts
 lighthouse-reports/
 scripts/lighthouse.mts
 
+# Backups locales de Supabase (npm run db:dump)
+backups/
+
 # Python
 __pycache__/
 *.pyc

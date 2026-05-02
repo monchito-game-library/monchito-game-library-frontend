@@ -118,14 +118,20 @@ WHERE  ug.user_id          = uw.user_id
 ALTER TABLE user_games ALTER COLUMN work_id SET NOT NULL;
 ```
 
-### 3.4. Columnas obsoletas en `user_games`
+### 3.4. Columnas obsoletas y trigger puente — fase de cleanup
 
-Tras el backfill, los campos de obra pasan a vivir solo en `user_works`. Como toda la migración va en una sola PR (ver §6), las columnas se eliminan en el mismo patch SQL después del INSERT/UPDATE de los pasos 2-3:
+Tras la fase 1 (`feat/work-copy-schema`) la BD queda con:
+
+- columnas `status`, `personal_rating`, `is_favorite`, `platform` duplicadas entre `user_games` y `user_works` (ambas con el mismo valor por backfill);
+- columnas huérfanas `personal_review`, `tags_personal`, `started_date`, `completed_date`, `purchased_date` (auditoría 2026-05-02: 423 filas en `user_games`, 0 con datos en estas cinco columnas);
+- el unique index `user_games_unique_per_platform` (por `platform`) sigue activo;
+- la vista `user_games_full` sigue leyendo todo desde `user_games`;
+- un **trigger puente** `trg_user_games_ensure_work_id` (función `public.ensure_user_work_id`) que asigna `work_id` automáticamente cuando un INSERT no lo trae — añadido en el patch 003 para que el frontend antiguo siga funcionando entre fase 1 y fase 2.
+
+La **fase 4 (`feat/work-copy-cleanup`)** se ejecuta cuando el repositorio ya manda `work_id` explícito en cada INSERT y los mappers leen de `user_works`. Su patch SQL:
 
 ```sql
--- Drop de columnas que ya viven en user_works + columnas huérfanas (auditoría 2026-05-02:
--- 423 filas en user_games, 0 con datos en personal_review, tags_personal, started_date,
--- completed_date ni purchased_date — drop 100 % seguro, sin migración previa).
+-- Drop columnas obsoletas (ya viven en user_works) + huérfanas
 ALTER TABLE user_games
   DROP COLUMN status,
   DROP COLUMN personal_rating,
@@ -137,13 +143,24 @@ ALTER TABLE user_games
   DROP COLUMN completed_date,     -- huérfano
   DROP COLUMN purchased_date;     -- huérfano
 
+-- Drop del trigger puente: el repositorio nuevo manda work_id explícito.
+-- (La función referencia status/personal_rating/is_favorite, así que hay que dropear el
+-- trigger ANTES de dropear las columnas. Se hace primero por orden de dependencia.)
+DROP TRIGGER  IF EXISTS trg_user_games_ensure_work_id ON user_games;
+DROP FUNCTION IF EXISTS public.ensure_user_work_id();
+
 -- Reemplazar el unique index actual (incluía platform) por uno limitado a (work_id, format, edition),
 -- que es lo que ahora distingue copias dentro de una obra:
 DROP INDEX IF EXISTS user_games_unique_per_platform;
 CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_work_format_edition
   ON user_games(work_id, format, edition)
   WHERE sold_at IS NULL;
+
+-- Reescribir la vista user_games_full para leer status/rating/favorite/platform desde user_works
+-- (ver §3.5 para el SELECT completo).
 ```
+
+Orden importante: dropear el trigger **antes** de dropear las columnas, porque la función referencia `NEW.status`, `NEW.personal_rating` y `NEW.is_favorite`.
 
 ### 3.5. Vistas actualizadas
 
@@ -307,10 +324,10 @@ Cobertura objetivo: ≥ 95.5 % branches (estado actual). El nuevo mapper aporta 
 
 Ramas pequeñas y aislables, no un PR único enorme:
 
-1. `feat/work-copy-schema` — patch SQL + vista nueva. Sin cambios TS. ~1 sesión.
-2. `feat/work-copy-mapper-repo` — DTOs, mappers, repositorio. Cobertura. ~2 sesiones.
+1. `feat/work-copy-schema` — patch SQL: tabla `user_works`, FK `work_id` en `user_games`, backfill, trigger puente para mantener compat con el frontend antiguo. Sin cambios TS. ~1 sesión.
+2. `feat/work-copy-mapper-repo` — DTOs, mappers, repositorio leen de `user_works` y mandan `work_id` en INSERTs. El trigger puente sigue activo por seguridad. Cobertura. ~2 sesiones.
 3. `feat/work-copy-models-frontend` — modelos TS, use cases, DI; presentation se actualiza al mínimo (mismo UX, refactor de imports). ~2 sesiones.
-4. `feat/work-copy-cleanup` — drop de columnas obsoletas, rename de la vista. ~1 sesión.
+4. `feat/work-copy-cleanup` — patch SQL final: drop de columnas obsoletas en `user_games` (`status`, `personal_rating`, `is_favorite`, `platform`, `personal_review`, `tags_personal`, `started_date`, `completed_date`, `purchased_date`), drop del trigger puente y de la función `ensure_user_work_id`, reemplazo del unique index por `(work_id, format, edition)`, reescritura de `user_games_full` con JOIN a `user_works`. Detalle en §3.4 y §3.5. ~1 sesión.
 
 Después: C1, C2, C3 (UI) en ramas separadas.
 

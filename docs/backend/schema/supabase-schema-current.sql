@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS user_games (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   game_catalog_id UUID NOT NULL REFERENCES game_catalog(id) ON DELETE CASCADE,
+  work_id         UUID NOT NULL,                  -- FK a user_works (constraint declarada en sección 3.b)
 
   -- Datos de compra
   price          NUMERIC(10,2),
@@ -198,6 +199,54 @@ CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at) 
 CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_platform
   ON user_games(user_id, game_catalog_id, platform, format, edition)
   WHERE sold_at IS NULL;
+
+
+-- ============================================================
+-- 3.b. TABLA: user_works
+--    Una "obra" agrupa 1..N copias del mismo juego del catálogo en
+--    la misma plataforma (ej: PS4 disco + PS4 digital = dos copias
+--    de la misma obra). Los atributos compartidos (status, rating,
+--    favorito) viven aquí; los específicos de cada copia (precio,
+--    tienda, formato, edición, venta…) siguen en user_games.
+--    Identidad: (user_id, game_catalog_id, platform).
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS user_works (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  game_catalog_id UUID NOT NULL REFERENCES game_catalog(id) ON DELETE CASCADE,
+  platform        TEXT NOT NULL,
+
+  -- Atributos de la obra (compartidos entre todas sus copias)
+  status TEXT DEFAULT 'backlog' CHECK (status IN (
+    'wishlist', 'backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'
+  )),
+  personal_rating  NUMERIC(3,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
+  is_favorite      BOOLEAN DEFAULT FALSE,
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Una obra por (user, juego del catálogo, plataforma).
+-- PS4 + Xbox del mismo juego = dos obras distintas (los logros y el
+-- platino están ligados a la plataforma).
+CREATE UNIQUE INDEX IF NOT EXISTS user_works_unique_per_user_catalog_platform
+  ON user_works(user_id, game_catalog_id, platform);
+
+CREATE INDEX IF NOT EXISTS idx_user_works_user_id      ON user_works(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_works_platform     ON user_works(platform);
+CREATE INDEX IF NOT EXISTS idx_user_works_status       ON user_works(status);
+CREATE INDEX IF NOT EXISTS idx_user_works_is_favorite  ON user_works(is_favorite) WHERE is_favorite = TRUE;
+
+-- FK de user_games.work_id (declarada aquí para no depender del orden de definición de tablas)
+ALTER TABLE user_games
+  DROP CONSTRAINT IF EXISTS user_games_work_id_fkey;
+ALTER TABLE user_games
+  ADD CONSTRAINT user_games_work_id_fkey
+  FOREIGN KEY (work_id) REFERENCES user_works(id) ON DELETE CASCADE;
+
+CREATE INDEX IF NOT EXISTS idx_user_games_work_id ON user_games(work_id);
 
 
 -- ============================================================
@@ -337,6 +386,21 @@ CREATE POLICY "Users can update their own games"
 CREATE POLICY "Users can delete their own games"
   ON user_games FOR DELETE USING (auth.uid() = user_id);
 
+-- user_works: solo el propio usuario
+ALTER TABLE user_works ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own works"
+  ON user_works FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own works"
+  ON user_works FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own works"
+  ON user_works FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own works"
+  ON user_works FOR DELETE USING (auth.uid() = user_id);
+
 -- user_preferences: solo el propio usuario
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 
@@ -387,6 +451,57 @@ DROP TRIGGER IF EXISTS trg_user_games_updated_at     ON user_games;
 CREATE TRIGGER trg_user_games_updated_at
   BEFORE UPDATE ON user_games
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS trg_user_works_updated_at     ON user_works;
+CREATE TRIGGER trg_user_works_updated_at
+  BEFORE UPDATE ON user_works
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger puente — asigna work_id automáticamente cuando un INSERT en user_games
+-- no lo trae (frontend antiguo). Se dropeará en la fase de cleanup del refactor
+-- obra/copia, cuando el repositorio mande work_id explícito.
+CREATE OR REPLACE FUNCTION public.ensure_user_work_id()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  v_work_id UUID;
+BEGIN
+  IF NEW.work_id IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+
+  IF NEW.platform IS NULL THEN
+    RAISE EXCEPTION 'user_games requiere platform para asignar work_id automáticamente';
+  END IF;
+
+  SELECT id INTO v_work_id
+  FROM   public.user_works
+  WHERE  user_id          = NEW.user_id
+    AND  game_catalog_id  = NEW.game_catalog_id
+    AND  platform         = NEW.platform
+  LIMIT 1;
+
+  IF v_work_id IS NULL THEN
+    INSERT INTO public.user_works (user_id, game_catalog_id, platform, status,
+                                   personal_rating, is_favorite)
+    VALUES (NEW.user_id, NEW.game_catalog_id, NEW.platform,
+            COALESCE(NEW.status, 'backlog'),
+            NEW.personal_rating,
+            COALESCE(NEW.is_favorite, FALSE))
+    RETURNING id INTO v_work_id;
+  END IF;
+
+  NEW.work_id := v_work_id;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_user_games_ensure_work_id ON user_games;
+CREATE TRIGGER trg_user_games_ensure_work_id
+  BEFORE INSERT ON user_games
+  FOR EACH ROW EXECUTE FUNCTION public.ensure_user_work_id();
 
 DROP TRIGGER IF EXISTS trg_user_preferences_updated_at ON user_preferences;
 CREATE TRIGGER trg_user_preferences_updated_at
