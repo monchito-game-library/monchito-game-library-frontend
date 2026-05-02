@@ -163,12 +163,7 @@
       } @else {
         <!-- "Mi opinión" — atributos de la obra (compartidos entre todas las copias) -->
         <section class="game-detail__section game-detail__section--opinion">
-          <div class="game-detail__section-header">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
-            @if (hasMultipleCopies()) {
-              <span class="game-detail__section-hint">{{ 'gameDetail.opinionHint' | transloco }}</span>
-            }
-          </div>
+          <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
           <div class="game-detail__data-grid">
             @if (g.personalRating !== null) {
               <div class="game-detail__data-item">
