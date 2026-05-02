@@ -24,46 +24,47 @@
     }
   </div>
 
-  <!-- Status -->
-  <div class="game-row__status">
-    @if (gameStatus(); as status) {
-      <span class="game-row__status-pill" [matTooltip]="status.labelKey | transloco">
-        <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
-      </span>
-    }
-  </div>
+  <!-- Meta wrapper — display: contents on desktop (children act as direct grid
+       items, layout unchanged); flex row on mobile so status, indicators and price
+       share the second row of the new two-row layout. -->
+  <div class="game-row__meta">
+    <div class="game-row__status">
+      @if (gameStatus(); as status) {
+        <span class="game-row__status-pill" [matTooltip]="status.labelKey | transloco">
+          <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+        </span>
+      }
+    </div>
 
-  <!-- Rating (stars) -->
-  <div class="game-row__rating">
-    @if (game().personalRating !== null) {
-      @for (i of [1, 2, 3, 4, 5]; track i) {
-        <mat-icon [class.game-row__star--filled]="i <= ratingStars()">
-          {{ i <= ratingStars() ? 'star' : 'star_border' }}
+    <div class="game-row__rating">
+      @if (game().personalRating !== null) {
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <mat-icon [class.game-row__star--filled]="i <= ratingStars()">
+            {{ i <= ratingStars() ? 'star' : 'star_border' }}
+          </mat-icon>
+        }
+      }
+    </div>
+
+    <div class="game-row__indicators">
+      @if (game().isFavorite) {
+        <mat-icon class="game-row__indicator game-row__indicator--favorite" matTooltip="Favorito">favorite</mat-icon>
+      }
+      @if (game().activeLoanId !== null) {
+        <mat-icon class="game-row__indicator game-row__indicator--loan" [matTooltip]="game().activeLoanTo ?? ''">
+          handshake
         </mat-icon>
       }
-    }
-  </div>
+      @if (game().forSale) {
+        <mat-icon class="game-row__indicator game-row__indicator--sale" matTooltip="En venta">sell</mat-icon>
+      }
+    </div>
 
-  <!-- Indicators (favorite, loan, sale) -->
-  <div class="game-row__indicators">
-    @if (game().isFavorite) {
-      <mat-icon class="game-row__indicator game-row__indicator--favorite" matTooltip="Favorito">favorite</mat-icon>
-    }
-    @if (game().activeLoanId !== null) {
-      <mat-icon class="game-row__indicator game-row__indicator--loan" [matTooltip]="game().activeLoanTo ?? ''">
-        handshake
-      </mat-icon>
-    }
-    @if (game().forSale) {
-      <mat-icon class="game-row__indicator game-row__indicator--sale" matTooltip="En venta">sell</mat-icon>
-    }
-  </div>
-
-  <!-- Price -->
-  <div class="game-row__price">
-    @if (game().price !== null) {
-      {{ game().price | currency: 'EUR' }}
-    }
+    <div class="game-row__price">
+      @if (game().price !== null) {
+        {{ game().price | currency: 'EUR' }}
+      }
+    </div>
   </div>
 
   <!-- Delete -->

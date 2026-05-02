@@ -385,7 +385,7 @@
 
   .game-form {
     .game-form__footer {
-      margin-bottom: calc(60px + 1rem);
+      margin-bottom: calc(var(--bottom-nav-height) + 1rem);
     }
   }
 
