@@ -396,7 +396,7 @@ export class SupabaseRepository implements GameRepositoryContract {
         .from(this._catalogTable)
         .select('id')
         .eq('rawg_id', catalogEntry.rawg_id)
-        .single();
+        .maybeSingle();
 
       if (existing) return existing.id;
 
@@ -427,7 +427,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       .from(this._catalogTable)
       .select('id')
       .ilike('title', title)
-      .single();
+      .maybeSingle();
 
     if (existing) return existing.id;
 
