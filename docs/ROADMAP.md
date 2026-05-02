@@ -16,6 +16,7 @@
 | [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
 | [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
 | [Mejoras visuales de polish](#mejoras-visuales-de-polish) | Baja | 🔄 Parcial (8/10) |
+| [Plan de UI/UX 2026](#plan-de-uiux-2026) | Alta | 🔄 Parcial (3/10) |
 | [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
 | [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
 | [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ✅ Completado |
@@ -921,7 +922,118 @@ Un pequeño translate vertical (`translateY(-2px)`) en el icono activo del botto
 
 ---
 
-## Social *(prioridad muy baja)*
+## Plan de UI/UX 2026
+
+Plan estructurado de mejoras de UX/UI surgido del análisis hecho en mayo de 2026. Pulidos sin tocar el modelo de datos, refactor del modelo `obra/copia` y UX que depende de ese refactor. Las completadas dejan referencia a la PR.
+
+### Fase A — Pulidos sin tocar el modelo
+
+#### A1. Filtros desktop con drawer lateral ✅ completado
+
+Drawer lateral derecho en desktop al pulsar el botón `tune` del header (mantiene el bottom-sheet en mobile). Barra fina de chips activos visible solo cuando hay filtros aplicados. Sheet polyform que soporta tanto inyección por `MatBottomSheet` como uso embebido vía `[dataInput]` y `(closed)`.
+
+**PR:** [#106](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/106)
+
+---
+
+#### A2. Vista lista compacta + header unificado ✅ completado
+
+Toggle grid ↔ list en el header con persistencia de la preferencia en `UserPreferencesService.gameListViewMode`. Cada fila compacta muestra cover 44×60, título + edición, plataforma, status, valoración, indicadores y precio (~5× más juegos por pantalla). Los botones del header (search, filter, view-mode, add) se muestran siempre y se ponen `disabled` durante el loading. Patrón replicado en `hardware-list-shell` para consolas y mandos.
+
+**PR:** [#107](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/107)
+
+---
+
+#### A3. Cache de imágenes RAWG con Service Worker ✅ completado
+
+`dataGroup` en `ngsw-config.json` que intercepta `media.rawg.io/media/**` con estrategia cache-first, `maxSize: 500` y `maxAge: 365d`. La primera vez que se ve una cover se guarda; las cargas siguientes salen de la caché del navegador. Funciona también offline para covers ya cacheadas. El mismo patrón sirve para Supabase Storage cuando se migren las imágenes (basta añadir su URL al pattern).
+
+**PR:** [#108](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/108)
+
+---
+
+#### A4. Action menu y sale-info colapsada en game-detail ⏳ pendiente
+
+Hoy el detalle muestra hasta 4 botones inline (Edit, Manage sale, Loan, Delete) que en mobile saturan la columna. Pasar Edit y Manage sale a botones principales, mover Loan y Delete a un menú `⋮` (kebab). Cuando un juego está vendido, convertir la "Sale info" en un banner verde colapsado arriba ("Vendido el 12/03/2026 por 28 €") y mover el resto del detalle debajo, ya que el juego vendido es read-only en la práctica.
+
+**Ficheros afectados:** `game-detail.component.{ts,html,scss}`.
+
+---
+
+#### A5. Profile menu accesible desde topbar mobile ⏳ pendiente
+
+Hoy en mobile el avatar del topbar abre `/settings` directo. En desktop abre el menú de perfil completo (banner, identidad, settings, logout). Unificar: en mobile el avatar también abre el menú de perfil. Sin esto, en mobile no se puede hacer logout sin pasar por settings primero.
+
+**Ficheros afectados:** `app.component.html`, posiblemente `profile-menu` si se extrae a componente propio.
+
+---
+
+#### A6. Centralizar breakpoints y `--bottom-nav-height` ⏳ pendiente
+
+Hoy `BreakpointObserver` en game-list y `@media` estáticas en game-detail se desincronizan. Crear constantes `BREAKPOINTS` (mobile 768, tablet 1024, desktop 1280) expuestas como tokens CSS y valores TS. Mover el hardcoded `60px` del bottom-nav a una variable CSS `--bottom-nav-height` consumida con `calc()` desde wishlist, game-list FABs y demás.
+
+**Ficheros afectados:** `styles.scss`, varios componentes con `@media` o cálculos sobre 60px.
+
+---
+
+### Fase B — Modelo obra/copia
+
+#### B1. Tabla `user_works` y agrupación de copias ⏳ pendiente
+
+Hoy dos copias del mismo juego (físico + digital) son dos `user_games` independientes que comparten `rawg_id` pero no se "saben" entre sí. Esto permite estados imposibles (dos platinos del mismo juego) y separa coste real (35 € disco + 70 € digital) sin contexto.
+
+**Modelo propuesto:** introducir el concepto de **obra (work)**: una obra tiene 1..N copias.
+
+| Campo | Vive en | Razón |
+|---|---|---|
+| Status (backlog/playing/platinum…) | Obra | Solo puede haber un platino por obra |
+| Personal rating | Obra | Tu opinión es de la obra, no del soporte |
+| Favorito | Obra | Mismo motivo |
+| Notas largas / review | Obra | |
+| Formato (digital/físico) | Copia | Por instancia |
+| Plataforma | Copia | PS5 disco vs Steam, p.ej. |
+| Precio, tienda, condición | Copia | |
+| Préstamo activo | Copia (solo física) | |
+| `forSale` / `soldAt` | Copia | Vendes una copia, no la obra |
+| Cover / cover position | Copia (con fallback a obra) | |
+
+**Migración pragmática:** introducir tabla `user_works` con campos compartidos (status, rating, favorite, notes) y columna `work_id` en `user_games`. Para entradas con `rawg_id`, el `work_id` se infiere por `(user_id, rawg_id)`. Para entradas sin `rawg_id` (juegos manuales), se rellena al duplicar.
+
+Requiere refactor del repositorio (`SupabaseGameRepository`), mappers, modelos (`GameModel`, `GameEditModel`, `GameListModel`), y la vista `user_games_full`.
+
+---
+
+### Fase C — UX que depende de obra/copia
+
+#### C1. Agrupar copias en el listado ⏳ pendiente
+
+Por defecto una sola card por obra; si hay >1 copia, badge `×2` en una esquina y el stripe digital + el icono físico apilados. Toggle "Mostrar copias separadas" en el drawer de filtros para los que prefieran ver una entrada por copia. Esto resuelve el patrón mental "no son juegos distintos".
+
+---
+
+#### C2. Tabs físico/digital en game-detail ⏳ pendiente
+
+En el detalle, mostrar el título y la sección "Mi opinión" (status, rating, favorito, notas) **una sola vez** fuera del bloque de copia, claramente separada con el aviso "aplica a todas tus copias". Selector tipo *segmented control* o *tabs* `[Físico · Digital]` para alternar la copia visible. Los datos por copia (precio, tienda, condición, formato, préstamo, venta) viven dentro del tab activo.
+
+---
+
+#### C3. CTA "Añadir otra copia" en el detalle ⏳ pendiente
+
+Si una obra solo tiene una copia, mostrar un botón discreto al final del detalle para añadir otra (físico ↔ digital). Atajo para los casos comunes (compra de upgrade digital tras tener disco, etc.).
+
+---
+
+### Cierre — Pulidos finales
+
+#### Z1. Acciones, ratings 0–10, stripe digital, skeletons ⏳ pendiente
+
+Bolsa de pulidos sueltos pendientes:
+- **Ratings**: el modelo guarda 0–10 y el form usa slider 0–10, pero el detalle muestra estrellas 0–5. Decidir uno y unificar (preferencia: 0–10 con un decimal).
+- **Stripe "DIGITAL"**: el banner cyan-magenta de las cards digitales rompe ligeramente la jerarquía cuando hay muchas seguidas. Reducir a *corner ribbon* o solo mostrarlo cuando coexiste con física en la misma obra (post-B1).
+- **Skeleton dinámico** en game-list: hoy son 12 placeholders fijos. Calcular `Math.ceil(viewportRows) * cols` o cap a 6 en mobile para no scroll innecesario al cargar.
+- **Géneros en catalog info**: hoy se truncan a 3 líneas sin "Ver más". Mostrar 3 chips visibles + `+N` si hay más.
+
+
 
 ### Perfiles públicos, amigos e interacción
 
