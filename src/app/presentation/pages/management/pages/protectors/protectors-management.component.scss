@@ -224,7 +224,7 @@
   }
 
   .protectors-grid-wrapper {
-    padding: 1rem 1rem calc(60px + 1rem);
+    padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
   }
 
   .protectors-grid {

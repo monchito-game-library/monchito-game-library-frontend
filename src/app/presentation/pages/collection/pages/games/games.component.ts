@@ -29,6 +29,7 @@ import { PlatformType } from '@/types/platform.type';
 import { GameFormatType } from '@/types/game-format.type';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { BREAKPOINTS, GAME_GRID_BREAKPOINTS, GAME_GRID_FALLBACK_COLUMNS } from '@/constants/breakpoints.constant';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -145,7 +146,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   readonly columnCount: WritableSignal<number> = signal<number>(this._columnCountFromWidth(window.innerWidth));
 
   /** Whether the viewport is in mobile range (≤ 768px). */
-  readonly isMobile: WritableSignal<boolean> = signal<boolean>(window.innerWidth <= 768);
+  readonly isMobile: WritableSignal<boolean> = signal<boolean>(window.innerWidth <= BREAKPOINTS.mobile);
 
   /** Current layout mode (cards grid or compact list), proxied to the user preferences service. */
   readonly viewMode: WritableSignal<GameListViewMode> = this._userPreferencesState.gameListViewMode;
@@ -270,22 +271,14 @@ export class GamesComponent implements OnInit, OnDestroy {
     // skeleton phase even though the browser resets scrollTop on DOM detachment.
     this._restoreScrollPosition();
 
-    this._bpSubscription = this._breakpointObserver
-      .observe([
-        '(max-width: 600px)',
-        '(max-width: 768px)',
-        '(max-width: 900px)',
-        '(max-width: 1200px)',
-        '(max-width: 1600px)'
-      ])
-      .subscribe((state) => {
-        this.isMobile.set(state.breakpoints['(max-width: 768px)']);
-        if (state.breakpoints['(max-width: 600px)']) this.columnCount.set(2);
-        else if (state.breakpoints['(max-width: 900px)']) this.columnCount.set(3);
-        else if (state.breakpoints['(max-width: 1200px)']) this.columnCount.set(4);
-        else if (state.breakpoints['(max-width: 1600px)']) this.columnCount.set(5);
-        else this.columnCount.set(6);
-      });
+    const mobileQuery = `(max-width: ${BREAKPOINTS.mobile}px)`;
+    const gridQueries: string[] = GAME_GRID_BREAKPOINTS.map((bp) => `(max-width: ${bp.maxWidth}px)`);
+
+    this._bpSubscription = this._breakpointObserver.observe([mobileQuery, ...gridQueries]).subscribe((state): void => {
+      this.isMobile.set(state.breakpoints[mobileQuery]);
+      const matched = GAME_GRID_BREAKPOINTS.find((bp) => state.breakpoints[`(max-width: ${bp.maxWidth}px)`]);
+      this.columnCount.set(matched?.columns ?? GAME_GRID_FALLBACK_COLUMNS);
+    });
   }
 
   ngOnDestroy(): void {
@@ -367,11 +360,8 @@ export class GamesComponent implements OnInit, OnDestroy {
    * @param {number} width - Viewport width in pixels
    */
   private _columnCountFromWidth(width: number): number {
-    if (width <= 600) return 2;
-    if (width <= 900) return 3;
-    if (width <= 1200) return 4;
-    if (width <= 1600) return 5;
-    return 6;
+    const matched = GAME_GRID_BREAKPOINTS.find((bp) => width <= bp.maxWidth);
+    return matched?.columns ?? GAME_GRID_FALLBACK_COLUMNS;
   }
 
   /**

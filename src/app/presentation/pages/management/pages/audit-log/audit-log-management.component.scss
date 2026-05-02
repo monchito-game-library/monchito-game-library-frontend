@@ -169,7 +169,7 @@
   }
 
   .audit-log-page__content {
-    padding: 1rem 1rem calc(60px + 1rem);
+    padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
   }
 
   .audit-log-list {

@@ -238,7 +238,7 @@
   .hw-list__fab {
     display: flex !important;
     position: fixed;
-    bottom: calc(60px + 1rem);
+    bottom: calc(var(--bottom-nav-height) + 1rem);
     right: 1rem;
     z-index: var(--z-card);
   }

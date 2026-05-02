@@ -121,6 +121,24 @@ html.dark-mode {
   --z-modal: 50;
   --z-toast: 60;
   --z-nav: 70;
+
+  /* ── Layout chrome ───────────────────────────────────── */
+  /* Height of the bottom navigation bar on mobile. Consumed via calc() by FABs,
+     scroll padding and any element that needs to clear it. Keep in sync with
+     `.bottom-nav` height in `app.component.scss`. */
+  --bottom-nav-height: 60px;
+
+  /* ── Breakpoints ─────────────────────────────────────── */
+  /* Mirror of `BREAKPOINTS` in `entities/constants/breakpoints.constant.ts`.
+     CSS custom properties are not valid inside @media queries, so SCSS files
+     keep literal values; these tokens are exposed for calc() and inline style
+     usage. */
+  --bp-mobile: 768px;
+  --bp-tablet: 1024px;
+  --bp-desktop: 1280px;
+  --bp-desktop-large: 1920px;
+  --bp-ultra-wide: 2560px;
+  --bp-ultra-wide-xl: 3840px;
 }
 
 // ────────────────────────── Scrollbar ──────────────────────────
