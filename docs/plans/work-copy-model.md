@@ -1,6 +1,29 @@
 # Plan — Modelo obra/copia (B1 del plan UI/UX 2026)
 
-> Este documento define la migración del modelo de "una entrada por copia" al modelo "obra → copias". Es la mejora más grande del plan; concentra cambios en schema Supabase, repositorios, mappers, modelos TS, use cases y presentation. **Léelo antes de empezar a tocar código** y ajusta lo que no cuadre.
+> Este documento define la migración del modelo de "una entrada por copia" al modelo "obra → copias". Es la mejora más grande del plan; concentra cambios en schema Supabase, repositorios, mappers, modelos TS, use cases y presentation.
+
+---
+
+## ✅ Estado: implementado (mayo 2026)
+
+El refactor está completo. Resumen de lo entregado:
+
+| Fase | Patches SQL | Resultado |
+|---|---|---|
+| 1 — Schema base | `003-work-copy-schema.sql` | Tabla `user_works`, `work_id` en `user_games`, backfill, trigger puente. |
+| 2 — Repo + mappers + vista | `004-vista-obra-copia.sql` | `user_games_full` hace JOIN con `user_works`. Mappers leen status/rating/favorite/platform desde la obra. Repo escribe campos de obra en `user_works`. |
+| · Fix imagen | `005-fix-coalesce-image.sql` | `COALESCE(custom_image_url, gc.image_url)` restaurado en la vista. |
+| 3 — Domain layer | (sólo TS) | `WorkRepositoryContract`, `SupabaseWorkRepository`, `WorkUseCases`. |
+| 4 — Cleanup | `006-cleanup-obsolete-columns.sql` | Drop trigger puente, drop columnas obsoletas y huérfanas, nuevo unique index `(work_id, format, edition)`, reescritura de la vista. Trigger AFTER DELETE para limpiar `user_works` huérfanos. |
+| · Refinamiento | `007-split-same-format-copies.sql` | Identidad de obra refinada: agrupa copias del mismo `(user, catalog, platform)` **solo si tienen formatos distintos** (físico + digital). Dos físicas o dos digitales son obras distintas. Drop del unique `user_works_unique_per_user_catalog_platform`. |
+| · Cleanup retroactivo | `008-cleanup-orphan-works.sql` | Limpia `user_works` huérfanos creados antes de existir el trigger AFTER DELETE. |
+
+**Fase de UX entregada en la misma rama** (post-B1 según ROADMAP): A4 (action menu + sale banner), C2 (tabs físico/digital + "Mi opinión" arriba), C3 (CTA "Añadir otra copia"), C1 simplificado (listado agrupado por obra con regla físico > digital, sin badge ni toggle).
+
+**Cambios respecto al plan original** que conviene tener en cuenta:
+- §2 / §3.1 — la **identidad de obra** ya NO es estrictamente única por `(user_id, game_catalog_id, platform)`. Se permite que coexistan varios `user_works` con la misma terna si tienen copias de formatos incompatibles entre sí (caso real: dos físicas con distintas ediciones de Castlevania PS3 → dos obras separadas, no una compartida). El matching se hace en el repositorio (`_getOrCreateUserWork`).
+- §3.4 — sí se dropearon los huérfanos (`personal_review`, `tags_personal`, `started_date`, `completed_date`, `purchased_date`) en patch 006.
+- §6 — se acordó "una sola PR al final" pero la rama acumula cada fase como commits separados (más fácil de revisar). PR único al cerrar.
 
 ---
 
@@ -35,7 +58,7 @@ Introducimos el concepto de **obra (work)**. Una obra agrupa 1..N **copias** que
 | `custom_image_url` | copy *(ya está así)* | Bug RAWG ya resuelto previamente |
 | `description` (notas) | copy | Decisión: una sola descripción por copia. Las dos copias del mismo work pueden tener notas distintas si hace falta ("esta copia tiene la caja dañada"). |
 
-**Identidad del work**: `(user_id, game_catalog_id, platform)`. Es la clave única natural. Si en el futuro queremos ediciones HD/remastered en la misma plataforma como obras distintas (p.ej. "The Last of Us" original PS3 vs "TLoU Remastered" PS4), eso ya queda separado por `game_catalog_id` distinto en RAWG. Si no tienen entrada distinta en RAWG y conviven en la misma `game_catalog_id` + `platform`, se considera la misma obra y son dos copias.
+**Identidad del work** (refinada, ver §10): se agrupan en una misma obra las copias que comparten `(user_id, game_catalog_id, platform)` **siempre que sean de formatos distintos** (una física + una digital). Dos copias del mismo formato (p.ej. dos físicas con distintas ediciones) viven en obras separadas y no comparten status/rating/favorito. La regla se aplica en el repositorio (`_getOrCreateUserWork`), no como constraint SQL: el unique index original sobre la terna `(user, catalog, platform)` se dropeó en el patch 007.
 
 ## 3. Schema Supabase
 
