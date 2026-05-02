@@ -303,8 +303,15 @@ export class GameFormComponent implements OnInit {
     void this._loadStores();
 
     // Read catalog entry preloaded from the wishlist "I have this game" action
+    // o desde el botón "Añadir otra copia" del detalle del juego.
     const navState = this._router.lastSuccessfulNavigation()?.extras.state as
-      | { catalogEntry?: GameCatalogDto; wishlistItemId?: string }
+      | {
+          catalogEntry?: GameCatalogDto;
+          wishlistItemId?: string;
+          prefillTitle?: string;
+          prefillPlatform?: PlatformType | null;
+          prefillFormat?: 'physical' | 'digital';
+        }
       | undefined;
     if (navState?.catalogEntry) this._pendingCatalogEntry = navState.catalogEntry;
     if (navState?.wishlistItemId) this._pendingWishlistItemId = navState.wishlistItemId;
@@ -314,6 +321,18 @@ export class GameFormComponent implements OnInit {
       // Create mode — preload catalog entry from wishlist if available
       if (this._pendingCatalogEntry) {
         this.selectGameFromSearch(this._pendingCatalogEntry);
+      } else if (navState?.prefillTitle) {
+        // Manual game without catalog: prefill at least the title
+        this.form.controls.title.setValue(navState.prefillTitle);
+      }
+      // Prefill platform and format from "Añadir otra copia" si vienen.
+      // selectGameFromSearch puede haber reseteado platform — forzamos después.
+      if (navState?.prefillPlatform) {
+        this.form.controls.platform.setValue(navState.prefillPlatform);
+      }
+      if (navState?.prefillFormat) {
+        this.form.controls.format.setValue(navState.prefillFormat);
+        this._formatTouchedByUser = true;
       }
       return;
     }

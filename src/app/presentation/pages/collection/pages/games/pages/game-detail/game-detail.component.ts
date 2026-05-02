@@ -252,6 +252,60 @@ export class GameDetailComponent implements OnInit {
   }
 
   /**
+   * Switches the visible copy when the user clicks a format tab. Carga el
+   * GameEditModel completo de la nueva copia para refrescar la sección
+   * "Mis datos" (precio, tienda, condición, edición, formato, préstamo, venta).
+   *
+   * @param {GameFormatType} format - Formato (physical | digital) seleccionado en el tab
+   */
+  async selectCopyByFormat(format: GameFormatType): Promise<void> {
+    const target: GameModel | undefined = this.copies().find((c) => c.format === format);
+    if (!target?.uuid || target.uuid === this.game()?.uuid) return;
+
+    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, target.uuid);
+    if (next) this.game.set(next);
+  }
+
+  /**
+   * Navigates to the "add game" form prefilling title, platform and the opposite
+   * format of the current copy. Useful when the user wants to register the other
+   * format of a game they already own (typical case: physical → digital o viceversa).
+   * El repo reutiliza la user_works existente vía _getOrCreateUserWork.
+   */
+  addAnotherCopy(): void {
+    const g = this.game();
+    if (!g) return;
+
+    const oppositeFormat: GameFormatType = g.format === 'physical' ? 'digital' : 'physical';
+
+    const catalogEntry = g.rawgId
+      ? ({
+          rawg_id: g.rawgId,
+          slug: g.rawgSlug ?? '',
+          title: g.title,
+          // platforms vacío: selectGameFromSearch solo resetea platform si llegan elementos
+          platforms: [] as string[],
+          released_date: g.releasedDate,
+          image_url: g.imageUrl ?? null,
+          rating: g.rawgRating,
+          metacritic_score: null,
+          esrb_rating: null,
+          genres: g.genres,
+          source: 'rawg' as const
+        } satisfies Partial<import('@/dtos/supabase/game-catalog.dto').GameCatalogDto>)
+      : null;
+
+    void this._router.navigate(['/collection/games/add'], {
+      state: {
+        catalogEntry,
+        prefillTitle: g.title,
+        prefillPlatform: g.platform,
+        prefillFormat: oppositeFormat
+      }
+    });
+  }
+
+  /**
    * Switches the body to the sale form view.
    */
   openSaleView(): void {
@@ -385,21 +439,6 @@ export class GameDetailComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
-  }
-
-  /**
-   * Switches the visible copy when the user clicks a format tab. Carga el
-   * GameEditModel completo de la nueva copia para refrescar la sección
-   * "Mis datos" (precio, tienda, condición, edición, formato, préstamo, venta).
-   *
-   * @param {GameFormatType} format - Formato (physical | digital) seleccionado en el tab
-   */
-  async selectCopyByFormat(format: GameFormatType): Promise<void> {
-    const target: GameModel | undefined = this.copies().find((c) => c.format === format);
-    if (!target?.uuid || target.uuid === this.game()?.uuid) return;
-
-    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, target.uuid);
-    if (next) this.game.set(next);
   }
 
   /**

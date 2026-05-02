@@ -412,6 +412,46 @@
   }
 }
 
+// ─── "Añadir otra copia" CTA ───────────────────────────────────────────────────
+
+.game-detail__add-copy-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.game-detail__add-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-full);
+  border: 1px dashed var(--mat-sys-outline);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+
+  mat-icon {
+    font-size: var(--text-lg);
+    width: var(--text-lg);
+    height: var(--text-lg);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--mat-sys-primary);
+    border-color: var(--mat-sys-primary);
+    background-color: color-mix(in srgb, var(--mat-sys-primary) 6%, transparent);
+  }
+}
+
 // ─── Sold banner ──────────────────────────────────────────────────────────────
 
 .game-detail__sold-banner {

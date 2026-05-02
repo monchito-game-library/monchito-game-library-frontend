@@ -170,6 +170,8 @@ export interface UserGameListDto {
   for_sale: boolean;
   sold_at: string | null;
   sold_price_final: number | null;
+  /** ISO timestamp — used by the repo to order the list after grouping copies by work. */
+  created_at: string;
   /** UUID of the active loan row. Null if not on loan. */
   active_loan_id?: string | null;
   /** Name of the person the game is loaned to. Null if not on loan. */

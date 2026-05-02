@@ -111,8 +111,9 @@ describe('SupabaseRepository', () => {
     });
 
     it('pagina hasta que el batch es menor de 1000', async () => {
-      const page1 = Array(1000).fill(listDto);
-      const page2 = [listDto];
+      // Cada fila con un work_id único para que el agrupamiento del repo no las colapse.
+      const page1 = Array.from({ length: 1000 }, (_, i) => ({ ...listDto, work_id: `work-${i}` }));
+      const page2 = [{ ...listDto, work_id: 'work-1000' }];
       mockSupabase.from
         .mockReturnValueOnce(makeBuilder({ data: page1, error: null }))
         .mockReturnValueOnce(makeBuilder({ data: page2, error: null }));
@@ -134,6 +135,65 @@ describe('SupabaseRepository', () => {
       mockSupabase.from.mockReturnValue(makeBuilder({ error: { message: 'DB error' } }));
 
       await expect(repo.getAllGamesForList('user-1')).rejects.toThrow('Failed to fetch games');
+    });
+
+    it('agrupa copias por work_id y elige la física como representante', async () => {
+      const digitalCopy = {
+        ...listDto,
+        id: 'copy-digital',
+        work_id: 'work-broforce',
+        format: 'digital',
+        created_at: '2026-01-01T00:00:00Z'
+      };
+      const physicalCopy = {
+        ...listDto,
+        id: 'copy-physical',
+        work_id: 'work-broforce',
+        format: 'physical',
+        created_at: '2026-02-01T00:00:00Z'
+      };
+      const otherWork = {
+        ...listDto,
+        id: 'copy-other',
+        work_id: 'work-other',
+        format: 'digital',
+        created_at: '2026-01-15T00:00:00Z'
+      };
+
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [digitalCopy, physicalCopy, otherWork], error: null }));
+
+      const result = await repo.getAllGamesForList('user-1');
+
+      expect(result).toHaveLength(2);
+      const broforceRepresentant = result.find((g) => g.uuid === 'copy-physical');
+      expect(broforceRepresentant).toBeDefined();
+      expect(broforceRepresentant!.format).toBe('physical');
+      // La copia digital del mismo work no debe aparecer en el listado.
+      expect(result.find((g) => g.uuid === 'copy-digital')).toBeUndefined();
+    });
+
+    it('cuando una obra solo tiene digitales, mantiene la más antigua', async () => {
+      const digitalOld = {
+        ...listDto,
+        id: 'copy-old',
+        work_id: 'work-1',
+        format: 'digital',
+        created_at: '2026-01-01T00:00:00Z'
+      };
+      const digitalNew = {
+        ...listDto,
+        id: 'copy-new',
+        work_id: 'work-1',
+        format: 'digital',
+        created_at: '2026-02-01T00:00:00Z'
+      };
+
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [digitalOld, digitalNew], error: null }));
+
+      const result = await repo.getAllGamesForList('user-1');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].uuid).toBe('copy-old');
     });
   });
 

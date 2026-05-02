@@ -58,15 +58,17 @@ export class SupabaseRepository implements GameRepositoryContract {
     let all: UserGameListDto[] = [];
     let from = 0;
     const select =
-      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,created_at,active_loan_id,active_loan_to,active_loan_at';
 
     while (true) {
+      // ASC: garantiza que en el tie-breaker (mismo formato dentro de una obra)
+      // gana la copia más antigua, por orden de inserción en el Map.
       const { data, error } = await this._supabase
         .from(this._viewName)
         .select(select)
         .eq('user_id', userId)
         .is('sold_at', null)
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: true })
         .range(from, from + PAGE_SIZE - 1);
 
       if (error) throw new Error(`Failed to fetch games: ${error.message}`);
@@ -77,7 +79,25 @@ export class SupabaseRepository implements GameRepositoryContract {
       from += PAGE_SIZE;
     }
 
-    return all.map(mapGameList);
+    // Agrupar por work_id: una sola copia representativa por obra.
+    // Regla: físico > digital. Tie-breaker: la copia más antigua (orden de
+    // inserción del Map, que respeta el ORDER BY created_at ASC del query).
+    const byWork: Map<string, UserGameListDto> = new Map();
+    for (const dto of all) {
+      const existing: UserGameListDto | undefined = byWork.get(dto.work_id);
+      if (!existing) {
+        byWork.set(dto.work_id, dto);
+        continue;
+      }
+      if (existing.format !== 'physical' && dto.format === 'physical') {
+        byWork.set(dto.work_id, dto);
+      }
+    }
+
+    // Devolver ordenado por created_at DESC (más reciente primero, semántica habitual del listado).
+    return Array.from(byWork.values())
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0))
+      .map(mapGameList);
   }
 
   /**
@@ -234,7 +254,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    */
   async getSoldGames(userId: string): Promise<GameListModel[]> {
     const select =
-      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,created_at,active_loan_id,active_loan_to,active_loan_at';
 
     const { data, error } = await this._supabase
       .from(this._viewName)

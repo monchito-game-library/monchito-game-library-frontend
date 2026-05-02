@@ -315,6 +315,19 @@
             }
           </section>
         }
+
+        @if (!hasMultipleCopies() && !g.soldAt) {
+          <div class="game-detail__add-copy-row">
+            <button
+              type="button"
+              class="game-detail__add-copy-btn"
+              (click)="addAnotherCopy()"
+              [attr.aria-label]="'gameDetail.addAnotherCopy' | transloco">
+              <mat-icon>library_add</mat-icon>
+              {{ 'gameDetail.addAnotherCopy' | transloco }}
+            </button>
+          </div>
+        }
       }
     </div>
   }

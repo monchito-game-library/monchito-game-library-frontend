@@ -22,7 +22,8 @@ const baseDto: UserGameListDto = {
   cover_position: null,
   for_sale: false,
   sold_at: null,
-  sold_price_final: null
+  sold_price_final: null,
+  created_at: '2026-01-01T00:00:00Z'
 };
 
 describe('mapGameList', () => {
