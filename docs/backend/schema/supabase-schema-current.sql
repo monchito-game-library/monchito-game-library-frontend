@@ -206,10 +206,12 @@ CREATE TABLE IF NOT EXISTS user_works (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Una obra por (user, juego del catálogo, plataforma).
--- PS4 + Xbox del mismo juego = dos obras distintas (los logros y el
--- platino están ligados a la plataforma).
-CREATE UNIQUE INDEX IF NOT EXISTS user_works_unique_per_user_catalog_platform
+-- Identidad lógica de obra: agrupa copias del mismo (user, catalog, platform)
+-- únicamente cuando tienen formatos distintos (físico + digital). Dos copias
+-- del mismo formato → dos obras distintas. La regla se aplica en el repo
+-- (_getOrCreateUserWork), no como constraint SQL — por eso la terna no es
+-- única a nivel BD. Index no-único para acelerar el lookup de candidatos.
+CREATE INDEX IF NOT EXISTS idx_user_works_user_catalog_platform
   ON user_works(user_id, game_catalog_id, platform);
 
 CREATE INDEX IF NOT EXISTS idx_user_works_user_id      ON user_works(user_id);

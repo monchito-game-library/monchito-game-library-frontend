@@ -264,11 +264,15 @@ describe('SupabaseRepository', () => {
   describe('addGameForUser', () => {
     it('reutiliza el catalog_id existente cuando el juego ya está en catálogo (rawg)', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
+      // Lookup user_works candidatos (multi-row): hay un work compatible
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-1' }], error: null });
+      // Lookup copias del mismo formato dentro de ese work: ninguna → reutilizar
+      const sameFormatLookupBuilder = makeBuilder({ data: [], error: null });
       const insertBuilder = makeBuilder({ error: null });
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       const catalogEntry = {
@@ -291,7 +295,7 @@ describe('SupabaseRepository', () => {
         status: 'backlog' as const,
         personalRating: null,
         edition: null,
-        format: null,
+        format: 'physical' as const,
         isFavorite: false,
         platform: 'PS5' as const,
         imageUrl: undefined,
@@ -358,9 +362,57 @@ describe('SupabaseRepository', () => {
       await expect(repo.addGameForUser('user-1', gameModel, catalogEntry)).rejects.toThrow('game.platform is required');
     });
 
+    it('crea un nuevo user_works cuando la obra existente ya tiene una copia del mismo formato', async () => {
+      // Caso: el usuario ya tiene Castlevania PS3 físico y añade otra física
+      // (otra edición). No deben compartir work — son dos obras independientes.
+      const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-castlevania' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-existing' }], error: null });
+      // El work existente YA tiene una física activa → no encaja, hay que crear nueva work
+      const sameFormatLookupBuilder = makeBuilder({ data: [{ id: 'existing-physical' }], error: null });
+      const workInsertBuilder = makeBuilder({ data: { id: 'work-new' }, error: null });
+      const insertBuilder = makeBuilder({ error: null });
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
+        .mockReturnValueOnce(workInsertBuilder)
+        .mockReturnValueOnce(insertBuilder);
+
+      const gameModel = {
+        title: 'Castlevania: Lords of Shadow',
+        price: null,
+        store: null,
+        condition: 'new' as const,
+        description: '',
+        status: 'backlog' as const,
+        personalRating: null,
+        edition: 'Special Edition (JAP)',
+        format: 'physical' as const,
+        isFavorite: false,
+        platform: 'PS3' as const,
+        imageUrl: undefined,
+        rawgId: 12345,
+        rawgSlug: null,
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
+      };
+
+      await repo.addGameForUser('user-1', gameModel);
+
+      expect(workInsertBuilder.insert).toHaveBeenCalled();
+      expect(insertBuilder.insert).toHaveBeenCalledWith(expect.objectContaining({ work_id: 'work-new' }));
+    });
+
     it('crea user_works cuando no existe para (user, catalog, platform)', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: null, error: null });
+      // Lookup candidatos: ninguno → crear nuevo work directamente
+      const workLookupBuilder = makeBuilder({ data: [], error: null });
       const workInsertBuilder = makeBuilder({ data: { id: 'work-new' }, error: null });
       const insertBuilder = makeBuilder({ error: null });
       mockSupabase.from
@@ -719,13 +771,15 @@ describe('SupabaseRepository', () => {
     it('crea un nuevo catálogo manual cuando no existe título igual', async () => {
       const catalogLookupBuilder = makeBuilder({ data: null, error: { message: 'Not found' } });
       const catalogInsertBuilder = makeBuilder({ data: { id: 'cat-new' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-1' }], error: null });
+      const sameFormatLookupBuilder = makeBuilder({ data: [], error: null });
       const insertBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(catalogInsertBuilder)
         .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel);
@@ -737,12 +791,14 @@ describe('SupabaseRepository', () => {
 
     it('reutiliza catálogo manual existente cuando el título ya existe', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-1' }], error: null });
+      const sameFormatLookupBuilder = makeBuilder({ data: [], error: null });
       const insertBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel);
@@ -752,12 +808,14 @@ describe('SupabaseRepository', () => {
 
     it('lanza error si el insert falla', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-1' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-1' }], error: null });
+      const sameFormatLookupBuilder = makeBuilder({ data: [], error: null });
       const insertBuilder = makeBuilder({ error: { message: 'Insert failed' } });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await expect(repo.addGameForUser('user-1', gameModel)).rejects.toThrow('Failed to add game');
@@ -805,13 +863,15 @@ describe('SupabaseRepository', () => {
     it('crea entrada de catálogo cuando no existe en RAWG', async () => {
       const catalogLookupBuilder = makeBuilder({ data: null, error: null });
       const catalogInsertBuilder = makeBuilder({ data: { id: 'cat-new-rawg' }, error: null });
-      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [{ id: 'work-1' }], error: null });
+      const sameFormatLookupBuilder = makeBuilder({ data: [], error: null });
       const insertBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(catalogInsertBuilder)
         .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(sameFormatLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel, catalogEntry);

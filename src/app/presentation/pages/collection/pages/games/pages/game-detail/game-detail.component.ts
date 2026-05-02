@@ -252,17 +252,16 @@ export class GameDetailComponent implements OnInit {
   }
 
   /**
-   * Switches the visible copy when the user clicks a format tab. Carga el
+   * Switches the visible copy when the user clicks a copy tab. Carga el
    * GameEditModel completo de la nueva copia para refrescar la sección
    * "Mis datos" (precio, tienda, condición, edición, formato, préstamo, venta).
    *
-   * @param {GameFormatType} format - Formato (physical | digital) seleccionado en el tab
+   * @param {string} uuid - UUID (user_games) de la copia a mostrar
    */
-  async selectCopyByFormat(format: GameFormatType): Promise<void> {
-    const target: GameModel | undefined = this.copies().find((c) => c.format === format);
-    if (!target?.uuid || target.uuid === this.game()?.uuid) return;
+  async selectCopyByUuid(uuid: string): Promise<void> {
+    if (!uuid || uuid === this.game()?.uuid) return;
 
-    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, target.uuid);
+    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, uuid);
     if (next) this.game.set(next);
   }
 

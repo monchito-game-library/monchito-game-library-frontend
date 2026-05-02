@@ -412,6 +412,12 @@
   }
 }
 
+.game-detail__copy-tab-edition {
+  font-weight: 400;
+  font-size: var(--text-xs);
+  opacity: 0.85;
+}
+
 // ─── "Añadir otra copia" CTA ───────────────────────────────────────────────────
 
 .game-detail__add-copy-row {

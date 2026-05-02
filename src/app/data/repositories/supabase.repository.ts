@@ -377,15 +377,35 @@ export class SupabaseRepository implements GameRepositoryContract {
       throw new Error('Cannot resolve user_works: game.platform is required');
     }
 
-    const { data: existing } = await this._supabase
+    // Una obra agrupa copias del mismo (user, catalog, platform) ÚNICAMENTE
+    // cuando tienen formatos distintos (físico + digital). Dos copias del
+    // mismo formato son obras independientes (cada una con su status, rating
+    // y favorito propios). Buscamos un work candidato en el que esta nueva
+    // copia "encaje": no debe existir todavía una copia activa con NEW.format
+    // dentro de él.
+    const { data: candidates } = await this._supabase
       .from(this._userWorksTable)
       .select('id')
       .eq('user_id', userId)
       .eq('game_catalog_id', gameCatalogId)
-      .eq('platform', game.platform)
-      .maybeSingle();
+      .eq('platform', game.platform);
 
-    if (existing?.id) return existing.id;
+    if (candidates && candidates.length > 0 && game.format) {
+      for (const candidate of candidates) {
+        const { data: sameFormatCopies } = await this._supabase
+          .from(this._userGamesTable)
+          .select('id')
+          .eq('work_id', candidate.id)
+          .eq('format', game.format)
+          .is('sold_at', null);
+
+        if (!sameFormatCopies || sameFormatCopies.length === 0) {
+          // Este work tiene espacio para esta nueva copia (no tiene copia activa
+          // con el mismo formato) → reutilizamos su id.
+          return candidate.id;
+        }
+      }
+    }
 
     const insertPayload: UserWorkInsertDto = {
       user_id: userId,

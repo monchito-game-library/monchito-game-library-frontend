@@ -206,7 +206,9 @@
           }
         </section>
 
-        <!-- Tabs físico/digital — solo si la obra tiene >1 copia -->
+        <!-- Tabs por copia — solo si la obra tiene >1 copia. Soporta el caso
+             edge donde hay varias copias del mismo formato pero distinta edición
+             (cada tab apunta al UUID de la copia, no solo al formato). -->
         @if (hasMultipleCopies()) {
           <div class="game-detail__copy-tabs" role="tablist">
             @for (copy of copies(); track copy.uuid) {
@@ -216,9 +218,12 @@
                 class="game-detail__copy-tab"
                 [class.game-detail__copy-tab--active]="copy.uuid === g.uuid"
                 [attr.aria-selected]="copy.uuid === g.uuid"
-                (click)="selectCopyByFormat(copy.format!)">
+                (click)="selectCopyByUuid(copy.uuid!)">
                 <mat-icon>{{ copy.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
                 {{ 'gameList.filters.' + copy.format | transloco }}
+                @if (copy.edition) {
+                  <span class="game-detail__copy-tab-edition">· {{ copy.edition }}</span>
+                }
               </button>
             }
           </div>
