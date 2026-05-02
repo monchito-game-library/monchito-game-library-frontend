@@ -485,6 +485,6 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .settings {
-    padding: 1.25rem 1rem calc(60px + 1rem);
+    padding: 1.25rem 1rem calc(var(--bottom-nav-height) + 1rem);
   }
 }

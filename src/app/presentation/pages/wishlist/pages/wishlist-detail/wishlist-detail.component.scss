@@ -212,6 +212,6 @@
 // ────────────────────────── Responsive: mobile ──────────────────────────────
 @media (max-width: 768px) {
   .wishlist-detail__content {
-    padding: 1rem 1rem calc(60px + 1.5rem);
+    padding: 1rem 1rem calc(var(--bottom-nav-height) + 1.5rem);
   }
 }
