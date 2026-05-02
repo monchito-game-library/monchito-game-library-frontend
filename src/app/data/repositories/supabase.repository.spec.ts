@@ -362,13 +362,18 @@ describe('SupabaseRepository', () => {
       await expect(repo.addGameForUser('user-1', gameModel, catalogEntry)).rejects.toThrow('game.platform is required');
     });
 
-    it('cuando se proporciona targetWorkId, omite _getOrCreate* y reutiliza catalog+work', async () => {
+    it('cuando se proporciona targetWorkId, omite _getOrCreate* y aplica el form a la obra', async () => {
       // Caso "Añadir otra copia" desde el detalle: el botón fuerza el work_id
-      // existente para evitar fugas con catálogos manuales (mismo título pero
-      // catalog_id distinto al re-resolver vía RAWG search).
+      // existente para evitar fugas con catálogos manuales. Además, los campos
+      // de obra (status/rating/favorito) que el usuario haya tocado en el form
+      // se aplican a user_works → afectan a todas las copias.
       const workLookupBuilder = makeBuilder({ data: { game_catalog_id: 'cat-existing' }, error: null });
+      const workUpdateBuilder = makeBuilder({ error: null });
       const insertBuilder = makeBuilder({ error: null });
-      mockSupabase.from.mockReturnValueOnce(workLookupBuilder).mockReturnValueOnce(insertBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(workUpdateBuilder)
+        .mockReturnValueOnce(insertBuilder);
 
       const gameModel = {
         title: 'Stranger of Paradise: Final Fantasy Origin',
@@ -399,6 +404,10 @@ describe('SupabaseRepository', () => {
 
       // El repo NO debe consultar game_catalog ni resolver _getOrCreateUserWork.
       expect(mockSupabase.from).not.toHaveBeenCalledWith('game_catalog');
+      // Aplica los campos de obra del modelo a user_works.
+      expect(workUpdateBuilder.update).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'backlog', personal_rating: null, is_favorite: false })
+      );
       expect(insertBuilder.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_id: 'user-1',

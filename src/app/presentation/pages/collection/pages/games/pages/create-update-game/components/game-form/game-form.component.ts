@@ -319,6 +319,9 @@ export class GameFormComponent implements OnInit {
           prefillTitle?: string;
           prefillPlatform?: PlatformType | null;
           prefillFormat?: 'physical' | 'digital';
+          prefillStatus?: import('@/types/game-status.type').GameStatus;
+          prefillPersonalRating?: number | null;
+          prefillIsFavorite?: boolean;
           forceWorkId?: string;
         }
       | undefined;
@@ -335,14 +338,24 @@ export class GameFormComponent implements OnInit {
         // Manual game without catalog: prefill at least the title
         this.form.controls.title.setValue(navState.prefillTitle);
       }
-      // Prefill platform and format from "Añadir otra copia" si vienen.
-      // selectGameFromSearch puede haber reseteado platform — forzamos después.
+      // Prefill platform y format desde "Añadir otra copia". selectGameFromSearch
+      // puede haber reseteado platform → lo forzamos después.
       if (navState?.prefillPlatform) {
         this.form.controls.platform.setValue(navState.prefillPlatform);
       }
       if (navState?.prefillFormat) {
         this.form.controls.format.setValue(navState.prefillFormat);
         this._formatTouchedByUser = true;
+      }
+      // Prefill atributos de obra (status / rating / favorito) con los valores
+      // actuales para que el usuario los vea y pueda mantenerlos o cambiarlos
+      // — los cambios se persisten en user_works en el submit.
+      if (navState?.prefillStatus) this.form.controls.status.setValue(navState.prefillStatus);
+      if (navState?.prefillPersonalRating !== undefined && navState.prefillPersonalRating !== null) {
+        this.form.controls.personal_rating.setValue(navState.prefillPersonalRating);
+      }
+      if (navState?.prefillIsFavorite !== undefined) {
+        this.form.controls.is_favorite.setValue(navState.prefillIsFavorite);
       }
       return;
     }

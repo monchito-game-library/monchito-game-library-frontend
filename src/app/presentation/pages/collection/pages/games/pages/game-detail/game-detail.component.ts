@@ -300,6 +300,12 @@ export class GameDetailComponent implements OnInit {
         prefillTitle: g.title,
         prefillPlatform: g.platform,
         prefillFormat: oppositeFormat,
+        // Atributos de obra prefijados con los valores actuales: el form
+        // los muestra editables, y si el usuario los cambia se aplican a
+        // user_works (afectando a todas las copias de la obra).
+        prefillStatus: g.status,
+        prefillPersonalRating: g.personalRating,
+        prefillIsFavorite: g.isFavorite,
         // Forzamos la asociación a la work existente para que el repo NO
         // re-resuelva el catalog (que con catálogos manuales podía crear
         // uno nuevo en RAWG y partir la obra). Si el usuario cambia el

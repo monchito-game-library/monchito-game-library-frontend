@@ -153,6 +153,16 @@ export class SupabaseRepository implements GameRepositoryContract {
       if (workErr || !work) throw new Error(`Failed to resolve targetWorkId: ${workErr?.message ?? 'not found'}`);
       gameCatalogId = work.game_catalog_id;
       workId = targetWorkId;
+
+      // El form muestra status/rating/favorito prefijados con los valores
+      // de la obra. Si el usuario los modifica, los aplicamos a user_works
+      // para que se reflejen en todas las copias (filosofía obra/copia).
+      const { error: updateWorkErr } = await this._supabase
+        .from(this._userWorksTable)
+        .update(mapGameToWorkInsertDto(game))
+        .eq('id', workId)
+        .eq('user_id', userId);
+      if (updateWorkErr) throw new Error(`Failed to update work: ${updateWorkErr.message}`);
     } else {
       gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
       workId = await this._getOrCreateUserWork(userId, gameCatalogId, game);
