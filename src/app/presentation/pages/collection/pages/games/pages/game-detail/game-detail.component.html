@@ -233,32 +233,32 @@
           </section>
         }
 
-        <!-- Tabs por copia — solo si la obra tiene >1 copia. Soporta el caso
-             edge donde hay varias copias del mismo formato pero distinta edición
-             (cada tab apunta al UUID de la copia, no solo al formato). -->
-        @if (hasMultipleCopies()) {
-          <div class="game-detail__copy-tabs" role="tablist">
-            @for (copy of copies(); track copy.uuid) {
-              <button
-                type="button"
-                role="tab"
-                class="game-detail__copy-tab"
-                [class.game-detail__copy-tab--active]="copy.uuid === g.uuid"
-                [attr.aria-selected]="copy.uuid === g.uuid"
-                (click)="selectCopyByUuid(copy.uuid!)">
-                <mat-icon>{{ copy.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
-                {{ 'gameList.filters.' + copy.format | transloco }}
-                @if (copy.edition) {
-                  <span class="game-detail__copy-tab-edition">· {{ copy.edition }}</span>
-                }
-              </button>
-            }
-          </div>
-        }
-
-        <!-- "Mis datos" — atributos de la copia activa -->
-        <section class="game-detail__section">
+        <!-- "Mis datos" — header común; los tabs y el contenido cambian por copia -->
+        <section class="game-detail__section game-detail__section--my-data">
           <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
+
+          <!-- Tabs por copia — solo si la obra tiene >1 copia. Soporta varias copias
+               del mismo formato (cada tab apunta al UUID de la copia, no al formato). -->
+          @if (hasMultipleCopies()) {
+            <div class="game-detail__copy-tabs" role="tablist">
+              @for (copy of copies(); track copy.uuid) {
+                <button
+                  type="button"
+                  role="tab"
+                  class="game-detail__copy-tab"
+                  [class.game-detail__copy-tab--active]="copy.uuid === g.uuid"
+                  [attr.aria-selected]="copy.uuid === g.uuid"
+                  (click)="selectCopyByUuid(copy.uuid!)">
+                  <mat-icon>{{ copy.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
+                  {{ 'gameList.filters.' + copy.format | transloco }}
+                  @if (copy.edition) {
+                    <span class="game-detail__copy-tab-edition">· {{ copy.edition }}</span>
+                  }
+                </button>
+              }
+            </div>
+          }
+
           <div class="game-detail__data-grid">
             @if (g.price !== null) {
               <div class="game-detail__data-item">
@@ -310,15 +310,13 @@
               </div>
             }
           </div>
-        </section>
 
-        <!-- "Notas" — descripción libre por copia (soporta "esta caja dañada" etc.) -->
-        @if (g.description) {
-          <section class="game-detail__section">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
+          <!-- Notas — descripción libre por copia. También cambia con el tab. -->
+          @if (g.description) {
+            <h3 class="game-detail__subsection-title">{{ 'gameDetail.notes' | transloco }}</h3>
             <p class="game-detail__notes">{{ g.description }}</p>
-          </section>
-        }
+          }
+        </section>
 
         @if (!hasMultipleCopies() && !g.soldAt) {
           <div class="game-detail__add-copy-row">
