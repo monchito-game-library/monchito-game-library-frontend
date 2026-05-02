@@ -811,6 +811,8 @@
       "saveBtn": "Save",
       "markAsSoldBtn": "Mark as sold",
       "saleInfoSection": "Sale information",
+      "soldBannerPrefix": "Sold on",
+      "soldBannerJoiner": "for",
       "editSaleBtn": "Edit sale",
       "undoSaleBtn": "Undo sale",
       "snack": {
@@ -821,6 +823,10 @@
         "undoSuccess": "Sale undone successfully",
         "undoError": "Error undoing the sale"
       }
+    },
+    "aria": {
+      "moreActions": "More actions",
+      "soldActions": "Sold game actions"
     }
   },
   "collectionOverview": {

@@ -2,8 +2,11 @@
  * Extracts a dominant color from an HTMLImageElement using canvas pixel sampling.
  * Skips near-black and near-white pixels to get a more representative mid-tone.
  * Returns an rgba string or null if extraction fails (e.g. CORS restriction).
+ *
+ * @param {HTMLImageElement} img - The image element to sample
+ * @param {number} alpha - Alpha channel for the returned rgba (default 0.75)
  */
-export function extractDominantColor(img: HTMLImageElement): string | null {
+export function extractDominantColor(img: HTMLImageElement, alpha: number = 0.75): string | null {
   try {
     const W = 50;
     const H = 67;
@@ -43,7 +46,7 @@ export function extractDominantColor(img: HTMLImageElement): string | null {
       count = data.length / 4;
     }
 
-    return `rgba(${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)}, 0.75)`;
+    return `rgba(${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)}, ${alpha})`;
   } catch {
     return null;
   }
