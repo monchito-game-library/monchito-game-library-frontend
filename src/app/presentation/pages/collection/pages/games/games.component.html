@@ -53,15 +53,9 @@
     <!-- State: loading -->
     @if (loading()) {
       <div class="game-list__skeleton" [style.--grid-cols]="columnCount()">
-        @for (n of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; track n) {
+        @for (n of skeletonItems(); track n) {
           <div class="game-list__skeleton-card">
-            <div class="game-list__skeleton-image">
-              <app-skeleton height="100%" />
-            </div>
-            <div class="game-list__skeleton-footer">
-              <app-skeleton width="70%" height="14px" />
-              <app-skeleton width="50%" height="12px" />
-            </div>
+            <app-skeleton height="100%" borderRadius="var(--radius-md)" />
           </div>
         }
       </div>

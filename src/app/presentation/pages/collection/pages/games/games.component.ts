@@ -145,6 +145,16 @@ export class GamesComponent implements OnInit, OnDestroy {
   /** Number of columns in the virtual scroll grid, updated by the breakpoint observer. */
   readonly columnCount: WritableSignal<number> = signal<number>(this._columnCountFromWidth(window.innerWidth));
 
+  /**
+   * Skeleton placeholder indices for the loading grid. Sized as `columns × 6 rows`
+   * so it always covers the visible viewport without over-drawing: 2 cols → 12, 5
+   * cols → 30, 8 cols (4K) → 48. Recomputes automatically when `columnCount` shifts.
+   */
+  readonly skeletonItems: Signal<readonly number[]> = computed((): readonly number[] => {
+    const total: number = this.columnCount() * 6;
+    return Array.from({ length: total }, (_, i: number): number => i);
+  });
+
   /** Whether the viewport is in mobile range (≤ 768px). */
   readonly isMobile: WritableSignal<boolean> = signal<boolean>(window.innerWidth <= BREAKPOINTS.mobile);
 

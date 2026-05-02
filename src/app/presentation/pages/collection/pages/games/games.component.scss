@@ -63,6 +63,9 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   align-content: start;
+  // Without align-items: start, the grid stretches every cell to the tallest row,
+  // overriding the aspect-ratio of the cards and making them grow vertically.
+  align-items: start;
   gap: 1.25rem;
   padding: 1.5rem;
   padding-bottom: 2.5rem;
@@ -87,35 +90,32 @@
 .game-list__skeleton {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
+  align-content: start;
+  align-items: start;
   gap: 1.25rem;
   padding: 1.5rem;
   box-sizing: border-box;
-  align-content: start;
   overflow: hidden;
 }
 
+// One placeholder per card — title and price live ON TOP of the cover (gradient
+// overlay) in the real game-card, so the skeleton matches that with a single 3:4
+// rounded block instead of a stack of bars below the image. The aspect-ratio is
+// enforced via padding-top hack (133.33% = 4/3) which works reliably on every
+// grid implementation, including the cases where `aspect-ratio` is ignored on
+// items whose width comes from a `1fr` track.
 .game-list__skeleton-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.game-list__skeleton-image {
-  aspect-ratio: 3 / 4;
+  position: relative;
+  width: 100%;
+  padding-top: calc(100% * 4 / 3);
   border-radius: var(--radius-md);
   overflow: hidden;
 
   app-skeleton {
+    position: absolute;
+    inset: 0;
     display: block;
-    height: 100%;
   }
-}
-
-.game-list__skeleton-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0 0.25rem;
 }
 
 // ─── Empty state ──────────────────────────────────────────────────────────────
