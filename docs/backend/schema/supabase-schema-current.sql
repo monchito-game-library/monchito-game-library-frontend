@@ -144,36 +144,16 @@ CREATE TABLE IF NOT EXISTS user_games (
   -- Datos de compra
   price          NUMERIC(10,2),
   store          UUID REFERENCES stores(id) ON DELETE SET NULL,
-  platform       TEXT,
   condition      TEXT CHECK (condition IN ('new', 'used')),
-  purchased_date DATE,
   format         TEXT CHECK (format IN ('physical', 'digital')),
+  edition        TEXT,                            -- 'Deluxe Edition', 'GOTY Edition'…
 
-  -- Estado y progreso
-  status   TEXT    DEFAULT 'backlog' CHECK (status IN (
-    'wishlist', 'backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'
-  )),
-
-  -- Valoración personal
-  personal_rating  NUMERIC(3,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
-  personal_review  TEXT,
-
-  -- Edición del ejemplar (ej: 'Deluxe Edition', 'GOTY Edition')
-  edition TEXT,
-
-  -- Fechas de tracking
-  started_date   DATE,
-  completed_date DATE,
-
-  -- Notas y etiquetas personales
-  description   TEXT,
-  tags_personal TEXT[] DEFAULT '{}',
-
-  -- Favorito
-  is_favorite BOOLEAN DEFAULT FALSE,
+  -- Notas personales (descripción libre por copia)
+  description    TEXT,
 
   -- Posición de la portada (punto focal configurable en la card)
-  cover_position VARCHAR(20),
+  cover_position    VARCHAR(20),
+  custom_image_url  TEXT,                         -- imagen personalizada por copia (override del catálogo)
 
   -- Venta
   for_sale         BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -189,15 +169,13 @@ CREATE TABLE IF NOT EXISTS user_games (
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_user_games_user_id             ON user_games(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_games_game_catalog_id     ON user_games(game_catalog_id);
-CREATE INDEX IF NOT EXISTS idx_user_games_platform            ON user_games(platform);
-CREATE INDEX IF NOT EXISTS idx_user_games_status              ON user_games(status);
-CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_for_sale       ON user_games(for_sale)     WHERE for_sale = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at)      WHERE sold_at IS NOT NULL;
 
--- Unicidad solo en juegos activos (sold_at IS NULL); los vendidos no computan
-CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_platform
-  ON user_games(user_id, game_catalog_id, platform, format, edition)
+-- Unicidad de copia dentro de una obra. Por (work_id, format, edition):
+-- una obra puede tener una física y una digital, ambas con ediciones distintas.
+CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_work_format_edition
+  ON user_games(work_id, format, edition)
   WHERE sold_at IS NULL;
 
 
@@ -457,51 +435,30 @@ CREATE TRIGGER trg_user_works_updated_at
   BEFORE UPDATE ON user_works
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Trigger puente — asigna work_id automáticamente cuando un INSERT en user_games
--- no lo trae (frontend antiguo). Se dropeará en la fase de cleanup del refactor
--- obra/copia, cuando el repositorio mande work_id explícito.
-CREATE OR REPLACE FUNCTION public.ensure_user_work_id()
+-- Trigger AFTER DELETE en user_games: si la fila borrada era la última copia
+-- de su user_works, borra también la obra para evitar huérfanos.
+-- (La FK user_games.work_id ON DELETE CASCADE cubre el caso opuesto:
+-- borrar la obra elimina todas sus copias.)
+CREATE OR REPLACE FUNCTION public.cleanup_orphan_user_works()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SECURITY DEFINER
 SET search_path = ''
 AS $$
-DECLARE
-  v_work_id UUID;
 BEGIN
-  IF NEW.work_id IS NOT NULL THEN
-    RETURN NEW;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.user_games WHERE work_id = OLD.work_id
+  ) THEN
+    DELETE FROM public.user_works WHERE id = OLD.work_id;
   END IF;
-
-  IF NEW.platform IS NULL THEN
-    RAISE EXCEPTION 'user_games requiere platform para asignar work_id automáticamente';
-  END IF;
-
-  SELECT id INTO v_work_id
-  FROM   public.user_works
-  WHERE  user_id          = NEW.user_id
-    AND  game_catalog_id  = NEW.game_catalog_id
-    AND  platform         = NEW.platform
-  LIMIT 1;
-
-  IF v_work_id IS NULL THEN
-    INSERT INTO public.user_works (user_id, game_catalog_id, platform, status,
-                                   personal_rating, is_favorite)
-    VALUES (NEW.user_id, NEW.game_catalog_id, NEW.platform,
-            COALESCE(NEW.status, 'backlog'),
-            NEW.personal_rating,
-            COALESCE(NEW.is_favorite, FALSE))
-    RETURNING id INTO v_work_id;
-  END IF;
-
-  NEW.work_id := v_work_id;
-  RETURN NEW;
+  RETURN OLD;
 END;
 $$;
 
-DROP TRIGGER IF EXISTS trg_user_games_ensure_work_id ON user_games;
-CREATE TRIGGER trg_user_games_ensure_work_id
-  BEFORE INSERT ON user_games
-  FOR EACH ROW EXECUTE FUNCTION public.ensure_user_work_id();
+DROP TRIGGER IF EXISTS trg_user_games_cleanup_orphan_works ON user_games;
+CREATE TRIGGER trg_user_games_cleanup_orphan_works
+  AFTER DELETE ON user_games
+  FOR EACH ROW EXECUTE FUNCTION public.cleanup_orphan_user_works();
 
 DROP TRIGGER IF EXISTS trg_user_preferences_updated_at ON user_preferences;
 CREATE TRIGGER trg_user_preferences_updated_at
@@ -625,13 +582,6 @@ SELECT
   ug.sale_price,
   ug.sold_at,
   ug.sold_price_final,
-
-  -- Huérfanos (mantenidos hasta la fase 4 para no romper DTOs)
-  ug.purchased_date,
-  ug.personal_review,
-  ug.started_date,
-  ug.completed_date,
-  ug.tags_personal,
 
   -- Préstamo activo (NULL si no está prestado)
   al.id          AS active_loan_id,

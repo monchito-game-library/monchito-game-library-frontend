@@ -46,37 +46,23 @@ export interface GameStoreDto {
   url?: string;
 }
 
-/** Row from the user_games table. */
+/**
+ * Row from the user_games table (cada copia que el usuario tiene). Atributos
+ * de obra (status, personal_rating, is_favorite, platform) viven en
+ * user_works — ver UserWorkDto.
+ */
 export interface UserGameDto {
   id?: string;
   user_id: string;
   game_catalog_id: string;
   /** FK a user_works. Identifica la obra a la que pertenece esta copia. */
-  work_id?: string;
+  work_id: string;
   price: number | null;
   store: string | null;
-  /** @deprecated Vive en user_works.platform desde el patch 003. Se dropea en la fase 4. */
-  platform: string | null;
   condition: 'new' | 'used' | null;
-  /** @deprecated Huérfano (0 filas con datos). Se dropea en la fase 4. */
-  purchased_date: string | null;
-  /** @deprecated Vive en user_works.status desde el patch 003. Se dropea en la fase 4. */
-  status: GameStatus;
-  /** @deprecated Vive en user_works.personal_rating desde el patch 003. Se dropea en la fase 4. */
-  personal_rating: number | null;
-  /** @deprecated Huérfano (0 filas con datos). Se dropea en la fase 4. */
-  personal_review?: string | null;
   edition: string | null;
   format: 'digital' | 'physical' | null;
-  /** @deprecated Huérfano (0 filas con datos). Se dropea en la fase 4. */
-  started_date: string | null;
-  /** @deprecated Huérfano (0 filas con datos). Se dropea en la fase 4. */
-  completed_date: string | null;
   description: string | null | undefined;
-  /** @deprecated Huérfano (0 filas con datos). Se dropea en la fase 4. */
-  tags_personal?: string[];
-  /** @deprecated Vive en user_works.is_favorite desde el patch 003. Se dropea en la fase 4. */
-  is_favorite: boolean;
   cover_position: string | null;
   custom_image_url?: string | null;
   for_sale: boolean;
@@ -89,11 +75,13 @@ export interface UserGameDto {
 
 /** Row from the user_games_full view (joins user_games + game_catalog + user_works). */
 export interface UserGameFullDto extends UserGameDto {
-  /** FK a user_works (siempre presente en la vista, el tipo opcional viene del DTO base). */
-  work_id?: string;
-  /** User's platform choice — viene de user_works.platform desde el patch 004. */
-  user_platform?: string | null;
-  /** User's personal notes (overrides catalog description). */
+  // Atributos de obra (vienen del JOIN con user_works)
+  user_platform: string | null;
+  status: GameStatus;
+  personal_rating: number | null;
+  is_favorite: boolean;
+
+  // Catálogo (game_catalog)
   user_notes?: string | null;
   rawg_id: number | null;
   title: string;
@@ -110,6 +98,7 @@ export interface UserGameFullDto extends UserGameDto {
   developers?: string[];
   publishers?: string[];
   source: 'rawg' | 'manual';
+
   /** UUID of the active loan row. Null if not on loan. */
   active_loan_id?: string | null;
   /** Name of the person the game is loaned to. Null if not on loan. */

@@ -121,16 +121,12 @@ const baseFullDto: UserGameFullDto = {
   slug: 'god-of-war',
   price: 59.99,
   store: 'GAME',
-  platform: 'PS4',
   user_platform: 'PS5',
   condition: 'new',
-  purchased_date: null,
   status: 'playing',
   personal_rating: 9,
   edition: null,
   format: 'physical',
-  started_date: null,
-  completed_date: null,
   description: 'catalog desc',
   user_notes: 'my note',
   is_favorite: true,
@@ -168,10 +164,10 @@ describe('mapGame', () => {
     expect(mapGame(baseFullDto).platform).toBe('PS5');
   });
 
-  it('usa platform cuando user_platform es null', () => {
+  it('mapea user_platform null a null (sin fallback a la columna platform de catálogo)', () => {
     const dto = { ...baseFullDto, user_platform: null };
 
-    expect(mapGame(dto).platform).toBe('PS4');
+    expect(mapGame(dto).platform).toBeNull();
   });
 
   it('prioriza user_notes sobre description', () => {

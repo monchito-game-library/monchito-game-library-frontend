@@ -23,7 +23,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
     store: dto.store ?? null,
     condition: (dto.condition ?? 'new') as GameConditionType,
     description: dto.user_notes || dto.description || '',
-    platform: (dto.user_platform || dto.platform) as PlatformType | null,
+    platform: (dto.user_platform ?? null) as PlatformType | null,
     imageUrl: dto.image_url ?? undefined,
     rawgId: dto.rawg_id ?? null,
     rawgSlug: dto.slug ?? null,
