@@ -12,6 +12,35 @@ html {
   );
 }
 
+// ── Global type scale on large viewports ──────────────────────────────
+// Bumping the root font-size makes every `rem`-based token (texts and
+// spacings) grow proportionally so the whole app feels more comfortable
+// to read on big screens, without rewriting per-component sizes.
+// Breakpoints aligned with common display tiers: laptop large, FHD, 2K, 4K.
+@media (min-width: 1440px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 3840px) {
+  html {
+    font-size: 24px;
+  }
+}
+
 html.dark-mode {
   color-scheme: dark;
 

@@ -639,4 +639,39 @@ describe('GameDetailComponent', () => {
       expect(snackBar.open).toHaveBeenCalled();
     });
   });
+
+  describe('coverPosition (parsing)', () => {
+    it('coverObjectPosition es 50% 50% cuando coverPosition es null', () => {
+      component.game.set(makeGame({ coverPosition: null }));
+      expect(component.coverObjectPosition()).toBe('50% 50%');
+    });
+
+    it('coverTransform es scale(1) cuando coverPosition es null', () => {
+      component.game.set(makeGame({ coverPosition: null }));
+      expect(component.coverTransform()).toBe('scale(1)');
+    });
+
+    it('parsea coverPosition con tres partes (x y scale)', () => {
+      component.game.set(makeGame({ coverPosition: '30% 60% 1.5' }));
+      expect(component.coverObjectPosition()).toBe('30% 60%');
+      expect(component.coverTransform()).toBe('scale(1.5)');
+    });
+
+    it('parsea coverPosition con dos partes y devuelve scale(1) por defecto', () => {
+      component.game.set(makeGame({ coverPosition: '40% 80%' }));
+      expect(component.coverObjectPosition()).toBe('40% 80%');
+      expect(component.coverTransform()).toBe('scale(1)');
+    });
+
+    it('rellena con 50% cuando coverPosition tiene una sola parte', () => {
+      component.game.set(makeGame({ coverPosition: '70%' }));
+      expect(component.coverObjectPosition()).toBe('70% 50%');
+    });
+  });
+
+  describe('dominantColor', () => {
+    it('arranca con el valor por defecto rgba(0, 0, 0, 0.45)', () => {
+      expect(component.dominantColor()).toBe('rgba(0, 0, 0, 0.45)');
+    });
+  });
 });

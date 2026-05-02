@@ -29,14 +29,53 @@
   // Scales with viewport height: min 200px, ideal 40vh, max 580px
   // Covers short screens (1080p@150%) through 2K/4K without extra media queries
   height: clamp(200px, 40vh, 580px);
-  background-size: cover;
-  background-position: 50% 50%;
   flex-shrink: 0;
+  overflow: hidden;
+  background-color: var(--mat-sys-surface-container);
+}
+
+// Atmospheric backdrop — a soft radial wash of the cover's dominant color around
+// the artwork. No blurred copy of the image, no harsh contrast: just a colour that
+// connects the cover to the page background and changes per game.
+.game-detail__hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 80% 100% at center,
+    var(--dominant, rgba(0, 0, 0, 0.45)) 0%,
+    var(--dominant, rgba(0, 0, 0, 0.45)) 35%,
+    transparent 90%
+  );
+}
+
+// Foreground cover wrapper — centres the cover natively (height: 100%, width: auto)
+// so the bounding box matches the rendered image. That lets us feather the lateral
+// edges with mask-image and get a soft blend with the blurred backdrop instead of a
+// hard rectangle.
+.game-detail__hero-cover-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game-detail__hero-cover {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .game-detail__hero-overlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.2) 100%);
   display: flex;
   flex-direction: column;
@@ -47,10 +86,70 @@
 .game-detail__topbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
-.game-detail__back-btn {
-  color: rgba(255, 255, 255, 0.9) !important;
+.game-detail__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Glass-style icon buttons over the hero image — high contrast on any cover
+.game-detail__back-btn,
+.game-detail__topbar-menu-btn {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95) !important;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(0, 0, 0, 0.55) !important;
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+}
+
+// Topbar Edit pill — label on desktop, collapses to circular icon on mobile
+.game-detail__topbar-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  background-color: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+
+  mat-icon {
+    font-size: var(--text-xl);
+    width: var(--text-xl);
+    height: var(--text-xl);
+  }
+}
+
+.game-detail__topbar-edit-label {
+  white-space: nowrap;
 }
 
 .game-detail__hero-info {
@@ -286,6 +385,50 @@
   gap: 1rem;
   padding-top: 0.5rem;
   flex-wrap: wrap;
+}
+
+// ─── Sold banner ──────────────────────────────────────────────────────────────
+
+.game-detail__sold-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: color-mix(in srgb, var(--mat-sys-tertiary) 14%, transparent);
+  color: var(--mat-sys-on-surface);
+  border: 1px solid color-mix(in srgb, var(--mat-sys-tertiary) 35%, transparent);
+}
+
+.game-detail__sold-banner-icon {
+  color: var(--mat-sys-tertiary);
+  flex-shrink: 0;
+}
+
+.game-detail__sold-banner-text {
+  flex: 1;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .game-detail__topbar-edit-btn {
+    width: 2.5rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .game-detail__topbar-edit-label {
+    display: none;
+  }
 }
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
