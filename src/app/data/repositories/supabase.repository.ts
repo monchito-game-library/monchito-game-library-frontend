@@ -121,14 +121,42 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Adds a new game for a user. If a RAWG catalog entry is provided it will be
    * linked to the record; otherwise the game is created as a manual entry.
+   * If `targetWorkId` is given, the new copy is forced into that exact work and
+   * its catalog (caso "Añadir otra copia" del detalle) — el repo omite la
+   * resolución por título/rawg_id para evitar fugas con catálogos manuales.
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
+   * @param {string} [targetWorkId] - Force the copy into this existing user_works UUID
    */
-  async addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
-    const gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
-    const workId = await this._getOrCreateUserWork(userId, gameCatalogId, game);
+  async addGameForUser(
+    userId: string,
+    game: GameModel,
+    catalogEntry?: GameCatalog | null,
+    targetWorkId?: string
+  ): Promise<void> {
+    let gameCatalogId: string;
+    let workId: string;
+
+    if (targetWorkId) {
+      // Caso "Añadir otra copia": work conocida → reutilizar catalog de la work
+      // y omitir _getOrCreate* para evitar fugas como el bug observado con
+      // catálogos manuales (mismo título pero catalog_id distinto).
+      const { data: work, error: workErr } = await this._supabase
+        .from(this._userWorksTable)
+        .select('game_catalog_id')
+        .eq('id', targetWorkId)
+        .eq('user_id', userId)
+        .single();
+
+      if (workErr || !work) throw new Error(`Failed to resolve targetWorkId: ${workErr?.message ?? 'not found'}`);
+      gameCatalogId = work.game_catalog_id;
+      workId = targetWorkId;
+    } else {
+      gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
+      workId = await this._getOrCreateUserWork(userId, gameCatalogId, game);
+    }
 
     const userGameRecord: UserGameInsertDto = {
       user_id: userId,

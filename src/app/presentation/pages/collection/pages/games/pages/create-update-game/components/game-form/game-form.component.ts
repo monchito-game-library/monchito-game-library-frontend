@@ -122,6 +122,14 @@ export class GameFormComponent implements OnInit {
   };
   /** Catalog entry passed from the wishlist "I have this game" action via router state. */
   private _pendingCatalogEntry: GameCatalogDto | null = null;
+  /**
+   * UUID de la work a la que se debe asociar el INSERT en modo create.
+   * Llega vía navState desde el botón "Añadir otra copia" del detalle.
+   * Se descarta si el usuario cambia el catálogo (selectGameFromSearch o
+   * clearSelectedGame), porque entonces ya no está añadiendo otra copia
+   * de la misma obra sino un juego distinto.
+   */
+  private _pendingTargetWorkId: string | null = null;
   /** Wishlist item ID to delete after a successful save (from "I have this game" flow). */
   private _pendingWishlistItemId: string | null = null;
   /** JSON snapshot of the form + rawg_id taken right after loading in edit mode. */
@@ -311,10 +319,12 @@ export class GameFormComponent implements OnInit {
           prefillTitle?: string;
           prefillPlatform?: PlatformType | null;
           prefillFormat?: 'physical' | 'digital';
+          forceWorkId?: string;
         }
       | undefined;
     if (navState?.catalogEntry) this._pendingCatalogEntry = navState.catalogEntry;
     if (navState?.wishlistItemId) this._pendingWishlistItemId = navState.wishlistItemId;
+    if (navState?.forceWorkId) this._pendingTargetWorkId = navState.forceWorkId;
 
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
     if (!idParam) {
@@ -464,7 +474,10 @@ export class GameFormComponent implements OnInit {
         if (this.isEditMode && this._gameUuid) {
           await this._gameUseCases.updateGame(userId, game, catalogEntry);
         } else {
-          await this._gameUseCases.addGame(userId, game, catalogEntry);
+          // Si llegamos aquí desde "Añadir otra copia" y el usuario no ha
+          // cambiado de catálogo, fuerzo el work_id para evitar fugas con
+          // catálogos manuales (mismo título pero catalog_id distinto).
+          await this._gameUseCases.addGame(userId, game, catalogEntry, this._pendingTargetWorkId ?? undefined);
           if (this._pendingWishlistItemId) {
             try {
               await this._wishlistUseCases.deleteItem(userId, this._pendingWishlistItemId);
@@ -549,6 +562,13 @@ export class GameFormComponent implements OnInit {
    * @param {GameCatalogDto} game - The catalogue game entry selected by the user
    */
   selectGameFromSearch(game: GameCatalogDto): void {
+    // Si el usuario elige un catálogo distinto, ya no es "Añadir otra copia"
+    // de la obra original — descarto el work_id forzado para que el repo
+    // resuelva la work normalmente desde el nuevo catálogo.
+    if (this._pendingTargetWorkId && this._pendingCatalogEntry?.rawg_id !== game.rawg_id) {
+      this._pendingTargetWorkId = null;
+    }
+
     const catalog: GameCatalog = {
       rawg_id: game.rawg_id ?? 0,
       title: game.title,
@@ -588,6 +608,9 @@ export class GameFormComponent implements OnInit {
    * In edit mode only clears the image association, keeping the existing title.
    */
   clearSelectedGame(): void {
+    // Cambiar el catalogEntry a null invalida el "Añadir otra copia": el
+    // usuario está renunciando al juego original y empezará desde cero.
+    this._pendingTargetWorkId = null;
     this.selectedGame.set(null);
     this.selectedImageUrl.set(null);
     this._coverPosition.set(null);

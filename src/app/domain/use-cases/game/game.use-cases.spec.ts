@@ -74,7 +74,15 @@ describe('GameUseCasesImpl', () => {
     const game = { id: 1 } as never;
     await useCases.addGame('user-1', game, null);
 
-    expect(mockRepo.addGameForUser).toHaveBeenCalledWith('user-1', game, null);
+    expect(mockRepo.addGameForUser).toHaveBeenCalledWith('user-1', game, null, undefined);
+  });
+
+  it('addGame propaga targetWorkId al repo cuando se proporciona', async () => {
+    vi.mocked(mockRepo.addGameForUser).mockResolvedValue();
+    const game = { id: 1 } as never;
+    await useCases.addGame('user-1', game, null, 'work-uuid-target');
+
+    expect(mockRepo.addGameForUser).toHaveBeenCalledWith('user-1', game, null, 'work-uuid-target');
   });
 
   it('updateGame delega en repo.updateGameForUser', async () => {

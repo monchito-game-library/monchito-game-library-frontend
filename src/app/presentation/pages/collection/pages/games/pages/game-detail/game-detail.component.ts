@@ -299,7 +299,12 @@ export class GameDetailComponent implements OnInit {
         catalogEntry,
         prefillTitle: g.title,
         prefillPlatform: g.platform,
-        prefillFormat: oppositeFormat
+        prefillFormat: oppositeFormat,
+        // Forzamos la asociación a la work existente para que el repo NO
+        // re-resuelva el catalog (que con catálogos manuales podía crear
+        // uno nuevo en RAWG y partir la obra). Si el usuario cambia el
+        // catalog dentro del form, este id se descarta automáticamente.
+        forceWorkId: g.workId
       }
     });
   }

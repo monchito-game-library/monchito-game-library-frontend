@@ -51,6 +51,7 @@ export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
   return {
     uuid: dto.id,
     workId: dto.work_id,
+    gameCatalogId: dto.game_catalog_id,
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
     title: dto.title,
     price: dto.price,

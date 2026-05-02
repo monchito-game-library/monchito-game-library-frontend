@@ -362,6 +362,52 @@ describe('SupabaseRepository', () => {
       await expect(repo.addGameForUser('user-1', gameModel, catalogEntry)).rejects.toThrow('game.platform is required');
     });
 
+    it('cuando se proporciona targetWorkId, omite _getOrCreate* y reutiliza catalog+work', async () => {
+      // Caso "Añadir otra copia" desde el detalle: el botón fuerza el work_id
+      // existente para evitar fugas con catálogos manuales (mismo título pero
+      // catalog_id distinto al re-resolver vía RAWG search).
+      const workLookupBuilder = makeBuilder({ data: { game_catalog_id: 'cat-existing' }, error: null });
+      const insertBuilder = makeBuilder({ error: null });
+      mockSupabase.from.mockReturnValueOnce(workLookupBuilder).mockReturnValueOnce(insertBuilder);
+
+      const gameModel = {
+        title: 'Stranger of Paradise: Final Fantasy Origin',
+        price: 30,
+        store: null,
+        condition: 'new' as const,
+        description: '',
+        status: 'backlog' as const,
+        personalRating: null,
+        edition: null,
+        format: 'digital' as const,
+        isFavorite: false,
+        platform: 'PS4' as const,
+        imageUrl: undefined,
+        rawgId: 619344,
+        rawgSlug: null,
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
+      };
+
+      await repo.addGameForUser('user-1', gameModel, undefined, 'work-existing');
+
+      // El repo NO debe consultar game_catalog ni resolver _getOrCreateUserWork.
+      expect(mockSupabase.from).not.toHaveBeenCalledWith('game_catalog');
+      expect(insertBuilder.insert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          user_id: 'user-1',
+          game_catalog_id: 'cat-existing',
+          work_id: 'work-existing'
+        })
+      );
+    });
+
     it('crea un nuevo user_works cuando la obra existente ya tiene una copia del mismo formato', async () => {
       // Caso: el usuario ya tiene Castlevania PS3 físico y añade otra física
       // (otra edición). No deben compartir work — son dos obras independientes.

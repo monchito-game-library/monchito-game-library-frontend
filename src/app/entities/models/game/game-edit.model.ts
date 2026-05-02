@@ -9,6 +9,8 @@ export interface GameEditModel {
   uuid: string;
   /** UUID de la obra (user_works) a la que pertenece esta copia. */
   workId: string;
+  /** UUID del catálogo (game_catalog) común a todas las copias de la obra. */
+  gameCatalogId: string;
   /** Numeric ID derived from the UUID. */
   id?: number;
   /** Game title. */
