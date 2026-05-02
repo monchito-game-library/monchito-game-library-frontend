@@ -6,6 +6,7 @@ import { GameModel } from '@/models/game/game.model';
 
 const baseDto: UserGameListDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   price: 59.99,
   store: 'GAME',
@@ -115,6 +116,7 @@ const baseFullDto: UserGameFullDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   user_id: 'user-1',
   game_catalog_id: 'cat-1',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   slug: 'god-of-war',
   price: 59.99,
@@ -246,6 +248,7 @@ const baseEditDto: UserGameEditDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   user_id: 'user-1',
   game_catalog_id: 'cat-1',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   slug: 'god-of-war',
   image_url: 'https://example.com/gow.jpg',
@@ -404,19 +407,26 @@ const baseGameModel: GameModel = {
 };
 
 describe('mapGameToInsertDto', () => {
-  it('mapea los campos estándar correctamente', () => {
+  it('mapea los campos estándar de copia correctamente', () => {
     const result = mapGameToInsertDto(baseGameModel);
 
     expect(result.price).toBe(59.99);
     expect(result.store).toBe('GAME');
-    expect(result.platform).toBe('PS5');
     expect(result.condition).toBe('new');
-    expect(result.status).toBe('playing');
-    expect(result.personal_rating).toBe(9);
     expect(result.format).toBe('physical');
-    expect(result.is_favorite).toBe(true);
     expect(result.cover_position).toBeNull();
     expect(result.for_sale).toBe(false);
+  });
+
+  it('no incluye campos de obra (status, rating, favorite, platform)', () => {
+    // Los campos de obra viven en user_works desde el patch 003 y se envían
+    // mediante mapGameToWorkInsertDto, no aquí.
+    const result = mapGameToInsertDto(baseGameModel);
+
+    expect(result).not.toHaveProperty('platform');
+    expect(result).not.toHaveProperty('status');
+    expect(result).not.toHaveProperty('personal_rating');
+    expect(result).not.toHaveProperty('is_favorite');
   });
 
   it('mapea forSale undefined a false', () => {

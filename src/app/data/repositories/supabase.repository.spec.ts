@@ -22,7 +22,8 @@ function makeBuilder(result: { data?: unknown; error: { message: string } | null
     'update',
     'delete',
     'upsert',
-    'single'
+    'single',
+    'maybeSingle'
   ]) {
     b[m] = vi.fn().mockReturnValue(b);
   }
@@ -72,6 +73,9 @@ describe('SupabaseRepository', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // mockReset borra las cadenas de mockReturnValueOnce que pudieran quedar pendientes
+    // por tests donde el repo lance antes de consumirlas todas.
+    mockSupabase.from.mockReset();
     TestBed.configureTestingModule({
       providers: [{ provide: SUPABASE_CLIENT, useValue: mockSupabase }, SupabaseRepository]
     });
@@ -203,8 +207,12 @@ describe('SupabaseRepository', () => {
   describe('addGameForUser', () => {
     it('reutiliza el catalog_id existente cuando el juego ya está en catálogo (rawg)', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
       const insertBuilder = makeBuilder({ error: null });
-      mockSupabase.from.mockReturnValueOnce(catalogLookupBuilder).mockReturnValueOnce(insertBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(insertBuilder);
 
       const catalogEntry = {
         rawg_id: 58175,
@@ -217,6 +225,42 @@ describe('SupabaseRepository', () => {
         genres: [],
         source: 'rawg' as const
       };
+      const gameModel = {
+        title: 'God of War',
+        price: null,
+        store: null,
+        condition: 'new' as const,
+        description: '',
+        status: 'backlog' as const,
+        personalRating: null,
+        edition: null,
+        format: null,
+        isFavorite: false,
+        platform: 'PS5' as const,
+        imageUrl: undefined,
+        rawgId: 58175,
+        rawgSlug: null,
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
+      };
+
+      await repo.addGameForUser('user-1', gameModel, catalogEntry);
+
+      expect(insertBuilder.insert).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: 'user-1', game_catalog_id: 'cat-existing', work_id: 'work-1' })
+      );
+    });
+
+    it('lanza error si el modelo no trae platform', async () => {
+      const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
+      mockSupabase.from.mockReturnValueOnce(catalogLookupBuilder);
+
       const gameModel = {
         title: 'God of War',
         price: null,
@@ -242,11 +286,74 @@ describe('SupabaseRepository', () => {
         activeLoanAt: null
       };
 
+      const catalogEntry = {
+        rawg_id: 58175,
+        title: 'God of War',
+        slug: 'god-of-war',
+        image_url: null,
+        released_date: null,
+        rating: 4,
+        platforms: [],
+        genres: [],
+        source: 'rawg' as const
+      };
+
+      await expect(repo.addGameForUser('user-1', gameModel, catalogEntry)).rejects.toThrow('game.platform is required');
+    });
+
+    it('crea user_works cuando no existe para (user, catalog, platform)', async () => {
+      const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: null, error: null });
+      const workInsertBuilder = makeBuilder({ data: { id: 'work-new' }, error: null });
+      const insertBuilder = makeBuilder({ error: null });
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(workInsertBuilder)
+        .mockReturnValueOnce(insertBuilder);
+
+      const gameModel = {
+        title: 'God of War',
+        price: null,
+        store: null,
+        condition: 'new' as const,
+        description: '',
+        status: 'backlog' as const,
+        personalRating: null,
+        edition: null,
+        format: null,
+        isFavorite: false,
+        platform: 'PS5' as const,
+        imageUrl: undefined,
+        rawgId: 58175,
+        rawgSlug: null,
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
+      };
+      const catalogEntry = {
+        rawg_id: 58175,
+        title: 'God of War',
+        slug: 'god-of-war',
+        image_url: null,
+        released_date: null,
+        rating: 4,
+        platforms: [],
+        genres: [],
+        source: 'rawg' as const
+      };
+
       await repo.addGameForUser('user-1', gameModel, catalogEntry);
 
-      expect(insertBuilder.insert).toHaveBeenCalledWith(
-        expect.objectContaining({ user_id: 'user-1', game_catalog_id: 'cat-existing' })
+      expect(workInsertBuilder.insert).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: 'user-1', game_catalog_id: 'cat-existing', platform: 'PS5' })
       );
+      expect(insertBuilder.insert).toHaveBeenCalledWith(expect.objectContaining({ work_id: 'work-new' }));
     });
   });
 
@@ -349,7 +456,7 @@ describe('SupabaseRepository', () => {
       edition: null,
       format: null,
       isFavorite: false,
-      platform: null,
+      platform: 'PS5' as const,
       imageUrl: undefined,
       rawgId: null,
       rawgSlug: null,
@@ -364,11 +471,15 @@ describe('SupabaseRepository', () => {
     };
 
     it('guarda custom_image_url en user_games (no toca game_catalog.image_url)', async () => {
-      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: 58175 };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
-      mockSupabase.from.mockReturnValueOnce(viewBuilder).mockReturnValueOnce(userGameUpdateBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(viewBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
+        .mockReturnValueOnce(userGameUpdateBuilder);
 
       await repo.updateGameForUser('user-1', {
         ...baseGameModel,
@@ -379,8 +490,40 @@ describe('SupabaseRepository', () => {
       expect(userGameUpdateBuilder.update).toHaveBeenCalledWith(
         expect.objectContaining({ custom_image_url: 'https://cdn.example.com/screenshot.jpg' })
       );
-      // game_catalog should NOT have been touched (only 2 from() calls total)
-      expect(mockSupabase.from).toHaveBeenCalledTimes(2);
+      // game_catalog should NOT have been touched (3 from() calls total: view + user_works + user_games)
+      expect(mockSupabase.from).toHaveBeenCalledTimes(3);
+      expect(mockSupabase.from).not.toHaveBeenCalledWith('game_catalog');
+    });
+
+    it('actualiza los campos de obra en user_works', async () => {
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: 58175 };
+      const viewBuilder = makeBuilder({ data: viewRecord, error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
+      const userGameUpdateBuilder = makeBuilder({ error: null });
+
+      mockSupabase.from
+        .mockReturnValueOnce(viewBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
+        .mockReturnValueOnce(userGameUpdateBuilder);
+
+      await repo.updateGameForUser('user-1', {
+        ...baseGameModel,
+        uuid: 'some-uuid',
+        status: 'platinum',
+        personalRating: 9.5,
+        isFavorite: true,
+        platform: 'PS4'
+      });
+
+      expect(userWorkUpdateBuilder.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'platinum',
+          personal_rating: 9.5,
+          is_favorite: true,
+          platform: 'PS4'
+        })
+      );
+      expect(userWorkUpdateBuilder.eq).toHaveBeenCalledWith('id', 'work-1');
     });
 
     it('lanza error cuando uuid es undefined', async () => {
@@ -396,14 +539,16 @@ describe('SupabaseRepository', () => {
     });
 
     it('actualiza el juego sin catalogEntry (sin rawg_id)', async () => {
-      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: null };
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: null };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
       const catalogUpdateBuilder = makeBuilder({ error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(viewBuilder)
         .mockReturnValueOnce(catalogUpdateBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
         .mockReturnValueOnce(userGameUpdateBuilder);
 
       await repo.updateGameForUser('user-1', { ...baseGameModel, uuid: 'some-uuid' });
@@ -412,11 +557,15 @@ describe('SupabaseRepository', () => {
     });
 
     it('actualiza el juego sin catalogEntry (con rawg_id existente)', async () => {
-      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: 58175 };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
-      mockSupabase.from.mockReturnValueOnce(viewBuilder).mockReturnValueOnce(userGameUpdateBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(viewBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
+        .mockReturnValueOnce(userGameUpdateBuilder);
 
       await repo.updateGameForUser('user-1', { ...baseGameModel, uuid: 'some-uuid' });
 
@@ -424,14 +573,16 @@ describe('SupabaseRepository', () => {
     });
 
     it('actualiza el juego con catalogEntry (rawg)', async () => {
-      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: 58175 };
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: 58175 };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-1' }, error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(viewBuilder)
         .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
         .mockReturnValueOnce(userGameUpdateBuilder);
 
       const catalogEntry = {
@@ -451,19 +602,33 @@ describe('SupabaseRepository', () => {
       expect(userGameUpdateBuilder.update).toHaveBeenCalled();
     });
 
-    it('lanza error si el update falla', async () => {
-      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', rawg_id: null };
+    it('lanza error si el update de la copia falla', async () => {
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: null };
       const viewBuilder = makeBuilder({ data: viewRecord, error: null });
       const catalogUpdateBuilder = makeBuilder({ error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: null });
       const userGameUpdateBuilder = makeBuilder({ error: { message: 'Update failed' } });
 
       mockSupabase.from
         .mockReturnValueOnce(viewBuilder)
         .mockReturnValueOnce(catalogUpdateBuilder)
+        .mockReturnValueOnce(userWorkUpdateBuilder)
         .mockReturnValueOnce(userGameUpdateBuilder);
 
       await expect(repo.updateGameForUser('user-1', { ...baseGameModel, uuid: 'some-uuid' })).rejects.toThrow(
         'Failed to update game'
+      );
+    });
+
+    it('lanza error si el update de la obra falla', async () => {
+      const viewRecord = { id: 'some-uuid', game_catalog_id: 'cat-1', work_id: 'work-1', rawg_id: 58175 };
+      const viewBuilder = makeBuilder({ data: viewRecord, error: null });
+      const userWorkUpdateBuilder = makeBuilder({ error: { message: 'Work update failed' } });
+
+      mockSupabase.from.mockReturnValueOnce(viewBuilder).mockReturnValueOnce(userWorkUpdateBuilder);
+
+      await expect(repo.updateGameForUser('user-1', { ...baseGameModel, uuid: 'some-uuid' })).rejects.toThrow(
+        'Failed to update work'
       );
     });
   });
@@ -480,7 +645,7 @@ describe('SupabaseRepository', () => {
       edition: null,
       format: null,
       isFavorite: false,
-      platform: null,
+      platform: 'PC' as const,
       imageUrl: undefined,
       rawgId: null,
       rawgSlug: null,
@@ -497,11 +662,13 @@ describe('SupabaseRepository', () => {
     it('crea un nuevo catálogo manual cuando no existe título igual', async () => {
       const catalogLookupBuilder = makeBuilder({ data: null, error: { message: 'Not found' } });
       const catalogInsertBuilder = makeBuilder({ data: { id: 'cat-new' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
       const insertBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(catalogInsertBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel);
@@ -513,9 +680,13 @@ describe('SupabaseRepository', () => {
 
     it('reutiliza catálogo manual existente cuando el título ya existe', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
       const insertBuilder = makeBuilder({ error: null });
 
-      mockSupabase.from.mockReturnValueOnce(catalogLookupBuilder).mockReturnValueOnce(insertBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel);
 
@@ -524,9 +695,13 @@ describe('SupabaseRepository', () => {
 
     it('lanza error si el insert falla', async () => {
       const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-1' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
       const insertBuilder = makeBuilder({ error: { message: 'Insert failed' } });
 
-      mockSupabase.from.mockReturnValueOnce(catalogLookupBuilder).mockReturnValueOnce(insertBuilder);
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(insertBuilder);
 
       await expect(repo.addGameForUser('user-1', gameModel)).rejects.toThrow('Failed to add game');
     });
@@ -544,7 +719,7 @@ describe('SupabaseRepository', () => {
       edition: null,
       format: null,
       isFavorite: false,
-      platform: null,
+      platform: 'PS5' as const,
       imageUrl: undefined,
       rawgId: 58175,
       rawgSlug: null,
@@ -573,11 +748,13 @@ describe('SupabaseRepository', () => {
     it('crea entrada de catálogo cuando no existe en RAWG', async () => {
       const catalogLookupBuilder = makeBuilder({ data: null, error: null });
       const catalogInsertBuilder = makeBuilder({ data: { id: 'cat-new-rawg' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: { id: 'work-1' }, error: null });
       const insertBuilder = makeBuilder({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce(catalogLookupBuilder)
         .mockReturnValueOnce(catalogInsertBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
         .mockReturnValueOnce(insertBuilder);
 
       await repo.addGameForUser('user-1', gameModel, catalogEntry);

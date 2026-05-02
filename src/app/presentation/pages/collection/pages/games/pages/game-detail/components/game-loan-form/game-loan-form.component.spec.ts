@@ -14,6 +14,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
   return {
     uuid: 'game-uuid-1',
+    workId: 'work-uuid-1',
     id: 1,
     title: 'God of War',
     price: 49.99,

@@ -17,6 +17,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
   return {
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
     uuid: dto.id,
+    workId: dto.work_id,
     title: dto.title,
     price: dto.price,
     store: dto.store ?? null,
@@ -49,6 +50,7 @@ export function mapGame(dto: UserGameFullDto): GameModel {
 export function mapGameEdit(dto: UserGameEditDto): GameEditModel {
   return {
     uuid: dto.id,
+    workId: dto.work_id,
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
     title: dto.title,
     price: dto.price,
@@ -87,6 +89,7 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
   return {
     id: parseInt((dto.id || '').split('-').join('').substring(0, 8), 16),
     uuid: dto.id,
+    workId: dto.work_id,
     title: dto.title,
     price: dto.price,
     store: dto.store ?? null,
@@ -109,8 +112,10 @@ export function mapGameList(dto: UserGameListDto): GameListModel {
 }
 
 /**
- * Maps game-data fields from a GameModel to a UserGameInsertDto.
- * Operational fields (user_id, game_catalog_id) must be added by the caller.
+ * Maps the copy-side fields from a GameModel to a UserGameInsertDto.
+ * Los campos de obra (status/personal_rating/is_favorite/platform) NO se incluyen:
+ * viven en user_works desde el patch 003 y se envían vía mapGameToWorkInsertDto.
+ * Operational fields (user_id, game_catalog_id, work_id) must be added by the caller.
  *
  * @param {GameModel} model - Game model to map
  */
@@ -118,14 +123,10 @@ export function mapGameToInsertDto(model: GameModel): UserGameInsertDto {
   return {
     price: model.price,
     store: model.store,
-    platform: model.platform,
     condition: model.condition as 'new' | 'used',
     description: model.description,
-    status: model.status,
-    personal_rating: model.personalRating,
     edition: model.edition,
     format: model.format,
-    is_favorite: model.isFavorite,
     cover_position: model.coverPosition ?? null,
     custom_image_url: model.imageUrl ?? null,
     for_sale: model.forSale ?? false,

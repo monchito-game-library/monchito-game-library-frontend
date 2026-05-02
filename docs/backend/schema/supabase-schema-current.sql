@@ -572,19 +572,23 @@ CREATE TRIGGER trg_decrement_users_on_delete
 
 -- ============================================================
 -- 8. VISTA: user_games_full
---    Join de user_games + game_catalog.
+--    Join de user_games + game_catalog + user_works.
 --    Es la vista principal que usa el frontend para leer la colección.
+--    Atributos de obra (status/personal_rating/is_favorite/user_platform)
+--    vienen de user_works; atributos de copia (price/store/condition/format/
+--    edition/sale_*/cover_*) siguen en user_games.
 --    security_invoker = on → respeta el RLS del usuario autenticado.
 -- ============================================================
 
-DROP VIEW IF EXISTS user_games_full;
+DROP VIEW IF EXISTS user_games_full CASCADE;
 CREATE VIEW user_games_full WITH (security_invoker = on) AS
 SELECT
   ug.id,
   ug.user_id,
   ug.game_catalog_id,
+  ug.work_id,
 
-  -- Datos del catálogo
+  -- Catálogo (game_catalog)
   gc.rawg_id,
   gc.title,
   gc.slug,
@@ -602,25 +606,32 @@ SELECT
   gc.publishers,
   gc.source,
 
-  -- Datos personales del usuario
+  -- Atributos de obra (user_works)
+  uw.platform        AS user_platform,
+  uw.status,
+  uw.personal_rating,
+  uw.is_favorite,
+
+  -- Atributos de copia (user_games)
   ug.price,
   ug.store,
-  ug.platform        AS user_platform,
   ug.condition,
-  ug.purchased_date,
   ug.format,
-  ug.status,
-  ug.personal_rating,
-  ug.personal_review,
   ug.edition,
   ug.description     AS user_notes,
-  ug.is_favorite,
   ug.cover_position,
-
+  ug.custom_image_url,
   ug.for_sale,
   ug.sale_price,
   ug.sold_at,
   ug.sold_price_final,
+
+  -- Huérfanos (mantenidos hasta la fase 4 para no romper DTOs)
+  ug.purchased_date,
+  ug.personal_review,
+  ug.started_date,
+  ug.completed_date,
+  ug.tags_personal,
 
   -- Préstamo activo (NULL si no está prestado)
   al.id          AS active_loan_id,
@@ -631,6 +642,7 @@ SELECT
   ug.updated_at
 FROM user_games ug
 JOIN game_catalog gc ON ug.game_catalog_id = gc.id
+JOIN user_works   uw ON ug.work_id         = uw.id
 LEFT JOIN LATERAL (
   SELECT id, loaned_to, loaned_at
   FROM   game_loans
