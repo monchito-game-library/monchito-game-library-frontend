@@ -29,14 +29,53 @@
   // Scales with viewport height: min 200px, ideal 40vh, max 580px
   // Covers short screens (1080p@150%) through 2K/4K without extra media queries
   height: clamp(200px, 40vh, 580px);
-  background-size: cover;
-  background-position: 50% 50%;
   flex-shrink: 0;
+  overflow: hidden;
+  background-color: var(--mat-sys-surface-container);
+}
+
+// Atmospheric backdrop — a soft radial wash of the cover's dominant color around
+// the artwork. No blurred copy of the image, no harsh contrast: just a colour that
+// connects the cover to the page background and changes per game.
+.game-detail__hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 80% 100% at center,
+    var(--dominant, rgba(0, 0, 0, 0.45)) 0%,
+    var(--dominant, rgba(0, 0, 0, 0.45)) 35%,
+    transparent 90%
+  );
+}
+
+// Foreground cover wrapper — centres the cover natively (height: 100%, width: auto)
+// so the bounding box matches the rendered image. That lets us feather the lateral
+// edges with mask-image and get a soft blend with the blurred backdrop instead of a
+// hard rectangle.
+.game-detail__hero-cover-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game-detail__hero-cover {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .game-detail__hero-overlay {
   position: absolute;
   inset: 0;
+  z-index: 2;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.2) 100%);
   display: flex;
   flex-direction: column;

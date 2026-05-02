@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   OnInit,
   Signal,
@@ -31,6 +32,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
+import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
@@ -72,6 +74,17 @@ export class GameDetailComponent implements OnInit {
 
   private readonly _statuses: GameStatusOption[] = availableGameStatuses;
 
+  /** Parsed cover position parts: [x%, y%, scale]. Defaults to centered, scale 1. */
+  private readonly _coverParts: Signal<[string, string, number]> = computed((): [string, string, number] => {
+    const pos: string | null | undefined = this.game()?.coverPosition;
+    if (!pos) return ['50%', '50%', 1];
+    const parts: string[] = pos.split(' ');
+    const x: string = parts[0] ?? '50%';
+    const y: string = parts[1] ?? '50%';
+    const scale: number = parts.length >= 3 ? parseFloat(parts[2]) : 1;
+    return [x, y, scale];
+  });
+
   /** Whether data is being loaded. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
@@ -95,6 +108,21 @@ export class GameDetailComponent implements OnInit {
     const g = this.game();
     return g?.imageUrl ?? defaultGameCover;
   });
+
+  /** CSS object-position for the foreground cover image (respects user-set positioning). */
+  readonly coverObjectPosition: Signal<string> = computed((): string => {
+    const [x, y] = this._coverParts();
+    return `${x} ${y}`;
+  });
+
+  /** CSS transform scale for the foreground cover image. */
+  readonly coverTransform: Signal<string> = computed((): string => `scale(${this._coverParts()[2]})`);
+
+  /**
+   * Dominant color sampled from the cover, used to paint a soft radial backdrop
+   * around the artwork instead of a blurred copy of the image.
+   */
+  readonly dominantColor: WritableSignal<string> = signal<string>('rgba(0, 0, 0, 0.45)');
 
   /** Status option matching the current game's status. */
   readonly gameStatus: Signal<GameStatusOption | undefined> = computed(() =>
@@ -137,6 +165,22 @@ export class GameDetailComponent implements OnInit {
   readonly platformColor: Signal<string | undefined> = computed(
     (): string | undefined => PLATFORM_COLORS[this.game()?.platform ?? '']
   );
+
+  constructor() {
+    // Sample the dominant color of the cover via a CORS probe so the hero backdrop
+    // can paint a soft radial gradient of that color (no recognisable blurred image).
+    effect((): void => {
+      const url: string = this.coverUrl();
+      if (!url) return;
+      const probe: HTMLImageElement = new Image();
+      probe.crossOrigin = 'anonymous';
+      probe.onload = (): void => {
+        const color: string | null = extractDominantColor(probe, 1);
+        if (color) this.dominantColor.set(color);
+      };
+      probe.src = url;
+    });
+  }
 
   /**
    * Saves the game's availability status (forSale + salePrice) via the use case.
