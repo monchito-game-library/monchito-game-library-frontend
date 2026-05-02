@@ -581,9 +581,19 @@ describe('GamesComponent', () => {
       expect((component as any)._columnCountFromWidth(1400)).toBe(5);
     });
 
-    it('devuelve 6 para width mayor que 1600', () => {
+    it('devuelve 6 para width entre 1601 y 1920', () => {
       expect((component as any)._columnCountFromWidth(1601)).toBe(6);
-      expect((component as any)._columnCountFromWidth(2560)).toBe(6);
+      expect((component as any)._columnCountFromWidth(1920)).toBe(6);
+    });
+
+    it('devuelve 7 para width entre 1921 y 2560', () => {
+      expect((component as any)._columnCountFromWidth(1921)).toBe(7);
+      expect((component as any)._columnCountFromWidth(2560)).toBe(7);
+    });
+
+    it('devuelve 8 para width mayor que 2560 (4K y superior)', () => {
+      expect((component as any)._columnCountFromWidth(2561)).toBe(8);
+      expect((component as any)._columnCountFromWidth(3840)).toBe(8);
     });
   });
 
@@ -721,51 +731,109 @@ describe('GamesComponent — breakpoint observer', () => {
     await component.ngOnInit();
   });
 
-  function emitBp(
-    active600: boolean,
-    active768: boolean,
-    active900: boolean,
-    active1200: boolean,
-    active1600: boolean
-  ): void {
+  interface BpFlags {
+    active600: boolean;
+    active768: boolean;
+    active900: boolean;
+    active1200: boolean;
+    active1600: boolean;
+    active1920: boolean;
+    active2560: boolean;
+  }
+
+  function emitBp(flags: BpFlags): void {
     bpSubject.next({
-      matches: active768,
+      matches: flags.active768,
       breakpoints: {
-        '(max-width: 600px)': active600,
-        '(max-width: 768px)': active768,
-        '(max-width: 900px)': active900,
-        '(max-width: 1200px)': active1200,
-        '(max-width: 1600px)': active1600
+        '(max-width: 768px)': flags.active768,
+        '(max-width: 600px)': flags.active600,
+        '(max-width: 900px)': flags.active900,
+        '(max-width: 1200px)': flags.active1200,
+        '(max-width: 1600px)': flags.active1600,
+        '(max-width: 1920px)': flags.active1920,
+        '(max-width: 2560px)': flags.active2560
       }
     });
   }
 
+  function allActive(): BpFlags {
+    return {
+      active600: true,
+      active768: true,
+      active900: true,
+      active1200: true,
+      active1600: true,
+      active1920: true,
+      active2560: true
+    };
+  }
+
   it('establece columnCount=2 cuando max-width 600px está activo', () => {
-    emitBp(true, true, true, true, true);
+    emitBp(allActive());
     expect(component.columnCount()).toBe(2);
     expect(component.isMobile()).toBe(true);
   });
 
   it('establece columnCount=3 cuando max-width 900px activo (sin 600px)', () => {
-    emitBp(false, true, true, true, true);
+    emitBp({ ...allActive(), active600: false });
     expect(component.columnCount()).toBe(3);
     expect(component.isMobile()).toBe(true);
   });
 
-  it('establece columnCount=4 cuando max-width 1200px activo (sin 600/900px)', () => {
-    emitBp(false, false, false, true, true);
+  it('establece columnCount=4 cuando max-width 1200px activo (sin 600/768/900px)', () => {
+    emitBp({ ...allActive(), active600: false, active768: false, active900: false });
     expect(component.columnCount()).toBe(4);
     expect(component.isMobile()).toBe(false);
   });
 
   it('establece columnCount=5 cuando max-width 1600px activo (sin menores)', () => {
-    emitBp(false, false, false, false, true);
+    emitBp({
+      ...allActive(),
+      active600: false,
+      active768: false,
+      active900: false,
+      active1200: false
+    });
     expect(component.columnCount()).toBe(5);
   });
 
-  it('establece columnCount=6 cuando ningún breakpoint está activo', () => {
-    emitBp(false, false, false, false, false);
+  it('establece columnCount=6 cuando max-width 1920px activo (sin menores)', () => {
+    emitBp({
+      active600: false,
+      active768: false,
+      active900: false,
+      active1200: false,
+      active1600: false,
+      active1920: true,
+      active2560: true
+    });
     expect(component.columnCount()).toBe(6);
+  });
+
+  it('establece columnCount=7 cuando max-width 2560px activo (sin menores)', () => {
+    emitBp({
+      active600: false,
+      active768: false,
+      active900: false,
+      active1200: false,
+      active1600: false,
+      active1920: false,
+      active2560: true
+    });
+    expect(component.columnCount()).toBe(7);
+  });
+
+  it('establece columnCount=8 cuando ningún breakpoint está activo (4K+)', () => {
+    emitBp({
+      active600: false,
+      active768: false,
+      active900: false,
+      active1200: false,
+      active1600: false,
+      active1920: false,
+      active2560: false
+    });
+    expect(component.columnCount()).toBe(8);
   });
 });
 

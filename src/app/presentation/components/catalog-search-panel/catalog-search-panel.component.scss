@@ -193,7 +193,7 @@
 @media (max-width: 768px) {
   .catalog-search-panel {
     .catalog-search-panel__results {
-      padding-bottom: calc(60px + 1rem);
+      padding-bottom: calc(var(--bottom-nav-height) + 1rem);
     }
   }
 

@@ -145,7 +145,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .order-detail-page {
-    padding: 1rem 1rem calc(60px + 1rem);
+    padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
     gap: 1rem;
 
     .order-detail-page__title-row {

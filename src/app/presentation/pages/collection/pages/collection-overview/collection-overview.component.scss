@@ -122,7 +122,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   :host {
-    padding-bottom: 60px;
+    padding-bottom: var(--bottom-nav-height);
     box-sizing: border-box;
   }
 
