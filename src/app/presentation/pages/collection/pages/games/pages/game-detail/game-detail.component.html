@@ -161,7 +161,7 @@
       } @else if (showLoanForm()) {
         <app-game-loan-form [game]="g" (saved)="onLoanSaved($event)" (cancelled)="closeLoanView()" />
       } @else {
-        <!-- "Mi opinión" — atributos de la obra, compartidos por todas las copias -->
+        <!-- "Mi opinión" — atributos de la obra (compartidos entre todas las copias) -->
         <section class="game-detail__section game-detail__section--opinion">
           <div class="game-detail__section-header">
             <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
@@ -200,11 +200,43 @@
               </div>
             }
           </div>
-
-          @if (g.description) {
-            <p class="game-detail__notes">{{ g.description }}</p>
-          }
         </section>
+
+        <!-- Información del catálogo — común a la obra, encima de los tabs -->
+        @if (g.rawgId) {
+          <section class="game-detail__section">
+            <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
+            <div class="game-detail__data-grid">
+              @if (g.releasedDate) {
+                <div class="game-detail__data-item">
+                  <span class="game-detail__data-label">
+                    <mat-icon>event</mat-icon>
+                    {{ 'gameDetail.released' | transloco }}
+                  </span>
+                  <span class="game-detail__data-value">{{ g.releasedDate }}</span>
+                </div>
+              }
+
+              @if (g.rawgRating) {
+                <div class="game-detail__data-item">
+                  <span class="game-detail__data-label">
+                    <mat-icon>public</mat-icon>
+                    {{ 'gameDetail.communityRating' | transloco }}
+                  </span>
+                  <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+                </div>
+              }
+            </div>
+
+            @if (g.genres.length) {
+              <div class="game-detail__genres">
+                @for (genre of g.genres; track genre) {
+                  <span class="game-detail__genre-chip">{{ genre }}</span>
+                }
+              </div>
+            }
+          </section>
+        }
 
         <!-- Tabs por copia — solo si la obra tiene >1 copia. Soporta el caso
              edge donde hay varias copias del mismo formato pero distinta edición
@@ -285,39 +317,11 @@
           </div>
         </section>
 
-        <!-- RAWG info section -->
-        @if (g.rawgId) {
+        <!-- "Notas" — descripción libre por copia (soporta "esta caja dañada" etc.) -->
+        @if (g.description) {
           <section class="game-detail__section">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
-            <div class="game-detail__data-grid">
-              @if (g.releasedDate) {
-                <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
-                    <mat-icon>event</mat-icon>
-                    {{ 'gameDetail.released' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.releasedDate }}</span>
-                </div>
-              }
-
-              @if (g.rawgRating) {
-                <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
-                    <mat-icon>public</mat-icon>
-                    {{ 'gameDetail.communityRating' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
-                </div>
-              }
-            </div>
-
-            @if (g.genres.length) {
-              <div class="game-detail__genres">
-                @for (genre of g.genres; track genre) {
-                  <span class="game-detail__genre-chip">{{ genre }}</span>
-                }
-              </div>
-            }
+            <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
+            <p class="game-detail__notes">{{ g.description }}</p>
           </section>
         }
 
