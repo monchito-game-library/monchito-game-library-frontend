@@ -14,6 +14,7 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { WORK_USE_CASES, WorkUseCasesContract } from '@/domain/use-cases/work/work.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { defaultGameCover } from '@/constants/game-library.constant';
 
@@ -82,6 +83,14 @@ describe('GameDetailComponent', () => {
           useValue: {
             getAllStores: vi.fn().mockResolvedValue([mockStore])
           } as Partial<StoreUseCasesContract>
+        },
+        {
+          provide: WORK_USE_CASES,
+          useValue: {
+            getById: vi.fn().mockResolvedValue(undefined),
+            getCopies: vi.fn().mockResolvedValue([]),
+            update: vi.fn().mockResolvedValue(undefined)
+          } as Partial<WorkUseCasesContract>
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: MatDialog, useValue: { open: vi.fn() } },
@@ -613,6 +622,14 @@ describe('GameDetailComponent', () => {
           {
             provide: STORE_USE_CASES,
             useValue: { getAllStores: vi.fn().mockResolvedValue([mockStore]) } as Partial<StoreUseCasesContract>
+          },
+          {
+            provide: WORK_USE_CASES,
+            useValue: {
+              getById: vi.fn().mockResolvedValue(undefined),
+              getCopies: vi.fn().mockResolvedValue([]),
+              update: vi.fn().mockResolvedValue(undefined)
+            } as Partial<WorkUseCasesContract>
           },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
           { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },

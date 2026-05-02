@@ -22,9 +22,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameModel } from '@/models/game/game.model';
 import { StoreModel } from '@/models/store/store.model';
+import { GameFormatType } from '@/types/game-format.type';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { WORK_USE_CASES, WorkUseCasesContract } from '@/domain/use-cases/work/work.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -66,6 +69,7 @@ export class GameDetailComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
+  private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -97,8 +101,14 @@ export class GameDetailComponent implements OnInit {
   /** Whether the loan form view is active. */
   readonly showLoanForm: WritableSignal<boolean> = signal<boolean>(false);
 
-  /** The game being displayed. */
+  /** The game being displayed (active copy). */
   readonly game: WritableSignal<GameEditModel | null> = signal<GameEditModel | null>(null);
+
+  /** All copies of the same work (digital + physical), ordered by created_at ASC. */
+  readonly copies: WritableSignal<GameModel[]> = signal<GameModel[]>([]);
+
+  /** Whether the work has more than one copy (and therefore the format tabs make sense). */
+  readonly hasMultipleCopies: Signal<boolean> = computed(() => this.copies().length > 1);
 
   /** All available stores, used to resolve the store UUID to a label. */
   readonly stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
@@ -364,12 +374,32 @@ export class GameDetailComponent implements OnInit {
 
       this.game.set(game);
       this.stores.set(stores);
+
+      // Cargar las copias hermanas (mismo work_id) para los tabs físico/digital.
+      // Se hace después y sin bloquear el render principal.
+      const copies: GameModel[] = await this._workUseCases.getCopies(this._userId, game.workId);
+      this.copies.set(copies);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
       void this._router.navigate(['/collection/games']);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  /**
+   * Switches the visible copy when the user clicks a format tab. Carga el
+   * GameEditModel completo de la nueva copia para refrescar la sección
+   * "Mis datos" (precio, tienda, condición, edición, formato, préstamo, venta).
+   *
+   * @param {GameFormatType} format - Formato (physical | digital) seleccionado en el tab
+   */
+  async selectCopyByFormat(format: GameFormatType): Promise<void> {
+    const target: GameModel | undefined = this.copies().find((c) => c.format === format);
+    if (!target?.uuid || target.uuid === this.game()?.uuid) return;
+
+    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, target.uuid);
+    if (next) this.game.set(next);
   }
 
   /**

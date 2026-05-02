@@ -35,14 +35,18 @@
             <div class="game-detail__topbar-actions">
               @if (!g.soldAt) {
                 <button
-                  type="button"
-                  class="game-detail__topbar-edit-btn"
+                  mat-icon-button
+                  class="game-detail__topbar-action-btn"
                   (click)="editGame()"
                   [attr.aria-label]="'gameCard.menu.edit' | transloco">
                   <mat-icon>edit</mat-icon>
-                  <span class="game-detail__topbar-edit-label">
-                    {{ 'gameCard.menu.edit' | transloco }}
-                  </span>
+                </button>
+                <button
+                  mat-icon-button
+                  class="game-detail__topbar-action-btn"
+                  (click)="openSaleView()"
+                  [attr.aria-label]="'gameDetail.sale.manageBtn' | transloco">
+                  <mat-icon>sell</mat-icon>
                 </button>
               }
               <button
@@ -65,10 +69,6 @@
                     <span>{{ 'gameDetail.sale.undoSaleBtn' | transloco }}</span>
                   </button>
                 } @else {
-                  <button mat-menu-item (click)="openSaleView()">
-                    <mat-icon>sell</mat-icon>
-                    <span>{{ 'gameDetail.sale.manageBtn' | transloco }}</span>
-                  </button>
                   @if (g.format === 'physical') {
                     <button mat-menu-item (click)="openLoanView()">
                       <mat-icon>handshake</mat-icon>
@@ -161,7 +161,70 @@
       } @else if (showLoanForm()) {
         <app-game-loan-form [game]="g" (saved)="onLoanSaved($event)" (cancelled)="closeLoanView()" />
       } @else {
-        <!-- Personal data section -->
+        <!-- "Mi opinión" — atributos de la obra, compartidos por todas las copias -->
+        <section class="game-detail__section game-detail__section--opinion">
+          <div class="game-detail__section-header">
+            <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
+            @if (hasMultipleCopies()) {
+              <span class="game-detail__section-hint">{{ 'gameDetail.opinionHint' | transloco }}</span>
+            }
+          </div>
+          <div class="game-detail__data-grid">
+            @if (g.personalRating !== null) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>star</mat-icon>
+                  {{ 'gameForm.fields.rating' | transloco }}
+                </span>
+                <span class="game-detail__data-value game-detail__data-value--rating">
+                  <span class="game-detail__stars">
+                    @for (_ of ratingStars(); track $index) {
+                      <mat-icon>star</mat-icon>
+                    }
+                    @if (hasHalfStar()) {
+                      <mat-icon>star_half</mat-icon>
+                    }
+                  </span>
+                  <span>{{ g.personalRating }}/10</span>
+                </span>
+              </div>
+            }
+
+            @if (g.isFavorite) {
+              <div class="game-detail__data-item">
+                <span class="game-detail__data-label">
+                  <mat-icon>favorite</mat-icon>
+                  {{ 'gameDetail.favorite' | transloco }}
+                </span>
+                <span class="game-detail__data-value">{{ 'common.yes' | transloco }}</span>
+              </div>
+            }
+          </div>
+
+          @if (g.description) {
+            <p class="game-detail__notes">{{ g.description }}</p>
+          }
+        </section>
+
+        <!-- Tabs físico/digital — solo si la obra tiene >1 copia -->
+        @if (hasMultipleCopies()) {
+          <div class="game-detail__copy-tabs" role="tablist">
+            @for (copy of copies(); track copy.uuid) {
+              <button
+                type="button"
+                role="tab"
+                class="game-detail__copy-tab"
+                [class.game-detail__copy-tab--active]="copy.uuid === g.uuid"
+                [attr.aria-selected]="copy.uuid === g.uuid"
+                (click)="selectCopyByFormat(copy.format!)">
+                <mat-icon>{{ copy.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
+                {{ 'gameList.filters.' + copy.format | transloco }}
+              </button>
+            }
+          </div>
+        }
+
+        <!-- "Mis datos" — atributos de la copia activa -->
         <section class="game-detail__section">
           <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
           <div class="game-detail__data-grid">
@@ -205,35 +268,17 @@
               </div>
             }
 
-            @if (g.personalRating !== null) {
+            @if (g.edition) {
               <div class="game-detail__data-item">
                 <span class="game-detail__data-label">
-                  <mat-icon>star</mat-icon>
-                  {{ 'gameForm.fields.rating' | transloco }}
+                  <mat-icon>style</mat-icon>
+                  {{ 'gameForm.fields.edition' | transloco }}
                 </span>
-                <span class="game-detail__data-value game-detail__data-value--rating">
-                  <span class="game-detail__stars">
-                    @for (_ of ratingStars(); track $index) {
-                      <mat-icon>star</mat-icon>
-                    }
-                    @if (hasHalfStar()) {
-                      <mat-icon>star_half</mat-icon>
-                    }
-                  </span>
-                  <span>{{ g.personalRating }}/10</span>
-                </span>
+                <span class="game-detail__data-value">{{ g.edition }}</span>
               </div>
             }
           </div>
         </section>
-
-        <!-- Notes section -->
-        @if (g.description) {
-          <section class="game-detail__section">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.notes' | transloco }}</h2>
-            <p class="game-detail__notes">{{ g.description }}</p>
-          </section>
-        }
 
         <!-- RAWG info section -->
         @if (g.rawgId) {

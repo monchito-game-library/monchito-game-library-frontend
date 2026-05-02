@@ -97,6 +97,7 @@
 
 // Glass-style icon buttons over the hero image — high contrast on any cover
 .game-detail__back-btn,
+.game-detail__topbar-action-btn,
 .game-detail__topbar-menu-btn {
   background-color: rgba(0, 0, 0, 0.35) !important;
   backdrop-filter: blur(10px);
@@ -112,44 +113,6 @@
     background-color: rgba(0, 0, 0, 0.55) !important;
     border-color: rgba(255, 255, 255, 0.32);
   }
-}
-
-// Topbar Edit pill — label on desktop, collapses to circular icon on mobile
-.game-detail__topbar-edit-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  height: 2.5rem;
-  border-radius: var(--radius-full);
-  background-color: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.95);
-  font-family: inherit;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease;
-
-  &:hover,
-  &:focus-visible {
-    background-color: rgba(0, 0, 0, 0.55);
-    border-color: rgba(255, 255, 255, 0.32);
-  }
-
-  mat-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
-  }
-}
-
-.game-detail__topbar-edit-label {
-  white-space: nowrap;
 }
 
 .game-detail__hero-info {
@@ -387,6 +350,68 @@
   flex-wrap: wrap;
 }
 
+// ─── Section header (h2 + hint inline) ────────────────────────────────────────
+
+.game-detail__section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.game-detail__section-header .game-detail__section-title {
+  margin: 0;
+}
+
+.game-detail__section-hint {
+  font-size: var(--text-xs);
+  color: var(--mat-sys-on-surface-variant);
+  font-style: italic;
+}
+
+// ─── Copy tabs (físico / digital) ──────────────────────────────────────────────
+
+.game-detail__copy-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.game-detail__copy-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease;
+
+  mat-icon {
+    font-size: var(--text-lg);
+    width: var(--text-lg);
+    height: var(--text-lg);
+  }
+
+  &:hover {
+    color: var(--mat-sys-on-surface);
+  }
+
+  &--active {
+    color: var(--mat-sys-primary);
+    border-bottom-color: var(--mat-sys-primary);
+  }
+}
+
 // ─── Sold banner ──────────────────────────────────────────────────────────────
 
 .game-detail__sold-banner {
@@ -395,13 +420,13 @@
   gap: 0.75rem;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
-  background-color: color-mix(in srgb, var(--mat-sys-tertiary) 14%, transparent);
+  background-color: color-mix(in srgb, #22c55e 14%, transparent);
   color: var(--mat-sys-on-surface);
-  border: 1px solid color-mix(in srgb, var(--mat-sys-tertiary) 35%, transparent);
+  border: 1px solid color-mix(in srgb, #22c55e 35%, transparent);
 }
 
 .game-detail__sold-banner-icon {
-  color: var(--mat-sys-tertiary);
+  color: #22c55e;
   flex-shrink: 0;
 }
 
@@ -415,19 +440,6 @@
 
   strong {
     font-weight: 600;
-  }
-}
-
-// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
-@media (max-width: 768px) {
-  .game-detail__topbar-edit-btn {
-    width: 2.5rem;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .game-detail__topbar-edit-label {
-    display: none;
   }
 }
 
