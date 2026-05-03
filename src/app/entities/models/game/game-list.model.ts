@@ -8,6 +8,8 @@ export interface GameListModel {
   id?: number;
   /** Original Supabase UUID of the user_games row. Used for edit navigation and delete operations. */
   uuid?: string;
+  /** UUID de la obra (user_works) a la que pertenece esta copia. */
+  workId?: string;
   /** Game title. */
   title: string;
   /** Purchase price. Null if unknown. */

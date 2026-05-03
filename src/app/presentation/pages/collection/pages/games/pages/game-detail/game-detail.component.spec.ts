@@ -14,12 +14,15 @@ import { GameEditModel } from '@/models/game/game-edit.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { WORK_USE_CASES, WorkUseCasesContract } from '@/domain/use-cases/work/work.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { defaultGameCover } from '@/constants/game-library.constant';
 
 function makeGame(overrides: Partial<GameEditModel> = {}): GameEditModel {
   return {
     uuid: 'game-uuid-1',
+    workId: 'work-uuid-1',
+    gameCatalogId: 'cat-uuid-1',
     id: 1,
     title: 'God of War',
     price: 49.99,
@@ -81,6 +84,14 @@ describe('GameDetailComponent', () => {
           useValue: {
             getAllStores: vi.fn().mockResolvedValue([mockStore])
           } as Partial<StoreUseCasesContract>
+        },
+        {
+          provide: WORK_USE_CASES,
+          useValue: {
+            getById: vi.fn().mockResolvedValue(undefined),
+            getCopies: vi.fn().mockResolvedValue([]),
+            update: vi.fn().mockResolvedValue(undefined)
+          } as Partial<WorkUseCasesContract>
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: MatDialog, useValue: { open: vi.fn() } },
@@ -613,6 +624,14 @@ describe('GameDetailComponent', () => {
             provide: STORE_USE_CASES,
             useValue: { getAllStores: vi.fn().mockResolvedValue([mockStore]) } as Partial<StoreUseCasesContract>
           },
+          {
+            provide: WORK_USE_CASES,
+            useValue: {
+              getById: vi.fn().mockResolvedValue(undefined),
+              getCopies: vi.fn().mockResolvedValue([]),
+              update: vi.fn().mockResolvedValue(undefined)
+            } as Partial<WorkUseCasesContract>
+          },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
           { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
           { provide: MatSnackBar, useValue: { open: vi.fn() } },
@@ -672,6 +691,123 @@ describe('GameDetailComponent', () => {
   describe('dominantColor', () => {
     it('arranca con el valor por defecto rgba(0, 0, 0, 0.45)', () => {
       expect(component.dominantColor()).toBe('rgba(0, 0, 0, 0.45)');
+    });
+  });
+
+  describe('selectCopyByUuid', () => {
+    it('no hace fetch si el uuid es vacío', async () => {
+      component.game.set(makeGame({ uuid: 'current' }));
+      const useCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      vi.mocked(useCases.getGameForEdit).mockClear();
+
+      await component.selectCopyByUuid('');
+
+      expect(useCases.getGameForEdit).not.toHaveBeenCalled();
+    });
+
+    it('no hace fetch si el uuid coincide con el de la copia activa', async () => {
+      component.game.set(makeGame({ uuid: 'same-uuid' }));
+      const useCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      vi.mocked(useCases.getGameForEdit).mockClear();
+
+      await component.selectCopyByUuid('same-uuid');
+
+      expect(useCases.getGameForEdit).not.toHaveBeenCalled();
+    });
+
+    it('actualiza game() con el modelo de la copia seleccionada', async () => {
+      component.game.set(makeGame({ uuid: 'old' }));
+      const newCopy = makeGame({ uuid: 'new', price: 49 });
+      const useCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      vi.mocked(useCases.getGameForEdit).mockResolvedValueOnce(newCopy);
+
+      await component.selectCopyByUuid('new');
+
+      expect(useCases.getGameForEdit).toHaveBeenCalledWith('user-1', 'new');
+      expect(component.game()?.uuid).toBe('new');
+      expect(component.game()?.price).toBe(49);
+    });
+
+    it('no actualiza game() si el use case devuelve undefined', async () => {
+      component.game.set(makeGame({ uuid: 'current' }));
+      const useCases = TestBed.inject(GAME_USE_CASES as any) as any;
+      vi.mocked(useCases.getGameForEdit).mockResolvedValueOnce(undefined);
+
+      await component.selectCopyByUuid('missing');
+
+      expect(component.game()?.uuid).toBe('current');
+    });
+  });
+
+  describe('addAnotherCopy', () => {
+    it('no hace nada si game es null', () => {
+      component.game.set(null);
+      const router = TestBed.inject(Router as any) as any;
+
+      component.addAnotherCopy();
+
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('navega a /add con catalogEntry, prefills y forceWorkId cuando el juego es de RAWG', () => {
+      component.game.set(
+        makeGame({
+          uuid: 'g1',
+          workId: 'w1',
+          title: 'Broforce',
+          platform: 'PS4',
+          format: 'physical',
+          status: 'completed',
+          personalRating: 9,
+          isFavorite: true,
+          rawgId: 12345,
+          rawgSlug: 'broforce',
+          imageUrl: 'https://example.com/cover.jpg',
+          releasedDate: '2015-01-01',
+          rawgRating: 4.2,
+          genres: ['Action']
+        })
+      );
+      const router = TestBed.inject(Router as any) as any;
+
+      component.addAnotherCopy();
+
+      expect(router.navigate).toHaveBeenCalledWith(
+        ['/collection/games/add'],
+        expect.objectContaining({
+          state: expect.objectContaining({
+            catalogEntry: expect.objectContaining({ rawg_id: 12345, slug: 'broforce' }),
+            prefillTitle: 'Broforce',
+            prefillPlatform: 'PS4',
+            prefillFormat: 'digital',
+            prefillStatus: 'completed',
+            prefillPersonalRating: 9,
+            prefillIsFavorite: true,
+            forceWorkId: 'w1'
+          })
+        })
+      );
+    });
+
+    it('pasa catalogEntry null cuando el juego es manual (sin rawgId)', () => {
+      component.game.set(makeGame({ uuid: 'g1', workId: 'w1', rawgId: null }));
+      const router = TestBed.inject(Router as any) as any;
+
+      component.addAnotherCopy();
+
+      const stateArg = router.navigate.mock.calls[0][1].state;
+      expect(stateArg.catalogEntry).toBeNull();
+      expect(stateArg.forceWorkId).toBe('w1');
+    });
+
+    it('cuando la copia activa es digital, el formato prefijado es physical', () => {
+      component.game.set(makeGame({ uuid: 'g1', workId: 'w1', format: 'digital' }));
+      const router = TestBed.inject(Router as any) as any;
+
+      component.addAnotherCopy();
+
+      const stateArg = router.navigate.mock.calls[0][1].state;
+      expect(stateArg.prefillFormat).toBe('physical');
     });
   });
 });

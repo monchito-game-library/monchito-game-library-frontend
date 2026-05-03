@@ -67,13 +67,21 @@ export class GameUseCasesImpl implements GameUseCasesContract {
   /**
    * Adds a new game to the user's collection.
    * Passes the catalog entry to the repository so it can be linked to the record.
+   * Si `targetWorkId` se proporciona, la nueva copia se asocia a esa work
+   * existente directamente (caso "Añadir otra copia" del detalle).
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry]
+   * @param {string} [targetWorkId] - UUID de la work existente a la que asociar la copia
    */
-  async addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
-    return this._repo.addGameForUser(userId, game, catalogEntry);
+  async addGame(
+    userId: string,
+    game: GameModel,
+    catalogEntry?: GameCatalog | null,
+    targetWorkId?: string
+  ): Promise<void> {
+    return this._repo.addGameForUser(userId, game, catalogEntry, targetWorkId);
   }
 
   /**

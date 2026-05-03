@@ -2,12 +2,20 @@ import { Routes } from '@angular/router';
 import { canActivateUser } from '@/guards/user/user.guard';
 import { gameRepositoryProvider } from '@/di/repositories/game.repository.provider';
 import { gameUseCasesProvider } from '@/di/use-cases/game.use-cases.provider';
+import { workRepositoryProvider } from '@/di/repositories/work.repository.provider';
+import { workUseCasesProvider } from '@/di/use-cases/work.use-cases.provider';
 import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 export const gamesRoutes: Routes = [
   {
     path: '',
-    providers: [gameRepositoryProvider, gameUseCasesProvider, GamesFilterService],
+    providers: [
+      gameRepositoryProvider,
+      gameUseCasesProvider,
+      workRepositoryProvider,
+      workUseCasesProvider,
+      GamesFilterService
+    ],
     children: [
       {
         path: '',

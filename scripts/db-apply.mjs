@@ -27,6 +27,12 @@ try {
   await client.query(sql);
   await client.query('COMMIT');
   console.log('✔ OK');
+
+  // Notificar a PostgREST que recargue el schema cache. Si no se hace, las tablas
+  // o columnas nuevas devuelven CORS "Method not allowed" en el preflight hasta
+  // el siguiente reload manual desde el dashboard.
+  await client.query("NOTIFY pgrst, 'reload schema'");
+  console.log('✔ PostgREST schema reload disparado');
 } catch (err) {
   await client.query('ROLLBACK').catch(() => {});
   console.error('✗ Falló — transacción revertida.');

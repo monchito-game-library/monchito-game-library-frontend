@@ -888,6 +888,104 @@ describe('GameFormComponent — ngOnInit nav state', () => {
     await component.ngOnInit();
     expect((component as any)._pendingCatalogEntry).toEqual(catalogEntry);
   });
+
+  it('aplica prefillTitle, prefillPlatform y prefillFormat al form (caso "Añadir otra copia" sin catalogEntry)', async () => {
+    vi.clearAllMocks();
+    const component = setupWithNavState({
+      prefillTitle: 'Broforce',
+      prefillPlatform: 'PS4',
+      prefillFormat: 'digital',
+      forceWorkId: 'work-uuid-1'
+    });
+    await component.ngOnInit();
+
+    expect(component.form.controls.title.value).toBe('Broforce');
+    expect(component.form.controls.platform.value).toBe('PS4');
+    expect(component.form.controls.format.value).toBe('digital');
+    expect((component as any)._pendingTargetWorkId).toBe('work-uuid-1');
+  });
+
+  it('aplica prefillStatus / prefillPersonalRating / prefillIsFavorite al form', async () => {
+    vi.clearAllMocks();
+    const component = setupWithNavState({
+      prefillTitle: 'Broforce',
+      prefillStatus: 'completed',
+      prefillPersonalRating: 9,
+      prefillIsFavorite: true
+    });
+    await component.ngOnInit();
+
+    expect(component.form.controls.status.value).toBe('completed');
+    expect(component.form.controls.personal_rating.value).toBe(9);
+    expect(component.form.controls.is_favorite.value).toBe(true);
+  });
+
+  it('no aplica prefillPersonalRating cuando viene null (mantiene el valor por defecto del form)', async () => {
+    vi.clearAllMocks();
+    const initialRating = 5;
+    const component = setupWithNavState({
+      prefillTitle: 'Broforce',
+      prefillPersonalRating: null
+    });
+    component.form.controls.personal_rating.setValue(initialRating);
+    await component.ngOnInit();
+
+    // El prefill null no debe sobrescribir el valor actual
+    expect(component.form.controls.personal_rating.value).toBe(initialRating);
+  });
+
+  it('aplica prefillIsFavorite=false explícitamente (no es undefined)', async () => {
+    vi.clearAllMocks();
+    const component = setupWithNavState({
+      prefillTitle: 'Broforce',
+      prefillIsFavorite: false
+    });
+    component.form.controls.is_favorite.setValue(true);
+    await component.ngOnInit();
+
+    expect(component.form.controls.is_favorite.value).toBe(false);
+  });
+
+  it('selectGameFromSearch descarta _pendingTargetWorkId si el rawg_id cambia', async () => {
+    vi.clearAllMocks();
+    const original = {
+      rawg_id: 100,
+      title: 'Original',
+      slug: 'original',
+      image_url: null,
+      released_date: null,
+      rating: 4,
+      platforms: [],
+      genres: [],
+      source: 'rawg' as const,
+      esrb_rating: null,
+      metacritic_score: null,
+      screenshots: []
+    };
+    const component = setupWithNavState({ catalogEntry: original, forceWorkId: 'work-1' });
+    await component.ngOnInit();
+    expect((component as any)._pendingTargetWorkId).toBe('work-1');
+
+    // El usuario elige otro juego desde la búsqueda RAWG
+    const otherGame = { ...original, rawg_id: 999, title: 'Otro', slug: 'otro' };
+    component.selectGameFromSearch(otherGame);
+
+    expect((component as any)._pendingTargetWorkId).toBeNull();
+  });
+
+  it('clearSelectedGame también descarta _pendingTargetWorkId', async () => {
+    vi.clearAllMocks();
+    const component = setupWithNavState({
+      prefillTitle: 'Broforce',
+      forceWorkId: 'work-1'
+    });
+    await component.ngOnInit();
+    expect((component as any)._pendingTargetWorkId).toBe('work-1');
+
+    component.clearSelectedGame();
+
+    expect((component as any)._pendingTargetWorkId).toBeNull();
+  });
 });
 
 describe('GameFormComponent — constructor effect stores', () => {

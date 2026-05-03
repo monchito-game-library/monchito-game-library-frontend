@@ -51,13 +51,17 @@ export interface GameUseCasesContract {
 
   /**
    * Adds a new game to the user's collection.
-   * Pass a catalog entry to link it to the RAWG catalog.
+   * Pass a catalog entry to link it to the RAWG catalog. Pass `targetWorkId`
+   * to forzar la asociación a una obra existente (caso "Añadir otra copia"
+   * desde el detalle: omite la resolución de catalog/work y reutiliza los IDs
+   * conocidos para evitar fugas con catálogos manuales).
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry]
+   * @param {string} [targetWorkId] - UUID de la work existente a la que asociar la nueva copia
    */
-  addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
+  addGame(userId: string, game: GameModel, catalogEntry?: GameCatalog | null, targetWorkId?: string): Promise<void>;
 
   /**
    * Updates an existing game. The model must include the uuid field.

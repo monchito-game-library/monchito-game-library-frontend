@@ -52,29 +52,22 @@ Catálogo compartido de juegos. Un juego vive aquí una sola vez aunque varios u
 
 ### `user_games`
 
-Colección personal de cada usuario. Referencia al catálogo compartido.
+Cada copia que el usuario tiene en su colección. Cada `user_games` apunta a una `user_works` (la "obra") y al catálogo compartido. Atributos de obra (status, rating, favorito, plataforma) viven en `user_works`; atributos de copia (precio, tienda, condición, formato, edición, notas, venta) viven aquí.
 
 | Columna | Tipo | Notas |
 |---|---|---|
 | `id` | UUID PK | `gen_random_uuid()` |
 | `user_id` | UUID FK auth.users | ON DELETE CASCADE |
 | `game_catalog_id` | UUID FK game_catalog | ON DELETE CASCADE |
+| `work_id` | UUID FK user_works NOT NULL | ON DELETE CASCADE — agrupa físico+digital de la misma obra |
 | `price` | NUMERIC(10,2) | Precio de compra |
 | `store` | UUID FK stores | NULL si desconocida |
-| `platform` | TEXT | Plataforma del usuario |
 | `condition` | TEXT | `'new'` \| `'used'` |
 | `format` | TEXT | `'physical'` \| `'digital'` \| NULL |
-| `purchased_date` | DATE | |
-| `status` | TEXT | `wishlist` / `backlog` / `playing` / `completed` / `platinum` / `abandoned` / `owned` |
-| `personal_rating` | NUMERIC(3,1) | 0.0–10.0 |
-| `personal_review` | TEXT | |
 | `edition` | TEXT | Edición del ejemplar (ej: 'Deluxe Edition', 'GOTY') |
-| `started_date` | DATE | |
-| `completed_date` | DATE | |
-| `description` | TEXT | Notas personales |
-| `tags_personal` | TEXT[] | |
-| `is_favorite` | BOOLEAN | Default FALSE |
+| `description` | TEXT | Notas personales libres por copia ("esta caja está dañada") |
 | `cover_position` | VARCHAR(20) | Posición focal del recorte de portada (ej: `'50% 20%'`) |
+| `custom_image_url` | TEXT | URL personalizada por copia. La vista usa `COALESCE(custom_image_url, gc.image_url)` |
 | `for_sale` | BOOLEAN NOT NULL | Default FALSE — el juego está publicado en venta |
 | `sale_price` | NUMERIC(10,2) | Precio deseado de venta |
 | `sold_at` | DATE | Fecha de venta real. `NULL` = en colección activa |
@@ -84,7 +77,31 @@ Colección personal de cada usuario. Referencia al catálogo compartido.
 
 **RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
 
-**Índice único parcial:** `user_games_unique_per_platform` — `UNIQUE(user_id, game_catalog_id, platform, format, edition) WHERE sold_at IS NULL`. Solo impide duplicados en juegos activos; los vendidos no computan, permitiendo re-añadir un juego ya vendido.
+**Índice único parcial:** `user_games_unique_per_work_format_edition` — `UNIQUE(work_id, format, edition) WHERE sold_at IS NULL`. Identidad de copia dentro de una obra; los vendidos no computan, permitiendo re-añadir un juego ya vendido.
+
+---
+
+### `user_works`
+
+Agrupa copias de la misma "obra" (mismo juego en la misma plataforma con formatos distintos: físico + digital). Atributos compartidos entre copias.
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| `id` | UUID PK | `gen_random_uuid()` |
+| `user_id` | UUID FK auth.users | ON DELETE CASCADE |
+| `game_catalog_id` | UUID FK game_catalog | ON DELETE CASCADE |
+| `platform` | TEXT NOT NULL | PS5, PS4, Xbox… (PS4 ≠ Xbox: dos obras distintas) |
+| `status` | TEXT | `wishlist` / `backlog` / `playing` / `completed` / `platinum` / `abandoned` / `owned` |
+| `personal_rating` | NUMERIC(3,1) | 0.0–10.0, opinión a nivel obra |
+| `is_favorite` | BOOLEAN | Default FALSE |
+| `created_at` | TIMESTAMP TZ | |
+| `updated_at` | TIMESTAMP TZ | Trigger automático |
+
+**RLS:** Solo el propio usuario (SELECT / INSERT / UPDATE / DELETE).
+
+**Identidad refinada:** La terna `(user, catalog, platform)` NO es estrictamente única — pueden existir múltiples `user_works` con la misma terna si las copias tienen formatos incompatibles entre sí (p.ej. dos físicas de la misma plataforma con distintas ediciones se modelan como dos obras separadas). El matching se hace en el repositorio (`_getOrCreateUserWork` reutiliza una obra existente solo si esa obra aún no tiene una copia activa con el mismo formato del nuevo INSERT). Index no-único `idx_user_works_user_catalog_platform` para acelerar el lookup.
+
+**Trigger de cleanup:** `trg_user_games_cleanup_orphan_works` (AFTER DELETE on user_games) borra automáticamente la fila de `user_works` cuando se elimina su última copia activa.
 
 ---
 
