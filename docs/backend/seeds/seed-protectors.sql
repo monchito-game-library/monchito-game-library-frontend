@@ -1,274 +1,41 @@
 -- ============================================================
--- Seed: protectores de cajas (order_products)
--- Proveedor principal: boxprotectors.nl
--- Proveedor alternativo: theboxprotectorshop.be (GBA)
--- Generado: 2026-04-15
--- 19 productos con sus packs de cantidad/precio/URL
+-- Seed: productos del módulo orders (cajas protectoras y otros)
+-- Regenerado desde Supabase: 2026-05-03
+-- 26 productos
 -- ============================================================
 -- Ejecutar en el SQL Editor de Supabase.
--- Idempotente: ON CONFLICT (id) DO NOTHING en todas las filas.
+-- Idempotente: ON CONFLICT DO NOTHING en todas las filas.
+-- Generado vía: pg_dump --data-only --table=public.order_products
+--              --inserts --on-conflict-do-nothing
 -- ============================================================
 
 BEGIN;
 
-INSERT INTO order_products (id, name, category, notes, is_active, packs) VALUES
-
-  (
-    '20000000-0000-0000-0000-000000000001',
-    'Cajas tamaño BluRay',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.boxprotectors.nl/a-72268597/playstation-3/1x-snug-fit-box-protectors-for-blu-ray/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.boxprotectors.nl/a-72268600/playstation-3/10x-snug-fit-box-protectors-for-blu-ray/"},
-      {"quantity":25,  "price":19.99,  "url":"https://www.boxprotectors.nl/a-72268603/playstation-3/25x-snug-fit-box-protectors-for-blu-ray/"},
-      {"quantity":50,  "price":38.99,  "url":"https://www.boxprotectors.nl/a-72268606/playstation-3/50x-snug-fit-box-protectors-for-blu-ray/"},
-      {"quantity":100, "price":74.99,  "url":"https://www.boxprotectors.nl/a-72268609/playstation-3/100x-snug-fit-box-protectors-for-blu-ray/"},
-      {"quantity":250, "price":184.99, "url":"https://www.boxprotectors.nl/a-72268612/playstation-3/250x-snug-fit-box-protectors-for-blu-ray/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000002',
-    'Cajas tamaño BluRay Extra',
-    'box',
-    'Con slipcover / steel boxes',
-    TRUE,
-    '[
-      {"quantity":1,  "price":1.25,  "url":"https://www.boxprotectors.nl/a-80111588/dvd-cd-bluray/1x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/"},
-      {"quantity":10, "price":9.99,  "url":"https://www.boxprotectors.nl/a-80111603/dvd-cd-bluray/10x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/"},
-      {"quantity":25, "price":22.99, "url":"https://www.boxprotectors.nl/a-80111621/dvd-cd-bluray/25x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/"},
-      {"quantity":50, "price":39.99, "url":"https://www.boxprotectors.nl/a-80111630/dvd-cd-bluray/50x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000003',
-    'Cajas BluRay pack doble (x2)',
-    'box',
-    'Para cajas de BluRay con 2 discos',
-    TRUE,
-    '[
-      {"quantity":1, "price":5.95, "url":"https://www.boxprotectors.nl/a-100076604/dvd-cd-bluray/1x-snug-fit-box-protectors-for-2-double-bluray/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000004',
-    'Cajas tamaño DVD',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.boxprotectors.nl/a-44704163/gamecube-dvd-protectors/1x-snug-fit-box-protector-for-gamecube-dvd/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.boxprotectors.nl/a-44704194/gamecube-dvd-protectors/10x-snug-fit-box-protector-for-gamecube-dvd/"},
-      {"quantity":25,  "price":19.99,  "url":"https://www.boxprotectors.nl/a-44704502/gamecube-dvd-protectors/25x-snug-fit-box-protector-for-gamecube-dvd/"},
-      {"quantity":50,  "price":39.99,  "url":"https://www.boxprotectors.nl/a-44704518/gamecube-dvd-protectors/50x-snug-fit-box-protector-for-gamecube-dvd/"},
-      {"quantity":100, "price":74.99,  "url":"https://www.boxprotectors.nl/a-44704529/gamecube-dvd-protectors/100x-snug-fit-box-protector-for-gamecube-dvd/"},
-      {"quantity":250, "price":179.99, "url":"https://www.boxprotectors.nl/a-44704543/gamecube-dvd-protectors/250x-snug-fit-box-protector-for-gamecube-dvd/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000005',
-    'Cajas tamaño DVD Extra',
-    'box',
-    'Para libros y media de mayor tamaño',
-    TRUE,
-    '[
-      {"quantity":1,  "price":1.25,  "url":"https://www.boxprotectors.nl/a-84349385/dvd-cd-bluray/1x-snug-fit-box-protectors-for-dvd-larger-media-books/"},
-      {"quantity":10, "price":11.99, "url":"https://www.boxprotectors.nl/a-84349391/dvd-cd-bluray/10x-snug-fit-box-protectors-dvd-larger-media-books/"},
-      {"quantity":25, "price":24.99, "url":"https://www.boxprotectors.nl/a-84349397/dvd-cd-bluray/25x-snug-fit-box-protectors-dvd-larger-media-books/"},
-      {"quantity":50, "price":44.99, "url":"https://www.boxprotectors.nl/a-84349400/dvd-cd-bluray/50x-snug-fit-box-protectors-dvd-larger-media-books/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000006',
-    'Cajas DVD pack doble (x3)',
-    'box',
-    'Para cajas de DVD con 3 discos',
-    TRUE,
-    '[
-      {"quantity":1, "price":5.95, "url":"https://www.boxprotectors.nl/a-100076526/dvd-cd-bluray/1x-snug-fit-box-protectors-for-3-double-dvd/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000007',
-    'Cajas tamaño Switch',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,  "price":0.99,  "url":"https://www.boxprotectors.nl/a-52748849/switch-game-protectors/1x-switch-game-protector/"},
-      {"quantity":10, "price":8.99,  "url":"https://www.boxprotectors.nl/a-52748852/switch-game-protectors/10x-switch-game-protector/"},
-      {"quantity":25, "price":19.99, "url":"https://www.boxprotectors.nl/a-52748853/switch-game-protectors/25x-switch-game-protector/"},
-      {"quantity":50, "price":38.99, "url":"https://www.boxprotectors.nl/a-52748857/switch-game-protectors/50x-switch-game-protector/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000008',
-    'Cajas tamaño 3DS',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.boxprotectors.nl/a-49739492/3ds-game-box-protector/1x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.boxprotectors.nl/a-49739496/3ds-game-box-protector/10x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"},
-      {"quantity":25,  "price":19.99,  "url":"https://www.boxprotectors.nl/a-49739506/3ds-game-box-protector/25x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"},
-      {"quantity":50,  "price":38.99,  "url":"https://www.boxprotectors.nl/a-49739509/3ds-game-box-protector/50x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"},
-      {"quantity":100, "price":71.99,  "url":"https://www.boxprotectors.nl/a-49739520/3ds-game-box-protector/100x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"},
-      {"quantity":250, "price":179.99, "url":"https://www.boxprotectors.nl/a-49739522/3ds-game-box-protector/250x-snug-fit-box-protectors-for-nintendo-3ds-boxes/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000009',
-    'Cajas tamaño DS',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.boxprotectors.nl/a-46683461/ds-dsi-2ds-game-box-protectors/1x-snug-fit-box-protectors-for-nintendo-ds-boxes/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.boxprotectors.nl/a-46683464/ds-dsi-2ds-game-box-protectors/10x-snug-fit-box-protectors-for-nintendo-ds-boxes/"},
-      {"quantity":25,  "price":19.99,  "url":"https://www.boxprotectors.nl/a-46683491/ds-dsi-2ds-game-box-protectors/25x-snug-fit-box-protectors-for-nintendo-ds-boxes/"},
-      {"quantity":50,  "price":38.99,  "url":"https://www.boxprotectors.nl/a-46683493/ds-dsi-2ds-game-box-protectors/50x-snug-fit-box-protectors-for-nintendo-ds-boxes/"},
-      {"quantity":100, "price":71.99,  "url":"https://www.boxprotectors.nl/a-46683497/ds-dsi-2ds-game-box-protectors/100x-snug-fit-box-protectors-for-nintendo-ds-boxes/"},
-      {"quantity":250, "price":174.99, "url":"https://www.boxprotectors.nl/a-46683500/ds-dsi-2ds-game-box-protectors/250x-snug-fit-box-protectors-for-nintendo-ds-boxes/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000010',
-    'Cajas tamaño PSP',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,  "url":"https://www.boxprotectors.nl/a-52876913/psp-game-protectors/1x-snug-fit-box-protectors-for-psp-games/"},
-      {"quantity":10,  "price":8.99,  "url":"https://www.boxprotectors.nl/a-52876914/psp-game-protectors/10x-snug-fit-box-protectors-for-psp-games/"},
-      {"quantity":25,  "price":19.99, "url":"https://www.boxprotectors.nl/a-52876916/psp-game-protectors/25x-snug-fit-box-protectors-for-psp-games/"},
-      {"quantity":50,  "price":39.99, "url":"https://www.boxprotectors.nl/a-52876917/psp-game-protectors/50x-snug-fit-box-protectors-for-psp-games/"},
-      {"quantity":100, "price":74.99, "url":"https://www.boxprotectors.nl/a-53153076/psp-game-protectors/100x-snug-fit-box-protectors-for-psp-games/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000011',
-    'Cajas tamaño GBA',
-    'box',
-    'Proveedor: theboxprotectorshop.be',
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.theboxprotectorshop.be/a-44680074/gameboy-game-box-protectors/1x-snug-fit-box-protectors-for-gameboy/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.theboxprotectorshop.be/a-44680205/gameboy-game-box-protectors/10x-snug-fit-box-protectors-for-gameboy/"},
-      {"quantity":25,  "price":20.99,  "url":"https://www.theboxprotectorshop.be/a-44680221/gameboy-game-box-protectors/25x-snug-fit-box-protectors-for-gameboy/"},
-      {"quantity":50,  "price":39.99,  "url":"https://www.theboxprotectorshop.be/a-44680283/gameboy-game-box-protectors/50x-snug-fit-box-protectors-for-gameboy/"},
-      {"quantity":100, "price":74.99,  "url":"https://www.theboxprotectorshop.be/a-44680299/gameboy-game-box-protectors/100x-snug-fit-box-protectors-for-gameboy/"},
-      {"quantity":250, "price":184.99, "url":"https://www.theboxprotectorshop.be/a-44680308/gameboy-game-box-protectors/250x-snug-fit-box-protectors-for-gameboy/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000012',
-    'Cajas tamaño Xbox One',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,   "url":"https://www.boxprotectors.nl/a-56276549/xbox-one-games/1x-snug-fit-box-protector-for-xbox-one-games/"},
-      {"quantity":10,  "price":8.99,   "url":"https://www.boxprotectors.nl/a-56276551/xbox-one-games/10x-snug-fit-box-protector-for-xbox-one-games/"},
-      {"quantity":25,  "price":19.99,  "url":"https://www.boxprotectors.nl/a-56276554/xbox-one-games/25x-snug-fit-box-protector-for-xbox-one-games/"},
-      {"quantity":50,  "price":39.99,  "url":"https://www.boxprotectors.nl/a-56276555/xbox-one-games/50x-snug-fit-box-protector-for-xbox-one-games/"},
-      {"quantity":100, "price":74.99,  "url":"https://www.boxprotectors.nl/a-56276556/xbox-one-games/100-x-snug-fit-box-protector-for-xbox-one-games/"},
-      {"quantity":250, "price":174.99, "url":"https://www.boxprotectors.nl/a-56276558/xbox-one-games/250-x-snug-fit-box-protector-for-xbox-one-games/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000013',
-    'Cajas tamaño PSVita',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1,   "price":0.99,  "url":"https://www.boxprotectors.nl/a-52745322/ps-vita-game-protectors/1x-snug-fit-box-protectors-for-ps-vita-games/"},
-      {"quantity":10,  "price":8.99,  "url":"https://www.boxprotectors.nl/a-52745324/ps-vita-game-protectors/10x-snug-fit-box-protectors-for-ps-vita-games/"},
-      {"quantity":25,  "price":19.99, "url":"https://www.boxprotectors.nl/a-52745326/ps-vita-game-protectors/25x-snug-fit-box-protectors-for-ps-vita-games/"},
-      {"quantity":50,  "price":39.99, "url":"https://www.boxprotectors.nl/a-52745327/ps-vita-game-protectors/50x-snug-fit-box-protectors-for-ps-vita-games/"},
-      {"quantity":100, "price":74.99, "url":"https://www.boxprotectors.nl/a-52745328/ps-vita-game-protectors/100x-snug-fit-box-protectors-for-ps-vita-games/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000014',
-    'Caja Especial 1 (4.6 x 15.9 x 21.4)',
-    'box',
-    'Ej: The Last of Us big box',
-    TRUE,
-    '[
-      {"quantity":1, "price":6.95, "url":"https://www.boxprotectors.nl/a-93848974/playstation-3/protector-for-ps3-the-last-of-us-ellie-joel-big-box/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000015',
-    'Caja Especial 2 (8 x 16.4 x 23.4)',
-    'box',
-    'Ej: Xbox / PS3 Black Ops big box',
-    TRUE,
-    '[
-      {"quantity":1, "price":6.95, "url":"https://www.boxprotectors.nl/a-93847891/playstation-3/boxprotector-for-xbox-ps3-black-ops-big-box/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000016',
-    'Caja PS3 Limited Edition (3 x 14.1 x 17.9)',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1, "price":4.95, "url":"https://www.boxprotectors.nl/a-88165214/playstation-3/ps3-big-box-limited-edition-protector/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000017',
-    'Caja PS4 Limited Edition (3 x 14 x 17.8)',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1, "price":4.95, "url":"https://www.boxprotectors.nl/a-71849785/switch-special-edition-big-box/switch-big-box-limited-edition-protector/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000018',
-    'Caja PS4 FFVII & DS Trilogy (4.6 x 14.1 x 17.9)',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1, "price":5.95, "url":"https://www.boxprotectors.nl/a-66060543/ps4-special-game-protectors/protector-for-ps4-final-fantasy-dark-souls/"}
-    ]'
-  ),
-
-  (
-    '20000000-0000-0000-0000-000000000019',
-    'Caja PS5 FFVII Rebirth (6.2 x 14 x 17.8)',
-    'box',
-    NULL,
-    TRUE,
-    '[
-      {"quantity":1, "price":6.95, "url":"https://www.boxprotectors.nl/a-87997142/playstation-5/protector-for-ps5-final-fantasy-vii/"}
-    ]'
-  )
-
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.order_products VALUES ('7a535b39-b32e-4505-b36f-bad63dd35907', 'Cajas tamaño BluRay', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-72268597/playstation-3/1x-snug-fit-box-protectors-for-blu-ray/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-72268600/playstation-3/10x-snug-fit-box-protectors-for-blu-ray/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-72268603/playstation-3/25x-snug-fit-box-protectors-for-blu-ray/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-72268606/playstation-3/50x-snug-fit-box-protectors-for-blu-ray/", "price": 38.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-72268609/playstation-3/100x-snug-fit-box-protectors-for-blu-ray/", "price": 74.99, "quantity": 100}, {"url": "https://www.boxprotectors.nl/a-72268612/playstation-3/250x-snug-fit-box-protectors-for-blu-ray/", "price": 184.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('b040a477-b719-413c-9293-0272a65b3ab0', 'Cajas tamaño BluRay Extra', 'box', 'Con slipcover / steel boxes', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-80111588/dvd-cd-bluray/1x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/", "price": 1.25, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-80111603/dvd-cd-bluray/10x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/", "price": 9.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-80111621/dvd-cd-bluray/25x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/", "price": 22.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-80111630/dvd-cd-bluray/50x-snug-fit-box-protectors-for-blu-ray-with-slipcover-steel-boxes/", "price": 39.99, "quantity": 50}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('b9a6cd48-783a-47e5-ac4b-f691f78aecd8', 'Cajas BluRay pack doble (x2)', 'box', 'Para cajas de BluRay con 2 discos', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-100076604/dvd-cd-bluray/1x-snug-fit-box-protectors-for-2-double-bluray/", "price": 5.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('f48b13db-69df-41d5-a56c-16ec4c538a35', 'Cajas tamaño DVD', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-44704163/gamecube-dvd-protectors/1x-snug-fit-box-protector-for-gamecube-dvd/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-44704194/gamecube-dvd-protectors/10x-snug-fit-box-protector-for-gamecube-dvd/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-44704502/gamecube-dvd-protectors/25x-snug-fit-box-protector-for-gamecube-dvd/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-44704518/gamecube-dvd-protectors/50x-snug-fit-box-protector-for-gamecube-dvd/", "price": 39.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-44704529/gamecube-dvd-protectors/100x-snug-fit-box-protector-for-gamecube-dvd/", "price": 74.99, "quantity": 100}, {"url": "https://www.boxprotectors.nl/a-44704543/gamecube-dvd-protectors/250x-snug-fit-box-protector-for-gamecube-dvd/", "price": 179.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('e7bcf68e-ae15-4e7e-967c-83ccbb9f5be4', 'Cajas tamaño DVD Extra', 'box', 'Para libros y media de mayor tamaño', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-84349385/dvd-cd-bluray/1x-snug-fit-box-protectors-for-dvd-larger-media-books/", "price": 1.25, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-84349391/dvd-cd-bluray/10x-snug-fit-box-protectors-dvd-larger-media-books/", "price": 11.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-84349397/dvd-cd-bluray/25x-snug-fit-box-protectors-dvd-larger-media-books/", "price": 24.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-84349400/dvd-cd-bluray/50x-snug-fit-box-protectors-dvd-larger-media-books/", "price": 44.99, "quantity": 50}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('50a25074-a4db-4e23-ac2f-38894d9c6acc', 'Cajas DVD pack doble (x3)', 'box', 'Para cajas de DVD con 3 discos', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-100076526/dvd-cd-bluray/1x-snug-fit-box-protectors-for-3-double-dvd/", "price": 5.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('112ed58b-6b48-4a08-ba09-209566087653', 'Caja PS3 Limited Edition (3 x 14.1 x 17.9)', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-88165214/playstation-3/ps3-big-box-limited-edition-protector/", "price": 4.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('dd540976-0074-416c-b79d-75b209a6089f', 'Caja PS4 Limited Edition (3 x 14 x 17.8)', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-71849785/switch-special-edition-big-box/switch-big-box-limited-edition-protector/", "price": 4.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('9df59d02-d24c-4a1a-959f-4a68e492deac', 'Cajas tamaño Switch', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-52748849/switch-game-protectors/1x-switch-game-protector/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-52748852/switch-game-protectors/10x-switch-game-protector/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-52748853/switch-game-protectors/25x-switch-game-protector/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-52748857/switch-game-protectors/50x-switch-game-protector/", "price": 38.99, "quantity": 50}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('3c9143b7-0be9-4bdf-93cd-2fa29b1b76b5', 'Cajas tamaño 3DS', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-49739492/3ds-game-box-protector/1x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-49739496/3ds-game-box-protector/10x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-49739506/3ds-game-box-protector/25x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-49739509/3ds-game-box-protector/50x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 38.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-49739520/3ds-game-box-protector/100x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 71.99, "quantity": 100}, {"url": "https://www.boxprotectors.nl/a-49739522/3ds-game-box-protector/250x-snug-fit-box-protectors-for-nintendo-3ds-boxes/", "price": 179.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('2b67917d-8e3d-4e62-8ebb-32a771ea0534', 'Cajas tamaño DS', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-46683461/ds-dsi-2ds-game-box-protectors/1x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-46683464/ds-dsi-2ds-game-box-protectors/10x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-46683491/ds-dsi-2ds-game-box-protectors/25x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-46683493/ds-dsi-2ds-game-box-protectors/50x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 38.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-46683497/ds-dsi-2ds-game-box-protectors/100x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 71.99, "quantity": 100}, {"url": "https://www.boxprotectors.nl/a-46683500/ds-dsi-2ds-game-box-protectors/250x-snug-fit-box-protectors-for-nintendo-ds-boxes/", "price": 174.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('a8ebd267-37c2-41e2-9ffd-fd9be997fcc4', 'Cajas tamaño PSP', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-52876913/psp-game-protectors/1x-snug-fit-box-protectors-for-psp-games/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-52876914/psp-game-protectors/10x-snug-fit-box-protectors-for-psp-games/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-52876916/psp-game-protectors/25x-snug-fit-box-protectors-for-psp-games/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-52876917/psp-game-protectors/50x-snug-fit-box-protectors-for-psp-games/", "price": 39.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-53153076/psp-game-protectors/100x-snug-fit-box-protectors-for-psp-games/", "price": 74.99, "quantity": 100}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('a5517de3-1351-4580-9d9d-29a17adcee99', 'Cajas tamaño GBA', 'box', 'Proveedor: theboxprotectorshop.be', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.theboxprotectorshop.be/a-44680074/gameboy-game-box-protectors/1x-snug-fit-box-protectors-for-gameboy/", "price": 0.99, "quantity": 1}, {"url": "https://www.theboxprotectorshop.be/a-44680205/gameboy-game-box-protectors/10x-snug-fit-box-protectors-for-gameboy/", "price": 8.99, "quantity": 10}, {"url": "https://www.theboxprotectorshop.be/a-44680221/gameboy-game-box-protectors/25x-snug-fit-box-protectors-for-gameboy/", "price": 20.99, "quantity": 25}, {"url": "https://www.theboxprotectorshop.be/a-44680283/gameboy-game-box-protectors/50x-snug-fit-box-protectors-for-gameboy/", "price": 39.99, "quantity": 50}, {"url": "https://www.theboxprotectorshop.be/a-44680299/gameboy-game-box-protectors/100x-snug-fit-box-protectors-for-gameboy/", "price": 74.99, "quantity": 100}, {"url": "https://www.theboxprotectorshop.be/a-44680308/gameboy-game-box-protectors/250x-snug-fit-box-protectors-for-gameboy/", "price": 184.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('0706cab8-d599-41d5-9963-36ecffcf6454', 'Cajas tamaño Xbox One', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-56276549/xbox-one-games/1x-snug-fit-box-protector-for-xbox-one-games/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-56276551/xbox-one-games/10x-snug-fit-box-protector-for-xbox-one-games/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-56276554/xbox-one-games/25x-snug-fit-box-protector-for-xbox-one-games/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-56276555/xbox-one-games/50x-snug-fit-box-protector-for-xbox-one-games/", "price": 39.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-56276556/xbox-one-games/100-x-snug-fit-box-protector-for-xbox-one-games/", "price": 74.99, "quantity": 100}, {"url": "https://www.boxprotectors.nl/a-56276558/xbox-one-games/250-x-snug-fit-box-protector-for-xbox-one-games/", "price": 174.99, "quantity": 250}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('ab54974d-7ace-48b3-9f36-6ef4867c6d9a', 'Cajas tamaño PSVita', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-52745322/ps-vita-game-protectors/1x-snug-fit-box-protectors-for-ps-vita-games/", "price": 0.99, "quantity": 1}, {"url": "https://www.boxprotectors.nl/a-52745324/ps-vita-game-protectors/10x-snug-fit-box-protectors-for-ps-vita-games/", "price": 8.99, "quantity": 10}, {"url": "https://www.boxprotectors.nl/a-52745326/ps-vita-game-protectors/25x-snug-fit-box-protectors-for-ps-vita-games/", "price": 19.99, "quantity": 25}, {"url": "https://www.boxprotectors.nl/a-52745327/ps-vita-game-protectors/50x-snug-fit-box-protectors-for-ps-vita-games/", "price": 39.99, "quantity": 50}, {"url": "https://www.boxprotectors.nl/a-52745328/ps-vita-game-protectors/100x-snug-fit-box-protectors-for-ps-vita-games/", "price": 74.99, "quantity": 100}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('33d84a99-509a-4abd-b11c-b17419010a45', 'Caja Especial 1 (4.6 x 15.9 x 21.4)', 'box', 'Ej: The Last of Us big box', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-93848974/playstation-3/protector-for-ps3-the-last-of-us-ellie-joel-big-box/", "price": 6.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('25b9dad9-2a1e-4f41-838d-cf7596f2d3f2', 'Caja Especial 2 (8 x 16.4 x 23.4)', 'box', 'Ej: Xbox / PS3 Black Ops big box', true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-93847891/playstation-3/boxprotector-for-xbox-ps3-black-ops-big-box/", "price": 6.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('ae3489c5-e139-438d-bd32-adc090b98886', 'Caja PS4 FFVII & DS Trilogy (4.6 x 14.1 x 17.9)', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-66060543/ps4-special-game-protectors/protector-for-ps4-final-fantasy-dark-souls/", "price": 5.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('3b062049-d42e-4597-87ba-3530638c9fcb', 'Caja PS5 FFVII Rebirth (6.2 x 14 x 17.8)', 'box', NULL, true, '2026-03-21 20:56:22.76833+00', '2026-03-21 20:56:22.76833+00', '[{"url": "https://www.boxprotectors.nl/a-87997142/playstation-5/protector-for-ps5-final-fantasy-vii/", "price": 6.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('867df82f-2626-494f-83af-0cc4865c1e55', 'Snug Fit Box Protectors For Gameboy Micro Console', 'other', NULL, true, '2026-04-27 21:36:24.066476+00', '2026-04-27 21:36:24.066476+00', '[{"url": "https://www.boxprotectors.nl/a-46677530/gameboy-micro-console-protectors/1x-snug-fit-box-protectors-for-gameboy-micro-console/", "price": 4.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('ca8b9a73-448b-4a10-8388-4c95d7206fac', 'Snug Fit Box Protectors For Gamecube Gameboy link cable', 'other', NULL, true, '2026-04-27 21:38:16.854966+00', '2026-04-27 21:38:16.854966+00', '[{"url": "https://www.boxprotectors.nl/a-52969425/gamecube-gameboy-link-cable-box-protector/snug-fit-box-protectors-for-gamecube-gameboy-link-cable/", "price": 3.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('b871ec50-6393-4380-aeea-24395d8e4755', 'PS5 DualSense Edge', 'other', NULL, true, '2026-04-27 21:35:27.167392+00', '2026-05-01 13:48:10.562322+00', '[{"url": "https://www.theboxprotectorshop.be/a-100076454/playstation-5/ps5-dualsense-edge-boxprotector/", "price": 6.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('2ba7472a-1b65-487f-80ca-071804ec61a2', 'PS5 Digital Edition 30th Anniversary', 'console', NULL, true, '2026-04-27 21:33:54.868599+00', '2026-05-01 13:48:16.718979+00', '[{"url": "https://www.theboxprotectorshop.be/a-100076406/playstation-5/ps5-digital-edition-30th-anniversary-boxprotector/", "price": 11.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('c2077aa6-d2d5-43f2-a476-26b970cda266', 'Playstation PORTAL Console', 'console', NULL, true, '2026-04-27 21:31:10.762238+00', '2026-05-01 13:48:26.499888+00', '[{"url": "https://www.theboxprotectorshop.be/a-87752157/ps-portal/playstation-portal-console-protector/", "price": 6.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('b85703aa-6b1d-4f53-922a-166d83881745', 'Playstation 5 Controller', 'other', NULL, true, '2026-04-27 21:32:11.665815+00', '2026-05-01 13:48:34.285057+00', '[{"url": "https://www.theboxprotectorshop.be/a-71850646/playstation-5/playstation-5-controller-protector/", "price": 4.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
+INSERT INTO public.order_products VALUES ('3b30da11-2f9f-427d-8b71-042d4eb496ea', 'Playstation 3 SLIM Console 11.5cm', 'console', NULL, true, '2026-04-27 21:38:56.530542+00', '2026-05-01 13:48:47.076392+00', '[{"url": "https://www.theboxprotectorshop.be/a-57626928/playstation-3/playstation-3-slim-console-box-protector-11-5cm/", "price": 7.95, "quantity": 1}]') ON CONFLICT DO NOTHING;
 
 COMMIT;

@@ -139,40 +139,21 @@ CREATE TABLE IF NOT EXISTS user_games (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   game_catalog_id UUID NOT NULL REFERENCES game_catalog(id) ON DELETE CASCADE,
+  work_id         UUID NOT NULL,                  -- FK a user_works (constraint declarada en sección 3.b)
 
   -- Datos de compra
   price          NUMERIC(10,2),
   store          UUID REFERENCES stores(id) ON DELETE SET NULL,
-  platform       TEXT,
   condition      TEXT CHECK (condition IN ('new', 'used')),
-  purchased_date DATE,
   format         TEXT CHECK (format IN ('physical', 'digital')),
+  edition        TEXT,                            -- 'Deluxe Edition', 'GOTY Edition'…
 
-  -- Estado y progreso
-  status   TEXT    DEFAULT 'backlog' CHECK (status IN (
-    'wishlist', 'backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'
-  )),
-
-  -- Valoración personal
-  personal_rating  NUMERIC(3,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
-  personal_review  TEXT,
-
-  -- Edición del ejemplar (ej: 'Deluxe Edition', 'GOTY Edition')
-  edition TEXT,
-
-  -- Fechas de tracking
-  started_date   DATE,
-  completed_date DATE,
-
-  -- Notas y etiquetas personales
-  description   TEXT,
-  tags_personal TEXT[] DEFAULT '{}',
-
-  -- Favorito
-  is_favorite BOOLEAN DEFAULT FALSE,
+  -- Notas personales (descripción libre por copia)
+  description    TEXT,
 
   -- Posición de la portada (punto focal configurable en la card)
-  cover_position VARCHAR(20),
+  cover_position    VARCHAR(20),
+  custom_image_url  TEXT,                         -- imagen personalizada por copia (override del catálogo)
 
   -- Venta
   for_sale         BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -188,16 +169,64 @@ CREATE TABLE IF NOT EXISTS user_games (
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_user_games_user_id             ON user_games(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_games_game_catalog_id     ON user_games(game_catalog_id);
-CREATE INDEX IF NOT EXISTS idx_user_games_platform            ON user_games(platform);
-CREATE INDEX IF NOT EXISTS idx_user_games_status              ON user_games(status);
-CREATE INDEX IF NOT EXISTS idx_user_games_is_favorite    ON user_games(is_favorite)  WHERE is_favorite = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_for_sale       ON user_games(for_sale)     WHERE for_sale = TRUE;
 CREATE INDEX IF NOT EXISTS idx_user_games_sold_at        ON user_games(sold_at)      WHERE sold_at IS NOT NULL;
 
--- Unicidad solo en juegos activos (sold_at IS NULL); los vendidos no computan
-CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_platform
-  ON user_games(user_id, game_catalog_id, platform, format, edition)
+-- Unicidad de copia dentro de una obra. Por (work_id, format, edition):
+-- una obra puede tener una física y una digital, ambas con ediciones distintas.
+CREATE UNIQUE INDEX IF NOT EXISTS user_games_unique_per_work_format_edition
+  ON user_games(work_id, format, edition)
   WHERE sold_at IS NULL;
+
+
+-- ============================================================
+-- 3.b. TABLA: user_works
+--    Una "obra" agrupa 1..N copias del mismo juego del catálogo en
+--    la misma plataforma (ej: PS4 disco + PS4 digital = dos copias
+--    de la misma obra). Los atributos compartidos (status, rating,
+--    favorito) viven aquí; los específicos de cada copia (precio,
+--    tienda, formato, edición, venta…) siguen en user_games.
+--    Identidad: (user_id, game_catalog_id, platform).
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS user_works (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  game_catalog_id UUID NOT NULL REFERENCES game_catalog(id) ON DELETE CASCADE,
+  platform        TEXT NOT NULL,
+
+  -- Atributos de la obra (compartidos entre todas sus copias)
+  status TEXT DEFAULT 'backlog' CHECK (status IN (
+    'wishlist', 'backlog', 'playing', 'completed', 'platinum', 'abandoned', 'owned'
+  )),
+  personal_rating  NUMERIC(3,1) CHECK (personal_rating >= 0 AND personal_rating <= 10),
+  is_favorite      BOOLEAN DEFAULT FALSE,
+
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Identidad lógica de obra: agrupa copias del mismo (user, catalog, platform)
+-- únicamente cuando tienen formatos distintos (físico + digital). Dos copias
+-- del mismo formato → dos obras distintas. La regla se aplica en el repo
+-- (_getOrCreateUserWork), no como constraint SQL — por eso la terna no es
+-- única a nivel BD. Index no-único para acelerar el lookup de candidatos.
+CREATE INDEX IF NOT EXISTS idx_user_works_user_catalog_platform
+  ON user_works(user_id, game_catalog_id, platform);
+
+CREATE INDEX IF NOT EXISTS idx_user_works_user_id      ON user_works(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_works_platform     ON user_works(platform);
+CREATE INDEX IF NOT EXISTS idx_user_works_status       ON user_works(status);
+CREATE INDEX IF NOT EXISTS idx_user_works_is_favorite  ON user_works(is_favorite) WHERE is_favorite = TRUE;
+
+-- FK de user_games.work_id (declarada aquí para no depender del orden de definición de tablas)
+ALTER TABLE user_games
+  DROP CONSTRAINT IF EXISTS user_games_work_id_fkey;
+ALTER TABLE user_games
+  ADD CONSTRAINT user_games_work_id_fkey
+  FOREIGN KEY (work_id) REFERENCES user_works(id) ON DELETE CASCADE;
+
+CREATE INDEX IF NOT EXISTS idx_user_games_work_id ON user_games(work_id);
 
 
 -- ============================================================
@@ -337,6 +366,21 @@ CREATE POLICY "Users can update their own games"
 CREATE POLICY "Users can delete their own games"
   ON user_games FOR DELETE USING (auth.uid() = user_id);
 
+-- user_works: solo el propio usuario
+ALTER TABLE user_works ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own works"
+  ON user_works FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own works"
+  ON user_works FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own works"
+  ON user_works FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own works"
+  ON user_works FOR DELETE USING (auth.uid() = user_id);
+
 -- user_preferences: solo el propio usuario
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 
@@ -387,6 +431,36 @@ DROP TRIGGER IF EXISTS trg_user_games_updated_at     ON user_games;
 CREATE TRIGGER trg_user_games_updated_at
   BEFORE UPDATE ON user_games
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS trg_user_works_updated_at     ON user_works;
+CREATE TRIGGER trg_user_works_updated_at
+  BEFORE UPDATE ON user_works
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger AFTER DELETE en user_games: si la fila borrada era la última copia
+-- de su user_works, borra también la obra para evitar huérfanos.
+-- (La FK user_games.work_id ON DELETE CASCADE cubre el caso opuesto:
+-- borrar la obra elimina todas sus copias.)
+CREATE OR REPLACE FUNCTION public.cleanup_orphan_user_works()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM public.user_games WHERE work_id = OLD.work_id
+  ) THEN
+    DELETE FROM public.user_works WHERE id = OLD.work_id;
+  END IF;
+  RETURN OLD;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_user_games_cleanup_orphan_works ON user_games;
+CREATE TRIGGER trg_user_games_cleanup_orphan_works
+  AFTER DELETE ON user_games
+  FOR EACH ROW EXECUTE FUNCTION public.cleanup_orphan_user_works();
 
 DROP TRIGGER IF EXISTS trg_user_preferences_updated_at ON user_preferences;
 CREATE TRIGGER trg_user_preferences_updated_at
@@ -457,24 +531,28 @@ CREATE TRIGGER trg_decrement_users_on_delete
 
 -- ============================================================
 -- 8. VISTA: user_games_full
---    Join de user_games + game_catalog.
+--    Join de user_games + game_catalog + user_works.
 --    Es la vista principal que usa el frontend para leer la colección.
+--    Atributos de obra (status/personal_rating/is_favorite/user_platform)
+--    vienen de user_works; atributos de copia (price/store/condition/format/
+--    edition/sale_*/cover_*) siguen en user_games.
 --    security_invoker = on → respeta el RLS del usuario autenticado.
 -- ============================================================
 
-DROP VIEW IF EXISTS user_games_full;
+DROP VIEW IF EXISTS user_games_full CASCADE;
 CREATE VIEW user_games_full WITH (security_invoker = on) AS
 SELECT
   ug.id,
   ug.user_id,
   ug.game_catalog_id,
+  ug.work_id,
 
-  -- Datos del catálogo
+  -- Catálogo (game_catalog)
   gc.rawg_id,
   gc.title,
   gc.slug,
   gc.description,
-  gc.image_url,
+  COALESCE(ug.custom_image_url, gc.image_url) AS image_url,
   gc.released_date,
   gc.rating          AS rawg_rating,
   gc.metacritic_score,
@@ -487,21 +565,21 @@ SELECT
   gc.publishers,
   gc.source,
 
-  -- Datos personales del usuario
+  -- Atributos de obra (user_works)
+  uw.platform        AS user_platform,
+  uw.status,
+  uw.personal_rating,
+  uw.is_favorite,
+
+  -- Atributos de copia (user_games)
   ug.price,
   ug.store,
-  ug.platform        AS user_platform,
   ug.condition,
-  ug.purchased_date,
   ug.format,
-  ug.status,
-  ug.personal_rating,
-  ug.personal_review,
   ug.edition,
   ug.description     AS user_notes,
-  ug.is_favorite,
   ug.cover_position,
-
+  ug.custom_image_url,
   ug.for_sale,
   ug.sale_price,
   ug.sold_at,
@@ -516,6 +594,7 @@ SELECT
   ug.updated_at
 FROM user_games ug
 JOIN game_catalog gc ON ug.game_catalog_id = gc.id
+JOIN user_works   uw ON ug.work_id         = uw.id
 LEFT JOIN LATERAL (
   SELECT id, loaned_to, loaned_at
   FROM   game_loans

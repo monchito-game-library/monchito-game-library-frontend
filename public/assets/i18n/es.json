@@ -765,6 +765,9 @@
   "gameDetail": {
     "myData": "Mis datos",
     "notes": "Notas",
+    "opinion": "Mi opinión",
+    "favorite": "Favorito",
+    "addAnotherCopy": "Añadir otra copia",
     "catalogInfo": "Información del catálogo",
     "released": "Lanzamiento",
     "communityRating": "Valoración comunidad",

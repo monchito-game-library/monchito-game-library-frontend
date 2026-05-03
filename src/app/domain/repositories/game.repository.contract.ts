@@ -36,12 +36,21 @@ export interface GameRepositoryContract {
   /**
    * Adds a new game to the user's collection.
    * If a catalog entry is provided it will be linked to the game record.
+   * If `targetWorkId` is provided, the new copy is added to that exact work_id
+   * (caso "Añadir otra copia"): el repo omite la resolución de catalog y de
+   * obra, y reutiliza el `game_catalog_id` y `work_id` proporcionados.
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
+   * @param {string} [targetWorkId] - UUID de la work existente a la que asociar la nueva copia
    */
-  addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void>;
+  addGameForUser(
+    userId: string,
+    game: GameModel,
+    catalogEntry?: GameCatalog | null,
+    targetWorkId?: string
+  ): Promise<void>;
 
   /**
    * Deletes a game by UUID if it belongs to the user.

@@ -46,26 +46,23 @@ export interface GameStoreDto {
   url?: string;
 }
 
-/** Row from the user_games table. */
+/**
+ * Row from the user_games table (cada copia que el usuario tiene). Atributos
+ * de obra (status, personal_rating, is_favorite, platform) viven en
+ * user_works — ver UserWorkDto.
+ */
 export interface UserGameDto {
   id?: string;
   user_id: string;
   game_catalog_id: string;
+  /** FK a user_works. Identifica la obra a la que pertenece esta copia. */
+  work_id: string;
   price: number | null;
   store: string | null;
-  platform: string | null;
   condition: 'new' | 'used' | null;
-  purchased_date: string | null;
-  status: GameStatus;
-  personal_rating: number | null;
-  personal_review?: string | null;
   edition: string | null;
   format: 'digital' | 'physical' | null;
-  started_date: string | null;
-  completed_date: string | null;
   description: string | null | undefined;
-  tags_personal?: string[];
-  is_favorite: boolean;
   cover_position: string | null;
   custom_image_url?: string | null;
   for_sale: boolean;
@@ -76,11 +73,15 @@ export interface UserGameDto {
   updated_at?: string;
 }
 
-/** Row from the user_games_full view (joins user_games + game_catalog). */
+/** Row from the user_games_full view (joins user_games + game_catalog + user_works). */
 export interface UserGameFullDto extends UserGameDto {
-  /** User's platform choice (overrides catalog platform). */
-  user_platform?: string | null;
-  /** User's personal notes (overrides catalog description). */
+  // Atributos de obra (vienen del JOIN con user_works)
+  user_platform: string | null;
+  status: GameStatus;
+  personal_rating: number | null;
+  is_favorite: boolean;
+
+  // Catálogo (game_catalog)
   user_notes?: string | null;
   rawg_id: number | null;
   title: string;
@@ -97,6 +98,7 @@ export interface UserGameFullDto extends UserGameDto {
   developers?: string[];
   publishers?: string[];
   source: 'rawg' | 'manual';
+
   /** UUID of the active loan row. Null if not on loan. */
   active_loan_id?: string | null;
   /** Name of the person the game is loaned to. Null if not on loan. */
@@ -113,6 +115,7 @@ export interface UserGameEditDto {
   id: string;
   user_id: string;
   game_catalog_id: string;
+  work_id: string;
   title: string;
   slug: string;
   image_url: string | null;
@@ -150,6 +153,7 @@ export interface UserGameEditDto {
  */
 export interface UserGameListDto {
   id: string;
+  work_id: string;
   title: string;
   price: number | null;
   store: string | null;
@@ -166,6 +170,8 @@ export interface UserGameListDto {
   for_sale: boolean;
   sold_at: string | null;
   sold_price_final: number | null;
+  /** ISO timestamp — used by the repo to order the list after grouping copies by work. */
+  created_at: string;
   /** UUID of the active loan row. Null if not on loan. */
   active_loan_id?: string | null;
   /** Name of the person the game is loaned to. Null if not on loan. */

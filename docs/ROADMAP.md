@@ -952,11 +952,11 @@ Toggle grid ↔ list en el header con persistencia de la preferencia en `UserPre
 
 ---
 
-#### A4. Action menu y sale-info colapsada en game-detail ⏳ pendiente
+#### A4. Action menu y sale-info colapsada en game-detail ✅ completado
 
-Hoy el detalle muestra hasta 4 botones inline (Edit, Manage sale, Loan, Delete) que en mobile saturan la columna. Pasar Edit y Manage sale a botones principales, mover Loan y Delete a un menú `⋮` (kebab). Cuando un juego está vendido, convertir la "Sale info" en un banner verde colapsado arriba ("Vendido el 12/03/2026 por 28 €") y mover el resto del detalle debajo, ya que el juego vendido es read-only en la práctica.
+Edit y "Manage sale" como botones principales en el topbar (mat-icon-button con estilo glass), Loan y Delete movidos al menú `⋮`. Cuando un juego está vendido, banner verde colapsado arriba con "Vendido el dd/mm/aaaa por X €" y kebab queda con "Editar venta" y "Anular venta". Banner usa color verde explícito (`#22c55e`) en lugar del `--mat-sys-tertiary` del theme violet.
 
-**Ficheros afectados:** `game-detail.component.{ts,html,scss}`.
+**Entregado junto con B1** en la misma rama (`feat/work-copy-schema`).
 
 ---
 
@@ -976,13 +976,11 @@ Constantes `BREAKPOINTS` y `GAME_GRID_BREAKPOINTS` en `entities/constants/breakp
 
 ### Fase B — Modelo obra/copia
 
-#### B1. Tabla `user_works` y agrupación de copias ⏳ pendiente — [plan detallado](./plans/work-copy-model.md)
+#### B1. Tabla `user_works` y agrupación de copias ✅ completado — [plan detallado](./plans/work-copy-model.md)
 
-> Antes de implementar, leer **`docs/plans/work-copy-model.md`** que detalla schema SQL, backfill, capas afectadas, plan de coexistencia y decisiones pendientes.
+Refactor entregado en 4 fases (`feat/work-copy-schema`): schema base + backfill + trigger puente, repositorio/mappers/vista escribiendo en `user_works`, capa de dominio (`WorkRepositoryContract` + use cases), cleanup final con drop de columnas obsoletas y nuevo unique index. Refinamiento posterior: dos copias del mismo formato son obras distintas (caso Castlevania: 2 físicas con distintas ediciones).
 
-Hoy dos copias del mismo juego (físico + digital) son dos `user_games` independientes que comparten `rawg_id` pero no se "saben" entre sí. Esto permite estados imposibles (dos platinos del mismo juego) y separa coste real (35 € disco + 70 € digital) sin contexto.
-
-**Modelo propuesto:** introducir el concepto de **obra (work)**: una obra tiene 1..N copias.
+**Modelo entregado**: una obra tiene 1..N copias del mismo juego/plataforma con formatos distintos. Status, rating y favorito viven en la obra (compartidos); precio, tienda, condición, formato, edición, notas y venta viven en cada copia.
 
 | Campo | Vive en | Razón |
 |---|---|---|
@@ -1005,21 +1003,21 @@ Requiere refactor del repositorio (`SupabaseGameRepository`), mappers, modelos (
 
 ### Fase C — UX que depende de obra/copia
 
-#### C1. Agrupar copias en el listado ⏳ pendiente
+#### C1. Agrupar copias en el listado ✅ completado (versión simplificada)
 
-Por defecto una sola card por obra; si hay >1 copia, badge `×2` en una esquina y el stripe digital + el icono físico apilados. Toggle "Mostrar copias separadas" en el drawer de filtros para los que prefieran ver una entrada por copia. Esto resuelve el patrón mental "no son juegos distintos".
-
----
-
-#### C2. Tabs físico/digital en game-detail ⏳ pendiente
-
-En el detalle, mostrar el título y la sección "Mi opinión" (status, rating, favorito, notas) **una sola vez** fuera del bloque de copia, claramente separada con el aviso "aplica a todas tus copias". Selector tipo *segmented control* o *tabs* `[Físico · Digital]` para alternar la copia visible. Los datos por copia (precio, tienda, condición, formato, préstamo, venta) viven dentro del tab activo.
+Una sola card por obra. Cuando hay físico+digital, gana el físico (regla automática `físico > digital`, tie-breaker `created_at ASC`). La copia subordinada se accede vía los tabs del detalle. **Sin badge `×N` ni toggle "mostrar copias separadas"** — la regla automática es suficiente y el detalle expone la otra copia. Implementado en cliente (agrupando por `work_id` tras el query del listado).
 
 ---
 
-#### C3. CTA "Añadir otra copia" en el detalle ⏳ pendiente
+#### C2. Tabs físico/digital en game-detail ✅ completado
 
-Si una obra solo tiene una copia, mostrar un botón discreto al final del detalle para añadir otra (físico ↔ digital). Atajo para los casos comunes (compra de upgrade digital tras tener disco, etc.).
+Sección "Mi opinión" arriba (rating + favorito, atributos de obra). Información del catálogo encima de los tabs (común a la obra). Tabs por copia con UUID — soportan el caso edge de varias copias del mismo formato con distintas ediciones (cada tab muestra "Físico · Deluxe Edition" cuando aplica). "Mis datos" + "Notas" dentro del tab activo (atributos de copia: precio, tienda, condición, formato, edición, notas libres).
+
+---
+
+#### C3. CTA "Añadir otra copia" en el detalle ✅ completado
+
+Botón discreto al final del detalle si la obra solo tiene una copia. Navega al form de añadir prefijado con catálogo + plataforma + formato opuesto. El repo reutiliza la `user_works` existente al crear la nueva copia (vía `_getOrCreateUserWork`).
 
 ---
 

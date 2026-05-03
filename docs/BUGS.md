@@ -13,6 +13,9 @@
 | ~~[Scroll de wishlist cortado al llegar al final en mobile](#scroll-de-wishlist-cortado-al-llegar-al-final-en-mobile)~~ | `WishlistComponent` | ✅ Resuelto |
 | ~~[Zoom + drag inoperativo en el reposicionamiento de portada](#zoom--drag-inoperativo-en-el-reposicionamiento-de-portada)~~ | `GameCoverPositionDialogComponent` | ✅ Resuelto |
 | ~~[Espaciados SCSS no siguen la convención de rem/múltiplos de 0.25](#espaciados-scss-no-siguen-la-convención-de-remmúltiplos-de-025)~~ | Varios | ✅ Resuelto |
+| ~~[i18n keys crudas en confirm-dialog del game-detail](#i18n-keys-crudas-en-confirm-dialog-del-game-detail)~~ | `GameDetailComponent` | ✅ Resuelto |
+| ~~[Animación @fadeSlide huérfana en game-form](#animación-fadeslide-huérfana-en-game-form)~~ | `GameFormComponent` | ✅ Resuelto |
+| ~~[HTTP 406 en lookup de game_catalog](#http-406-en-lookup-de-game_catalog)~~ | `SupabaseRepository` | ✅ Resuelto |
 
 ---
 
@@ -277,3 +280,36 @@ Varios ficheros SCSS usan valores de `gap`, `margin` y `padding` que incumplen u
 | `game-card.component.scss` | 324 | `gap: 3px` |
 | `wishlist-item-dialog.component.scss` | 37 | `gap: 2px` |
 | `wishlist.component.scss` | 158 | `gap: 2px` |
+
+---
+
+## ~~i18n keys crudas en confirm-dialog del game-detail~~
+
+**Componente:** `GameDetailComponent`
+**Fichero:** `src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.ts`
+
+**Descripción:** al pulsar "Eliminar" en el menú kebab del detalle, el `ConfirmDialogComponent` mostraba literalmente `gameCard.dialog.delete.title` y `.message` en lugar del texto traducido. La versión equivalente en `game-card.component.ts` ya hacía bien el `transloco.translate(...)` antes de pasar los datos al dialog.
+
+**Solución:** aplicar el mismo patrón en game-detail (envolver las claves en `this._transloco.translate(...)` al construir el `data` del dialog). Bug pre-existente al refactor obra/copia, detectado durante las pruebas de la rama y arreglado oportunistamente.
+
+---
+
+## ~~Animación @fadeSlide huérfana en game-form~~
+
+**Componente:** `GameFormComponent`
+**Fichero:** `src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.html`
+
+**Descripción:** el template hacía binding `@fadeSlide` sobre `<app-catalog-search-panel>` pero la animación nunca estuvo definida en el `@Component` decorator y la app no registra `provideAnimations()`. Resultado: `NG05105: Unexpected synthetic property @fadeSlide found` en cada change-detection del bloque `@if (searchMode())`, visible al abrir el flujo "Buscar en RAWG" del formulario.
+
+**Solución:** quitar el binding `@fadeSlide` del template. Si en el futuro se quiere recuperar la animación, hay que añadir `provideAnimationsAsync()` al `app.config.ts` y declarar el trigger `fadeSlide` en `game-form.component.ts`. Bug pre-existente al refactor obra/copia.
+
+---
+
+## ~~HTTP 406 en lookup de game_catalog~~
+
+**Componente:** `SupabaseRepository`
+**Fichero:** `src/app/data/repositories/supabase.repository.ts`
+
+**Descripción:** `_getOrCreateGameCatalog` usaba `.single()` para los lookups por `rawg_id` y por título (`ilike`). Cuando el lookup no devolvía filas, Supabase respondía con HTTP 406 *(Not Acceptable)*, que el código ignoraba (el flujo seguía al `INSERT` correctamente) pero quedaba como ruido en la consola del navegador al añadir el primer juego de un título nuevo.
+
+**Solución:** sustituir las dos llamadas `.single()` por `.maybeSingle()`. Devuelve `{ data: null, error: null }` cuando no hay match, sin 406. Comportamiento idéntico, log limpio. Bug pre-existente al refactor obra/copia.

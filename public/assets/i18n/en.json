@@ -765,6 +765,9 @@
   "gameDetail": {
     "myData": "My data",
     "notes": "Notes",
+    "opinion": "My opinion",
+    "favorite": "Favourite",
+    "addAnotherCopy": "Add another copy",
     "catalogInfo": "Catalog information",
     "released": "Released",
     "communityRating": "Community rating",

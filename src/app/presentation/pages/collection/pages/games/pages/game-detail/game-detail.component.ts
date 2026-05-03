@@ -22,9 +22,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
+import { GameModel } from '@/models/game/game.model';
 import { StoreModel } from '@/models/store/store.model';
+import { GameFormatType } from '@/types/game-format.type';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
+import { WORK_USE_CASES, WorkUseCasesContract } from '@/domain/use-cases/work/work.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
@@ -66,6 +69,7 @@ export class GameDetailComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
+  private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
@@ -97,8 +101,14 @@ export class GameDetailComponent implements OnInit {
   /** Whether the loan form view is active. */
   readonly showLoanForm: WritableSignal<boolean> = signal<boolean>(false);
 
-  /** The game being displayed. */
+  /** The game being displayed (active copy). */
   readonly game: WritableSignal<GameEditModel | null> = signal<GameEditModel | null>(null);
+
+  /** All copies of the same work (digital + physical), ordered by created_at ASC. */
+  readonly copies: WritableSignal<GameModel[]> = signal<GameModel[]>([]);
+
+  /** Whether the work has more than one copy (and therefore the format tabs make sense). */
+  readonly hasMultipleCopies: Signal<boolean> = computed(() => this.copies().length > 1);
 
   /** All available stores, used to resolve the store UUID to a label. */
   readonly stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
@@ -242,6 +252,70 @@ export class GameDetailComponent implements OnInit {
   }
 
   /**
+   * Switches the visible copy when the user clicks a copy tab. Carga el
+   * GameEditModel completo de la nueva copia para refrescar la sección
+   * "Mis datos" (precio, tienda, condición, edición, formato, préstamo, venta).
+   *
+   * @param {string} uuid - UUID (user_games) de la copia a mostrar
+   */
+  async selectCopyByUuid(uuid: string): Promise<void> {
+    if (!uuid || uuid === this.game()?.uuid) return;
+
+    const next: GameEditModel | undefined = await this._gameUseCases.getGameForEdit(this._userId, uuid);
+    if (next) this.game.set(next);
+  }
+
+  /**
+   * Navigates to the "add game" form prefilling title, platform and the opposite
+   * format of the current copy. Useful when the user wants to register the other
+   * format of a game they already own (typical case: physical → digital o viceversa).
+   * El repo reutiliza la user_works existente vía _getOrCreateUserWork.
+   */
+  addAnotherCopy(): void {
+    const g = this.game();
+    if (!g) return;
+
+    const oppositeFormat: GameFormatType = g.format === 'physical' ? 'digital' : 'physical';
+
+    const catalogEntry = g.rawgId
+      ? ({
+          rawg_id: g.rawgId,
+          slug: g.rawgSlug ?? '',
+          title: g.title,
+          // platforms vacío: selectGameFromSearch solo resetea platform si llegan elementos
+          platforms: [] as string[],
+          released_date: g.releasedDate,
+          image_url: g.imageUrl ?? null,
+          rating: g.rawgRating,
+          metacritic_score: null,
+          esrb_rating: null,
+          genres: g.genres,
+          source: 'rawg' as const
+        } satisfies Partial<import('@/dtos/supabase/game-catalog.dto').GameCatalogDto>)
+      : null;
+
+    void this._router.navigate(['/collection/games/add'], {
+      state: {
+        catalogEntry,
+        prefillTitle: g.title,
+        prefillPlatform: g.platform,
+        prefillFormat: oppositeFormat,
+        // Atributos de obra prefijados con los valores actuales: el form
+        // los muestra editables, y si el usuario los cambia se aplican a
+        // user_works (afectando a todas las copias de la obra).
+        prefillStatus: g.status,
+        prefillPersonalRating: g.personalRating,
+        prefillIsFavorite: g.isFavorite,
+        // Forzamos la asociación a la work existente para que el repo NO
+        // re-resuelva el catalog (que con catálogos manuales podía crear
+        // uno nuevo en RAWG y partir la obra). Si el usuario cambia el
+        // catalog dentro del form, este id se descarta automáticamente.
+        forceWorkId: g.workId
+      }
+    });
+  }
+
+  /**
    * Switches the body to the sale form view.
    */
   openSaleView(): void {
@@ -327,8 +401,8 @@ export class GameDetailComponent implements OnInit {
 
     const ref = this._dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'gameCard.dialog.delete.title',
-        message: 'gameCard.dialog.delete.message'
+        title: this._transloco.translate('gameCard.dialog.delete.title'),
+        message: this._transloco.translate('gameCard.dialog.delete.message')
       } satisfies ConfirmDialogInterface
     });
 
@@ -364,6 +438,11 @@ export class GameDetailComponent implements OnInit {
 
       this.game.set(game);
       this.stores.set(stores);
+
+      // Cargar las copias hermanas (mismo work_id) para los tabs físico/digital.
+      // Se hace después y sin bloquear el render principal.
+      const copies: GameModel[] = await this._workUseCases.getCopies(this._userId, game.workId);
+      this.copies.set(copies);
     } catch {
       this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
       void this._router.navigate(['/collection/games']);

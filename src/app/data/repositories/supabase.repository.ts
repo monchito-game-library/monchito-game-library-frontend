@@ -18,7 +18,9 @@ import {
   UserGameInsertDto,
   UserGameListDto
 } from '@/dtos/supabase/game-catalog.dto';
+import { UserWorkInsertDto } from '@/dtos/supabase/user-work.dto';
 import { mapGame, mapGameEdit, mapGameList, mapGameToInsertDto } from '@/mappers/supabase/game.mapper';
+import { mapGameToWorkInsertDto } from '@/mappers/supabase/user-work.mapper';
 
 /**
  * Game repository backed by Supabase.
@@ -31,6 +33,7 @@ export class SupabaseRepository implements GameRepositoryContract {
   private readonly _viewName = 'user_games_full';
   private readonly _catalogTable = 'game_catalog';
   private readonly _userGamesTable = 'user_games';
+  private readonly _userWorksTable = 'user_works';
   private readonly _loansTable = 'game_loans';
 
   /**
@@ -55,15 +58,17 @@ export class SupabaseRepository implements GameRepositoryContract {
     let all: UserGameListDto[] = [];
     let from = 0;
     const select =
-      'id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,created_at,active_loan_id,active_loan_to,active_loan_at';
 
     while (true) {
+      // ASC: garantiza que en el tie-breaker (mismo formato dentro de una obra)
+      // gana la copia más antigua, por orden de inserción en el Map.
       const { data, error } = await this._supabase
         .from(this._viewName)
         .select(select)
         .eq('user_id', userId)
         .is('sold_at', null)
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: true })
         .range(from, from + PAGE_SIZE - 1);
 
       if (error) throw new Error(`Failed to fetch games: ${error.message}`);
@@ -74,7 +79,25 @@ export class SupabaseRepository implements GameRepositoryContract {
       from += PAGE_SIZE;
     }
 
-    return all.map(mapGameList);
+    // Agrupar por work_id: una sola copia representativa por obra.
+    // Regla: físico > digital. Tie-breaker: la copia más antigua (orden de
+    // inserción del Map, que respeta el ORDER BY created_at ASC del query).
+    const byWork: Map<string, UserGameListDto> = new Map();
+    for (const dto of all) {
+      const existing: UserGameListDto | undefined = byWork.get(dto.work_id);
+      if (!existing) {
+        byWork.set(dto.work_id, dto);
+        continue;
+      }
+      if (existing.format !== 'physical' && dto.format === 'physical') {
+        byWork.set(dto.work_id, dto);
+      }
+    }
+
+    // Devolver ordenado por created_at DESC (más reciente primero, semántica habitual del listado).
+    return Array.from(byWork.values())
+      .sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0))
+      .map(mapGameList);
   }
 
   /**
@@ -98,17 +121,57 @@ export class SupabaseRepository implements GameRepositoryContract {
   /**
    * Adds a new game for a user. If a RAWG catalog entry is provided it will be
    * linked to the record; otherwise the game is created as a manual entry.
+   * If `targetWorkId` is given, the new copy is forced into that exact work and
+   * its catalog (caso "Añadir otra copia" del detalle) — el repo omite la
+   * resolución por título/rawg_id para evitar fugas con catálogos manuales.
    *
    * @param {string} userId - UUID del usuario autenticado
    * @param {GameModel} game - Juego a guardar
    * @param {GameCatalog | null} [catalogEntry] - Optional RAWG catalog entry to associate
+   * @param {string} [targetWorkId] - Force the copy into this existing user_works UUID
    */
-  async addGameForUser(userId: string, game: GameModel, catalogEntry?: GameCatalog | null): Promise<void> {
-    const gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
+  async addGameForUser(
+    userId: string,
+    game: GameModel,
+    catalogEntry?: GameCatalog | null,
+    targetWorkId?: string
+  ): Promise<void> {
+    let gameCatalogId: string;
+    let workId: string;
+
+    if (targetWorkId) {
+      // Caso "Añadir otra copia": work conocida → reutilizar catalog de la work
+      // y omitir _getOrCreate* para evitar fugas como el bug observado con
+      // catálogos manuales (mismo título pero catalog_id distinto).
+      const { data: work, error: workErr } = await this._supabase
+        .from(this._userWorksTable)
+        .select('game_catalog_id')
+        .eq('id', targetWorkId)
+        .eq('user_id', userId)
+        .single();
+
+      if (workErr || !work) throw new Error(`Failed to resolve targetWorkId: ${workErr?.message ?? 'not found'}`);
+      gameCatalogId = work.game_catalog_id;
+      workId = targetWorkId;
+
+      // El form muestra status/rating/favorito prefijados con los valores
+      // de la obra. Si el usuario los modifica, los aplicamos a user_works
+      // para que se reflejen en todas las copias (filosofía obra/copia).
+      const { error: updateWorkErr } = await this._supabase
+        .from(this._userWorksTable)
+        .update(mapGameToWorkInsertDto(game))
+        .eq('id', workId)
+        .eq('user_id', userId);
+      if (updateWorkErr) throw new Error(`Failed to update work: ${updateWorkErr.message}`);
+    } else {
+      gameCatalogId = await this._getOrCreateGameCatalog(game.title, catalogEntry);
+      workId = await this._getOrCreateUserWork(userId, gameCatalogId, game);
+    }
 
     const userGameRecord: UserGameInsertDto = {
       user_id: userId,
       game_catalog_id: gameCatalogId,
+      work_id: workId,
       ...mapGameToInsertDto(game)
     };
 
@@ -140,7 +203,7 @@ export class SupabaseRepository implements GameRepositoryContract {
 
     const { data: viewRecord, error: fetchError } = await this._supabase
       .from(this._viewName)
-      .select('id, game_catalog_id, rawg_id')
+      .select('id, game_catalog_id, work_id, rawg_id')
       .eq('user_id', userId)
       .eq('id', updated.uuid)
       .single();
@@ -154,9 +217,15 @@ export class SupabaseRepository implements GameRepositoryContract {
       // Only update the title for manual (non-RAWG) catalog entries
       await this._supabase.from(this._catalogTable).update({ title: updated.title }).eq('id', gameCatalogId);
     }
-    // Image is stored in user_games.custom_image_url (via mapGameToInsertDto),
-    // not in game_catalog.image_url, so copies of the same game stay independent.
 
+    // Atributos de obra (status, rating, favorite, platform) → user_works
+    const { error: workError } = await this._supabase
+      .from(this._userWorksTable)
+      .update(mapGameToWorkInsertDto(updated))
+      .eq('id', viewRecord.work_id);
+    if (workError) throw new Error(`Failed to update work: ${workError.message}`);
+
+    // Atributos de copia → user_games
     const userGameRecord: UserGameInsertDto = {
       game_catalog_id: gameCatalogId,
       ...mapGameToInsertDto(updated)
@@ -205,7 +274,7 @@ export class SupabaseRepository implements GameRepositoryContract {
     const { data, error } = await this._supabase
       .from(this._viewName)
       .select(
-        'id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at'
+        'id,work_id,game_catalog_id,title,slug,image_url,rawg_id,released_date,rawg_rating,genres,price,store,user_platform,condition,user_notes,description,status,personal_rating,edition,format,is_favorite,cover_position,for_sale,sale_price,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at'
       )
       .eq('user_id', userId)
       .eq('id', uuid)
@@ -223,7 +292,7 @@ export class SupabaseRepository implements GameRepositoryContract {
    */
   async getSoldGames(userId: string): Promise<GameListModel[]> {
     const select =
-      'id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,active_loan_id,active_loan_to,active_loan_at';
+      'id,work_id,title,price,store,user_platform,description,user_notes,status,personal_rating,edition,format,is_favorite,image_url,cover_position,for_sale,sold_at,sold_price_final,created_at,active_loan_id,active_loan_to,active_loan_at';
 
     const { data, error } = await this._supabase
       .from(this._viewName)
@@ -334,6 +403,65 @@ export class SupabaseRepository implements GameRepositoryContract {
   }
 
   /**
+   * Finds an existing user_works row for (user, catalog, platform) or creates one
+   * with the work-side fields from the GameModel. Returns the user_works UUID.
+   *
+   * @param {string} userId - UUID del usuario autenticado
+   * @param {string} gameCatalogId - UUID del catálogo
+   * @param {GameModel} game - Game model whose work-side fields seed the new row
+   */
+  private async _getOrCreateUserWork(userId: string, gameCatalogId: string, game: GameModel): Promise<string> {
+    if (!game.platform) {
+      throw new Error('Cannot resolve user_works: game.platform is required');
+    }
+
+    // Una obra agrupa copias del mismo (user, catalog, platform) ÚNICAMENTE
+    // cuando tienen formatos distintos (físico + digital). Dos copias del
+    // mismo formato son obras independientes (cada una con su status, rating
+    // y favorito propios). Buscamos un work candidato en el que esta nueva
+    // copia "encaje": no debe existir todavía una copia activa con NEW.format
+    // dentro de él.
+    const { data: candidates } = await this._supabase
+      .from(this._userWorksTable)
+      .select('id')
+      .eq('user_id', userId)
+      .eq('game_catalog_id', gameCatalogId)
+      .eq('platform', game.platform);
+
+    if (candidates && candidates.length > 0 && game.format) {
+      for (const candidate of candidates) {
+        const { data: sameFormatCopies } = await this._supabase
+          .from(this._userGamesTable)
+          .select('id')
+          .eq('work_id', candidate.id)
+          .eq('format', game.format)
+          .is('sold_at', null);
+
+        if (!sameFormatCopies || sameFormatCopies.length === 0) {
+          // Este work tiene espacio para esta nueva copia (no tiene copia activa
+          // con el mismo formato) → reutilizamos su id.
+          return candidate.id;
+        }
+      }
+    }
+
+    const insertPayload: UserWorkInsertDto = {
+      user_id: userId,
+      game_catalog_id: gameCatalogId,
+      ...mapGameToWorkInsertDto(game)
+    };
+
+    const { data: newWork, error } = await this._supabase
+      .from(this._userWorksTable)
+      .insert(insertPayload)
+      .select('id')
+      .single();
+
+    if (error) throw new Error(`Failed to create user work: ${error.message}`);
+    return newWork.id;
+  }
+
+  /**
    * Finds an existing game_catalog entry by RAWG ID (or by title for manual entries),
    * creating one if it does not exist yet. Returns the catalog row UUID.
    *
@@ -346,7 +474,7 @@ export class SupabaseRepository implements GameRepositoryContract {
         .from(this._catalogTable)
         .select('id')
         .eq('rawg_id', catalogEntry.rawg_id)
-        .single();
+        .maybeSingle();
 
       if (existing) return existing.id;
 
@@ -377,7 +505,7 @@ export class SupabaseRepository implements GameRepositoryContract {
       .from(this._catalogTable)
       .select('id')
       .ilike('title', title)
-      .single();
+      .maybeSingle();
 
     if (existing) return existing.id;
 

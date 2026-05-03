@@ -6,6 +6,7 @@ import { GameModel } from '@/models/game/game.model';
 
 const baseDto: UserGameListDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   price: 59.99,
   store: 'GAME',
@@ -21,7 +22,8 @@ const baseDto: UserGameListDto = {
   cover_position: null,
   for_sale: false,
   sold_at: null,
-  sold_price_final: null
+  sold_price_final: null,
+  created_at: '2026-01-01T00:00:00Z'
 };
 
 describe('mapGameList', () => {
@@ -115,20 +117,17 @@ const baseFullDto: UserGameFullDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   user_id: 'user-1',
   game_catalog_id: 'cat-1',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   slug: 'god-of-war',
   price: 59.99,
   store: 'GAME',
-  platform: 'PS4',
   user_platform: 'PS5',
   condition: 'new',
-  purchased_date: null,
   status: 'playing',
   personal_rating: 9,
   edition: null,
   format: 'physical',
-  started_date: null,
-  completed_date: null,
   description: 'catalog desc',
   user_notes: 'my note',
   is_favorite: true,
@@ -166,10 +165,10 @@ describe('mapGame', () => {
     expect(mapGame(baseFullDto).platform).toBe('PS5');
   });
 
-  it('usa platform cuando user_platform es null', () => {
+  it('mapea user_platform null a null (sin fallback a la columna platform de catálogo)', () => {
     const dto = { ...baseFullDto, user_platform: null };
 
-    expect(mapGame(dto).platform).toBe('PS4');
+    expect(mapGame(dto).platform).toBeNull();
   });
 
   it('prioriza user_notes sobre description', () => {
@@ -246,6 +245,7 @@ const baseEditDto: UserGameEditDto = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   user_id: 'user-1',
   game_catalog_id: 'cat-1',
+  work_id: 'work-uuid-base',
   title: 'God of War',
   slug: 'god-of-war',
   image_url: 'https://example.com/gow.jpg',
@@ -404,19 +404,26 @@ const baseGameModel: GameModel = {
 };
 
 describe('mapGameToInsertDto', () => {
-  it('mapea los campos estándar correctamente', () => {
+  it('mapea los campos estándar de copia correctamente', () => {
     const result = mapGameToInsertDto(baseGameModel);
 
     expect(result.price).toBe(59.99);
     expect(result.store).toBe('GAME');
-    expect(result.platform).toBe('PS5');
     expect(result.condition).toBe('new');
-    expect(result.status).toBe('playing');
-    expect(result.personal_rating).toBe(9);
     expect(result.format).toBe('physical');
-    expect(result.is_favorite).toBe(true);
     expect(result.cover_position).toBeNull();
     expect(result.for_sale).toBe(false);
+  });
+
+  it('no incluye campos de obra (status, rating, favorite, platform)', () => {
+    // Los campos de obra viven en user_works desde el patch 003 y se envían
+    // mediante mapGameToWorkInsertDto, no aquí.
+    const result = mapGameToInsertDto(baseGameModel);
+
+    expect(result).not.toHaveProperty('platform');
+    expect(result).not.toHaveProperty('status');
+    expect(result).not.toHaveProperty('personal_rating');
+    expect(result).not.toHaveProperty('is_favorite');
   });
 
   it('mapea forSale undefined a false', () => {

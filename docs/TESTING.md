@@ -372,16 +372,16 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Capa | Ficheros | Tests |
 |---|---|---|
 | Configuración | 1 | 3 |
-| Mappers | 13 | 193 |
-| Use Cases | 17 | 158 |
-| Repositorios | 17 | 286 |
+| Mappers | 14 | 207 |
+| Use Cases | 18 | 162 |
+| Repositorios | 18 | 312 |
 | Guards | 5 | 22 |
 | Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 72 | 1505 |
+| Componentes | 72 | 1514 |
 | Utilidades | 8 | 106 |
-| **Total** | **146** | **2569** |
+| **Total** | **149** | **2622** |
 
 > Fuente autoritativa: `npm test`.
 
@@ -391,10 +391,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica | Valor |
 |---|---|
-| Statements | 99.08 % (4960 / 5006) |
-| Branches | **95.68 %** (3239 / 3385) |
-| Functions | 99.30 % (1143 / 1151) |
-| Lines | 99.87 % (4092 / 4097) |
+| Statements | 99.04 % (5069 / 5118) |
+| Branches | **95.70 %** (3339 / 3489) |
+| Functions | 99.14 % (1160 / 1170) |
+| Lines | 99.83 % (4183 / 4190) |
 
 ```bash
 npm run test:coverage
@@ -402,7 +402,7 @@ npm run test:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.68 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.70 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
@@ -476,6 +476,8 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 ### Categoría 4 — Lógica real con cobertura mejorable
 
 > Tras las últimas iteraciones todas las ramas reales con valor de cubrir están cerradas. El resto de gaps de `order-detail.component.ts` son ramas Cat. 2 (`o ? {...} : o` con `o` no nulo por contrato del `signal.update`) y artefactos Ivy (`@ViewChild` setter en línea 65). Se mantiene esta sección vacía para registrar futuras detecciones.
+
+> Tras el refactor obra/copia (mayo 2026) se añadieron tests específicos para: `mapUserWork` con campos null/undefined, `selectCopyByUuid` y `addAnotherCopy` del `game-detail`, los prefills de "Añadir otra copia" en `game-form` (status / rating / favorito / format opuesto), y los error paths de `addGameForUser` con `targetWorkId` (lookup roto, UPDATE work fallido). Las ramas que aún figuran en `lcov` para esos ficheros (`supabase.repository.ts:99,153`, `game-form.component.ts:582`, `game-detail.component.ts:188-189`) son artefactos Cat. 3 (callback de `Image.onload` con `crossOrigin` y comparadores dentro de `.sort()` que V8 no instrumenta consistentemente).
 
 ---
 
