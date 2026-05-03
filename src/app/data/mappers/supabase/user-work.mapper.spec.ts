@@ -47,6 +47,26 @@ describe('mapUserWork', () => {
     expect(result.isFavorite).toBe(false);
   });
 
+  it('aplica fallbacks cuando platform / status / is_favorite vienen como null o undefined', () => {
+    // Caso defensivo: aunque la BD declara estas columnas como NOT NULL, el
+    // mapper aplica ?? por seguridad para soportar fixtures parciales.
+    const dto = {
+      id: 'work-fallbacks',
+      user_id: 'user-x',
+      game_catalog_id: 'catalog-x',
+      platform: null,
+      status: null,
+      personal_rating: null,
+      is_favorite: null
+    } as unknown as UserWorkDto;
+
+    const result = mapUserWork(dto);
+
+    expect(result.platform).toBeNull();
+    expect(result.status).toBe('backlog');
+    expect(result.isFavorite).toBe(false);
+  });
+
   it('no expone created_at ni updated_at en el modelo', () => {
     const dto: UserWorkDto = {
       id: 'work-uuid-3',

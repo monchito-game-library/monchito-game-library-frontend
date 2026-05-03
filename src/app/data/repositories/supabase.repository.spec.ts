@@ -172,6 +172,17 @@ describe('SupabaseRepository', () => {
       expect(result.find((g) => g.uuid === 'copy-digital')).toBeUndefined();
     });
 
+    it('preserva orden de inserción cuando dos obras tienen mismo created_at', async () => {
+      // Cubre la rama tie-break del sort comparator (a.created_at === b.created_at).
+      const a = { ...listDto, id: 'A', work_id: 'work-A', format: 'physical', created_at: '2026-01-01T00:00:00Z' };
+      const b = { ...listDto, id: 'B', work_id: 'work-B', format: 'physical', created_at: '2026-01-01T00:00:00Z' };
+      mockSupabase.from.mockReturnValue(makeBuilder({ data: [a, b], error: null }));
+
+      const result = await repo.getAllGamesForList('user-1');
+
+      expect(result).toHaveLength(2);
+    });
+
     it('cuando una obra solo tiene digitales, mantiene la más antigua', async () => {
       const digitalOld = {
         ...listDto,
@@ -417,6 +428,82 @@ describe('SupabaseRepository', () => {
       );
     });
 
+    it('targetWorkId: lanza error si no encuentra la work objetivo', async () => {
+      // El SELECT a user_works falla → el repo no puede resolver el catalog
+      const workLookupBuilder = makeBuilder({ data: null, error: { message: 'work not found' } });
+      mockSupabase.from.mockReturnValueOnce(workLookupBuilder);
+
+      await expect(
+        repo.addGameForUser(
+          'user-1',
+          {
+            title: 'Broforce',
+            price: null,
+            store: null,
+            condition: 'new',
+            description: '',
+            status: 'backlog',
+            personalRating: null,
+            edition: null,
+            format: 'physical',
+            isFavorite: false,
+            platform: 'PS4',
+            imageUrl: undefined,
+            rawgId: 1,
+            rawgSlug: null,
+            coverPosition: null,
+            forSale: false,
+            salePrice: null,
+            soldAt: null,
+            soldPriceFinal: null,
+            activeLoanId: null,
+            activeLoanTo: null,
+            activeLoanAt: null
+          },
+          undefined,
+          'work-missing'
+        )
+      ).rejects.toThrow('Failed to resolve targetWorkId');
+    });
+
+    it('targetWorkId: lanza error si el UPDATE a user_works falla', async () => {
+      const workLookupBuilder = makeBuilder({ data: { game_catalog_id: 'cat-x' }, error: null });
+      const workUpdateBuilder = makeBuilder({ error: { message: 'rls denied' } });
+      mockSupabase.from.mockReturnValueOnce(workLookupBuilder).mockReturnValueOnce(workUpdateBuilder);
+
+      await expect(
+        repo.addGameForUser(
+          'user-1',
+          {
+            title: 'Broforce',
+            price: null,
+            store: null,
+            condition: 'new',
+            description: '',
+            status: 'backlog',
+            personalRating: null,
+            edition: null,
+            format: 'physical',
+            isFavorite: false,
+            platform: 'PS4',
+            imageUrl: undefined,
+            rawgId: 1,
+            rawgSlug: null,
+            coverPosition: null,
+            forSale: false,
+            salePrice: null,
+            soldAt: null,
+            soldPriceFinal: null,
+            activeLoanId: null,
+            activeLoanTo: null,
+            activeLoanAt: null
+          },
+          undefined,
+          'work-existing'
+        )
+      ).rejects.toThrow('Failed to update work');
+    });
+
     it('crea un nuevo user_works cuando la obra existente ya tiene una copia del mismo formato', async () => {
       // Caso: el usuario ya tiene Castlevania PS3 físico y añade otra física
       // (otra edición). No deben compartir work — son dos obras independientes.
@@ -462,6 +549,43 @@ describe('SupabaseRepository', () => {
 
       expect(workInsertBuilder.insert).toHaveBeenCalled();
       expect(insertBuilder.insert).toHaveBeenCalledWith(expect.objectContaining({ work_id: 'work-new' }));
+    });
+
+    it('lanza error si la creación del user_works falla', async () => {
+      const catalogLookupBuilder = makeBuilder({ data: { id: 'cat-existing' }, error: null });
+      const workLookupBuilder = makeBuilder({ data: [], error: null });
+      const workInsertBuilder = makeBuilder({ data: null, error: { message: 'rls denied' } });
+      mockSupabase.from
+        .mockReturnValueOnce(catalogLookupBuilder)
+        .mockReturnValueOnce(workLookupBuilder)
+        .mockReturnValueOnce(workInsertBuilder);
+
+      const gameModel = {
+        title: 'Broforce',
+        price: null,
+        store: null,
+        condition: 'new' as const,
+        description: '',
+        status: 'backlog' as const,
+        personalRating: null,
+        edition: null,
+        format: 'physical' as const,
+        isFavorite: false,
+        platform: 'PS4' as const,
+        imageUrl: undefined,
+        rawgId: null,
+        rawgSlug: null,
+        coverPosition: null,
+        forSale: false,
+        salePrice: null,
+        soldAt: null,
+        soldPriceFinal: null,
+        activeLoanId: null,
+        activeLoanTo: null,
+        activeLoanAt: null
+      };
+
+      await expect(repo.addGameForUser('user-1', gameModel)).rejects.toThrow('Failed to create user work');
     });
 
     it('crea user_works cuando no existe para (user, catalog, platform)', async () => {
