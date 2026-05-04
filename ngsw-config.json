@@ -27,17 +27,5 @@
       }
     }
   ],
-  "dataGroups": [
-    {
-      "name": "rawg-images",
-      "urls": [
-        "https://media.rawg.io/media/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 500,
-        "maxAge": "365d"
-      }
-    }
-  ]
+  "dataGroups": []
 }
