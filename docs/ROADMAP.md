@@ -944,11 +944,11 @@ Toggle grid ↔ list en el header con persistencia de la preferencia en `UserPre
 
 ---
 
-#### A3. Cache de imágenes RAWG con Service Worker ✅ completado
+#### A3. Cache de imágenes RAWG con Service Worker ⛔ revertido
 
-`dataGroup` en `ngsw-config.json` que intercepta `media.rawg.io/media/**` con estrategia cache-first, `maxSize: 500` y `maxAge: 365d`. La primera vez que se ve una cover se guarda; las cargas siguientes salen de la caché del navegador. Funciona también offline para covers ya cacheadas. El mismo patrón sirve para Supabase Storage cuando se migren las imágenes (basta añadir su URL al pattern).
+`dataGroup` en `ngsw-config.json` que interceptaba `media.rawg.io/media/**` con estrategia cache-first. Tuvo que **revertirse** porque el `ngsw-worker.js` envía `fetch()` con CORS para cachear y RAWG no devuelve `Access-Control-Allow-Origin` — en producción rompía la carga de portadas (las `<img>` directas funcionan sin CORS, pero el SW las intercepta primero). Para retomar la caché en el futuro hay que servir las imágenes vía un proxy en Vercel (`/api/rawg-image/...`) que añada las cabeceras CORS, o migrar las imágenes a Supabase Storage donde sí controlamos los headers.
 
-**PR:** [#108](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/108)
+**PRs:** [#108](https://github.com/monchito-game-library/monchito-game-library-frontend/pull/108) (introducción) · revert posterior por bug CORS.
 
 ---
 
