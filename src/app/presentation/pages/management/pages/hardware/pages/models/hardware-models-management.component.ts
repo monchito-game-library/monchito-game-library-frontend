@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -44,17 +44,17 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
     HardwareBrandEditPanelComponent,
     HardwareModelEditPanelComponent,
     CatalogItemCardComponent,
-    LibIconComponent,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibSkeletonComponent,
-    LibButtonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent
   ]
 })
 export class HardwareModelsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);

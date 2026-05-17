@@ -83,7 +83,7 @@ describe('ProtectorEditPanelComponent — template real', () => {
     const toggleHost: HTMLElement = fixture.nativeElement.querySelector(
       'retro-button.edit-panel__deactivate-btn, retro-button.edit-panel__activate-btn'
     );
-    const toggleBtn: HTMLButtonElement | null = toggleHost?.querySelector('button.lib-btn') ?? null;
+    const toggleBtn: HTMLButtonElement | null = toggleHost?.querySelector('button.retro-btn') ?? null;
     toggleBtn?.click();
     expect(spy).toHaveBeenCalled();
   });
@@ -100,7 +100,7 @@ describe('ProtectorEditPanelComponent — template real', () => {
     fixture.detectChanges();
     const spy = vi.spyOn(component.deleted, 'emit');
     const deleteHost: HTMLElement = fixture.nativeElement.querySelector('retro-button.edit-panel__delete-btn');
-    const deleteBtn: HTMLButtonElement | null = deleteHost?.querySelector('button.lib-btn') ?? null;
+    const deleteBtn: HTMLButtonElement | null = deleteHost?.querySelector('button.retro-btn') ?? null;
     deleteBtn?.click();
     expect(spy).toHaveBeenCalled();
   });

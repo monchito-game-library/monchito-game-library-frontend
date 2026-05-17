@@ -1,0 +1,21 @@
+<button
+  class="retro-btn"
+  [class.retro-btn--primary]="variant() === 'primary'"
+  [class.retro-btn--ghost]="variant() === 'ghost'"
+  [class.retro-btn--danger]="variant() === 'danger'"
+  [class.retro-btn--success]="variant() === 'success'"
+  [class.retro-btn--full]="fullWidth()"
+  [class.retro-btn--loading]="loading()"
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="clicked.emit($event)">
+  @if (loading()) {
+    <retro-icon class="retro-btn__icon retro-btn__icon--spin" name="progress_activity" />
+  } @else {
+    <span class="retro-btn__slot"><ng-content /></span>
+    @if (icon()) {
+      <retro-icon class="retro-btn__icon" [name]="icon()!" />
+    }
+  }
+  <span class="retro-btn__label">{{ label() }}</span>
+</button>

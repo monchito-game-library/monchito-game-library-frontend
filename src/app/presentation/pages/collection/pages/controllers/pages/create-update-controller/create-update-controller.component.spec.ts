@@ -1,7 +1,7 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -117,7 +117,7 @@ function setupTestBed(controllerId: string | null): void {
         useValue: { requireUserId: vi.fn().mockReturnValue('user-1'), userId: vi.fn().mockReturnValue('user-1') }
       },
       {
-        provide: LibSnackbarService,
+        provide: RetroSnackbarService,
         useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
       },
       { provide: Router, useValue: { navigate: vi.fn() } },
@@ -205,7 +205,7 @@ describe('CreateUpdateControllerComponent — modo creación', () => {
     it('muestra snackbar de error si add lanza', async () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
       controllerUseCases.add.mockRejectedValue(new Error('save error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       component.form.controls.brandId.setValue('11111111-1111-1111-1111-111111111111');
       component.form.controls.modelId.setValue('22222222-2222-2222-2222-222222222222');
@@ -336,7 +336,7 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
     it('muestra snackbar y navega a /collection/controllers si _loadController lanza', async () => {
       const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
       controllerUseCases.getById.mockRejectedValue(new Error('DB error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
       await component.ngOnInit();

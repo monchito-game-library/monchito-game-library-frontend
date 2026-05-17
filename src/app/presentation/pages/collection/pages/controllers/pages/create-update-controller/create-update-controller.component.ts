@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base/hardware-form-base.component';
@@ -33,10 +33,10 @@ import { ControllerCompatibilityType } from '@/types/controller-compatibility.ty
     ReactiveFormsModule,
     TranslocoPipe,
     HardwareFormShellComponent,
-    LibFormFieldComponent,
-    LibLabelComponent,
-    LibSelectComponent,
-    LibOptionComponent
+    RetroFormFieldComponent,
+    RetroLabelComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ]
 })
 export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {

@@ -7,7 +7,7 @@ import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contra
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { StoreModel } from '@/models/store/store.model';
 
 function makeStore(overrides: Partial<StoreModel> = {}): StoreModel {
@@ -38,7 +38,7 @@ describe('StoresManagementComponent', () => {
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn() } },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: TranslocoService, useValue: mockTransloco },
-        { provide: LibDialogService, useValue: { open: vi.fn() } }
+        { provide: RetroDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -122,7 +122,7 @@ describe('StoresManagementComponent', () => {
   describe('onDeleteStore', () => {
     it('no elimina el store si el dialog se cancela', () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedStore.set(makeStore());
@@ -135,7 +135,7 @@ describe('StoresManagementComponent', () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
       storeUseCases.deleteStore.mockResolvedValue(undefined);
       storeUseCases.getAllStores.mockResolvedValue([]);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.selectedStore.set(makeStore());
@@ -147,7 +147,7 @@ describe('StoresManagementComponent', () => {
     });
 
     it('no hace nada si no hay store seleccionado', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedStore.set(undefined);
       component.onDeleteStore();
       expect(dialog.open).not.toHaveBeenCalled();

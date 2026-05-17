@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LIB_BOTTOM_SHEET_DATA } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
-import { LIB_OVERLAY_REF } from '@/services/lib-overlay/lib-overlay.service';
+import { RETRO_BOTTOM_SHEET_DATA } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
+import { RETRO_OVERLAY_REF } from '@/services/retro-overlay/retro-overlay.service';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GameListFiltersSheetComponent } from './game-list-filters-sheet.component';
@@ -31,8 +31,8 @@ describe('GameListFiltersSheetComponent', () => {
     TestBed.configureTestingModule({
       imports: [GameListFiltersSheetComponent],
       providers: [
-        { provide: LIB_OVERLAY_REF, useValue: mockSheetRef },
-        { provide: LIB_BOTTOM_SHEET_DATA, useValue: mockData }
+        { provide: RETRO_OVERLAY_REF, useValue: mockSheetRef },
+        { provide: RETRO_BOTTOM_SHEET_DATA, useValue: mockData }
       ]
     });
     TestBed.overrideComponent(GameListFiltersSheetComponent, { set: { imports: [], template: '' } });

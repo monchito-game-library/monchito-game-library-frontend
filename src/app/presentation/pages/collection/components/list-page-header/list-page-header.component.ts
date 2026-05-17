@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-list-page-header',
@@ -14,12 +14,12 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibButtonComponent,
-    LibIconButtonComponent,
+    RetroButtonComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent
   ]
 })
 export class ListPageHeaderComponent {

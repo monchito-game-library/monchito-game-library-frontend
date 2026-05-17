@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -16,7 +16,7 @@ import { OrderSummaryCardComponent } from '@/pages/orders/components/order-summa
   styleUrl: './orders-list.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibIconComponent, TranslocoPipe, OrderSummaryCardComponent, LibSkeletonComponent]
+  imports: [RetroIconComponent, TranslocoPipe, OrderSummaryCardComponent, RetroSkeletonComponent]
 })
 export class OrdersListComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

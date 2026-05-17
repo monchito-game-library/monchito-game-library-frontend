@@ -14,18 +14,18 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
-import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
-import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroDatepickerComponent } from '@/retro/retro-datepicker/retro-datepicker.component';
+import { RetroDatepickerDirective } from '@/retro/retro-datepicker/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@/retro/retro-datepicker/retro-datepicker-toggle.directive';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -47,17 +47,17 @@ export type { HardwareLoanItem };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibIconComponent,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibButtonComponent,
-    LibSectionHeaderComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibDatepickerComponent,
-    LibDatepickerDirective,
-    LibDatepickerToggleDirective
+    RetroButtonComponent,
+    RetroSectionHeaderComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroDatepickerComponent,
+    RetroDatepickerDirective,
+    RetroDatepickerToggleDirective
   ]
 })
 export class HardwareLoanFormComponent implements OnInit {
@@ -65,7 +65,7 @@ export class HardwareLoanFormComponent implements OnInit {
   private readonly _controllerUseCases: ControllerUseCasesContract | null = inject(CONTROLLER_USE_CASES, {
     optional: true
   });
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 

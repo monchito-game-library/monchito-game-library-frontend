@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ProtectorModel } from '@/models/protector/protector.model';
@@ -23,17 +23,17 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibIconComponent,
-    LibIconButtonComponent,
-    LibTooltipDirective,
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    RetroTooltipDirective,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent,
-    LibSelectComponent,
-    LibOptionComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ],
   templateUrl: './protector-edit-panel.component.html',
   styleUrl: './protector-edit-panel.component.scss'

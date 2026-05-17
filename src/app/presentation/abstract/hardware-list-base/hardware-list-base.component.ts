@@ -1,6 +1,6 @@
 import { computed, Directive, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -39,7 +39,7 @@ export abstract class HardwareListBaseComponent<
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
   protected readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
-  protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  protected readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   protected readonly _stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);

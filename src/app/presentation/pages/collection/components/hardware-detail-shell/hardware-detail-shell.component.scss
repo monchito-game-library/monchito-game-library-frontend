@@ -58,7 +58,7 @@
     color: var(--text-mid);
     font-style: italic;
 
-    app-lib-icon {
+    retro-icon {
       color: var(--accent-amber);
     }
   }
@@ -97,7 +97,7 @@
   .hardware-detail__actions {
     flex-direction: column;
 
-    lib-button {
+    retro-button {
       width: 100%;
     }
   }

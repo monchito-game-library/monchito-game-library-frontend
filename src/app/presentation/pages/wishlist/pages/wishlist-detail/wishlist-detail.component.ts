@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -25,10 +25,10 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-wishlist-detail',
@@ -39,14 +39,14 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   imports: [
     DecimalPipe,
     NgOptimizedImage,
-    LibIconComponent,
-    LibTooltipDirective,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroTooltipDirective,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibSkeletonComponent,
-    LibChipComponent,
-    LibDataRowComponent,
-    LibButtonComponent
+    RetroSkeletonComponent,
+    RetroChipComponent,
+    RetroDataRowComponent,
+    RetroButtonComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {
@@ -55,8 +55,8 @@ export class WishlistDetailComponent implements OnInit {
   private readonly _location: Location = inject(Location);
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Priority star range used to render the star icons. */

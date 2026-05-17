@@ -1,0 +1,128 @@
+.retro-datepicker__dialog {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  padding: 0.75rem;
+  min-width: 280px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+}
+
+.retro-datepicker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.retro-datepicker__header-label {
+  font-size: 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-hi);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.retro-datepicker__grid-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.25rem;
+}
+
+.retro-datepicker__weekday {
+  font-size: 0.6875rem;
+  color: var(--text-lo);
+  text-align: center;
+  padding: 0.25rem 0;
+  text-transform: uppercase;
+}
+
+.retro-datepicker__grid {
+  width: 100%;
+  border-collapse: collapse;
+
+  td[role='gridcell'] {
+    text-align: center;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+
+    &:focus {
+      outline: 1px solid var(--border-active);
+    }
+  }
+}
+
+.retro-datepicker__day-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-hi);
+  padding: 0.375rem;
+  min-width: 32px;
+  min-height: 32px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  td.retro-datepicker__day--outside & {
+    color: var(--text-lo);
+  }
+
+  td.retro-datepicker__day--today & {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  td.retro-datepicker__day--selected & {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  td.retro-datepicker__day--active:not(.retro-datepicker__day--selected) & {
+    outline: 1px solid var(--border-active);
+  }
+
+  td.retro-datepicker__day--disabled & {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) {
+    td:not(.retro-datepicker__day--disabled):not(.retro-datepicker__day--selected):hover & {
+      background: var(--bg-surface-hi);
+    }
+  }
+}
+
+.retro-datepicker__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.retro-datepicker__today-btn,
+.retro-datepicker__close-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--border-active);
+    color: var(--text-hi);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+}

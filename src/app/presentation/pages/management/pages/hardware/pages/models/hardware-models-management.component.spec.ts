@@ -7,7 +7,7 @@ import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hard
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 
@@ -69,7 +69,7 @@ describe('HardwareModelsManagementComponent', () => {
           }
         },
         { provide: Router, useValue: mockRouter },
-        { provide: LibDialogService, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -205,7 +205,7 @@ describe('HardwareModelsManagementComponent', () => {
 
   describe('onDeleteModel', () => {
     it('no hace nada si no hay modelo seleccionado', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedModel.set(undefined);
       component.onDeleteModel();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -213,7 +213,7 @@ describe('HardwareModelsManagementComponent', () => {
 
     it('no elimina el modelo si el dialog se cancela', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedModel.set(makeModel());
@@ -226,7 +226,7 @@ describe('HardwareModelsManagementComponent', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       modelUseCases.delete.mockResolvedValue(undefined);
       modelUseCases.getAllByBrand.mockResolvedValue([]);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -296,7 +296,7 @@ describe('HardwareModelsManagementComponent', () => {
 
   describe('onBrandDeleted', () => {
     it('no hace nada si no hay marca cargada', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.brand.set(undefined);
       component.onBrandDeleted();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -305,7 +305,7 @@ describe('HardwareModelsManagementComponent', () => {
     it('no elimina la marca si el dialog se cancela', () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       brandUseCases.delete = vi.fn();
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
 
@@ -317,7 +317,7 @@ describe('HardwareModelsManagementComponent', () => {
     it('elimina la marca y navega al listado si el dialog se confirma', async () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       brandUseCases.delete = vi.fn().mockResolvedValue(undefined);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
 

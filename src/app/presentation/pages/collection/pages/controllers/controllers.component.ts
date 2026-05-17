@@ -8,7 +8,7 @@ import {
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
 import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
 
 @Component({
   selector: 'app-controllers',
@@ -16,7 +16,7 @@ import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
   styleUrls: ['./controllers.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HardwareListShellComponent, LibChipComponent]
+  imports: [TranslocoPipe, HardwareListShellComponent, RetroChipComponent]
 })
 export class ControllersComponent extends HardwareListBaseComponent<ControllerModel> {
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);

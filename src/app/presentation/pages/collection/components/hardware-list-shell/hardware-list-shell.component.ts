@@ -8,14 +8,14 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
-import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware
@@ -36,12 +36,12 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    LibIconComponent,
+    RetroIconComponent,
     TranslocoPipe,
-    LibSkeletonComponent,
+    RetroSkeletonComponent,
     ListPageHeaderComponent,
-    LibEmptyStateComponent,
-    LibDataRowComponent
+    RetroEmptyStateComponent,
+    RetroDataRowComponent
   ]
 })
 export class HardwareListShellComponent {

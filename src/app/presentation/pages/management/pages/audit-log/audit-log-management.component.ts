@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import {
   AUDIT_LOG_USE_CASES,
@@ -19,11 +19,11 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibIconComponent, TranslocoPipe, DatePipe, LibSkeletonComponent]
+  imports: [RetroIconComponent, TranslocoPipe, DatePipe, RetroSkeletonComponent]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether the log list is being loaded. */

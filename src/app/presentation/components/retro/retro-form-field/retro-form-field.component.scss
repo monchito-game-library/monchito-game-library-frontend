@@ -1,0 +1,35 @@
+.retro-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .retro-form-field__control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    padding: 0 0.75rem;
+    min-height: 44px;
+    transition: border-color 120ms linear;
+    position: relative;
+  }
+
+  .retro-form-field__subscript {
+    min-height: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+  }
+
+  &--focused .retro-form-field__control {
+    border-color: var(--primary);
+  }
+
+  &--invalid .retro-form-field__control {
+    border-color: var(--accent-rose);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

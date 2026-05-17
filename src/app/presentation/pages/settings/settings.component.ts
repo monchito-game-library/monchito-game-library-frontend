@@ -14,16 +14,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroCardComponent } from '@/retro/retro-card/retro-card.component';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -39,8 +39,8 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
-import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroCheckboxComponent } from '@/components/retro/retro-checkbox/retro-checkbox.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 @Component({
   selector: 'app-settings',
@@ -50,17 +50,17 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
-    LibCardComponent,
-    LibIconComponent,
-    LibSpinnerComponent,
-    LibTooltipDirective,
-    LibCheckboxComponent,
-    LibSkeletonComponent,
+    RetroCardComponent,
+    RetroIconComponent,
+    RetroSpinnerComponent,
+    RetroTooltipDirective,
+    RetroCheckboxComponent,
+    RetroSkeletonComponent,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
@@ -70,9 +70,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _rawgSearchState: RawgSearchStateService = inject(RawgSearchStateService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();

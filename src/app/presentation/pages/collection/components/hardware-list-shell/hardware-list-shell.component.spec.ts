@@ -211,7 +211,7 @@ describe('HardwareListShellComponent', () => {
       setupComponent({ loading: false, items, filteredItems: items });
 
       const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
-      const countSpan = statDivs[0].query(By.css('span:not(.lib-icon)'));
+      const countSpan = statDivs[0].query(By.css('span:not(.retro-icon)'));
       expect(countSpan.nativeElement.textContent.trim()).toBe('2');
     });
 
@@ -224,7 +224,7 @@ describe('HardwareListShellComponent', () => {
       });
 
       const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
-      const spentSpan = statDivs[1].query(By.css('span:not(.lib-icon)'));
+      const spentSpan = statDivs[1].query(By.css('span:not(.retro-icon)'));
       expect(spentSpan.nativeElement.textContent).toContain('300');
     });
   });

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { LibRouterTabsComponent } from '@/lib/lib-tabs/lib-router-tabs.component';
-import { LibRouterTabItemInterface } from '@/interfaces/lib-router-tab-item.interface';
+import { RetroRouterTabsComponent } from '@/retro/retro-tabs/retro-router-tabs.component';
+import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.interface';
 
 @Component({
   selector: 'app-collection',
@@ -8,10 +8,10 @@ import { LibRouterTabItemInterface } from '@/interfaces/lib-router-tab-item.inte
   styleUrls: ['./collection.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibRouterTabsComponent]
+  imports: [RetroRouterTabsComponent]
 })
 export class CollectionComponent {
-  /** Items de navegación de la colección para lib-router-tabs. */
+  /** Items de navegación de la colección para retro-router-tabs. */
   readonly navItems: readonly LibRouterTabItemInterface[] = [
     { path: '/collection', label: 'collectionOverview.tabOverview', icon: 'home', exact: true },
     { path: '/collection/games', label: 'collectionOverview.tabGames', icon: 'sports_esports' },

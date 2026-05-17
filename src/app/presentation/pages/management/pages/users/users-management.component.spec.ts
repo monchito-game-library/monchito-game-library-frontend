@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -33,7 +33,7 @@ describe('UsersManagementComponent', () => {
       getActiveLang: vi.fn(() => 'es')
     };
     mockDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<LibDialogRef<unknown>>)
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<RetroDialogRef<unknown>>)
     };
     mockUserContext = { userId: vi.fn(() => 'u-owner') };
 
@@ -52,10 +52,10 @@ describe('UsersManagementComponent', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: TranslocoService, useValue: mockTransloco },
         {
-          provide: LibSnackbarService,
+          provide: RetroSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         },
-        { provide: LibDialogService, useValue: mockDialog }
+        { provide: RetroDialogService, useValue: mockDialog }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -192,7 +192,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error si setUserRole falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.setUserRole.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
 
@@ -291,7 +291,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de éxito al borrar correctamente', async () => {
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDeleteUser(member);
 
@@ -304,7 +304,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error y NO modifica la lista si deleteUser falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.deleteUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
 
@@ -363,7 +363,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.getAllUsers.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.ngOnInit();
 

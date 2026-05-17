@@ -7,7 +7,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -75,7 +75,7 @@ describe('HardwareEditionsManagementComponent', () => {
           }
         },
         { provide: Router, useValue: mockRouter },
-        { provide: LibDialogService, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -218,7 +218,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
   describe('onDeleteEdition', () => {
     it('no hace nada si no hay edition seleccionada', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedEdition.set(undefined);
       component.onDeleteEdition();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -226,7 +226,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
     it('no elimina la edition si el dialog se cancela', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedEdition.set(makeEdition());
@@ -239,7 +239,7 @@ describe('HardwareEditionsManagementComponent', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
       editionUseCases.delete.mockResolvedValue(undefined);
       editionUseCases.getAllByModel.mockResolvedValue([]);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -356,7 +356,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
   describe('onModelDeleted', () => {
     it('no hace nada si no hay modelo cargado', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.model.set(undefined);
       component.onModelDeleted();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -364,7 +364,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
     it('no elimina el modelo si el dialog se cancela', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       component.model.set(makeModel());
 
@@ -376,7 +376,7 @@ describe('HardwareEditionsManagementComponent', () => {
     it('elimina el modelo y navega atrás si el dialog se confirma', async () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       modelUseCases.delete.mockResolvedValue(undefined);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.model.set(makeModel({ id: 'model-uuid-1', brandId: 'brand-uuid-1' }));
 

@@ -5,7 +5,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { AuditLogManagementComponent } from './audit-log-management.component';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 
 describe('AuditLogManagementComponent', () => {
   let component: AuditLogManagementComponent;
@@ -20,7 +20,7 @@ describe('AuditLogManagementComponent', () => {
         { provide: AUDIT_LOG_USE_CASES, useValue: { getRecentLogs: vi.fn().mockResolvedValue([]) } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         {
-          provide: LibSnackbarService,
+          provide: RetroSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         }
       ],
@@ -103,7 +103,7 @@ describe('AuditLogManagementComponent', () => {
     it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
       const auditLogUseCases = TestBed.inject(AUDIT_LOG_USE_CASES as any) as any;
       auditLogUseCases.getRecentLogs.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.ngOnInit();
 

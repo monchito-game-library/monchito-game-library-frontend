@@ -1,7 +1,7 @@
 import { Directive, inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -48,8 +48,8 @@ export abstract class HardwareDetailBaseComponent {
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
-  protected readonly _dialog: LibDialogService = inject(LibDialogService);
-  protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  protected readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  protected readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   protected _stores: StoreModel[] = [];

@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import {
-  LIB_DIALOG_DATA,
-  LibDialogActionsDirective,
-  LibDialogCloseDirective,
-  LibDialogContentDirective,
-  LibDialogRef,
-  LibDialogTitleDirective
-} from '@/services/lib-dialog/lib-dialog.service';
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@/services/retro-dialog/retro-dialog.service';
 
 /**
  * Reusable confirmation dialog component.
@@ -24,18 +24,18 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibDialogTitleDirective,
-    LibDialogContentDirective,
-    LibDialogActionsDirective,
-    LibDialogCloseDirective,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroDialogCloseDirective,
     TranslocoPipe,
-    LibButtonComponent
+    RetroButtonComponent
   ]
 })
 export class ConfirmDialogComponent {
   /** Data injected into the dialog, containing title and message. */
-  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(LIB_DIALOG_DATA);
+  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(RETRO_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically if needed. */
-  dialogRef: LibDialogRef<ConfirmDialogComponent> = inject(LibDialogRef<ConfirmDialogComponent>);
+  dialogRef: RetroDialogRef<ConfirmDialogComponent> = inject(RetroDialogRef<ConfirmDialogComponent>);
 }

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -24,15 +24,15 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    LibIconButtonComponent,
-    LibIconComponent,
+    RetroIconButtonComponent,
+    RetroIconComponent,
     TranslocoPipe,
     AuthPanelComponent,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent
   ]
 })
 /** Registration page component. Creates a new account and redirects to login on success. */

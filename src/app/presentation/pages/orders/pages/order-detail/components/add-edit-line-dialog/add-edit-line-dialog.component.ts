@@ -1,26 +1,26 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
-import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
-import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroAutocompleteComponent } from '@/retro/retro-autocomplete/retro-autocomplete.component';
+import { RetroAutocompleteTriggerDirective } from '@/retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderLineForm, OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import {
-  LIB_DIALOG_DATA,
-  LibDialogActionsDirective,
-  LibDialogContentDirective,
-  LibDialogRef,
-  LibDialogTitleDirective
-} from '@/services/lib-dialog/lib-dialog.service';
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@/services/retro-dialog/retro-dialog.service';
 
 @Component({
   selector: 'app-add-edit-line-dialog',
@@ -30,28 +30,28 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibDialogTitleDirective,
-    LibDialogContentDirective,
-    LibDialogActionsDirective,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent,
-    LibAutocompleteComponent,
-    LibAutocompleteTriggerDirective,
-    LibOptionComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroAutocompleteComponent,
+    RetroAutocompleteTriggerDirective,
+    RetroOptionComponent
   ]
 })
 export class AddEditLineDialogComponent {
-  private readonly _dialogRef: LibDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
-    LibDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
+  private readonly _dialogRef: RetroDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
+    RetroDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
   );
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
   /** Data injected by the parent: list of products and optional existing line. */
-  readonly data: AddEditLineDialogData = inject<AddEditLineDialogData>(LIB_DIALOG_DATA);
+  readonly data: AddEditLineDialogData = inject<AddEditLineDialogData>(RETRO_DIALOG_DATA);
 
   /** Whether the dialog is in edit mode (line already exists). */
   readonly isEditMode: boolean = !!this.data.line;

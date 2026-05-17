@@ -13,14 +13,14 @@ import { CurrencyPipe, DatePipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibMenuComponent } from '@/lib/lib-menu/lib-menu.component';
-import { LibMenuItemComponent } from '@/lib/lib-menu/lib-menu-item.component';
-import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directive';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroMenuComponent } from '@/retro/retro-menu/retro-menu.component';
+import { RetroMenuItemComponent } from '@/retro/retro-menu/retro-menu-item.component';
+import { RetroMenuTriggerDirective } from '@/retro/retro-menu/retro-menu-trigger.directive';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -42,10 +42,10 @@ import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
-import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -57,19 +57,19 @@ import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-
     CurrencyPipe,
     DatePipe,
     DecimalPipe,
-    LibIconComponent,
-    LibMenuComponent,
-    LibMenuItemComponent,
-    LibMenuTriggerDirective,
-    LibIconButtonComponent,
-    LibSpinnerComponent,
+    RetroIconComponent,
+    RetroMenuComponent,
+    RetroMenuItemComponent,
+    RetroMenuTriggerDirective,
+    RetroIconButtonComponent,
+    RetroSpinnerComponent,
     TranslocoPipe,
     SaleFormComponent,
     GameLoanFormComponent,
-    LibButtonComponent,
-    LibChipComponent,
-    LibDataRowComponent,
-    LibSectionHeaderComponent
+    RetroButtonComponent,
+    RetroChipComponent,
+    RetroDataRowComponent,
+    RetroSectionHeaderComponent
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -79,8 +79,8 @@ export class GameDetailComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 

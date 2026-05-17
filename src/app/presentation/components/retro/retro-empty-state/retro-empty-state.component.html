@@ -1,0 +1,14 @@
+<div class="retro-empty">
+  <pre class="retro-empty__ascii" aria-hidden="true">
+┌──────────────────┐
+│  NO RESULTS      │
+│  0 RECORDS FOUND │
+└──────────────────┘</pre
+  >
+  <p class="retro-empty__title">{{ title() }}</p>
+  @if (subtitle()) {
+    <p class="retro-empty__subtitle">{{ subtitle() }}</p>
+  }
+  <p class="retro-empty__hint">{{ hint() }}</p>
+  <ng-content />
+</div>

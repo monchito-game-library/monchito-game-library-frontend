@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -15,10 +15,10 @@ import {
 } from '@/pages/collection/components/hardware-loan-form/hardware-loan-form.component';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
-import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 
 /**
  * Presentational shell component that renders the shared layout for hardware
@@ -38,16 +38,16 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   imports: [
     CurrencyPipe,
     DatePipe,
-    LibIconComponent,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibSkeletonComponent,
+    RetroSkeletonComponent,
     HardwareLoanFormComponent,
     SaleFormComponent,
-    LibSectionHeaderComponent,
-    LibDataRowComponent,
-    LibChipComponent,
-    LibButtonComponent
+    RetroSectionHeaderComponent,
+    RetroDataRowComponent,
+    RetroChipComponent,
+    RetroButtonComponent
   ]
 })
 export class HardwareDetailShellComponent {

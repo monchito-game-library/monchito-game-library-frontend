@@ -15,8 +15,8 @@ import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 
 const mockCatalogDto: GameCatalogDto = {
   rawg_id: null,
@@ -67,10 +67,10 @@ function buildCommonProviders(opts: { catalogScreenshots?: string[] } = {}) {
       useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
     },
     {
-      provide: LibSnackbarService,
+      provide: RetroSnackbarService,
       useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
     },
-    { provide: LibDialogService, useValue: { open: vi.fn() } }
+    { provide: RetroDialogService, useValue: { open: vi.fn() } }
   ];
 }
 
@@ -436,14 +436,14 @@ describe('GameFormComponent', () => {
 
   describe('onSubmit', () => {
     it('no abre el diálogo cuando el formulario es inválido', () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.onSubmit();
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('no procede cuando el diálogo no se confirma', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(false) });
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
 
@@ -455,7 +455,7 @@ describe('GameFormComponent', () => {
 
     it('llama a addGame y navega cuando se confirma en modo creación', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -468,7 +468,7 @@ describe('GameFormComponent', () => {
 
     it('incluye catalogEntry cuando selectedGame tiene rawg_id', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -493,7 +493,7 @@ describe('GameFormComponent', () => {
     it('llama a deleteItem después de addGame cuando hay pendingWishlistItemId', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       (wishlistUseCases.deleteItem as any).mockResolvedValue(undefined);
@@ -508,7 +508,7 @@ describe('GameFormComponent', () => {
 
     it('llama a updateGame en modo edición cuando se confirma', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.updateGame as any).mockResolvedValue(undefined);
       component.isEditMode = true;
@@ -523,8 +523,8 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje de duplicado cuando el error contiene 23505', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(LibSnackbarService);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('unique constraint 23505'));
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -537,7 +537,7 @@ describe('GameFormComponent', () => {
 
     it('usa los fallbacks de ?? cuando los campos opcionales son null', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
 
@@ -561,8 +561,8 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(LibSnackbarService);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('Network error'));
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -587,7 +587,7 @@ describe('GameFormComponent', () => {
 
   describe('openCoverPositionDialog', () => {
     it('no abre el diálogo cuando no hay imageUrl', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedImageUrl.set(null);
 
       await component.openCoverPositionDialog();
@@ -596,7 +596,7 @@ describe('GameFormComponent', () => {
     });
 
     it('actualiza _coverPosition cuando el diálogo devuelve un valor', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of('50% 30% 1.2') });
       component.selectedImageUrl.set('https://cdn.example.com/cover.jpg');
 
@@ -606,7 +606,7 @@ describe('GameFormComponent', () => {
     });
 
     it('no actualiza _coverPosition cuando el diálogo devuelve null', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(null) });
       component.selectedImageUrl.set('https://cdn.example.com/cover.jpg');
       (component as any)._coverPosition.set('50% 50%');

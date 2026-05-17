@@ -1,0 +1,35 @@
+<div class="retro-tabs">
+  <div role="tablist" class="retro-tabs__list" [attr.aria-label]="ariaLabel() || null">
+    @for (tab of tabs; track tab.id; let i = $index) {
+      <button
+        type="button"
+        role="tab"
+        [id]="'retro-tab-' + tab.id"
+        [attr.aria-controls]="'retro-tabpanel-' + tab.id"
+        [attr.aria-selected]="activeIndex() === i"
+        [tabindex]="activeIndex() === i ? 0 : -1"
+        class="retro-tabs__tab"
+        [class.retro-tabs__tab--active]="activeIndex() === i"
+        (click)="select(i)"
+        (keydown)="onKeydown($event, i)">
+        @if (tab.icon()) {
+          <retro-icon [name]="tab.icon()!" />
+        }
+        <span>{{ tab.label() }}</span>
+      </button>
+    }
+  </div>
+  <div class="retro-tabs__panels">
+    @for (tab of tabs; track tab.id; let i = $index) {
+      <div
+        role="tabpanel"
+        [id]="'retro-tabpanel-' + tab.id"
+        [attr.aria-labelledby]="'retro-tab-' + tab.id"
+        [hidden]="activeIndex() !== i">
+        @if (tab.template) {
+          <ng-container *ngTemplateOutlet="tab.template" />
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { Component, NO_ERRORS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -12,7 +12,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { mockRouter } from '@/testing/router.mock';
-import { mockLibSnackbar } from '@/testing/lib-snackbar.mock';
+import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 interface TestItem {
@@ -62,7 +62,7 @@ describe('HardwareListBaseComponent', () => {
         { provide: HARDWARE_BRAND_USE_CASES, useValue: mockBrandUseCases },
         { provide: HARDWARE_MODEL_USE_CASES, useValue: mockModelUseCases },
         { provide: UserContextService, useValue: mockUserContext },
-        { provide: LibSnackbarService, useValue: mockLibSnackbar }
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -286,7 +286,7 @@ describe('HardwareListBaseComponent', () => {
 
       await (component as any)._loadItems(loadFn);
 
-      expect(mockLibSnackbar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
     });
 

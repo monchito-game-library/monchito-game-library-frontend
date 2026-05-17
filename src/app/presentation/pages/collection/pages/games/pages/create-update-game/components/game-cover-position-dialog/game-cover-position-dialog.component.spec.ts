@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GameCoverPositionDialogComponent } from './game-cover-position-dialog.component';
-import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 describe('GameCoverPositionDialogComponent', () => {
@@ -17,8 +17,8 @@ describe('GameCoverPositionDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [GameCoverPositionDialogComponent],
       providers: [
-        { provide: LIB_DIALOG_DATA, useValue: { imageUrl: 'https://cdn.example.com/cover.jpg', initialPosition } },
-        { provide: LibDialogRef, useValue: mockDialogRef },
+        { provide: RETRO_DIALOG_DATA, useValue: { imageUrl: 'https://cdn.example.com/cover.jpg', initialPosition } },
+        { provide: RetroDialogRef, useValue: mockDialogRef },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ]
     });

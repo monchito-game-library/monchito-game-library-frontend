@@ -9,11 +9,11 @@ import {
   WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { lastValueFrom } from 'rxjs';
@@ -38,7 +38,7 @@ import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/ad
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { allMembersReady } from '@/shared/order-member/order-member.util';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -48,16 +48,16 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    LibIconButtonComponent,
-    LibTooltipDirective,
-    LibSkeletonComponent,
+    RetroIconButtonComponent,
+    RetroTooltipDirective,
+    RetroSkeletonComponent,
     TranslocoPipe,
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,
     OrderProductListComponent,
     OrderStepperComponent,
     OrderPlacingComponent,
-    LibButtonComponent
+    RetroButtonComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
@@ -66,8 +66,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private _orderId: string = '';

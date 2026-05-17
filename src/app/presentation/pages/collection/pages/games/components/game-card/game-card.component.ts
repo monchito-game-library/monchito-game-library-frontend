@@ -15,16 +15,16 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { RetroCardComponent } from '@/retro/retro-card/retro-card.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -32,7 +32,7 @@ import { defaultGameCover } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { LibChipColor } from '@/types/lib-component.type';
+import { RetroChipColor } from '@/types/retro-component.type';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 
@@ -43,20 +43,20 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibIconButtonComponent,
-    LibTooltipDirective,
+    RetroIconButtonComponent,
+    RetroTooltipDirective,
     CurrencyPipe,
     NgOptimizedImage,
     TranslocoPipe,
-    LibSkeletonComponent,
-    LibCardComponent,
-    LibChipComponent
+    RetroSkeletonComponent,
+    RetroCardComponent,
+    RetroChipComponent
   ]
 })
 export class GameCardComponent {
   private readonly _router: Router = inject(Router);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -127,8 +127,8 @@ export class GameCardComponent {
     (): string | undefined => PLATFORM_COLORS[this.game().platform ?? '']
   );
 
-  /** Color semántico del lib-chip de estado, mapeado desde game().status. */
-  readonly statusColor: Signal<LibChipColor> = computed((): LibChipColor => {
+  /** Color semántico del retro-chip de estado, mapeado desde game().status. */
+  readonly statusColor: Signal<RetroChipColor> = computed((): RetroChipColor => {
     switch (this.game().status) {
       case 'completed':
       case 'platinum':
@@ -202,7 +202,7 @@ export class GameCardComponent {
     const game: GameListModel = this.game();
     if (!game.uuid) return;
 
-    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')

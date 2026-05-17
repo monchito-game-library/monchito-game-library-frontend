@@ -14,17 +14,17 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
-import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
-import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroDatepickerComponent } from '@/retro/retro-datepicker/retro-datepicker.component';
+import { RetroDatepickerDirective } from '@/retro/retro-datepicker/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@/retro/retro-datepicker/retro-datepicker-toggle.directive';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -39,21 +39,21 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibIconComponent,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibDatepickerComponent,
-    LibDatepickerDirective,
-    LibDatepickerToggleDirective
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroDatepickerComponent,
+    RetroDatepickerDirective,
+    RetroDatepickerToggleDirective
   ]
 })
 export class GameLoanFormComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   /** The game whose loan status is being managed. */
   readonly game: InputSignal<GameEditModel> = input.required<GameEditModel>();

@@ -43,7 +43,7 @@
   font-size: 0.8125rem;
   color: var(--text-hi);
 
-  app-lib-icon {
+  retro-icon {
     color: var(--text-lo);
   }
 }
@@ -62,7 +62,7 @@
   .hardware-loan-form__action-btn {
     align-self: stretch;
 
-    app-lib-button {
+    app-retro-button {
       width: 100%;
     }
   }

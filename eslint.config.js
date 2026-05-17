@@ -239,9 +239,9 @@ module.exports = [
       '@angular-eslint/template/no-negated-async': 'warn'
     }
   },
-  // Sección para componentes lib/ con prefijo retro (va al final para sobreescribir la regla global)
+  // Sección para componentes retro/ con prefijo retro (va al final para sobreescribir la regla global)
   {
-    files: ['src/app/presentation/components/lib/**/*.ts', 'src/app/presentation/shared/**/*.ts', 'src/app/presentation/services/lib-*/**/*.ts'],
+    files: ['src/app/presentation/components/retro/**/*.ts', 'src/app/presentation/shared/**/*.ts', 'src/app/presentation/services/retro-*/**/*.ts'],
     ignores: ['**/*.spec.ts'],
     rules: {
       '@angular-eslint/component-selector': ['error', { prefix: 'retro', style: 'kebab-case', type: 'element' }],

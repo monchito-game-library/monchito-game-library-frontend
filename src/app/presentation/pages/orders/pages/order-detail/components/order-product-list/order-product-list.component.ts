@@ -8,10 +8,10 @@ import {
   OutputEmitterRef
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -32,11 +32,11 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
   },
   imports: [
     DecimalPipe,
-    LibIconComponent,
-    LibTooltipDirective,
+    RetroIconComponent,
+    RetroTooltipDirective,
     TranslocoPipe,
-    LibButtonComponent,
-    LibIconButtonComponent
+    RetroButtonComponent,
+    RetroIconButtonComponent
   ]
 })
 export class OrderProductListComponent {

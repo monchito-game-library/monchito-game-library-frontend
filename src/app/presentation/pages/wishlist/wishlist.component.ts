@@ -14,16 +14,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -37,9 +37,9 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -52,28 +52,28 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     NgOptimizedImage,
     SlicePipe,
     ReactiveFormsModule,
-    LibIconButtonComponent,
-    LibIconComponent,
-    LibSelectComponent,
-    LibOptionComponent,
+    RetroIconButtonComponent,
+    RetroIconComponent,
+    RetroSelectComponent,
+    RetroOptionComponent,
     TranslocoPipe,
     WishlistCardComponent,
     CatalogSearchPanelComponent,
-    LibSkeletonComponent,
-    LibEmptyStateComponent,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent
+    RetroSkeletonComponent,
+    RetroEmptyStateComponent,
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent
   ]
 })
 export class WishlistComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);

@@ -163,14 +163,14 @@
                     <input retroInput type="number" formControlName="discountAmount" min="0" step="0.01" />
                   </retro-form-field>
                   <fieldset
-                    class="lib-radio-group"
+                    class="retro-radio-group"
                     role="radiogroup"
                     [attr.aria-label]="'orders.header.discountType' | transloco">
-                    <label class="lib-radio-group__option">
+                    <label class="retro-radio-group__option">
                       <input type="radio" name="discountType" value="amount" formControlName="discountType" />
                       <span>€</span>
                     </label>
-                    <label class="lib-radio-group__option">
+                    <label class="retro-radio-group__option">
                       <input type="radio" name="discountType" value="percentage" formControlName="discountType" />
                       <span>%</span>
                     </label>

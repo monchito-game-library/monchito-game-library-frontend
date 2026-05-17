@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
-import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 describe('ConfirmDialogComponent', () => {
@@ -13,8 +13,8 @@ describe('ConfirmDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [ConfirmDialogComponent],
       providers: [
-        { provide: LIB_DIALOG_DATA, useValue: { title: 'Confirmar', message: '¿Estás seguro?' } },
-        { provide: LibDialogRef, useValue: { close: vi.fn(), afterClosed: () => [] } },
+        { provide: RETRO_DIALOG_DATA, useValue: { title: 'Confirmar', message: '¿Estás seguro?' } },
+        { provide: RetroDialogRef, useValue: { close: vi.fn(), afterClosed: () => [] } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ]
     });

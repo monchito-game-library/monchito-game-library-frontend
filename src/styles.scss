@@ -252,8 +252,8 @@ input[type='number'] {
   gap: 0.25rem;
 }
 
-// ────────────────────────── Utility: lib-divider ──────────────────────────────────
-.lib-divider {
+// ────────────────────────── Utility: retro-divider ──────────────────────────────────
+.retro-divider {
   border: none;
   border-top: 1px solid var(--border);
   margin: 1rem 0;
@@ -301,8 +301,8 @@ input[type='number'] {
   }
 }
 
-// ────────────────────────── lib-tooltip ──────────────────────────
-.lib-tooltip {
+// ────────────────────────── retro-tooltip ──────────────────────────
+.retro-tooltip {
   position: fixed;
   background: var(--bg-void);
   color: var(--text-hi);
@@ -321,17 +321,17 @@ input[type='number'] {
   }
 }
 
-// ────────────────────────── lib-overlay (CDK Overlay panels) ────────────────
+// ────────────────────────── retro-overlay (CDK Overlay panels) ────────────────
 
-.lib-overlay-backdrop {
+.retro-overlay-backdrop {
   background: rgba(0, 0, 0, 0.65);
 }
 
-.lib-overlay-backdrop--transparent {
+.retro-overlay-backdrop--transparent {
   background: transparent;
 }
 
-.lib-overlay-panel--dialog {
+.retro-overlay-panel--dialog {
   border: 1px solid var(--border);
   background: var(--bg-elev);
   border-radius: 0;
@@ -343,7 +343,7 @@ input[type='number'] {
   overflow: hidden;
 }
 
-.lib-dialog__title {
+.retro-dialog__title {
   margin: 0;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border);
@@ -354,7 +354,7 @@ input[type='number'] {
   color: var(--text-hi);
 }
 
-.lib-dialog__content {
+.retro-dialog__content {
   padding: 1.25rem;
   overflow-y: auto;
   color: var(--text-mid);
@@ -363,7 +363,7 @@ input[type='number'] {
   flex: 1 1 auto;
 }
 
-.lib-dialog__actions {
+.retro-dialog__actions {
   display: flex;
   gap: 0.5rem;
   padding: 1rem 1.25rem;
@@ -381,13 +381,13 @@ input[type='number'] {
   }
 }
 
-.lib-overlay-panel--menu {
+.retro-overlay-panel--menu {
   background: var(--bg-surface);
   border: 1px solid var(--border-strong);
   min-width: 12rem;
 }
 
-.lib-overlay-panel--bottom-sheet {
+.retro-overlay-panel--bottom-sheet {
   position: fixed !important;
   bottom: 0;
   left: 0;
@@ -398,12 +398,12 @@ input[type='number'] {
   background: var(--bg-surface);
 }
 
-// ─── lib-input — input nativo con estilos Terminal Collector ─────────────────
-// Aplicado como clase CSS al <input> / <textarea> dentro de lib-form-field.
-// El borde lo gestiona el contenedor .lib-form-field__control; aquí sólo
+// ─── retro-input — input nativo con estilos Terminal Collector ─────────────────
+// Aplicado como clase CSS al <input> / <textarea> dentro de retro-form-field.
+// El borde lo gestiona el contenedor .retro-form-field__control; aquí sólo
 // se definen los estilos de tipografía, color y comportamiento interno.
 
-.lib-input__control {
+.retro-input__control {
   flex: 1;
   background: transparent;
   border: none;
@@ -426,10 +426,10 @@ input[type='number'] {
   }
 }
 
-// ─── lib-select — panel de selección (fuera del shadow DOM) ──────────────────
+// ─── retro-select — panel de selección (fuera del shadow DOM) ──────────────────
 // El panel se teletransporta al body via CDK Portal; los estilos deben ser globales.
 
-.lib-select__panel {
+.retro-select__panel {
   background: var(--bg-elev);
   border: 1px solid var(--border-strong);
   padding: 0.25rem 0;
@@ -441,9 +441,9 @@ input[type='number'] {
   z-index: 1000;
 }
 
-// ─── lib-autocomplete — panel (fuera del shadow DOM) ─────────────────────────
+// ─── retro-autocomplete — panel (fuera del shadow DOM) ─────────────────────────
 
-.lib-autocomplete__panel {
+.retro-autocomplete__panel {
   background: var(--bg-elev);
   border: 1px solid var(--border-strong);
   padding: 0.25rem 0;

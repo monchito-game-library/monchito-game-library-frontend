@@ -2,7 +2,7 @@ import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -14,7 +14,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { HardwareFormBaseComponent } from './hardware-form-base.component';
 import { mockRouter } from '@/testing/router.mock';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
-import { mockLibSnackbar } from '@/testing/lib-snackbar.mock';
+import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
@@ -72,7 +72,7 @@ describe('HardwareFormBaseComponent', () => {
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: LibSnackbarService, useValue: mockLibSnackbar },
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco },
         { provide: STORE_USE_CASES, useValue: mockStoreUseCases },
         { provide: HARDWARE_BRAND_USE_CASES, useValue: mockBrandUseCases },
@@ -381,7 +381,7 @@ describe('HardwareFormBaseComponent', () => {
       const result = await (component as any)._loadHardwareForEdit('item-1');
 
       expect(result).toBeNull();
-      expect(mockLibSnackbar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test/list']);
     });
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderModel } from '@/models/order/order.model';
@@ -18,7 +18,7 @@ import { PlacingRow } from '@/interfaces/orders/order-placing.interface';
     class: 'order-detail-page__section order-detail-page__section--lines',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, LibIconComponent, TranslocoPipe]
+  imports: [DecimalPipe, RetroIconComponent, TranslocoPipe]
 })
 export class OrderPlacingComponent {
   /** The order being placed. */

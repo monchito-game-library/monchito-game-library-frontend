@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 
@@ -34,7 +34,7 @@ describe('SaleFormComponent', () => {
           translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
         })
       ],
-      providers: [{ provide: LibSnackbarService, useValue: snackBar }],
+      providers: [{ provide: RetroSnackbarService, useValue: snackBar }],
       schemas: [NO_ERRORS_SCHEMA]
     });
 

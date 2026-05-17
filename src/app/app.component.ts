@@ -13,19 +13,19 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
-import { LibSnackbarHostComponent } from '@/components/lib/lib-snackbar-host/lib-snackbar-host.component';
-import { LibMenuComponent } from '@/lib/lib-menu/lib-menu.component';
-import { LibMenuItemComponent } from '@/lib/lib-menu/lib-menu-item.component';
-import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directive';
+import { RetroSnackbarHostComponent } from '@/components/retro/retro-snackbar-host/retro-snackbar-host.component';
+import { RetroMenuComponent } from '@/retro/retro-menu/retro-menu.component';
+import { RetroMenuItemComponent } from '@/retro/retro-menu/retro-menu-item.component';
+import { RetroMenuTriggerDirective } from '@/retro/retro-menu/retro-menu-trigger.directive';
 
 @Component({
   selector: 'app-root',
@@ -36,14 +36,14 @@ import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directi
   imports: [
     RouterOutlet,
     RouterLink,
-    LibSkeletonComponent,
-    LibIconComponent,
+    RetroSkeletonComponent,
+    RetroIconComponent,
     TranslocoPipe,
     NgOptimizedImage,
-    LibSnackbarHostComponent,
-    LibMenuComponent,
-    LibMenuItemComponent,
-    LibMenuTriggerDirective
+    RetroSnackbarHostComponent,
+    RetroMenuComponent,
+    RetroMenuItemComponent,
+    RetroMenuTriggerDirective
   ]
 })
 export class AppComponent implements OnInit, OnDestroy {

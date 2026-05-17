@@ -1,0 +1,14 @@
+<button
+  class="retro-icon-btn"
+  [class.retro-icon-btn--primary]="variant() === 'primary'"
+  [class.retro-icon-btn--danger]="variant() === 'danger'"
+  [class.retro-icon-btn--ghost]="variant() === 'ghost'"
+  [class.retro-icon-btn--sm]="size() === 'sm'"
+  [class.retro-icon-btn--md]="size() === 'md'"
+  [class.retro-icon-btn--lg]="size() === 'lg'"
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  (click)="clicked.emit($event)">
+  <retro-icon class="retro-icon-btn__icon" [name]="icon()" />
+</button>

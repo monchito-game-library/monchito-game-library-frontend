@@ -14,8 +14,8 @@ import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cas
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { Router } from '@angular/router';
 
 function makeItem(overrides: Partial<WishlistItemModel> = {}): WishlistItemModel {
@@ -74,9 +74,9 @@ describe('WishlistComponent', () => {
           }
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
-        { provide: LibDialogService, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         {
-          provide: LibSnackbarService,
+          provide: RetroSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
@@ -271,7 +271,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.ngOnInit();
 
@@ -318,7 +318,7 @@ describe('WishlistComponent', () => {
   describe('onDeleteItem', () => {
     it('no elimina si el dialog se cancela', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       await component.onDeleteItem(makeItem());
@@ -330,9 +330,9 @@ describe('WishlistComponent', () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.deleteItem.mockResolvedValue(undefined);
       wishlistUseCases.getAllForUser.mockResolvedValue([]);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDeleteItem(makeItem());
 
@@ -343,9 +343,9 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error si deleteItem lanza', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.deleteItem.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDeleteItem(makeItem());
 
@@ -355,7 +355,7 @@ describe('WishlistComponent', () => {
 
   describe('onOwnItem', () => {
     it('no navega si el dialog se cancela', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -365,7 +365,7 @@ describe('WishlistComponent', () => {
     });
 
     it('navega a /games/add con el catalog entry si el dialog se confirma', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -378,7 +378,7 @@ describe('WishlistComponent', () => {
     });
 
     it('establece source como "rawg" cuando rawgId es truthy', async () => {
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -476,7 +476,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error si updateItem lanza en modo edición', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.updateItem.mockRejectedValue(new Error('update error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       (component as any)._editingItem = makeItem();
       component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
@@ -489,7 +489,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error si addItem lanza en modo creación', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.addItem.mockRejectedValue(new Error('add error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       component.mobileForm.setValue({ priority: 3, platform: 'PS5', desiredPrice: 50, notes: null });
       component.pendingCatalogEntry.set(mockCatalogEntry);

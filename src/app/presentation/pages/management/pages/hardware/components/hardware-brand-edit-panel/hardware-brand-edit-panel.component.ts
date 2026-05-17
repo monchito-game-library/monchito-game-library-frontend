@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -17,11 +17,11 @@ import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-
   imports: [
     ReactiveFormsModule,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent
   ],
   templateUrl: './hardware-brand-edit-panel.component.html',
   styleUrl: './hardware-brand-edit-panel.component.scss'

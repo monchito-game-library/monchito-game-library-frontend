@@ -12,17 +12,17 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
-import { LibChipComponent } from '@/components/lib/lib-chip/lib-chip.component';
+import { RetroChipComponent } from '@/components/retro/retro-chip/retro-chip.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -38,17 +38,17 @@ import { UserContextService } from '@/services/user-context/user-context.service
   imports: [
     CurrencyPipe,
     NgOptimizedImage,
-    LibIconComponent,
-    LibTooltipDirective,
+    RetroIconComponent,
+    RetroTooltipDirective,
     TranslocoPipe,
-    LibChipComponent,
-    LibIconButtonComponent
+    RetroChipComponent,
+    RetroIconButtonComponent
   ]
 })
 export class GameRowComponent {
   private readonly _router: Router = inject(Router);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -98,7 +98,7 @@ export class GameRowComponent {
     const game: GameListModel = this.game();
     if (!game.uuid) return;
 
-    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')

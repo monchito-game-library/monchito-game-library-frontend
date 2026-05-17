@@ -1,23 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibHintComponent } from '@/lib/lib-form-field/lib-hint.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroHintComponent } from '@/retro/retro-form-field/retro-hint.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 import {
-  LIB_DIALOG_DATA,
-  LibDialogActionsDirective,
-  LibDialogCloseDirective,
-  LibDialogContentDirective,
-  LibDialogRef,
-  LibDialogTitleDirective
-} from '@/services/lib-dialog/lib-dialog.service';
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@/services/retro-dialog/retro-dialog.service';
 
 /**
  * Confirmation dialog for permanently deleting a user.
@@ -33,26 +33,26 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibDialogTitleDirective,
-    LibDialogContentDirective,
-    LibDialogActionsDirective,
-    LibDialogCloseDirective,
-    LibIconComponent,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroDialogCloseDirective,
+    RetroIconComponent,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibHintComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroHintComponent
   ]
 })
 export class DeleteUserDialogComponent {
   /** Data injected into the dialog, containing the target user's email. */
-  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(LIB_DIALOG_DATA);
+  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(RETRO_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically. */
-  readonly dialogRef: LibDialogRef<DeleteUserDialogComponent, boolean> = inject(
-    LibDialogRef<DeleteUserDialogComponent, boolean>
+  readonly dialogRef: RetroDialogRef<DeleteUserDialogComponent, boolean> = inject(
+    RetroDialogRef<DeleteUserDialogComponent, boolean>
   );
 
   /** Reactive form requiring the operator to type the user's email to confirm. */

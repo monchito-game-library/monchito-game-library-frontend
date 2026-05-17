@@ -1,4 +1,4 @@
-// game-card usa app-lib-card como host, que ya aporta border 1px --border y fondo --bg-surface.
+// game-card usa app-retro-card como host, que ya aporta border 1px --border y fondo --bg-surface.
 // Este fichero sólo define el interior: flip, imagen, overlay y chips.
 
 .game-card {
@@ -251,10 +251,10 @@
     white-space: nowrap;
   }
 
-  // Hover: propaga el color dominante al border de lib-card (cae a --border-active si no hay dominante)
+  // Hover: propaga el color dominante al border de retro-card (cae a --border-active si no hay dominante)
   @media (hover: hover) {
     &:hover {
-      --lib-card-hover-border: var(--dominant-glow, var(--border-active));
+      --retro-card-hover-border: var(--dominant-glow, var(--border-active));
     }
   }
 }

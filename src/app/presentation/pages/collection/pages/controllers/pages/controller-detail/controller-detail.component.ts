@@ -10,7 +10,7 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
 
 @Component({
   selector: 'app-controller-detail',
@@ -18,7 +18,7 @@ import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
   styleUrl: './controller-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HardwareDetailShellComponent, LibChipComponent]
+  imports: [TranslocoPipe, HardwareDetailShellComponent, RetroChipComponent]
 })
 export class ControllerDetailComponent extends HardwareDetailBaseComponent {
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);

@@ -1,7 +1,7 @@
 import { Directive, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { StoreModel } from '@/models/store/store.model';
@@ -38,7 +38,7 @@ export abstract class HardwareFormBaseComponent {
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
-  protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  protected readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);

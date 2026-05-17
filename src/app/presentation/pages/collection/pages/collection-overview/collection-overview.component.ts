@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -33,11 +33,11 @@ import { UserContextService } from '@/services/user-context/user-context.service
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    LibIconComponent,
-    LibSkeletonComponent,
+    RetroIconComponent,
+    RetroSkeletonComponent,
     TranslocoPipe,
-    LibSectionHeaderComponent,
-    LibDataRowComponent
+    RetroSectionHeaderComponent,
+    RetroDataRowComponent
   ]
 })
 export class CollectionOverviewComponent implements OnInit {

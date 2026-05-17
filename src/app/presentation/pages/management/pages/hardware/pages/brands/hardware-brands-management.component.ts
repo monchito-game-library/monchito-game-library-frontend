@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -28,13 +28,13 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
     HardwareBrandEditPanelComponent,
     TranslocoPipe,
     CatalogItemCardComponent,
-    LibSkeletonComponent,
-    LibButtonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent
   ]
 })
 export class HardwareBrandsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
 

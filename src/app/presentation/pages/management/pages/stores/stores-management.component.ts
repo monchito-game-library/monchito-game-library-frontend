@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import {
@@ -27,10 +27,16 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoreEditPanelComponent, TranslocoPipe, CatalogItemCardComponent, LibSkeletonComponent, LibButtonComponent]
+  imports: [
+    StoreEditPanelComponent,
+    TranslocoPipe,
+    CatalogItemCardComponent,
+    RetroSkeletonComponent,
+    RetroButtonComponent
+  ]
 })
 export class StoresManagementComponent implements OnInit {
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);

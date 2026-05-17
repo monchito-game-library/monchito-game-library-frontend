@@ -322,9 +322,9 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 | Fichero | Exporta | Uso |
 |---|---|---|
 | `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
-| `dialog.mock.ts` | `mockDialog`, `mockDialogRef` | `{ provide: LibDialogService, useValue: mockDialog }` |
-| `lib-bottom-sheet.mock.ts` | `mockLibBottomSheet` | `{ provide: LibBottomSheetService, useValue: mockLibBottomSheet }` |
-| `lib-snackbar.mock.ts` | `mockLibSnackbar` | `{ provide: LibSnackbarService, useValue: mockLibSnackbar }` |
+| `dialog.mock.ts` | `mockDialog`, `mockDialogRef` | `{ provide: RetroDialogService, useValue: mockDialog }` |
+| `retro-bottom-sheet.mock.ts` | `mockRetroBottomSheet` | `{ provide: RetroBottomSheetService, useValue: mockRetroBottomSheet }` |
+| `retro-snackbar.mock.ts` | `mockRetroSnackbar` | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` |
 | `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
 | `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
 | `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |

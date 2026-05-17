@@ -141,7 +141,7 @@
     background: var(--bg-surface-hi);
     color: var(--text-mid);
 
-    app-lib-icon {
+    retro-icon {
       font-size: var(--text-xl);
       width: var(--text-xl);
       height: var(--text-xl);
@@ -316,14 +316,14 @@
   flex: 1;
 }
 
-.lib-radio-group {
+.retro-radio-group {
   display: inline-flex;
   border: 1px solid var(--border);
   padding: 0;
   margin: 0;
   flex-shrink: 0;
 
-  .lib-radio-group__option {
+  .retro-radio-group__option {
     padding: 0.5rem 0.75rem;
     cursor: pointer;
     color: var(--text-mid);

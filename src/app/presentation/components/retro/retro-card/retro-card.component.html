@@ -1,0 +1,13 @@
+<div
+  class="retro-card"
+  [class.retro-card--interactive]="interactive()"
+  [class.retro-card--padded]="padded()"
+  [class.retro-card--accent]="variant() === 'accent'"
+  [class.retro-card--muted]="variant() === 'muted'"
+  [attr.role]="interactive() ? 'button' : null"
+  [attr.tabindex]="interactive() ? 0 : null"
+  (click)="interactive() && cardClicked.emit($event)"
+  (keydown.enter)="interactive() && cardClicked.emit($any($event))"
+  (keydown.space)="onKeydown($event)">
+  <ng-content />
+</div>

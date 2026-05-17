@@ -1,0 +1,27 @@
+<button
+  #trigger
+  type="button"
+  class="retro-select__trigger"
+  role="combobox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-haspopup]="'listbox'"
+  [attr.aria-controls]="listboxId"
+  [attr.aria-labelledby]="ariaLabelledBy() || null"
+  [attr.aria-activedescendant]="open() ? _activeOptionId() : null"
+  [disabled]="_isDisabled()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)">
+  <span
+    class="retro-select__value"
+    [class.retro-select__value--placeholder]="!_value() && _value() !== 0 && _value() !== false">
+    {{ displayValue() }}
+  </span>
+  <retro-icon name="expand_more" class="retro-select__caret" [class.retro-select__caret--open]="open()" />
+</button>
+
+<!-- Panel (teleportado via CDK Portal) -->
+<ng-template #panel>
+  <ul class="retro-select__panel" [id]="listboxId" role="listbox" [attr.aria-labelledby]="ariaLabelledBy() || null">
+    <ng-content />
+  </ul>
+</ng-template>

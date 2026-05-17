@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
 import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
 import {
-  LIB_DIALOG_DATA,
-  LibDialogActionsDirective,
-  LibDialogContentDirective,
-  LibDialogRef,
-  LibDialogTitleDirective
-} from '@/services/lib-dialog/lib-dialog.service';
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@/services/retro-dialog/retro-dialog.service';
 
 @Component({
   selector: 'app-avatar-crop-dialog',
@@ -20,21 +20,21 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibDialogTitleDirective,
-    LibDialogContentDirective,
-    LibDialogActionsDirective,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
     TranslocoPipe,
-    LibSpinnerComponent,
-    LibButtonComponent
+    RetroSpinnerComponent,
+    RetroButtonComponent
   ]
 })
 export class AvatarCropDialogComponent extends CropInteractionBase implements OnDestroy {
-  private readonly _dialogRef: LibDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
-    LibDialogRef<AvatarCropDialogComponent, Blob | null>
+  private readonly _dialogRef: RetroDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
+    RetroDialogRef<AvatarCropDialogComponent, Blob | null>
   );
 
   /** Cropper configuration received from the parent component. */
-  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(LIB_DIALOG_DATA);
+  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(RETRO_DIALOG_DATA);
 
   /** Object URL pointing to the file being cropped. Revoked on destroy. */
   readonly imageUrl!: string;

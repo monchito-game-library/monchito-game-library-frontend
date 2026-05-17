@@ -1,0 +1,18 @@
+<nav class="retro-router-tabs" [attr.aria-label]="ariaLabel() || null">
+  @for (item of items(); track item.path) {
+    <a
+      class="retro-router-tabs__link"
+      [routerLink]="item.path"
+      [routerLinkActiveOptions]="item.exact ? { exact: true } : {}"
+      routerLinkActive
+      #rla="routerLinkActive"
+      [class.retro-router-tabs__link--active]="rla.isActive"
+      [attr.aria-current]="rla.isActive ? 'page' : null">
+      @if (item.icon) {
+        <retro-icon [name]="item.icon" />
+      }
+      <span>{{ item.label | transloco }}</span>
+    </a>
+  }
+</nav>
+<router-outlet />

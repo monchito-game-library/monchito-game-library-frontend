@@ -10,19 +10,19 @@ import {
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
@@ -48,14 +48,14 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibIconComponent,
-    LibSpinnerComponent,
-    LibTooltipDirective,
-    LibIconButtonComponent,
+    RetroIconComponent,
+    RetroSpinnerComponent,
+    RetroTooltipDirective,
+    RetroIconButtonComponent,
     TranslocoPipe,
     NgOptimizedImage,
-    LibSkeletonComponent,
-    LibButtonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {
@@ -63,8 +63,8 @@ export class UsersManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
 
   /** Whether the user list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -153,7 +153,7 @@ export class UsersManagementComponent implements OnInit {
     const titleKey = newRole === 'admin' ? 'management.users.promote.title' : 'management.users.demote.title';
     const messageKey = newRole === 'admin' ? 'management.users.promote.message' : 'management.users.demote.message';
 
-    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate(titleKey),
         message: this._transloco.translate(messageKey, { email: user.email })
@@ -176,7 +176,7 @@ export class UsersManagementComponent implements OnInit {
     if (user.role === 'owner') return;
     if (user.userId === this._userContext.userId()) return;
 
-    const dialogRef: LibDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
+    const dialogRef: RetroDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
       data: { email: user.email } satisfies DeleteUserDialogInterface,
       autoFocus: false
     });

@@ -11,16 +11,16 @@ import {
   ViewChild,
   WritableSignal
 } from '@angular/core';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibCommandBarComponent } from '@/lib/lib-command-bar/lib-command-bar.component';
-import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroCommandBarComponent } from '@/retro/retro-command-bar/retro-command-bar.component';
+import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { LibBottomSheetService } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroBottomSheetService } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameListModel } from '@/models/game/game-list.model';
@@ -38,7 +38,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
 import { GameRowComponent } from '@/pages/collection/pages/games/components/game-row/game-row.component';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
@@ -55,30 +55,30 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    LibIconComponent,
+    RetroIconComponent,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
-    LibSkeletonComponent,
+    RetroSkeletonComponent,
     ListPageHeaderComponent,
     GameListFiltersBarComponent,
     GameListFiltersSheetComponent,
     GameRowComponent,
-    LibButtonComponent,
-    LibCommandBarComponent,
-    LibEmptyStateComponent
+    RetroButtonComponent,
+    RetroCommandBarComponent,
+    RetroEmptyStateComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
-  private readonly _bottomSheet: LibBottomSheetService = inject(LibBottomSheetService);
+  private readonly _bottomSheet: RetroBottomSheetService = inject(RetroBottomSheetService);
   private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
@@ -239,7 +239,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   );
 
   /**
-   * Flags dinámicos para el lib-command-bar según el estado actual de la lista.
+   * Flags dinámicos para el retro-command-bar según el estado actual de la lista.
    * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
    */
   readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {

@@ -14,23 +14,23 @@ import { DatePipe, Location, NgOptimizedImage } from '@angular/common';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
-import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
-import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroCheckboxComponent } from '@/components/retro/retro-checkbox/retro-checkbox.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RetroAutocompleteComponent } from '@/retro/retro-autocomplete/retro-autocomplete.component';
+import { RetroAutocompleteTriggerDirective } from '@/retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { firstValueFrom } from 'rxjs';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -74,22 +74,22 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     NgOptimizedImage,
     ReactiveFormsModule,
     DatePipe,
-    LibCheckboxComponent,
-    LibIconComponent,
-    LibSpinnerComponent,
-    LibIconButtonComponent,
+    RetroCheckboxComponent,
+    RetroIconComponent,
+    RetroSpinnerComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    LibSkeletonComponent,
+    RetroSkeletonComponent,
     CatalogSearchPanelComponent,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent,
-    LibSelectComponent,
-    LibOptionComponent,
-    LibAutocompleteComponent,
-    LibAutocompleteTriggerDirective
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroSelectComponent,
+    RetroOptionComponent,
+    RetroAutocompleteComponent,
+    RetroAutocompleteTriggerDirective
   ]
 })
 export class GameFormComponent implements OnInit {
@@ -98,8 +98,8 @@ export class GameFormComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _dialog: LibDialogService = inject(LibDialogService);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -444,7 +444,7 @@ export class GameFormComponent implements OnInit {
     const confirmTitle: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
     const confirmMessage: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
-    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
@@ -536,7 +536,7 @@ export class GameFormComponent implements OnInit {
     const imageUrl: string | null = this.selectedImageUrl();
     if (!imageUrl) return;
 
-    const dialogRef: LibDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
+    const dialogRef: RetroDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
       GameCoverPositionDialogComponent,
       {
         data: {

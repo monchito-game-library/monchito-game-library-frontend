@@ -12,9 +12,9 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
-import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
-import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
-import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
 
 @Component({
   selector: 'app-console-detail',
@@ -25,9 +25,9 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
   imports: [
     TranslocoPipe,
     HardwareDetailShellComponent,
-    LibChipComponent,
-    LibSectionHeaderComponent,
-    LibDataRowComponent
+    RetroChipComponent,
+    RetroSectionHeaderComponent,
+    RetroDataRowComponent
   ]
 })
 export class ConsoleDetailComponent extends HardwareDetailBaseComponent {

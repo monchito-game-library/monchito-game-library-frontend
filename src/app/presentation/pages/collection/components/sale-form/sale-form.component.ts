@@ -12,18 +12,18 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibCheckboxComponent } from '@/lib/lib-checkbox/lib-checkbox.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
-import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
-import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
-import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroCheckboxComponent } from '@/retro/retro-checkbox/retro-checkbox.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroDatepickerComponent } from '@/retro/retro-datepicker/retro-datepicker.component';
+import { RetroDatepickerDirective } from '@/retro/retro-datepicker/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@/retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
@@ -42,22 +42,22 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibIconComponent,
-    LibIconButtonComponent,
-    LibCheckboxComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    RetroCheckboxComponent,
     TranslocoPipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent,
-    LibDatepickerComponent,
-    LibDatepickerDirective,
-    LibDatepickerToggleDirective
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroDatepickerComponent,
+    RetroDatepickerDirective,
+    RetroDatepickerToggleDirective
   ]
 })
 export class SaleFormComponent implements OnInit {
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Initial sale values used to pre-fill the form. */

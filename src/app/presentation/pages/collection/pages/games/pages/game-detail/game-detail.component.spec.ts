@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { mockLocation } from '@/testing/location.mock';
-import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -94,9 +94,9 @@ describe('GameDetailComponent', () => {
           } as Partial<WorkUseCasesContract>
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
-        { provide: LibDialogService, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         {
-          provide: LibSnackbarService,
+          provide: RetroSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         },
         { provide: Router, useValue: { navigate: vi.fn() } },
@@ -159,7 +159,7 @@ describe('GameDetailComponent', () => {
     it('muestra snackbar de error y navega a /games si la carga falla', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.getGameForEdit.mockRejectedValue(new Error('load error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
       component.ngOnInit();
@@ -211,7 +211,7 @@ describe('GameDetailComponent', () => {
   describe('deleteGame', () => {
     it('no abre el dialog si game es null', async () => {
       component.game.set(null);
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
 
       await component.deleteGame();
 
@@ -221,7 +221,7 @@ describe('GameDetailComponent', () => {
     it('no elimina si el dialog se cancela', async () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       await component.deleteGame();
@@ -232,7 +232,7 @@ describe('GameDetailComponent', () => {
     it('llama a deleteGame y navega a /games si se confirma', async () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -246,9 +246,9 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.deleteGame.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.deleteGame();
 
@@ -259,7 +259,7 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.deleteGame.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(LibDialogService as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       await component.deleteGame();
@@ -592,7 +592,7 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.updateSaleStatus.mockRejectedValue(new Error('undo error'));
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.undoSell();
 
@@ -636,9 +636,9 @@ describe('GameDetailComponent', () => {
             } as Partial<WorkUseCasesContract>
           },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
-          { provide: LibDialogService, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
+          { provide: RetroDialogService, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
           {
-            provide: LibSnackbarService,
+            provide: RetroSnackbarService,
             useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
           },
           { provide: Router, useValue: { navigate: vi.fn() } },
@@ -657,7 +657,7 @@ describe('GameDetailComponent', () => {
 
     it('muestra snackbar cuando userId es null al intentar eliminar un juego', async () => {
       guardComponent.game.set(makeGame());
-      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await guardComponent.deleteGame();
 

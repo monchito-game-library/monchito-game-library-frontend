@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -48,8 +48,8 @@ const setupTestBed = (data: AddEditLineDialogData): ComponentFixture<AddEditLine
       })
     ],
     providers: [
-      { provide: LibDialogRef, useValue: mockDialogRef },
-      { provide: LIB_DIALOG_DATA, useValue: data }
+      { provide: RetroDialogRef, useValue: mockDialogRef },
+      { provide: RETRO_DIALOG_DATA, useValue: data }
     ],
     schemas: [NO_ERRORS_SCHEMA]
   });

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { WishlistItemDialogComponent } from './wishlist-item-dialog.component';
-import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { TranslocoService } from '@jsverse/transloco';
 
@@ -33,8 +33,8 @@ describe('WishlistItemDialogComponent — modo add', () => {
     TestBed.configureTestingModule({
       imports: [WishlistItemDialogComponent],
       providers: [
-        { provide: LIB_DIALOG_DATA, useValue: { mode: 'add' } },
-        { provide: LibDialogRef, useValue: mockDialogRef },
+        { provide: RETRO_DIALOG_DATA, useValue: { mode: 'add' } },
+        { provide: RetroDialogRef, useValue: mockDialogRef },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -136,8 +136,8 @@ describe('WishlistItemDialogComponent — modo edit', () => {
     TestBed.configureTestingModule({
       imports: [WishlistItemDialogComponent],
       providers: [
-        { provide: LIB_DIALOG_DATA, useValue: { mode: 'edit', item: existingItem } },
-        { provide: LibDialogRef, useValue: mockDialogRef },
+        { provide: RETRO_DIALOG_DATA, useValue: { mode: 'edit', item: existingItem } },
+        { provide: RetroDialogRef, useValue: mockDialogRef },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ],
       schemas: [NO_ERRORS_SCHEMA]

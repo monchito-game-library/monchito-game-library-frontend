@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -17,12 +17,12 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
 import {
-  LIB_DIALOG_DATA,
-  LibDialogActionsDirective,
-  LibDialogContentDirective,
-  LibDialogRef,
-  LibDialogTitleDirective
-} from '@/services/lib-dialog/lib-dialog.service';
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@/services/retro-dialog/retro-dialog.service';
 
 @Component({
   selector: 'app-wishlist-item-dialog',
@@ -32,31 +32,31 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    LibDialogTitleDirective,
-    LibDialogContentDirective,
-    LibDialogActionsDirective,
-    LibIconButtonComponent,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroIconButtonComponent,
     NgOptimizedImage,
     TranslocoPipe,
     CatalogSearchPanelComponent,
     SlicePipe,
-    LibButtonComponent,
-    LibFormFieldComponent,
-    LibInputDirective,
-    LibLabelComponent,
-    LibErrorComponent,
-    LibSelectComponent,
-    LibOptionComponent
+    RetroButtonComponent,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ]
 })
 export class WishlistItemDialogComponent {
-  private readonly _dialogRef: LibDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
-    LibDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
+  private readonly _dialogRef: RetroDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
+    RetroDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
   );
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
   /** Dialog configuration: mode and optional existing item. */
-  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(LIB_DIALOG_DATA);
+  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(RETRO_DIALOG_DATA);
 
   /** Available priority levels (1–5). */
   readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;

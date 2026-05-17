@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, Signal } from '@angular/core';
-import { LIB_BOTTOM_SHEET_DATA } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
-import { LIB_OVERLAY_REF, LibOverlayRef } from '@/services/lib-overlay/lib-overlay.service';
-import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
-import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
-import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
-import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { RETRO_BOTTOM_SHEET_DATA } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
+import { RETRO_OVERLAY_REF, RetroOverlayRef } from '@/services/retro-overlay/retro-overlay.service';
+import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
+import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
+import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
+import { RetroCheckboxComponent } from '@/components/retro/retro-checkbox/retro-checkbox.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
-import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-game-list-filters-sheet',
@@ -24,20 +24,20 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    LibButtonComponent,
-    LibIconButtonComponent,
-    LibIconComponent,
-    LibCheckboxComponent,
+    RetroButtonComponent,
+    RetroIconButtonComponent,
+    RetroIconComponent,
+    RetroCheckboxComponent,
     TranslocoPipe,
-    LibFormFieldComponent,
-    LibLabelComponent,
-    LibSelectComponent,
-    LibOptionComponent
+    RetroFormFieldComponent,
+    RetroLabelComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ]
 })
 export class GameListFiltersSheetComponent {
-  private readonly _sheetRef: LibOverlayRef | null = inject(LIB_OVERLAY_REF, { optional: true });
-  private readonly _sheetData: GameListFiltersSheetData | null = inject(LIB_BOTTOM_SHEET_DATA, {
+  private readonly _sheetRef: RetroOverlayRef | null = inject(RETRO_OVERLAY_REF, { optional: true });
+  private readonly _sheetData: GameListFiltersSheetData | null = inject(RETRO_BOTTOM_SHEET_DATA, {
     optional: true
   }) as GameListFiltersSheetData | null;
 

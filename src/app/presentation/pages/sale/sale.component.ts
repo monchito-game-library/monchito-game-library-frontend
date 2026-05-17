@@ -9,11 +9,11 @@ import {
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { LibTabsComponent } from '@/lib/lib-tabs/lib-tabs.component';
-import { LibTabComponent } from '@/lib/lib-tabs/lib-tab.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroTabsComponent } from '@/retro/retro-tabs/retro-tabs.component';
+import { RetroTabComponent } from '@/retro/retro-tabs/retro-tab.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
@@ -35,18 +35,18 @@ import { Router } from '@angular/router';
   imports: [
     CurrencyPipe,
     DatePipe,
-    LibIconComponent,
-    LibTabsComponent,
-    LibTabComponent,
+    RetroIconComponent,
+    RetroTabsComponent,
+    RetroTabComponent,
     TranslocoPipe,
-    LibSpinnerComponent
+    RetroSpinnerComponent
   ]
 })
 export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
-  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Active tab: 'available' or 'history'. */
@@ -120,7 +120,7 @@ export class SaleComponent implements OnInit {
   }
 
   /**
-   * Callback para selectedIndexChange de lib-tabs.
+   * Callback para selectedIndexChange de retro-tabs.
    * Mapea el índice numérico a la clave SaleTab correspondiente.
    *
    * @param {number} index - Índice del tab seleccionado (0 = available, 1 = history).
