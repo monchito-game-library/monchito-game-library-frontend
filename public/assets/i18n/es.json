@@ -59,7 +59,8 @@
     "delete": "Eliminar",
     "back": "Volver",
     "loading": "Cargando",
-    "clear": "Limpiar"
+    "clear": "Limpiar",
+    "notifications": "Notificaciones"
   },
   "cropDialog": {
     "hint": "Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom"
