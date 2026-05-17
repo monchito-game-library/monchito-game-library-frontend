@@ -42,14 +42,12 @@
   }
 
   @if (showAddBtn()) {
-    <button
-      mat-flat-button
-      color="primary"
+    <app-lib-button
       class="list-page-header__add-btn"
+      variant="primary"
+      icon="add"
+      [label]="'nav.add' | transloco"
       [disabled]="disabled()"
-      (click)="addClick.emit()">
-      <mat-icon>add</mat-icon>
-      {{ 'nav.add' | transloco }}
-    </button>
+      (clicked)="addClick.emit()" />
   }
 </div>

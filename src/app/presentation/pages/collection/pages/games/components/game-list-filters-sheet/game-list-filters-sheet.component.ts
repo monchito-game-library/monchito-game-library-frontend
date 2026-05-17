@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, Signal } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 @Component({
   selector: 'app-game-list-filters-sheet',
@@ -22,7 +23,7 @@ import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.i
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    LibButtonComponent,
     MatIconButton,
     MatDivider,
     MatFormField,

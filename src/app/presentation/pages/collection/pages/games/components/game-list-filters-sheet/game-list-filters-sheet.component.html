@@ -105,9 +105,10 @@
 
   <!-- Footer -->
   <div class="filters-sheet__footer">
-    <button mat-stroked-button color="warn" (click)="onClearAll()">
-      <mat-icon>filter_alt_off</mat-icon>
-      {{ 'gameList.empty.clearFilters' | transloco }}
-    </button>
+    <app-lib-button
+      variant="danger"
+      icon="filter_alt_off"
+      [label]="'gameList.empty.clearFilters' | transloco"
+      (clicked)="onClearAll()" />
   </div>
 </div>

@@ -92,6 +92,23 @@ html {
   --radius-lg: 0;
   --radius-full: 0;
 
+  /* ── Tokens legacy reasignados ─────────────────────────
+     Páginas fuera del scope del rediseño (orders, management, catalog-search,
+     auth-panel, sale, settings) siguen consumiendo estos tokens. Los mapeamos
+     a equivalentes Terminal Collector para no romper su render visual.
+     Las páginas se migrarán cuando se aborde su rediseño en otra iteración. */
+  --color-rating: var(--accent-amber);
+  --color-metacritic: var(--accent-green);
+  --color-status-ordered-bg: transparent;
+  --color-status-ordered-text: var(--accent-blue);
+  --color-status-shipped-bg: transparent;
+  --color-status-shipped-text: var(--accent-amber);
+  --color-status-received-bg: transparent;
+  --color-status-received-text: var(--accent-green);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
   /* ── Tipografía ─────────────────────────────────────── */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
