@@ -186,6 +186,23 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `components/catalog-search-panel/catalog-search-panel.component.spec.ts` | 10 | ✅ Cubierto |
 | `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
 
+#### Librería `lib/` (Terminal Collector)
+
+| Fichero | Tests | Estado |
+|---|---|---|
+| `components/lib/lib-badge/lib-badge.component.spec.ts` | 3 | ✅ Cubierto |
+| `components/lib/lib-button/lib-button.component.spec.ts` | 7 | ✅ Cubierto |
+| `components/lib/lib-card/lib-card.component.spec.ts` | 5 | ✅ Cubierto |
+| `components/lib/lib-checkbox/lib-checkbox.component.spec.ts` | 17 | ✅ Cubierto |
+| `components/lib/lib-chip/lib-chip.component.spec.ts` | 5 | ✅ Cubierto |
+| `components/lib/lib-command-bar/lib-command-bar.component.spec.ts` | 5 | ✅ Cubierto |
+| `components/lib/lib-data-row/lib-data-row.component.spec.ts` | 3 | ✅ Cubierto |
+| `components/lib/lib-empty-state/lib-empty-state.component.spec.ts` | 5 | ✅ Cubierto |
+| `components/lib/lib-icon-button/lib-icon-button.component.spec.ts` | 3 | ✅ Cubierto |
+| `components/lib/lib-section-header/lib-section-header.component.spec.ts` | 4 | ✅ Cubierto |
+| `components/lib/lib-skeleton/lib-skeleton.component.spec.ts` | 4 | ✅ Cubierto |
+| `components/lib/lib-spinner/lib-spinner.component.spec.ts` | 2 | ✅ Cubierto |
+
 #### Auth (`pages/auth`)
 
 | Fichero | Tests | Estado |
@@ -279,6 +296,15 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts` | 23 | ✅ Cubierto |
 
 **Qué se cubre** (componentes):
+- `LibButtonComponent`: label requerido, modificadores `--primary`/`--ghost`/`--danger`/`--success`, `disabled`, `loading` (icono spin), proyección `<ng-content>` (SVG inline) y precedencia ng-content vs `icon` input (regla CSS `:not(:empty) ~ .lib-btn__icon { display: none }`).
+- `LibIconButtonComponent`: icono requerido, `ariaLabel`, variantes de tamaño `sm`/`md`/`lg`, `:host { display: contents }` para directivas Material (`matTooltip`, `matMenuTriggerFor`, `matSuffix`).
+- `LibCardComponent`: `interactive` (role + tabindex + key handlers), `padded`, variantes; emisión de `cardClicked` con Enter/Space/click.
+- `LibCheckboxComponent`: CVA completo (`writeValue`, `registerOnChange`, `registerOnTouched`, `setDisabledState`), modo standalone (`checked` + `disabled`) y modo reactive form (ignora inputs); patrón `[X]/[ ]` mono; output `changed`.
+- `LibChipComponent`: variantes de color (6), `filled` (fondo sólido), `icon`, `closable` (botón X + emisión `closed` con stopPropagation).
+- `LibBadgeComponent`: variantes (6) y modo `dot`.
+- `LibSpinnerComponent`: variantes `bars`/`dots`/`blocks` × tamaños `inline`/`sm`/`md`/`lg`.
+- `LibSkeletonComponent`: width/height custom, `shape` semántico, `role="status"` + `aria-busy`.
+- `LibDataRowComponent` / `LibSectionHeaderComponent` / `LibCommandBarComponent` / `LibEmptyStateComponent`: renderizado de inputs, slots `<ng-content>` cuando aplica.
 - `CatalogSearchPanelComponent`: valores iniciales, `onSearchInput`, `onSelectGame`.
 - `ConfirmDialogComponent`: existencia y datos inyectados.
 - `LoginComponent` / `RegisterComponent` / `ForgotPasswordComponent` / `ResetPasswordComponent`: validaciones de formulario, estados de `loading`, emisión de errores, integración con use cases. Para `RegisterComponent` y `ResetPasswordComponent` se cubren además las ramas early-return del validador privado `_passwordMatchValidator` invocándolo directamente vía `(component as any)._passwordMatchValidator(group)` con grupos sintéticos que carecen de uno de los controles.
@@ -374,11 +400,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Servicios | 7 | 90 |
 | Abstractas | 5 | 175 |
 | App component | 1 | 31 |
-| Componentes | 72 | 1514 |
+| Componentes (incluye `lib/` × 12 ficheros / 63 tests) | 84 | 1577 |
 | Utilidades | 8 | 106 |
-| **Total** | **149** | **2622** |
 
-> Fuente autoritativa: `npm test`.
+> Fuente autoritativa: `npm test`. Vitest reporta actualmente **158 ficheros / 2648 tests passed**. Ejecutar `/update-testing` para sincronizar la tabla por capa con los conteos exactos.
 
 ---
 

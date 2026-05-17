@@ -11,7 +11,6 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -41,7 +40,6 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
     MatInput,
     MatSelect,
     MatOption,
-    MatIcon,
     NgOptimizedImage,
     TranslocoPipe,
     CatalogSearchPanelComponent,

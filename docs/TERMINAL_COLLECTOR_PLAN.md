@@ -19,6 +19,7 @@
    - [FASE 5 — Material overrides y lib extras](#fase-5--material-overrides-y-lib-extras)
    - [FASE 6 — Migración y rediseño de componentes ad-hoc](#fase-6--migración-y-rediseño-de-componentes-ad-hoc)
    - [FASE 7 — Migración de botones, mat-card, mat-menu y mat-slide-toggle](#fase-7--migración-de-botones-mat-card-mat-menu-y-mat-slide-toggle)
+   - [FASE 8 — Ampliaciones de `lib/` y cierre de excepciones](#fase-8--ampliaciones-de-lib-y-cierre-de-excepciones)
 5. [Checkpoints](#5-checkpoints)
 6. [Notas operativas](#6-notas-operativas)
 
@@ -2769,6 +2770,295 @@ Si OK → PR único `feat: terminal collector redesign` contra `master` con squa
 
 ---
 
+### FASE 8 — Ampliaciones de `lib/` y cierre de excepciones
+
+> **Objetivo**: cerrar las dos únicas excepciones documentadas tras Fase 7 (6 botones OAuth con SVG inline + 10 `mat-icon-button matSuffix` en formularios) **ampliando los componentes `lib/` existentes** en vez de mantener Material como excepción. Tras Fase 8, el grep `mat-icon-button|mat-stroked-button|mat-button\b|mat-flat-button` sobre `src/**.html` (excluyendo specs) devuelve **0 ocurrencias** y `lib-button` + `lib-icon-button` cubren el 100% de la app.
+>
+> **Estado al entrar en FASE 8** (verificable con grep tras Fase 7):
+> - `<button mat-stroked-button class="auth-oauth-btn">` con SVG inline: **6 ocurrencias** (3 en `login.component.html` Google/Discord/Twitch, 3 en `register.component.html` idem). Cada botón inyecta un `<svg viewBox="0 0 24 24">` con paths de marca + label i18n.
+> - `<button mat-icon-button matSuffix>`: **10 ocurrencias en 5 ficheros**:
+>   - `login.component.html` (1 — visibility toggle password)
+>   - `register.component.html` (2 — visibility toggles password + confirmPassword)
+>   - `reset-password.component.html` (2 — idem)
+>   - `hardware-form-shell.component.html` (3 — clear brand, clear model, clear store en autocompletes)
+>   - `game-form.component.html` (2 — clear platform, clear store en autocompletes)
+>
+> **Análisis técnico de viabilidad**: `matSuffix` es un selector de directiva (`[matSuffix], [matIconSuffix], [matTextSuffix]`) que se aplica al **host del componente**. El template del `mat-form-field` proyecta los suffixes via `<ng-content select="[matSuffix], [matIconSuffix]">`. Por tanto, `<app-lib-icon-button matSuffix>` se proyecta correctamente: la directiva queda en el host, `MAT_SUFFIX` token registra el componente en `_suffixChildren`, y Material lo posiciona en el slot de suffix del template. Como `lib-icon-button` ya tiene `:host { display: contents }` (Fase 7 Commit 14 — añadido para `matTooltip` y `matMenuTriggerFor`), el `<button>` interno queda como hijo directo de `.mat-mdc-form-field-icon-suffix` y Material puede alinearlo verticalmente. La migración **no requiere cambiar la API del componente**, sólo sustituir `<button mat-icon-button matSuffix>` por `<app-lib-icon-button matSuffix>` con `size="sm"` (32px, encaja en la altura del suffix de form-field con density -2).
+>
+> **Análisis técnico de OAuth**: la API actual de `lib-button` acepta `icon: string` que se pinta como `<mat-icon>{{ icon() }}</mat-icon>`. Los 6 botones OAuth necesitan SVG inline (paths de marca con `fill="#4285F4"`, etc.). La ampliación consiste en añadir un `<ng-content>` interno al template de `lib-button` que renderiza **antes** del label y **en lugar** del `<mat-icon>` si hay contenido proyectado. Esto:
+> - No rompe consumidores actuales (el slot vacío queda inerte).
+> - Mantiene `label` como required (sigue siendo el texto visible y se usa para el aria-label cuando no hay texto).
+> - Convierte la "excepción OAuth" en uso canónico del componente.
+>
+> **Sorpresa frente al brief inicial (Fase 7)**: la sección "Sorpresas frente al brief" del Commit 13 documenta dos excepciones (OAuth y matSuffix) que se asumían **imposibles de migrar**. El análisis técnico hecho para esta Fase 8 demuestra que ambas son **viables sin tocar la API pública del componente** (lib-icon-button) o con una ampliación mínima retrocompatible (lib-button + ng-content). El argumento de Fase 7 "matSuffix es slot de mat-form-field, no es un icon-button independiente" es **válido conceptualmente pero falso técnicamente**: como `[matSuffix]` es solo una directiva-marcador que se asocia al host, cualquier elemento (incluido un componente Angular) puede llevarla.
+>
+> **Eliminaciones esperadas tras Fase 8**:
+> - `MatButtonModule` desaparece de los imports de `login.component.ts`, `register.component.ts`, `reset-password.component.ts`, `hardware-form-shell.component.ts`, `game-form.component.html`. Tras Fase 8, **ningún componente de la app importa `MatButtonModule`**.
+> - El comentario `<!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->` desaparece de los 10 sitios donde está.
+> - La clase SCSS `.auth-oauth-btn` (en `auth-panel.component.scss`) puede vaciarse o reducirse — los estilos `lib-btn` ya cubren la estética. Mantener solo lo específico de OAuth (espaciado del SVG si difiere del `<mat-icon>` 1rem por defecto).
+
+#### Commit 18 — `feat(lib): lib-button acepta ng-content para SVG/contenido custom`
+
+**Objetivo**: ampliar `lib-button` con un slot `<ng-content>` que permite proyectar SVG inline o cualquier markup custom antes del label. Reemplaza la excepción de los 6 botones OAuth.
+
+**Ficheros afectados**:
+
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/components/lib/lib-button/lib-button.component.html` — añadir `<ng-content>` antes del bloque del icono.
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/components/lib/lib-button/lib-button.component.scss` — añadir reglas para que el contenido proyectado (típicamente `svg`) tenga tamaño y alineación coherentes con el `<mat-icon>` interno (1rem × 1rem, `flex-shrink: 0`).
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/components/lib/lib-button/lib-button.component.spec.ts` — añadir 2 specs:
+  1. Renderiza ng-content cuando se proyecta `<svg>`.
+  2. Cuando hay ng-content **y** `icon` definido, gana el ng-content (precedencia explícita).
+
+**Spec concreta de la ampliación**:
+
+API pública sin cambios — `label` sigue siendo required, `icon` sigue siendo opcional. Nueva regla: si hay contenido en `<ng-content>`, **no se renderiza el `<mat-icon>` aunque `icon` esté definido**.
+
+_Template antes_:
+```html
+<button class="lib-btn" ...>
+  @if (icon() && !loading()) {
+    <mat-icon class="lib-btn__icon">{{ icon() }}</mat-icon>
+  }
+  @if (loading()) {
+    <mat-icon class="lib-btn__icon lib-btn__icon--spin">progress_activity</mat-icon>
+  }
+  <span class="lib-btn__label">{{ label() }}</span>
+</button>
+```
+
+_Template después_:
+```html
+<button class="lib-btn" ...>
+  @if (loading()) {
+    <mat-icon class="lib-btn__icon lib-btn__icon--spin">progress_activity</mat-icon>
+  } @else {
+    <span class="lib-btn__slot"><ng-content /></span>
+    @if (icon()) {
+      <mat-icon class="lib-btn__icon">{{ icon() }}</mat-icon>
+    }
+  }
+  <span class="lib-btn__label">{{ label() }}</span>
+</button>
+```
+
+> Nota de orden de renderizado: el `<ng-content>` se proyecta **antes** del `<mat-icon>` interno. Para garantizar que solo uno de los dos aparece (precedencia ng-content), el SCSS aplica `.lib-btn__slot:not(:empty) ~ .lib-btn__icon { display: none }`. Alternativa más limpia (pero requiere TS): exponer un signal `_hasProjectedContent` consultando `ContentChild` — descartada por su coste vs la regla CSS de una línea.
+
+_SCSS añadido_:
+```scss
+.lib-btn__slot {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+
+  &:not(:empty) {
+    /* contenido proyectado activo */
+
+    &::v-deep,
+    & {
+      svg {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.lib-btn__slot:not(:empty) ~ .lib-btn__icon {
+  display: none;
+}
+```
+
+> `::ng-deep` está marcado como deprecated en Angular pero sigue funcionando. Alternativa: el SCSS del componente consumidor (auth-panel) ya define `.auth-oauth-btn svg { width: 1.25rem; height: 1.25rem }` — la regla puede vivir ahí en lugar del lib (más limpio: el lib NO impone tamaño al contenido proyectado, deja al consumidor decidir). **Decisión final**: el lib aplica un `display: inline-flex` + `line-height: 0` neutro al wrapper `.lib-btn__slot` y deja el sizing del SVG al consumidor. Esto evita `::ng-deep`.
+
+**Criterio de aceptación 18**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- Specs nuevos pasan (ng-content renderiza, precedencia ng-content sobre `icon`).
+- Visual check: un `<app-lib-button>` sin ng-content sigue renderizando idéntico (no hay regresión).
+- `docs/LIB_COMPONENTS.md` §4.1.1 ya cubre la documentación del slot — verificar que sigue alineada con la implementación final.
+
+#### Commit 19 — `style(auth): botones OAuth migrados a app-lib-button con SVG proyectado`
+
+**Objetivo**: sustituir los 6 botones `<button mat-stroked-button class="auth-oauth-btn">` por `<app-lib-button>` con el SVG proyectado como ng-content.
+
+**Ficheros afectados**:
+
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/login/login.component.html` — 3 botones OAuth (Google, Discord, Twitch).
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/register/register.component.html` — 3 botones OAuth idem.
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/login/login.component.ts` — quitar `MatButtonModule` del array `imports` si ya no quedan `mat-*-button` (tras este commit no quedan). Si después de revisar **todavía** queda algún `mat-*-button` (poco probable: solo el de submit que ya está migrado a lib-button), mantener el módulo.
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/register/register.component.ts` — idem.
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/components/auth-panel/auth-panel.component.scss` — vaciar / reducir `.auth-oauth-btn` (el lib-btn ya aporta border, padding, color, mono). Mantener sólo lo que sea específico (p.ej. tamaño del SVG `width: 1.25rem; height: 1.25rem;` y `flex-shrink: 0`).
+
+**Patrón canónico**:
+
+_Antes_:
+```html
+<button
+  mat-stroked-button
+  type="button"
+  class="auth-oauth-btn"
+  [disabled]="loading()"
+  (click)="onOAuthSignIn('google')">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="..." fill="#4285F4" />
+    ...
+  </svg>
+  {{ 'auth.continueWithGoogle' | transloco }}
+</button>
+```
+
+_Después_:
+```html
+<app-lib-button
+  [label]="'auth.continueWithGoogle' | transloco"
+  variant="ghost"
+  type="button"
+  [fullWidth]="true"
+  [disabled]="loading()"
+  (clicked)="onOAuthSignIn('google')">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="..." fill="#4285F4" />
+    ...
+  </svg>
+</app-lib-button>
+```
+
+**Específico SCSS auth-panel**:
+```scss
+/* DESPUÉS del commit 19 — sólo el SVG, no el botón */
+app-lib-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+```
+
+> El bloque `.auth-oauth-btn { height: 44px; font-size: ...; border-radius: var(--radius-sm); ... .mdc-button__label { ... } }` **se elimina por completo** — todas esas propiedades las aporta `lib-btn`.
+
+**Specs afectados**:
+- `login.component.spec.ts`, `register.component.spec.ts` — si hay tests que buscan `By.css('.auth-oauth-btn')`, cambiar a `By.css('app-lib-button')` filtrando por `[label]` o el handler.
+
+**Criterio de aceptación 19**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-stroked-button" src --include="*.html"` devuelve **0 resultados**.
+- Visual check en login/register en desktop y mobile: el SVG aparece a la izquierda del label, el corchete `[ CONTINUE WITH GOOGLE ]` se renderiza correctamente (en desktop), el botón pinta `width: 100%` y altura ≥ 44px en mobile.
+- Click en cada uno de los 3 botones dispara el handler con el provider correcto (`google`, `discord`, `twitch`).
+
+#### Commit 20 — `style(forms): mat-icon-button matSuffix → app-lib-icon-button matSuffix (auth + game-form + hardware-form-shell)`
+
+**Objetivo**: cerrar la última excepción Material — los 10 `mat-icon-button matSuffix` distribuidos en auth y forms se migran a `<app-lib-icon-button matSuffix size="sm">`.
+
+**Ficheros afectados** (10 botones en 5 ficheros):
+
+| # | Path (absoluto) | Botones | Contexto |
+|---|---|---|---|
+| 1 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/login/login.component.html` | 1 | Visibility toggle password |
+| 2 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/register/register.component.html` | 2 | Visibility toggles password + confirmPassword |
+| 3 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/reset-password/reset-password.component.html` | 2 | Visibility toggles idem |
+| 4 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/hardware-form-shell/hardware-form-shell.component.html` | 3 | Clear brand / model / store en autocompletes |
+| 5 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.html` | 2 | Clear platform / store en autocompletes |
+
+**Patrón canónico (visibility toggle)**:
+
+_Antes_:
+```html
+<button
+  mat-icon-button
+  matSuffix
+  type="button"
+  (click)="togglePasswordVisibility()"
+  [attr.aria-label]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco">
+  <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+</button>
+```
+
+_Después_:
+```html
+<app-lib-icon-button
+  matSuffix
+  size="sm"
+  [icon]="hidePassword() ? 'visibility' : 'visibility_off'"
+  [ariaLabel]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
+  (clicked)="togglePasswordVisibility()" />
+```
+
+**Patrón canónico (clear de autocomplete)**:
+
+_Antes_:
+```html
+<button
+  matSuffix
+  mat-icon-button
+  type="button"
+  (click)="form().get('brandId')?.setValue(null); brandChange.emit(null)">
+  <mat-icon>close</mat-icon>
+</button>
+```
+
+_Después_:
+```html
+<app-lib-icon-button
+  matSuffix
+  size="sm"
+  icon="close"
+  [ariaLabel]="'common.clear' | transloco"
+  (clicked)="form().get('brandId')?.setValue(null); brandChange.emit(null)" />
+```
+
+> **Nuevo requisito i18n**: `common.clear` (ES: "Limpiar", EN: "Clear"). Añadir en `src/assets/i18n/es.json` y `en.json` en el mismo commit. Los `clear` actuales en game-form no tienen `aria-label` definido — esto **mejora la accesibilidad** (regresión positiva).
+
+**Imports a actualizar (.ts)**:
+
+- En cada `.component.ts` afectado:
+  - Añadir `LibIconButtonComponent` desde `@/components/lib` al array `imports`.
+  - Quitar `MatButtonModule` si ya no quedan otros `mat-*-button`. **Verificar antes** con `grep -n "mat-icon-button\\|mat-flat-button\\|mat-stroked-button\\|mat-button\\b" <html>`.
+
+**Verificación de proyección al slot de form-field**:
+
+El template del `<mat-form-field>` proyecta los suffixes via `<ng-content select="[matSuffix], [matIconSuffix]">`. La directiva `[matSuffix]` se asocia al host `<app-lib-icon-button>`, registrando el componente en `_suffixChildren: ContentChildren(MAT_SUFFIX, { descendants: true })` del form-field. Como `:host { display: contents }` ya está aplicado (Commit 14), el `<button>` interno queda como hijo directo de `.mat-mdc-form-field-icon-suffix`.
+
+**Riesgos identificados y mitigaciones**:
+
+1. **Alineación vertical**: Material aplica `align-items: center` al wrapper suffix. El `<app-lib-icon-button size="sm">` mide 32×32. La altura del input outline en density -2 es ~40px. **Mitigación**: si hay misalign, añadir `vertical-align: middle` al `:host` de `lib-icon-button` o `margin: auto 0` al `<button>` interno. Verificar visualmente en los 5 ficheros tras la migración.
+2. **Padding lateral del suffix slot**: Material aplica `padding: 0 4px` al wrapper. Si el botón queda pegado al outline, el SCSS local del form-field consumidor puede ajustarse vía `::ng-deep .mat-mdc-form-field-icon-suffix { padding-right: 8px }`. **Solo si se detecta visualmente**, no preventivo.
+3. **Tests rotos**: specs que hagan `By.css('button[mat-icon-button][matSuffix]')` rompen. Cambiar a `By.css('app-lib-icon-button[matSuffix]')` o filtrar por aria-label.
+
+**Eliminación del HACK comment**: tras migrar cada botón, borrar el comentario `<!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->`. Total de comments a eliminar: 10 ocurrencias en 5 ficheros (verificar con `grep -rn "HACK: matSuffix" src`).
+
+**Criterio de aceptación 20**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-icon-button" src --include="*.html" | wc -l` devuelve **0**.
+- `grep -rn "HACK: matSuffix" src` devuelve **0**.
+- Visual check: en los 5 forms, el botón suffix se renderiza con la estética terminal (32px, sin ripple, sin border-radius). La altura del input no cambia respecto al estado pre-Fase 8. El click toggle/clear funciona idénticamente.
+- Auth password visibility: pulsar el botón cambia el icono entre `visibility` y `visibility_off` y el tipo del input entre `password` y `text`.
+- Autocomplete clear: pulsar el botón limpia el control del form y emite el evento change correspondiente.
+- Touch target en mobile ≥ 44px (el override `@media (max-width: 768px)` de `lib-icon-button` ya lo garantiza).
+
+→ **CHECKPOINT 8 FINAL**: la app no contiene ningún `mat-*-button` ni ningún `mat-icon-button` en sus templates. La librería `lib/` cubre el 100% de los botones de la app. Las excepciones documentadas en Fase 7 quedan cerradas.
+
+Criterios objetivos:
+- `grep -rn "mat-flat-button\\|mat-stroked-button\\|mat-icon-button\\|mat-fab\\|mat-mini-fab" src --include="*.html"` devuelve **0 resultados** salvo el `<button mat-fab class="orders-page__fab">` de `orders-list.component.html` (ver §6 — Notas operativas: queda como excepción aceptada o se mete en un futuro commit 21 si se decide migrar).
+- `grep -rn "<button mat-button\\b" src --include="*.html"` devuelve **0 resultados**.
+- `grep -rn "MatButtonModule" src --include="*.ts"` devuelve **0 resultados** o quedan solo en los specs de Material (no en componentes de la app).
+- `docs/frontend/AD_HOC_COMPONENTS.md` está **eliminado** del repo (era documentación de los 3 componentes ad-hoc — `SkeletonComponent`, `ToggleSwitchComponent`, `BadgeChipComponent` — migrados en Fase 6). El nuevo fichero de referencia es `docs/LIB_COMPONENTS.md`.
+- `docs/TESTING.md` actualizado para que las 3 entradas que aún referencian `components/ad-hoc/badge-chip`, `components/ad-hoc/skeleton`, `components/ad-hoc/toggle-switch` se eliminen o se reemplacen por las entradas de los specs de `lib-skeleton`, `lib-checkbox`, etc.
+- Visual final en los 6 viewports: 0 regresiones respecto a Checkpoint 7. La estética terminal es total y la API es uniforme: cualquier botón de la app es `lib-button` o `lib-icon-button`.
+
+Si OK → PR único `feat: terminal collector redesign` contra `master` con squash merge. Si Fase 8 se hace **después** de cerrar la PR de Fase 7, va en una PR aparte `feat(lib): cerrar excepciones OAuth y matSuffix (Fase 8)`.
+
+#### Limpieza documental obligatoria al cerrar Fase 8
+
+| Acción | Path |
+|---|---|
+| **Eliminar** | `/Users/alcheca/git/personal/monchito-game-library/docs/frontend/AD_HOC_COMPONENTS.md` |
+| **Verificar (no debe haber referencias)** | `grep -rn "ad-hoc\\|AD_HOC_COMPONENTS" /Users/alcheca/git/personal/monchito-game-library/docs/ /Users/alcheca/git/personal/monchito-game-library/CLAUDE.md` |
+| **Actualizar** | `/Users/alcheca/git/personal/monchito-game-library/docs/TESTING.md` — quitar líneas 186-188 (refs a `components/ad-hoc/badge-chip`, `components/ad-hoc/skeleton`, `components/ad-hoc/toggle-switch`) y línea 285-286 (descripciones de ToggleSwitchComponent y BadgeChipComponent). Re-ejecutar `/update-testing` para sincronizar con los specs reales de `lib-*`. |
+| **Referencia oficial** | A partir de Fase 8, `docs/LIB_COMPONENTS.md` es la única fuente de verdad sobre componentes de la lib. Cualquier `README` o doc que apunte a ad-hoc debe redirigirse aquí. |
+
+> El fichero `docs/frontend/AD_HOC_COMPONENTS.md` describe `SkeletonComponent` (eliminado en Fase 6 Commit 11) y `ToggleSwitchComponent` (eliminado en Fase 6 Commit 12). El `BadgeChipComponent` también fue eliminado en Fase 6. Mantener el doc tras Fase 6 ya era stale — la limpieza se difirió porque el plan no tenía una fase explícita de cierre documental. Fase 8 cierra el ciclo.
+
+---
+
 ## 5. Checkpoints
 
 Resumen de revisiones visuales requeridas:
@@ -2782,7 +3072,8 @@ Resumen de revisiones visuales requeridas:
 | 4 | 8 | Auditoría responsive integral en los 6 viewports |
 | 5 | 10 | Material residual pulido (slide-toggle, icon-button, datepicker, spinner) + lib extras |
 | 6 | 12 | Migración y eliminación de ad-hoc (skeleton → lib-skeleton, toggle-switch → lib-checkbox, badge-chip eliminado) |
-| 7 (final) | 17 | Migración integral de botones (`mat-flat`/`stroked`/`button` → `lib-button`), `mat-icon-button` → `lib-icon-button`, `mat-card` → `lib-card` en settings, `mat-menu` reskinneado como overlay engine, último `mat-slide-toggle` → `lib-checkbox` + PR |
+| 7 | 17 | Migración integral de botones (`mat-flat`/`stroked`/`button` → `lib-button`), `mat-icon-button` → `lib-icon-button`, `mat-card` → `lib-card` en settings, `mat-menu` reskinneado como overlay engine, último `mat-slide-toggle` → `lib-checkbox` |
+| 8 (final) | 20 | Ampliaciones de `lib-button` (ng-content para SVG) y migración de las 2 excepciones documentadas en Fase 7 (6 OAuth + 10 matSuffix). Eliminación de `AD_HOC_COMPONENTS.md` + actualización de `TESTING.md`. La lib cubre el 100% de la app + PR |
 
 Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 
@@ -2806,10 +3097,15 @@ Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 - **Tests existentes**: pueden romperse en commits 1, 2, 5, 6, 7, 10, 13, 14, 15, 17 si los specs hacen aserciones DOM sobre clases CSS específicas (`By.css('mat-spinner')`, `By.css('button[mat-flat-button]')`, `By.css('mat-card-title')`, `By.css('mat-slide-toggle')`). El tech agent debe actualizar los specs en el mismo commit donde modifica el componente.
 - **Fase 7 — recordatorios concretos**:
   - `display: contents` en `:host` de `lib-icon-button` desbloquea `matTooltip` y `matMenuTriggerFor` aplicados al wrapper. Es la pieza clave para evitar refactorizar la API del componente.
-  - Las 5 excepciones `matSuffix` de auth (login, register, reset-password) **se quedan como `mat-icon-button`** porque dependen del motor de `mat-form-field`. Documentar con comentario inline en el HTML.
-  - Los 6 botones OAuth de auth (`login.html`, `register.html`) **no se migran a `lib-button`** porque llevan SVG inline; se alinean visualmente vía SCSS local `.auth-oauth-btn`.
+  - Las 5 excepciones `matSuffix` de auth y las 5 de forms (game-form + hardware-form-shell) **se cierran en Fase 8** — el análisis técnico para Fase 8 demuestra que la directiva `[matSuffix]` se aplica al host del componente y la proyección via `<ng-content select="[matSuffix]">` funciona con `<app-lib-icon-button matSuffix>`. Por tanto durante Fase 7 se documenta con comentario inline `<!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->` y se difiere a Fase 8 sin desviar el scope del rediseño visual.
+  - Los 6 botones OAuth de auth (`login.html`, `register.html`) **se difieren a Fase 8** — la decisión de ampliar `lib-button` con `<ng-content>` para SVG proyectado se toma fuera del scope de Fase 7 para no expandir la API del componente core en mitad de la migración masiva. Durante Fase 7 quedan como `<button mat-stroked-button class="auth-oauth-btn">` con override CSS local que mimetiza visualmente al `lib-btn`.
   - `mat-menu` se mantiene como overlay engine (decisión documentada en Fase 7). El "código" del Commit 16 es CSS de refinamiento, no nuevo componente.
   - Tras Fase 7, `MatCardModule`, `MatSlideToggleModule` y `MatButtonModule` se quedan únicamente como peer deps invisibles del bundle (no se importan desde ningún componente). `MatMenuModule` sigue importándose en `app.component.ts` y `game-detail.component.ts`. `MatTooltipModule`, `MatDialogModule`, `MatFormFieldModule`, `MatInputModule`, `MatDatepickerModule`, `MatSnackBarModule` siguen activos como servicios reskinneados.
+- **Fase 8 — recordatorios concretos**:
+  - El análisis técnico del template del form-field confirma que `<ng-content select="[matSuffix], [matIconSuffix]">` proyecta cualquier elemento que lleve la directiva `matSuffix` — incluyendo un componente Angular. La directiva sólo registra el host en `_suffixChildren: ContentChildren(MAT_SUFFIX, { descendants: true })` y no impone restricciones sobre el tipo de elemento. Por tanto `<app-lib-icon-button matSuffix>` es **canónicamente correcto**, no un hack.
+  - La ampliación de `lib-button` con `<ng-content>` mantiene compatibilidad hacia atrás: cualquier consumidor que use `<app-lib-button [label]="..." [icon]="...">` sigue funcionando sin cambios. El slot solo activa el nuevo comportamiento cuando hay contenido proyectado.
+  - Tras Fase 8: **`MatButtonModule` desaparece de todos los `imports` de la app**. Verificable con `grep -rn "MatButtonModule" src --include="*.ts" | grep -v ".spec.ts"`. Lo único que permanece es la dependencia transitiva via `MatFormFieldModule` (toolbar internals).
+  - Quedará pendiente — fuera del scope de este plan — el `<button mat-fab>` de `orders-list.component.html` (FAB de crear orden). Si se decide migrar, se puede añadir un commit 21 que cree `lib-fab` o se mete bajo `lib-icon-button size="lg"` con un wrapper de posicionamiento. **No urgente**: ese FAB es uno solo y ya está reskinneado en Fase 5.
 - **i18n**: los labels nuevos como "ADD_COPY", "LIMPIAR", "APLICAR", "FILTROS" se traducen vía clave i18n existente cuando exista; si no, **se añade en `src/assets/i18n/es.json` y `en.json`** en el mismo commit que los usa.
 - **Sin migración de BD**: este rediseño es 100% frontend.
 - **PWA manifest**: revisar `src/manifest.webmanifest` al final — `theme_color` y `background_color` deben pasar a `#000000`.

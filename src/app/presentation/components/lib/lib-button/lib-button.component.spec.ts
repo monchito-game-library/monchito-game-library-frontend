@@ -76,5 +76,20 @@ describe('LibButtonComponent', () => {
       expect(slot).not.toBeNull();
       expect(svg).not.toBeNull();
     });
+
+    it('should hide the icon (mat-icon) when ng-content has projected SVG (precedence CSS rule)', async () => {
+      const hostFixture = TestBed.createComponent(TestHostWithSvgAndIconComponent);
+      hostFixture.detectChanges();
+      const slot: HTMLElement | null = hostFixture.nativeElement.querySelector('.lib-btn__slot');
+      const matIcon: HTMLElement | null = hostFixture.nativeElement.querySelector('.lib-btn__icon');
+      expect(slot).not.toBeNull();
+      expect(matIcon).not.toBeNull();
+      // The slot is non-empty -> sibling .lib-btn__icon must be hidden by CSS rule
+      // `.lib-btn__slot:not(:empty) ~ .lib-btn__icon { display: none }`
+      const matIconDisplay = (matIcon as HTMLElement).ownerDocument.defaultView?.getComputedStyle(
+        matIcon as HTMLElement
+      ).display;
+      expect(matIconDisplay).toBe('none');
+    });
   });
 });
