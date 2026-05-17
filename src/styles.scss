@@ -383,6 +383,177 @@ input[type='number'] {
   border: 1px solid var(--border) !important;
 }
 
+// Slide-toggle — cuadrado [ ] / [X] terminal
+.mat-mdc-slide-toggle {
+  // Ocultar la pista redondeada y el thumb de MDC
+  .mdc-switch__track,
+  .mdc-switch__handle-track,
+  .mdc-switch__handle,
+  .mdc-switch__ripple,
+  .mdc-switch__shadow,
+  .mdc-switch__icons {
+    display: none !important;
+  }
+
+  // El botón nativo del switch pasa a ser representación textual mono
+  .mdc-switch {
+    width: auto !important;
+    height: auto !important;
+    background: transparent !important;
+
+    &::before {
+      content: '[ ]';
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--text-mid);
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    &.mdc-switch--selected::before {
+      content: '[X]';
+      color: var(--primary);
+    }
+
+    &.mdc-switch--disabled::before {
+      color: var(--text-lo);
+    }
+  }
+
+  // Label a la derecha mono
+  .mdc-form-field > label,
+  .mat-mdc-slide-toggle-touch-target {
+    font-family: var(--font-mono) !important;
+    color: var(--text-hi) !important;
+  }
+}
+
+// Menu items — texto mono, hover plano, divider 1px
+.mat-mdc-menu-item {
+  font-family: var(--font-mono) !important;
+  font-size: 0.8125rem !important;
+  letter-spacing: 0.02em;
+  color: var(--text-hi) !important;
+  border-radius: 0 !important;
+  min-height: 40px;
+  padding: 0 0.875rem !important;
+
+  .mat-icon,
+  .mat-mdc-menu-item-text {
+    color: inherit !important;
+  }
+
+  @media (hover: hover) {
+    &:hover:not(:disabled),
+    &.cdk-focused {
+      background-color: var(--bg-surface-hi) !important;
+      color: var(--text-hi) !important;
+    }
+  }
+
+  &[disabled] {
+    color: var(--text-lo) !important;
+    opacity: 1;
+  }
+}
+
+.mat-mdc-menu-content .mat-divider {
+  border-top-color: var(--border) !important;
+  margin: 0.25rem 0;
+}
+
+// Icon button — cuadrado terminal sin ripple redondo
+.mat-mdc-icon-button {
+  --mdc-icon-button-state-layer-shape: 0;
+  --mat-icon-button-state-layer-shape: 0;
+
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: 1px solid transparent !important;
+  background-color: transparent !important;
+  color: var(--text-mid) !important;
+  transition:
+    color 120ms linear,
+    border-color 120ms linear,
+    background-color 120ms linear !important;
+
+  // Eliminar el ripple circular de MDC
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-button-ripple,
+  .mat-mdc-focus-indicator {
+    border-radius: 0 !important;
+    display: none !important;
+  }
+
+  .mat-icon {
+    color: inherit !important;
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover {
+      color: var(--text-hi) !important;
+      border-color: var(--border-active) !important;
+      background-color: var(--bg-surface-hi) !important;
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Variante densa dentro de form-field (matSuffix)
+.mat-mdc-form-field .mat-mdc-icon-button {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+// Progress spinner — red de seguridad terminal (overrideado por lib-spinner en commit 10)
+.mat-mdc-progress-spinner,
+mat-spinner,
+mat-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: var(--primary);
+
+  circle {
+    stroke: var(--primary) !important;
+    stroke-linecap: square !important;
+  }
+}
+
+// Form field extras — hint, error, required asterisk, text-suffix
+.mat-mdc-form-field {
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    font-family: var(--font-mono) !important;
+    font-size: 0.6875rem !important;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .mat-mdc-form-field-error {
+    color: var(--accent-rose) !important;
+  }
+
+  .mat-mdc-form-field-required-marker {
+    color: var(--accent-rose) !important;
+  }
+
+  // matTextSuffix / matTextPrefix (ej. €, /10, ud.) en mono
+  .mat-mdc-form-field-text-suffix,
+  .mat-mdc-form-field-text-prefix {
+    font-family: var(--font-mono) !important;
+    color: var(--text-mid) !important;
+  }
+}
+
 // ────────────────────────── Datepicker ──────────────────────────
 .mat-datepicker-content .mat-calendar-content {
   padding: 0 1rem 1rem 1rem;
@@ -400,6 +571,45 @@ input[type='number'] {
 
 .mat-datepicker-input[readonly] {
   cursor: pointer;
+}
+
+// Datepicker panel — terminal completo
+.mat-datepicker-content {
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--text-hi) !important;
+  font-family: var(--font-mono) !important;
+
+  .mat-calendar-table-header,
+  .mat-calendar-body-label,
+  .mat-calendar-period-button {
+    font-family: var(--font-mono) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-lo) !important;
+  }
+
+  .mat-calendar-body-cell-content {
+    border-radius: 0 !important;
+    border: 1px solid transparent;
+  }
+
+  .mat-calendar-body-active .mat-calendar-body-cell-content,
+  .mat-calendar-body-selected {
+    background-color: var(--primary) !important;
+    color: var(--bg-void) !important;
+    border-radius: 0 !important;
+  }
+
+  .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+    border-color: var(--border-active) !important;
+  }
+}
+
+.mat-datepicker-toggle .mat-icon {
+  color: var(--text-mid);
 }
 
 // ────────────────────────── Route transitions ──────────────────────────────────────
@@ -426,6 +636,27 @@ input[type='number'] {
     margin: 0 !important;
     border-radius: 0 !important;
     border-top: 1px solid var(--border-active);
+  }
+}
+
+// ────────────────────────── Touch targets: pointer coarse ──────────────────────────
+@media (pointer: coarse) {
+  .mat-mdc-icon-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .mat-mdc-menu-item {
+    min-height: 44px;
+  }
+}
+
+// ────────────────────────── Datepicker: mobile ──────────────────────────
+@media (max-width: 768px) {
+  .mat-datepicker-content {
+    .mat-calendar {
+      width: 100%;
+    }
   }
 }
 
