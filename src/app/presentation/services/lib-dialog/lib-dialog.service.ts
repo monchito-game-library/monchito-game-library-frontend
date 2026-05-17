@@ -95,16 +95,27 @@ export class LibDialogService {
       panelClasses.push(...extra);
     }
 
+    let dialogRef!: LibDialogRef<T, R>;
     const overlayRef = this._overlay.open<T, R>(component, {
       ...LIB_OVERLAY_DIALOG_CONFIG,
       data: config?.data,
       panelClass: panelClasses,
       width: config?.width,
       autoFocus: config?.disableClose === true ? false : (config?.autoFocus ?? 'first-tabbable'),
-      restoreFocus: config?.restoreFocus ?? true
+      restoreFocus: config?.restoreFocus ?? true,
+      disableClose: config?.disableClose === true,
+      extraProviders: (overlay: unknown) => {
+        dialogRef = new LibDialogRef<T, R>(overlay as LibOverlayRef<T, R>);
+        return [{ provide: LibDialogRef, useValue: dialogRef }];
+      }
     });
 
-    return new LibDialogRef<T, R>(overlayRef);
+    // Si el componente no se montó (ej. content era TemplateRef), creamos el ref aquí.
+    if (!dialogRef) {
+      dialogRef = new LibDialogRef<T, R>(overlayRef);
+    }
+
+    return dialogRef;
   }
 }
 

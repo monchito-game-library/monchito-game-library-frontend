@@ -1,4 +1,4 @@
-import { ElementRef, InjectionToken, Injectable, Injector, TemplateRef, inject } from '@angular/core';
+import { ElementRef, InjectionToken, Injectable, Injector, StaticProvider, TemplateRef, inject } from '@angular/core';
 import { ConnectedPosition, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType, TemplatePortal } from '@angular/cdk/portal';
 import { ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
@@ -147,18 +147,23 @@ export class LibOverlayService {
       const portal = new TemplatePortal(content, null as any);
       overlayRef.attach(portal);
     } else {
-      const injector = this._createInjector(libRef as LibOverlayRef<unknown, unknown>, cfg.data);
+      const extraProviders = cfg.extraProviders ? cfg.extraProviders(libRef) : [];
+      const injector = this._createInjector(libRef as LibOverlayRef<unknown, unknown>, cfg.data, extraProviders);
       const portal = new ComponentPortal(content, null, injector);
       const componentRef = overlayRef.attach(portal);
       libRef.componentInstance = componentRef.instance;
     }
 
     if (cfg.hasBackdrop) {
-      overlayRef.backdropClick().subscribe(() => libRef.close());
+      overlayRef.backdropClick().subscribe(() => {
+        if (!cfg.disableClose) {
+          libRef.close();
+        }
+      });
     }
 
     overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && !cfg.disableClose) {
         event.preventDefault();
         libRef.close();
       }
@@ -228,17 +233,24 @@ export class LibOverlayService {
   }
 
   /**
-   * Crea un injector hijo con LIB_OVERLAY_REF y LIB_OVERLAY_DATA disponibles.
+   * Crea un injector hijo con LIB_OVERLAY_REF, LIB_OVERLAY_DATA y los providers
+   * extra disponibles para el componente abierto.
    *
    * @param {LibOverlayRef} ref - Referencia del overlay actual.
    * @param {unknown} data - Datos opcionales para el componente abierto.
+   * @param {StaticProvider[]} extraProviders - Providers adicionales (ej. LibDialogRef).
    */
-  private _createInjector(ref: LibOverlayRef<unknown, unknown>, data?: unknown): Injector {
+  private _createInjector(
+    ref: LibOverlayRef<unknown, unknown>,
+    data?: unknown,
+    extraProviders: StaticProvider[] = []
+  ): Injector {
     return Injector.create({
       parent: this._injector,
       providers: [
         { provide: LIB_OVERLAY_REF, useValue: ref },
-        { provide: LIB_OVERLAY_DATA, useValue: data ?? null }
+        { provide: LIB_OVERLAY_DATA, useValue: data ?? null },
+        ...extraProviders
       ]
     });
   }

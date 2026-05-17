@@ -1,5 +1,12 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { ElementRef } from '@angular/core';
+import { ElementRef, StaticProvider } from '@angular/core';
+
+/**
+ * Factory de providers extra a inyectar en el componente abierto, que recibe
+ * la referencia al overlay para poder envolverla en wrappers (LibDialogRef,
+ * LibBottomSheetRef, etc.) sin acoplar el servicio de overlay a ellos.
+ */
+export type LibOverlayExtraProvidersFactory = (overlayRef: unknown) => StaticProvider[];
 
 /** Configuración para abrir un overlay CDK con LibOverlayService. */
 export interface LibOverlayConfig {
@@ -29,4 +36,11 @@ export interface LibOverlayConfig {
   readonly height?: string;
   /** Datos arbitrarios inyectables en el componente abierto. */
   readonly data?: unknown;
+  /**
+   * Factory que produce providers extra (ej. LibDialogRef) registrados en el
+   * injector del componente abierto. Recibe la LibOverlayRef ya creada.
+   */
+  readonly extraProviders?: LibOverlayExtraProvidersFactory;
+  /** Si true, Escape y backdrop click NO cierran el overlay. */
+  readonly disableClose?: boolean;
 }
