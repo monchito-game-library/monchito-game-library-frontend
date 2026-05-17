@@ -18,9 +18,12 @@
   box-sizing: border-box;
 
   .collection-overview__title {
+    font-family: var(--font-display);
     font-size: var(--text-3xl);
     font-weight: 600;
+    letter-spacing: 0.02em;
     margin: 0;
+    color: var(--text-hi);
   }
 
   .collection-overview__total-banner {
@@ -31,17 +34,20 @@
   }
 
   .collection-overview__total-label {
+    font-family: var(--font-mono);
     font-size: var(--text-sm);
     font-weight: 400;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-lo);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .collection-overview__total-amount {
+    font-family: var(--font-mono);
     font-size: var(--text-3xl);
     font-weight: 700;
-    color: var(--mat-sys-primary);
+    color: var(--primary-glow);
+    text-shadow: 0 0 24px rgba(124, 58, 237, 0.4);
     min-height: 2.5rem;
     display: flex;
     align-items: center;
@@ -61,50 +67,44 @@
     align-items: center;
     gap: 0.75rem;
     padding: 2rem 1rem;
-    background-color: var(--mat-sys-surface-container);
-    border: 1px solid var(--mat-sys-outline-variant);
+    background-color: var(--bg-surface-hi);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
+    clip-path: polygon(0 0, calc(100% - var(--bevel-size, 12px)) 0, 100% var(--bevel-size, 12px), 100% 100%, 0 100%);
     cursor: pointer;
     transition:
-      background-color var(--transition-base),
-      transform var(--transition-fast);
+      border-color var(--transition-base),
+      box-shadow var(--transition-base);
     text-align: center;
-
-    &:hover {
-      background-color: var(--mat-sys-surface-container-high);
-      transform: translateY(-2px);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
   }
 
   .collection-overview__card-icon {
     font-size: 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
-    color: var(--mat-sys-primary);
+    color: var(--primary-glow);
   }
 
   .collection-overview__card-title {
+    font-family: var(--font-display);
     font-size: var(--text-lg);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-mid);
   }
 
   .collection-overview__card-subtitle {
     font-size: var(--text-sm);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-lo);
   }
 
   .collection-overview__card-count {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--font-mono);
     font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--mat-sys-primary);
+    font-weight: 700;
+    color: var(--text-hi);
     min-height: 1.25rem;
   }
 
@@ -112,10 +112,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--font-mono);
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
     min-height: 1.25rem;
+  }
+}
+
+// ────────────────────────── Responsive: hover (pointer devices) ──────────────────────────
+@media (hover: hover) {
+  .collection-overview__card:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--glow-primary);
   }
 }
 
@@ -131,6 +140,7 @@
 
     .collection-overview__total-amount {
       font-size: var(--text-3xl);
+      text-shadow: 0 0 16px rgba(124, 58, 237, 0.3);
     }
 
     .collection-overview__grid {
@@ -140,6 +150,7 @@
 
     .collection-overview__card {
       padding: 1rem;
+      --bevel-size: var(--bevel-size-mobile);
     }
 
     .collection-overview__card-icon {
