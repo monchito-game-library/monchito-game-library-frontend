@@ -421,6 +421,13 @@ input[type='number'] {
   }
 }
 
+// ────────────────────────── Responsive: ≥ 1441px (laptop grande) ──────────────────────────
+@media (min-width: 1441px) {
+  :root {
+    font-size: 17px;
+  }
+}
+
 // ────────────────────────── Responsive: ≥ 1921px (FHD+) ──────────────────────────
 @media (min-width: 1921px) {
   :root {
@@ -429,9 +436,12 @@ input[type='number'] {
 }
 
 // ────────────────────────── Responsive: ≥ 2561px (2K/QHD+) ──────────────────────────
+// El bisel sube a 16px porque a partir de 2K el root font crece (20px) y las cards
+// se hacen más anchas; un bisel fijo de 12px se ve perdido en proporción.
 @media (min-width: 2561px) {
   :root {
     font-size: 20px;
+    --bevel-size: 16px;
   }
 }
 

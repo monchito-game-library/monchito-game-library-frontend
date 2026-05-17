@@ -24,6 +24,7 @@
 - [Arquitectura de capas](#arquitectura-de-capas)
 - [Estructura de pages y components](#estructura-de-pages-y-components)
 - [Tests — mocks compartidos](#tests--mocks-compartidos)
+- [UI/UX](#uiux)
 
 ---
 
@@ -330,3 +331,8 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 | `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
 
 Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
+
+## UI/UX
+
+- En cualquier tarea que implique diseño, componentes visuales, revisión de estilos o decisiones de UX, consultar y aplicar siempre las guías de `.claude/skills/ui-ux-pro-max/SKILL.md`.
+- Esto incluye: crear o modificar componentes, elegir paletas o tipografía, revisar layouts, valorar alternativas de diseño y hacer análisis de usabilidad.
