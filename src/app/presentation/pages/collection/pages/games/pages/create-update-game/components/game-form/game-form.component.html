@@ -18,7 +18,7 @@
 
   @if (loading()) {
     <div class="game-form-page__loading">
-      <mat-spinner diameter="48" />
+      <app-lib-spinner size="md" />
     </div>
   } @else if (!searchMode()) {
     <div class="game-form-page__content">
@@ -265,7 +265,7 @@
               class="game-form__submit-btn">
               <span class="game-form__submit-content">
                 @if (saving()) {
-                  <mat-spinner diameter="18" />
+                  <app-lib-spinner size="inline" />
                 } @else {
                   <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
                 }

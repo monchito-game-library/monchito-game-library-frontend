@@ -17,7 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -60,7 +60,7 @@ import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     TranslocoPipe,
     SaleFormComponent,
     GameLoanFormComponent,

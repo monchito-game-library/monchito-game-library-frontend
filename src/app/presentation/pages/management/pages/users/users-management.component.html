@@ -136,7 +136,7 @@
 
                 <div class="user-card__action">
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <mat-spinner diameter="20" />
+                    <app-lib-spinner size="sm" />
                   } @else {
                     <button
                       mat-stroked-button
@@ -199,7 +199,7 @@
 
                 <div class="user-card__action">
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <mat-spinner diameter="20" />
+                    <app-lib-spinner size="sm" />
                   } @else {
                     <button
                       mat-flat-button

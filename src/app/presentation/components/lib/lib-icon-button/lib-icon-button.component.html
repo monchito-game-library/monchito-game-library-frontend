@@ -1,0 +1,14 @@
+<button
+  class="lib-icon-btn"
+  [class.lib-icon-btn--primary]="variant() === 'primary'"
+  [class.lib-icon-btn--danger]="variant() === 'danger'"
+  [class.lib-icon-btn--ghost]="variant() === 'ghost'"
+  [class.lib-icon-btn--sm]="size() === 'sm'"
+  [class.lib-icon-btn--md]="size() === 'md'"
+  [class.lib-icon-btn--lg]="size() === 'lg'"
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  (click)="clicked.emit($event)">
+  <mat-icon class="lib-icon-btn__icon">{{ icon() }}</mat-icon>
+</button>

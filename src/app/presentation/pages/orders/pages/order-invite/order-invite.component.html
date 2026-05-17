@@ -36,7 +36,7 @@
       <button mat-flat-button (click)="onJoin()" [disabled]="joining()">
         <span class="order-invite-page__btn-content">
           @if (joining()) {
-            <mat-progress-spinner mode="indeterminate" diameter="20" />
+            <app-lib-spinner size="sm" />
           } @else {
             <mat-icon>group_add</mat-icon>
           }

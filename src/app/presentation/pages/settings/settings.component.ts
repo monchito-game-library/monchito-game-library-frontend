@@ -21,7 +21,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -61,7 +61,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatInput,
     MatPrefix,
     MatIcon,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     MatTooltip,
     ToggleSwitchComponent,
     SkeletonComponent,

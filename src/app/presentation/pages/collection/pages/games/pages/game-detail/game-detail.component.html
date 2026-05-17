@@ -2,7 +2,7 @@
   <!-- Loading state -->
   @if (loading()) {
     <div class="game-detail__loading">
-      <mat-spinner diameter="48" />
+      <app-lib-spinner size="md" />
       <span class="game-detail__loading-label">&gt; LOADING...</span>
     </div>
   } @else if (game(); as g) {

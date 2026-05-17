@@ -12,3 +12,15 @@ export type LibChipColor = 'primary' | 'green' | 'amber' | 'rose' | 'blue' | 'ne
 
 /** Variantes visuales del lib-badge Terminal Collector. */
 export type LibBadgeVariant = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+
+/** Variantes visuales del lib-icon-button Terminal Collector. */
+export type LibIconButtonVariant = 'primary' | 'ghost' | 'danger';
+
+/** Tamaños del lib-icon-button: sm (32) matSuffix, md (40) topbars, lg (44) standalone. */
+export type LibIconButtonSize = 'sm' | 'md' | 'lg';
+
+/** Tamaños del lib-spinner Terminal Collector. */
+export type LibSpinnerSize = 'inline' | 'sm' | 'md' | 'lg';
+
+/** Variantes de glyph del lib-spinner Terminal Collector. */
+export type LibSpinnerVariant = 'bars' | 'dots' | 'blocks';

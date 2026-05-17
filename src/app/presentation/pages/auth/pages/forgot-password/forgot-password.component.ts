@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -25,7 +25,7 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     MatLabel,
     MatInput,
     MatButton,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     MatIcon,
     MatError,
     MatPrefix,

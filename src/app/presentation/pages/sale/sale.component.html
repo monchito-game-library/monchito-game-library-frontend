@@ -37,10 +37,7 @@
         <div class="sale-page__content">
           @if (loading()) {
             <div class="sale-page__loading">
-              <mat-progress-spinner
-                diameter="48"
-                mode="indeterminate"
-                [attr.aria-label]="'common.loading' | transloco" />
+              <app-lib-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
             </div>
           } @else if (filteredAvailable().length === 0) {
             <div class="sale-page__empty">
@@ -153,10 +150,7 @@
         <div class="sale-page__content">
           @if (loading()) {
             <div class="sale-page__loading">
-              <mat-progress-spinner
-                diameter="48"
-                mode="indeterminate"
-                [attr.aria-label]="'common.loading' | transloco" />
+              <app-lib-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
             </div>
           } @else if (filteredSold().length === 0) {
             <div class="sale-page__empty">

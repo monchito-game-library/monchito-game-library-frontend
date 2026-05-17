@@ -17,7 +17,7 @@ import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
@@ -38,7 +38,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     MatPrefix,
     MatInput,
     MatIcon,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     TranslocoPipe
   ]
 })

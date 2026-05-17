@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
@@ -20,7 +20,7 @@ import { OrderInvitationModel } from '@/models/order/order-invitation.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     MatIcon,
     TranslocoPipe,
     DatePipe,

@@ -6,3 +6,5 @@ export { LibSectionHeaderComponent } from './lib-section-header/lib-section-head
 export { LibCommandBarComponent } from './lib-command-bar/lib-command-bar.component';
 export { LibEmptyStateComponent } from './lib-empty-state/lib-empty-state.component';
 export { LibBadgeComponent } from './lib-badge/lib-badge.component';
+export { LibIconButtonComponent } from './lib-icon-button/lib-icon-button.component';
+export { LibSpinnerComponent } from './lib-spinner/lib-spinner.component';

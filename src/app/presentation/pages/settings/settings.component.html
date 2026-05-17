@@ -19,7 +19,7 @@
             [disabled]="!preferencesLoaded()"
             (change)="onAvatarFileSelected($event)" />
           @if (uploadingAvatar()) {
-            <mat-spinner diameter="80" />
+            <app-lib-spinner size="lg" />
           } @else if (!preferencesLoaded()) {
             <app-skeleton width="80px" height="80px" borderRadius="50%" />
           } @else {
@@ -59,7 +59,7 @@
                   maxlength="30"
                   [placeholder]="'settings.profile.namePlaceholder' | transloco" />
                 @if (savingName()) {
-                  <mat-spinner diameter="18" />
+                  <app-lib-spinner size="inline" />
                 } @else {
                   <button
                     class="settings__name-action-btn settings__name-action-btn--confirm"
@@ -108,7 +108,7 @@
             (change)="onBannerFileSelected($event)" />
           @if (uploadingBanner()) {
             <div class="settings__banner-preview settings__banner-upload-loading">
-              <mat-spinner diameter="36" />
+              <app-lib-spinner size="sm" />
             </div>
           } @else if (bannerImageUrl()) {
             <div

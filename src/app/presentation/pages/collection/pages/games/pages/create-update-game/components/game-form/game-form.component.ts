@@ -26,7 +26,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -80,7 +80,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatButton,
     MatIcon,
     MatIconButton,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     TranslocoPipe,
     MatAutocompleteTrigger,
     MatAutocomplete,

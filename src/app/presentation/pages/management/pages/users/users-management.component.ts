@@ -11,7 +11,7 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -48,7 +48,7 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIcon,
-    MatProgressSpinner,
+    LibSpinnerComponent,
     MatButton,
     MatIconButton,
     MatTooltip,

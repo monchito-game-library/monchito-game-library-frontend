@@ -7,7 +7,7 @@ import {
   MatDialogTitle
 } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
@@ -19,7 +19,7 @@ import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-inter
   styleUrl: './avatar-crop-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatProgressSpinner, TranslocoPipe]
+  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe, LibSpinnerComponent]
 })
 export class AvatarCropDialogComponent extends CropInteractionBase implements OnDestroy {
   private readonly _dialogRef: MatDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
