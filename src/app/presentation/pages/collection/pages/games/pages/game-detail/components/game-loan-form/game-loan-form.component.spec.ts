@@ -2,7 +2,7 @@ import { Component, NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -82,7 +82,10 @@ describe('GameLoanFormComponent', () => {
             returnLoan: vi.fn().mockResolvedValue(undefined)
           } as Partial<GameUseCasesContract>
         },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -162,7 +165,7 @@ describe('GameLoanFormComponent', () => {
     });
 
     it('muestra snackbar de éxito tras crear el préstamo', async () => {
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
@@ -200,7 +203,7 @@ describe('GameLoanFormComponent', () => {
       });
 
       it('muestra snackbar de error', async () => {
-        const snackBar = TestBed.inject(MatSnackBar as any) as any;
+        const snackBar = TestBed.inject(LibSnackbarService as any) as any;
         await component.onLoan();
         expect(snackBar.open).toHaveBeenCalled();
       });
@@ -253,7 +256,7 @@ describe('GameLoanFormComponent', () => {
     });
 
     it('muestra snackbar de éxito tras la devolución', async () => {
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const { child } = makeLoanedChild();
       await child.onReturn();
       expect(snackBar.open).toHaveBeenCalled();
@@ -283,7 +286,7 @@ describe('GameLoanFormComponent', () => {
       });
 
       it('muestra snackbar de error', async () => {
-        const snackBar = TestBed.inject(MatSnackBar as any) as any;
+        const snackBar = TestBed.inject(LibSnackbarService as any) as any;
         const { child } = makeLoanedChild();
         await child.onReturn();
         expect(snackBar.open).toHaveBeenCalled();

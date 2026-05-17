@@ -141,11 +141,11 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
 
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!value.brandId || !uuidRegex.test(value.brandId) || !value.modelId || !uuidRegex.test(value.modelId)) {
-      this._snackBar.open(
-        this._transloco.translate('consolePage.snack.selectBrandModel'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('consolePage.snack.selectBrandModel'),
+        duration: 3000,
+        variant: 'warning'
+      });
       return;
     }
 

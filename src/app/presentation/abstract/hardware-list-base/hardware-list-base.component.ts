@@ -1,6 +1,6 @@
 import { computed, Directive, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -39,7 +39,7 @@ export abstract class HardwareListBaseComponent<
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
   protected readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
-  protected readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   protected readonly _stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
@@ -214,9 +214,7 @@ export abstract class HardwareListBaseComponent<
       const data: T[] = await loadFn();
       this.items.set(data);
     } catch {
-      this._snackBar.open(this._transloco.translate(this._i18nLoadError), this._transloco.translate('common.close'), {
-        duration: 3000
-      });
+      this._snack.open({ text: this._transloco.translate(this._i18nLoadError), duration: 3000, variant: 'error' });
     } finally {
       this.loading.set(false);
     }

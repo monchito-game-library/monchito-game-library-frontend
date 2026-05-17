@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 
@@ -68,7 +68,10 @@ describe('HardwareLoanFormComponent', () => {
         provideNativeDateAdapter(),
         { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
         { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -181,7 +184,7 @@ describe('HardwareLoanFormComponent', () => {
 
     it('muestra snackbar de éxito tras crear el préstamo', async () => {
       fixture.detectChanges();
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
@@ -192,7 +195,7 @@ describe('HardwareLoanFormComponent', () => {
     it('muestra snackbar de error si createLoan lanza', async () => {
       fixture.detectChanges();
       (mockConsoleUseCases.createLoan as any).mockRejectedValueOnce(new Error('loan error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       component.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
 
       await component.onLoan();
@@ -262,7 +265,7 @@ describe('HardwareLoanFormComponent', () => {
     it('muestra snackbar de éxito tras devolver el item', async () => {
       fixture.componentRef.setInput('item', makeConsole({ activeLoanId: 'loan-uuid-1' }));
       fixture.detectChanges();
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onReturn();
 
@@ -273,7 +276,7 @@ describe('HardwareLoanFormComponent', () => {
       fixture.componentRef.setInput('item', makeConsole({ activeLoanId: 'loan-uuid-1' }));
       fixture.detectChanges();
       (mockConsoleUseCases.returnLoan as any).mockRejectedValueOnce(new Error('return error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onReturn();
 
@@ -320,7 +323,10 @@ describe('HardwareLoanFormComponent', () => {
           provideNativeDateAdapter(),
           { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
-          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          {
+            provide: LibSnackbarService,
+            useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+          },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } }
         ],
         schemas: [NO_ERRORS_SCHEMA]
@@ -334,7 +340,7 @@ describe('HardwareLoanFormComponent', () => {
 
     it('muestra snackbar cuando el userId es null al intentar devolver el item', async () => {
       guardFixture.detectChanges();
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await guardComponent.onReturn();
 
@@ -360,7 +366,10 @@ describe('HardwareLoanFormComponent', () => {
         providers: [
           provideNativeDateAdapter(),
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
-          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          {
+            provide: LibSnackbarService,
+            useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+          },
           { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } }
         ],
         schemas: [NO_ERRORS_SCHEMA]
@@ -375,7 +384,7 @@ describe('HardwareLoanFormComponent', () => {
     it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta crear un préstamo', async () => {
       guardFixture.detectChanges();
       guardComponent.form.patchValue({ loanedTo: 'Juan', loanedAt: new Date('2024-06-01T00:00:00') });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await guardComponent.onLoan();
 
@@ -385,7 +394,7 @@ describe('HardwareLoanFormComponent', () => {
     it('muestra snackbar cuando CONSOLE_USE_CASES no está registrado y se intenta devolver un item', async () => {
       guardFixture.componentRef.setInput('item', makeConsole({ activeLoanId: 'loan-uuid-1' }));
       guardFixture.detectChanges();
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await guardComponent.onReturn();
 

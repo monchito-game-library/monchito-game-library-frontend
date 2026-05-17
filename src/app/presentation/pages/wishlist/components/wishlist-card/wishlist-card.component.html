@@ -59,7 +59,7 @@
             [href]="link.url"
             target="_blank"
             rel="noopener noreferrer"
-            [matTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
+            [libTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
             {{ link.label }}
           </a>
         }
@@ -72,19 +72,19 @@
           variant="primary"
           class="wishlist-card__own-btn"
           [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
-          [matTooltip]="'wishlist.card.ownTooltip' | transloco"
+          [libTooltip]="'wishlist.card.ownTooltip' | transloco"
           (clicked)="onOwn()" />
         <app-lib-icon-button
           icon="edit"
           [ariaLabel]="'common.edit' | transloco"
-          [matTooltip]="'common.edit' | transloco"
+          [libTooltip]="'common.edit' | transloco"
           (clicked)="onEdit()" />
         <app-lib-icon-button
           icon="delete"
           variant="danger"
           class="wishlist-card__delete-btn"
           [ariaLabel]="'common.delete' | transloco"
-          [matTooltip]="'common.delete' | transloco"
+          [libTooltip]="'common.delete' | transloco"
           (clicked)="onDelete()" />
       </div>
     }

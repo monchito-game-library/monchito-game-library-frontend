@@ -21,7 +21,7 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -71,7 +71,7 @@ export class WishlistComponent implements OnInit {
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
@@ -221,17 +221,17 @@ export class WishlistComponent implements OnInit {
     try {
       await this._wishlistUseCases.deleteItem(this._userId, item.id);
       await this._loadItems();
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleted'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleted'),
+        duration: 2000,
+        variant: 'success'
+      });
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleteError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -293,11 +293,11 @@ export class WishlistComponent implements OnInit {
       try {
         await this._wishlistUseCases.updateItem(this._userId, this._editingItem.id, formValue);
         await this._loadItems();
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.updated'),
-          this._transloco.translate('common.close'),
-          { duration: 2000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.updated'),
+          duration: 2000,
+          variant: 'success'
+        });
         if (this._returnToDetail && this._returnToDetailId) {
           const updated: WishlistItemModel | undefined = this.items().find((i) => i.id === this._returnToDetailId);
           this._returnToDetail = false;
@@ -309,11 +309,11 @@ export class WishlistComponent implements OnInit {
         }
         this.viewMode.set('list');
       } catch {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.updateError'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.updateError'),
+          duration: 3000,
+          variant: 'error'
+        });
       }
     } else {
       const catalogEntry: GameCatalogDto = this.pendingCatalogEntry()!;
@@ -321,17 +321,17 @@ export class WishlistComponent implements OnInit {
         await this._wishlistUseCases.addItem(this._userId, catalogEntry, formValue);
         await this._loadItems();
         this.viewMode.set('list');
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.added'),
-          this._transloco.translate('common.close'),
-          { duration: 2000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.added'),
+          duration: 2000,
+          variant: 'success'
+        });
       } catch {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.addError'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.addError'),
+          duration: 3000,
+          variant: 'error'
+        });
       }
     }
   }
@@ -386,11 +386,11 @@ export class WishlistComponent implements OnInit {
       const data: WishlistItemModel[] = await this._wishlistUseCases.getAllForUser(this._userId);
       this.items.set(data);
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }

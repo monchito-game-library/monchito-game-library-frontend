@@ -8,7 +8,7 @@ import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/f
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ProtectorModel } from '@/models/protector/protector.model';
@@ -30,7 +30,7 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     MatOption,
     MatIcon,
     LibIconButtonComponent,
-    MatTooltip,
+    LibTooltipDirective,
     TranslocoPipe,
     LibButtonComponent
   ],

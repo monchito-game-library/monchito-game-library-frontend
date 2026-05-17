@@ -21,8 +21,8 @@ import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field'
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatInput } from '@angular/material/input';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -56,7 +56,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatPrefix,
     LibIconComponent,
     LibSpinnerComponent,
-    MatTooltip,
+    LibTooltipDirective,
     LibCheckboxComponent,
     LibSkeletonComponent,
     TranslocoPipe,
@@ -70,7 +70,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _rawgSearchState: RawgSearchStateService = inject(RawgSearchStateService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
@@ -262,7 +262,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.editingName.set(false);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : this._transloco.translate('settings.errors.updateName');
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
+      this._snack.open({ text: message, duration: 4000, variant: 'error' });
     } finally {
       this.savingName.set(false);
     }
@@ -354,7 +354,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       setUrl(url);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : this._transloco.translate(errorKey);
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
+      this._snack.open({ text: message, duration: 4000, variant: 'error' });
     } finally {
       loadingSignal.set(false);
     }

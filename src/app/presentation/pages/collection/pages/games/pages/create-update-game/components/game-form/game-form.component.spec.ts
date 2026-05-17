@@ -15,7 +15,7 @@ import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { MatDialog } from '@angular/material/dialog';
 
 const mockCatalogDto: GameCatalogDto = {
@@ -66,7 +66,10 @@ function buildCommonProviders(opts: { catalogScreenshots?: string[] } = {}) {
       provide: TranslocoService,
       useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
     },
-    { provide: MatSnackBar, useValue: { open: vi.fn() } },
+    {
+      provide: LibSnackbarService,
+      useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+    },
     { provide: MatDialog, useValue: { open: vi.fn() } }
   ];
 }
@@ -520,7 +523,7 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje de duplicado cuando el error contiene 23505', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBar = TestBed.inject(LibSnackbarService);
       const dialog = TestBed.inject(MatDialog);
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('unique constraint 23505'));
@@ -558,7 +561,7 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBar = TestBed.inject(LibSnackbarService);
       const dialog = TestBed.inject(MatDialog);
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('Network error'));

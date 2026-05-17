@@ -14,7 +14,7 @@ import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cas
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
@@ -75,7 +75,10 @@ describe('WishlistComponent', () => {
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: MatDialog, useValue: { open: vi.fn() } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: Location, useValue: mockLocation },
@@ -268,7 +271,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.ngOnInit();
 
@@ -329,7 +332,7 @@ describe('WishlistComponent', () => {
       wishlistUseCases.getAllForUser.mockResolvedValue([]);
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onDeleteItem(makeItem());
 
@@ -342,7 +345,7 @@ describe('WishlistComponent', () => {
       wishlistUseCases.deleteItem.mockRejectedValue(new Error('delete error'));
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onDeleteItem(makeItem());
 
@@ -473,7 +476,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error si updateItem lanza en modo edición', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.updateItem.mockRejectedValue(new Error('update error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       (component as any)._editingItem = makeItem();
       component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
@@ -486,7 +489,7 @@ describe('WishlistComponent', () => {
     it('muestra snackbar de error si addItem lanza en modo creación', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.addItem.mockRejectedValue(new Error('add error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       component.mobileForm.setValue({ priority: 3, platform: 'PS5', desiredPrice: 50, notes: null });
       component.pendingCatalogEntry.set(mockCatalogEntry);

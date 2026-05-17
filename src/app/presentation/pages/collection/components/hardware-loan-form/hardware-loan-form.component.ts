@@ -19,7 +19,7 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
@@ -66,7 +66,7 @@ export class HardwareLoanFormComponent implements OnInit {
   private readonly _controllerUseCases: ControllerUseCasesContract | null = inject(CONTROLLER_USE_CASES, {
     optional: true
   });
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -134,10 +134,18 @@ export class HardwareLoanFormComponent implements OnInit {
     this.form.disable();
     try {
       const loanId = await this._useCase().createLoan(loan);
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.loanSuccess'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.loanSuccess'),
+        duration: 3000,
+        variant: 'success'
+      });
       this.saved.emit({ ...it, activeLoanId: loanId, activeLoanTo: loan.loanedTo, activeLoanAt: loan.loanedAt });
     } catch {
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.loanError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.loanError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
       this.form.enable();
@@ -155,10 +163,18 @@ export class HardwareLoanFormComponent implements OnInit {
     this.returning.set(true);
     try {
       await this._useCase().returnLoan(it.activeLoanId, it.id, this._userId);
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.returnSuccess'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.returnSuccess'),
+        duration: 3000,
+        variant: 'success'
+      });
       this.saved.emit({ ...it, activeLoanId: null, activeLoanTo: null, activeLoanAt: null });
     } catch {
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.returnError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.returnError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.returning.set(false);
     }

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { mockLocation } from '@/testing/location.mock';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -95,7 +95,10 @@ describe('GameDetailComponent', () => {
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: MatDialog, useValue: { open: vi.fn() } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: Location, useValue: mockLocation },
         {
@@ -156,7 +159,7 @@ describe('GameDetailComponent', () => {
     it('muestra snackbar de error y navega a /games si la carga falla', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.getGameForEdit.mockRejectedValue(new Error('load error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
       component.ngOnInit();
@@ -245,7 +248,7 @@ describe('GameDetailComponent', () => {
       gameUseCases.deleteGame.mockRejectedValue(new Error('delete error'));
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.deleteGame();
 
@@ -589,7 +592,7 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.updateSaleStatus.mockRejectedValue(new Error('undo error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.undoSell();
 
@@ -634,7 +637,10 @@ describe('GameDetailComponent', () => {
           },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
           { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
-          { provide: MatSnackBar, useValue: { open: vi.fn() } },
+          {
+            provide: LibSnackbarService,
+            useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+          },
           { provide: Router, useValue: { navigate: vi.fn() } },
           { provide: Location, useValue: mockLocation },
           {
@@ -651,7 +657,7 @@ describe('GameDetailComponent', () => {
 
     it('muestra snackbar cuando userId es null al intentar eliminar un juego', async () => {
       guardComponent.game.set(makeGame());
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await guardComponent.deleteGame();
 

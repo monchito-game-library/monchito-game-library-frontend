@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -136,7 +136,10 @@ describe('OrderStepperComponent', () => {
       ],
       providers: [
         { provide: ORDERS_USE_CASES, useValue: mockUseCases },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } }
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });

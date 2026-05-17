@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -32,7 +32,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
 })
 export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _protectorUseCases: ProtectorUseCasesContract = inject(PROTECTOR_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
@@ -177,16 +177,18 @@ export class ProtectorsManagementComponent implements OnInit {
           entityId: protector.id,
           description: protector.name
         });
-        this._snackBar.open(this._transloco.translate('management.products.deleted'), '', {
+        this._snack.open({
+          text: this._transloco.translate('management.products.deleted'),
           duration: 3000,
-          panelClass: ['snack-mobile']
+          variant: 'success'
         });
         await this._loadProtectors();
         this.onClosePanel();
       } catch {
-        this._snackBar.open(this._transloco.translate('management.products.deleteError'), '', {
+        this._snack.open({
+          text: this._transloco.translate('management.products.deleteError'),
           duration: 4000,
-          panelClass: ['snack-mobile']
+          variant: 'error'
         });
       }
     });

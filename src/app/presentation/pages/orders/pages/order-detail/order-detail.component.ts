@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { lastValueFrom } from 'rxjs';
@@ -49,7 +49,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   imports: [
     RouterLink,
     LibIconButtonComponent,
-    MatTooltip,
+    LibTooltipDirective,
     LibSkeletonComponent,
     TranslocoPipe,
     OrderInfoSectionComponent,
@@ -67,7 +67,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private _orderId: string = '';
@@ -228,7 +228,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       await this._ordersUseCases.update(this._orderId, { status: next });
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -250,7 +254,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -267,7 +275,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -297,10 +309,14 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.addLine(this._orderId, userId, result);
-      this._snackBar.open(this._transloco.translate('orders.snack.lineAdded'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.lineAdded'), duration: 3000, variant: 'error' });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineAddError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineAddError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -326,10 +342,18 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.updateLine(line.id, { quantityNeeded: result.quantityNeeded, notes: result.notes });
-      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdated'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineUpdated'),
+        duration: 3000,
+        variant: 'error'
+      });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineUpdateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -354,10 +378,18 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.deleteLine(lineId);
-      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleted'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineDeleted'),
+        duration: 3000,
+        variant: 'error'
+      });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineDeleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -386,7 +418,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
           : o
       );
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -403,9 +439,17 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       const token: string = await this._ordersUseCases.createInvitation(this._orderId);
       const url: string = `${window.location.origin}/orders/invite/${token}`;
       await navigator.clipboard.writeText(url);
-      this._snackBar.open(this._transloco.translate('orders.snack.inviteCopied'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.inviteCopied'),
+        duration: 3000,
+        variant: 'error'
+      });
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.inviteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.inviteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -431,10 +475,14 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.delete(this._orderId);
-      this._snackBar.open(this._transloco.translate('orders.snack.deleted'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.deleted'), duration: 3000, variant: 'error' });
       await this._router.navigate(['/orders']);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.deleteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -450,7 +498,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.order.set(result);
       await this._initStepper(result);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -518,7 +570,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.order.set(result);
       await this._initForStatus(result);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.loadError'), duration: 3000, variant: 'error' });
     } finally {
       this.loading.set(false);
     }

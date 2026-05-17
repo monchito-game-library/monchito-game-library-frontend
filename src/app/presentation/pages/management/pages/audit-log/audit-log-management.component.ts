@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 import { DatePipe } from '@angular/common';
 
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -23,7 +23,7 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether the log list is being loaded. */
@@ -73,9 +73,10 @@ export class AuditLogManagementComponent implements OnInit {
       const entries: AuditLogModel[] = await this._auditLogUseCases.getRecentLogs(100);
       this.entries.set(entries);
     } catch {
-      this._snackBar.open(this._transloco.translate('management.auditLog.loadError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.auditLog.loadError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.loading.set(false);

@@ -12,9 +12,9 @@ import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -40,7 +40,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     DecimalPipe,
     NgOptimizedImage,
     LibIconComponent,
-    MatTooltip,
+    LibTooltipDirective,
     LibIconButtonComponent,
     TranslocoPipe,
     LibSkeletonComponent,
@@ -56,7 +56,7 @@ export class WishlistDetailComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Priority star range used to render the star icons. */
@@ -128,18 +128,18 @@ export class WishlistDetailComponent implements OnInit {
 
     try {
       await this._wishlistUseCases.deleteItem(this._userId, i.id);
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleted'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleted'),
+        duration: 2000,
+        variant: 'success'
+      });
       this._location.back();
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleteError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -189,19 +189,19 @@ export class WishlistDetailComponent implements OnInit {
       if (found) {
         this.item.set(found);
       } else {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.notFound'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.notFound'),
+          duration: 3000,
+          variant: 'warning'
+        });
         this._location.back();
       }
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
       this._location.back();
     } finally {
       this.loading.set(false);

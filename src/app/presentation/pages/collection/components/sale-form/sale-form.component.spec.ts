@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 
@@ -35,7 +35,7 @@ describe('SaleFormComponent', () => {
           translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
         })
       ],
-      providers: [provideNativeDateAdapter(), { provide: MatSnackBar, useValue: snackBar }],
+      providers: [provideNativeDateAdapter(), { provide: LibSnackbarService, useValue: snackBar }],
       schemas: [NO_ERRORS_SCHEMA]
     });
 

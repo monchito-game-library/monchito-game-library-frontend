@@ -3,7 +3,7 @@
   <div class="game-row__cover">
     <img [ngSrc]="cover()" fill alt="Game cover" />
     @if (game().format === 'digital') {
-      <span class="game-row__digital-badge" matTooltip="Digital">
+      <span class="game-row__digital-badge" libTooltip="Digital">
         <app-lib-icon name="cloud" />
       </span>
     }
@@ -30,7 +30,7 @@
   <div class="game-row__meta">
     <div class="game-row__status">
       @if (gameStatus(); as status) {
-        <span class="game-row__status-pill" [matTooltip]="status.labelKey | transloco">
+        <span class="game-row__status-pill" [libTooltip]="status.labelKey | transloco">
           <app-lib-icon [name]="status.icon" [style.color]="status.color" />
         </span>
       }

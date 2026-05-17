@@ -11,7 +11,7 @@ import {
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -46,7 +46,7 @@ export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Active tab: 'available' or 'history'. */
@@ -99,7 +99,11 @@ export class SaleComponent implements OnInit {
       this.availableItems.set(available);
       this.soldItems.set(sold);
     } catch {
-      this._snackBar.open(this._transloco.translate('salePage.snack.loadError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('salePage.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }

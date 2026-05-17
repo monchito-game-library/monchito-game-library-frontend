@@ -30,3 +30,9 @@ export type LibSkeletonShape = 'line' | 'square' | 'block';
 
 /** Tamaños del lib-checkbox: sm (0.875rem) o md (1rem, default). */
 export type LibCheckboxSize = 'sm' | 'md';
+
+/** Variantes de color del lib-snackbar Terminal Collector. */
+export type LibSnackbarVariant = 'info' | 'success' | 'warning' | 'error';
+
+/** Posiciones del lib-tooltip. */
+export type LibTooltipPosition = 'top' | 'bottom' | 'left' | 'right';

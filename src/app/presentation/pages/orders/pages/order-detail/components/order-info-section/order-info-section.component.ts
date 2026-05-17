@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -49,7 +49,7 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
 export class OrderInfoSectionComponent implements OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _HIDE_ACTIONS_MS: number = 350;
@@ -153,7 +153,7 @@ export class OrderInfoSectionComponent implements OnDestroy {
     try {
       const patch: Partial<OrderFormValue> = this.headerForm.getRawValue();
       await this._ordersUseCases.update(this.order().id, patch);
-      this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.updated'), duration: 3000, variant: 'success' });
       this.hidingActions.set(true);
       if (this._hideActionsTimer !== null) clearTimeout(this._hideActionsTimer);
       this._hideActionsTimer = setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
@@ -161,7 +161,11 @@ export class OrderInfoSectionComponent implements OnDestroy {
       this.editingEnded.emit();
       this.headerSaved.emit();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }

@@ -5,7 +5,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrderInfoSectionComponent } from './order-info-section.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderMemberModel } from '@/models/order/order-member.model';
 
@@ -48,21 +48,21 @@ describe('OrderInfoSectionComponent', () => {
   let component: OrderInfoSectionComponent;
   let fixture: ComponentFixture<OrderInfoSectionComponent>;
   let mockOrdersUseCases: { update: ReturnType<typeof vi.fn> };
-  let mockSnackBar: { open: ReturnType<typeof vi.fn> };
+  let mockLibSnackbar: { open: ReturnType<typeof vi.fn> };
   let mockTransloco: { translate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockOrdersUseCases = { update: vi.fn().mockResolvedValue(undefined) };
-    mockSnackBar = { open: vi.fn() };
+    mockLibSnackbar = { open: vi.fn() };
     mockTransloco = { translate: vi.fn().mockReturnValue('') };
 
     TestBed.configureTestingModule({
       imports: [OrderInfoSectionComponent],
       providers: [
         { provide: ORDERS_USE_CASES, useValue: mockOrdersUseCases },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: LibSnackbarService, useValue: mockLibSnackbar },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -318,7 +318,7 @@ describe('OrderInfoSectionComponent', () => {
       await component.onSaveHeader();
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(mockSnackBar.open).toHaveBeenCalledOnce();
+      expect(mockLibSnackbar.open).toHaveBeenCalledOnce();
     });
 
     it('muestra snackbar de error cuando update falla', async () => {
@@ -328,7 +328,7 @@ describe('OrderInfoSectionComponent', () => {
       await component.onSaveHeader();
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(mockSnackBar.open).toHaveBeenCalledOnce();
+      expect(mockLibSnackbar.open).toHaveBeenCalledOnce();
     });
   });
 

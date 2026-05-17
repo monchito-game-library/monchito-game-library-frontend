@@ -1,7 +1,7 @@
 import { Directive, inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -49,7 +49,7 @@ export abstract class HardwareDetailBaseComponent {
   protected readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
   protected readonly _dialog: MatDialog = inject(MatDialog);
-  protected readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   protected _stores: StoreModel[] = [];
@@ -287,11 +287,11 @@ export abstract class HardwareDetailBaseComponent {
       await this._updateSaleStatus(this._userContext.requireUserId(), item.id, sale);
       this._setItem({ ...item, forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null });
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('hardwareSale.snack.undoError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('hardwareSale.snack.undoError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -352,18 +352,14 @@ export abstract class HardwareDetailBaseComponent {
     this.deleting.set(true);
     try {
       await this._deleteItem();
-      this._snackBar.open(
-        this._transloco.translate(this._i18nDeletedSnack),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({ text: this._transloco.translate(this._i18nDeletedSnack), duration: 3000, variant: 'success' });
       void this._router.navigate([this._listRoute]);
     } catch {
-      this._snackBar.open(
-        this._transloco.translate(this._i18nDeleteErrorSnack),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate(this._i18nDeleteErrorSnack),
+        duration: 3000,
+        variant: 'error'
+      });
       this.deleting.set(false);
     }
   }

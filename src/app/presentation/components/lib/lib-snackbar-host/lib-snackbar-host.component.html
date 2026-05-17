@@ -1,0 +1,26 @@
+<aside
+  class="lib-snackbar-host"
+  role="region"
+  aria-live="polite"
+  [attr.aria-label]="'common.notifications' | transloco">
+  @for (msg of service.messages(); track msg.id) {
+    <div
+      class="lib-snackbar"
+      [class.lib-snackbar--success]="msg.variant === 'success'"
+      [class.lib-snackbar--error]="msg.variant === 'error'"
+      [class.lib-snackbar--warning]="msg.variant === 'warning'"
+      [attr.role]="msg.variant === 'error' || msg.variant === 'warning' ? 'alert' : 'status'">
+      <span class="lib-snackbar__text">{{ msg.text }}</span>
+      @if (msg.action) {
+        <button class="lib-snackbar__action" type="button" (click)="onAction(msg)">
+          {{ msg.action.label }}
+        </button>
+      }
+      <app-lib-icon-button
+        icon="close"
+        size="sm"
+        [ariaLabel]="'common.close' | transloco"
+        (clicked)="dismiss(msg.id)" />
+    </div>
+  }
+</aside>

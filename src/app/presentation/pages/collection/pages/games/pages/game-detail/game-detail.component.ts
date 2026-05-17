@@ -18,7 +18,7 @@ import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.co
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -78,7 +78,7 @@ export class GameDetailComponent implements OnInit {
   private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -382,7 +382,11 @@ export class GameDetailComponent implements OnInit {
       await this._gameUseCases.updateSaleStatus(this._userId, g.uuid, sale);
       this.game.set({ ...g, forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null });
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.sale.snack.undoError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.sale.snack.undoError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -420,7 +424,11 @@ export class GameDetailComponent implements OnInit {
       await this._gameUseCases.deleteGame(this._userId, game.uuid);
       void this._router.navigate(['/collection/games']);
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
       this.deleting.set(false);
     }
   }
@@ -450,7 +458,11 @@ export class GameDetailComponent implements OnInit {
       const copies: GameModel[] = await this._workUseCases.getCopies(this._userId, game.workId);
       this.copies.set(copies);
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
       void this._router.navigate(['/collection/games']);
     } finally {
       this.loading.set(false);

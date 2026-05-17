@@ -22,7 +22,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameListModel } from '@/models/game/game-list.model';
@@ -77,7 +77,7 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
 export class GamesComponent implements OnInit, OnDestroy {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -325,11 +325,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    */
   async onGameDeleted(): Promise<void> {
     await this._loadGames(true);
-    this._snackBar.open(
-      this._transloco.translate('gameList.snack.deleted'),
-      this._transloco.translate('common.close'),
-      { duration: 2000 }
-    );
+    this._snack.open({ text: this._transloco.translate('gameList.snack.deleted'), duration: 2000, variant: 'success' });
   }
 
   /**
@@ -440,11 +436,11 @@ export class GamesComponent implements OnInit, OnDestroy {
       this.allGames.set(data);
       this._userPreferencesState.allGames.set(data);
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('gameList.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('gameList.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }

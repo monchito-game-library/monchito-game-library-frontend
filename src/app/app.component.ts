@@ -25,6 +25,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
+import { LibSnackbarHostComponent } from '@/components/lib/lib-snackbar-host/lib-snackbar-host.component';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +41,8 @@ import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
     LibSkeletonComponent,
     LibIconComponent,
     TranslocoPipe,
-    NgOptimizedImage
+    NgOptimizedImage,
+    LibSnackbarHostComponent
   ]
 })
 export class AppComponent implements OnInit, OnDestroy {

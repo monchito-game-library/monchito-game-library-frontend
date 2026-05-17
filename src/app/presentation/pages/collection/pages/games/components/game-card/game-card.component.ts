@@ -16,7 +16,7 @@ import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -44,7 +44,7 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     LibIconButtonComponent,
-    MatTooltip,
+    LibTooltipDirective,
     CurrencyPipe,
     NgOptimizedImage,
     TranslocoPipe,

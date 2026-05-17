@@ -21,7 +21,7 @@ import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
@@ -57,7 +57,7 @@ import {
   ]
 })
 export class SaleFormComponent implements OnInit {
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Initial sale values used to pre-fill the form. */
@@ -156,13 +156,17 @@ export class SaleFormComponent implements OnInit {
     this.form.disable();
     try {
       await this.saveFn()(values);
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.saveSuccess`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.saveSuccess`),
+        duration: 3000,
+        variant: 'success'
       });
       this.saveCompleted.emit(values);
     } catch {
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.saveError`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.saveError`),
+        duration: 3000,
+        variant: 'error'
       });
     } finally {
       this.saving.set(false);
@@ -186,13 +190,17 @@ export class SaleFormComponent implements OnInit {
     this.form.disable();
     try {
       await this.sellFn()(values);
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.soldSuccess`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.soldSuccess`),
+        duration: 3000,
+        variant: 'success'
       });
       this.sellCompleted.emit(values);
     } catch {
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.soldError`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.soldError`),
+        duration: 3000,
+        variant: 'error'
       });
       this.selling.set(false);
       this.form.enable();

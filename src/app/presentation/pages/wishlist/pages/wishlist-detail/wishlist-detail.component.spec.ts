@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { mockLocation } from '@/testing/location.mock';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -57,7 +57,10 @@ describe('WishlistDetailComponent', () => {
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: MatDialog, useValue: { open: vi.fn() } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: Location, useValue: mockLocation },
@@ -143,7 +146,7 @@ describe('WishlistDetailComponent', () => {
     it('muestra snackbar de error y navega atrás si la carga falla', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const location = TestBed.inject(Location as any) as any;
 
       await component.ngOnInit();
@@ -215,7 +218,7 @@ describe('WishlistDetailComponent', () => {
       component.item.set(makeItem());
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onDelete();
 
@@ -228,7 +231,7 @@ describe('WishlistDetailComponent', () => {
       wishlistUseCases.deleteItem.mockRejectedValue(new Error('delete error'));
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
       await component.onDelete();
 

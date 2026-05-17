@@ -24,7 +24,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
@@ -97,7 +97,7 @@ export class GameFormComponent implements OnInit {
   private readonly _location: Location = inject(Location);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
@@ -512,12 +512,7 @@ export class GameFormComponent implements OnInit {
         const msg = isDuplicate
           ? this._transloco.translate('gameForm.errors.duplicate')
           : this._transloco.translate('gameForm.errors.saveFailed');
-        this._snackBar.open(msg, this._transloco.translate('common.close'), {
-          duration: 4000,
-          verticalPosition: 'bottom',
-          horizontalPosition: 'center',
-          panelClass: ['snack-mobile']
-        });
+        this._snack.open({ text: msg, duration: 4000, variant: 'error' });
         this.saving.set(false);
         this.form.enable();
       }

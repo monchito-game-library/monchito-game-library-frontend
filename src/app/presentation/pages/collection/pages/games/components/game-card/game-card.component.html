@@ -33,7 +33,7 @@
             [icon]="gameStatus()!.icon"
             [color]="statusColor()"
             [filled]="true"
-            [matTooltip]="gameStatus()!.labelKey | transloco" />
+            [libTooltip]="gameStatus()!.labelKey | transloco" />
         }
 
         <!-- Favourite — top right -->
@@ -44,7 +44,7 @@
             icon="favorite"
             color="rose"
             [filled]="true"
-            matTooltip="Favorito" />
+            libTooltip="Favorito" />
         }
 
         <!-- Gradient overlay with title, platform, price and flip -->
@@ -64,7 +64,7 @@
                     icon="handshake"
                     color="amber"
                     [filled]="true"
-                    [matTooltip]="game().activeLoanTo ?? ''" />
+                    [libTooltip]="game().activeLoanTo ?? ''" />
                 }
                 @if (game().forSale) {
                   <app-lib-chip
@@ -73,7 +73,7 @@
                     icon="sell"
                     color="green"
                     [filled]="true"
-                    matTooltip="En venta" />
+                    libTooltip="En venta" />
                 }
               </div>
             }

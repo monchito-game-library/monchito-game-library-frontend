@@ -12,7 +12,7 @@ import { USER_PREFERENCES_USE_CASES } from '@/domain/use-cases/user-preferences/
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { MatDialog } from '@angular/material/dialog';
 
 describe('SettingsComponent', () => {
@@ -104,7 +104,10 @@ describe('SettingsComponent', () => {
             setActiveLang: vi.fn()
           }
         },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: LibSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: MatDialog, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -309,7 +312,7 @@ describe('SettingsComponent', () => {
   describe('onSaveName — error path', () => {
     it('muestra snackbar cuando updateDisplayName lanza un error', async () => {
       const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       authUseCases.updateDisplayName.mockRejectedValue(new Error('Auth error'));
       mockUserContext.getDisplayName.mockReturnValue('Old Name');
       component.nameInputValue.set('New Name');
@@ -322,14 +325,14 @@ describe('SettingsComponent', () => {
 
     it('usa el mensaje de transloco cuando el error no es instanceof Error', async () => {
       const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       authUseCases.updateDisplayName.mockRejectedValue('string error');
       mockUserContext.getDisplayName.mockReturnValue('Old Name');
       component.nameInputValue.set('New Name');
 
       await component.onSaveName();
 
-      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.updateName', expect.any(String), expect.any(Object));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.updateName' }));
       expect(component.savingName()).toBe(false);
     });
   });
@@ -366,7 +369,7 @@ describe('SettingsComponent', () => {
     it('usa mensaje de transloco cuando el error del avatar no es instanceof Error', async () => {
       const dialog = TestBed.inject(MatDialog as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadAvatar.mockRejectedValue('string error');
@@ -374,7 +377,7 @@ describe('SettingsComponent', () => {
 
       await component.onAvatarFileSelected(mockFileEvent(file));
 
-      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.uploadImage', expect.any(String), expect.any(Object));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.uploadImage' }));
       expect(mockUserPreferencesState.uploadingAvatar()).toBe(false);
     });
   });
@@ -476,7 +479,7 @@ describe('SettingsComponent', () => {
     it('muestra snackbar cuando la subida falla', async () => {
       const dialog = TestBed.inject(MatDialog as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadAvatar.mockRejectedValue(new Error('Storage error'));
@@ -543,7 +546,7 @@ describe('SettingsComponent', () => {
     it('muestra snackbar cuando la subida del banner falla', async () => {
       const dialog = TestBed.inject(MatDialog as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadBanner.mockRejectedValue(new Error('Storage error'));
@@ -558,7 +561,7 @@ describe('SettingsComponent', () => {
     it('usa mensaje de transloco cuando el error del banner no es instanceof Error', async () => {
       const dialog = TestBed.inject(MatDialog as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadBanner.mockRejectedValue('string error');
@@ -566,11 +569,7 @@ describe('SettingsComponent', () => {
 
       await component.onBannerFileSelected(mockFileEvent(file));
 
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'settings.errors.uploadBanner',
-        expect.any(String),
-        expect.any(Object)
-      );
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.uploadBanner' }));
       expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
     });
 

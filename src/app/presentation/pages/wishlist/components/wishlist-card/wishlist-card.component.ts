@@ -11,7 +11,7 @@ import {
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -29,7 +29,7 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
     DecimalPipe,
     NgOptimizedImage,
     LibIconComponent,
-    MatTooltip,
+    LibTooltipDirective,
     LibIconButtonComponent,
     TranslocoPipe,
     LibChipComponent,

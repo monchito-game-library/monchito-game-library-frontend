@@ -7,7 +7,7 @@ import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { ProtectorModel } from '@/models/protector/protector.model';
 
 function makeProtector(overrides: Partial<ProtectorModel> = {}): ProtectorModel {
@@ -188,13 +188,13 @@ describe('ProtectorsManagementComponent', () => {
       protectorUseCases.deleteProtector.mockRejectedValue(new Error('delete error'));
       const dialog = TestBed.inject(MatDialog as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBar = TestBed.inject(LibSnackbarService);
       vi.spyOn(snackBar, 'open');
 
       component.onDeleteProtector(makeProtector());
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(snackBar.open).toHaveBeenCalledWith(expect.any(String), '', expect.objectContaining({ duration: 4000 }));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ duration: 4000 }));
     });
   });
 

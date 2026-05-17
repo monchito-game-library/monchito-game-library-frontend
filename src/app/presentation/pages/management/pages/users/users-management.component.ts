@@ -15,8 +15,8 @@ import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -50,7 +50,7 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   imports: [
     LibIconComponent,
     LibSpinnerComponent,
-    MatTooltip,
+    LibTooltipDirective,
     LibIconButtonComponent,
     TranslocoPipe,
     NgOptimizedImage,
@@ -63,7 +63,7 @@ export class UsersManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _dialog: MatDialog = inject(MatDialog);
 
   /** Whether the user list is being loaded. */
@@ -229,14 +229,16 @@ export class UsersManagementComponent implements OnInit {
         entityId: user.userId,
         description: `${user.email}: ${user.role} → ${newRole}`
       });
-      this._snackBar.open(this._transloco.translate('management.users.changeRoleSuccess'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.changeRoleSuccess'),
         duration: 3000,
-        panelClass: ['snack-mobile']
+        variant: 'success'
       });
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.changeRoleError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.changeRoleError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.updatingUserId.set(null);
@@ -260,14 +262,16 @@ export class UsersManagementComponent implements OnInit {
         entityId: user.userId,
         description: `${user.email} (${user.role})`
       });
-      this._snackBar.open(this._transloco.translate('management.users.delete.success', { email: user.email }), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.delete.success', { email: user.email }),
         duration: 3000,
-        panelClass: ['snack-mobile']
+        variant: 'success'
       });
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.delete.error'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.delete.error'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.deletingUserId.set(null);
@@ -283,9 +287,10 @@ export class UsersManagementComponent implements OnInit {
       const users: UserAdminModel[] = await this._userAdminUseCases.getAllUsers();
       this.users.set(users);
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.loadError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.loadError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.loading.set(false);

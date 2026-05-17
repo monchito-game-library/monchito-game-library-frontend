@@ -11,3 +11,4 @@ export { LibIconButtonComponent } from './lib-icon-button/lib-icon-button.compon
 export { LibSpinnerComponent } from './lib-spinner/lib-spinner.component';
 export { LibSkeletonComponent } from './lib-skeleton/lib-skeleton.component';
 export { LibCheckboxComponent } from './lib-checkbox/lib-checkbox.component';
+export { LibSnackbarHostComponent } from './lib-snackbar-host/lib-snackbar-host.component';
