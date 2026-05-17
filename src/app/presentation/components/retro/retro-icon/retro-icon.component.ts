@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, InputSignal, input } from '@angular/core';
+import { LibIconSize } from '@/types/retro-component.type';
 
 /**
  * Icono reutilizable de la lib Terminal Collector.
@@ -24,8 +25,13 @@ export class RetroIconComponent {
   readonly name: InputSignal<string> = input.required<string>();
 
   /** Tamaño del icono. */
-  readonly size: InputSignal<'sm' | 'md' | 'lg'> = input<'sm' | 'md' | 'lg'>('md');
+  readonly size: InputSignal<LibIconSize> = input<LibIconSize>('md');
 
   /** Oculta el icono a los lectores de pantalla cuando es decorativo. */
   readonly ariaHidden: InputSignal<boolean> = input<boolean>(true);
+
+  /** Aplica la clase de variante de tamaño al host para que :host.retro-icon-host--* funcione. */
+  @HostBinding('class') get sizeClass(): string {
+    return `retro-icon-host--${this.size()}`;
+  }
 }

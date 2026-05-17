@@ -1,23 +1,43 @@
 :host {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  /* Variable interna de tamaño — el host dicta, el span hereda */
+  --_size: var(--icon-md);
+  width: var(--_size);
+  height: var(--_size);
+  font-size: var(--_size);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Variantes de tamaño */
+:host.retro-icon-host--xs {
+  --_size: var(--icon-xs);
+}
+:host.retro-icon-host--sm {
+  --_size: var(--icon-sm);
+}
+:host.retro-icon-host--md {
+  --_size: var(--icon-md);
+}
+:host.retro-icon-host--lg {
+  --_size: var(--icon-lg);
+}
+:host.retro-icon-host--xl {
+  --_size: var(--icon-xl);
+}
+:host.retro-icon-host--2xl {
+  --_size: var(--icon-2xl);
 }
 
 .retro-icon {
-  font-size: 1.25rem;
+  font-size: inherit; /* hereda del :host — ya no tiene valor propio */
   line-height: 1;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  overflow: hidden; /* evita que el glifo desborde su em-box */
   user-select: none;
-  color: currentColor;
-}
-
-.retro-icon--sm {
-  font-size: 1rem;
-}
-
-.retro-icon--md {
-  font-size: 1.25rem;
-}
-
-.retro-icon--lg {
-  font-size: 1.5rem;
 }
