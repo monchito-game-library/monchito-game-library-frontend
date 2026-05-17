@@ -9,6 +9,7 @@ import {
   Signal,
   WritableSignal,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -52,7 +53,7 @@ export class LibTabsComponent {
   readonly selectedIndexChange: OutputEmitterRef<number> = output<number>();
 
   /** Índice activo interno (controlado por el componente). */
-  readonly _activeIndex: WritableSignal<number> = signal<number>(0);
+  readonly activeIndex: WritableSignal<number> = signal<number>(0);
 
   /** Tabs proyectados como hijos. */
   @ContentChildren(LibTabComponent)
@@ -61,13 +62,23 @@ export class LibTabsComponent {
   /** Lista de tabs como array reactivo para el template. */
   readonly tabsArray: Signal<LibTabComponent[]> = computed(() => this.tabs?.toArray() ?? []);
 
+  constructor() {
+    // Sincronizar selectedIndex input → activeIndex interno.
+    effect(() => {
+      const idx = this.selectedIndex();
+      if (idx >= 0) {
+        this.activeIndex.set(idx);
+      }
+    });
+  }
+
   /**
    * Selecciona un tab por índice, actualiza el estado interno y emite el cambio.
    *
    * @param {number} index - Índice del tab a activar.
    */
   select(index: number): void {
-    this._activeIndex.set(index);
+    this.activeIndex.set(index);
     this.selectedIndexChange.emit(index);
   }
 

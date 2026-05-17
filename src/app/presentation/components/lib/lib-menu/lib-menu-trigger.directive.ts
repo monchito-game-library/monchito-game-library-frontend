@@ -172,7 +172,7 @@ export class LibMenuTriggerDirective implements OnDestroy {
       event.preventDefault();
       const active = this._keyManager?.activeItem;
       if (active) {
-        active._onClick(new MouseEvent('click'));
+        active.onClick(new MouseEvent('click'));
         this._closeMenu();
       }
       return;

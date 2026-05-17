@@ -21,7 +21,7 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
   imports: [LibIconComponent],
   template: `
     <li class="lib-menu-item" role="none">
-      <button type="button" role="menuitem" [disabled]="isDisabled() || null" (click)="_onClick($event)">
+      <button type="button" role="menuitem" [disabled]="isDisabled() || null" (click)="onClick($event)">
         @if (icon()) {
           <app-lib-icon [name]="icon()!" class="lib-menu-item__icon" />
         }
@@ -86,7 +86,7 @@ export class LibMenuItemComponent implements Highlightable {
    *
    * @param {MouseEvent} event - Evento de ratón del click.
    */
-  _onClick(event: MouseEvent): void {
+  onClick(event: MouseEvent): void {
     if (!this.isDisabled()) {
       this.clicked.emit(event);
     }

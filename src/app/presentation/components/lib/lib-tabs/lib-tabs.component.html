@@ -6,10 +6,10 @@
         role="tab"
         [id]="'lib-tab-' + tab.id"
         [attr.aria-controls]="'lib-tabpanel-' + tab.id"
-        [attr.aria-selected]="_activeIndex() === i"
-        [tabindex]="_activeIndex() === i ? 0 : -1"
+        [attr.aria-selected]="activeIndex() === i"
+        [tabindex]="activeIndex() === i ? 0 : -1"
         class="lib-tabs__tab"
-        [class.lib-tabs__tab--active]="_activeIndex() === i"
+        [class.lib-tabs__tab--active]="activeIndex() === i"
         (click)="select(i)"
         (keydown)="onKeydown($event, i)">
         @if (tab.icon()) {
@@ -25,7 +25,7 @@
         role="tabpanel"
         [id]="'lib-tabpanel-' + tab.id"
         [attr.aria-labelledby]="'lib-tab-' + tab.id"
-        [hidden]="_activeIndex() !== i">
+        [hidden]="activeIndex() !== i">
         @if (tab.template) {
           <ng-container *ngTemplateOutlet="tab.template" />
         }

@@ -37,12 +37,12 @@ describe('LibMenuItemComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should NOT emit clicked when _onClick is called while disabled', () => {
+  it('should NOT emit clicked when onClick is called while disabled', () => {
     fixture.componentRef.setInput('isDisabled', true);
     fixture.detectChanges();
     const spy = vi.fn();
     component.clicked.subscribe(spy);
-    component._onClick(new MouseEvent('click'));
+    component.onClick(new MouseEvent('click'));
     expect(spy).not.toHaveBeenCalled();
   });
 
