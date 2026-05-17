@@ -65,7 +65,7 @@
   gap: 0.5rem;
   padding: 1rem;
   border-radius: var(--radius-sm);
-  background: var(--mat-sys-surface-variant);
+  background: var(--bg-surface-hi);
 }
 
 .order-placing__product-header {
@@ -81,17 +81,17 @@
 
 .order-placing__product-total {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .order-placing__product-cost {
   font-weight: 600;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
 }
 
 .order-placing__no-breakdown {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .order-placing__pack-list {
@@ -106,13 +106,13 @@
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-sm);
-  background: var(--mat-sys-surface-container);
+  background: var(--bg-surface);
   font-size: var(--text-sm);
 }
 
 .order-placing__pack-count {
   font-weight: 700;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
   min-width: 2rem;
 }
 
@@ -123,18 +123,18 @@
 
 .order-placing__pack-subtotal {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .order-placing__pack-price {
   font-weight: 600;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
 }
 
 .order-placing__pack-link {
   display: flex;
   align-items: center;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   text-decoration: none;
   border-radius: var(--radius-xs);
   transition: color 0.15s;
@@ -146,6 +146,6 @@
   }
 
   &:hover {
-    color: var(--mat-sys-primary);
+    color: var(--primary);
   }
 }

@@ -37,7 +37,7 @@
     justify-content: center;
     gap: 0.75rem;
     flex: 1;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     padding: 3rem 0;
 
     mat-icon {
@@ -61,8 +61,8 @@
   gap: 1rem;
   padding: 0.75rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
   cursor: pointer;
   transition:
     background var(--transition-fast),
@@ -71,8 +71,8 @@
   flex-shrink: 0;
 
   &:hover {
-    background: var(--mat-sys-surface-container);
-    border-color: var(--mat-sys-primary);
+    background: var(--bg-surface);
+    border-color: var(--primary);
     transform: translateX(3px);
   }
 
@@ -83,7 +83,7 @@
     aspect-ratio: 16 / 9;
     border-radius: var(--radius-sm);
     overflow: hidden;
-    background: var(--mat-sys-surface-variant);
+    background: var(--bg-surface-hi);
   }
 
   .search-result-card__img {
@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
     mat-icon {
       font-size: var(--text-2xl);
@@ -118,7 +118,7 @@
     margin: 0;
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -129,7 +129,7 @@
     align-items: center;
     gap: 0.75rem;
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
   }
 
   .search-result-card__year {
@@ -169,14 +169,14 @@
     font-size: var(--text-xs);
     padding: 1px 0.5rem;
     border-radius: var(--radius-sm);
-    background: var(--mat-sys-surface-variant);
-    color: var(--mat-sys-on-surface-variant);
-    border: 1px solid var(--mat-sys-outline-variant);
+    background: var(--bg-surface-hi);
+    color: var(--text-mid);
+    border: 1px solid var(--border);
     white-space: nowrap;
 
     &--more {
-      background: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      background: var(--bg-surface-hi);
+      color: var(--primary);
       border-color: transparent;
     }
   }
@@ -184,7 +184,7 @@
   .search-result-card__genres {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     opacity: 0.8;
   }
 }

@@ -55,7 +55,7 @@
   gap: 0.5rem;
   overflow-x: auto;
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -64,10 +64,10 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
-  border: 1px solid var(--mat-sys-outline-variant);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: transparent;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   font-family: inherit;
   font-size: var(--text-sm);
   font-weight: 500;
@@ -85,8 +85,8 @@
   }
 
   &--active {
-    background: var(--mat-sys-secondary-container);
-    color: var(--mat-sys-on-secondary-container);
+    background: var(--bg-surface-hi);
+    color: var(--text-hi);
     border-color: transparent;
   }
 }
@@ -119,7 +119,7 @@
   flex: 1;
   padding: 3rem 1.5rem;
   text-align: center;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .sale-page__empty-svg {
@@ -129,21 +129,21 @@
 }
 
 .es-shape {
-  fill: var(--mat-sys-surface-variant);
-  stroke: var(--mat-sys-outline-variant);
+  fill: var(--bg-surface-hi);
+  stroke: var(--border);
 }
 
 .es-ring {
   fill: none;
-  stroke: var(--mat-sys-outline-variant);
+  stroke: var(--border);
 }
 
 .es-accent {
-  fill: var(--mat-sys-primary);
+  fill: var(--primary);
 }
 
 .es-accent-stroke {
-  stroke: var(--mat-sys-primary);
+  stroke: var(--primary);
   fill: none;
 }
 
@@ -151,7 +151,7 @@
   margin: 0;
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .sale-page__empty-subtitle {
@@ -166,24 +166,24 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: var(--mat-sys-surface-container);
+  background: var(--bg-surface);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   flex-shrink: 0;
 
   mat-icon {
     font-size: var(--text-base);
     width: var(--text-base);
     height: var(--text-base);
-    color: var(--mat-sys-primary);
+    color: var(--primary);
   }
 }
 
 .sale-page__summary-count {
   font-size: var(--text-lg);
   font-weight: 700;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .sale-page__summary-divider {
@@ -214,16 +214,16 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: var(--mat-sys-surface-container);
+  background: var(--bg-surface);
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
+  border: 1px solid var(--border);
   cursor: pointer;
   transition: background var(--transition-fast);
   animation: cardIn 280ms ease both;
   animation-delay: calc(min(var(--i, 0), 12) * 40ms);
 
   &:hover {
-    background: var(--mat-sys-surface-container-high);
+    background: var(--bg-surface-hi);
   }
 }
 
@@ -234,14 +234,14 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: var(--radius-full);
-  background: var(--mat-sys-surface-container-high);
+  background: var(--bg-surface-hi);
   flex-shrink: 0;
 
   mat-icon {
     font-size: var(--text-xl);
     width: var(--text-xl);
     height: var(--text-xl);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
   }
 }
 
@@ -256,7 +256,7 @@
 .sale-page__item-name {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -275,20 +275,20 @@
   font-weight: 500;
   padding: 2px 0.5rem;
   border-radius: var(--radius-lg);
-  background: var(--mat-sys-surface-container-high);
-  color: var(--mat-sys-on-surface-variant);
+  background: var(--bg-surface-hi);
+  color: var(--text-mid);
 }
 
 .sale-page__item-price {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
   flex-shrink: 0;
 }
 
 .sale-page__item-no-price {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   font-weight: 400;
 }
 
@@ -303,12 +303,12 @@
 .sale-page__item-sold-price {
   font-size: var(--text-base);
   font-weight: 700;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
 }
 
 .sale-page__item-date {
   font-size: var(--text-xs);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────

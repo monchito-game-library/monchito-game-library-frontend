@@ -20,7 +20,7 @@
 }
 
 .order-detail-page__cost-divider {
-  border-top: 1px solid var(--mat-sys-outline-variant);
+  border-top: 1px solid var(--border);
 }
 
 .order-detail-page__cost-order-total {
@@ -37,14 +37,14 @@
   font-size: var(--text-xl);
   width: var(--text-xl);
   height: var(--text-xl);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .order-detail-page__cost-detail-row {
   display: flex;
   justify-content: space-between;
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   padding-left: 0.5rem;
 
   &:first-child {
@@ -74,7 +74,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   padding-left: 0.5rem;
 
   &:first-child {
@@ -99,8 +99,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--mat-sys-surface-variant);
-    color: var(--mat-sys-on-surface-variant);
+    background: var(--bg-surface-hi);
+    color: var(--text-mid);
 
     mat-icon {
       font-size: var(--text-base);

@@ -1,33 +1,5 @@
-@use '@angular/material' as mat;
-
 html {
   color-scheme: dark;
-
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$violet-palette,
-        theme-type: dark
-      ),
-      typography: (
-        plain-family: 'JetBrains Mono, monospace',
-        brand-family: 'IBM Plex Sans, sans-serif'
-      ),
-      density: -2
-    )
-  );
-
-  // ── Sobrescritura de tokens Material ────────────────────────────────
-  --mat-sys-surface: var(--bg-void);
-  --mat-sys-surface-container: var(--bg-surface);
-  --mat-sys-surface-container-high: var(--bg-surface-hi);
-  --mat-sys-on-surface: var(--text-hi);
-  --mat-sys-on-surface-variant: var(--text-mid);
-  --mat-sys-outline-variant: var(--border);
-  --mat-sys-outline: var(--border-strong);
-  --mat-sys-primary: var(--primary);
-  --mat-sys-on-primary: #ffffff;
-  --mat-sys-error: var(--accent-rose);
 }
 
 // ── Global type scale on large viewports ──────────────────────────────

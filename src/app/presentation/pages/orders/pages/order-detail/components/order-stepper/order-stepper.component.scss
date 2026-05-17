@@ -60,7 +60,7 @@
 .order-detail-page__stepper-progress {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 // stepper-content: last link in the chain, enables real scroll
@@ -86,7 +86,7 @@
 
 .order-detail-page__stepper-needed {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   white-space: nowrap;
 }
 
@@ -102,8 +102,8 @@
   gap: 0.5rem;
   padding: 0.25rem 0.75rem 0.25rem 0.25rem;
   border-radius: 2rem;
-  background: var(--mat-sys-surface-variant);
-  color: var(--mat-sys-on-surface-variant);
+  background: var(--bg-surface-hi);
+  color: var(--text-mid);
 }
 
 .order-detail-page__stepper-member-avatar {
@@ -117,7 +117,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--mat-sys-outline-variant);
+    background: var(--border);
 
     mat-icon {
       font-size: var(--text-base);
@@ -135,8 +135,8 @@
 .order-detail-page__stepper-member-qty {
   font-size: var(--text-sm);
   font-weight: 700;
-  background: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
+  background: var(--bg-surface-hi);
+  color: var(--primary);
   border-radius: var(--radius-md);
   padding: 1px 7px;
 }
@@ -149,7 +149,7 @@
 }
 
 .order-detail-page__stepper-no-packs {
-  color: var(--mat-sys-error);
+  color: var(--accent-rose);
   font-size: var(--text-sm);
 }
 
@@ -159,20 +159,20 @@
   gap: 0.5rem;
   padding: 1rem 1.25rem;
   border-radius: var(--radius-md);
-  border: 2px solid var(--mat-sys-outline-variant);
+  border: 2px solid var(--border);
   cursor: pointer;
   transition:
     border-color 0.15s,
     background-color 0.15s;
 
   &--selected {
-    border-color: var(--mat-sys-primary);
-    background-color: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+    border-color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
   }
 
   &:hover:not(.order-detail-page__pack-option--selected) {
-    border-color: var(--mat-sys-outline);
-    background-color: var(--mat-sys-surface-variant);
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-hi);
   }
 }
 
@@ -186,12 +186,12 @@
   border-radius: var(--radius-md);
   font-size: var(--text-xs);
   font-weight: 600;
-  background: var(--mat-sys-secondary-container);
-  color: var(--mat-sys-on-secondary-container);
+  background: var(--bg-surface-hi);
+  color: var(--text-hi);
 
   &--suggestion {
-    background: var(--mat-sys-tertiary-container);
-    color: var(--mat-sys-on-tertiary-container);
+    background: var(--bg-surface-hi);
+    color: var(--text-hi);
   }
 }
 
@@ -208,24 +208,24 @@
 
 .order-detail-page__pack-option-units {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .order-detail-page__pack-option-excess {
-  color: var(--mat-sys-tertiary);
+  color: var(--accent-blue);
   margin-left: 0.25rem;
 }
 
 .order-detail-page__pack-option-cost {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
 }
 
 .order-detail-page__pack-option-unit-price {
   font-weight: 400;
   font-size: var(--text-xs);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   margin-left: 0.25rem;
 }
 

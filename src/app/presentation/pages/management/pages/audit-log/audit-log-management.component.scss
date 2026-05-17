@@ -20,7 +20,7 @@
   flex-shrink: 0;
   padding: 1rem 1.5rem;
   min-height: 73px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--border);
   box-sizing: border-box;
 }
 
@@ -28,7 +28,7 @@
   font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .audit-log-page__content {
@@ -55,8 +55,8 @@
   gap: 1rem;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
 }
 
 .audit-log-skeleton__body {
@@ -73,7 +73,7 @@
   justify-content: center;
   gap: 0.75rem;
   padding: 3rem 0;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 
   .audit-log-empty__icon {
     font-size: var(--text-display);
@@ -101,19 +101,19 @@
   gap: 1rem;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
 
   .audit-log-entry__icon-wrap {
     width: 36px;
     height: 36px;
     border-radius: var(--radius-full);
-    background: var(--mat-sys-surface-variant);
+    background: var(--bg-surface-hi);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
   }
 
   .audit-log-entry__icon {
@@ -133,12 +133,12 @@
   .audit-log-entry__action {
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
   }
 
   .audit-log-entry__actor {
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -146,7 +146,7 @@
 
   .audit-log-entry__description {
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -154,7 +154,7 @@
 
   .audit-log-entry__date {
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     flex-shrink: 0;
     padding-top: 2px;
     white-space: nowrap;

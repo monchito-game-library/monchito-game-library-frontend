@@ -19,20 +19,20 @@
   justify-content: space-between;
   flex-shrink: 0;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--border);
 }
 
 .protectors-page__title {
   font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .protectors-edit-panel-wrapper {
   flex-shrink: 0;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
 }
 
 .protectors-grid-wrapper {
@@ -56,8 +56,8 @@
   gap: 0.5rem;
   padding: 1rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
 }
 
 .protectors-skeleton__header {
@@ -74,7 +74,7 @@
 
 .protectors-page__empty {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   margin: 0;
   padding: 1rem 0;
 }
@@ -92,8 +92,8 @@
   gap: 0.5rem;
   padding: 1rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
   position: relative;
   cursor: pointer;
   transition:
@@ -101,17 +101,17 @@
     box-shadow var(--transition-fast);
 
   &:hover {
-    border-color: var(--mat-sys-outline);
+    border-color: var(--border-strong);
   }
 
   &--selected {
-    border-color: var(--mat-sys-primary);
-    box-shadow: 0 0 0 1px var(--mat-sys-primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
   }
 
   &--inactive {
     opacity: 0.55;
-    background: var(--mat-sys-surface-container);
+    background: var(--bg-surface);
   }
 
   .protector-card__header {
@@ -124,7 +124,7 @@
   .protector-card__name {
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
     flex: 1;
     min-width: 0;
     line-height: 1.3;
@@ -141,27 +141,27 @@
     letter-spacing: 0.03em;
 
     &--box {
-      background: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      background: var(--bg-surface-hi);
+      color: var(--primary);
     }
 
     &--console {
-      background: var(--mat-sys-secondary-container);
-      color: var(--mat-sys-on-secondary-container);
+      background: var(--bg-surface-hi);
+      color: var(--text-hi);
     }
 
     &--other {
-      background: var(--mat-sys-surface-variant);
-      color: var(--mat-sys-on-surface-variant);
+      background: var(--bg-surface-hi);
+      color: var(--text-mid);
     }
   }
 
   .protector-card__price-hint {
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
     strong {
-      color: var(--mat-sys-primary);
+      color: var(--primary);
       font-weight: 600;
     }
   }
@@ -178,28 +178,28 @@
     gap: 0;
     font-size: var(--text-xs);
     border-radius: var(--radius-sm);
-    border: 1px solid var(--mat-sys-outline-variant);
+    border: 1px solid var(--border);
     font-family: monospace;
     overflow: hidden;
   }
 
   .protector-card__pack-qty {
     padding: 2px 0.5rem;
-    background: var(--mat-sys-surface-variant);
-    color: var(--mat-sys-on-surface-variant);
+    background: var(--bg-surface-hi);
+    color: var(--text-mid);
   }
 
   .protector-card__pack-price {
     padding: 2px 0.5rem;
-    background: var(--mat-sys-primary-container);
-    color: var(--mat-sys-on-primary-container);
+    background: var(--bg-surface-hi);
+    color: var(--primary);
     font-weight: 600;
   }
 
   .protector-card__notes {
     margin: 0;
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     font-style: italic;
     line-height: 1.4;
   }
@@ -209,8 +209,8 @@
     font-weight: 600;
     padding: 2px 0.5rem;
     border-radius: var(--radius-sm);
-    background: var(--mat-sys-error-container);
-    color: var(--mat-sys-on-error-container);
+    background: var(--bg-surface-hi);
+    color: var(--accent-rose);
     align-self: flex-start;
     text-transform: uppercase;
     letter-spacing: 0.03em;
