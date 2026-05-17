@@ -1,0 +1,21 @@
+<div
+  class="lib-form-field"
+  [class.lib-form-field--focused]="focused()"
+  [class.lib-form-field--invalid]="invalid()"
+  [class.lib-form-field--disabled]="disabled()">
+  <ng-content select="app-lib-label, [libLabel]" />
+
+  <div class="lib-form-field__control">
+    <ng-content select="[libPrefix]" />
+    <ng-content />
+    <ng-content select="[libSuffix]" />
+  </div>
+
+  <div class="lib-form-field__subscript">
+    @if (invalid()) {
+      <ng-content select="app-lib-error, [libError]" />
+    } @else {
+      <ng-content select="app-lib-hint, [libHint]" />
+    }
+  </div>
+</div>

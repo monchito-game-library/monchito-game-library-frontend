@@ -12,3 +12,8 @@ export { LibSpinnerComponent } from './lib-spinner/lib-spinner.component';
 export { LibSkeletonComponent } from './lib-skeleton/lib-skeleton.component';
 export { LibCheckboxComponent } from './lib-checkbox/lib-checkbox.component';
 export { LibSnackbarHostComponent } from './lib-snackbar-host/lib-snackbar-host.component';
+export { LibFormFieldComponent } from './lib-form-field/lib-form-field.component';
+export { LibInputDirective } from './lib-form-field/lib-input.directive';
+export { LibLabelComponent } from './lib-form-field/lib-label.component';
+export { LibErrorComponent } from './lib-form-field/lib-error.component';
+export { LibHintComponent } from './lib-form-field/lib-hint.component';

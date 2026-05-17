@@ -795,3 +795,31 @@ mat-progress-spinner {
   border-bottom: none;
   background: var(--bg-surface);
 }
+
+// ─── lib-input — input nativo con estilos Terminal Collector ─────────────────
+// Aplicado como clase CSS al <input> / <textarea> dentro de lib-form-field.
+// El borde lo gestiona el contenedor .lib-form-field__control; aquí sólo
+// se definen los estilos de tipografía, color y comportamiento interno.
+
+.lib-input__control {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-hi);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  width: 100%;
+  resize: vertical; // útil para textarea
+
+  &::placeholder {
+    color: var(--text-lo);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  &:disabled {
+    color: var(--text-lo);
+    cursor: not-allowed;
+  }
+}
