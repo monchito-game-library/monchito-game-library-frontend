@@ -259,8 +259,7 @@
               type="submit"
               class="game-form__submit-btn"
               [loading]="saving()"
-              [disabled]="form.invalid || saving() || !hasChanges()"
-              (clicked)="onSubmit()" />
+              [disabled]="form.invalid || saving() || !hasChanges()" />
           </div>
         </div>
       </form>

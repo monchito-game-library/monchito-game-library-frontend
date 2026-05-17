@@ -112,10 +112,9 @@
       [label]="'auth.register.submit' | transloco"
       variant="primary"
       type="submit"
-      class="full-width"
+      [fullWidth]="true"
       [loading]="loading()"
-      [disabled]="loading()"
-      (clicked)="onSubmit()" />
+      [disabled]="loading()" />
 
     <!-- OAuth divider -->
     <div class="auth-divider">

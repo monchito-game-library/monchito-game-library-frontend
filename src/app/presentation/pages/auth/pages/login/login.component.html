@@ -60,10 +60,9 @@
       [label]="'auth.login.submit' | transloco"
       variant="primary"
       type="submit"
-      class="full-width"
+      [fullWidth]="true"
       [loading]="loading()"
-      [disabled]="loading()"
-      (clicked)="onSubmit()" />
+      [disabled]="loading()" />
 
     <!-- Forgot password -->
     <div class="auth-links">
