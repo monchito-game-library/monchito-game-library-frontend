@@ -81,6 +81,14 @@ html {
   --shadow-md: none;
   --shadow-lg: none;
 
+  /* ── Escala de tamaños de icono ─────────────────────── */
+  --icon-xs: 0.75rem; /* chip, data-row, badges densos */
+  --icon-sm: 1rem; /* botón, tabs, icon-button sm, prefix/suffix input */
+  --icon-md: 1.125rem; /* icon-button md, menús, list items */
+  --icon-lg: 1.25rem; /* icon-button lg, headers de sección */
+  --icon-xl: 1.5rem; /* topbar, nav-rail brand */
+  --icon-2xl: 2rem; /* empty states, hero */
+
   /* ── Tipografía ─────────────────────────────────────── */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
