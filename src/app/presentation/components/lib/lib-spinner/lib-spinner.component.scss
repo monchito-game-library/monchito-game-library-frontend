@@ -25,19 +25,22 @@
   }
 
   // Variantes
+  //
+  // Importante: las animaciones que cambian la propiedad `content` deben
+  // declararse sobre el pseudo-elemento ::before (donde vive la propiedad),
+  // no sobre el span padre. Solo `bars` puede animarse en el padre porque
+  // anima `transform`, que se propaga al ::before contenido.
   &--bars {
     animation: lib-spinner-bars 480ms steps(4, end) infinite;
   }
 
-  &--dots {
-    &::before {
-      content: '.';
-    }
-
+  &--dots::before {
+    content: '.';
     animation: lib-spinner-dots 800ms steps(4, end) infinite;
   }
 
-  &--blocks {
+  &--blocks::before {
+    content: '\2596'; // ▖ (frame inicial)
     animation: lib-spinner-blocks 640ms steps(4, end) infinite;
   }
 }
