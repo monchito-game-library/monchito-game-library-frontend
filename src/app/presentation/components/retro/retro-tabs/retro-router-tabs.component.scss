@@ -36,10 +36,6 @@
   white-space: nowrap;
   transition: color 160ms ease;
 
-  retro-icon {
-    font-size: 1rem;
-  }
-
   &--active {
     color: var(--text-hi);
     text-shadow: 0 0 6px color-mix(in srgb, var(--primary) 45%, transparent);
