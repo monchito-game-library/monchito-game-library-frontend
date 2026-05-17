@@ -15,7 +15,6 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { MatCard } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -25,7 +24,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
+import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -33,6 +33,7 @@ import { defaultGameCover } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
+import { LibChipColor } from '@/types/lib-component.type';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 
@@ -43,7 +44,6 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
     MatIconButton,
     MatIcon,
     MatTooltip,
@@ -51,7 +51,8 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
     NgOptimizedImage,
     TranslocoPipe,
     SkeletonComponent,
-    BadgeChipComponent
+    LibCardComponent,
+    LibChipComponent
   ]
 })
 export class GameCardComponent {
@@ -127,6 +128,23 @@ export class GameCardComponent {
   readonly platformColor: Signal<string | undefined> = computed(
     (): string | undefined => PLATFORM_COLORS[this.game().platform ?? '']
   );
+
+  /** Color semántico del lib-chip de estado, mapeado desde game().status. */
+  readonly statusColor: Signal<LibChipColor> = computed((): LibChipColor => {
+    switch (this.game().status) {
+      case 'completed':
+      case 'platinum':
+        return 'green';
+      case 'playing':
+        return 'blue';
+      case 'backlog':
+        return 'amber';
+      case 'abandoned':
+        return 'rose';
+      default:
+        return 'neutral';
+    }
+  });
 
   /** Whether the card is currently showing its back face (description). */
   readonly isFlipped: WritableSignal<boolean> = signal<boolean>(false);

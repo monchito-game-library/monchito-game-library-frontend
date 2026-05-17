@@ -1,11 +1,16 @@
-<mat-card class="game-card" [style.--dominant-glow]="dominantColor()">
+<app-lib-card
+  class="game-card"
+  [interactive]="true"
+  [padded]="false"
+  [style.--dominant-glow]="dominantColor()"
+  (cardClicked)="editGame()">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
     <!-- FRONT FACE -->
     <div
       class="game-card__front"
       [class.game-card__front--digital]="isDigital()"
       [class.game-card__front--flipped]="isFlipped()">
-      <div class="game-card__image-wrapper" (click)="editGame()">
+      <div class="game-card__image-wrapper">
         @if (!imageLoaded()) {
           <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
         }
@@ -22,19 +27,24 @@
 
         <!-- Status badge — top left -->
         @if (gameStatus()) {
-          <div
+          <app-lib-chip
             class="game-card__status-badge"
-            [style.background-color]="gameStatus()!.color"
-            [matTooltip]="gameStatus()!.labelKey | transloco">
-            <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
-          </div>
+            [label]="gameStatus()!.code"
+            [icon]="gameStatus()!.icon"
+            [color]="statusColor()"
+            [filled]="true"
+            [matTooltip]="gameStatus()!.labelKey | transloco" />
         }
 
         <!-- Favourite — top right -->
         @if (isFavorite()) {
-          <div class="game-card__favorite" matTooltip="Favorito">
-            <mat-icon>favorite</mat-icon>
-          </div>
+          <app-lib-chip
+            class="game-card__favorite"
+            label="FAV"
+            icon="favorite"
+            color="rose"
+            [filled]="true"
+            matTooltip="Favorito" />
         }
 
         <!-- Gradient overlay with title, platform, price and flip -->
@@ -42,21 +52,28 @@
           <div class="game-card__chips-area">
             <div class="game-card__platform-row">
               @if (game().platform) {
-                <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
+                <app-lib-chip [label]="game().platform!" color="primary" />
               }
             </div>
             @if (isLoaned() || game().forSale) {
               <div class="game-card__status-chips">
                 @if (isLoaned()) {
-                  <span class="game-card__loan-chip" [matTooltip]="game().activeLoanTo ?? ''">
-                    <mat-icon>handshake</mat-icon>
-                    <span class="game-card__loan-name">{{ loanChipLabel() }}</span>
-                  </span>
+                  <app-lib-chip
+                    class="game-card__loan-chip"
+                    [label]="loanChipLabel()"
+                    icon="handshake"
+                    color="amber"
+                    [filled]="true"
+                    [matTooltip]="game().activeLoanTo ?? ''" />
                 }
                 @if (game().forSale) {
-                  <span class="game-card__sale-chip" matTooltip="En venta">
-                    <mat-icon>sell</mat-icon>
-                  </span>
+                  <app-lib-chip
+                    class="game-card__sale-chip"
+                    label="VENTA"
+                    icon="sell"
+                    color="green"
+                    [filled]="true"
+                    matTooltip="En venta" />
                 }
               </div>
             }
@@ -101,4 +118,4 @@
       </div>
     </div>
   </div>
-</mat-card>
+</app-lib-card>

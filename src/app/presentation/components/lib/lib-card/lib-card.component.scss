@@ -25,7 +25,9 @@
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--border-active);
+        // --lib-card-hover-border permite que el consumidor sobreescriba el color de hover
+        // (e.g. game-card lo usa con --dominant-glow); cae a --border-active por defecto
+        border-color: var(--lib-card-hover-border, var(--border-active));
       }
     }
 
