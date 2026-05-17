@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -28,7 +27,7 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoreEditPanelComponent, MatButton, MatIcon, TranslocoPipe, CatalogItemCardComponent, LibSkeletonComponent]
+  imports: [StoreEditPanelComponent, TranslocoPipe, CatalogItemCardComponent, LibSkeletonComponent, LibButtonComponent]
 })
 export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);

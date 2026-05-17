@@ -4,10 +4,11 @@
       <mat-icon class="order-invite-page__icon">group_add</mat-icon>
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.loginRequired' | transloco }}</div>
-      <button mat-flat-button (click)="onGoToLogin()">
-        <mat-icon>login</mat-icon>
-        {{ 'orders.invite.loginBtn' | transloco }}
-      </button>
+      <app-lib-button
+        [label]="'orders.invite.loginBtn' | transloco"
+        icon="login"
+        variant="primary"
+        (clicked)="onGoToLogin()" />
     } @else if (loading()) {
       <app-lib-skeleton width="48px" height="48px" />
       <app-lib-skeleton width="160px" height="20px" />
@@ -20,10 +21,11 @@
       <mat-icon class="order-invite-page__icon order-invite-page__icon--success">check_circle</mat-icon>
       <div class="order-invite-page__title">{{ 'orders.invite.alreadyMemberTitle' | transloco }}</div>
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
-      <button mat-flat-button [routerLink]="['/orders', invitation()!.orderId]">
-        <mat-icon>open_in_new</mat-icon>
-        {{ 'orders.invite.goToOrder' | transloco }}
-      </button>
+      <app-lib-button
+        [label]="'orders.invite.goToOrder' | transloco"
+        icon="open_in_new"
+        variant="primary"
+        [routerLink]="['/orders', invitation()!.orderId]" />
     } @else if (invitation()) {
       <mat-icon class="order-invite-page__icon">group_add</mat-icon>
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
@@ -33,16 +35,13 @@
           {{ 'orders.invite.expires' | transloco }}: {{ invitation()!.expiresAt | date: 'dd/MM/yyyy HH:mm' }}
         </div>
       }
-      <button mat-flat-button (click)="onJoin()" [disabled]="joining()">
-        <span class="order-invite-page__btn-content">
-          @if (joining()) {
-            <app-lib-spinner size="sm" />
-          } @else {
-            <mat-icon>group_add</mat-icon>
-          }
-          {{ joining() ? ('orders.invite.joining' | transloco) : ('orders.invite.join' | transloco) }}
-        </span>
-      </button>
+      <app-lib-button
+        [label]="joining() ? ('orders.invite.joining' | transloco) : ('orders.invite.join' | transloco)"
+        icon="group_add"
+        variant="primary"
+        [loading]="joining()"
+        [disabled]="joining()"
+        (clicked)="onJoin()" />
     }
   </div>
 </div>

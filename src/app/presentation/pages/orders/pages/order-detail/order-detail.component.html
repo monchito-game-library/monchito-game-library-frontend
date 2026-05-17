@@ -38,15 +38,19 @@
             @for (m of ord.members; track m.id) {
               @if (m.userId === userContext.userId()) {
                 @if (!m.isReady) {
-                  <button mat-flat-button (click)="onToggleMemberReady()" [disabled]="saving()">
-                    <mat-icon>check_circle</mat-icon>
-                    {{ 'orders.header.markReady' | transloco }}
-                  </button>
+                  <app-lib-button
+                    [label]="'orders.header.markReady' | transloco"
+                    icon="check_circle"
+                    variant="success"
+                    [disabled]="saving()"
+                    (clicked)="onToggleMemberReady()" />
                 } @else {
-                  <button mat-stroked-button (click)="onToggleMemberReady()" [disabled]="saving()">
-                    <mat-icon>cancel</mat-icon>
-                    {{ 'orders.header.cancelReady' | transloco }}
-                  </button>
+                  <app-lib-button
+                    [label]="'orders.header.cancelReady' | transloco"
+                    icon="cancel"
+                    variant="ghost"
+                    [disabled]="saving()"
+                    (clicked)="onToggleMemberReady()" />
                 }
               }
             }

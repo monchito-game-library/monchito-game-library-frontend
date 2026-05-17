@@ -138,14 +138,12 @@
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <app-lib-spinner size="sm" />
                   } @else {
-                    <button
-                      mat-stroked-button
-                      type="button"
+                    <app-lib-button
+                      [label]="'management.users.action.demote' | transloco"
+                      icon="person_remove"
+                      variant="ghost"
                       class="user-card__action-btn user-card__action-btn--demote"
-                      (click)="onTogglePromotion(user)">
-                      <mat-icon>person_remove</mat-icon>
-                      <span>{{ 'management.users.action.demote' | transloco }}</span>
-                    </button>
+                      (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
                       <button
                         mat-icon-button
@@ -201,14 +199,12 @@
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <app-lib-spinner size="sm" />
                   } @else {
-                    <button
-                      mat-flat-button
-                      type="button"
+                    <app-lib-button
+                      [label]="'management.users.action.promote' | transloco"
+                      icon="person_add"
+                      variant="primary"
                       class="user-card__action-btn user-card__action-btn--promote"
-                      (click)="onTogglePromotion(user)">
-                      <mat-icon>person_add</mat-icon>
-                      <span>{{ 'management.users.action.promote' | transloco }}</span>
-                    </button>
+                      (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
                       <button
                         mat-icon-button

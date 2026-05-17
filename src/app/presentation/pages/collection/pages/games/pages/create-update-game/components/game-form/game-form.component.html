@@ -78,12 +78,14 @@
           </div>
         }
 
-        <button mat-flat-button type="button" (click)="openSearchMode()" class="game-cover-panel__search-btn">
-          <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
-          {{
+        <app-lib-button
+          [label]="
             selectedGame() ? ('gameForm.cover.changeGame' | transloco) : ('gameForm.cover.searchCatalogue' | transloco)
-          }}
-        </button>
+          "
+          [icon]="selectedGame() ? 'swap_horiz' : 'search'"
+          variant="ghost"
+          class="game-cover-panel__search-btn"
+          (clicked)="openSearchMode()" />
 
         @if (selectedGame()) {
           <div class="game-cover-panel__info">
@@ -251,25 +253,21 @@
           </div>
 
           <div class="game-form__footer-actions">
-            <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="saving()">
-              <mat-icon>close</mat-icon>
-              {{ 'common.cancel' | transloco }}
-            </button>
-            <button
-              mat-flat-button
-              color="primary"
+            <app-lib-button
+              [label]="'common.cancel' | transloco"
+              icon="close"
+              variant="ghost"
+              [disabled]="saving()"
+              (clicked)="onCancel()" />
+            <app-lib-button
+              [label]="isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco)"
+              [icon]="isEditMode ? 'save' : 'add'"
+              variant="primary"
               type="submit"
+              class="game-form__submit-btn"
+              [loading]="saving()"
               [disabled]="form.invalid || saving() || !hasChanges()"
-              class="game-form__submit-btn">
-              <span class="game-form__submit-content">
-                @if (saving()) {
-                  <app-lib-spinner size="inline" />
-                } @else {
-                  <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-                }
-                {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
-              </span>
-            </button>
+              (clicked)="onSubmit()" />
           </div>
         </div>
       </form>

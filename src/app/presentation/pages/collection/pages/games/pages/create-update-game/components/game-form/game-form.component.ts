@@ -20,7 +20,8 @@ import { MatSelect } from '@angular/material/select';
 import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatOption } from '@angular/material/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -77,7 +78,6 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatSelect,
     MatOption,
     LibCheckboxComponent,
-    MatButton,
     MatIcon,
     MatIconButton,
     LibSpinnerComponent,
@@ -86,7 +86,8 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatAutocomplete,
     MatSuffix,
     LibSkeletonComponent,
-    CatalogSearchPanelComponent
+    CatalogSearchPanelComponent,
+    LibButtonComponent
   ]
 })
 export class GameFormComponent implements OnInit {

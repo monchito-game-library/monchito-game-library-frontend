@@ -12,7 +12,7 @@ import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
@@ -37,8 +37,8 @@ import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.
     MatAutocomplete,
     MatAutocompleteTrigger,
     MatOption,
-    MatButton,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ]
 })
 export class AddEditLineDialogComponent {

@@ -3,8 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -24,13 +23,12 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     MatFormField,
     MatLabel,
     MatInput,
-    MatButton,
-    LibSpinnerComponent,
     MatIcon,
     MatError,
     MatPrefix,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    LibButtonComponent
   ]
 })
 /** Forgot-password page component. Sends a password-reset email and redirects to login on success. */

@@ -94,33 +94,31 @@
 
     <div class="edit-panel__actions">
       @if (protector()) {
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="toggled.emit()"
-          [class.edit-panel__deactivate-btn]="protector()!.isActive"
-          [class.edit-panel__activate-btn]="!protector()!.isActive">
-          <mat-icon>{{ protector()!.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-          {{
+        <app-lib-button
+          [label]="
             (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
               | transloco
-          }}
-        </button>
-        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
-          <mat-icon>delete</mat-icon>
-          {{ 'management.products.deleteBtn' | transloco }}
-        </button>
+          "
+          [icon]="protector()!.isActive ? 'toggle_on' : 'toggle_off'"
+          variant="ghost"
+          [class.edit-panel__deactivate-btn]="protector()!.isActive"
+          [class.edit-panel__activate-btn]="!protector()!.isActive"
+          (clicked)="toggled.emit()" />
+        <app-lib-button
+          [label]="'management.products.deleteBtn' | transloco"
+          icon="delete"
+          variant="danger"
+          class="edit-panel__delete-btn"
+          (clicked)="deleted.emit()" />
       }
       <div class="edit-panel__actions-right">
-        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="onSave()"
-          [disabled]="form.invalid || packsArray.length === 0">
-          {{ 'common.save' | transloco }}
-        </button>
+        <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <app-lib-button
+          [label]="'common.save' | transloco"
+          icon="save"
+          variant="primary"
+          [disabled]="form.invalid || packsArray.length === 0"
+          (clicked)="onSave()" />
       </div>
     </div>
   </form>

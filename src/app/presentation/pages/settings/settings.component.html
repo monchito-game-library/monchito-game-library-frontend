@@ -219,9 +219,7 @@
           <mat-icon>logout</mat-icon>
           {{ 'settings.session.logoutDescription' | transloco }}
         </span>
-        <button mat-stroked-button color="warn" (click)="logout()">
-          {{ 'nav.logout' | transloco }}
-        </button>
+        <app-lib-button [label]="'nav.logout' | transloco" variant="danger" (clicked)="logout()" />
       </div>
     </mat-card-content>
   </mat-card>

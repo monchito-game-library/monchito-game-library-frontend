@@ -25,20 +25,14 @@
         <span>{{ game().activeLoanAt }}</span>
       </div>
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
+      <app-lib-button
+        [label]="'gameDetail.loan.returnBtn' | transloco"
+        icon="undo"
+        variant="primary"
         class="game-loan-form__action-btn"
-        (click)="onReturn()"
-        [disabled]="returning()">
-        @if (returning()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>undo</mat-icon>
-        }
-        {{ 'gameDetail.loan.returnBtn' | transloco }}
-      </button>
+        [loading]="returning()"
+        [disabled]="returning()"
+        (clicked)="onReturn()" />
     </section>
   } @else {
     <!-- Loan mode: create loan form -->
@@ -62,20 +56,14 @@
           <mat-datepicker #loanedAtPicker></mat-datepicker>
         </mat-form-field>
 
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
+        <app-lib-button
+          [label]="'gameDetail.loan.loanBtn' | transloco"
+          icon="handshake"
+          variant="primary"
           class="game-loan-form__action-btn"
-          (click)="onLoan()"
-          [disabled]="saving()">
-          @if (saving()) {
-            <mat-icon>hourglass_empty</mat-icon>
-          } @else {
-            <mat-icon>handshake</mat-icon>
-          }
-          {{ 'gameDetail.loan.loanBtn' | transloco }}
-        </button>
+          [loading]="saving()"
+          [disabled]="saving()"
+          (clicked)="onLoan()" />
       </section>
     </form>
   }

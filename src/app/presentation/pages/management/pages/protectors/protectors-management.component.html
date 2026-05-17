@@ -1,10 +1,12 @@
 <div class="protectors-page" [class.protectors-page--panel-open]="panelOpen()">
   <header class="protectors-page__header">
     <h1 class="protectors-page__title">{{ 'management.products.title' | transloco }}</h1>
-    <button mat-flat-button color="primary" (click)="onAddProtector()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.products.addBtn' | transloco }}
-    </button>
+    <app-lib-button
+      [label]="'management.products.addBtn' | transloco"
+      icon="add"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddProtector()" />
   </header>
 
   @if (panelOpen()) {

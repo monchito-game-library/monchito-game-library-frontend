@@ -29,9 +29,11 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="delete-user-dialog__actions">
-  <button mat-button mat-dialog-close type="button">{{ 'common.cancel' | transloco }}</button>
-  <button mat-flat-button color="warn" type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
-    <mat-icon>delete_forever</mat-icon>
-    <span>{{ 'management.users.delete.confirm' | transloco }}</span>
-  </button>
+  <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" mat-dialog-close />
+  <app-lib-button
+    [label]="'management.users.delete.confirm' | transloco"
+    icon="delete_forever"
+    variant="danger"
+    [disabled]="!canConfirm()"
+    (clicked)="onConfirm()" />
 </mat-dialog-actions>

@@ -7,7 +7,7 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
@@ -20,7 +20,7 @@ import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
   styleUrl: './game-cover-position-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage, MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
+  imports: [NgOptimizedImage, MatDialogTitle, MatDialogContent, MatDialogActions, TranslocoPipe, LibButtonComponent]
 })
 export class GameCoverPositionDialogComponent extends CropInteractionBase {
   private readonly _dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = inject(

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -31,9 +30,8 @@ import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
     MatInput,
     MatSelect,
     MatOption,
-    MatButton,
-    MatIcon,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ],
   templateUrl: './hardware-model-edit-panel.component.html',
   styleUrl: './hardware-model-edit-panel.component.scss'

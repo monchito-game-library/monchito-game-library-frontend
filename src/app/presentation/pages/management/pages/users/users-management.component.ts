@@ -12,7 +12,8 @@ import { NgOptimizedImage } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -49,12 +50,12 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   imports: [
     MatIcon,
     LibSpinnerComponent,
-    MatButton,
     MatIconButton,
     MatTooltip,
     TranslocoPipe,
     NgOptimizedImage,
-    LibSkeletonComponent
+    LibSkeletonComponent,
+    LibButtonComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -25,9 +24,8 @@ import { StoreFormResult } from '@/interfaces/management/store-form-result.inter
     MatInput,
     MatSelect,
     MatOption,
-    MatButton,
-    MatIcon,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ],
   templateUrl: './store-edit-panel.component.html',
   styleUrl: './store-edit-panel.component.scss'

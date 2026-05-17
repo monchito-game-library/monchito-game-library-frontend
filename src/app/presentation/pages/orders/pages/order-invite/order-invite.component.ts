@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatButton } from '@angular/material/button';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
@@ -18,16 +17,7 @@ import { OrderInvitationModel } from '@/models/order/order-invitation.model';
   styleUrl: './order-invite.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButton,
-    LibSpinnerComponent,
-    MatIcon,
-    TranslocoPipe,
-    DatePipe,
-    RouterLink,
-    NgTemplateOutlet,
-    LibSkeletonComponent
-  ]
+  imports: [MatIcon, TranslocoPipe, DatePipe, RouterLink, NgTemplateOutlet, LibSkeletonComponent, LibButtonComponent]
 })
 export class OrderInviteComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

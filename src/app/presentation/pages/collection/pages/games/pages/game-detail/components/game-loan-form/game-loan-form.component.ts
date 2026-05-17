@@ -14,7 +14,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -37,7 +38,6 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
     MatIconButton,
     MatIcon,
     MatFormField,
@@ -48,7 +48,8 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
     MatDatepickerInput,
     MatDatepickerToggle,
     DatepickerFieldClickDirective,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ]
 })
 export class GameLoanFormComponent implements OnInit {

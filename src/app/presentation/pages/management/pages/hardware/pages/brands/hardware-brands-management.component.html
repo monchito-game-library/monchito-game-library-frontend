@@ -3,10 +3,12 @@
     <div class="brands-page__header-left">
       <h1 class="brands-page__title">{{ 'management.hardware.title' | transloco }}</h1>
     </div>
-    <button mat-flat-button color="primary" (click)="onAddBrand()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.brands.addBtn' | transloco }}
-    </button>
+    <app-lib-button
+      [label]="'management.hardware.brands.addBtn' | transloco"
+      icon="add"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddBrand()" />
   </header>
 
   @if (panelOpen()) {

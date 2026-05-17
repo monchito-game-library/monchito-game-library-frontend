@@ -13,7 +13,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -32,7 +32,7 @@ import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.inter
     class: 'order-detail-page__section order-detail-page__section--lines order-detail-page__stepper',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, NgOptimizedImage, MatButton, MatIcon, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, MatIcon, TranslocoPipe, LibButtonComponent]
 })
 export class OrderStepperComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

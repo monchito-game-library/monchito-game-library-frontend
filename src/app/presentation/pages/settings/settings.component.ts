@@ -14,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -50,7 +50,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
-    MatButton,
     MatCard,
     MatCardContent,
     MatCardHeader,
@@ -65,7 +64,8 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatTooltip,
     LibCheckboxComponent,
     LibSkeletonComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {

@@ -45,10 +45,10 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="onCancel()">
-    {{ 'orders.header.cancel' | transloco }}
-  </button>
-  <button mat-flat-button type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
-    {{ 'orders.ready.confirm' | transloco }}
-  </button>
+  <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+  <app-lib-button
+    [label]="'orders.ready.confirm' | transloco"
+    variant="success"
+    [disabled]="!canConfirm()"
+    (clicked)="onConfirm()" />
 </mat-dialog-actions>

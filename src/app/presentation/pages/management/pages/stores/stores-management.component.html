@@ -1,10 +1,12 @@
 <div class="stores-page" [class.stores-page--panel-open]="panelOpen()">
   <header class="stores-page__header">
     <h1 class="stores-page__title">{{ 'management.stores.title' | transloco }}</h1>
-    <button mat-flat-button color="primary" (click)="onAddStore()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.stores.addBtn' | transloco }}
-    </button>
+    <app-lib-button
+      [label]="'management.stores.addBtn' | transloco"
+      icon="add"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddStore()" />
   </header>
 
   @if (panelOpen()) {

@@ -3,8 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -25,15 +25,14 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     MatFormField,
     MatLabel,
     MatInput,
-    MatButton,
     MatIconButton,
-    LibSpinnerComponent,
     MatIcon,
     MatError,
     MatPrefix,
     MatSuffix,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    LibButtonComponent
   ]
 })
 /** Registration page component. Creates a new account and redirects to login on success. */

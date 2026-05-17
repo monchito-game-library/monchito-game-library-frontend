@@ -40,10 +40,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="onCancel()">
-    {{ 'orders.header.cancel' | transloco }}
-  </button>
-  <button mat-flat-button type="button" (click)="onSubmit()">
-    {{ 'orders.header.save' | transloco }}
-  </button>
+  <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+  <app-lib-button [label]="'orders.header.save' | transloco" icon="save" variant="primary" (clicked)="onSubmit()" />
 </mat-dialog-actions>

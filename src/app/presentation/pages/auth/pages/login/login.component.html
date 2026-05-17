@@ -55,13 +55,14 @@
     }
 
     <!-- Submit -->
-    <button mat-flat-button type="submit" class="full-width auth-submit-btn" [disabled]="loading()">
-      @if (loading()) {
-        <app-lib-spinner size="sm" />
-      } @else {
-        {{ 'auth.login.submit' | transloco }}
-      }
-    </button>
+    <app-lib-button
+      [label]="'auth.login.submit' | transloco"
+      variant="primary"
+      type="submit"
+      class="full-width"
+      [loading]="loading()"
+      [disabled]="loading()"
+      (clicked)="onSubmit()" />
 
     <!-- Forgot password -->
     <div class="auth-links">

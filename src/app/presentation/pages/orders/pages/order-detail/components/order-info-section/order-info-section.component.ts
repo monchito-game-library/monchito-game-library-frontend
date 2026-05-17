@@ -13,7 +13,7 @@ import {
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -39,14 +39,14 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     DatePipe,
     DecimalPipe,
     NgOptimizedImage,
-    MatButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatIcon,
     MatFormField,
     MatLabel,
     MatInput,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ]
 })
 export class OrderInfoSectionComponent implements OnDestroy {

@@ -7,7 +7,7 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
@@ -20,7 +20,7 @@ import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
   styleUrl: './ready-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
+  imports: [DecimalPipe, MatDialogTitle, MatDialogContent, MatDialogActions, TranslocoPipe, LibButtonComponent]
 })
 export class ReadyDialogComponent {
   private readonly _dialogRef: MatDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined> = inject(

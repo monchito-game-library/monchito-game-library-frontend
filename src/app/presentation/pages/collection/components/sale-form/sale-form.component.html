@@ -35,20 +35,14 @@
         </mat-form-field>
       }
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
+      <app-lib-button
+        [label]="i18nPrefix() + '.saveBtn' | transloco"
+        icon="save"
+        variant="primary"
         class="sale-form__save-btn"
-        (click)="onSave()"
-        [disabled]="saving() || selling()">
-        @if (saving()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>save</mat-icon>
-        }
-        {{ i18nPrefix() + '.saveBtn' | transloco }}
-      </button>
+        [loading]="saving()"
+        [disabled]="saving() || selling()"
+        (clicked)="onSave()" />
     </section>
 
     <mat-divider />
@@ -84,20 +78,14 @@
         {{ i18nPrefix() + '.soldWarning' | transloco }}
       </p>
 
-      <button
-        mat-flat-button
-        color="warn"
-        type="button"
+      <app-lib-button
+        [label]="i18nPrefix() + '.markAsSoldBtn' | transloco"
+        icon="sell"
+        variant="danger"
         class="sale-form__sold-btn"
-        (click)="onMarkAsSold()"
-        [disabled]="!canMarkAsSold || saving() || selling()">
-        @if (selling()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>sell</mat-icon>
-        }
-        {{ i18nPrefix() + '.markAsSoldBtn' | transloco }}
-      </button>
+        [loading]="selling()"
+        [disabled]="!canMarkAsSold || saving() || selling()"
+        (clicked)="onMarkAsSold()" />
     </section>
   </form>
 </div>

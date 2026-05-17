@@ -87,14 +87,18 @@
     }
 
     <div class="order-detail-page__stepper-nav">
-      <button mat-stroked-button (click)="onPrevStep()" [disabled]="currentStep() === 0">
-        <mat-icon>arrow_back</mat-icon>
-        {{ 'orders.ready.prev' | transloco }}
-      </button>
-      <button mat-stroked-button (click)="onNextStep()" [disabled]="currentStep() === packSteps().length - 1">
-        {{ 'orders.ready.next' | transloco }}
-        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-      </button>
+      <app-lib-button
+        [label]="'orders.ready.prev' | transloco"
+        icon="arrow_back"
+        variant="ghost"
+        [disabled]="currentStep() === 0"
+        (clicked)="onPrevStep()" />
+      <app-lib-button
+        [label]="'orders.ready.next' | transloco"
+        icon="arrow_forward"
+        variant="ghost"
+        [disabled]="currentStep() === packSteps().length - 1"
+        (clicked)="onNextStep()" />
     </div>
   </div>
 </div>

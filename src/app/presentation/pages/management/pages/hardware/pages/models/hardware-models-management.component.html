@@ -15,10 +15,12 @@
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <button mat-flat-button color="primary" (click)="onAddModel()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.models.addBtn' | transloco }}
-    </button>
+    <app-lib-button
+      [label]="'management.hardware.models.addBtn' | transloco"
+      icon="add"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddModel()" />
   </header>
 
   @if (brandPanelOpen()) {

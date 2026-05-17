@@ -3,9 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -26,10 +24,8 @@ import { DiscountType } from '@/types/discount-type.type';
     MatLabel,
     MatError,
     MatInput,
-    MatButton,
-    MatIcon,
-    LibSpinnerComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ]
 })
 export class OrderCreateComponent {

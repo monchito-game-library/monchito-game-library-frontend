@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -27,11 +26,10 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HardwareBrandEditPanelComponent,
-    MatButton,
-    MatIcon,
     TranslocoPipe,
     CatalogItemCardComponent,
-    LibSkeletonComponent
+    LibSkeletonComponent,
+    LibButtonComponent
   ]
 })
 export class HardwareBrandsManagementComponent implements OnInit {

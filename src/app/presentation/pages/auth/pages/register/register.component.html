@@ -108,13 +108,14 @@
     }
 
     <!-- Submit -->
-    <button mat-flat-button type="submit" class="full-width auth-submit-btn" [disabled]="loading()">
-      @if (loading()) {
-        <app-lib-spinner size="sm" />
-      } @else {
-        {{ 'auth.register.submit' | transloco }}
-      }
-    </button>
+    <app-lib-button
+      [label]="'auth.register.submit' | transloco"
+      variant="primary"
+      type="submit"
+      class="full-width"
+      [loading]="loading()"
+      [disabled]="loading()"
+      (clicked)="onSubmit()" />
 
     <!-- OAuth divider -->
     <div class="auth-divider">

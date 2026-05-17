@@ -15,10 +15,12 @@
         <mat-icon>edit</mat-icon>
       </button>
     </div>
-    <button mat-flat-button color="primary" (click)="onAddEdition()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.editions.addBtn' | transloco }}
-    </button>
+    <app-lib-button
+      [label]="'management.hardware.editions.addBtn' | transloco"
+      icon="add"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddEdition()" />
   </header>
 
   @if (modelPanelOpen()) {

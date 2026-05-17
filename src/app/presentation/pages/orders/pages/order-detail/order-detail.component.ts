@@ -11,7 +11,8 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -48,7 +49,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    MatButton,
     MatIconButton,
     MatIcon,
     MatTooltip,
@@ -58,7 +58,8 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     OrderCostSummaryComponent,
     OrderProductListComponent,
     OrderStepperComponent,
-    OrderPlacingComponent
+    OrderPlacingComponent,
+    LibButtonComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {

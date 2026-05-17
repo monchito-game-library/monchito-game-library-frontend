@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -27,11 +28,11 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     MatInput,
     MatSelect,
     MatOption,
-    MatButton,
     MatIconButton,
     MatIcon,
     MatTooltip,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent
   ],
   templateUrl: './protector-edit-panel.component.html',
   styleUrl: './protector-edit-panel.component.scss'

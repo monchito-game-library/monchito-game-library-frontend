@@ -1,10 +1,7 @@
 <div class="order-detail-page__section-header" [class.order-detail-page__section-header--collapsed]="editingHeader()">
   <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
   @if (order().status === ORDER_STATUS.DRAFT && !editingHeader()) {
-    <button mat-flat-button (click)="lineAdd.emit()">
-      <mat-icon>add</mat-icon>
-      {{ 'orders.lines.add' | transloco }}
-    </button>
+    <app-lib-button [label]="'orders.lines.add' | transloco" icon="add" variant="primary" (clicked)="lineAdd.emit()" />
   }
 </div>
 

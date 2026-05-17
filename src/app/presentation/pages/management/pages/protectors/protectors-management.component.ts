@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -29,7 +28,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   styleUrl: './protectors-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProtectorEditPanelComponent, MatButton, MatIcon, TranslocoPipe, DecimalPipe, LibSkeletonComponent]
+  imports: [ProtectorEditPanelComponent, TranslocoPipe, DecimalPipe, LibSkeletonComponent, LibButtonComponent]
 })
 export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);
