@@ -18,27 +18,7 @@ html {
 
 html.dark-mode {
   color-scheme: dark;
-
-  .mat-mdc-dialog-container .mdc-dialog__surface {
-    box-shadow:
-      0 0 0 1px var(--mat-sys-outline-variant),
-      0 12px 40px rgba(0, 0, 0, 0.6);
-  }
-
-  .mat-mdc-select-panel.mdc-menu-surface {
-    background: var(--mat-sys-surface-container-high) !important;
-    border: 2px solid var(--mat-sys-outline-variant) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55) !important;
-  }
-
-  .cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mat-mdc-select-panel.mdc-menu-surface {
-    margin-top: 0.5rem !important;
-  }
-
-  .cdk-overlay-pane.mat-mdc-select-panel-above .mat-mdc-select-panel.mdc-menu-surface {
-    margin-bottom: 0.5rem !important;
-  }
+  // Salvaguarda para compatibilidad — los overrides visuales están en la sección Material chrome overrides
 }
 
 :root {
@@ -339,6 +319,89 @@ input[type='number'] {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+// ────────────────────────── Material chrome overrides ──────────────────────────
+// Mantenemos mat.theme() como motor, pero forzamos los acabados visuales del
+// rediseño donde Material aplicaría su estética MD3 estándar.
+
+// Dialog: sin elevación, borde fino, halo sutil
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--bg-surface-hi) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow:
+    0 0 0 1px var(--border-glow),
+    0 24px 60px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+// Bottom-sheet (filtros mobile)
+.mat-bottom-sheet-container {
+  background-color: var(--bg-surface-hi) !important;
+  border-top: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+// Drawer lateral (filtros desktop)
+.mat-drawer {
+  background-color: var(--bg-surface-hi) !important;
+  border-left: 1px solid var(--border-glow) !important;
+}
+
+// Snackbar
+.mdc-snackbar__surface {
+  background-color: var(--bg-surface-hi) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.mdc-snackbar__label {
+  font-family: var(--font-mono) !important;
+  font-size: 0.75rem !important;
+  color: var(--text-hi) !important;
+}
+
+// Select panel
+.mat-mdc-select-panel.mdc-menu-surface {
+  background: var(--bg-surface-hi) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+// FAB (Floating Action Button) — aparece en games, wishlist, hardware-list, orders
+.mat-mdc-fab,
+.mat-mdc-extended-fab {
+  background-color: var(--primary) !important;
+  color: var(--text-hi) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--glow-primary-soft) !important;
+}
+
+@media (hover: hover) {
+  .mat-mdc-fab:hover,
+  .mat-mdc-extended-fab:hover {
+    box-shadow: var(--glow-primary) !important;
+  }
+}
+
+// Datepicker calendar
+.mat-datepicker-content {
+  background-color: var(--bg-surface-hi) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+// Tooltip
+.mdc-tooltip__surface {
+  background-color: var(--bg-surface-hi) !important;
+  border: 1px solid var(--border-glow) !important;
+  border-radius: var(--radius-sm) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.04em !important;
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
