@@ -19,7 +19,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { LibBottomSheetService } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
@@ -83,7 +83,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
-  private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _bottomSheet: LibBottomSheetService = inject(LibBottomSheetService);
   private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
@@ -358,7 +358,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    */
   openFilters(): void {
     if (this.isMobile()) {
-      this._bottomSheet.open(GameListFiltersSheetComponent, { data: this.filtersData });
+      this._bottomSheet.open(GameListFiltersSheetComponent, this.filtersData);
       return;
     }
     void this.filtersDrawer()?.toggle();

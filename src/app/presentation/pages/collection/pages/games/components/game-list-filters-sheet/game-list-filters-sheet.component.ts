@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, Signal } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { LIB_BOTTOM_SHEET_DATA } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
+import { LIB_OVERLAY_REF, LibOverlayRef } from '@/services/lib-overlay/lib-overlay.service';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatOption } from '@angular/material/core';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -34,10 +35,10 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   ]
 })
 export class GameListFiltersSheetComponent {
-  private readonly _sheetRef: MatBottomSheetRef<GameListFiltersSheetComponent> | null = inject(MatBottomSheetRef, {
+  private readonly _sheetRef: LibOverlayRef | null = inject(LIB_OVERLAY_REF, { optional: true });
+  private readonly _sheetData: GameListFiltersSheetData | null = inject(LIB_BOTTOM_SHEET_DATA, {
     optional: true
-  });
-  private readonly _sheetData: GameListFiltersSheetData | null = inject(MAT_BOTTOM_SHEET_DATA, { optional: true });
+  }) as GameListFiltersSheetData | null;
 
   /** Filter state passed when the component is rendered embedded (e.g. inside a drawer). */
   readonly dataInput = input<GameListFiltersSheetData | null>(null);
@@ -62,7 +63,7 @@ export class GameListFiltersSheetComponent {
    */
   close(): void {
     if (this._sheetRef) {
-      this._sheetRef.dismiss();
+      this._sheetRef.close();
       return;
     }
     this.closed.emit();

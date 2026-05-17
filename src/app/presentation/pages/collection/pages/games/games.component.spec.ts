@@ -14,7 +14,7 @@ import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { LibBottomSheetService } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
 import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
@@ -70,7 +70,7 @@ describe('GamesComponent', () => {
         },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: LibBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -534,14 +534,14 @@ describe('GamesComponent', () => {
 
   describe('openFilters', () => {
     it('en mobile abre el bottom sheet con el data correcto', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const bottomSheet = TestBed.inject(LibBottomSheetService as any) as any;
       component.isMobile.set(true);
       component.openFilters();
       expect(bottomSheet.open).toHaveBeenCalled();
     });
 
     it('en desktop hace toggle del drawer', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const bottomSheet = TestBed.inject(LibBottomSheetService as any) as any;
       const drawerToggleSpy = vi.fn().mockResolvedValue('open');
       vi.spyOn(component, 'filtersDrawer').mockReturnValue({ toggle: drawerToggleSpy } as any);
       component.isMobile.set(false);
@@ -551,12 +551,12 @@ describe('GamesComponent', () => {
     });
 
     it('la función clearAllFilters del data limpia los filtros', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const bottomSheet = TestBed.inject(LibBottomSheetService as any) as any;
       component.isMobile.set(true);
       component.searchTerm.set('zelda');
       component.selectedConsole.set('PS5');
       component.openFilters();
-      const data = bottomSheet.open.mock.calls[0][1].data;
+      const data = bottomSheet.open.mock.calls[0][1];
       data.clearAllFilters();
       expect(component.searchTerm()).toBe('');
       expect(component.selectedConsole()).toBe('');
@@ -680,7 +680,7 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
         },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: LibBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -729,7 +729,7 @@ describe('GamesComponent — breakpoint observer', () => {
         },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(bpSubject.asObservable()) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: LibBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -877,7 +877,7 @@ describe('GamesComponent — carga inicial', () => {
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: LibBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -928,7 +928,7 @@ describe('GamesComponent — scroll restoration', () => {
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: LibBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
