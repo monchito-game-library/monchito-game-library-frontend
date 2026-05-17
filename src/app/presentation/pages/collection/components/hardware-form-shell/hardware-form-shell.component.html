@@ -27,47 +27,41 @@
     </div>
   } @else {
     <form [formGroup]="form()" class="hw-form__form">
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.brand' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="brandAuto" formControlName="brandId" />
-        <mat-autocomplete
-          #brandAuto="matAutocomplete"
-          [displayWith]="displayBrandLabel()"
-          (optionSelected)="brandChange.emit($event.option.value)">
+      <app-lib-form-field class="hw-form__field--full">
+        <app-lib-label>{{ i18nPrefix() + '.brand' | transloco }}</app-lib-label>
+        <input type="text" libInput [libAutocompleteTrigger]="brandAuto" formControlName="brandId" />
+        <app-lib-autocomplete #brandAuto [displayWith]="displayBrandLabel()" (optionSelected)="onBrandSelected($event)">
           @for (brand of filteredBrands(); track brand.id) {
-            <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
+            <app-lib-option [value]="brand.id">{{ brand.name }}</app-lib-option>
           }
-        </mat-autocomplete>
+        </app-lib-autocomplete>
         @if (form().get('brandId')?.value) {
           <app-lib-icon-button
-            matSuffix
+            libSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('brandId')?.setValue(null); brandChange.emit(null)" />
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.model' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="modelAuto" formControlName="modelId" />
-        <mat-autocomplete
-          #modelAuto="matAutocomplete"
-          [displayWith]="displayModelLabel()"
-          (optionSelected)="modelChange.emit($event.option.value)">
+      <app-lib-form-field class="hw-form__field--full">
+        <app-lib-label>{{ i18nPrefix() + '.model' | transloco }}</app-lib-label>
+        <input type="text" libInput [libAutocompleteTrigger]="modelAuto" formControlName="modelId" />
+        <app-lib-autocomplete #modelAuto [displayWith]="displayModelLabel()" (optionSelected)="onModelSelected($event)">
           @for (model of filteredModels(); track model.id) {
-            <mat-option [value]="model.id">{{ model.name }}</mat-option>
+            <app-lib-option [value]="model.id">{{ model.name }}</app-lib-option>
           }
-        </mat-autocomplete>
+        </app-lib-autocomplete>
         @if (form().get('modelId')?.value) {
           <app-lib-icon-button
-            matSuffix
+            libSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('modelId')?.setValue(null); modelChange.emit(null)" />
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <app-lib-form-field class="hw-form__field--full">
         <app-lib-label>{{ i18nPrefix() + '.edition' | transloco }}</app-lib-label>
@@ -98,23 +92,23 @@
         <input libInput type="number" formControlName="price" min="0" step="0.01" />
       </app-lib-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ i18nPrefix() + '.store' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="storeAuto" formControlName="store" />
-        <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel()">
+      <app-lib-form-field>
+        <app-lib-label>{{ i18nPrefix() + '.store' | transloco }}</app-lib-label>
+        <input type="text" libInput [libAutocompleteTrigger]="storeAuto" formControlName="store" />
+        <app-lib-autocomplete #storeAuto [displayWith]="displayStoreLabel()" (optionSelected)="onStoreSelected($event)">
           @for (store of filteredStores(); track store.id) {
-            <mat-option [value]="store.id">{{ store.label }}</mat-option>
+            <app-lib-option [value]="store.id">{{ store.label }}</app-lib-option>
           }
-        </mat-autocomplete>
+        </app-lib-autocomplete>
         @if (form().get('store')?.value) {
           <app-lib-icon-button
-            matSuffix
+            libSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('store')?.setValue(null)" />
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <mat-form-field appearance="outline" [appDatepickerFieldClick]="purchaseDatePicker">
         <mat-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</mat-label>

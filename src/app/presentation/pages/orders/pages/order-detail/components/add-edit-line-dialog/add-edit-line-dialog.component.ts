@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatOption } from '@angular/material/core';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
+import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
@@ -30,15 +33,15 @@ import {
     LibDialogTitleDirective,
     LibDialogContentDirective,
     LibDialogActionsDirective,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
-    MatOption,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent,
+    LibAutocompleteComponent,
+    LibAutocompleteTriggerDirective,
+    LibOptionComponent
   ]
 })
 export class AddEditLineDialogComponent {
@@ -89,13 +92,14 @@ export class AddEditLineDialogComponent {
   /**
    * Sets the productId form control when the user selects a product from the autocomplete.
    *
-   * @param {MatAutocompleteSelectedEvent} event - The selection event containing the product id
+   * @param {unknown} productId - ID del producto seleccionado.
    */
-  onProductSelected(event: MatAutocompleteSelectedEvent): void {
-    const product = this.data.products.find((p) => p.id === event.option.value);
-    this.form.controls.productId.setValue(event.option.value);
+  onProductSelected(productId: unknown): void {
+    const id: string = productId as string;
+    const product = this.data.products.find((p) => p.id === id);
+    this.form.controls.productId.setValue(id);
     this.productSearchControl.setValue(product?.name ?? null, { emitEvent: false });
-    if (this.data.takenProductIds?.includes(event.option.value)) {
+    if (this.data.takenProductIds?.includes(id)) {
       this.form.controls.productId.setErrors({ alreadyExists: true });
       this.productSearchControl.setErrors({ alreadyExists: true });
     } else {

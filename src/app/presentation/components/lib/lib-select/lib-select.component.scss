@@ -1,0 +1,52 @@
+.lib-select {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.lib-select__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-hi);
+  text-align: left;
+  min-height: 44px;
+  gap: 0.25rem;
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--text-lo);
+  }
+}
+
+.lib-select__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &--placeholder {
+    color: var(--text-lo);
+  }
+}
+
+.lib-select__caret {
+  color: var(--text-mid);
+  font-size: 1.125rem;
+  transition: transform 120ms linear;
+  flex-shrink: 0;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+// ─── Panel global (fuera del shadow — estilos globales en styles.scss) ────────
+// Los estilos del panel van en styles.scss bajo .lib-select__panel

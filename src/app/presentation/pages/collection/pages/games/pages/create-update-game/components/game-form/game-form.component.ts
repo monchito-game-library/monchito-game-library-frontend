@@ -14,9 +14,6 @@ import { DatePipe, Location, NgOptimizedImage } from '@angular/common';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatOption } from '@angular/material/core';
 import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
@@ -24,6 +21,8 @@ import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
 import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
 import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
+import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
@@ -31,7 +30,6 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { firstValueFrom } from 'rxjs';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -76,19 +74,11 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     NgOptimizedImage,
     ReactiveFormsModule,
     DatePipe,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatOption,
     LibCheckboxComponent,
     LibIconComponent,
     LibSpinnerComponent,
     LibIconButtonComponent,
     TranslocoPipe,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatSuffix,
     LibSkeletonComponent,
     CatalogSearchPanelComponent,
     LibButtonComponent,
@@ -97,7 +87,9 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     LibLabelComponent,
     LibErrorComponent,
     LibSelectComponent,
-    LibOptionComponent
+    LibOptionComponent,
+    LibAutocompleteComponent,
+    LibAutocompleteTriggerDirective
   ]
 })
 export class GameFormComponent implements OnInit {
@@ -674,6 +666,26 @@ export class GameFormComponent implements OnInit {
     );
     return platform ? this._transloco.translate(platform.labelKey) : code;
   };
+
+  /**
+   * Maneja la selección de plataforma desde el autocomplete.
+   * Actualiza el formControl con el código seleccionado.
+   *
+   * @param {unknown} value - Código de plataforma seleccionado.
+   */
+  onPlatformSelected(value: unknown): void {
+    this.form.controls.platform.setValue(value as PlatformType | null);
+  }
+
+  /**
+   * Maneja la selección de tienda desde el autocomplete.
+   * Actualiza el formControl con el ID seleccionado.
+   *
+   * @param {unknown} value - ID de tienda seleccionado.
+   */
+  onStoreSelected(value: unknown): void {
+    this.form.controls.store.setValue(value as string | null);
+  }
 
   /**
    * Handles a manual format toggle change by the user.

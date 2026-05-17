@@ -8,34 +8,34 @@
 
 <div libDialogContent>
   <form [formGroup]="form" class="add-edit-line-dialog__form">
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.productLabel' | transloco }}</mat-label>
-      <input matInput [formControl]="productSearchControl" [matAutocomplete]="productAuto" />
-      <mat-autocomplete #productAuto="matAutocomplete" (optionSelected)="onProductSelected($event)">
+    <app-lib-form-field class="add-edit-line-dialog__field">
+      <app-lib-label>{{ 'orders.lines.productLabel' | transloco }}</app-lib-label>
+      <input libInput [formControl]="productSearchControl" [libAutocompleteTrigger]="productAuto" />
+      <app-lib-autocomplete #productAuto (optionSelected)="onProductSelected($event)">
         @for (product of filteredProducts(); track product.id) {
-          <mat-option [value]="product.id">{{ product.name }} ({{ product.category }})</mat-option>
+          <app-lib-option [value]="product.id">{{ product.name }} ({{ product.category }})</app-lib-option>
         }
-      </mat-autocomplete>
+      </app-lib-autocomplete>
       @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
-        <mat-error>{{ 'orders.lines.productRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'orders.lines.productRequired' | transloco }}</app-lib-error>
       }
       @if (productSearchControl.hasError('alreadyExists')) {
-        <mat-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</mat-error>
+        <app-lib-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</mat-label>
-      <input matInput type="number" formControlName="quantityNeeded" min="1" />
+    <app-lib-form-field class="add-edit-line-dialog__field">
+      <app-lib-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</app-lib-label>
+      <input libInput type="number" formControlName="quantityNeeded" min="1" />
       @if (form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')) {
-        <mat-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.notesLabel' | transloco }}</mat-label>
-      <textarea matInput formControlName="notes" rows="3"></textarea>
-    </mat-form-field>
+    <app-lib-form-field class="add-edit-line-dialog__field">
+      <app-lib-label>{{ 'orders.lines.notesLabel' | transloco }}</app-lib-label>
+      <textarea libInput formControlName="notes" rows="3"></textarea>
+    </app-lib-form-field>
   </form>
 </div>
 

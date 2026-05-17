@@ -104,68 +104,71 @@
 
       <!-- Right column: form fields -->
       <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-          <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
-          <input matInput formControlName="title" [readonly]="!!selectedGame()" />
+        <app-lib-form-field class="game-form__field game-form__field--full">
+          <app-lib-label [required]="true">{{ 'gameForm.fields.title' | transloco }}</app-lib-label>
+          <input libInput formControlName="title" [readonly]="!!selectedGame()" />
           @if (selectedGame()) {
-            <mat-icon matSuffix>lock</mat-icon>
+            <app-lib-icon libSuffix name="lock" />
           }
           @if (form.controls.title.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
           }
-        </mat-form-field>
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-          <mat-label>{{ 'gameForm.fields.edition' | transloco }}</mat-label>
-          <input matInput formControlName="edition" [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
-          <mat-icon matSuffix>local_offer</mat-icon>
-        </mat-form-field>
+        <app-lib-form-field class="game-form__field game-form__field--full">
+          <app-lib-label>{{ 'gameForm.fields.edition' | transloco }}</app-lib-label>
+          <input libInput formControlName="edition" [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
+          <app-lib-icon libSuffix name="local_offer" />
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
-          <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
-          <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
+        <app-lib-form-field class="game-form__field">
+          <app-lib-label [required]="true">{{ 'gameForm.fields.platform' | transloco }}</app-lib-label>
+          <input type="text" libInput [libAutocompleteTrigger]="platformAuto" [formControl]="form.controls.platform" />
+          <app-lib-autocomplete
+            #platformAuto
+            [displayWith]="displayPlatformLabel"
+            (optionSelected)="onPlatformSelected($event)">
             @for (platform of filteredPlatforms(); track platform.code) {
-              <mat-option [value]="platform.code">{{ platform.labelKey | transloco }}</mat-option>
+              <app-lib-option [value]="platform.code">{{ platform.labelKey | transloco }}</app-lib-option>
             }
-          </mat-autocomplete>
+          </app-lib-autocomplete>
           @if (form.controls.platform.value) {
             <app-lib-icon-button
-              matSuffix
+              libSuffix
               size="sm"
               icon="close"
               [ariaLabel]="'common.clear' | transloco"
               (clicked)="form.controls.platform.setValue(null)" />
           }
           @if (form.controls.platform.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
           } @else if (form.controls.platform.hasError('invalidOption')) {
-            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
+            <app-lib-error>{{ 'gameForm.errors.invalidOption' | transloco }}</app-lib-error>
           }
-        </mat-form-field>
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
-          <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
-          <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
+        <app-lib-form-field class="game-form__field">
+          <app-lib-label>{{ 'gameForm.fields.store' | transloco }}</app-lib-label>
+          <input type="text" libInput [libAutocompleteTrigger]="storeAuto" [formControl]="form.controls.store" />
+          <app-lib-autocomplete #storeAuto [displayWith]="displayStoreLabel" (optionSelected)="onStoreSelected($event)">
             @for (store of filteredStores(); track store.id) {
-              <mat-option [value]="store.id">{{ store.label }}</mat-option>
+              <app-lib-option [value]="store.id">{{ store.label }}</app-lib-option>
             }
-          </mat-autocomplete>
+          </app-lib-autocomplete>
           @if (form.controls.store.value) {
             <app-lib-icon-button
-              matSuffix
+              libSuffix
               size="sm"
               icon="close"
               [ariaLabel]="'common.clear' | transloco"
               (clicked)="form.controls.store.setValue(null)" />
           }
           @if (form.controls.store.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
           } @else if (form.controls.store.hasError('invalidOption')) {
-            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
+            <app-lib-error>{{ 'gameForm.errors.invalidOption' | transloco }}</app-lib-error>
           }
-        </mat-form-field>
+        </app-lib-form-field>
 
         <app-lib-form-field class="game-form__field">
           <app-lib-label>{{ 'gameForm.fields.condition' | transloco }}</app-lib-label>

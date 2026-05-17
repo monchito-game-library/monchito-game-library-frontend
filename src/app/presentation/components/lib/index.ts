@@ -19,3 +19,5 @@ export { LibErrorComponent } from './lib-form-field/lib-error.component';
 export { LibHintComponent } from './lib-form-field/lib-hint.component';
 export { LibSelectComponent } from './lib-select/lib-select.component';
 export { LibOptionComponent } from './lib-select/lib-option.component';
+export { LibAutocompleteComponent } from './lib-autocomplete/lib-autocomplete.component';
+export { LibAutocompleteTriggerDirective } from './lib-autocomplete/lib-autocomplete-trigger.directive';

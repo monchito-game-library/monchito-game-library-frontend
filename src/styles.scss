@@ -838,3 +838,17 @@ mat-progress-spinner {
   overscroll-behavior: contain;
   z-index: 1000;
 }
+
+// ─── lib-autocomplete — panel (fuera del shadow DOM) ─────────────────────────
+
+.lib-autocomplete__panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0;
+  list-style: none;
+  margin: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 1000;
+}

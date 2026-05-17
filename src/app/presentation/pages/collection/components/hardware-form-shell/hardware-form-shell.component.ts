@@ -12,14 +12,14 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatOption } from '@angular/material/core';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
 import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
 import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
 import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
+import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
@@ -53,9 +53,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatLabel,
     MatSuffix,
     MatInput,
-    MatOption,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
@@ -67,7 +64,9 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     LibInputDirective,
     LibLabelComponent,
     LibSelectComponent,
-    LibOptionComponent
+    LibOptionComponent,
+    LibAutocompleteComponent,
+    LibAutocompleteTriggerDirective
   ]
 })
 export class HardwareFormShellComponent {
@@ -136,4 +135,42 @@ export class HardwareFormShellComponent {
 
   /** GAME_CONDITION constant exposed to the template. */
   readonly GAME_CONDITION = GAME_CONDITION;
+
+  // ── Métodos públicos ─────────────────────────────────────────────────────────
+
+  /**
+   * Maneja la selección de marca desde el autocomplete.
+   * Actualiza el formControl y emite brandChange.
+   *
+   * @param {unknown} value - ID de marca seleccionado.
+   */
+  onBrandSelected(value: unknown): void {
+    const id: string | null = value as string | null;
+    this.form().get('brandId')?.setValue(id);
+    this.brandChange.emit(id);
+  }
+
+  /**
+   * Maneja la selección de modelo desde el autocomplete.
+   * Actualiza el formControl y emite modelChange.
+   *
+   * @param {unknown} value - ID de modelo seleccionado.
+   */
+  onModelSelected(value: unknown): void {
+    const id: string | null = value as string | null;
+    this.form().get('modelId')?.setValue(id);
+    this.modelChange.emit(id);
+  }
+
+  /**
+   * Maneja la selección de tienda desde el autocomplete.
+   * Actualiza el formControl.
+   *
+   * @param {unknown} value - ID de tienda seleccionado.
+   */
+  onStoreSelected(value: unknown): void {
+    this.form()
+      .get('store')
+      ?.setValue(value as string | null);
+  }
 }

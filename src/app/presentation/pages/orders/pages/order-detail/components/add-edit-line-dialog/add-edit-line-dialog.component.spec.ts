@@ -1,7 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -154,7 +153,7 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
   });
 
   it('establece el productId en el formulario', () => {
-    const event = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
+    const event = 'product-1';
 
     component.onProductSelected(event);
 
@@ -162,7 +161,7 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
   });
 
   it('establece el nombre del producto en productSearchControl', () => {
-    const event = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
+    const event = 'product-1';
 
     component.onProductSelected(event);
 
@@ -170,7 +169,7 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
   });
 
   it('establece el error alreadyExists cuando el producto está en takenProductIds', () => {
-    const event = { option: { value: 'product-2' } } as MatAutocompleteSelectedEvent;
+    const event = 'product-2';
 
     component.onProductSelected(event);
 
@@ -179,10 +178,10 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
   });
 
   it('limpia los errores cuando el producto NO está en takenProductIds', () => {
-    const invalidEvent = { option: { value: 'product-2' } } as MatAutocompleteSelectedEvent;
+    const invalidEvent = 'product-2';
     component.onProductSelected(invalidEvent);
 
-    const validEvent = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
+    const validEvent = 'product-1';
     component.onProductSelected(validEvent);
 
     expect(component.form.controls.productId.errors).toBeNull();
@@ -190,7 +189,7 @@ describe('AddEditLineDialogComponent — onProductSelected()', () => {
   });
 
   it('establece null en productSearchControl cuando el productId no existe en la lista', () => {
-    const event = { option: { value: 'unknown-product-id' } } as MatAutocompleteSelectedEvent;
+    const event = 'unknown-product-id';
 
     component.onProductSelected(event);
 
