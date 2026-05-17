@@ -11,65 +11,62 @@
   <!-- Filter fields -->
   <div class="filters-sheet__body">
     <!-- Console -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
-      <mat-label>{{ 'gameList.filters.console' | transloco }}</mat-label>
-      <mat-select [value]="d.selectedConsole()" (selectionChange)="d.selectedConsole.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</mat-option>
+    <app-lib-form-field class="filters-sheet__field">
+      <app-lib-label>{{ 'gameList.filters.console' | transloco }}</app-lib-label>
+      <app-lib-select [value]="d.selectedConsole()" (selectionChange)="d.selectedConsole.set($any($event))">
+        <app-lib-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</app-lib-option>
         @for (c of consoles; track c.code) {
-          <mat-option [value]="c.code">{{ c.labelKey | transloco }}</mat-option>
+          <app-lib-option [value]="c.code">{{ c.labelKey | transloco }}</app-lib-option>
         }
-      </mat-select>
-    </mat-form-field>
+      </app-lib-select>
+    </app-lib-form-field>
 
     <!-- Store -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
-      <mat-label>{{ 'gameList.filters.store' | transloco }}</mat-label>
-      <mat-select [value]="d.selectedStore()" (selectionChange)="d.selectedStore.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allStores' | transloco }}</mat-option>
+    <app-lib-form-field class="filters-sheet__field">
+      <app-lib-label>{{ 'gameList.filters.store' | transloco }}</app-lib-label>
+      <app-lib-select [value]="d.selectedStore()" (selectionChange)="d.selectedStore.set($any($event))">
+        <app-lib-option value="">{{ 'gameList.filters.allStores' | transloco }}</app-lib-option>
         @for (s of d.stores(); track s.id) {
-          <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          <app-lib-option [value]="s.id">{{ s.label }}</app-lib-option>
         }
-      </mat-select>
-    </mat-form-field>
+      </app-lib-select>
+    </app-lib-form-field>
 
     <!-- Format -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
-      <mat-label>{{ 'gameList.filters.format' | transloco }}</mat-label>
-      <mat-select [value]="d.selectedFormat()" (selectionChange)="d.selectedFormat.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allFormats' | transloco }}</mat-option>
-        <mat-option value="physical">{{ 'gameList.filters.physical' | transloco }}</mat-option>
-        <mat-option value="digital">{{ 'gameList.filters.digital' | transloco }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <app-lib-form-field class="filters-sheet__field">
+      <app-lib-label>{{ 'gameList.filters.format' | transloco }}</app-lib-label>
+      <app-lib-select [value]="d.selectedFormat()" (selectionChange)="d.selectedFormat.set($any($event))">
+        <app-lib-option value="">{{ 'gameList.filters.allFormats' | transloco }}</app-lib-option>
+        <app-lib-option value="physical">{{ 'gameList.filters.physical' | transloco }}</app-lib-option>
+        <app-lib-option value="digital">{{ 'gameList.filters.digital' | transloco }}</app-lib-option>
+      </app-lib-select>
+    </app-lib-form-field>
 
     <!-- Status -->
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters-sheet__field">
-      <mat-label>{{ 'gameList.filters.status' | transloco }}</mat-label>
-      <mat-select [value]="d.selectedStatus()" (selectionChange)="d.selectedStatus.set($event.value)">
-        <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
+    <app-lib-form-field class="filters-sheet__field">
+      <app-lib-label>{{ 'gameList.filters.status' | transloco }}</app-lib-label>
+      <app-lib-select [value]="d.selectedStatus()" (selectionChange)="d.selectedStatus.set($any($event))">
+        <app-lib-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</app-lib-option>
         @for (status of gameStatuses; track status.code) {
-          <mat-option [value]="status.code">
+          <app-lib-option [value]="status.code">
             <app-lib-icon [name]="status.icon" [style.color]="status.color" />
             {{ status.labelKey | transloco }}
-          </mat-option>
+          </app-lib-option>
         }
-      </mat-select>
-    </mat-form-field>
+      </app-lib-select>
+    </app-lib-form-field>
 
     <!-- Sort -->
     <div class="filters-sheet__sort-row">
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="filters-sheet__field filters-sheet__field--sort">
-        <mat-label>{{ 'gameList.filters.sortBy' | transloco }}</mat-label>
-        <mat-select [value]="d.sortBy()" (selectionChange)="d.sortBy.set($event.value)">
-          <mat-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</mat-option>
-          <mat-option value="title">{{ 'gameList.sort.title' | transloco }}</mat-option>
-          <mat-option value="price">{{ 'gameList.sort.price' | transloco }}</mat-option>
-          <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-lib-form-field class="filters-sheet__field filters-sheet__field--sort">
+        <app-lib-label>{{ 'gameList.filters.sortBy' | transloco }}</app-lib-label>
+        <app-lib-select [value]="d.sortBy()" (selectionChange)="d.sortBy.set($any($event))">
+          <app-lib-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</app-lib-option>
+          <app-lib-option value="title">{{ 'gameList.sort.title' | transloco }}</app-lib-option>
+          <app-lib-option value="price">{{ 'gameList.sort.price' | transloco }}</app-lib-option>
+          <app-lib-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</app-lib-option>
+        </app-lib-select>
+      </app-lib-form-field>
       <app-lib-icon-button
         [icon]="d.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward'"
         [ariaLabel]="'Sort direction: ' + d.sortDirection()"

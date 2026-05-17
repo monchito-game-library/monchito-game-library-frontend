@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, Si
 import { LIB_BOTTOM_SHEET_DATA } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
 import { LIB_OVERLAY_REF, LibOverlayRef } from '@/services/lib-overlay/lib-overlay.service';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatOption } from '@angular/material/core';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatSelect } from '@angular/material/select';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
@@ -25,13 +26,13 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   imports: [
     LibButtonComponent,
     LibIconButtonComponent,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
     LibIconComponent,
     LibCheckboxComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    LibFormFieldComponent,
+    LibLabelComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ]
 })
 export class GameListFiltersSheetComponent {

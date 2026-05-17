@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
@@ -37,11 +36,6 @@ import {
     LibDialogContentDirective,
     LibDialogActionsDirective,
     LibIconButtonComponent,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatSelect,
-    MatOption,
     NgOptimizedImage,
     TranslocoPipe,
     CatalogSearchPanelComponent,
@@ -50,7 +44,9 @@ import {
     LibFormFieldComponent,
     LibInputDirective,
     LibLabelComponent,
-    LibErrorComponent
+    LibErrorComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ]
 })
 export class WishlistItemDialogComponent {

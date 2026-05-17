@@ -18,14 +18,14 @@
         }
       </app-lib-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>
-        <mat-select formControlName="formatHint">
-          <mat-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</mat-option>
-          <mat-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</mat-option>
-          <mat-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-lib-form-field>
+        <app-lib-label>{{ 'management.stores.formatHintLabel' | transloco }}</app-lib-label>
+        <app-lib-select formControlName="formatHint">
+          <app-lib-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</app-lib-option>
+          <app-lib-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</app-lib-option>
+          <app-lib-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</app-lib-option>
+        </app-lib-select>
+      </app-lib-form-field>
     </div>
 
     <div class="edit-panel__actions">

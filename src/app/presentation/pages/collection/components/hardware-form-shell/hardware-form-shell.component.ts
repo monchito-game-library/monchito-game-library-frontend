@@ -12,10 +12,14 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
@@ -49,7 +53,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatLabel,
     MatSuffix,
     MatInput,
-    MatSelect,
     MatOption,
     MatAutocomplete,
     MatAutocompleteTrigger,
@@ -59,7 +62,12 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     DatepickerFieldClickDirective,
     TranslocoPipe,
     LibSkeletonComponent,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ]
 })
 export class HardwareFormShellComponent {

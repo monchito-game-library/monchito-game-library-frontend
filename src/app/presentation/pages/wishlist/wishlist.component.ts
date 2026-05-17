@@ -16,9 +16,8 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
 import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
@@ -54,12 +53,9 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     SlicePipe,
     ReactiveFormsModule,
     LibIconButtonComponent,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatSelect,
-    MatOption,
     LibIconComponent,
+    LibSelectComponent,
+    LibOptionComponent,
     TranslocoPipe,
     WishlistCardComponent,
     CatalogSearchPanelComponent,

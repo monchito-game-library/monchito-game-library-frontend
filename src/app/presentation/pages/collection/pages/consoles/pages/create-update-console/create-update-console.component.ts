@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base/hardware-form-base.component';
@@ -27,12 +28,12 @@ import { ConsoleRegionType } from '@/types/console-region.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
     TranslocoPipe,
-    HardwareFormShellComponent
+    HardwareFormShellComponent,
+    LibFormFieldComponent,
+    LibLabelComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ]
 })
 export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {

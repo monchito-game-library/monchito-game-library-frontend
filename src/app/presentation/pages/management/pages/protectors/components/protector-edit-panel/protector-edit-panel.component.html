@@ -18,14 +18,14 @@
         }
       </app-lib-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.categoryLabel' | transloco }}</mat-label>
-        <mat-select formControlName="category">
-          <mat-option value="box">{{ 'management.products.categoryBox' | transloco }}</mat-option>
-          <mat-option value="console">{{ 'management.products.categoryConsole' | transloco }}</mat-option>
-          <mat-option value="other">{{ 'management.products.categoryOther' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <app-lib-form-field>
+        <app-lib-label>{{ 'management.products.categoryLabel' | transloco }}</app-lib-label>
+        <app-lib-select formControlName="category">
+          <app-lib-option value="box">{{ 'management.products.categoryBox' | transloco }}</app-lib-option>
+          <app-lib-option value="console">{{ 'management.products.categoryConsole' | transloco }}</app-lib-option>
+          <app-lib-option value="other">{{ 'management.products.categoryOther' | transloco }}</app-lib-option>
+        </app-lib-select>
+      </app-lib-form-field>
 
       <app-lib-form-field>
         <app-lib-label>{{ 'management.products.notesLabel' | transloco }}</app-lib-label>

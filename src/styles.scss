@@ -823,3 +823,18 @@ mat-progress-spinner {
     cursor: not-allowed;
   }
 }
+
+// ─── lib-select — panel de selección (fuera del shadow DOM) ──────────────────
+// El panel se teletransporta al body via CDK Portal; los estilos deben ser globales.
+
+.lib-select__panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0;
+  list-style: none;
+  margin: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 1000;
+}

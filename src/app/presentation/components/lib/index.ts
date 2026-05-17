@@ -17,3 +17,5 @@ export { LibInputDirective } from './lib-form-field/lib-input.directive';
 export { LibLabelComponent } from './lib-form-field/lib-label.component';
 export { LibErrorComponent } from './lib-form-field/lib-error.component';
 export { LibHintComponent } from './lib-form-field/lib-hint.component';
+export { LibSelectComponent } from './lib-select/lib-select.component';
+export { LibOptionComponent } from './lib-select/lib-option.component';

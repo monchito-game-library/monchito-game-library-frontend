@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, ou
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
 import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
@@ -27,16 +26,14 @@ import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
     TranslocoPipe,
     LibButtonComponent,
     LibFormFieldComponent,
     LibInputDirective,
     LibLabelComponent,
-    LibErrorComponent
+    LibErrorComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ],
   templateUrl: './hardware-model-edit-panel.component.html',
   styleUrl: './hardware-model-edit-panel.component.scss'

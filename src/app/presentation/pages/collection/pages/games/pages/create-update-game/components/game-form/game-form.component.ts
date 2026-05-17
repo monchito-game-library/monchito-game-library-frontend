@@ -14,12 +14,17 @@ import { DatePipe, Location, NgOptimizedImage } from '@angular/common';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
-import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatOption } from '@angular/material/core';
+import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
@@ -75,7 +80,6 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatLabel,
     MatError,
     MatInput,
-    MatSelect,
     MatOption,
     LibCheckboxComponent,
     LibIconComponent,
@@ -87,7 +91,13 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatSuffix,
     LibSkeletonComponent,
     CatalogSearchPanelComponent,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ]
 })
 export class GameFormComponent implements OnInit {

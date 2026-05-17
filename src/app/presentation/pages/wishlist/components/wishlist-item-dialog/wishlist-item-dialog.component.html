@@ -47,17 +47,17 @@
 
       <!-- Platform (required in add mode, static in edit mode) -->
       @if (config.mode === 'add') {
-        <mat-form-field appearance="outline" class="wishlist-item-dialog__field">
-          <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
-          <mat-select formControlName="platform">
+        <app-lib-form-field class="wishlist-item-dialog__field">
+          <app-lib-label [required]="true">{{ 'wishlist.fields.platform' | transloco }}</app-lib-label>
+          <app-lib-select formControlName="platform">
             @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
-              <mat-option [value]="platform">{{ platform }}</mat-option>
+              <app-lib-option [value]="platform">{{ platform }}</app-lib-option>
             }
-          </mat-select>
+          </app-lib-select>
           @if (form.controls.platform.hasError('required')) {
-            <mat-error>{{ 'wishlist.fields.platformRequired' | transloco }}</mat-error>
+            <app-lib-error>{{ 'wishlist.fields.platformRequired' | transloco }}</app-lib-error>
           }
-        </mat-form-field>
+        </app-lib-form-field>
       } @else if (config.item?.platform) {
         <div class="wishlist-item-dialog__platform-display">
           <span class="wishlist-item-dialog__platforms-label">{{ 'wishlist.fields.platform' | transloco }}</span>

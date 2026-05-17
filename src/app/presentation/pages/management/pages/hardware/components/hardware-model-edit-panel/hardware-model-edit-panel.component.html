@@ -20,17 +20,17 @@
         }
       </app-lib-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.hardware.models.typeLabel' | transloco }}</mat-label>
-        <mat-select formControlName="type">
-          <mat-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
+      <app-lib-form-field>
+        <app-lib-label>{{ 'management.hardware.models.typeLabel' | transloco }}</app-lib-label>
+        <app-lib-select formControlName="type">
+          <app-lib-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
             {{ 'management.hardware.models.typeConsole' | transloco }}
-          </mat-option>
-          <mat-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
+          </app-lib-option>
+          <app-lib-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
             {{ 'management.hardware.models.typeController' | transloco }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+          </app-lib-option>
+        </app-lib-select>
+      </app-lib-form-field>
 
       <app-lib-form-field>
         <app-lib-label>{{ 'management.hardware.models.generationLabel' | transloco }}</app-lib-label>
@@ -52,41 +52,41 @@
           <input libInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
         </app-lib-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</mat-label>
-          <mat-select formControlName="category">
-            <mat-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</app-lib-label>
+          <app-lib-select formControlName="category">
+            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
               {{ 'management.hardware.models.categoryHome' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
               {{ 'management.hardware.models.categoryPortable' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
               {{ 'management.hardware.models.categoryHybrid' | transloco }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+            </app-lib-option>
+          </app-lib-select>
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.mediaLabel' | transloco }}</mat-label>
-          <mat-select formControlName="media">
-            <mat-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.mediaLabel' | transloco }}</app-lib-label>
+          <app-lib-select formControlName="media">
+            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
               {{ 'management.hardware.models.mediaOpticalDisc' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
               {{ 'management.hardware.models.mediaDigital' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
               {{ 'management.hardware.models.mediaCartridge' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
               {{ 'management.hardware.models.mediaHybrid' | transloco }}
-            </mat-option>
-            <mat-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
+            </app-lib-option>
+            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
               {{ 'management.hardware.models.mediaBuiltIn' | transloco }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+            </app-lib-option>
+          </app-lib-select>
+        </app-lib-form-field>
 
         <app-lib-form-field>
           <app-lib-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</app-lib-label>

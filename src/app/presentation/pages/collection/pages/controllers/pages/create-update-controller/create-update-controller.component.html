@@ -29,12 +29,12 @@
     </div>
   </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'controllerPage.compatibility' | transloco }}</mat-label>
-    <mat-select [formControl]="form.controls.compatibility">
+  <app-lib-form-field>
+    <app-lib-label>{{ 'controllerPage.compatibility' | transloco }}</app-lib-label>
+    <app-lib-select [formControl]="form.controls.compatibility">
       @for (compat of availableCompatibilities; track compat.code) {
-        <mat-option [value]="compat.code">{{ compat.labelKey | transloco }}</mat-option>
+        <app-lib-option [value]="compat.code">{{ compat.labelKey | transloco }}</app-lib-option>
       }
-    </mat-select>
-  </mat-form-field>
+    </app-lib-select>
+  </app-lib-form-field>
 </ng-template>

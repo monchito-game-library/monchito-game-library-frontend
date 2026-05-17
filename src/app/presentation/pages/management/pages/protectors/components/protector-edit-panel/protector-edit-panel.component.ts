@@ -4,9 +4,8 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
+import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
 import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
@@ -24,10 +23,6 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
     LibIconComponent,
     LibIconButtonComponent,
     LibTooltipDirective,
@@ -36,7 +31,9 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     LibFormFieldComponent,
     LibInputDirective,
     LibLabelComponent,
-    LibErrorComponent
+    LibErrorComponent,
+    LibSelectComponent,
+    LibOptionComponent
   ],
   templateUrl: './protector-edit-panel.component.html',
   styleUrl: './protector-edit-panel.component.scss'
