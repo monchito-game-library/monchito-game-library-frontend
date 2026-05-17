@@ -540,13 +540,14 @@ describe('GamesComponent', () => {
       expect(bottomSheet.open).toHaveBeenCalled();
     });
 
-    it('en desktop hace toggle del drawer', () => {
+    it('en desktop alterna el estado filtersOpen', () => {
       const bottomSheet = TestBed.inject(LibBottomSheetService as any) as any;
-      const drawerToggleSpy = vi.fn().mockResolvedValue('open');
-      vi.spyOn(component, 'filtersDrawer').mockReturnValue({ toggle: drawerToggleSpy } as any);
       component.isMobile.set(false);
+      component.filtersOpen.set(false);
       component.openFilters();
-      expect(drawerToggleSpy).toHaveBeenCalledOnce();
+      expect(component.filtersOpen()).toBe(true);
+      component.openFilters();
+      expect(component.filtersOpen()).toBe(false);
       expect(bottomSheet.open).not.toHaveBeenCalled();
     });
 

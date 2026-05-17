@@ -3118,6 +3118,8 @@ Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 
 ## 7. FASE 10 — Reemplazo total de Angular Material y CDK
 
+> **COMPLETADA** — `@angular/material` y `@angular/animations` eliminados de `package.json` (commits 22-38, rama `feat/terminal-collector-redesign`). `@angular/cdk` conservado como dependencia justificada (Overlay, a11y, layout, portal). CSS dead code de Material eliminado de `styles.scss`. Todos los tokens `--mat-sys-*` sustituidos por tokens propios.
+
 > Objetivo: construir desde cero, dentro de `src/app/presentation/components/lib/`, todos los componentes que faltan para eliminar `@angular/material` y `@angular/cdk` del `package.json`. El usuario asume conscientemente la deuda inicial de a11y a cambio de control total y de borrar la dependencia. La deuda se documenta explícitamente componente a componente y se cierra de forma iterativa en commits posteriores fuera de este plan.
 
 > **Estrategia de rama y PR**: todos los commits de Fase 10 viven en una rama nueva `refactor/lib-remove-material` creada desde `master` tras haber mergeado la rama `feat/terminal-collector-redesign` (Fases 0-8). **Un único PR** al final, contra `master`, con squash merge — alineado con la convención del proyecto y con el feedback de memoria "Refactors de BD multi-fase = un solo PR final". No hay PRs intermedios. Los checkpoints A-E son revisiones del usuario en local sobre la rama, no PRs.
