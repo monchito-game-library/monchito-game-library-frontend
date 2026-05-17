@@ -3,13 +3,12 @@
   @if (loading()) {
     <div class="game-detail__loading">
       <mat-spinner diameter="48" />
+      <span class="game-detail__loading-label">&gt; LOADING...</span>
     </div>
   } @else if (game(); as g) {
-    <!-- Hero — three layers: blurred backdrop, contained cover image, and the gradient overlay
-         carrying the topbar + chips + title. The cover is shown whole (object-fit: contain) so no
-         part of the artwork is cropped; the blurred backdrop fills the wide horizontal area. -->
+    <!-- Hero — tres capas: backdrop plano, portada contenida, overlay con topbar + chips + título -->
     <div class="game-detail__hero">
-      <div class="game-detail__hero-backdrop" [style.--dominant]="dominantColor()"></div>
+      <div class="game-detail__hero-backdrop"></div>
       <div class="game-detail__hero-cover-wrap">
         <img
           class="game-detail__hero-cover"
@@ -21,7 +20,7 @@
           aria-hidden="true" />
       </div>
       <div class="game-detail__hero-overlay">
-        <!-- Topbar: back on the left, contextual kebab on the right -->
+        <!-- Topbar: back a la izquierda, acciones contextuales a la derecha -->
         <div class="game-detail__topbar">
           <button
             mat-icon-button
@@ -91,37 +90,35 @@
           }
         </div>
 
-        <!-- Bottom: chips, title, edition -->
+        <!-- Bottom: chips, título, edición -->
         <div class="game-detail__hero-info">
           <div class="game-detail__chips-row">
             @if (gameStatus()) {
-              <span class="game-detail__status-chip" [style.background-color]="gameStatus()!.color">
-                <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
-                {{ gameStatus()!.labelKey | transloco }}
-              </span>
+              <app-lib-chip
+                [label]="gameStatus()!.labelKey | transloco"
+                [icon]="gameStatus()!.icon"
+                color="primary"
+                [filled]="true" />
             }
             @if (g.platform) {
-              <app-badge-chip [label]="g.platform!" variant="neutral" [bgColor]="platformColor()" />
+              <app-lib-chip [label]="g.platform!" color="neutral" [filled]="true" />
             }
             @if (g.isFavorite) {
-              <span class="game-detail__fav-chip">
-                <mat-icon>favorite</mat-icon>
-              </span>
+              <app-lib-chip label="FAV" icon="favorite" color="rose" [filled]="true" />
             }
             @if (g.forSale) {
-              <span class="game-detail__sale-chip">
-                <mat-icon>sell</mat-icon>
-                {{ 'gameDetail.sale.forSaleBadge' | transloco }}
-                @if (g.salePrice !== null) {
-                  · {{ g.salePrice | currency: 'EUR' }}
-                }
-              </span>
+              <app-lib-chip
+                [label]="'gameDetail.sale.forSaleBadge' | transloco"
+                icon="sell"
+                color="green"
+                [filled]="true" />
             }
             @if (g.activeLoanId) {
-              <span class="game-detail__loan-chip">
-                <mat-icon>handshake</mat-icon>
-                {{ 'gameDetail.loan.loanedBadge' | transloco }} {{ g.activeLoanTo }}
-              </span>
+              <app-lib-chip
+                [label]="('gameDetail.loan.loanedBadge' | transloco) + ' ' + g.activeLoanTo"
+                icon="handshake"
+                color="amber"
+                [filled]="true" />
             }
           </div>
           <h1 class="game-detail__title">{{ g.title }}</h1>
@@ -135,7 +132,7 @@
     <!-- Body -->
     <div class="game-detail__body">
       @if (g.soldAt && !showSaleForm() && !showLoanForm()) {
-        <!-- Sold banner — collapsed summary; actions live in the topbar kebab next to the back button -->
+        <!-- Sold banner — resumen colapsado; acciones en el kebab del topbar -->
         <div class="game-detail__sold-banner">
           <mat-icon class="game-detail__sold-banner-icon">sell</mat-icon>
           <span class="game-detail__sold-banner-text">
@@ -163,36 +160,27 @@
       } @else {
         <!-- "Mi opinión" — atributos de la obra (compartidos entre todas las copias) -->
         <section class="game-detail__section game-detail__section--opinion">
-          <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
+          <app-lib-section-header [label]="'gameDetail.opinion' | transloco" />
           <div class="game-detail__data-grid">
             @if (g.personalRating !== null) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>star</mat-icon>
-                  {{ 'gameForm.fields.rating' | transloco }}
+              <app-lib-data-row [label]="'gameForm.fields.rating' | transloco" icon="star">
+                <span class="game-detail__stars">
+                  @for (_ of ratingStars(); track $index) {
+                    <mat-icon>star</mat-icon>
+                  }
+                  @if (hasHalfStar()) {
+                    <mat-icon>star_half</mat-icon>
+                  }
                 </span>
-                <span class="game-detail__data-value game-detail__data-value--rating">
-                  <span class="game-detail__stars">
-                    @for (_ of ratingStars(); track $index) {
-                      <mat-icon>star</mat-icon>
-                    }
-                    @if (hasHalfStar()) {
-                      <mat-icon>star_half</mat-icon>
-                    }
-                  </span>
-                  <span>{{ g.personalRating }}/10</span>
-                </span>
-              </div>
+                <span>{{ g.personalRating }}/10</span>
+              </app-lib-data-row>
             }
 
             @if (g.isFavorite) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>favorite</mat-icon>
-                  {{ 'gameDetail.favorite' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ 'common.yes' | transloco }}</span>
-              </div>
+              <app-lib-data-row
+                [label]="'gameDetail.favorite' | transloco"
+                icon="favorite"
+                [value]="'common.yes' | transloco" />
             }
           </div>
         </section>
@@ -200,33 +188,23 @@
         <!-- Información del catálogo — común a la obra, encima de los tabs -->
         @if (g.rawgId) {
           <section class="game-detail__section">
-            <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
+            <app-lib-section-header [label]="'gameDetail.catalogInfo' | transloco" />
             <div class="game-detail__data-grid">
               @if (g.releasedDate) {
-                <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
-                    <mat-icon>event</mat-icon>
-                    {{ 'gameDetail.released' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.releasedDate }}</span>
-                </div>
+                <app-lib-data-row [label]="'gameDetail.released' | transloco" icon="event" [value]="g.releasedDate" />
               }
 
               @if (g.rawgRating) {
-                <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
-                    <mat-icon>public</mat-icon>
-                    {{ 'gameDetail.communityRating' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
-                </div>
+                <app-lib-data-row [label]="'gameDetail.communityRating' | transloco" icon="public">
+                  <span>{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+                </app-lib-data-row>
               }
             </div>
 
             @if (g.genres.length) {
               <div class="game-detail__genres">
                 @for (genre of g.genres; track genre) {
-                  <span class="game-detail__genre-chip">{{ genre }}</span>
+                  <app-lib-chip [label]="genre" color="neutral" />
                 }
               </div>
             }
@@ -235,10 +213,9 @@
 
         <!-- "Mis datos" — header común; los tabs y el contenido cambian por copia -->
         <section class="game-detail__section game-detail__section--my-data">
-          <h2 class="game-detail__section-title">{{ 'gameDetail.myData' | transloco }}</h2>
+          <app-lib-section-header [label]="'gameDetail.myData' | transloco" />
 
-          <!-- Tabs por copia — solo si la obra tiene >1 copia. Soporta varias copias
-               del mismo formato (cada tab apunta al UUID de la copia, no al formato). -->
+          <!-- Tabs por copia — solo si la obra tiene >1 copia -->
           @if (hasMultipleCopies()) {
             <div class="game-detail__copy-tabs" role="tablist">
               @for (copy of copies(); track copy.uuid) {
@@ -261,57 +238,36 @@
 
           <div class="game-detail__data-grid">
             @if (g.price !== null) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>payments</mat-icon>
-                  {{ 'gameForm.fields.price' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</span>
-              </div>
+              <app-lib-data-row
+                [label]="'gameForm.fields.price' | transloco"
+                icon="payments"
+                [value]="(g.price | currency: 'EUR') ?? ''" />
             }
 
             @if (storeName()) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>storefront</mat-icon>
-                  {{ 'gameForm.fields.store' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ storeName() }}</span>
-              </div>
+              <app-lib-data-row [label]="'gameForm.fields.store' | transloco" icon="storefront" [value]="storeName()" />
             }
 
             @if (formatKey()) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>{{ g.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
-                  {{ 'gameForm.fields.format' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ formatKey()! | transloco }}</span>
-              </div>
+              <app-lib-data-row
+                [label]="'gameForm.fields.format' | transloco"
+                [icon]="g.format === 'physical' ? 'album' : 'cloud'"
+                [value]="formatKey()! | transloco" />
             }
 
             @if (conditionKey()) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>grade</mat-icon>
-                  {{ 'gameForm.fields.condition' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ conditionKey()! | transloco }}</span>
-              </div>
+              <app-lib-data-row
+                [label]="'gameForm.fields.condition' | transloco"
+                icon="grade"
+                [value]="conditionKey()! | transloco" />
             }
 
             @if (g.edition) {
-              <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
-                  <mat-icon>style</mat-icon>
-                  {{ 'gameForm.fields.edition' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ g.edition }}</span>
-              </div>
+              <app-lib-data-row [label]="'gameForm.fields.edition' | transloco" icon="style" [value]="g.edition" />
             }
           </div>
 
-          <!-- Notas — descripción libre por copia. También cambia con el tab. -->
+          <!-- Notas — descripción libre por copia -->
           @if (g.description) {
             <h3 class="game-detail__subsection-title">{{ 'gameDetail.notes' | transloco }}</h3>
             <p class="game-detail__notes">{{ g.description }}</p>
@@ -320,14 +276,11 @@
 
         @if (!hasMultipleCopies() && !g.soldAt) {
           <div class="game-detail__add-copy-row">
-            <button
-              type="button"
-              class="game-detail__add-copy-btn"
-              (click)="addAnotherCopy()"
-              [attr.aria-label]="'gameDetail.addAnotherCopy' | transloco">
-              <mat-icon>library_add</mat-icon>
-              {{ 'gameDetail.addAnotherCopy' | transloco }}
-            </button>
+            <app-lib-button
+              [label]="'gameDetail.addAnotherCopy' | transloco"
+              icon="library_add"
+              variant="ghost"
+              (clicked)="addAnotherCopy()" />
           </div>
         }
       }

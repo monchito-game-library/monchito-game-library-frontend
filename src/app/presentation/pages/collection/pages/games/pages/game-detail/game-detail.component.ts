@@ -40,7 +40,10 @@ import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -61,7 +64,10 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
     TranslocoPipe,
     SaleFormComponent,
     GameLoanFormComponent,
-    BadgeChipComponent
+    LibButtonComponent,
+    LibChipComponent,
+    LibDataRowComponent,
+    LibSectionHeaderComponent
   ]
 })
 export class GameDetailComponent implements OnInit {
