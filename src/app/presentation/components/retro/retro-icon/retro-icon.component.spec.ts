@@ -5,7 +5,7 @@ import { RetroIconComponent } from './retro-icon.component';
 describe('RetroIconComponent', () => {
   let fixture: ComponentFixture<RetroIconComponent>;
 
-  function createComponent(name: string, size?: 'sm' | 'md' | 'lg'): void {
+  function createComponent(name: string, size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'): void {
     fixture = TestBed.createComponent(RetroIconComponent);
     fixture.componentRef.setInput('name', name);
     if (size) {
@@ -26,16 +26,14 @@ describe('RetroIconComponent', () => {
     expect(span.nativeElement.textContent.trim()).toBe('star');
   });
 
-  it('should apply size class --sm when size is sm', () => {
+  it('should apply size host class retro-icon-host--sm when size is sm', () => {
     createComponent('close', 'sm');
-    const span = fixture.debugElement.query(By.css('.retro-icon--sm'));
-    expect(span).toBeTruthy();
+    expect(fixture.nativeElement.classList.contains('retro-icon-host--sm')).toBe(true);
   });
 
-  it('should apply size class --lg when size is lg', () => {
+  it('should apply size host class retro-icon-host--lg when size is lg', () => {
     createComponent('settings', 'lg');
-    const span = fixture.debugElement.query(By.css('.retro-icon--lg'));
-    expect(span).toBeTruthy();
+    expect(fixture.nativeElement.classList.contains('retro-icon-host--lg')).toBe(true);
   });
 
   it('should set aria-hidden="true" by default', () => {
