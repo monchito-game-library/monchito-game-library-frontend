@@ -7,7 +7,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { AuthStateService } from '@/services/auth-state/auth-state.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
@@ -26,7 +26,7 @@ import { OrderInvitationModel } from '@/models/order/order-invitation.model';
     DatePipe,
     RouterLink,
     NgTemplateOutlet,
-    SkeletonComponent
+    LibSkeletonComponent
   ]
 })
 export class OrderInviteComponent implements OnInit {

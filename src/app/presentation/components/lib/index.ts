@@ -8,3 +8,4 @@ export { LibEmptyStateComponent } from './lib-empty-state/lib-empty-state.compon
 export { LibBadgeComponent } from './lib-badge/lib-badge.component';
 export { LibIconButtonComponent } from './lib-icon-button/lib-icon-button.component';
 export { LibSpinnerComponent } from './lib-spinner/lib-spinner.component';
+export { LibSkeletonComponent } from './lib-skeleton/lib-skeleton.component';

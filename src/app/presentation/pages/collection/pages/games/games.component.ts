@@ -40,7 +40,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
 import { GameRowComponent } from '@/pages/collection/pages/games/components/game-row/game-row.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
@@ -64,7 +64,7 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
-    SkeletonComponent,
+    LibSkeletonComponent,
     ListPageHeaderComponent,
     GameListFiltersBarComponent,
     GameListFiltersSheetComponent,

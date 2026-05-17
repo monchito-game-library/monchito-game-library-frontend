@@ -38,7 +38,7 @@ import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/ad
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { allMembersReady } from '@/shared/order-member/order-member.util';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -52,7 +52,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatIconButton,
     MatIcon,
     MatTooltip,
-    SkeletonComponent,
+    LibSkeletonComponent,
     TranslocoPipe,
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,

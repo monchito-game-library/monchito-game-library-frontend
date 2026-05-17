@@ -4,7 +4,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -41,7 +41,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatIconButton,
     MatIcon,
     TranslocoPipe,
-    SkeletonComponent,
+    LibSkeletonComponent,
     HardwareLoanFormComponent,
     SaleFormComponent,
     LibSectionHeaderComponent,

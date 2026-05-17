@@ -21,7 +21,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
@@ -54,7 +54,7 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
     MatTooltip,
     TranslocoPipe,
     NgOptimizedImage,
-    SkeletonComponent
+    LibSkeletonComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {

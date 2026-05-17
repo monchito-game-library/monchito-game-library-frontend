@@ -35,7 +35,7 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
@@ -61,7 +61,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     TranslocoPipe,
     WishlistCardComponent,
     CatalogSearchPanelComponent,
-    SkeletonComponent,
+    LibSkeletonComponent,
     LibEmptyStateComponent,
     LibButtonComponent
   ]

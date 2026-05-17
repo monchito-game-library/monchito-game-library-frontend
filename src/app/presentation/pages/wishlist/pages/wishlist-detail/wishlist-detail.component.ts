@@ -25,7 +25,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
 import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
@@ -43,7 +43,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatIconButton,
     MatTooltip,
     TranslocoPipe,
-    SkeletonComponent,
+    LibSkeletonComponent,
     LibChipComponent,
     LibDataRowComponent,
     LibButtonComponent

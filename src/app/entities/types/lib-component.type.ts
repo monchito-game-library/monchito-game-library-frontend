@@ -24,3 +24,6 @@ export type LibSpinnerSize = 'inline' | 'sm' | 'md' | 'lg';
 
 /** Variantes de glyph del lib-spinner Terminal Collector. */
 export type LibSpinnerVariant = 'bars' | 'dots' | 'blocks';
+
+/** Alias semántico de forma del lib-skeleton (no altera la geometría rectangular). */
+export type LibSkeletonShape = 'line' | 'square' | 'block';

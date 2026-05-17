@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 import {
   AUDIT_LOG_USE_CASES,
@@ -19,7 +19,7 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslocoPipe, DatePipe, SkeletonComponent]
+  imports: [MatIcon, TranslocoPipe, DatePipe, LibSkeletonComponent]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);

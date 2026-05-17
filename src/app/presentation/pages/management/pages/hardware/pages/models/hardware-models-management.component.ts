@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -47,7 +47,7 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
     MatIconButton,
     MatIcon,
     TranslocoPipe,
-    SkeletonComponent
+    LibSkeletonComponent
   ]
 })
 export class HardwareModelsManagementComponent implements OnInit {

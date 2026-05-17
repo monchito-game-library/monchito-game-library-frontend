@@ -61,7 +61,7 @@
         @if (screenshotsLoading()) {
           <div class="game-cover-panel__thumbnails">
             @for (i of [1, 2, 3, 4, 5]; track i) {
-              <app-skeleton width="72px" height="48px" borderRadius="6px" class="game-cover-panel__thumb-skeleton" />
+              <app-lib-skeleton width="72px" height="48px" class="game-cover-panel__thumb-skeleton" />
             }
           </div>
         } @else if (coverImages().length > 1) {

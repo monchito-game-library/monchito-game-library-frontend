@@ -4,7 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFabButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -17,7 +17,7 @@ import { OrderSummaryCardComponent } from '@/pages/orders/components/order-summa
   styleUrl: './orders-list.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatFabButton, TranslocoPipe, OrderSummaryCardComponent, SkeletonComponent]
+  imports: [MatIcon, MatFabButton, TranslocoPipe, OrderSummaryCardComponent, LibSkeletonComponent]
 })
 export class OrdersListComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

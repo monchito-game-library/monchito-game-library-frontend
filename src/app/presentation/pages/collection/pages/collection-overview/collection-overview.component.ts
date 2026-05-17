@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
 import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 
@@ -31,7 +31,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrls: ['./collection-overview.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe, LibSectionHeaderComponent, LibDataRowComponent]
+  imports: [CurrencyPipe, MatIcon, LibSkeletonComponent, TranslocoPipe, LibSectionHeaderComponent, LibDataRowComponent]
 })
 export class CollectionOverviewComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);

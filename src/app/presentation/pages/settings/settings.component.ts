@@ -40,7 +40,7 @@ import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 @Component({
   selector: 'app-settings',
@@ -64,7 +64,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     LibSpinnerComponent,
     MatTooltip,
     ToggleSwitchComponent,
-    SkeletonComponent,
+    LibSkeletonComponent,
     TranslocoPipe
   ]
 })

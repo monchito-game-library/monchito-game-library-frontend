@@ -21,7 +21,7 @@
           @if (uploadingAvatar()) {
             <app-lib-spinner size="lg" />
           } @else if (!preferencesLoaded()) {
-            <app-skeleton width="80px" height="80px" borderRadius="50%" />
+            <app-lib-skeleton width="80px" height="80px" />
           } @else {
             <img
               class="settings__avatar settings__avatar--loaded"
@@ -78,8 +78,8 @@
             }
             <span class="settings__email">{{ getUserEmail() }}</span>
           } @else {
-            <app-skeleton width="120px" height="1rem" />
-            <app-skeleton width="160px" height="0.8rem" />
+            <app-lib-skeleton width="120px" height="1rem" />
+            <app-lib-skeleton width="160px" height="0.8rem" />
           }
           <span class="settings__avatar-hint">{{ 'settings.profile.tapToChange' | transloco }}</span>
         </div>
@@ -97,7 +97,7 @@
 
       <!-- Clickable preview / placeholder for custom image upload -->
       @if (!preferencesLoaded()) {
-        <app-skeleton class="settings__banner-skeleton" width="100%" height="120px" borderRadius="10px" />
+        <app-lib-skeleton class="settings__banner-skeleton" width="100%" height="120px" />
       } @else {
         <label class="settings__banner-upload-label" [matTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
           <input
@@ -139,7 +139,7 @@
         @if (rawgSearchLoading()) {
           <div class="settings__banner-grid">
             @for (_ of skeletonThumbs; track $index) {
-              <app-skeleton width="88px" height="58px" borderRadius="6px" />
+              <app-lib-skeleton width="88px" height="58px" />
             }
           </div>
         } @else if (rawgResults().length) {

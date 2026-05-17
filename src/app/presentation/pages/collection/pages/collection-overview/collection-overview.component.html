@@ -8,7 +8,7 @@
     <span class="collection-overview__total-label">{{ 'collectionOverview.totalSpent' | transloco }}</span>
     <span class="collection-overview__total-amount">
       @if (collectionTotalSpent() === null) {
-        <app-skeleton width="120px" height="2rem" />
+        <app-lib-skeleton width="120px" height="2rem" />
       } @else {
         {{ collectionTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
       }
@@ -24,7 +24,7 @@
       <div class="collection-overview__card-data">
         <app-lib-data-row label="ITEMS" icon="tag">
           @if (gamesCount() === null) {
-            <app-skeleton width="80px" height="1rem" />
+            <app-lib-skeleton width="80px" height="1rem" />
           } @else if (gamesCount() === 1) {
             {{ 'collectionOverview.oneItem' | transloco }}
           } @else {
@@ -33,7 +33,7 @@
         </app-lib-data-row>
         <app-lib-data-row label="TOTAL" icon="payments">
           @if (gamesTotalSpent() === null) {
-            <app-skeleton width="60px" height="0.875rem" />
+            <app-lib-skeleton width="60px" height="0.875rem" />
           } @else {
             {{ gamesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
           }
@@ -49,7 +49,7 @@
       <div class="collection-overview__card-data">
         <app-lib-data-row label="ITEMS" icon="tag">
           @if (consolesCount() === null) {
-            <app-skeleton width="80px" height="1rem" />
+            <app-lib-skeleton width="80px" height="1rem" />
           } @else if (consolesCount() === 1) {
             {{ 'collectionOverview.oneItem' | transloco }}
           } @else {
@@ -58,7 +58,7 @@
         </app-lib-data-row>
         <app-lib-data-row label="TOTAL" icon="payments">
           @if (consolesTotalSpent() === null) {
-            <app-skeleton width="60px" height="0.875rem" />
+            <app-lib-skeleton width="60px" height="0.875rem" />
           } @else {
             {{ consolesTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
           }
@@ -74,7 +74,7 @@
       <div class="collection-overview__card-data">
         <app-lib-data-row label="ITEMS" icon="tag">
           @if (controllersCount() === null) {
-            <app-skeleton width="80px" height="1rem" />
+            <app-lib-skeleton width="80px" height="1rem" />
           } @else if (controllersCount() === 1) {
             {{ 'collectionOverview.oneItem' | transloco }}
           } @else {
@@ -83,7 +83,7 @@
         </app-lib-data-row>
         <app-lib-data-row label="TOTAL" icon="payments">
           @if (controllersTotalSpent() === null) {
-            <app-skeleton width="60px" height="0.875rem" />
+            <app-lib-skeleton width="60px" height="0.875rem" />
           } @else {
             {{ controllersTotalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}
           }

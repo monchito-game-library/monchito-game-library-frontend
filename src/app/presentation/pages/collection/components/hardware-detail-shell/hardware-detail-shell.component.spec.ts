@@ -154,7 +154,7 @@ describe('HardwareDetailShellComponent', () => {
     });
 
     it('muestra los skeletons de carga', () => {
-      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('app-lib-skeleton'));
       expect(skeletons.length).toBeGreaterThan(0);
     });
 

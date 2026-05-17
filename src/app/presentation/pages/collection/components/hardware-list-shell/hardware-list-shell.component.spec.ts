@@ -202,7 +202,7 @@ describe('HardwareListShellComponent', () => {
   describe('stats', () => {
     it('muestra skeletons cuando loading es true', () => {
       setupComponent({ loading: true, items: [], filteredItems: [] });
-      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('app-lib-skeleton'));
       expect(skeletons.length).toBeGreaterThanOrEqual(2);
     });
 

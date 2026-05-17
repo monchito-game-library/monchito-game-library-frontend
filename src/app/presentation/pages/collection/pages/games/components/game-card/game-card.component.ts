@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -50,7 +50,7 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
     CurrencyPipe,
     NgOptimizedImage,
     TranslocoPipe,
-    SkeletonComponent,
+    LibSkeletonComponent,
     LibCardComponent,
     LibChipComponent
   ]

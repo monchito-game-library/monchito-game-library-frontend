@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import {
@@ -28,7 +28,7 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   styleUrl: './stores-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StoreEditPanelComponent, MatButton, MatIcon, TranslocoPipe, CatalogItemCardComponent, SkeletonComponent]
+  imports: [StoreEditPanelComponent, MatButton, MatIcon, TranslocoPipe, CatalogItemCardComponent, LibSkeletonComponent]
 })
 export class StoresManagementComponent implements OnInit {
   private readonly _dialog: MatDialog = inject(MatDialog);

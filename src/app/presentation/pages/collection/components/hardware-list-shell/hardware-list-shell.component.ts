@@ -11,7 +11,7 @@ import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
 import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
@@ -38,7 +38,7 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
     NgTemplateOutlet,
     MatIcon,
     TranslocoPipe,
-    SkeletonComponent,
+    LibSkeletonComponent,
     ListPageHeaderComponent,
     LibEmptyStateComponent,
     LibDataRowComponent

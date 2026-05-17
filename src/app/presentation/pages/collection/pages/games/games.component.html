@@ -22,7 +22,7 @@
       <div class="game-list__stat">
         <mat-icon>{{ formatFilterIcon() }}</mat-icon>
         @if (loading()) {
-          <app-skeleton width="24px" height="12px" />
+          <app-lib-skeleton width="24px" height="12px" />
         } @else {
           <span>{{ ownedCount() }}</span>
         }
@@ -31,7 +31,7 @@
       <div class="game-list__stat">
         <mat-icon>payments</mat-icon>
         @if (loading()) {
-          <app-skeleton width="40px" height="12px" />
+          <app-lib-skeleton width="40px" height="12px" />
         } @else {
           <span>{{ totalPrice() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         }
@@ -40,7 +40,7 @@
       <div class="game-list__stat">
         <mat-icon>emoji_events</mat-icon>
         @if (loading()) {
-          <app-skeleton width="24px" height="12px" />
+          <app-lib-skeleton width="24px" height="12px" />
         } @else {
           <span>{{ platinumCount() }}</span>
         }
@@ -58,7 +58,7 @@
       <div class="game-list__skeleton" [style.--grid-cols]="columnCount()">
         @for (n of skeletonItems(); track n) {
           <div class="game-list__skeleton-card">
-            <app-skeleton height="100%" borderRadius="0" />
+            <app-lib-skeleton height="100%" />
           </div>
         }
       </div>

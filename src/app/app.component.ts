@@ -19,7 +19,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
@@ -38,7 +38,7 @@ import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
     MatIcon,
     MatMenu,
     MatMenuTrigger,
-    SkeletonComponent,
+    LibSkeletonComponent,
     TranslocoPipe,
     NgOptimizedImage
   ]

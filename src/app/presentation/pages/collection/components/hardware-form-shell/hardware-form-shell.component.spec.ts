@@ -139,7 +139,7 @@ describe('HardwareFormShellComponent', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('app-lib-skeleton'));
       const form = fixture.debugElement.query(By.css('form'));
 
       expect(skeletons.length).toBeGreaterThan(0);

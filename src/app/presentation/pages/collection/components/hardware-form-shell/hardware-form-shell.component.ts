@@ -27,7 +27,7 @@ import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 /**
  * Presentational shell component that renders the shared form layout for hardware
@@ -60,7 +60,7 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatDatepickerToggle,
     DatepickerFieldClickDirective,
     TranslocoPipe,
-    SkeletonComponent,
+    LibSkeletonComponent,
     LibButtonComponent
   ]
 })

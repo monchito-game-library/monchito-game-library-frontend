@@ -12,7 +12,7 @@
       [class.game-card__front--flipped]="isFlipped()">
       <div class="game-card__image-wrapper">
         @if (!imageLoaded()) {
-          <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
+          <app-lib-skeleton width="100%" height="100%" class="game-card__image-skeleton" />
         }
         <img
           class="game-card__image"

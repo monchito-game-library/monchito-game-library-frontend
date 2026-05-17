@@ -11,7 +11,7 @@
     <div class="hw-list__stat">
       <mat-icon>{{ statIcon() }}</mat-icon>
       @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
+        <app-lib-skeleton width="24px" height="12px" />
       } @else {
         <span>{{ filteredItems().length }}</span>
       }
@@ -21,7 +21,7 @@
     <div class="hw-list__stat">
       <mat-icon>payments</mat-icon>
       @if (loading()) {
-        <app-skeleton width="60px" height="12px" />
+        <app-lib-skeleton width="60px" height="12px" />
       } @else {
         <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
       }
@@ -35,17 +35,17 @@
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="hw-list__card hw-list__card--skeleton">
             <div class="hw-list__card-header">
-              <app-skeleton width="32px" height="32px" borderRadius="0" />
+              <app-lib-skeleton width="32px" height="32px" />
               <div class="hw-list__card-titles">
-                <app-skeleton width="140px" height="16px" />
-                <app-skeleton width="90px" height="12px" />
+                <app-lib-skeleton width="140px" height="16px" />
+                <app-lib-skeleton width="90px" height="12px" />
               </div>
             </div>
             <div class="hw-list__card-chips">
-              <app-skeleton width="64px" height="22px" />
-              <app-skeleton width="48px" height="22px" />
+              <app-lib-skeleton width="64px" height="22px" />
+              <app-lib-skeleton width="48px" height="22px" />
             </div>
-            <app-skeleton width="110px" height="12px" />
+            <app-lib-skeleton width="110px" height="12px" />
           </div>
         }
       </div>

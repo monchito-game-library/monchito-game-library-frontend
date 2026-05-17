@@ -18,7 +18,7 @@ import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/f
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -85,7 +85,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatSuffix,
-    SkeletonComponent,
+    LibSkeletonComponent,
     CatalogSearchPanelComponent
   ]
 })
