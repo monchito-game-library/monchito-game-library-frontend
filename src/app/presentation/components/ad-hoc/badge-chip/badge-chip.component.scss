@@ -25,3 +25,10 @@
   border-color: var(--text-lo);
   color: var(--text-mid);
 }
+
+// ────────────────────────── Responsive: ≤ 550px ──────────────────────────
+@media (max-width: 550px) {
+  :host {
+    letter-spacing: 0.06em;
+  }
+}
