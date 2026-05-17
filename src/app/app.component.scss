@@ -34,7 +34,7 @@
     color: var(--primary);
     gap: 0.25rem;
 
-    mat-icon {
+    app-lib-icon {
       font-size: var(--text-3xl);
       width: var(--text-3xl);
       height: var(--text-3xl);
@@ -329,12 +329,6 @@
   cursor: pointer;
   transition: none;
 
-  mat-icon {
-    font-size: var(--text-base);
-    width: var(--text-base);
-    height: var(--text-base);
-  }
-
   @media (hover: hover) {
     &:hover {
       border-color: var(--border-active);
@@ -402,10 +396,6 @@
 
     .bottom-nav__label {
       display: none;
-    }
-
-    mat-icon {
-      font-size: 1rem;
     }
   }
 }

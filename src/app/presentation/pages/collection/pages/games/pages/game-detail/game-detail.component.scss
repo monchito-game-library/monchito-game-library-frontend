@@ -168,10 +168,7 @@
   display: flex;
   align-items: center;
 
-  mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+  app-lib-icon {
     color: var(--accent-amber);
   }
 }
@@ -227,12 +224,6 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
-
-  mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
-  }
 
   @media (hover: hover) {
     &:hover {

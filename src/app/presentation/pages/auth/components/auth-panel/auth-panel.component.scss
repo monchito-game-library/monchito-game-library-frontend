@@ -42,7 +42,7 @@
   gap: 0.25rem;
   margin-bottom: 1.75rem;
 
-  mat-icon {
+  app-lib-icon {
     font-size: var(--text-display);
     width: var(--text-display);
     height: var(--text-display);
@@ -97,7 +97,7 @@
     font-size: var(--text-sm);
     line-height: 1.4;
 
-    mat-icon {
+    app-lib-icon {
       font-size: var(--text-lg);
       width: var(--text-lg);
       height: var(--text-lg);

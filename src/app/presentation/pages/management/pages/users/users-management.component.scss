@@ -114,7 +114,7 @@
     background: var(--bg-surface-hi);
     color: var(--text-mid);
 
-    mat-icon {
+    app-lib-icon {
       font-size: 2.25rem;
       width: 2.25rem;
       height: 2.25rem;
@@ -316,7 +316,7 @@
   flex-shrink: 0;
   color: var(--text-mid);
 
-  mat-icon {
+  app-lib-icon {
     font-size: var(--text-xl);
     width: var(--text-xl);
     height: var(--text-xl);

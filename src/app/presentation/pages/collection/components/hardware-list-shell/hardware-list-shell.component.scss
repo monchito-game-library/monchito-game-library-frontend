@@ -26,10 +26,7 @@
   font-weight: 500;
   color: var(--text-mid);
 
-  mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+  app-lib-icon {
     color: var(--text-lo);
   }
 }
@@ -61,7 +58,7 @@
   padding: 2rem 0;
   color: var(--text-lo);
 
-  mat-icon {
+  app-lib-icon {
     font-size: 2rem;
     width: 2rem;
     height: 2rem;

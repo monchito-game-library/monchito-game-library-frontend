@@ -191,7 +191,7 @@
 .wishlist-view__stars {
   display: flex;
 
-  .mat-icon {
+  app-lib-icon {
     color: var(--accent-amber);
   }
 }

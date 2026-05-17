@@ -82,7 +82,7 @@
     flex-shrink: 0;
   }
 
-  /* Si hay contenido proyectado en el slot, ocultar el mat-icon del input icon */
+  /* Si hay contenido proyectado en el slot, ocultar el lib-icon del input icon */
   .lib-btn__slot:not(:empty) ~ .lib-btn__icon {
     display: none;
   }

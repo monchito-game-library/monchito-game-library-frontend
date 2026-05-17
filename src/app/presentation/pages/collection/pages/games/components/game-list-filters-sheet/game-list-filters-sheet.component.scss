@@ -78,10 +78,7 @@
   letter-spacing: 0.05em;
   color: var(--text-mid);
 
-  mat-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
+  app-lib-icon {
     color: var(--text-lo);
   }
 }
