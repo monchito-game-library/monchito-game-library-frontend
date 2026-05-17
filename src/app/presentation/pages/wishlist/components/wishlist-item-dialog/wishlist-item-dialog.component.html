@@ -101,10 +101,12 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-stroked-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
+  <app-lib-button variant="ghost" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
   @if (!showSearch()) {
-    <button mat-flat-button color="primary" type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
-      {{ 'common.confirm' | transloco }}
-    </button>
+    <app-lib-button
+      variant="primary"
+      [label]="'common.confirm' | transloco"
+      [disabled]="!canConfirm()"
+      (clicked)="onConfirm()" />
   }
 </mat-dialog-actions>

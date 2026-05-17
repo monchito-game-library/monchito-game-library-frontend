@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -37,6 +37,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -49,7 +50,6 @@ import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.co
     NgOptimizedImage,
     SlicePipe,
     ReactiveFormsModule,
-    MatButton,
     MatIconButton,
     MatFormField,
     MatLabel,
@@ -62,7 +62,8 @@ import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.co
     WishlistCardComponent,
     CatalogSearchPanelComponent,
     SkeletonComponent,
-    LibEmptyStateComponent
+    LibEmptyStateComponent,
+    LibButtonComponent
   ]
 })
 export class WishlistComponent implements OnInit {

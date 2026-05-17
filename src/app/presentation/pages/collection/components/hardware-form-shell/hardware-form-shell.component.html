@@ -28,7 +28,7 @@
       </div>
     </div>
   } @else {
-    <form [formGroup]="form()" (ngSubmit)="submitClick.emit()" class="hw-form__form">
+    <form [formGroup]="form()" class="hw-form__form">
       <mat-form-field appearance="outline" class="hw-form__field--full">
         <mat-label>{{ i18nPrefix() + '.brand' | transloco }}</mat-label>
         <input type="text" matInput [matAutocomplete]="brandAuto" formControlName="brandId" />
@@ -126,16 +126,13 @@
       </mat-form-field>
 
       <div class="hw-form__footer">
-        <button mat-stroked-button type="button" (click)="cancelClick.emit()">
-          {{ i18nPrefix() + '.cancel' | transloco }}
-        </button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form().invalid || saving()">
-          @if (saving()) {
-            <mat-progress-spinner diameter="20" mode="indeterminate" />
-          } @else {
-            {{ i18nPrefix() + '.save' | transloco }}
-          }
-        </button>
+        <app-lib-button variant="ghost" [label]="i18nPrefix() + '.cancel' | transloco" (clicked)="cancelClick.emit()" />
+        <app-lib-button
+          variant="primary"
+          [label]="i18nPrefix() + '.save' | transloco"
+          [disabled]="form().invalid || saving()"
+          [loading]="saving()"
+          (clicked)="submitClick.emit()" />
       </div>
     </form>
   }

@@ -11,7 +11,7 @@ import {
 import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -28,6 +28,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
 import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 @Component({
   selector: 'app-wishlist-detail',
@@ -40,12 +41,12 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
     NgOptimizedImage,
     MatIcon,
     MatIconButton,
-    MatButton,
     MatTooltip,
     TranslocoPipe,
     SkeletonComponent,
     LibChipComponent,
-    LibDataRowComponent
+    LibDataRowComponent,
+    LibButtonComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {

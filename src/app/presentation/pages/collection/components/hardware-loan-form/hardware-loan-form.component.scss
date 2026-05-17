@@ -35,18 +35,6 @@
   gap: 1rem;
 }
 
-.hardware-loan-form__section-title {
-  margin: 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-lo);
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
-}
-
 .hardware-loan-form__info-row {
   display: flex;
   align-items: center;
@@ -69,11 +57,16 @@
 
 .hardware-loan-form__action-btn {
   align-self: flex-start;
+  display: inline-flex;
 }
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
 @media (max-width: 768px) and (orientation: portrait) {
   .hardware-loan-form__action-btn {
     align-self: stretch;
+
+    app-lib-button {
+      width: 100%;
+    }
   }
 }

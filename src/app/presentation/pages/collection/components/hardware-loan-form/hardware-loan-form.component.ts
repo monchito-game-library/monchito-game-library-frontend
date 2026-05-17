@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -23,6 +23,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -44,7 +46,6 @@ export type { HardwareLoanItem };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
     MatIconButton,
     MatIcon,
     MatFormField,
@@ -55,7 +56,9 @@ export type { HardwareLoanItem };
     MatDatepickerInput,
     MatDatepickerToggle,
     DatepickerFieldClickDirective,
-    TranslocoPipe
+    TranslocoPipe,
+    LibButtonComponent,
+    LibSectionHeaderComponent
   ]
 })
 export class HardwareLoanFormComponent implements OnInit {

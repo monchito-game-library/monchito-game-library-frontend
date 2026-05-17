@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -17,10 +17,10 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -45,7 +45,6 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   imports: [
     NgTemplateOutlet,
     ReactiveFormsModule,
-    MatButton,
     MatIconButton,
     MatIcon,
     MatFormField,
@@ -60,9 +59,9 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatDatepickerInput,
     MatDatepickerToggle,
     DatepickerFieldClickDirective,
-    MatProgressSpinner,
     TranslocoPipe,
-    SkeletonComponent
+    SkeletonComponent,
+    LibButtonComponent
   ]
 })
 export class HardwareFormShellComponent {

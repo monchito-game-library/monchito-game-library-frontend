@@ -7,13 +7,13 @@ import {
   MatDialogRef,
   MatDialogTitle
 } from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -34,7 +34,6 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatButton,
     MatIconButton,
     MatFormField,
     MatLabel,
@@ -46,7 +45,8 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
     NgOptimizedImage,
     TranslocoPipe,
     CatalogSearchPanelComponent,
-    SlicePipe
+    SlicePipe,
+    LibButtonComponent
   ]
 })
 export class WishlistItemDialogComponent {

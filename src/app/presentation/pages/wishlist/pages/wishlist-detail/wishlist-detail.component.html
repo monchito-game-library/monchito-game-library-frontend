@@ -122,15 +122,14 @@
       </div>
 
       <!-- Own button -->
-      <button
-        mat-flat-button
-        type="button"
-        class="wishlist-detail__own-btn"
-        (click)="onOwn()"
-        [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
-        <mat-icon>shopping_bag</mat-icon>
-        {{ 'wishlist.card.ownTooltip' | transloco }}
-      </button>
+      <div class="wishlist-detail__own-btn">
+        <app-lib-button
+          variant="success"
+          icon="shopping_bag"
+          [label]="'wishlist.card.ownTooltip' | transloco"
+          [fullWidth]="true"
+          (clicked)="onOwn()" />
+      </div>
     </div>
   }
 </div>

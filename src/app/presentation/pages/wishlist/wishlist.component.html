@@ -20,10 +20,13 @@
         }
       </div>
       @if (!loading() && items().length > 0) {
-        <button mat-stroked-button type="button" class="wishlist-page__header-add-btn" (click)="onAddItem()">
-          <mat-icon>add</mat-icon>
-          {{ 'wishlist.addBtn' | transloco }}
-        </button>
+        <div class="wishlist-page__header-add-btn">
+          <app-lib-button
+            variant="primary"
+            icon="add"
+            [label]="'wishlist.addBtn' | transloco"
+            (clicked)="onAddItem()" />
+        </div>
       }
     </header>
 
@@ -44,10 +47,7 @@
       <app-lib-empty-state
         [title]="'wishlist.empty.title' | transloco"
         [subtitle]="'wishlist.empty.subtitle' | transloco">
-        <button mat-stroked-button type="button" (click)="onAddItem()">
-          <mat-icon>add</mat-icon>
-          {{ 'wishlist.addBtn' | transloco }}
-        </button>
+        <app-lib-button variant="primary" icon="add" [label]="'wishlist.addBtn' | transloco" (clicked)="onAddItem()" />
       </app-lib-empty-state>
     } @else {
       <div class="wishlist-page__list">
@@ -214,15 +214,17 @@
       </form>
 
       <div class="wishlist-view__actions">
-        <button mat-stroked-button type="button" (click)="onMobileCancel()">{{ 'common.cancel' | transloco }}</button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
+        <app-lib-button
+          variant="ghost"
+          [label]="'common.cancel' | transloco"
+          [fullWidth]="true"
+          (clicked)="onMobileCancel()" />
+        <app-lib-button
+          variant="primary"
+          [label]="'common.confirm' | transloco"
           [disabled]="!mobileCanConfirm()"
-          (click)="onMobileConfirm()">
-          {{ 'common.confirm' | transloco }}
-        </button>
+          [fullWidth]="true"
+          (clicked)="onMobileConfirm()" />
       </div>
     }
     <!-- end @else !editPlatformsLoading -->
