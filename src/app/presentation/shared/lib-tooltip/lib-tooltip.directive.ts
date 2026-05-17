@@ -16,15 +16,21 @@ import { Directive, ElementRef, HostListener, inject, input, InputSignal, OnDest
   selector: '[libTooltip]',
   standalone: true
 })
+/* eslint-disable @typescript-eslint/member-ordering --
+ * El contador estático `_idCounter` debe inicializarse antes que el campo
+ * de instancia `_tooltipId` que lo consume; TypeScript inicializa por orden
+ * textual. Mantenerlo al inicio rompe el orden de `private-readonly-field`
+ * antes de `private-field`, así que se desactiva la regla en esta clase.
+ */
 export class LibTooltipDirective implements OnDestroy {
   private static _idCounter = 0;
 
   private readonly _el: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _renderer: Renderer2 = inject(Renderer2);
+  private readonly _tooltipId: string = `lib-tooltip-${++LibTooltipDirective._idCounter}`;
 
   private _tooltipEl?: HTMLElement;
   private _timer?: ReturnType<typeof setTimeout>;
-  private readonly _tooltipId: string = `lib-tooltip-${++LibTooltipDirective._idCounter}`;
 
   /** Texto del tooltip. */
   readonly libTooltip: InputSignal<string> = input.required<string>();

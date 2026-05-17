@@ -309,7 +309,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.addLine(this._orderId, userId, result);
-      this._snack.open({ text: this._transloco.translate('orders.snack.lineAdded'), duration: 3000, variant: 'error' });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineAdded'),
+        duration: 3000,
+        variant: 'success'
+      });
       await this._loadOrder();
     } catch {
       this._snack.open({
@@ -345,7 +349,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this._snack.open({
         text: this._transloco.translate('orders.snack.lineUpdated'),
         duration: 3000,
-        variant: 'error'
+        variant: 'success'
       });
       await this._loadOrder();
     } catch {
@@ -381,7 +385,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this._snack.open({
         text: this._transloco.translate('orders.snack.lineDeleted'),
         duration: 3000,
-        variant: 'error'
+        variant: 'success'
       });
       await this._loadOrder();
     } catch {
@@ -442,7 +446,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this._snack.open({
         text: this._transloco.translate('orders.snack.inviteCopied'),
         duration: 3000,
-        variant: 'error'
+        variant: 'success'
       });
     } catch {
       this._snack.open({
@@ -475,7 +479,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.delete(this._orderId);
-      this._snack.open({ text: this._transloco.translate('orders.snack.deleted'), duration: 3000, variant: 'error' });
+      this._snack.open({ text: this._transloco.translate('orders.snack.deleted'), duration: 3000, variant: 'success' });
       await this._router.navigate(['/orders']);
     } catch {
       this._snack.open({

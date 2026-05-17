@@ -323,9 +323,9 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 |---|---|---|
 | `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
 | `dialog.mock.ts` | `mockDialog` | `{ provide: MatDialog, useValue: mockDialog }` |
+| `lib-snackbar.mock.ts` | `mockLibSnackbar` | `{ provide: LibSnackbarService, useValue: mockLibSnackbar }` |
 | `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
 | `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
-| `snack-bar.mock.ts` | `mockSnackBar` | `{ provide: MatSnackBar, useValue: mockSnackBar }` |
 | `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
 | `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
 

@@ -12,12 +12,12 @@ export type { LibSnackbarMessage };
  */
 @Injectable({ providedIn: 'root' })
 export class LibSnackbarService {
-  private _nextId = 0;
   private readonly _timers: Map<number, ReturnType<typeof setTimeout>> = new Map<
     number,
     ReturnType<typeof setTimeout>
   >();
   private readonly _messages: WritableSignal<readonly LibSnackbarMessage[]> = signal<readonly LibSnackbarMessage[]>([]);
+  private _nextId = 0;
 
   /** Lista reactiva de mensajes activos (para el host). */
   readonly messages: Signal<readonly LibSnackbarMessage[]> = this._messages.asReadonly();

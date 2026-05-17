@@ -22,6 +22,7 @@
    - [FASE 8 — Ampliaciones de `lib/` y cierre de excepciones](#fase-8--ampliaciones-de-lib-y-cierre-de-excepciones)
 5. [Checkpoints](#5-checkpoints)
 6. [Notas operativas](#6-notas-operativas)
+7. [FASE 10 — Reemplazo total de Angular Material y CDK](#7-fase-10--reemplazo-total-de-angular-material-y-cdk)
 
 ---
 
@@ -3112,6 +3113,1612 @@ Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 - **Service worker / cache**: no se toca; los cambios CSS se sirven con el bust normal de Angular.
 - **Accesibilidad**: tras el commit 8, ejecutar Lighthouse a11y para confirmar que el contraste no ha empeorado vs baseline actual (la app ya estaba en dark, el cambio principal es a `--text-lo: #525252` para labels — verificar contraste 4.5:1 contra `--bg-surface: #0A0A0A` → ratio ≈ 7.0:1 OK; `--text-mid #A3A3A3` contra `#0A0A0A` ≈ 11:1 OK).
 - **Lighthouse perf**: la eliminación de gradients, sombras, animaciones y dos webfonts (Outfit + Space Grotesk → JetBrains Mono + IBM Plex Sans similares en peso) no debería afectar negativamente; medir igualmente.
+
+---
+
+## 7. FASE 10 — Reemplazo total de Angular Material y CDK
+
+> Objetivo: construir desde cero, dentro de `src/app/presentation/components/lib/`, todos los componentes que faltan para eliminar `@angular/material` y `@angular/cdk` del `package.json`. El usuario asume conscientemente la deuda inicial de a11y a cambio de control total y de borrar la dependencia. La deuda se documenta explícitamente componente a componente y se cierra de forma iterativa en commits posteriores fuera de este plan.
+
+> **Estrategia de rama y PR**: todos los commits de Fase 10 viven en una rama nueva `refactor/lib-remove-material` creada desde `master` tras haber mergeado la rama `feat/terminal-collector-redesign` (Fases 0-8). **Un único PR** al final, contra `master`, con squash merge — alineado con la convención del proyecto y con el feedback de memoria "Refactors de BD multi-fase = un solo PR final". No hay PRs intermedios. Los checkpoints A-E son revisiones del usuario en local sobre la rama, no PRs.
+
+> **Inventario verificado (snapshot de `master`, tras Fase 8)**:
+>
+> | Módulo Material | Files que lo importan | Notas |
+> |---|---|---|
+> | `@angular/material/dialog` | 16 (servicio) + 7 (tokens MAT_DIALOG_DATA/Title/Content/Actions/Close/Ref) | 7 componentes que se abren como dialog: `confirm-dialog`, `avatar-crop-dialog`, `game-cover-position-dialog`, `delete-user-dialog`, `add-edit-line-dialog`, `ready-dialog`, `wishlist-item-dialog`. |
+> | `@angular/material/icon` | 49 (entre TS y HTML; 147 `<mat-icon>` en templates) | Webfont `Material Icons` ya cargada en `src/index.html`. **No** migrar a `Material Symbols Outlined`: cambio visual no pedido y rompería todos los nombres de iconos (`star_rate` vs `star`). |
+> | `@angular/material/snack-bar` | 18 | Sin servicio propio; cada componente inyecta `MatSnackBar` directamente. |
+> | `@angular/material/form-field` | 27 | 80 `<mat-form-field>`. 47 `<mat-option>` (compartidos con select y autocomplete). |
+> | `@angular/material/input` | 24 | Combina con form-field + datepicker. |
+> | `@angular/material/core` | 19 | `MAT_DATE_LOCALE`, `provideNativeDateAdapter`, `MatOption`, `ErrorStateMatcher`. |
+> | `@angular/material/tooltip` | 10 (38 usos `matTooltip` en templates) | Directiva sobre cualquier host. |
+> | `@angular/material/select` | 10 (19 `<mat-select>`) | — |
+> | `@angular/material/datepicker` | 6 (4 `<mat-datepicker>` + 1 directiva `DatepickerFieldClickDirective` propia) | Sólo 4 datepickers reales en toda la app — el usuario lo había estimado en 13. |
+> | `@angular/material/bottom-sheet` | 4 | Un único componente que se abre: `GameListFiltersSheetComponent` desde `games.component.ts`. |
+> | `@angular/material/autocomplete` | 4 (6 `<mat-autocomplete>`) | Usa `displayWith`, `MatAutocompleteSelectedEvent` y validador custom `invalidOption`. |
+> | `@angular/material/divider` | 3 (4 `<mat-divider>`) | — |
+> | `@angular/material/tabs` | 2 | 1 `<mat-tab-group>` real (`sale.component.html`) + 1 `<mat-tab-nav-bar>` con `routerLink` (`collection.component.html`). |
+> | `@angular/material/menu` | 2 (2 templates: `app.component.html` profile menu, `game-detail.component.html` context menu) | — |
+> | `@angular/material/sidenav` | 1 (import sin uso real) | A confirmar — puede caer con un grep en el commit de cleanup. |
+> | `@angular/material/button-toggle` | 1 (`order-info-section.component.html` con `mat-button-toggle-group` €/%) | — |
+> | `@angular/material/button` | 1 (residuo) | A barrer en commit 21. |
+> | `@angular/cdk/layout` | 4 | `BreakpointObserver`. No bloquea — se puede sustituir por `window.matchMedia` o quedarse como única dep CDK si la limpieza del último commit es costosa. |
+> | `@angular/animations` | 0 (uso propio) | Solo lo arrastra Material como peer dep. Cae con la desinstalación. |
+>
+> Diferencias relevantes vs estimación inicial del usuario:
+> - **Datepickers: 4, no 13.**
+> - **Select: 19, no 66.** (la cifra 66 era contando opciones, no selects.)
+> - **Tabs reales: 1.** El segundo es un `mat-tab-nav-bar` que en realidad es un `routerLink` group y se migra como un nav-list, no como un tab system.
+> - **Sidenav: 0 usos reales en templates.** El import es residual.
+
+### 7.1 Principios obligatorios
+
+1. **Orden de riesgo ascendente**. Trivial primero (icons, divider), complejo al final (datepicker, form-field). Cada commit es funcional, testeable y reversible.
+2. **CDK como puente, no permanente**. Los commits de overlay (snackbar, tooltip, menu, drawer, bottom-sheet, dialog) **se construyen sobre `@angular/cdk/overlay`, `@angular/cdk/a11y` (FocusTrap, A11yModule), `@angular/cdk/portal` y `@angular/cdk/scrolling`**. Es bibliografía bien probada y nos da focus trap, scroll lock, posicionamiento y overlay container sin reinventar. El commit final de cleanup (Commit 39) **no** intenta eliminar CDK si todavía hay usos — se elimina sólo si el inventario de `grep -rn "@angular/cdk"` queda a 0. Si quedan usos de `@angular/cdk/layout` (BreakpointObserver) o `@angular/cdk/overlay`, se mantienen como **dependencia explícita justificada** y se documenta. La promesa de "sin Material" se cumple igualmente; CDK es un kit de primitivas, no un design system.
+3. **Sin romper la app en ningún commit**. Tras cada commit: `npm run build && npm run lint && npm test --watch=false` deben pasar. Tests rotos por specs que asertan DOM Material (`By.css('mat-form-field')`) se actualizan en el mismo commit que toca el componente.
+4. **A11y declarada explícitamente**. Cada componente nuevo de `lib/` documenta en su JSDoc de clase:
+   - Roles ARIA que aplica.
+   - Lista de teclas soportadas (Tab, Escape, flechas, Enter, Space, Home, End, type-ahead).
+   - Comportamiento de focus (trap, restore, autofocus).
+   - **Deuda a11y abierta** — qué falta vs WCAG 2.1 AA y vs APG (ARIA Authoring Practices). El usuario asume esa deuda y se cierra iterativamente.
+5. **i18n**: ninguna cadena hardcoded. Cualquier label/aria nuevo (`SnackbarHostComponent`, "Cerrar diálogo", etc.) se traduce vía Transloco con claves nuevas en `src/assets/i18n/es.json` y `en.json` en el mismo commit.
+6. **Tipos explícitos y prefijo `_` en privados** (CLAUDE.md). Sin excepciones.
+7. **SCSS con `rem`, múltiplos de 0.25, sin `&__elemento`, sin `box-shadow` decorativo, sin `transform` en hover, `border-radius: 0`**. La estética Terminal Collector se mantiene.
+
+### 7.2 Decisiones de diseño previas (tomadas antes de los commits)
+
+1. **Iconos: mantener la webfont `Material Icons` ya cargada en `index.html`**. Componente `lib-icon` que renderiza `<span class="material-icons" aria-hidden="true">{{ name }}</span>`. **No** cambiar a `Material Symbols Outlined` porque (a) implicaría cargar otra webfont, (b) muchos nombres difieren (`star_rate` no existe en outlined, sería `star`), (c) es un cambio visual fuera de scope. La webfont actual seguirá funcionando aunque desinstalemos `@angular/material/icon` — son cosas independientes (la dependencia Material sólo aporta el componente `<mat-icon>`, no la fuente).
+2. **Snackbar: servicio singleton + host global**. `LibSnackbarService` (provideIn root) gestiona una `WritableSignal<readonly LibSnackbarMessage[]>`. Un único componente `<app-lib-snackbar-host>` montado en `app.component.html` consume la signal y renderiza la cola. Auto-dismiss configurable (default 4000ms), action button opcional. Posición fija (bottom-center desktop, top-center mobile encima del bottom-nav). Sin Overlay CDK — directamente posición fija en `app-root`.
+3. **Tooltip: directiva ligera + DOM nativo absolute**. `[libTooltip]` directiva. En desktop muestra el tooltip via `position: absolute` sobre un wrapper relative del host, con delay 500ms al hover. En touch (sin hover) se omite — los tooltips de Material en mobile se activan con long-press y degradan mal. Como compensación, los `aria-label` ya están bien puestos.
+4. **Menu: CDK Overlay + ListKeyManager**. `LibMenuComponent` + `LibMenuTriggerDirective`. El trigger abre el overlay con `OverlayConfig` y `FlexibleConnectedPositionStrategy`. La navegación con flechas usa `cdk/a11y` `ListKeyManager` para no reimplementar type-ahead. La salida con Escape cierra y restaura focus al trigger.
+5. **Drawer: panel slide-in lateral + scrim**. Como sólo hay 0 usos reales de `mat-sidenav`, se construye uno mínimo para el filters drawer de games-list (que actualmente usa `MatDrawer` indirectamente). Si tras la verificación final no hay consumidor, **se omite el componente** y se documenta. Decisión: dejarlo en el plan como opcional.
+6. **Bottom-sheet: dialog con anchorBottom + drag-to-dismiss**. Un único consumidor (`GameListFiltersSheetComponent`). Se reutiliza la infraestructura de `lib-dialog` con una variante `position="bottom"` que ancla el panel a `bottom: 0`, full-width, con drag handle visible y `swipe-down` para cerrar. Esto evita un overlay separado.
+7. **Dialog: CDK Overlay + portal + focus trap**. `LibDialogService` con API mimetizando `MatDialog.open()` para minimizar el diff en los call-sites: `open(component, { data, ariaLabel, position, ... })` → devuelve `LibDialogRef<T, R>` con `.afterClosed()` (`Observable<R | undefined>`) y `.close(result?)`. Los componentes que se abren como dialog (`ConfirmDialogComponent`, etc.) cambian sus imports: `MAT_DIALOG_DATA` → `LIB_DIALOG_DATA`, `MatDialogRef` → `LibDialogRef`, y los wrappers `<h2 mat-dialog-title>` → `<header lib-dialog-title>`. **La directiva equivalente `[libDialogClose]` se mantiene** para botones de cierre.
+8. **Form-field stack: construir incrementalmente**.
+   - **`lib-form-field`** wrapper + `[libFormFieldControl]` directiva marcadora para el input/select/textarea.
+   - **`lib-input`** = `<input>` nativo con clase `.lib-input__control` (proyectado en form-field). Sin componente envoltorio pesado — sólo una directiva `[libInput]` que añade clase y maneja focus/blur events.
+   - **`lib-select`** ≠ `<select>` nativo. Es un combobox completo con `role="combobox"` + listbox emergente (CDK Overlay). API: `[options]`, `[value]`, `(valueChange)`, `displayWith`. Implementa `ControlValueAccessor`.
+   - **`lib-autocomplete`** = `lib-input` + listbox con filtrado. CDK ListKeyManager para teclas. `displayWith` y validador custom `invalidOption` se replican.
+   - **`lib-datepicker`** = `lib-input` + popup calendario. **Implementación interna desde cero** (grid 7×6 con `role="grid"` y `gridcell`, navegación con flechas/PageUp/PageDown/Home/End siguiendo APG date picker dialog), locale `es-ES` vía `Intl.DateTimeFormat`. **No** se usa `flatpickr` ni libs externas para mantener bundle limpio y consistencia visual; si el coste estimado supera 1 día de implementación, **alternativa documentada**: usar `flatpickr` (3.5KB gz) envuelto en un wrapper Angular que aplica el theme terminal por overrides CSS sobre `.flatpickr-calendar`. La decisión final se toma en el Commit 37.
+   - **`lib-error`** / **`lib-hint`** / **`lib-label`** = componentes wrapper triviales con clases CSS — esencialmente tags semánticos.
+9. **Tabs (sale.component): `lib-tabs` con `role="tablist"`**. Sólo 1 usuario real. Componente compone `<lib-tab-list>` + `<lib-tab>` + `<lib-tab-panel>`. Teclas flechas + Home/End. Sin animations (el `animationDuration="150ms"` original se elimina; cambio visual aceptado).
+10. **Tab-nav-bar (collection.component): `lib-router-tabs`** distinto. Es semánticamente una navegación, no un tablist (los enlaces cambian de ruta). Se convierte en `<nav class="lib-router-tabs"><a routerLink>...</a></nav>` con `aria-current="page"` en el activo y estilos terminal. **No usa rol tablist**.
+11. **Button-toggle (orders €/%): radio group nativo**. Como sólo hay 1 uso, se hace inline con `<fieldset role="radiogroup">` + dos `<input type="radio">` estilizados con la convención terminal. No vale la pena un `lib-button-toggle` para un único consumidor.
+12. **Divider: HR con clase**. `<hr class="lib-divider" />`. No es un componente, es una utilidad CSS.
+
+### 7.3 Estructura de commits
+
+> **Rama**: `refactor/lib-remove-material` desde `master` (post-merge de Fases 0-8). Numeración continua desde Commit 21 para coherencia con el plan existente. Los nombres en backticks son los mensajes de commit propuestos.
+>
+> **Checkpoints** (revisiones del usuario, no PRs): 5 (A-E) intercalados entre bloques.
+
+#### Bloque 1 — Trivial (sin riesgo overlay)
+
+##### Commit 21 — `feat(lib): lib-icon + sustitución de mat-icon en toda la app`
+
+**Objetivo**: eliminar `@angular/material/icon` como dependencia importada.
+
+**Componente nuevo**: `src/app/presentation/components/lib/lib-icon/lib-icon.component.ts`
+
+```typescript
+@Component({
+  selector: 'app-lib-icon',
+  standalone: true,
+  template: `<span class="lib-icon material-icons" aria-hidden="true">{{ name() }}</span>`,
+  styleUrl: './lib-icon.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class LibIconComponent {
+  readonly name: InputSignal<string> = input.required<string>();
+}
+```
+
+**SCSS**: line-height 1, font-size `1em` por defecto, color `currentColor`. Modificadores opcionales `--sm`, `--md`, `--lg` con `font-size` explícito.
+
+**A11y**: `aria-hidden="true"` por defecto (decorativo). Para iconos *informativos* el call-site añade `aria-label` al contenedor padre (el patrón ya está extendido en la app via `lib-icon-button`).
+
+**Migración mecánica**: 147 `<mat-icon>` en templates + 49 ficheros `import { MatIconModule }` o `import { MatIcon }`.
+
+**Patrón sed-friendly**:
+```
+<mat-icon>name</mat-icon>           → <app-lib-icon name="name" />
+<mat-icon class="x">name</mat-icon> → <app-lib-icon class="x" name="name" />
+<mat-icon [style.color]="c">name</mat-icon> → <app-lib-icon [style.color]="c" name="name" />
+```
+
+**Casos especiales** (búsqueda obligatoria antes del barrido):
+- `<mat-icon matSuffix>` y `<mat-icon matPrefix>` dentro de `<mat-form-field>`: se mantienen como `mat-icon` con directiva — se migrarán al desmontar form-field en commits 34+. **No tocar en este commit**.
+- `<mat-icon>` dentro de `<button mat-menu-item>` (game-detail context menu, profile menu): el botón mat sigue vivo hasta Commit 27. Sustituir el icono **interior** sin tocar el botón.
+- `<mat-icon>` con `[matBadge]` (no debería haber, verificar con `grep matBadge src`): si aparece, mantener Material hasta auditar.
+
+**Internos del lib que ya usan mat-icon**:
+- `lib-button` → quitar `import { MatIconModule }` y poner `LibIconComponent` en `imports`. Sustituir `<mat-icon>` por `<app-lib-icon>` en su template.
+- `lib-icon-button` → mismo cambio.
+- `lib-spinner` no usa mat-icon (ASCII).
+
+**Ficheros a modificar** (49 TS + 49 HTML aprox):
+```
+grep -rln "MatIcon\|@angular/material/icon" src/ --include="*.ts" | grep -v spec
+grep -rln "<mat-icon" src/ --include="*.html"
+```
+
+**Specs afectados**: ~10 specs que aserten `By.css('mat-icon')`. Migrar a `By.css('app-lib-icon')`.
+
+**Actualizar**: `src/app/presentation/components/lib/index.ts` añade `export { LibIconComponent } from './lib-icon/lib-icon.component';`
+
+**No se desinstala** `@angular/material/icon` del package.json hasta Commit 39 (cleanup). El commit deja a 0 los imports en `src/`, verificable con:
+```
+grep -rn "@angular/material/icon\|MatIconModule\b\|<mat-icon" src/ --include="*.ts" --include="*.html" | grep -v "matSuffix\|matPrefix\|matIconSuffix" | wc -l   # → debe dar 0
+```
+
+**Deuda a11y declarada**: ninguna; es paridad funcional con `mat-icon` (que también renderiza un span con webfont).
+
+**Criterios de aceptación**:
+- `npm run build && npm run lint && npm test --watch=false` verde.
+- 0 `<mat-icon>` en el repo salvo los marcados con `matSuffix`/`matPrefix` (form-field interno).
+- Visual: ningún icono cambia de tamaño/color/peso.
+
+##### Commit 22 — `feat(lib): lib-divider y migración de button-toggle a radio group nativo`
+
+**Componente nuevo**: ninguno como tal. Se añade utilidad CSS `.lib-divider` en `styles.scss`:
+```scss
+.lib-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+```
+
+**Migración divider**: 4 `<mat-divider>` → `<hr class="lib-divider" />`.
+
+Ficheros:
+- `src/app/presentation/pages/settings/settings.component.html:161`
+- `src/app/presentation/pages/collection/components/sale-form/sale-form.component.html:46`
+- `src/app/presentation/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.html:9`
+- `src/app/presentation/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.html:100`
+
+**Migración button-toggle (orders €/%)**:
+
+Fichero: `src/app/presentation/pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.html:171-177`
+
+Sustituir:
+```html
+<mat-button-toggle-group [(ngModel)]="discountType">
+  <mat-button-toggle value="amount">€</mat-button-toggle>
+  <mat-button-toggle value="percentage">%</mat-button-toggle>
+</mat-button-toggle-group>
+```
+
+Por:
+```html
+<fieldset class="lib-radio-group" role="radiogroup" [attr.aria-label]="'orders.discount.type' | transloco">
+  <label class="lib-radio-group__option" [class.lib-radio-group__option--active]="discountType() === 'amount'">
+    <input type="radio" name="discountType" value="amount" [checked]="discountType() === 'amount'" (change)="discountType.set('amount')" />
+    <span>€</span>
+  </label>
+  <label class="lib-radio-group__option" [class.lib-radio-group__option--active]="discountType() === 'percentage'">
+    <input type="radio" name="discountType" value="percentage" [checked]="discountType() === 'percentage'" (change)="discountType.set('percentage')" />
+    <span>%</span>
+  </label>
+</fieldset>
+```
+
+**SCSS** (en el propio order-info-section.component.scss):
+```scss
+.lib-radio-group {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  padding: 0;
+  margin: 0;
+
+  .lib-radio-group__option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--text-mid);
+    border-right: 1px solid var(--border);
+
+    input { position: absolute; opacity: 0; pointer-events: none; }
+
+    &--active { color: var(--text-hi); background: var(--bg-surface-hi); }
+    &:focus-within { outline: 1px solid var(--primary); outline-offset: -1px; }
+    &:last-child { border-right: none; }
+  }
+}
+```
+
+**A11y**: nativo de radio (Tab al group, flechas entre opciones — comportamiento nativo del browser); `aria-label` en el fieldset.
+
+**Specs afectados**: `order-info-section.component.spec.ts`. Actualizar selectores `By.css('mat-button-toggle')`.
+
+**Deuda a11y**: ninguna; el comportamiento nativo de radio es el mejor.
+
+**Criterios de aceptación**:
+- 0 `<mat-divider>` y 0 `<mat-button-toggle>` en el repo.
+- Visual: divisor con grosor 1px color border. Toggle €/% con bordes terminales.
+
+→ **CHECKPOINT A** — usuario revisa: iconos, divisores, toggle €/% en orders detail.
+
+#### Bloque 2 — Servicios de overlay sencillos (riesgo bajo)
+
+##### Commit 23 — `feat(lib): lib-snackbar service + host + migración de 18 ficheros`
+
+**Servicio nuevo**: `src/app/presentation/services/lib-snackbar/lib-snackbar.service.ts`
+
+```typescript
+export interface LibSnackbarMessage {
+  readonly id: number;
+  readonly text: string;
+  readonly action?: { label: string; handler: () => void };
+  readonly variant: 'info' | 'success' | 'warning' | 'error';
+  readonly duration: number;   // 0 = sticky
+}
+
+@Injectable({ providedIn: 'root' })
+export class LibSnackbarService {
+  private _nextId = 0;
+  private readonly _messages: WritableSignal<readonly LibSnackbarMessage[]> = signal([]);
+  readonly messages: Signal<readonly LibSnackbarMessage[]> = this._messages.asReadonly();
+
+  /**
+   * Encola un mensaje. Auto-dismiss tras duration ms (default 4000).
+   * @param {Omit<LibSnackbarMessage, 'id'>} msg
+   * @returns {number} id del mensaje (para cierre programático)
+   */
+  open(msg: Omit<LibSnackbarMessage, 'id' | 'duration' | 'variant'> & Partial<Pick<LibSnackbarMessage, 'duration' | 'variant'>>): number { ... }
+
+  /** Cierra programáticamente. */
+  dismiss(id: number): void { ... }
+}
+```
+
+**Componente host**: `src/app/presentation/components/lib/lib-snackbar-host/lib-snackbar-host.component.ts`
+
+- Lee `LibSnackbarService.messages()`.
+- Renderiza una `<aside class="lib-snackbar-host" role="region" aria-live="polite" aria-label="Notificaciones">` con una lista de items.
+- Cada item: `role="status"` (info/success) o `role="alert"` (warning/error), con `<button>` opcional de acción + `<app-lib-icon-button icon="close">` de cerrar.
+- Auto-dismiss via `setTimeout` en el efecto al recibir el mensaje.
+
+**Template**:
+```html
+<aside class="lib-snackbar-host" role="region" [attr.aria-label]="'common.notifications' | transloco">
+  @for (msg of service.messages(); track msg.id) {
+    <div
+      class="lib-snackbar"
+      [class.lib-snackbar--success]="msg.variant === 'success'"
+      [class.lib-snackbar--error]="msg.variant === 'error'"
+      [class.lib-snackbar--warning]="msg.variant === 'warning'"
+      [attr.role]="msg.variant === 'error' || msg.variant === 'warning' ? 'alert' : 'status'">
+      <span class="lib-snackbar__text">{{ msg.text }}</span>
+      @if (msg.action) {
+        <button class="lib-snackbar__action" type="button" (click)="onAction(msg)">
+          {{ msg.action.label }}
+        </button>
+      }
+      <app-lib-icon-button icon="close" size="sm" [ariaLabel]="'common.close' | transloco" (clicked)="dismiss(msg.id)" />
+    </div>
+  }
+</aside>
+```
+
+**SCSS**:
+```scss
+.lib-snackbar-host {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 1000;
+  pointer-events: none;     // los items recuperan pointer-events
+}
+.lib-snackbar {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 480px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-hi);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.lib-snackbar--success { border-color: var(--accent-green); }
+.lib-snackbar--error   { border-color: var(--accent-rose); }
+.lib-snackbar--warning { border-color: var(--accent-amber); }
+
+// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
+@media (max-width: 768px) {
+  .lib-snackbar-host {
+    top: 1rem;
+    bottom: auto;
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+  }
+  .lib-snackbar { min-width: 0; max-width: none; }
+}
+```
+
+**Montaje**: añadir `<app-lib-snackbar-host />` al final de `src/app/app.component.html` (fuera del router-outlet).
+
+**A11y**:
+- `role="region"` + `aria-live="polite"` para que los screen readers anuncien.
+- `role="alert"` para errores/warnings (anuncio inmediato).
+- Cerrar con tecla Escape: opcional, abierto como deuda (un foco no llega ahí solo).
+
+**Deuda a11y declarada**:
+- No hay focus management — los snackbars no roban focus (decisión correcta para mensajes transitorios). El botón de acción es accesible vía Tab si el usuario quiere.
+- Type-ahead/dismiss con tecla `Escape` desde cualquier parte de la app: NO implementado (deuda baja prioridad).
+
+**Migración** — 18 ficheros usan `MatSnackBar`:
+
+Patrón typescript en cada uno:
+```diff
+- import { MatSnackBar } from '@angular/material/snack-bar';
++ import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
+- protected readonly _snackBar: MatSnackBar = inject(MatSnackBar);
++ private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
+- this._snackBar.open(message, 'Cerrar', { duration: 3000 });
++ this._snack.open({ text: message, duration: 3000 });
+```
+
+Ficheros (verificados):
+1. `src/app/presentation/abstract/hardware-list-base/hardware-list-base.component.ts`
+2. `src/app/presentation/abstract/hardware-form-base/hardware-form-base.component.ts`
+3. `src/app/presentation/abstract/hardware-detail-base/hardware-detail-base.component.ts`
+4. `src/app/presentation/pages/sale/sale.component.ts`
+5. `src/app/presentation/pages/settings/settings.component.ts`
+6. `src/app/presentation/pages/collection/components/sale-form/sale-form.component.ts`
+7. `src/app/presentation/pages/collection/components/hardware-loan-form/hardware-loan-form.component.ts`
+8. Resto: `grep -rln "MatSnackBar" src/ --include="*.ts" | grep -v spec` (18 totales).
+
+**Tests**: cada spec que mockeaba `MatSnackBar` ahora mockea `LibSnackbarService`. Crear `src/testing/lib-snackbar.mock.ts`:
+```typescript
+export const mockLibSnackbar: { open: jasmine.Spy; dismiss: jasmine.Spy; messages: () => readonly LibSnackbarMessage[] } = {
+  open: jasmine.createSpy('open').and.returnValue(0),
+  dismiss: jasmine.createSpy('dismiss'),
+  messages: () => []
+};
+```
+
+Y añadir entrada a la tabla del CLAUDE.md (sección "Tests — mocks compartidos").
+
+**Criterios de aceptación**:
+- 0 imports de `@angular/material/snack-bar` en `src/`.
+- Snackbar visible en operaciones (guardar juego, error de red).
+- Auto-dismiss tras 4s default.
+
+##### Commit 24 — `feat(lib): lib-tooltip directiva + migración de 38 usos`
+
+**Directiva nueva**: `src/app/presentation/shared/lib-tooltip/lib-tooltip.directive.ts`
+
+```typescript
+@Directive({
+  selector: '[libTooltip]',
+  standalone: true
+})
+export class LibTooltipDirective implements OnDestroy {
+  readonly libTooltip: InputSignal<string> = input.required<string>();
+  readonly libTooltipDelay: InputSignal<number> = input<number>(500);
+
+  private readonly _el: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly _renderer: Renderer2 = inject(Renderer2);
+  private _tooltipEl?: HTMLElement;
+  private _timer?: number;
+
+  @HostListener('mouseenter') _onEnter(): void { ... }     // crea div absolute con texto + clase
+  @HostListener('mouseleave') _onLeave(): void { ... }     // destruye
+  @HostListener('focusin')    _onFocus(): void { ... }     // mismo flujo para teclado
+  @HostListener('focusout')   _onBlur(): void { ... }
+  // Toca añadir aria-describedby al host + role="tooltip" al div
+}
+```
+
+**SCSS global** (en `styles.scss`):
+```scss
+.lib-tooltip {
+  position: absolute;
+  background: var(--bg-void);
+  color: var(--text-hi);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1100;
+  pointer-events: none;
+
+  @media (hover: none) { display: none; }   // mobile: sin tooltip
+}
+```
+
+**Posicionamiento**: el div se ancla con `position: fixed` y se calcula la posición leyendo `getBoundingClientRect()` del host. Por defecto bottom-center; si no cabe en viewport, top-center.
+
+**A11y**:
+- `role="tooltip"` en el div.
+- El host recibe `aria-describedby="<id-generated>"`.
+- Sin tooltip en touch — el usuario ya pone `aria-label` en icon-buttons.
+
+**Deuda a11y declarada**: no se muestra tooltip al focus en teclado si el host no recibe focus (por ejemplo: `<div libTooltip>`). Para iconos puramente decorativos basta el aria-label del wrapper button. Documentar en JSDoc.
+
+**Migración**: 38 `matTooltip` en 10 ficheros.
+
+Patrón:
+```diff
+- <button matTooltip="...">       →  <button [libTooltip]="'...'">
+- <button [matTooltip]="x">       →  <button [libTooltip]="x">
+- <button matTooltipShowDelay=200 →  <button [libTooltipDelay]="200">
+```
+
+En los TS, sustituir `import { MatTooltipModule } from '@angular/material/tooltip'` por `import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive'`.
+
+**Specs afectados**: ~3. Mock trivial.
+
+**Criterios de aceptación**:
+- 0 `matTooltip` en el repo.
+- Tooltips aparecen tras 500ms hover en desktop, nada en mobile.
+
+→ **CHECKPOINT B** — usuario revisa: snackbars de éxito/error en flujos típicos (guardar juego, borrar) y tooltips en topbar/game-card/game-detail.
+
+#### Bloque 3 — Overlay engine (riesgo medio)
+
+##### Commit 25 — `feat(lib): lib-overlay engine sobre CDK Overlay`
+
+**Objetivo**: introducir la infra de overlay reutilizable que servirá para menu, dialog, datepicker popup, select listbox, autocomplete listbox y bottom-sheet. **No** migra ningún consumidor; sólo construye el cimiento y lo testea con un sandbox interno (un dev-only `lib-overlay-demo` accesible bajo `/dev/overlay` si `isDevMode()`).
+
+**Servicio**: `src/app/presentation/services/lib-overlay/lib-overlay.service.ts`
+
+```typescript
+export interface LibOverlayConfig {
+  readonly origin?: ElementRef | HTMLElement;        // para anchored (menu, select)
+  readonly positions?: ConnectedPosition[];          // CDK
+  readonly hasBackdrop?: boolean;
+  readonly backdropClass?: string;
+  readonly panelClass?: string | string[];
+  readonly disposeOnNavigation?: boolean;
+  readonly scrollStrategy?: 'reposition' | 'block' | 'close';
+  readonly focusTrap?: boolean;
+  readonly autoFocus?: 'first-tabbable' | 'first-heading' | false;
+  readonly restoreFocus?: boolean;
+  readonly width?: string;
+  readonly height?: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class LibOverlayService {
+  private readonly _overlay = inject(Overlay);
+  private readonly _injector = inject(Injector);
+
+  /**
+   * Abre un componente o template dentro de un overlay CDK.
+   * Devuelve una ref con .close() y .afterClosed$.
+   */
+  open<T, R = unknown>(content: ComponentType<T> | TemplateRef<unknown>, config?: LibOverlayConfig): LibOverlayRef<T, R> { ... }
+}
+```
+
+**LibOverlayRef**: clase ligera que envuelve `OverlayRef` y expone `close(result?)`, `afterClosed$: Observable<R | undefined>`, `keydownEvents$`, `backdropClick$`, `componentInstance`. Internamente conecta un `cdk/a11y` `FocusTrap` cuando `focusTrap` está true, captura el activeElement antes de abrir y lo restaura al cerrar.
+
+**Configs preset**: en el propio servicio se exportan helpers para casos comunes:
+```typescript
+export const LIB_OVERLAY_DIALOG_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop',
+  panelClass: 'lib-overlay-panel--dialog',
+  scrollStrategy: 'block',
+  focusTrap: true,
+  autoFocus: 'first-tabbable',
+  restoreFocus: true
+};
+
+export const LIB_OVERLAY_MENU_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop--transparent',
+  panelClass: 'lib-overlay-panel--menu',
+  scrollStrategy: 'reposition',
+  focusTrap: false,                    // ListKeyManager hace el trabajo
+  restoreFocus: true
+};
+```
+
+**SCSS global** (en `styles.scss`):
+```scss
+.lib-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+.lib-overlay-backdrop--transparent {
+  background: transparent;
+}
+.lib-overlay-panel--dialog {
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+```
+
+**Imports `package.json`**: ya están `@angular/cdk` instalado (4 usos `@angular/cdk/layout`). Verificar que `@angular/cdk/overlay`, `@angular/cdk/portal` y `@angular/cdk/a11y` son accesibles (lo son — vienen en el mismo paquete).
+
+**provideAnimations / overlay container scroll**: añadir en `app.config.ts` el necesario para que CDK Overlay funcione. CDK Overlay **no requiere** `provideAnimations`. Si por algún motivo `OverlayContainer` no aparece, registrar:
+```typescript
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+// O directamente: nada — CDK Overlay funciona sin animations.
+```
+
+**Criterios de aceptación**:
+- Compila, lint y test verde.
+- El sandbox `/dev/overlay` (sólo `isDevMode()`) abre un overlay simple con focus trap, escape para cerrar y backdrop click para cerrar.
+- Ningún consumidor real usa todavía `LibOverlayService`.
+
+##### Commit 26 — `feat(lib): lib-menu sobre lib-overlay + migración de 2 menús`
+
+**Componentes nuevos**:
+- `LibMenuComponent` — el panel con la lista de items.
+- `LibMenuItemComponent` — un item con `role="menuitem"`.
+- `LibMenuTriggerDirective` — `[libMenuTriggerFor]="menuRef"` aplicado al botón disparador.
+
+**LibMenuComponent template**:
+```html
+<ul class="lib-menu" role="menu" [attr.aria-labelledby]="ariaLabelledBy">
+  <ng-content />
+</ul>
+```
+
+**LibMenuItemComponent template**:
+```html
+<li class="lib-menu-item" role="none">
+  <button type="button" role="menuitem" [disabled]="disabled()" (click)="onClick($event)">
+    @if (icon()) { <app-lib-icon [name]="icon()!" class="lib-menu-item__icon" /> }
+    <span class="lib-menu-item__label"><ng-content /></span>
+  </button>
+</li>
+```
+
+**LibMenuTriggerDirective**:
+- Aplica al host `aria-haspopup="menu"`, `aria-expanded` reactivo.
+- Click / Enter / Space / ArrowDown abren.
+- Una vez abierto, crea CDK `ListKeyManager` con los `LibMenuItemComponent` proyectados; flechas arriba/abajo navegan, Enter activa, Escape cierra y restaura focus al trigger, type-ahead funciona vía `withTypeAhead()`.
+
+**SCSS**:
+```scss
+.lib-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  min-width: 12rem;
+}
+.lib-menu-item {
+  button {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-mid);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    @media (hover: hover) {
+      &:hover { color: var(--text-hi); background: var(--bg-surface-hi); }
+    }
+    &:focus-visible { outline: 1px solid var(--primary); outline-offset: -1px; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+```
+
+**A11y completa**:
+- Roles: `menu` (lista), `menuitem` (cada botón).
+- Teclas: ArrowUp/Down (navegación), Home/End (extremos), Enter/Space (activar), Escape (cerrar), Tab (cierra y mueve fuera), type-ahead (escribir letra busca item).
+- Focus restore al trigger al cerrar.
+
+**Deuda a11y declarada**: submenús no soportados (no se usan en la app).
+
+**Migración** — 2 menús:
+
+1. `src/app/app.component.html:41-138` — profile menu:
+```html
+<!-- ANTES -->
+<button mat-icon-button [matMenuTriggerFor]="profileMenu">
+  <app-lib-icon name="account_circle" />
+</button>
+<mat-menu #profileMenu="matMenu" panelClass="profile-menu">
+  <button mat-menu-item (click)="...">...</button>
+</mat-menu>
+
+<!-- DESPUÉS -->
+<app-lib-icon-button icon="account_circle" [libMenuTriggerFor]="profileMenu" ... />
+<app-lib-menu #profileMenu>
+  <app-lib-menu-item icon="settings" (clicked)="...">{{ 'common.settings' | transloco }}</app-lib-menu-item>
+  <app-lib-menu-item icon="logout" (clicked)="...">{{ 'common.logout' | transloco }}</app-lib-menu-item>
+</app-lib-menu>
+```
+
+2. `src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.html:48-78` — context menu del game-detail. Mismo patrón.
+
+**Imports a quitar**: `MatMenuModule` de `app.component.ts` y `game-detail.component.ts`.
+
+**Criterios de aceptación**:
+- 0 `mat-menu` en el repo.
+- Funcional con teclado completo en profile menu (Tab al avatar, Enter, flechas, Enter para activar item).
+- Visual idéntico (terminal frame + monospace).
+
+##### Commit 27 — `feat(lib): lib-tabs (sale page) + lib-router-tabs (collection nav)`
+
+**Componentes nuevos**:
+
+`LibTabsComponent` + `LibTabComponent` + `LibTabPanelComponent` — sólo para el `mat-tab-group` de `sale.component.html`.
+
+API:
+```html
+<app-lib-tabs [selectedIndex]="0" (selectedIndexChange)="onTabChange($event)">
+  <app-lib-tab label="Disponible" icon="sell">
+    <ng-template>...contenido tab 1...</ng-template>
+  </app-lib-tab>
+  <app-lib-tab label="Historial" icon="receipt_long">
+    <ng-template>...contenido tab 2...</ng-template>
+  </app-lib-tab>
+</app-lib-tabs>
+```
+
+Template `LibTabsComponent`:
+```html
+<div class="lib-tabs">
+  <div role="tablist" class="lib-tabs__list" [attr.aria-label]="ariaLabel()">
+    @for (tab of tabs(); track tab; let i = $index) {
+      <button
+        type="button"
+        role="tab"
+        [id]="'lib-tab-' + tab.id"
+        [attr.aria-controls]="'lib-tabpanel-' + tab.id"
+        [attr.aria-selected]="selectedIndex() === i"
+        [tabindex]="selectedIndex() === i ? 0 : -1"
+        class="lib-tabs__tab"
+        [class.lib-tabs__tab--active]="selectedIndex() === i"
+        (click)="select(i)"
+        (keydown)="onKeydown($event, i)">
+        @if (tab.icon) { <app-lib-icon [name]="tab.icon" /> }
+        <span>{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+  <div class="lib-tabs__panels">
+    @for (tab of tabs(); track tab; let i = $index) {
+      <div
+        role="tabpanel"
+        [id]="'lib-tabpanel-' + tab.id"
+        [attr.aria-labelledby]="'lib-tab-' + tab.id"
+        [hidden]="selectedIndex() !== i">
+        <ng-container *ngTemplateOutlet="tab.template" />
+      </div>
+    }
+  </div>
+</div>
+```
+
+**A11y completa**:
+- `tablist` / `tab` / `tabpanel`.
+- Roving tabindex: sólo el tab activo tiene `tabindex=0`.
+- ArrowLeft/Right (o Up/Down si vertical) navegan, Home/End extremos. Enter/Space activan (con activación automática al navegar — APG `automatic activation`).
+
+**`LibRouterTabsComponent`** — para `collection.component.html`. Renderiza un `<nav>` con `<a>` que usan `routerLinkActive`. Es una **navegación**, no un tablist (cambia URL). Plantilla:
+
+```html
+<nav class="lib-router-tabs" [attr.aria-label]="ariaLabel()">
+  @for (item of items(); track item.path) {
+    <a
+      class="lib-router-tabs__link"
+      [routerLink]="item.path"
+      [routerLinkActiveOptions]="item.exact ? { exact: true } : {}"
+      routerLinkActive
+      #rla="routerLinkActive"
+      [class.lib-router-tabs__link--active]="rla.isActive"
+      [attr.aria-current]="rla.isActive ? 'page' : null">
+      @if (item.icon) { <app-lib-icon [name]="item.icon" /> }
+      <span>{{ item.label }}</span>
+    </a>
+  }
+</nav>
+<router-outlet />
+```
+
+Input: `items: Signal<readonly { path: string; label: string; icon?: string; exact?: boolean }[]>`.
+
+**Migración**:
+
+1. `src/app/presentation/pages/sale/sale.component.html` — `<mat-tab-group>` → `<app-lib-tabs>` con 2 tabs. Mover el `(selectedTabChange)` a `(selectedIndexChange)`. **Cambio visual aceptado**: sin la animación de 150ms — el plan general ya elimina animations decorativas.
+
+2. `src/app/presentation/pages/collection/collection.component.html` — `<nav mat-tab-nav-bar>...</nav>` → `<app-lib-router-tabs [items]="navItems" />`. El `routerLinkActive` se mueve dentro del componente. Definir `navItems` en `CollectionComponent`:
+```typescript
+readonly navItems: readonly { path: string; label: string; icon: string; exact?: boolean }[] = [
+  { path: '/collection', label: 'collectionOverview.tabOverview', icon: 'home', exact: true },
+  { path: '/collection/games', label: 'collectionOverview.tabGames', icon: 'sports_esports' },
+  { path: '/collection/consoles', label: 'collectionOverview.tabConsoles', icon: 'tv' },
+  { path: '/collection/controllers', label: 'collectionOverview.tabControllers', icon: 'gamepad' }
+];
+```
+
+Los labels los traduce el template del componente via `transloco`.
+
+**Imports a quitar**: `MatTabsModule` de `sale.component.ts` y `collection.component.ts`.
+
+**Criterios de aceptación**:
+- 0 `mat-tab` en el repo.
+- Teclado: en sale page, flechas izq/der cambian tab, Home/End van a extremos. En collection nav, Tab entre links funciona como navegación normal.
+- `aria-current="page"` en el link activo de collection nav.
+
+##### Commit 28 — `feat(lib): lib-bottom-sheet + migración de game-list-filters-sheet`
+
+**Decisión arquitectónica**: el bottom-sheet **reutiliza la infra de `LibOverlayService`** con un preset específico. NO se crea un servicio independiente — sería duplicar `LibOverlayService`.
+
+**Helper preset** en `lib-overlay.service.ts`:
+```typescript
+export const LIB_OVERLAY_BOTTOM_SHEET_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop',
+  panelClass: 'lib-overlay-panel--bottom-sheet',
+  scrollStrategy: 'block',
+  focusTrap: true,
+  autoFocus: 'first-tabbable',
+  restoreFocus: true
+};
+```
+
+**SCSS** (en `styles.scss`):
+```scss
+.lib-overlay-panel--bottom-sheet {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 90vh;
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  background: var(--bg-surface);
+}
+```
+
+**API consumidor** — se ofrece un wrapper conveniente `LibBottomSheetService.open(component, data)` que internamente llama a `LibOverlayService.open(component, { ...LIB_OVERLAY_BOTTOM_SHEET_CONFIG, data })`. Token de inyección `LIB_BOTTOM_SHEET_DATA` para que el componente abierto reciba la data.
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class LibBottomSheetService {
+  private readonly _overlay = inject(LibOverlayService);
+  open<T, R = unknown>(component: ComponentType<T>, data?: unknown): LibBottomSheetRef<T, R> { ... }
+}
+```
+
+**Migración** — 1 consumidor:
+
+`src/app/presentation/pages/collection/pages/games/games.component.ts:86, 365`:
+```diff
+- import { MatBottomSheet } from '@angular/material/bottom-sheet';
++ import { LibBottomSheetService } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
+- private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
++ private readonly _bottomSheet: LibBottomSheetService = inject(LibBottomSheetService);
+  // call-site:
+- this._bottomSheet.open(GameListFiltersSheetComponent, { data: this.filtersData });
++ this._bottomSheet.open(GameListFiltersSheetComponent, this.filtersData);
+```
+
+`src/app/presentation/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.ts`:
+```diff
+- import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
++ import { LIB_BOTTOM_SHEET_DATA, LibBottomSheetRef } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
+```
+
+**A11y**:
+- `role="dialog"` + `aria-modal="true"` en el panel.
+- Focus trap.
+- Escape cierra.
+- Backdrop click cierra.
+
+**Deuda a11y declarada**: swipe-down para cerrar — no implementado en este commit. Está la X superior. Documentar como mejora futura.
+
+**Criterios de aceptación**:
+- 0 imports de `@angular/material/bottom-sheet` en `src/`.
+- Filtros mobile siguen abriéndose desde el FAB.
+- Escape y backdrop cierran.
+
+→ **CHECKPOINT C** — usuario revisa: profile menu + context menu (game-detail), sale tabs + collection nav-tabs, filtros mobile en games list.
+
+#### Bloque 4 — Dialog system (riesgo alto)
+
+##### Commit 29 — `feat(lib): lib-dialog service + componentes wrapper + migración de los 7 dialogs`
+
+**Servicio**: `src/app/presentation/services/lib-dialog/lib-dialog.service.ts`
+
+```typescript
+export interface LibDialogConfig<D = unknown> {
+  readonly data?: D;
+  readonly ariaLabel?: string;
+  readonly ariaLabelledBy?: string;
+  readonly panelClass?: string | string[];
+  readonly width?: string;
+  readonly maxWidth?: string;
+  readonly disableClose?: boolean;          // bloquea escape/backdrop
+  readonly autoFocus?: 'first-tabbable' | 'first-heading' | false;
+  readonly restoreFocus?: boolean;
+}
+
+@Injectable({ providedIn: 'root' })
+export class LibDialogService {
+  private readonly _overlay = inject(LibOverlayService);
+
+  open<T, D = unknown, R = unknown>(component: ComponentType<T>, config?: LibDialogConfig<D>): LibDialogRef<T, R> { ... }
+}
+```
+
+**Tokens y refs**:
+- `LIB_DIALOG_DATA` — InjectionToken para acceso a `config.data` dentro del componente.
+- `LibDialogRef<T, R>` — clase con `.close(result?)`, `.afterClosed()`, `.componentInstance`, `.backdropClick$`, `.keydownEvents$`.
+
+**Componentes wrapper de template** (paridad con MatDialogTitle / Content / Actions / Close):
+
+- `LibDialogTitleComponent` (selector `[lib-dialog-title]`) — aplica `id` autogenerado y lo registra en el host del overlay como `aria-labelledby`. Renderiza un `<h2>` o el tag indicado.
+- `LibDialogContentComponent` (selector `[lib-dialog-content]`) — clase con padding + scroll vertical.
+- `LibDialogActionsComponent` (selector `[lib-dialog-actions]`) — flex row con justify-end por defecto, `[align]` input para `start`/`center`/`end`.
+- `LibDialogCloseDirective` (selector `[libDialogClose]`) — al hacer click cierra el dialog con el valor pasado (`[libDialogClose]="true"` cierra con `true`).
+
+**Template ejemplo (post-migración del ConfirmDialogComponent)**:
+```html
+<header lib-dialog-title>{{ data.title }}</header>
+<div lib-dialog-content>{{ data.message }}</div>
+<footer lib-dialog-actions align="end">
+  <app-lib-button [label]="'common.no' | transloco" variant="ghost" libDialogClose />
+  <app-lib-button [label]="'common.yes' | transloco" variant="danger" [libDialogClose]="true" />
+</footer>
+```
+
+Y en el TS:
+```diff
+- import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
++ import { LIB_DIALOG_DATA, LibDialogActionsComponent, LibDialogCloseDirective, LibDialogContentComponent, LibDialogRef, LibDialogTitleComponent } from '@/services/lib-dialog/lib-dialog.service';
+- imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, ...]
++ imports: [LibDialogTitleComponent, LibDialogContentComponent, LibDialogActionsComponent, LibDialogCloseDirective, ...]
+- data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(MAT_DIALOG_DATA);
++ data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(LIB_DIALOG_DATA);
+- dialogRef: MatDialogRef<ConfirmDialogComponent> = inject(MatDialogRef<ConfirmDialogComponent>);
++ dialogRef: LibDialogRef<ConfirmDialogComponent> = inject(LibDialogRef<ConfirmDialogComponent>);
+```
+
+**SCSS** (en `lib-dialog.component.scss`, importado globalmente):
+```scss
+.lib-dialog__title {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+.lib-dialog__content {
+  padding: 1.25rem;
+  overflow-y: auto;
+  color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+}
+.lib-dialog__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+
+  &--end    { justify-content: flex-end; }
+  &--center { justify-content: center; }
+  &--start  { justify-content: flex-start; }
+}
+```
+
+**A11y completa**:
+- Panel del overlay con `role="dialog"`, `aria-modal="true"`, `aria-labelledby` (id del título) + opcional `aria-label`.
+- Focus trap con `cdk/a11y` FocusTrap.
+- Escape cierra (a menos que `disableClose: true`).
+- Backdrop click cierra (a menos que `disableClose: true`).
+- Focus restore al activeElement previo.
+- Scroll lock del body via `scrollStrategy: 'block'`.
+
+**Migración** — 16 call-sites + 7 componentes:
+
+Componentes (cambiar inyección de tokens + template wrappers):
+1. `src/app/presentation/components/confirm-dialog/confirm-dialog.component.ts`
+2. `src/app/presentation/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.ts`
+3. `src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.ts`
+4. `src/app/presentation/pages/management/pages/users/components/delete-user-dialog/delete-user-dialog.component.ts`
+5. `src/app/presentation/pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.ts`
+6. `src/app/presentation/pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.ts`
+7. `src/app/presentation/pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.ts`
+
+Call-sites (cambiar `MatDialog` → `LibDialogService`, `MatDialogRef<X>` → `LibDialogRef<X>`):
+1. `src/app/presentation/abstract/hardware-detail-base/hardware-detail-base.component.ts`
+2. `src/app/presentation/pages/settings/settings.component.ts`
+3. `src/app/presentation/pages/collection/pages/games/components/game-row/game-row.component.ts`
+4. `src/app/presentation/pages/collection/pages/games/components/game-card/game-card.component.ts`
+5. `src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.ts`
+6. `src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.ts`
+7. `src/app/presentation/pages/management/pages/hardware/pages/editions/hardware-editions-management.component.ts`
+8. `src/app/presentation/pages/management/pages/hardware/pages/brands/hardware-brands-management.component.ts`
+9. `src/app/presentation/pages/management/pages/hardware/pages/models/hardware-models-management.component.ts`
+10. `src/app/presentation/pages/management/pages/stores/stores-management.component.ts`
+11. `src/app/presentation/pages/management/pages/protectors/protectors-management.component.ts`
+12. `src/app/presentation/pages/management/pages/users/users-management.component.ts`
+13. `src/app/presentation/pages/orders/pages/order-detail/order-detail.component.ts`
+14. `src/app/presentation/pages/wishlist/wishlist.component.ts`
+15. `src/app/presentation/pages/wishlist/pages/wishlist-detail/wishlist-detail.component.ts`
+
+Patrón call-site:
+```diff
+- private readonly _dialog: MatDialog = inject(MatDialog);
++ private readonly _dialog: LibDialogService = inject(LibDialogService);
+- const ref: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, { data: { ... }, width: '400px' });
++ const ref: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, { data: { ... }, width: '400px' });
+  ref.afterClosed().subscribe(result => { ... });   // misma API
+```
+
+**Mock para tests**: `src/testing/lib-dialog.mock.ts`:
+```typescript
+export const mockLibDialog: { open: jasmine.Spy } = {
+  open: jasmine.createSpy('open').and.returnValue({
+    afterClosed: () => of(undefined),
+    close: jasmine.createSpy('close'),
+    componentInstance: null
+  })
+};
+```
+
+Y entrada en CLAUDE.md.
+
+**Deuda a11y declarada**:
+- `aria-describedby` automático apuntando al primer `[lib-dialog-content]`: **NO** implementado en este commit. Material lo hace; nuestra primera versión no. Deuda baja (los lectores leen el contenido del dialog igualmente al entrar en focus trap).
+- `role="alertdialog"` para confirmaciones destructivas: no diferenciado del `dialog` normal. Deuda media — futura mejora del `ConfirmDialogComponent`.
+
+**Criterios de aceptación**:
+- 0 imports de `@angular/material/dialog` en `src/`.
+- Todos los flujos que abren dialog funcionan (eliminar juego, editar wishlist, crear edición de hardware, crear/editar línea de orden, etc.).
+- Escape y backdrop cierran.
+- Focus trap funciona (Tab dentro del dialog no escapa).
+- Focus restore al elemento previo al abrir.
+
+→ **CHECKPOINT D** — usuario revisa: cada dialog manualmente (los 7), comprobando teclado (Tab cíclico, Escape) y aspecto visual. **Es el checkpoint más crítico** — si algo falla aquí, el bloque 5 se bloquea.
+
+#### Bloque 5 — Formularios (riesgo muy alto)
+
+##### Commit 30 — `feat(lib): lib-form-field + lib-input + lib-label + lib-error + lib-hint`
+
+**Objetivo**: construir la infraestructura de form-field sin todavía tocar select/autocomplete/datepicker. **Migrar primero un único formulario simple como caso de validación**: `wishlist-item-dialog.component.html` (1 input texto + 1 textarea, sin selects).
+
+**Componentes nuevos**:
+
+`LibFormFieldComponent` — wrapper:
+```html
+<div class="lib-form-field" [class.lib-form-field--invalid]="invalid()" [class.lib-form-field--focused]="focused()" [class.lib-form-field--disabled]="disabled()">
+  <ng-content select="[libLabel], app-lib-label" />
+  <div class="lib-form-field__control">
+    <ng-content select="[libPrefix]" />
+    <ng-content />                          <!-- el input proyectado -->
+    <ng-content select="[libSuffix]" />
+  </div>
+  <div class="lib-form-field__subscript">
+    @if (invalid()) {
+      <ng-content select="app-lib-error, [libError]" />
+    } @else {
+      <ng-content select="app-lib-hint, [libHint]" />
+    }
+  </div>
+</div>
+```
+
+API:
+- Detecta automáticamente el control proyectado vía `@ContentChild(LibInputDirective)` (o select/autocomplete/datepicker en commits siguientes). Si el control es un `FormControl`, observa su `statusChanges` y `touched` para calcular `invalid()`.
+- Inputs: `[label]` (alternativa a proyectar `<app-lib-label>`), `[required]`, `[disabled]`.
+
+**LibInputDirective**:
+```typescript
+@Directive({
+  selector: 'input[libInput], textarea[libInput]',
+  standalone: true,
+  host: {
+    'class': 'lib-input__control',
+    '(focus)': '_onFocus()',
+    '(blur)': '_onBlur()'
+  }
+})
+export class LibInputDirective { ... }
+```
+
+Notifica al `LibFormFieldComponent` padre vía un service `LibFormFieldStateService` (provideIn parent) cuando recibe focus/blur. Si el host tiene `formControl`, el directive lee `NgControl` y se conecta al estado.
+
+**LibLabelComponent**:
+```html
+<label class="lib-label" [attr.for]="for()">
+  <ng-content />
+  @if (required()) { <span class="lib-label__required" aria-hidden="true">*</span> }
+</label>
+```
+
+**LibErrorComponent**:
+```html
+<span class="lib-error" role="alert"><ng-content /></span>
+```
+
+**LibHintComponent**:
+```html
+<span class="lib-hint"><ng-content /></span>
+```
+
+**SCSS** (terminal):
+```scss
+.lib-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    padding: 0 0.75rem;
+    min-height: 44px;
+    transition: border-color 120ms linear;
+
+    .lib-input__control {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-hi);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      padding: 0.5rem 0;
+
+      &::placeholder { color: var(--text-lo); }
+      &:disabled { color: var(--text-lo); cursor: not-allowed; }
+    }
+  }
+
+  &--focused .lib-form-field__control { border-color: var(--primary); }
+  &--invalid .lib-form-field__control { border-color: var(--accent-rose); }
+  &--disabled { opacity: 0.5; pointer-events: none; }
+
+  &__subscript {
+    min-height: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+  }
+}
+.lib-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-mid);
+
+  &__required { color: var(--accent-rose); margin-left: 0.25rem; }
+}
+.lib-error { color: var(--accent-rose); }
+.lib-hint  { color: var(--text-lo); }
+```
+
+**A11y**:
+- `<label for="">` correctamente vinculado al input. Si no se pasa `for`, generar un id en `LibInputDirective` y enlazarlo automáticamente (via DI mutual).
+- `aria-invalid` sobre el input cuando `invalid()`.
+- `aria-describedby` apuntando al id del `lib-error` o `lib-hint` si existe.
+- `aria-required` cuando required.
+
+**Migración piloto** — sólo `wishlist-item-dialog.component.html`. El resto de formularios se quedan con `mat-form-field` un commit más; el siguiente commit (Commit 35) migra el resto que no usa select/autocomplete/datepicker.
+
+**Deuda a11y declarada**:
+- `aria-describedby` con múltiples ids (hint + error simultáneos): no soportado, sólo uno a la vez. Material soporta ambos.
+- Sin "floating label" animado: nuestra label vive arriba siempre (decisión de diseño terminal).
+
+**Criterios de aceptación**:
+- Compila + lint + test verde.
+- `wishlist-item-dialog` funciona con teclado: Tab al input, escribir, validation visual al borrar required, mensaje de error visible.
+- `mat-form-field` sigue presente en el resto de la app (no se ha tocado todavía).
+
+##### Commit 31 — `feat(lib): migrar todos los form-field text-only a lib-form-field`
+
+**Objetivo**: migrar los `<mat-form-field>` que **NO** llevan `<mat-select>`, `<mat-autocomplete>` ni `<mat-datepicker>`. Son ~50 de los 80 totales.
+
+**Búsqueda** para identificar los simples:
+```bash
+# Form-fields con select/autocomplete/datepicker (NO tocar todavía):
+grep -l "mat-select\|mat-autocomplete\|mat-datepicker" $(grep -rln "mat-form-field" src/ --include="*.html")
+# El resto son los simples.
+```
+
+Por aproximación, los form-fields simples viven en:
+- Auth: `login.html`, `register.html`, `forgot-password.html`, `reset-password.html` (~6 fields total)
+- Hardware edit panels: `hardware-brand-edit-panel`, `hardware-edition-edit-panel` (~4)
+- Stores edit panel: `store-edit-panel` (~2)
+- Protectors: `protector-edit-panel` (~3)
+- Orders: `order-create` (~2)
+- Settings: nombre + email fields (~2)
+- Catalog-search-panel (~1, sólo si no usa autocomplete)
+- `wishlist.component.html` filtros simples
+- `delete-user-dialog`
+
+**Patrón de migración** (estricto):
+```diff
+- <mat-form-field appearance="outline" class="game-form__field">
+-   <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
+-   <input matInput formControlName="title" />
+-   <mat-icon matSuffix>lock</mat-icon>
+-   @if (form.controls.title.hasError('required')) {
+-     <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+-   }
+- </mat-form-field>
++ <app-lib-form-field class="game-form__field">
++   <app-lib-label>{{ 'gameForm.fields.title' | transloco }}</app-lib-label>
++   <input libInput formControlName="title" />
++   <app-lib-icon libSuffix name="lock" />
++   @if (form.controls.title.hasError('required')) {
++     <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
++   }
++ </app-lib-form-field>
+```
+
+**Specs afectados**: muchos (~15). El selector `By.css('mat-form-field')` → `By.css('app-lib-form-field')`. Aserciones sobre `mat-error` → `app-lib-error`.
+
+**Criterios de aceptación**:
+- 0 `mat-form-field` que NO contenga `mat-select/mat-autocomplete/mat-datepicker` (verificar con grep).
+- Auth forms, register/login, settings, hardware edit panels visualmente OK.
+- Validación: error rojo aparece al hacer touched y dejar vacío.
+
+##### Commit 32 — `feat(lib): lib-select + migración de 19 selects`
+
+**Componentes**:
+
+`LibSelectComponent` — implementa `ControlValueAccessor`. Renderiza:
+```html
+<button
+  type="button"
+  class="lib-select__trigger"
+  role="combobox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-haspopup]="'listbox'"
+  [attr.aria-controls]="listboxId"
+  [attr.aria-labelledby]="ariaLabelledBy"
+  [attr.aria-activedescendant]="open() ? activeOptionId() : null"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)">
+  <span class="lib-select__value">{{ displayValue() }}</span>
+  <app-lib-icon name="expand_more" class="lib-select__caret" />
+</button>
+```
+
+El listbox emergente se abre con `LibOverlayService` (preset menu-like, sin focus trap — el activeDescendant pattern es mejor para combobox que mover focus a las opciones).
+
+`LibOptionComponent` (selector `app-lib-option`):
+```html
+<li
+  class="lib-option"
+  role="option"
+  [id]="id"
+  [attr.aria-selected]="selected()"
+  [attr.aria-disabled]="disabled()"
+  (click)="onClick()">
+  <ng-content />
+</li>
+```
+
+API:
+```html
+<app-lib-form-field>
+  <app-lib-label>Plataforma</app-lib-label>
+  <app-lib-select formControlName="platform">
+    @for (p of platforms; track p.code) {
+      <app-lib-option [value]="p.code">{{ p.labelKey | transloco }}</app-lib-option>
+    }
+  </app-lib-select>
+</app-lib-form-field>
+```
+
+**A11y completa (APG combobox + listbox + activeDescendant)**:
+- Trigger: `role="combobox"`, `aria-expanded`, `aria-haspopup="listbox"`, `aria-controls="<listbox-id>"`, `aria-activedescendant="<option-id>"` cuando hay highlight.
+- Listbox: `role="listbox"`, `aria-labelledby` apuntando a la label del form-field.
+- Cada opción: `role="option"`, `aria-selected` reactivo.
+- Teclas (trigger cerrado): Enter/Space/ArrowDown/ArrowUp abren y posicionan el highlight; tipo-letra abre y va a la primera opción que matchea.
+- Teclas (listbox abierto): ArrowDown/Up navegan, Home/End extremos, Enter/Space seleccionan y cierran, Escape cierra sin cambios, Tab cierra y selecciona, type-ahead.
+- Click fuera cierra.
+
+**Migración**: 19 `<mat-select>` en 10 ficheros (ver `grep`).
+
+Patrón:
+```diff
+- <mat-form-field appearance="outline">
+-   <mat-label>Estado</mat-label>
+-   <mat-select formControlName="status">
+-     @for (s of statuses; track s.code) {
+-       <mat-option [value]="s.code">{{ s.labelKey | transloco }}</mat-option>
+-     }
+-   </mat-select>
+- </mat-form-field>
++ <app-lib-form-field>
++   <app-lib-label>Estado</app-lib-label>
++   <app-lib-select formControlName="status">
++     @for (s of statuses; track s.code) {
++       <app-lib-option [value]="s.code">{{ s.labelKey | transloco }}</app-lib-option>
++     }
++   </app-lib-select>
++ </app-lib-form-field>
+```
+
+**Caso especial: opción con icono** (game-form status field, líneas 183-187):
+```html
+<app-lib-option [value]="status.code">
+  <app-lib-icon [name]="status.icon" [style.color]="status.color" />
+  {{ status.labelKey | transloco }}
+</app-lib-option>
+```
+Funciona porque LibOption usa `<ng-content>` libre.
+
+**Imports a quitar**: `MatSelectModule`, `MatOption` de los 10 ficheros TS.
+
+**Deuda a11y declarada**:
+- Multi-select (`[multiple]`): NO implementado en este commit (no se usa en la app). Documentar en JSDoc como deuda futura si aparece la necesidad.
+- `compareWith` para objetos: implementado mínimamente (comparación por referencia). Si algún select usa `[compareWith]`, replicar.
+
+**Criterios de aceptación**:
+- 0 `<mat-select>` en el repo.
+- Teclado completo en cada select migrado.
+- `formControlName` enlazado correctamente — los valores guardados en el form coinciden con los antiguos.
+
+##### Commit 33 — `feat(lib): lib-autocomplete + migración de 6 autocompletes`
+
+**Componentes**:
+
+`LibAutocompleteComponent` y `LibAutocompleteTriggerDirective` (`[libAutocompleteTrigger]`):
+```html
+<!-- Trigger en un input nativo dentro de lib-form-field -->
+<input
+  libInput
+  [libAutocompleteTrigger]="auto"
+  [formControl]="form.controls.platform" />
+<app-lib-autocomplete #auto [displayWith]="displayFn">
+  @for (p of filtered(); track p.code) {
+    <app-lib-option [value]="p.code">{{ p.label }}</app-lib-option>
+  }
+</app-lib-autocomplete>
+```
+
+Diferencias clave vs select:
+- El control es un `<input>` libre — el usuario escribe.
+- El listbox emergente se filtra por lo que escribe (lógica del consumidor — `filtered()` es un computed signal en el componente).
+- `[displayWith]` recibe una función `(value: T) => string` para transformar el valor del FormControl en lo mostrado en el input cuando se selecciona.
+- Al seleccionar una opción se emite `(selected)` con el valor y se cierra.
+
+A nivel ARIA, sigue siendo combobox + listbox pero con `aria-autocomplete="list"`.
+
+**Teclas**:
+- ArrowDown abre y navega; type filtra naturalmente.
+- Enter selecciona la opción highlighted (si la hay) o cierra (si ninguna).
+- Escape cierra y restaura el valor previo.
+- Tab cierra (selecciona la highlighted si la hay; abierto a discusión — Material selecciona).
+
+**Validador custom `invalidOption`**: el game-form actualmente usa un validator que invalida si el valor del control no matchea ninguna opción válida. Este validator es independiente del componente — se mantiene en el FormControl y opera sobre el valor crudo. No necesita cambios.
+
+**`[displayWith]`**: input del componente; cuando recibe un valor desde `writeValue`, llama a `displayFn(value)` y lo pinta en el `<input>` interno (a través de `setValue` del FormControl si está enlazado, o de `nativeElement.value` si no).
+
+**Migración**: 6 `<mat-autocomplete>` en 4 ficheros — todos en `game-form.component.html` (platform, store) y `add-edit-line-dialog.component.html` (product), más posiblemente en `hardware-model-edit-panel`. Verificar con grep.
+
+Patrón estricto del game-form (líneas 124-145 actual):
+```diff
+- <mat-form-field appearance="outline" class="game-form__field">
+-   <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
+-   <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
+-   <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
+-     @for (platform of filteredPlatforms(); track platform.code) {
+-       <mat-option [value]="platform.code">{{ platform.labelKey | transloco }}</mat-option>
+-     }
+-   </mat-autocomplete>
+-   @if (form.controls.platform.value) {
+-     <app-lib-icon-button matSuffix size="sm" icon="close" ... />
+-   }
+- </mat-form-field>
++ <app-lib-form-field class="game-form__field">
++   <app-lib-label>{{ 'gameForm.fields.platform' | transloco }}</app-lib-label>
++   <input libInput type="text" [libAutocompleteTrigger]="platformAuto" [formControl]="form.controls.platform" />
++   <app-lib-autocomplete #platformAuto [displayWith]="displayPlatformLabel">
++     @for (platform of filteredPlatforms(); track platform.code) {
++       <app-lib-option [value]="platform.code">{{ platform.labelKey | transloco }}</app-lib-option>
++     }
++   </app-lib-autocomplete>
++   @if (form.controls.platform.value) {
++     <app-lib-icon-button libSuffix size="sm" icon="close" ... />
++   }
++ </app-lib-form-field>
+```
+
+**Deuda a11y declarada**:
+- Anuncio del número de opciones disponibles (`aria-live` con "5 opciones disponibles"): NO implementado. Material lo hace. Deuda media.
+- `aria-activedescendant` actualizado al filtrar: implementado.
+
+**Criterios de aceptación**:
+- 0 `<mat-autocomplete>` en el repo.
+- game-form: platform y store funcionan (escribir, filtrar, seleccionar, validar invalidOption).
+- Add line dialog en orders: producto se busca y selecciona.
+
+##### Commit 34 — `feat(lib): lib-datepicker + migración de 4 datepickers`
+
+**Decisión**: implementar **desde cero**. La grid del calendario es manejable y mantiene consistencia visual + bundle limpio. Si en la implementación se detecta que cuesta más de 1 día de tech engineer, **alternativa**: instalar `flatpickr@4.6.13` (3.5KB gz) y envolverlo con un wrapper Angular que aplique theme terminal. **Decisión final reservada al tech lead** durante la implementación; el plan documenta ambas vías.
+
+**Componente**: `LibDatepickerComponent` + `LibDatepickerToggleDirective` (icono que abre).
+
+**API**:
+```html
+<app-lib-form-field>
+  <app-lib-label>Fecha</app-lib-label>
+  <input libInput [libDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
+  <app-lib-icon libSuffix libDatepickerToggle [for]="picker" name="calendar_today" />
+  <app-lib-datepicker #picker [min]="minDate" [max]="maxDate" />
+</app-lib-form-field>
+```
+
+**Internals**:
+- El popup se abre con `LibOverlayService` preset menu-like.
+- Renderiza un calendario mes vista:
+  - Header: botones prev/next mes, dropdown año, botón "hoy".
+  - Grid 7×6: encabezados días de semana (`L M X J V S D` para `es-ES`), celdas día con `role="gridcell"`, `aria-selected`, `tabindex` roving.
+  - Vista mes (`role="grid"`).
+- Vistas opcionales: año (12 meses), década (12 años). Iniciar sólo con vista mes; las otras como deuda si hace falta.
+- Locale `es-ES`: usar `Intl.DateTimeFormat('es-ES', ...)` para días de semana, mes, año.
+
+**Teclas (APG date picker dialog grid pattern)**:
+- ArrowLeft/Right: día anterior/siguiente.
+- ArrowUp/Down: semana anterior/siguiente.
+- Home/End: inicio/fin de semana.
+- PageUp/PageDown: mes anterior/siguiente.
+- Shift+PageUp/Down: año anterior/siguiente.
+- Enter/Space: seleccionar día y cerrar.
+- Escape: cerrar sin cambios.
+
+**A11y completa**:
+- `role="dialog"`, `aria-modal="true"`, `aria-labelledby` (header con "Marzo 2026").
+- Grid `role="grid"`, filas `role="row"`, celdas `role="gridcell"`.
+- Día actual: `aria-current="date"`.
+- Día seleccionado: `aria-selected="true"`.
+- Día fuera de mes: `aria-disabled="true"` (opcional, mostrar grises).
+
+**Locale + provideNativeDateAdapter**: ya no se necesita `provideNativeDateAdapter` ni `MAT_DATE_LOCALE` en `app.config.ts`. Quitar esos providers. El componente trabaja con `Date` nativo y formatea con `Intl.DateTimeFormat('es-ES', { year: 'numeric', month: 'long', day: '2-digit' })`.
+
+**`[matDatepickerParse]`** (sale-form usa esa key de error): se sustituye por un error custom `'invalidDate'` aplicado por el validator del FormControl (o por el propio `LibDatepickerComponent` cuando `writeValue` recibe un valor inválido).
+
+**Migración**: 4 datepickers (verificados):
+1. `src/app/presentation/pages/collection/components/hardware-form-shell/hardware-form-shell.component.html:117-119`
+2. `src/app/presentation/pages/collection/components/sale-form/sale-form.component.html:66-69`
+3. `src/app/presentation/pages/collection/components/hardware-loan-form/hardware-loan-form.component.html:56-58`
+4. `src/app/presentation/pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.html:52-54`
+
+Y eliminar la directiva `DatepickerFieldClickDirective` (`src/app/presentation/shared/datepicker-field-click/datepicker-field-click.directive.ts`) que sólo existía para abrir el datepicker al click en el wrapper — el nuevo lib-datepicker se abre desde el toggle, no del wrapper.
+
+**Imports a quitar**: `MatDatepickerModule`, `provideNativeDateAdapter`, `MAT_DATE_LOCALE` de los componentes + `app.config.ts`.
+
+**Deuda a11y declarada**:
+- Sin range picker (no se usa en la app).
+- Sin entrada por teclado del input (escribir "2026-03-15"): el actual ya es `[readonly]="true"`, así que no aplica.
+- Sin auto-focus al día actual al abrir: implementado.
+- Sin anuncios `aria-live` al cambiar de mes (Material no los hace tampoco). Deuda baja.
+- Si la implementación se desvía a flatpickr, la deuda a11y se mide contra lo que flatpickr ofrece (es razonable, no perfecto, manejable).
+
+**Criterios de aceptación**:
+- 0 `<mat-datepicker>` en el repo.
+- 4 formularios con fecha funcionan (sale, hardware-loan, hardware-form, game-loan).
+- Teclado en el calendario navega correctamente.
+- Locale `es-ES` (días en español, lunes primer día).
+
+→ **CHECKPOINT E** — usuario revisa: game-form completo (autocompletes + selects + inputs + datepicker), un dialog de edición con form complejo (add-edit-line orders), un loan form. Verificar que TODO el flujo del CRUD funciona.
+
+#### Bloque 6 — Cleanup final
+
+##### Commit 35 — `chore(theme): quitar mat.theme() + tokens propios + manifest`
+
+**Objetivo**: eliminar la dependencia visual de `@angular/material` en `styles.scss`.
+
+**Cambios**:
+
+1. Quitar de `src/styles.scss`:
+```diff
+- @use '@angular/material' as mat;
+- @include mat.theme((...))
+- // Sobrescritura de tokens Material (--mat-sys-*): eliminar todas
+```
+
+2. Tokens propios — ya están definidos en `:root` (`--bg-void`, `--text-hi`, etc.). Asegurar cobertura completa.
+
+3. Sin `mat-typography` en `<body>`: quitar la clase de `src/index.html`.
+
+4. Si quedan `--mat-*` referenciados en SCSS de componentes, sustituirlos por las variables locales (`--text-hi`, `--bg-surface`, etc.). Grep:
+```bash
+grep -rn "var(--mat-" src/ --include="*.scss"
+```
+
+5. `src/manifest.webmanifest`: `theme_color` y `background_color` ya deberían estar a `#000000` por Fases anteriores; verificar.
+
+**Criterios de aceptación**:
+- `grep -rn "@angular/material" src/styles.scss` → 0.
+- `grep -rn "var(--mat-" src/ --include="*.scss"` → 0.
+- Visual: idéntico (los tokens nuevos asumen los valores que tenía la sobrescritura).
+
+##### Commit 36 — `chore(deps): npm uninstall @angular/material + verificación CDK`
+
+**Pre-check obligatorio**:
+```bash
+grep -rn "@angular/material" src/ --include="*.ts" --include="*.html" --include="*.scss"
+# → debe dar 0 resultados.
+```
+
+Si quedara alguno, detener y arreglar antes.
+
+**Comandos**:
+```bash
+npm uninstall @angular/material
+npm install                                        # sincroniza lock
+npm run build && npm run lint && npm test --watch=false
+```
+
+**Decisión sobre `@angular/cdk`**:
+```bash
+grep -rn "@angular/cdk" src/ --include="*.ts" --include="*.html"
+# Espera:
+# - @angular/cdk/overlay   (lib-overlay.service usa Overlay, ScrollStrategy, OverlayConfig, ConnectedPosition)
+# - @angular/cdk/portal    (ComponentPortal, TemplatePortal)
+# - @angular/cdk/a11y      (FocusTrap, ListKeyManager, FocusMonitor)
+# - @angular/cdk/layout    (BreakpointObserver — 4 usos)
+```
+
+**Resolución**: `@angular/cdk` **se mantiene** en `package.json` como dependencia justificada. CDK es un kit de primitivas (FocusTrap, Overlay, ListKeyManager) — eliminarlo implicaría reimplementar trampas de focus y posicionamiento de overlays, lo cual NO está en el scope del usuario ("preferir corregir a11y gradualmente vs depender de librería externa"). FocusTrap a mano es exactamente el tipo de cosa que querríamos NO inventar. **Documentar la decisión en `docs/LIB_COMPONENTS.md` y `CLAUDE.md`** como sección "Dependencias externas conservadas".
+
+Si en el futuro el usuario quiere también eliminar CDK, se planificaría como Fase 11 con su propio análisis de riesgo (no trivial — reimplementar Overlay + FocusTrap son 3-5 días).
+
+**`@angular/animations`**: ¿se necesita?
+```bash
+grep -rn "@angular/animations" src/ --include="*.ts"
+# → 0 (verificado en inventario inicial).
+```
+
+Sin uso propio. CDK Overlay no lo requiere. Material lo requería como peer, pero Material ya no está. `npm uninstall @angular/animations` si está en deps directos:
+```bash
+cat package.json | grep "@angular/animations"
+# Si está → npm uninstall @angular/animations
+```
+
+Quitar `provideAnimations`/`BrowserAnimationsModule` si quedaran en algún sitio (verificado: ya no hay).
+
+**`@angular/platform-browser/animations` imports**: comprobar y limpiar.
+
+**Criterios de aceptación**:
+- `package.json` sin `@angular/material` ni `@angular/animations`.
+- `package-lock.json` sincronizado.
+- `npm run build && npm run lint && npm test --watch=false` verde.
+- Bundle size: medir antes/después. Esperado: -150KB gz (Material + Animations).
+- `npm ls @angular/material` → no encontrado.
+
+##### Commit 37 — `test(lib): actualizar specs + mocks + docs`
+
+**Objetivo**: cerrar la deuda de tests que se haya acumulado durante el refactor.
+
+**Pasos**:
+
+1. Auditoría de specs:
+```bash
+grep -rn "MatDialog\|MatSnackBar\|MatSelect\|MatFormField\|MatAutocomplete\|MatDatepicker\|MatBottomSheet\|MatMenu\|MatTabs\|MatTooltip\|mat-icon" src/ --include="*.spec.ts" | wc -l
+```
+Deben quedar **0** referencias a Material en specs.
+
+2. Actualizar mocks en `src/testing/`:
+   - Crear `lib-snackbar.mock.ts` (Commit 23) → verificar que existe.
+   - Crear `lib-dialog.mock.ts` (Commit 29) → verificar que existe.
+   - Crear `lib-bottom-sheet.mock.ts`.
+   - Crear `lib-overlay.mock.ts` si algún spec lo inyecta directo.
+
+3. Actualizar `CLAUDE.md` — tabla "Tests — mocks compartidos":
+
+| Fichero | Exporta | Uso |
+|---|---|---|
+| `lib-snackbar.mock.ts` | `mockLibSnackbar` | `{ provide: LibSnackbarService, useValue: mockLibSnackbar }` |
+| `lib-dialog.mock.ts` | `mockLibDialog` | `{ provide: LibDialogService, useValue: mockLibDialog }` |
+| `lib-bottom-sheet.mock.ts` | `mockLibBottomSheet` | `{ provide: LibBottomSheetService, useValue: mockLibBottomSheet }` |
+
+(Y quitar las filas obsoletas si aún están: `MatDialog`, `MatSnackBar`.)
+
+4. Actualizar `docs/LIB_COMPONENTS.md`:
+   - Añadir entradas para todos los componentes nuevos (lib-icon, lib-snackbar, lib-tooltip, lib-menu, lib-tabs, lib-router-tabs, lib-overlay, lib-bottom-sheet, lib-dialog, lib-form-field, lib-input, lib-label, lib-error, lib-hint, lib-select, lib-option, lib-autocomplete, lib-datepicker).
+   - Sección "Deuda a11y" listando los items declarados componente a componente para que sea visible y se cierre iterativamente.
+
+5. `docs/TESTING.md`: re-ejecutar `/update-testing` para sincronizar.
+
+6. `index.ts` de `lib/`: añadir todos los exports nuevos en orden alfabético.
+
+**Criterios de aceptación**:
+- 0 referencias Material en `*.spec.ts`.
+- Cobertura ≥ 80% (umbral CI del proyecto).
+- `docs/LIB_COMPONENTS.md` actualizado.
+- `docs/TESTING.md` actualizado.
+- `CLAUDE.md` tabla mocks actualizada.
+
+##### Commit 38 — `docs(plan): cierre Fase 10 + PR ready`
+
+**Objetivo**: documentar el cierre y preparar el PR único.
+
+**Cambios**:
+
+1. En `docs/TERMINAL_COLLECTOR_PLAN.md`, marcar Fase 10 como completada (añadir nota al inicio de la sección 7).
+
+2. En `docs/LIB_COMPONENTS.md`, sección final "Estado": `100% de la app sin @angular/material. @angular/cdk conservado como dependencia justificada.`
+
+3. Generar el PR con `/pr` siguiendo la convención del proyecto:
+   - Título: `refactor(lib): reemplazo total de Angular Material por componentes propios`
+   - Body: lista de bloques + checkpoints + decisiones (CDK conservado, Material Icons font conservada, datepicker desde cero o flatpickr según ejecución).
+
+**Criterios de aceptación**:
+- PR abierto contra `master`.
+- CI verde (build + lint + test ≥ 80% coverage).
+- Squash merge listo.
+
+### 7.4 Mapa de checkpoints
+
+| Checkpoint | Tras commit | Bloque | Qué revisar |
+|---|---|---|---|
+| A | 22 | Bloque 1 | Iconos, divisores, toggle €/% (orders detail). Sin regresión visual. |
+| B | 24 | Bloque 2 | Snackbars de éxito/error en flujos típicos. Tooltips desktop. |
+| C | 28 | Bloque 3 | Profile menu + context menu game-detail. Sale tabs + collection nav. Filtros bottom-sheet mobile. |
+| D | 29 | Bloque 4 | Cada uno de los 7 dialogs. Focus trap, Escape, backdrop. **Checkpoint más crítico**. |
+| E | 34 | Bloque 5 | game-form completo. add-edit-line dialog. Loan forms con fecha. CRUD entero funcional. |
+| Final | 38 | Bloque 6 | PR único contra master. CI verde. |
+
+### 7.5 Criterios de aceptación globales
+
+- `package.json` sin `@angular/material` ni `@angular/animations`.
+- `@angular/cdk` conservado (Overlay, a11y, portal, layout) — decisión documentada.
+- `grep -rn "@angular/material" src/` → **0**.
+- `grep -rn "<mat-" src/` → **0**.
+- `grep -rn "MatDialog\|MatSnackBar\|MatSelect\|MatFormField\|MatAutocomplete\|MatDatepicker\|MatBottomSheet\|MatMenu\|MatTabs\|MatTooltip\|MatIcon" src/ --include="*.ts"` → **0**.
+- Bundle size: -150KB gz aproximado.
+- Visual: paridad con Fase 8 (terminal collector style consistente).
+- Funcional: 100% paridad con flujos previos.
+- A11y: la deuda declarada en cada componente está listada en `docs/LIB_COMPONENTS.md` para cierre iterativo.
+
+### 7.6 Riesgos y mitigaciones
+
+| Riesgo | Probabilidad | Impacto | Mitigación |
+|---|---|---|---|
+| `lib-datepicker` desde cero es más caro de lo previsto | Media | Alto | Fallback documentado: flatpickr envuelto. Decisión en Commit 34. |
+| `lib-autocomplete` no replica el `displayWith` bien | Media | Alto | Validar primero en game-form (el más complejo) antes de propagar al resto. |
+| Focus trap CDK falla con `cdk-overlay-container` y body scroll lock | Baja | Medio | CDK Overlay maneja ambos via `scrollStrategy: 'block'`. Probado en Commit 29 (checkpoint D). |
+| Specs DOM-asserted rompen masivamente | Alta | Bajo (sólo CI) | Se actualizan en cada commit que toca el componente. Commit 37 cierra la deuda. |
+| Algún `aria-describedby` se pierde tras la migración | Media | Medio (a11y) | Aceptado por usuario como deuda. Documentado componente a componente. |
+| Bundle inicial crece (CDK ya no es transitivo de Material) | Baja | Bajo | CDK ya está en deps (4 usos `cdk/layout`). No cambia. |
+| Sale tabs sin animation rompe UX visual | Baja | Bajo | Aceptado por usuario — el plan general elimina animations. |
+
+### 7.7 Notas operativas
+
+- **Rama dedicada**: `refactor/lib-remove-material` desde `master` post-Fase 8 mergeada. Sin PRs intermedios.
+- **Convención de commits del proyecto**: títulos en backticks (`feat(lib): ...`, `chore(deps): ...`, `docs(plan): ...`, `test(lib): ...`).
+- **No tocar BD**: el refactor es 100% frontend.
+- **No tocar service worker**: los cambios CSS se sirven con el bust de Angular normal.
+- **i18n keys nuevas**: añadir a `src/assets/i18n/es.json` y `en.json` en el mismo commit que las usa. Claves esperadas: `common.notifications`, `common.close` (ya existe), `common.next`, `common.previous`, `common.today`, `lib.calendar.month.*`, `lib.calendar.weekday.*`.
+- **Tests CI ≥ 80% cobertura**: cada commit que rompa cobertura debe restaurarla en el mismo commit (no en posteriores).
+- **Build de producción**: verificar tamaño del bundle tras Commit 36. Comparar con baseline pre-Fase 10.
 
 ---
 
