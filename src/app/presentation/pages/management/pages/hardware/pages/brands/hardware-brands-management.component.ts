@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -34,7 +34,7 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
 })
 export class HardwareBrandsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
 
@@ -119,7 +119,7 @@ export class HardwareBrandsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(brand.id);
       await this._loadBrands();

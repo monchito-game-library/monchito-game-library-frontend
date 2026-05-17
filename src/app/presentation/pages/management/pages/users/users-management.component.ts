@@ -14,7 +14,7 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -64,7 +64,7 @@ export class UsersManagementComponent implements OnInit {
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
 
   /** Whether the user list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -153,14 +153,14 @@ export class UsersManagementComponent implements OnInit {
     const titleKey = newRole === 'admin' ? 'management.users.promote.title' : 'management.users.demote.title';
     const messageKey = newRole === 'admin' ? 'management.users.promote.message' : 'management.users.demote.message';
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate(titleKey),
         message: this._transloco.translate(messageKey, { email: user.email })
       } satisfies ConfirmDialogInterface
     });
 
-    const confirmed: boolean = await firstValueFrom(dialogRef.afterClosed());
+    const confirmed: boolean | undefined = await firstValueFrom(dialogRef.afterClosed());
     if (!confirmed) return;
     await this._applyRoleChange(user, newRole);
   }
@@ -176,7 +176,7 @@ export class UsersManagementComponent implements OnInit {
     if (user.role === 'owner') return;
     if (user.userId === this._userContext.userId()) return;
 
-    const dialogRef: MatDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
+    const dialogRef: LibDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
       data: { email: user.email } satisfies DeleteUserDialogInterface,
       autoFocus: false
     });

@@ -1,6 +1,6 @@
-<div mat-dialog-title>{{ 'orders.ready.dialogTitle' | transloco }}</div>
+<div libDialogTitle>{{ 'orders.ready.dialogTitle' | transloco }}</div>
 
-<mat-dialog-content class="ready-dialog__content">
+<div libDialogContent class="ready-dialog__content">
   <div class="ready-dialog__intro">{{ 'orders.ready.dialogIntro' | transloco }}</div>
 
   @for (lineData of data.lines; track lineData.line.id) {
@@ -42,13 +42,13 @@
       }
     </div>
   }
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end">
+<footer libDialogActions align="end">
   <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
   <app-lib-button
     [label]="'orders.ready.confirm' | transloco"
     variant="success"
     [disabled]="!canConfirm()"
     (clicked)="onConfirm()" />
-</mat-dialog-actions>
+</footer>

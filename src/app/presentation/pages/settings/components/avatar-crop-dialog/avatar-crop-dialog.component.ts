@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
 import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 @Component({
   selector: 'app-avatar-crop-dialog',
@@ -19,15 +19,22 @@ import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-inter
   styleUrl: './avatar-crop-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, TranslocoPipe, LibSpinnerComponent, LibButtonComponent]
+  imports: [
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
+    TranslocoPipe,
+    LibSpinnerComponent,
+    LibButtonComponent
+  ]
 })
 export class AvatarCropDialogComponent extends CropInteractionBase implements OnDestroy {
-  private readonly _dialogRef: MatDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
-    MatDialogRef<AvatarCropDialogComponent, Blob | null>
+  private readonly _dialogRef: LibDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
+    LibDialogRef<AvatarCropDialogComponent, Blob | null>
   );
 
   /** Cropper configuration received from the parent component. */
-  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(MAT_DIALOG_DATA);
+  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(LIB_DIALOG_DATA);
 
   /** Object URL pointing to the file being cropped. Revoked on destroy. */
   readonly imageUrl!: string;

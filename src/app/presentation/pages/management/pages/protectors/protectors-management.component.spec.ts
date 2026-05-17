@@ -6,7 +6,7 @@ import { ProtectorsManagementComponent } from './protectors-management.component
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { ProtectorModel } from '@/models/protector/protector.model';
 
@@ -38,7 +38,7 @@ describe('ProtectorsManagementComponent', () => {
         },
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        { provide: LibDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -121,7 +121,7 @@ describe('ProtectorsManagementComponent', () => {
   describe('onToggleActive', () => {
     it('no llama a toggleProtectorActive si el dialog se cancela', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.onToggleActive(makeProtector());
@@ -133,7 +133,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.onToggleActive(makeProtector({ isActive: true }));
@@ -146,7 +146,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.onToggleActive(makeProtector({ isActive: false }));
@@ -159,7 +159,7 @@ describe('ProtectorsManagementComponent', () => {
   describe('onDeleteProtector', () => {
     it('no llama a deleteProtector si el dialog se cancela', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.onDeleteProtector(makeProtector());
@@ -171,7 +171,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.deleteProtector.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -186,7 +186,7 @@ describe('ProtectorsManagementComponent', () => {
     it('muestra snackbar de error si deleteProtector lanza', async () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.deleteProtector.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const snackBar = TestBed.inject(LibSnackbarService);
       vi.spyOn(snackBar, 'open');

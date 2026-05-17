@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -109,7 +109,7 @@ describe('ControllerDetailComponent', () => {
           provide: UserContextService,
           useValue: { requireUserId: vi.fn().mockReturnValue('user-1'), userId: vi.fn().mockReturnValue('user-1') }
         },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: LibDialogService, useValue: { open: vi.fn() } },
         {
           provide: LibSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { mockLocation } from '@/testing/location.mock';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -94,7 +94,7 @@ describe('GameDetailComponent', () => {
           } as Partial<WorkUseCasesContract>
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: LibDialogService, useValue: { open: vi.fn() } },
         {
           provide: LibSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
@@ -211,7 +211,7 @@ describe('GameDetailComponent', () => {
   describe('deleteGame', () => {
     it('no abre el dialog si game es null', async () => {
       component.game.set(null);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
 
       await component.deleteGame();
 
@@ -221,7 +221,7 @@ describe('GameDetailComponent', () => {
     it('no elimina si el dialog se cancela', async () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       await component.deleteGame();
@@ -232,7 +232,7 @@ describe('GameDetailComponent', () => {
     it('llama a deleteGame y navega a /games si se confirma', async () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -246,7 +246,7 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.deleteGame.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const snackBar = TestBed.inject(LibSnackbarService as any) as any;
 
@@ -259,7 +259,7 @@ describe('GameDetailComponent', () => {
       component.game.set(makeGame());
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.deleteGame.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       await component.deleteGame();
@@ -636,7 +636,7 @@ describe('GameDetailComponent', () => {
             } as Partial<WorkUseCasesContract>
           },
           { provide: UserContextService, useValue: { userId: signal<string | null>(null) } },
-          { provide: MatDialog, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
+          { provide: LibDialogService, useValue: { open: vi.fn().mockReturnValue({ afterClosed: () => of(true) }) } },
           {
             provide: LibSnackbarService,
             useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }

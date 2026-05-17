@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -54,8 +54,8 @@ const setupTestBed = (data: ReadyDialogData): ComponentFixture<ReadyDialogCompon
       })
     ],
     providers: [
-      { provide: MatDialogRef, useValue: mockDialogRef },
-      { provide: MAT_DIALOG_DATA, useValue: data }
+      { provide: LibDialogRef, useValue: mockDialogRef },
+      { provide: LIB_DIALOG_DATA, useValue: data }
     ],
     schemas: [NO_ERRORS_SCHEMA]
   });

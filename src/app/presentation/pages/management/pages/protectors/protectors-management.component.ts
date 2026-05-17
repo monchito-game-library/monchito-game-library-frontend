@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 import { DecimalPipe } from '@angular/common';
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -31,7 +31,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   imports: [ProtectorEditPanelComponent, TranslocoPipe, DecimalPipe, LibSkeletonComponent, LibButtonComponent]
 })
 export class ProtectorsManagementComponent implements OnInit {
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _protectorUseCases: ProtectorUseCasesContract = inject(PROTECTOR_USE_CASES);
@@ -121,7 +121,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       await this._protectorUseCases.toggleProtectorActive(protector.id, nextActive);
       void this._auditLogUseCases.log({
@@ -167,7 +167,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       try {
         await this._protectorUseCases.deleteProtector(protector.id);

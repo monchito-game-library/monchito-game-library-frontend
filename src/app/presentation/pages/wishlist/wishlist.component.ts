@@ -14,7 +14,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -69,7 +69,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 export class WishlistComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);

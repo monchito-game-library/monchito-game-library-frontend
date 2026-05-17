@@ -1,13 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -18,6 +11,13 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { OrderProductModel } from '@/models/order/order-product.model';
 import { OrderLineForm, OrderLineFormValue } from '@/interfaces/forms/order-line-form.interface';
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 @Component({
   selector: 'app-add-edit-line-dialog',
@@ -27,9 +27,9 @@ import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
     MatFormField,
     MatLabel,
     MatError,
@@ -42,13 +42,13 @@ import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.
   ]
 })
 export class AddEditLineDialogComponent {
-  private readonly _dialogRef: MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
-    MatDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
+  private readonly _dialogRef: LibDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined> = inject(
+    LibDialogRef<AddEditLineDialogComponent, OrderLineFormValue | undefined>
   );
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
   /** Data injected by the parent: list of products and optional existing line. */
-  readonly data: AddEditLineDialogData = inject<AddEditLineDialogData>(MAT_DIALOG_DATA);
+  readonly data: AddEditLineDialogData = inject<AddEditLineDialogData>(LIB_DIALOG_DATA);
 
   /** Whether the dialog is in edit mode (line already exists). */
   readonly isEditMode: boolean = !!this.data.line;

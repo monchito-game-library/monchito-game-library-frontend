@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { HardwareBrandsManagementComponent } from './hardware-brands-management.component';
 import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { Router } from '@angular/router';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 
@@ -39,7 +39,7 @@ describe('HardwareBrandsManagementComponent', () => {
           }
         },
         { provide: Router, useValue: mockRouter },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: LibDialogService, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -142,7 +142,7 @@ describe('HardwareBrandsManagementComponent', () => {
 
   describe('onDeleteBrand', () => {
     it('no hace nada si no hay brand seleccionada', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       component.selectedBrand.set(undefined);
       component.onDeleteBrand();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -150,7 +150,7 @@ describe('HardwareBrandsManagementComponent', () => {
 
     it('no elimina la brand si el dialog se cancela', () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedBrand.set(makeBrand());
@@ -163,7 +163,7 @@ describe('HardwareBrandsManagementComponent', () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       brandUseCases.delete.mockResolvedValue(undefined);
       brandUseCases.getAll.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);

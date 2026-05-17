@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -33,7 +33,7 @@ describe('UsersManagementComponent', () => {
       getActiveLang: vi.fn(() => 'es')
     };
     mockDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<MatDialogRef<unknown>>)
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<LibDialogRef<unknown>>)
     };
     mockUserContext = { userId: vi.fn(() => 'u-owner') };
 
@@ -55,7 +55,7 @@ describe('UsersManagementComponent', () => {
           provide: LibSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         },
-        { provide: MatDialog, useValue: mockDialog }
+        { provide: LibDialogService, useValue: mockDialog }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });

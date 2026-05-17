@@ -1,14 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -16,6 +8,14 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogCloseDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 /**
  * Confirmation dialog for permanently deleting a user.
@@ -31,10 +31,10 @@ import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/ma
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
+    LibDialogCloseDirective,
     MatFormField,
     MatLabel,
     MatHint,
@@ -46,11 +46,11 @@ import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/ma
 })
 export class DeleteUserDialogComponent {
   /** Data injected into the dialog, containing the target user's email. */
-  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(MAT_DIALOG_DATA);
+  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(LIB_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically. */
-  readonly dialogRef: MatDialogRef<DeleteUserDialogComponent, boolean> = inject(
-    MatDialogRef<DeleteUserDialogComponent, boolean>
+  readonly dialogRef: LibDialogRef<DeleteUserDialogComponent, boolean> = inject(
+    LibDialogRef<DeleteUserDialogComponent, boolean>
   );
 
   /** Reactive form requiring the operator to type the user's email to confirm. */

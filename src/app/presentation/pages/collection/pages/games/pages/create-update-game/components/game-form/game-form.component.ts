@@ -23,7 +23,7 @@ import { MatOption } from '@angular/material/core';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { firstValueFrom } from 'rxjs';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
@@ -96,7 +96,7 @@ export class GameFormComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
@@ -442,11 +442,11 @@ export class GameFormComponent implements OnInit {
     const confirmTitle: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.title`);
     const confirmMessage: string = this._transloco.translate(`gameForm.dialog.confirm.${key}.message`);
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
 
       this.saving.set(true);
@@ -534,7 +534,7 @@ export class GameFormComponent implements OnInit {
     const imageUrl: string | null = this.selectedImageUrl();
     if (!imageUrl) return;
 
-    const dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
+    const dialogRef: LibDialogRef<GameCoverPositionDialogComponent, string | null> = this._dialog.open(
       GameCoverPositionDialogComponent,
       {
         data: {

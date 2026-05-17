@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -54,7 +54,7 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
 export class HardwareModelsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
@@ -161,7 +161,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(b.id);
       this.onBack();
@@ -244,7 +244,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.models.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       await this._modelUseCases.delete(model.id);
       await this._loadModels();

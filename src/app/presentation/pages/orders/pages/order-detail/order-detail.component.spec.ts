@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { of } from 'rxjs';
@@ -77,7 +77,7 @@ describe('OrderDetailComponent', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: ActivatedRoute, useValue: mockRoute },
         { provide: Router, useValue: mockRouter },
-        { provide: MatDialog, useValue: mockDialog },
+        { provide: LibDialogService, useValue: mockDialog },
         { provide: LibSnackbarService, useValue: mockLibSnackbar },
         { provide: TranslocoService, useValue: mockTransloco }
       ],

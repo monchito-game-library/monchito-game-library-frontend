@@ -9,7 +9,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
@@ -66,7 +66,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 

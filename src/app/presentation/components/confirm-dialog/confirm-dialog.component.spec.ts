@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import { LIB_DIALOG_DATA, LibDialogRef } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 describe('ConfirmDialogComponent', () => {
@@ -13,8 +13,8 @@ describe('ConfirmDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [ConfirmDialogComponent],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { title: 'Confirmar', message: '¿Estás seguro?' } },
-        { provide: MatDialogRef, useValue: { close: vi.fn() } },
+        { provide: LIB_DIALOG_DATA, useValue: { title: 'Confirmar', message: '¿Estás seguro?' } },
+        { provide: LibDialogRef, useValue: { close: vi.fn(), afterClosed: () => [] } },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ]
     });

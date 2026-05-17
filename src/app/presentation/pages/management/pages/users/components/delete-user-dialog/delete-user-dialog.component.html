@@ -1,9 +1,9 @@
-<h2 mat-dialog-title class="delete-user-dialog__title">
+<h2 libDialogTitle class="delete-user-dialog__title">
   <app-lib-icon class="delete-user-dialog__title-icon" name="warning" />
   <span>{{ 'management.users.delete.title' | transloco }}</span>
 </h2>
 
-<mat-dialog-content class="delete-user-dialog__content">
+<div libDialogContent class="delete-user-dialog__content">
   <p class="delete-user-dialog__warning">
     {{ 'management.users.delete.warning' | transloco: { email: data.email } }}
   </p>
@@ -26,14 +26,14 @@
       <mat-hint>{{ 'management.users.delete.field.hint' | transloco }}</mat-hint>
     </mat-form-field>
   </form>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end" class="delete-user-dialog__actions">
-  <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" mat-dialog-close />
+<footer libDialogActions align="end" class="delete-user-dialog__actions">
+  <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" libDialogClose />
   <app-lib-button
     [label]="'management.users.delete.confirm' | transloco"
     icon="delete_forever"
     variant="danger"
     [disabled]="!canConfirm()"
     (clicked)="onConfirm()" />
-</mat-dialog-actions>
+</footer>

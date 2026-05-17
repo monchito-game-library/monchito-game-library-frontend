@@ -1,12 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -21,6 +14,13 @@ import { WishlistItemForm } from '@/interfaces/forms/wishlist-item-form.interfac
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 @Component({
   selector: 'app-wishlist-item-dialog',
@@ -30,9 +30,9 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
     LibIconButtonComponent,
     MatFormField,
     MatLabel,
@@ -48,13 +48,13 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
   ]
 })
 export class WishlistItemDialogComponent {
-  private readonly _dialogRef: MatDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
-    MatDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
+  private readonly _dialogRef: LibDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
+    LibDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
   );
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
   /** Dialog configuration: mode and optional existing item. */
-  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(MAT_DIALOG_DATA);
+  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(LIB_DIALOG_DATA);
 
   /** Available priority levels (1–5). */
   readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;

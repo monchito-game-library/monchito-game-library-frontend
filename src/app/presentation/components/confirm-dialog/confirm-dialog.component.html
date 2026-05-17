@@ -1,6 +1,6 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content>{{ data.message }}</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <app-lib-button [label]="'common.no' | transloco" variant="ghost" mat-dialog-close />
-  <app-lib-button [label]="'common.yes' | transloco" variant="danger" [mat-dialog-close]="true" />
-</mat-dialog-actions>
+<h2 libDialogTitle>{{ data.title }}</h2>
+<div libDialogContent>{{ data.message }}</div>
+<footer libDialogActions align="end">
+  <app-lib-button [label]="'common.no' | transloco" variant="ghost" libDialogClose />
+  <app-lib-button [label]="'common.yes' | transloco" variant="danger" [libDialogClose]="true" />
+</footer>

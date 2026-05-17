@@ -1,6 +1,6 @@
-<h2 mat-dialog-title>{{ config.title }}</h2>
+<h2 libDialogTitle>{{ config.title }}</h2>
 
-<mat-dialog-content>
+<div libDialogContent>
   <div class="crop-dialog__wrap">
     @if (!imageLoaded()) {
       <div class="crop-dialog__loading">
@@ -33,11 +33,11 @@
     </div>
   </div>
   <p class="crop-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
-</mat-dialog-content>
+</div>
 
 @if (imageLoaded()) {
-  <mat-dialog-actions align="end">
+  <footer libDialogActions align="end">
     <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
     <app-lib-button [label]="'common.save' | transloco" variant="primary" icon="save" (clicked)="onConfirm()" />
-  </mat-dialog-actions>
+  </footer>
 }

@@ -16,7 +16,7 @@ import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxj
 import { NgOptimizedImage } from '@angular/common';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatInput } from '@angular/material/input';
@@ -72,7 +72,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();

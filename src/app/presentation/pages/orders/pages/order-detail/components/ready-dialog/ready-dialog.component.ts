@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { ReadyDialogData } from '@/interfaces/orders/ready-dialog.interface';
 import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 @Component({
   selector: 'app-ready-dialog',
@@ -20,15 +20,22 @@ import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
   styleUrl: './ready-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatDialogTitle, MatDialogContent, MatDialogActions, TranslocoPipe, LibButtonComponent]
+  imports: [
+    DecimalPipe,
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
+    TranslocoPipe,
+    LibButtonComponent
+  ]
 })
 export class ReadyDialogComponent {
-  private readonly _dialogRef: MatDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined> = inject(
-    MatDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined>
+  private readonly _dialogRef: LibDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined> = inject(
+    LibDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined>
   );
 
   /** Data injected by the parent: lines with suggestions. */
-  readonly data: ReadyDialogData = inject<ReadyDialogData>(MAT_DIALOG_DATA);
+  readonly data: ReadyDialogData = inject<ReadyDialogData>(LIB_DIALOG_DATA);
 
   /** Returns the human-readable breakdown of a suggestion. */
   readonly formatBreakdown = formatBreakdown;

@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import {
+  LIB_DIALOG_DATA,
+  LibDialogActionsDirective,
+  LibDialogCloseDirective,
+  LibDialogContentDirective,
+  LibDialogRef,
+  LibDialogTitleDirective
+} from '@/services/lib-dialog/lib-dialog.service';
 
 /**
  * Reusable confirmation dialog component.
@@ -23,12 +23,19 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
   styleUrl: './confirm-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, TranslocoPipe, LibButtonComponent]
+  imports: [
+    LibDialogTitleDirective,
+    LibDialogContentDirective,
+    LibDialogActionsDirective,
+    LibDialogCloseDirective,
+    TranslocoPipe,
+    LibButtonComponent
+  ]
 })
 export class ConfirmDialogComponent {
   /** Data injected into the dialog, containing title and message. */
-  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(MAT_DIALOG_DATA);
+  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(LIB_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically if needed. */
-  dialogRef: MatDialogRef<ConfirmDialogComponent> = inject(MatDialogRef<ConfirmDialogComponent>);
+  dialogRef: LibDialogRef<ConfirmDialogComponent> = inject(LibDialogRef<ConfirmDialogComponent>);
 }

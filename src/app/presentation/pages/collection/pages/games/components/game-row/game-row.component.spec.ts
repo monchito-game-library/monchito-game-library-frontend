@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -68,7 +68,7 @@ describe('GameRowComponent', () => {
           provide: GAME_USE_CASES,
           useValue: { deleteGame } as Partial<GameUseCasesContract>
         },
-        { provide: MatDialog, useValue: { open: dialogOpen } },
+        { provide: LibDialogService, useValue: { open: dialogOpen } },
         {
           provide: UserContextService,
           useValue: { userId: signal('user-1') }
@@ -150,13 +150,13 @@ describe('GameRowComponent', () => {
 
     it('detiene la propagación del click', () => {
       const evt = makeEvent();
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as LibDialogRef<unknown>);
       component.onDelete(evt);
       expect(evt.stopPropagation).toHaveBeenCalledOnce();
     });
 
     it('abre el diálogo de confirmación', () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as LibDialogRef<unknown>);
       component.onDelete(makeEvent());
       expect(dialogOpen).toHaveBeenCalledOnce();
     });
@@ -168,7 +168,7 @@ describe('GameRowComponent', () => {
     });
 
     it('elimina el juego y emite gameDeleted cuando se confirma', async () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(true) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(true) } as unknown as LibDialogRef<unknown>);
       const emitSpy = vi.fn();
       component.gameDeleted.subscribe(emitSpy);
 
@@ -181,7 +181,7 @@ describe('GameRowComponent', () => {
     });
 
     it('no llama a deleteGame cuando se cancela', async () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as LibDialogRef<unknown>);
       component.onDelete(makeEvent());
       await Promise.resolve();
       expect(deleteGame).not.toHaveBeenCalled();

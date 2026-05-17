@@ -1,6 +1,6 @@
 import { Directive, inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
@@ -48,7 +48,7 @@ export abstract class HardwareDetailBaseComponent {
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
-  protected readonly _dialog: MatDialog = inject(MatDialog);
+  protected readonly _dialog: LibDialogService = inject(LibDialogService);
   protected readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
@@ -337,7 +337,7 @@ export abstract class HardwareDetailBaseComponent {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe((confirmed: boolean | undefined) => {
       if (!confirmed) return;
       const id = this._getItemId();
       if (!id) return;

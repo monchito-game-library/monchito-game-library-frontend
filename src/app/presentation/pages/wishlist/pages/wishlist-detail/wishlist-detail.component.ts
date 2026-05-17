@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
@@ -55,7 +55,7 @@ export class WishlistDetailComponent implements OnInit {
   private readonly _location: Location = inject(Location);
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 

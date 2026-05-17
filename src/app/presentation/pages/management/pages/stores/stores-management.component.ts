@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -30,7 +30,7 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   imports: [StoreEditPanelComponent, TranslocoPipe, CatalogItemCardComponent, LibSkeletonComponent, LibButtonComponent]
 })
 export class StoresManagementComponent implements OnInit {
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
@@ -118,7 +118,7 @@ export class StoresManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (!confirmed) return;
       await this._storeUseCases.deleteStore(store.id);
       void this._auditLogUseCases.log({

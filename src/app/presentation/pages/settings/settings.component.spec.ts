@@ -13,7 +13,7 @@ import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -108,7 +108,7 @@ describe('SettingsComponent', () => {
           provide: LibSnackbarService,
           useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
         },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        { provide: LibDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -367,7 +367,7 @@ describe('SettingsComponent', () => {
     }
 
     it('usa mensaje de transloco cuando el error del avatar no es instanceof Error', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
@@ -445,13 +445,13 @@ describe('SettingsComponent', () => {
     }
 
     it('retorna sin abrir diálogo cuando no hay fichero', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       await component.onAvatarFileSelected(mockFileEvent());
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('retorna sin subir cuando el diálogo se cancela (blob null)', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(null) });
       const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
@@ -462,7 +462,7 @@ describe('SettingsComponent', () => {
     });
 
     it('sube el avatar cuando el diálogo confirma un blob', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -477,7 +477,7 @@ describe('SettingsComponent', () => {
     });
 
     it('muestra snackbar cuando la subida falla', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
@@ -492,7 +492,7 @@ describe('SettingsComponent', () => {
     });
 
     it('retorna sin subir cuando no hay userId', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -512,13 +512,13 @@ describe('SettingsComponent', () => {
     }
 
     it('retorna sin abrir diálogo cuando no hay fichero', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       await component.onBannerFileSelected(mockFileEvent());
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('retorna sin subir cuando el diálogo se cancela', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(null) });
       const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
@@ -529,7 +529,7 @@ describe('SettingsComponent', () => {
     });
 
     it('sube el banner cuando el diálogo confirma un blob', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -544,7 +544,7 @@ describe('SettingsComponent', () => {
     });
 
     it('muestra snackbar cuando la subida del banner falla', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
@@ -559,7 +559,7 @@ describe('SettingsComponent', () => {
     });
 
     it('usa mensaje de transloco cuando el error del banner no es instanceof Error', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const snackBar = TestBed.inject(LibSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
@@ -574,7 +574,7 @@ describe('SettingsComponent', () => {
     });
 
     it('retorna sin subir cuando no hay userId', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(LibDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });

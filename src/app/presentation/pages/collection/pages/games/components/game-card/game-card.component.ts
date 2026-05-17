@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LibDialogRef, LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -56,7 +56,7 @@ import { extractDominantColor } from '@/shared/dominant-color/dominant-color.uti
 export class GameCardComponent {
   private readonly _router: Router = inject(Router);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -202,14 +202,14 @@ export class GameCardComponent {
     const game: GameListModel = this.game();
     if (!game.uuid) return;
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: LibDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')
       } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
       if (confirmed && game.uuid && game.id !== undefined) {
         await this._gameUseCases.deleteGame(this._userId, game.uuid);
         this.gameDeleted.emit(game.id);

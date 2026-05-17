@@ -15,7 +15,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatDialog } from '@angular/material/dialog';
+import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibMenuComponent } from '@/lib/lib-menu/lib-menu.component';
 import { LibMenuItemComponent } from '@/lib/lib-menu/lib-menu-item.component';
 import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directive';
@@ -79,7 +79,7 @@ export class GameDetailComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: LibDialogService = inject(LibDialogService);
   private readonly _snack: LibSnackbarService = inject(LibSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);

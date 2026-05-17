@@ -730,12 +730,53 @@ mat-progress-spinner {
 }
 
 .lib-overlay-panel--dialog {
-  border: 1px solid var(--border-strong);
-  background: var(--bg-surface);
-  max-width: 90vw;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  border-radius: 0;
+  min-width: 280px;
+  max-width: min(90vw, 560px);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.lib-dialog__title {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+
+.lib-dialog__content {
+  padding: 1.25rem;
+  overflow-y: auto;
+  color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  flex: 1 1 auto;
+}
+
+.lib-dialog__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+
+  &--end {
+    justify-content: flex-end;
+  }
+  &--center {
+    justify-content: center;
+  }
+  &--start {
+    justify-content: flex-start;
+  }
 }
 
 .lib-overlay-panel--menu {
