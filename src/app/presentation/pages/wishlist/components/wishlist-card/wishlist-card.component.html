@@ -66,32 +66,25 @@
 
       <!-- Actions -->
       <div class="wishlist-card__actions">
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onOwn()"
-          [matTooltip]="'wishlist.card.ownTooltip' | transloco"
+        <app-lib-icon-button
+          icon="shopping_bag"
+          variant="primary"
           class="wishlist-card__own-btn"
-          [attr.aria-label]="'wishlist.card.ownTooltip' | transloco">
-          <mat-icon>shopping_bag</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onEdit()"
+          [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
+          [matTooltip]="'wishlist.card.ownTooltip' | transloco"
+          (clicked)="onOwn()" />
+        <app-lib-icon-button
+          icon="edit"
+          [ariaLabel]="'common.edit' | transloco"
           [matTooltip]="'common.edit' | transloco"
-          [attr.aria-label]="'common.edit' | transloco">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onDelete()"
-          [matTooltip]="'common.delete' | transloco"
+          (clicked)="onEdit()" />
+        <app-lib-icon-button
+          icon="delete"
+          variant="danger"
           class="wishlist-card__delete-btn"
-          [attr.aria-label]="'common.delete' | transloco">
-          <mat-icon>delete</mat-icon>
-        </button>
+          [ariaLabel]="'common.delete' | transloco"
+          [matTooltip]="'common.delete' | transloco"
+          (clicked)="onDelete()" />
       </div>
     }
   </div>

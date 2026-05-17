@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatIcon } from '@angular/material/icon';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -44,8 +44,8 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
     HardwareBrandEditPanelComponent,
     HardwareModelEditPanelComponent,
     CatalogItemCardComponent,
-    MatIconButton,
     MatIcon,
+    LibIconButtonComponent,
     TranslocoPipe,
     LibSkeletonComponent,
     LibButtonComponent

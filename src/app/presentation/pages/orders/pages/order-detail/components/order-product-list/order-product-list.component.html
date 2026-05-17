@@ -54,20 +54,19 @@
                   </td>
                   <td>{{ line.quantityNeeded ?? '—' }}</td>
                   <td class="order-detail-page__line-actions">
-                    <button
-                      mat-icon-button
+                    <app-lib-icon-button
+                      icon="edit"
+                      size="sm"
+                      [ariaLabel]="'orders.lines.edit' | transloco"
                       [matTooltip]="'orders.lines.edit' | transloco"
-                      [attr.aria-label]="'orders.lines.edit' | transloco"
-                      (click)="lineEdit.emit(line)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button
-                      mat-icon-button
+                      (clicked)="lineEdit.emit(line)" />
+                    <app-lib-icon-button
+                      icon="delete"
+                      variant="danger"
+                      size="sm"
+                      [ariaLabel]="'orders.lines.delete' | transloco"
                       [matTooltip]="'orders.lines.delete' | transloco"
-                      [attr.aria-label]="'orders.lines.delete' | transloco"
-                      (click)="lineDelete.emit(line.id)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
+                      (clicked)="lineDelete.emit(line.id)" />
                   </td>
                 </tr>
               }

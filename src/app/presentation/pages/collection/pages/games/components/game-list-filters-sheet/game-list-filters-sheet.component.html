@@ -3,9 +3,7 @@
   <!-- Header -->
   <div class="filters-sheet__header">
     <span class="filters-sheet__title">{{ 'gameList.filters.filters' | transloco }}</span>
-    <button mat-icon-button (click)="close()" [attr.aria-label]="'common.close' | transloco">
-      <mat-icon>close</mat-icon>
-    </button>
+    <app-lib-icon-button icon="close" [ariaLabel]="'common.close' | transloco" (clicked)="close()" />
   </div>
 
   <mat-divider />
@@ -72,12 +70,10 @@
           <mat-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</mat-option>
         </mat-select>
       </mat-form-field>
-      <button
-        mat-icon-button
-        (click)="d.sortDirection.set(d.sortDirection() === 'asc' ? 'desc' : 'asc')"
-        [attr.aria-label]="'Sort direction: ' + d.sortDirection()">
-        <mat-icon>{{ d.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
-      </button>
+      <app-lib-icon-button
+        [icon]="d.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward'"
+        [ariaLabel]="'Sort direction: ' + d.sortDirection()"
+        (clicked)="d.sortDirection.set(d.sortDirection() === 'asc' ? 'desc' : 'asc')" />
     </div>
 
     <!-- Favourites toggle -->

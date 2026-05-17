@@ -1,13 +1,10 @@
 <div class="game-form-page" [class.game-form-page--search-mode]="searchMode()">
   <header class="game-form-page__header">
     @if (searchMode()) {
-      <button
-        mat-icon-button
-        type="button"
-        (click)="closeSearchMode()"
-        [attr.aria-label]="'gameForm.aria.backToForm' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <app-lib-icon-button
+        icon="arrow_back"
+        [ariaLabel]="'gameForm.aria.backToForm' | transloco"
+        (clicked)="closeSearchMode()" />
       <h1 class="game-form-page__title">{{ 'gameForm.search.title' | transloco }}</h1>
     } @else {
       <h1 class="game-form-page__title">
@@ -34,22 +31,16 @@
               [style.object-position]="coverObjectPosition()"
               [style.transform]="coverTransform()"
               class="game-cover-panel__image" />
-            <button
-              mat-icon-button
-              type="button"
-              (click)="openCoverPositionDialog()"
+            <app-lib-icon-button
+              icon="open_with"
               class="game-cover-panel__reposition-btn"
-              [attr.aria-label]="'gameForm.cover.repositionTooltip' | transloco">
-              <mat-icon>open_with</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              type="button"
-              (click)="clearSelectedGame()"
+              [ariaLabel]="'gameForm.cover.repositionTooltip' | transloco"
+              (clicked)="openCoverPositionDialog()" />
+            <app-lib-icon-button
+              icon="close"
               class="game-cover-panel__clear-btn"
-              [attr.aria-label]="'gameForm.aria.clearSelection' | transloco">
-              <mat-icon>close</mat-icon>
-            </button>
+              [ariaLabel]="'gameForm.aria.clearSelection' | transloco"
+              (clicked)="clearSelectedGame()" />
           } @else {
             <div class="game-cover-panel__placeholder">
               <mat-icon>sports_esports</mat-icon>
@@ -139,6 +130,7 @@
             }
           </mat-autocomplete>
           @if (form.controls.platform.value) {
+            <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
             <button
               class="game-form__clear-btn"
               mat-icon-button
@@ -164,6 +156,7 @@
             }
           </mat-autocomplete>
           @if (form.controls.store.value) {
+            <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
             <button
               class="game-form__clear-btn"
               mat-icon-button

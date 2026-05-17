@@ -23,13 +23,10 @@
             <span class="wishlist-item-dialog__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
           }
         </div>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onChangGame()"
-          [attr.aria-label]="'wishlist.dialog.changeGame' | transloco">
-          <mat-icon>close</mat-icon>
-        </button>
+        <app-lib-icon-button
+          icon="close"
+          [ariaLabel]="'wishlist.dialog.changeGame' | transloco"
+          (clicked)="onChangGame()" />
       </div>
     }
 
@@ -39,13 +36,11 @@
         <span class="wishlist-item-dialog__priority-label">{{ 'wishlist.fields.priority' | transloco }}</span>
         <div class="wishlist-item-dialog__priority-stars">
           @for (level of priorityOptions; track level) {
-            <button
-              mat-icon-button
-              type="button"
-              (click)="form.controls.priority.setValue(level)"
-              [attr.aria-label]="level">
-              <mat-icon>{{ level <= form.controls.priority.value ? 'star' : 'star_border' }}</mat-icon>
-            </button>
+            <app-lib-icon-button
+              [icon]="level <= form.controls.priority.value ? 'star' : 'star_border'"
+              [ariaLabel]="'' + level"
+              variant="primary"
+              (clicked)="form.controls.priority.setValue(level)" />
           }
         </div>
       </div>

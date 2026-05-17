@@ -16,29 +16,26 @@
   </mat-form-field>
 
   @if (showViewModeBtn()) {
-    <button
+    <app-lib-icon-button
       class="list-page-header__view-btn"
-      mat-icon-button
-      type="button"
+      [icon]="viewMode() === 'grid' ? 'view_list' : 'view_module'"
+      [ariaLabel]="'gameList.aria.toggleViewMode' | transloco"
       [disabled]="disabled()"
-      (click)="viewModeToggle.emit()"
-      [attr.aria-label]="'gameList.aria.toggleViewMode' | transloco">
-      <mat-icon>{{ viewMode() === 'grid' ? 'view_list' : 'view_module' }}</mat-icon>
-    </button>
+      (clicked)="viewModeToggle.emit()" />
   }
 
   @if (showFilterBtn()) {
-    <button
-      class="list-page-header__filter-btn"
-      mat-icon-button
-      [disabled]="disabled()"
-      (click)="filterClick.emit()"
-      [attr.aria-label]="'gameList.filters.filters' | transloco">
-      <mat-icon>tune</mat-icon>
+    <div class="list-page-header__filter-wrap">
+      <app-lib-icon-button
+        class="list-page-header__filter-btn"
+        icon="tune"
+        [ariaLabel]="'gameList.filters.filters' | transloco"
+        [disabled]="disabled()"
+        (clicked)="filterClick.emit()" />
       @if (filterCount() > 0) {
         <span class="list-page-header__filter-badge">{{ filterCount() }}</span>
       }
-    </button>
+    </div>
   }
 
   @if (showAddBtn()) {

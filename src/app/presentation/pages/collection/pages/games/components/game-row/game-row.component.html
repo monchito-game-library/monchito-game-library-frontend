@@ -68,12 +68,11 @@
   </div>
 
   <!-- Delete -->
-  <button
-    mat-icon-button
-    type="button"
+  <app-lib-icon-button
+    icon="delete"
+    variant="danger"
+    size="sm"
     class="game-row__delete"
-    (click)="onDelete($event)"
-    [attr.aria-label]="'gameCard.aria.delete' | transloco">
-    <mat-icon>delete</mat-icon>
-  </button>
+    [ariaLabel]="'gameCard.aria.delete' | transloco"
+    (clicked)="onDelete($event)" />
 </button>

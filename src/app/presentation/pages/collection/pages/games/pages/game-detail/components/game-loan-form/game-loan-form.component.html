@@ -1,13 +1,11 @@
 <div class="game-loan-form">
   <!-- Header -->
   <div class="game-loan-form__header">
-    <button
-      mat-icon-button
+    <app-lib-icon-button
+      icon="arrow_back"
+      [ariaLabel]="'common.back' | transloco"
       class="game-loan-form__back-btn"
-      (click)="onCancel()"
-      [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+      (clicked)="onCancel()" />
     <h2 class="game-loan-form__title">{{ 'gameDetail.loan.title' | transloco }}</h2>
   </div>
 

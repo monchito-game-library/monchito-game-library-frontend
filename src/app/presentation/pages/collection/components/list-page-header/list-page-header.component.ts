@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -13,7 +12,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   styleUrl: './list-page-header.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibButtonComponent, MatIconButton, MatFormField, MatLabel, MatPrefix, MatIcon, MatInput, TranslocoPipe]
+  imports: [LibButtonComponent, LibIconButtonComponent, MatFormField, MatLabel, MatPrefix, MatInput, TranslocoPipe]
 })
 export class ListPageHeaderComponent {
   /** Transloco key for the search field label. */

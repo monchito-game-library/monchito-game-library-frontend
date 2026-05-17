@@ -12,8 +12,8 @@ import { NgOptimizedImage } from '@angular/common';
 
 import { MatIcon } from '@angular/material/icon';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -50,8 +50,8 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   imports: [
     MatIcon,
     LibSpinnerComponent,
-    MatIconButton,
     MatTooltip,
+    LibIconButtonComponent,
     TranslocoPipe,
     NgOptimizedImage,
     LibSkeletonComponent,

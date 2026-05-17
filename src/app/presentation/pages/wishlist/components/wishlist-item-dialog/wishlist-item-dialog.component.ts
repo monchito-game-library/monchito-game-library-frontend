@@ -12,8 +12,8 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -34,7 +34,7 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatIconButton,
+    LibIconButtonComponent,
     MatFormField,
     MatLabel,
     MatError,

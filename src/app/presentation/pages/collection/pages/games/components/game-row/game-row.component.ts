@@ -12,7 +12,7 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { MatIconButton } from '@angular/material/button';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -35,7 +35,15 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrl: './game-row.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, NgOptimizedImage, MatIconButton, MatIcon, MatTooltip, TranslocoPipe, LibChipComponent]
+  imports: [
+    CurrencyPipe,
+    NgOptimizedImage,
+    MatIcon,
+    MatTooltip,
+    TranslocoPipe,
+    LibChipComponent,
+    LibIconButtonComponent
+  ]
 })
 export class GameRowComponent {
   private readonly _router: Router = inject(Router);

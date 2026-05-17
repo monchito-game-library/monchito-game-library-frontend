@@ -22,41 +22,31 @@
       <div class="game-detail__hero-overlay">
         <!-- Topbar: back a la izquierda, acciones contextuales a la derecha -->
         <div class="game-detail__topbar">
-          <button
-            mat-icon-button
+          <app-lib-icon-button
+            icon="arrow_back"
             class="game-detail__back-btn"
-            (click)="goBack()"
-            [attr.aria-label]="'common.back' | transloco">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
+            [ariaLabel]="'common.back' | transloco"
+            (clicked)="goBack()" />
 
           @if (!showSaleForm() && !showLoanForm()) {
             <div class="game-detail__topbar-actions">
               @if (!g.soldAt) {
-                <button
-                  mat-icon-button
+                <app-lib-icon-button
+                  icon="edit"
                   class="game-detail__topbar-action-btn"
-                  (click)="editGame()"
-                  [attr.aria-label]="'gameCard.menu.edit' | transloco">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
+                  [ariaLabel]="'gameCard.menu.edit' | transloco"
+                  (clicked)="editGame()" />
+                <app-lib-icon-button
+                  icon="sell"
                   class="game-detail__topbar-action-btn"
-                  (click)="openSaleView()"
-                  [attr.aria-label]="'gameDetail.sale.manageBtn' | transloco">
-                  <mat-icon>sell</mat-icon>
-                </button>
+                  [ariaLabel]="'gameDetail.sale.manageBtn' | transloco"
+                  (clicked)="openSaleView()" />
               }
-              <button
-                mat-icon-button
+              <app-lib-icon-button
+                icon="more_vert"
                 class="game-detail__topbar-menu-btn"
                 [matMenuTriggerFor]="contextMenu"
-                [attr.aria-label]="
-                  (g.soldAt ? 'gameDetail.aria.soldActions' : 'gameDetail.aria.moreActions') | transloco
-                ">
-                <mat-icon>more_vert</mat-icon>
-              </button>
+                [ariaLabel]="(g.soldAt ? 'gameDetail.aria.soldActions' : 'gameDetail.aria.moreActions') | transloco" />
               <mat-menu #contextMenu="matMenu">
                 @if (g.soldAt) {
                   <button mat-menu-item (click)="openSaleView()">

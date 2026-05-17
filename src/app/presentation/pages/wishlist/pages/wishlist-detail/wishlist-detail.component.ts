@@ -11,7 +11,7 @@ import {
 import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -40,8 +40,8 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     DecimalPipe,
     NgOptimizedImage,
     MatIcon,
-    MatIconButton,
     MatTooltip,
+    LibIconButtonComponent,
     TranslocoPipe,
     LibSkeletonComponent,
     LibChipComponent,

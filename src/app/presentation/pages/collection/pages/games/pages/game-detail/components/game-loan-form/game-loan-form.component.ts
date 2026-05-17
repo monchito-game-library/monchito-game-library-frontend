@@ -14,8 +14,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -38,8 +38,8 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatIconButton,
     MatIcon,
+    LibIconButtonComponent,
     MatFormField,
     MatLabel,
     MatSuffix,

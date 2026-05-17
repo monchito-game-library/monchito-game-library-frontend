@@ -40,14 +40,12 @@
     <div class="packs-section">
       <div class="packs-section__header">
         <span class="packs-section__title">{{ 'management.products.packsTitle' | transloco }}</span>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="addPack()"
+        <app-lib-icon-button
+          icon="add"
+          size="sm"
+          [ariaLabel]="'management.products.addPack' | transloco"
           [matTooltip]="'management.products.addPack' | transloco"
-          [attr.aria-label]="'management.products.addPack' | transloco">
-          <mat-icon>add</mat-icon>
-        </button>
+          (clicked)="addPack()" />
       </div>
 
       @if (packsArray.length === 0) {
@@ -79,14 +77,13 @@
               <input matInput formControlName="url" type="url" placeholder="https://..." />
             </mat-form-field>
 
-            <button
-              mat-icon-button
-              type="button"
-              (click)="removePack($index)"
+            <app-lib-icon-button
+              icon="delete"
+              variant="danger"
+              size="sm"
               class="pack-row__remove"
-              [attr.aria-label]="'management.products.removePack' | transloco">
-              <mat-icon>delete</mat-icon>
-            </button>
+              [ariaLabel]="'management.products.removePack' | transloco"
+              (clicked)="removePack($index)" />
           </div>
         }
       </div>

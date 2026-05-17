@@ -8,8 +8,8 @@ import {
   OutputEmitterRef
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -30,7 +30,7 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     class: 'order-detail-page__section order-detail-page__section--lines',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, MatIconButton, MatIcon, MatTooltip, TranslocoPipe, LibButtonComponent]
+  imports: [DecimalPipe, MatIcon, MatTooltip, TranslocoPipe, LibButtonComponent, LibIconButtonComponent]
 })
 export class OrderProductListComponent {
   private readonly _userContext: UserContextService = inject(UserContextService);

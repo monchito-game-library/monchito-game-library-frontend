@@ -6,14 +6,12 @@
         <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
       </div>
-      <button
-        mat-icon-button
-        type="button"
+      <app-lib-icon-button
+        icon="edit"
+        size="sm"
         class="editions-page__edit-btn"
-        [attr.aria-label]="'common.edit' | transloco"
-        (click)="onEditModel()">
-        <mat-icon>edit</mat-icon>
-      </button>
+        [ariaLabel]="'common.edit' | transloco"
+        (clicked)="onEditModel()" />
     </div>
     <app-lib-button
       [label]="'management.hardware.editions.addBtn' | transloco"

@@ -1,13 +1,11 @@
 <div class="sale-form">
   <!-- Header -->
   <div class="sale-form__header">
-    <button
-      mat-icon-button
+    <app-lib-icon-button
+      icon="arrow_back"
+      [ariaLabel]="'common.back' | transloco"
       class="sale-form__back-btn"
-      (click)="onCancel()"
-      [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+      (clicked)="onCancel()" />
     <h2 class="sale-form__title">{{ i18nPrefix() + '.title' | transloco }}</h2>
   </div>
 

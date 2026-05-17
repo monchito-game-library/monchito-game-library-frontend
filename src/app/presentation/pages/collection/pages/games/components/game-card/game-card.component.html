@@ -86,13 +86,11 @@
             <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
           </div>
           @if (game().description) {
-            <button
-              mat-icon-button
+            <app-lib-icon-button
+              icon="flip_to_back"
               class="game-card__flip-btn"
-              (click)="onFlip(); $event.stopPropagation()"
-              [attr.aria-label]="'gameCard.aria.viewDescription' | transloco">
-              <mat-icon>flip_to_back</mat-icon>
-            </button>
+              [ariaLabel]="'gameCard.aria.viewDescription' | transloco"
+              (clicked)="onFlip(); $event.stopPropagation()" />
           }
         </div>
       </div>
@@ -108,13 +106,11 @@
           }
           <p class="game-card__back-description">{{ game().description }}</p>
         </div>
-        <button
-          mat-icon-button
+        <app-lib-icon-button
+          icon="flip_to_front"
           class="game-card__flip-btn game-card__flip-btn--back"
-          (click)="onFlip(); $event.stopPropagation()"
-          [attr.aria-label]="'gameCard.aria.back' | transloco">
-          <mat-icon>flip_to_front</mat-icon>
-        </button>
+          [ariaLabel]="'gameCard.aria.back' | transloco"
+          (clicked)="onFlip(); $event.stopPropagation()" />
       </div>
     </div>
   </div>

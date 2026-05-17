@@ -80,9 +80,7 @@
 @if (viewMode() === 'search') {
   <div class="wishlist-view">
     <header class="wishlist-view__header">
-      <button mat-icon-button type="button" (click)="onMobileCancel()" [attr.aria-label]="'common.cancel' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.cancel' | transloco" (clicked)="onMobileCancel()" />
       <h1 class="wishlist-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
     </header>
     <p class="wishlist-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
@@ -94,13 +92,10 @@
 @if (viewMode() === 'form') {
   <div class="wishlist-view">
     <header class="wishlist-view__header">
-      <button
-        mat-icon-button
-        type="button"
-        (click)="pendingCatalogEntry() ? onMobileBackToSearch() : onMobileCancel()"
-        [attr.aria-label]="'common.cancel' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <app-lib-icon-button
+        icon="arrow_back"
+        [ariaLabel]="'common.cancel' | transloco"
+        (clicked)="pendingCatalogEntry() ? onMobileBackToSearch() : onMobileCancel()" />
       <h1 class="wishlist-view__title">
         {{ (pendingCatalogEntry() ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
       </h1>
@@ -145,13 +140,11 @@
           <span class="wishlist-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
           <div class="wishlist-view__stars">
             @for (level of priorityOptions; track level) {
-              <button
-                mat-icon-button
-                type="button"
-                (click)="mobileForm.controls.priority.setValue(level)"
-                [attr.aria-label]="level">
-                <mat-icon>{{ level <= mobileForm.controls.priority.value ? 'star' : 'star_border' }}</mat-icon>
-              </button>
+              <app-lib-icon-button
+                [icon]="level <= mobileForm.controls.priority.value ? 'star' : 'star_border'"
+                [ariaLabel]="'' + level"
+                variant="primary"
+                (clicked)="mobileForm.controls.priority.setValue(level)" />
             }
           </div>
         </div>

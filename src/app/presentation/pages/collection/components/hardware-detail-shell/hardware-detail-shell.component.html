@@ -1,9 +1,7 @@
 <div class="hardware-detail">
   @if (loading()) {
     <div class="hardware-detail__header">
-      <button mat-icon-button type="button" (click)="backClicked.emit()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
       <div class="hardware-detail__header-titles">
         <app-lib-skeleton width="160px" height="20px" />
         <app-lib-skeleton width="100px" height="14px" />
@@ -26,9 +24,7 @@
     </div>
   } @else if (item()) {
     <div class="hardware-detail__header">
-      <button mat-icon-button type="button" (click)="backClicked.emit()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
       <div class="hardware-detail__header-titles">
         <h2 class="hardware-detail__title">{{ model()?.name ?? '—' }}</h2>
         <span class="hardware-detail__subtitle">{{ brand()?.name ?? '—' }}</span>

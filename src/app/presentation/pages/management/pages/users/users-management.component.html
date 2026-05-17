@@ -145,16 +145,14 @@
                       class="user-card__action-btn user-card__action-btn--demote"
                       (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        color="warn"
+                      <app-lib-icon-button
+                        icon="delete"
+                        variant="danger"
+                        size="sm"
                         class="user-card__action-delete"
-                        [attr.aria-label]="'management.users.action.delete' | transloco"
+                        [ariaLabel]="'management.users.action.delete' | transloco"
                         [matTooltip]="'management.users.action.delete' | transloco"
-                        (click)="onDeleteUser(user)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
+                        (clicked)="onDeleteUser(user)" />
                     }
                   }
                 </div>
@@ -206,16 +204,14 @@
                       class="user-card__action-btn user-card__action-btn--promote"
                       (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        color="warn"
+                      <app-lib-icon-button
+                        icon="delete"
+                        variant="danger"
+                        size="sm"
                         class="user-card__action-delete"
-                        [attr.aria-label]="'management.users.action.delete' | transloco"
+                        [ariaLabel]="'management.users.action.delete' | transloco"
                         [matTooltip]="'management.users.action.delete' | transloco"
-                        (click)="onDeleteUser(user)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
+                        (clicked)="onDeleteUser(user)" />
                     }
                   }
                 </div>

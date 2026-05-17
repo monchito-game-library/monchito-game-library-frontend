@@ -1,8 +1,6 @@
 <div class="hw-form">
   <div class="hw-form__header">
-    <button mat-icon-button type="button" (click)="cancelClick.emit()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+    <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="cancelClick.emit()" />
     <h2 class="hw-form__title">
       @if (isEditMode()) {
         {{ i18nPrefix() + '.editTitle' | transloco }}
@@ -41,6 +39,7 @@
           }
         </mat-autocomplete>
         @if (form().get('brandId')?.value) {
+          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
           <button
             matSuffix
             mat-icon-button
@@ -63,6 +62,7 @@
           }
         </mat-autocomplete>
         @if (form().get('modelId')?.value) {
+          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
           <button
             matSuffix
             mat-icon-button
@@ -107,6 +107,7 @@
           }
         </mat-autocomplete>
         @if (form().get('store')?.value) {
+          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
           <button matSuffix mat-icon-button type="button" (click)="form().get('store')?.setValue(null)">
             <mat-icon>close</mat-icon>
           </button>

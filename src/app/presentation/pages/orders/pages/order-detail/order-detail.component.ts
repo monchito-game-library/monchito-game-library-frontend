@@ -11,9 +11,8 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatIconButton } from '@angular/material/button';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -49,8 +48,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    MatIconButton,
-    MatIcon,
+    LibIconButtonComponent,
     MatTooltip,
     LibSkeletonComponent,
     TranslocoPipe,

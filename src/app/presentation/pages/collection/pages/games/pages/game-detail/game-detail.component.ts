@@ -14,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
@@ -56,8 +56,8 @@ import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-
     DatePipe,
     DecimalPipe,
     MatIcon,
-    MatIconButton,
     MatMenu,
+    LibIconButtonComponent,
     MatMenuItem,
     MatMenuTrigger,
     LibSpinnerComponent,

@@ -1,13 +1,11 @@
 <div class="hardware-loan-form">
   <!-- Header -->
   <div class="hardware-loan-form__header">
-    <button
-      mat-icon-button
+    <app-lib-icon-button
+      icon="arrow_back"
+      [ariaLabel]="'common.back' | transloco"
       class="hardware-loan-form__back-btn"
-      (click)="onCancel()"
-      [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+      (clicked)="onCancel()" />
     <h2 class="hardware-loan-form__title">{{ 'hardwareLoan.title' | transloco }}</h2>
   </div>
 

@@ -1,29 +1,22 @@
 <div class="wishlist-detail">
   <!-- ─── Toolbar ──────────────────────────────────────────────────────────── -->
   <header class="wishlist-detail__toolbar">
-    <button mat-icon-button type="button" (click)="onBack()" [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+    <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="onBack()" />
     <h1 class="wishlist-detail__toolbar-title">{{ 'nav.wishlist' | transloco }}</h1>
     @if (item()) {
       <div class="wishlist-detail__toolbar-actions">
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onEdit()"
+        <app-lib-icon-button
+          icon="edit"
+          [ariaLabel]="'common.edit' | transloco"
           [matTooltip]="'common.edit' | transloco"
-          [attr.aria-label]="'common.edit' | transloco">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onDelete()"
+          (clicked)="onEdit()" />
+        <app-lib-icon-button
+          icon="delete"
+          variant="danger"
           class="wishlist-detail__delete-btn"
+          [ariaLabel]="'common.delete' | transloco"
           [matTooltip]="'common.delete' | transloco"
-          [attr.aria-label]="'common.delete' | transloco">
-          <mat-icon>delete</mat-icon>
-        </button>
+          (clicked)="onDelete()" />
       </div>
     }
   </header>

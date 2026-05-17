@@ -1,3 +1,9 @@
+// display: contents hace que el host no genere un box propio.
+// matTooltip y matMenuTriggerFor aplicados al host se disparan sobre el <button> interno.
+:host {
+  display: contents;
+}
+
 .lib-icon-btn {
   --color: var(--text-mid);
 

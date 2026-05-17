@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconButton } from '@angular/material/button';
+import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -50,7 +50,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     NgOptimizedImage,
     SlicePipe,
     ReactiveFormsModule,
-    MatIconButton,
+    LibIconButtonComponent,
     MatFormField,
     MatLabel,
     MatError,
