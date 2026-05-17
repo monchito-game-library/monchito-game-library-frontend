@@ -629,6 +629,13 @@ mat-progress-spinner {
   color: var(--text-mid);
 }
 
+// ────────────────────────── Utility: lib-divider ──────────────────────────────────
+.lib-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
 // ────────────────────────── Route transitions ──────────────────────────────────────
 .app-content router-outlet + * {
   animation: routeFadeIn 220ms ease-out backwards;

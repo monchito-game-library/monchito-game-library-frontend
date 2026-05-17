@@ -17,7 +17,6 @@ import { NgOptimizedImage } from '@angular/common';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatInput } from '@angular/material/input';
@@ -51,7 +50,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   imports: [
     NgOptimizedImage,
     LibCardComponent,
-    MatDivider,
     MatFormField,
     MatLabel,
     MatInput,

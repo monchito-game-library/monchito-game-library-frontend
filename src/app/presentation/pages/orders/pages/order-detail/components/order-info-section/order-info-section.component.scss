@@ -322,26 +322,42 @@
   flex: 1;
 }
 
-.order-detail-page__discount-type-toggle {
-  height: 2.75rem;
+.lib-radio-group {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  padding: 0;
+  margin: 0;
   flex-shrink: 0;
 
-  ::ng-deep .mat-button-toggle {
-    font-size: var(--text-lg);
-    font-weight: 500;
-  }
-
-  ::ng-deep .mat-button-toggle-button {
-    height: 100%;
+  .lib-radio-group__option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--text-mid);
+    border-right: 1px solid var(--border);
     display: flex;
     align-items: center;
-    justify-content: center;
-  }
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
 
-  ::ng-deep .mat-button-toggle-label-content {
-    line-height: normal;
-    display: flex;
-    align-items: center;
+    input[type='radio'] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &:has(input:checked) {
+      color: var(--text-hi);
+      background: var(--bg-surface-hi);
+    }
+
+    &:focus-within {
+      outline: 1px solid var(--primary);
+      outline-offset: -1px;
+    }
+
+    &:last-child {
+      border-right: none;
+    }
   }
 }
 

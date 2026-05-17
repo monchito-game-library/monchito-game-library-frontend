@@ -298,6 +298,7 @@
       "shippingCost": "Shipping (€)",
       "paypalFee": "PayPal fee (€)",
       "discountAmount": "Discount",
+      "discountType": "Discount type",
       "orderDate": "Order date",
       "receivedDate": "Received date",
       "edit": "Edit header",

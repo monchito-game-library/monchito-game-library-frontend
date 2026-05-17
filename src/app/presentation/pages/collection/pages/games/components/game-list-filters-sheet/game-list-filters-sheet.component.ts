@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, Si
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatOption } from '@angular/material/core';
-import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatSelect } from '@angular/material/select';
@@ -25,7 +24,6 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   imports: [
     LibButtonComponent,
     LibIconButtonComponent,
-    MatDivider,
     MatFormField,
     MatLabel,
     MatSelect,

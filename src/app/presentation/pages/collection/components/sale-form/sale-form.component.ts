@@ -22,7 +22,6 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular
 
 import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDivider } from '@angular/material/divider';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
@@ -53,7 +52,6 @@ import {
     MatDatepickerInput,
     MatDatepickerToggle,
     DatepickerFieldClickDirective,
-    MatDivider,
     TranslocoPipe,
     LibButtonComponent
   ]
