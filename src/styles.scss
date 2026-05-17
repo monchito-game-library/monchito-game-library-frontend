@@ -365,12 +365,14 @@ input[type='number'] {
   }
 }
 
+// ────────────────────────── Responsive: ≥ 2561px (2K/QHD+) ──────────────────────────
 @media (min-width: 2561px) {
   :root {
     font-size: 20px;
   }
 }
 
+// ────────────────────────── Responsive: ≥ 3841px (4K/UHD+) ──────────────────────────
 @media (min-width: 3841px) {
   :root {
     font-size: 22px;
