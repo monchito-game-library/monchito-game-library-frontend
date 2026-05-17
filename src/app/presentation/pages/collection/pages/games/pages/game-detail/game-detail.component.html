@@ -164,14 +164,14 @@
         <!-- "Mi opinión" — atributos de la obra (compartidos entre todas las copias) -->
         <section class="game-detail__section game-detail__section--opinion">
           <h2 class="game-detail__section-title">{{ 'gameDetail.opinion' | transloco }}</h2>
-          <div class="game-detail__data-grid">
+          <dl class="game-detail__data-grid">
             @if (g.personalRating !== null) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>star</mat-icon>
                   {{ 'gameForm.fields.rating' | transloco }}
-                </span>
-                <span class="game-detail__data-value game-detail__data-value--rating">
+                </dt>
+                <dd class="game-detail__data-value game-detail__data-value--rating">
                   <span class="game-detail__stars">
                     @for (_ of ratingStars(); track $index) {
                       <mat-icon>star</mat-icon>
@@ -181,47 +181,47 @@
                     }
                   </span>
                   <span>{{ g.personalRating }}/10</span>
-                </span>
+                </dd>
               </div>
             }
 
             @if (g.isFavorite) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>favorite</mat-icon>
                   {{ 'gameDetail.favorite' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ 'common.yes' | transloco }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ 'common.yes' | transloco }}</dd>
               </div>
             }
-          </div>
+          </dl>
         </section>
 
         <!-- Información del catálogo — común a la obra, encima de los tabs -->
         @if (g.rawgId) {
           <section class="game-detail__section">
             <h2 class="game-detail__section-title">{{ 'gameDetail.catalogInfo' | transloco }}</h2>
-            <div class="game-detail__data-grid">
+            <dl class="game-detail__data-grid">
               @if (g.releasedDate) {
                 <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
+                  <dt class="game-detail__data-label">
                     <mat-icon>event</mat-icon>
                     {{ 'gameDetail.released' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.releasedDate }}</span>
+                  </dt>
+                  <dd class="game-detail__data-value">{{ g.releasedDate }}</dd>
                 </div>
               }
 
               @if (g.rawgRating) {
                 <div class="game-detail__data-item">
-                  <span class="game-detail__data-label">
+                  <dt class="game-detail__data-label">
                     <mat-icon>public</mat-icon>
                     {{ 'gameDetail.communityRating' | transloco }}
-                  </span>
-                  <span class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</span>
+                  </dt>
+                  <dd class="game-detail__data-value">{{ g.rawgRating | number: '1.1-1' }} / 5</dd>
                 </div>
               }
-            </div>
+            </dl>
 
             @if (g.genres.length) {
               <div class="game-detail__genres">
@@ -259,57 +259,57 @@
             </div>
           }
 
-          <div class="game-detail__data-grid">
+          <dl class="game-detail__data-grid">
             @if (g.price !== null) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>payments</mat-icon>
                   {{ 'gameForm.fields.price' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ g.price | currency: 'EUR' }}</dd>
               </div>
             }
 
             @if (storeName()) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>storefront</mat-icon>
                   {{ 'gameForm.fields.store' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ storeName() }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ storeName() }}</dd>
               </div>
             }
 
             @if (formatKey()) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>{{ g.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
                   {{ 'gameForm.fields.format' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ formatKey()! | transloco }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ formatKey()! | transloco }}</dd>
               </div>
             }
 
             @if (conditionKey()) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>grade</mat-icon>
                   {{ 'gameForm.fields.condition' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ conditionKey()! | transloco }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ conditionKey()! | transloco }}</dd>
               </div>
             }
 
             @if (g.edition) {
               <div class="game-detail__data-item">
-                <span class="game-detail__data-label">
+                <dt class="game-detail__data-label">
                   <mat-icon>style</mat-icon>
                   {{ 'gameForm.fields.edition' | transloco }}
-                </span>
-                <span class="game-detail__data-value">{{ g.edition }}</span>
+                </dt>
+                <dd class="game-detail__data-value">{{ g.edition }}</dd>
               </div>
             }
-          </div>
+          </dl>
 
           <!-- Notas — descripción libre por copia. También cambia con el tab. -->
           @if (g.description) {
