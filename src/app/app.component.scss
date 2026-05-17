@@ -342,6 +342,11 @@
     }
   }
 
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+
   &--logout {
     border-color: var(--border);
     color: var(--accent-rose);
