@@ -14,6 +14,8 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -29,7 +31,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrls: ['./collection-overview.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe]
+  imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe, LibSectionHeaderComponent, LibDataRowComponent]
 })
 export class CollectionOverviewComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
