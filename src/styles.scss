@@ -718,3 +718,39 @@ mat-progress-spinner {
     display: none;
   }
 }
+
+// ────────────────────────── lib-overlay (CDK Overlay panels) ────────────────
+
+.lib-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.lib-overlay-backdrop--transparent {
+  background: transparent;
+}
+
+.lib-overlay-panel--dialog {
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.lib-overlay-panel--menu {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  min-width: 12rem;
+}
+
+.lib-overlay-panel--bottom-sheet {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 90vh;
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  background: var(--bg-surface);
+}

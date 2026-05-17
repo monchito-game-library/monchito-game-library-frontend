@@ -1,0 +1,245 @@
+import { ElementRef, InjectionToken, Injectable, Injector, TemplateRef, inject } from '@angular/core';
+import { ConnectedPosition, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal, ComponentType, TemplatePortal } from '@angular/cdk/portal';
+import { ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
+import { Observable, Subject } from 'rxjs';
+import { LibOverlayConfig } from '@/interfaces/lib-overlay-config.interface';
+
+// ─── Tokens de inyección ─────────────────────────────────────────────────────
+
+/** Token para inyectar la LibOverlayRef dentro del componente abierto. */
+export const LIB_OVERLAY_REF = new InjectionToken<LibOverlayRef>('LIB_OVERLAY_REF');
+
+/** Token para inyectar los datos pasados al overlay desde el caller. */
+export const LIB_OVERLAY_DATA = new InjectionToken<unknown>('LIB_OVERLAY_DATA');
+
+// ─── Configs preset ──────────────────────────────────────────────────────────
+
+/** Preset para dialogs modales con foco atrapado y scroll bloqueado. */
+export const LIB_OVERLAY_DIALOG_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop',
+  panelClass: 'lib-overlay-panel--dialog',
+  scrollStrategy: 'block',
+  focusTrap: true,
+  autoFocus: 'first-tabbable',
+  restoreFocus: true
+};
+
+/** Preset para menús contextuales; sin focus trap (ListKeyManager lo gestiona). */
+export const LIB_OVERLAY_MENU_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop--transparent',
+  panelClass: 'lib-overlay-panel--menu',
+  scrollStrategy: 'reposition',
+  focusTrap: false,
+  restoreFocus: true
+};
+
+/** Preset para bottom sheets con foco atrapado, scroll bloqueado y panel pegado al fondo. */
+export const LIB_OVERLAY_BOTTOM_SHEET_CONFIG: LibOverlayConfig = {
+  hasBackdrop: true,
+  backdropClass: 'lib-overlay-backdrop',
+  panelClass: 'lib-overlay-panel--bottom-sheet',
+  scrollStrategy: 'block',
+  focusTrap: true,
+  autoFocus: 'first-tabbable',
+  restoreFocus: true
+};
+
+// ─── LibOverlayRef ───────────────────────────────────────────────────────────
+
+/**
+ * Referencia a un overlay abierto. Envuelve el OverlayRef del CDK y expone
+ * una API limpia para cerrar, escuchar el cierre y acceder a la instancia del
+ * componente proyectado.
+ */
+export class LibOverlayRef<T = unknown, R = unknown> {
+  private readonly _afterClosed$: Subject<R | undefined> = new Subject<R | undefined>();
+  private _result: R | undefined;
+
+  /** Instancia del componente abierto (null si se abrió con TemplateRef). */
+  componentInstance: T | null = null;
+
+  constructor(private readonly _overlayRef: OverlayRef) {}
+
+  /**
+   * Cierra el overlay, opcionalmente con un resultado que se emitirá en afterClosed$.
+   *
+   * @param {R} result - Valor opcional de resultado del overlay.
+   */
+  close(result?: R): void {
+    this._result = result;
+    this._overlayRef.dispose();
+    this._afterClosed$.next(this._result);
+    this._afterClosed$.complete();
+  }
+
+  /**
+   * Observable que emite una vez cuando el overlay se cierra, con el resultado.
+   */
+  get afterClosed$(): Observable<R | undefined> {
+    return this._afterClosed$.asObservable();
+  }
+
+  /**
+   * Observable que emite al hacer click en el backdrop.
+   */
+  get backdropClick$(): Observable<MouseEvent> {
+    return this._overlayRef.backdropClick();
+  }
+
+  /**
+   * Observable que emite eventos de teclado dentro del overlay.
+   */
+  get keydownEvents$(): Observable<KeyboardEvent> {
+    return this._overlayRef.keydownEvents();
+  }
+}
+
+// ─── LibOverlayService ───────────────────────────────────────────────────────
+
+/**
+ * Servicio de infraestructura de overlay reutilizable.
+ * Envuelve el CDK Overlay y centraliza la lógica de focus trap, scroll lock
+ * y restauración de foco. Sirve de base para lib-menu, lib-bottom-sheet y
+ * lib-dialog.
+ */
+@Injectable({ providedIn: 'root' })
+export class LibOverlayService {
+  private readonly _overlay: Overlay = inject(Overlay);
+  private readonly _injector: Injector = inject(Injector);
+  private readonly _focusTrapFactory: ConfigurableFocusTrapFactory = inject(ConfigurableFocusTrapFactory);
+
+  /**
+   * Abre un componente o TemplateRef dentro de un overlay CDK.
+   * Devuelve una LibOverlayRef con .close(), .afterClosed$, .backdropClick$.
+   *
+   * @param {ComponentType<T> | TemplateRef<unknown>} content - Componente o template a proyectar.
+   * @param {LibOverlayConfig} config - Configuración del overlay.
+   */
+  open<T, R = unknown>(
+    content: ComponentType<T> | TemplateRef<unknown>,
+    config?: LibOverlayConfig
+  ): LibOverlayRef<T, R> {
+    const cfg = config ?? {};
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const scrollStrategy = this._resolveScrollStrategy(cfg.scrollStrategy);
+
+    const overlayConfig = new OverlayConfig({
+      hasBackdrop: cfg.hasBackdrop ?? false,
+      backdropClass: cfg.backdropClass,
+      panelClass: cfg.panelClass,
+      scrollStrategy,
+      disposeOnNavigation: cfg.disposeOnNavigation ?? true,
+      width: cfg.width,
+      height: cfg.height,
+      positionStrategy: cfg.origin
+        ? this._buildConnectedPosition(cfg.origin, cfg.positions)
+        : this._overlay.position().global().centerHorizontally().centerVertically()
+    });
+
+    const overlayRef = this._overlay.create(overlayConfig);
+    const libRef = new LibOverlayRef<T, R>(overlayRef);
+
+    if (content instanceof TemplateRef) {
+      const portal = new TemplatePortal(content, null as any);
+      overlayRef.attach(portal);
+    } else {
+      const injector = this._createInjector(libRef as LibOverlayRef<unknown, unknown>, cfg.data);
+      const portal = new ComponentPortal(content, null, injector);
+      const componentRef = overlayRef.attach(portal);
+      libRef.componentInstance = componentRef.instance;
+    }
+
+    if (cfg.hasBackdrop) {
+      overlayRef.backdropClick().subscribe(() => libRef.close());
+    }
+
+    overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        libRef.close();
+      }
+    });
+
+    if (cfg.focusTrap) {
+      const panelEl = overlayRef.overlayElement;
+      const focusTrap = this._focusTrapFactory.create(panelEl);
+
+      if (cfg.autoFocus === 'first-tabbable') {
+        focusTrap.focusFirstTabbableElementWhenReady();
+      }
+
+      libRef.afterClosed$.subscribe(() => {
+        focusTrap.destroy();
+        if (cfg.restoreFocus && previouslyFocused) {
+          previouslyFocused.focus();
+        }
+      });
+    } else if (cfg.restoreFocus) {
+      libRef.afterClosed$.subscribe(() => {
+        if (previouslyFocused) {
+          previouslyFocused.focus();
+        }
+      });
+    }
+
+    return libRef;
+  }
+
+  /**
+   * Resuelve la estrategia de scroll según la configuración.
+   *
+   * @param {'reposition' | 'block' | 'close' | undefined} strategy - Tipo de estrategia.
+   */
+  private _resolveScrollStrategy(strategy?: 'reposition' | 'block' | 'close') {
+    switch (strategy) {
+      case 'block':
+        return this._overlay.scrollStrategies.block();
+      case 'close':
+        return this._overlay.scrollStrategies.close();
+      case 'reposition':
+      default:
+        return this._overlay.scrollStrategies.reposition();
+    }
+  }
+
+  /**
+   * Construye una estrategia de posición anclada a un elemento de origen.
+   *
+   * @param {ElementRef | HTMLElement} origin - Elemento disparador.
+   * @param {ConnectedPosition[] | undefined} positions - Posiciones de alineación CDK.
+   */
+  private _buildConnectedPosition(origin: ElementRef | HTMLElement, positions?: ConnectedPosition[]) {
+    const element = origin instanceof ElementRef ? origin.nativeElement : origin;
+    const defaultPositions: ConnectedPosition[] = [
+      { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+      { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+      { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+      { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' }
+    ];
+    return this._overlay
+      .position()
+      .flexibleConnectedTo(element)
+      .withPositions(positions ?? defaultPositions)
+      .withPush(true);
+  }
+
+  /**
+   * Crea un injector hijo con LIB_OVERLAY_REF y LIB_OVERLAY_DATA disponibles.
+   *
+   * @param {LibOverlayRef} ref - Referencia del overlay actual.
+   * @param {unknown} data - Datos opcionales para el componente abierto.
+   */
+  private _createInjector(ref: LibOverlayRef<unknown, unknown>, data?: unknown): Injector {
+    return Injector.create({
+      parent: this._injector,
+      providers: [
+        { provide: LIB_OVERLAY_REF, useValue: ref },
+        { provide: LIB_OVERLAY_DATA, useValue: data ?? null }
+      ]
+    });
+  }
+}
