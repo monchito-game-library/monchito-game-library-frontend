@@ -37,7 +37,8 @@
       "@/models/*": ["src/app/entities/models/*"],
       "@/mappers/*": ["src/app/data/mappers/*"],
       "@/env": ["src/environments/environment"],
-      "@/testing/*": ["src/testing/*"]
+      "@/testing/*": ["src/testing/*"],
+      "@/lib/*": ["src/app/presentation/components/lib/*"]
     }
   },
   "angularCompilerOptions": {

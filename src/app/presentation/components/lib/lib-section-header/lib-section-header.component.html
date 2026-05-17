@@ -1,0 +1,8 @@
+<div class="lib-section-header">
+  <span class="lib-section-header__prefix" aria-hidden="true">&gt;</span>
+  <h2 class="lib-section-header__label">{{ label() }}</h2>
+  @if (count() !== null) {
+    <span class="lib-section-header__count">[{{ count() }}]</span>
+  }
+  <ng-content select="[slot=actions]" />
+</div>

@@ -1,0 +1,109 @@
+.lib-btn {
+  --color: var(--text-hi);
+  --bg: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color);
+  background: var(--bg);
+  color: var(--color);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border-radius: 0;
+  transition:
+    color 120ms linear,
+    border-color 120ms linear;
+
+  &::before,
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0.4rem;
+    height: 1ch;
+    border-color: var(--color);
+    border-style: solid;
+  }
+
+  &::before {
+    border-width: 1px 0 1px 1px;
+    margin-right: 0.25rem; /* "[" */
+  }
+
+  &::after {
+    border-width: 1px 1px 1px 0;
+    margin-left: 0.25rem; /* "]" */
+  }
+
+  &--primary {
+    --color: var(--primary);
+  }
+  &--danger {
+    --color: var(--accent-rose);
+  }
+  &--success {
+    --color: var(--accent-green);
+  }
+  &--ghost {
+    --color: var(--text-mid);
+  }
+  &--full {
+    width: 100%;
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover {
+      color: var(--text-hi);
+      border-color: var(--border-active);
+      --color: var(--border-active);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .lib-btn__icon {
+    font-size: 1rem;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .lib-btn__icon--spin {
+    animation: lib-btn-spin 800ms linear infinite;
+  }
+}
+
+@keyframes lib-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .lib-btn {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+
+    &::before,
+    &::after {
+      display: none; /* corchetes ocultos en mobile */
+    }
+  }
+}
+
+// ────────────────────────── prefers-reduced-motion ──────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .lib-btn__icon--spin {
+    animation: none;
+  }
+}

@@ -1,0 +1,14 @@
+<div class="lib-empty">
+  <pre class="lib-empty__ascii" aria-hidden="true">
+┌──────────────────┐
+│  NO RESULTS      │
+│  0 RECORDS FOUND │
+└──────────────────┘</pre
+  >
+  <p class="lib-empty__title">{{ title() }}</p>
+  @if (subtitle()) {
+    <p class="lib-empty__subtitle">{{ subtitle() }}</p>
+  }
+  <p class="lib-empty__hint">{{ hint() }}</p>
+  <ng-content />
+</div>

@@ -1,0 +1,10 @@
+<div class="lib-cmd" aria-hidden="true">
+  <span class="lib-cmd__path">{{ path() }}</span>
+  <span class="lib-cmd__sep">$</span>
+  @for (f of flags(); track f) {
+    <span class="lib-cmd__flag">--{{ f }}</span>
+  }
+  @if (cursor()) {
+    <span class="lib-cmd__cursor"></span>
+  }
+</div>

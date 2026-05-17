@@ -1,0 +1,16 @@
+<div class="lib-row" [class.lib-row--emphasized]="emphasized()">
+  <dt class="lib-row__key">
+    @if (icon()) {
+      <mat-icon class="lib-row__icon">{{ icon() }}</mat-icon>
+    }
+    <span>{{ label() }}</span>
+  </dt>
+  <span class="lib-row__dots" aria-hidden="true"></span>
+  <dd class="lib-row__value">
+    @if (value() !== null) {
+      {{ value() }}
+    } @else {
+      <ng-content />
+    }
+  </dd>
+</div>

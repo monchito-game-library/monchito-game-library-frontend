@@ -1,0 +1,39 @@
+.lib-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+
+  .lib-empty__ascii {
+    color: var(--text-lo);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .lib-empty__title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-hi);
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .lib-empty__subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    color: var(--text-mid);
+    margin: 0;
+  }
+
+  .lib-empty__hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-green);
+    margin: 0;
+  }
+}

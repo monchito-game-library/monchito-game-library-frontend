@@ -1,0 +1,75 @@
+.lib-chip {
+  --c: var(--text-mid);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2px 8px; /* reason: micro-espaciado decorativo de chip */
+  border: 1px solid var(--c);
+  color: var(--c);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 0;
+  background: transparent;
+
+  &--primary {
+    --c: var(--primary);
+  }
+  &--green {
+    --c: var(--accent-green);
+  }
+  &--amber {
+    --c: var(--accent-amber);
+  }
+  &--rose {
+    --c: var(--accent-rose);
+  }
+  &--blue {
+    --c: var(--accent-blue);
+  }
+  &--neutral {
+    --c: var(--text-mid);
+  }
+
+  &--filled {
+    background: var(--c);
+    color: var(--bg-void);
+  }
+
+  .lib-chip__icon {
+    font-size: 0.75rem;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .lib-chip__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--c);
+    cursor: pointer;
+
+    .lib-chip__close-icon {
+      font-size: 0.75rem;
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .lib-chip .lib-chip__close {
+    /* touch target mínimo 24px para el área clicable */
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

@@ -1,0 +1,19 @@
+<button
+  class="lib-btn"
+  [class.lib-btn--primary]="variant() === 'primary'"
+  [class.lib-btn--ghost]="variant() === 'ghost'"
+  [class.lib-btn--danger]="variant() === 'danger'"
+  [class.lib-btn--success]="variant() === 'success'"
+  [class.lib-btn--full]="fullWidth()"
+  [class.lib-btn--loading]="loading()"
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="clicked.emit($event)">
+  @if (icon() && !loading()) {
+    <mat-icon class="lib-btn__icon">{{ icon() }}</mat-icon>
+  }
+  @if (loading()) {
+    <mat-icon class="lib-btn__icon lib-btn__icon--spin">progress_activity</mat-icon>
+  }
+  <span class="lib-btn__label">{{ label() }}</span>
+</button>
