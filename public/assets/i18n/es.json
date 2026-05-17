@@ -318,7 +318,8 @@
       "pending": "Pendiente",
       "markReady": "Marcar como listo",
       "cancelReady": "Cancelar listo",
-      "ready": "Listo"
+      "ready": "Listo",
+      "regressStatus": "Retroceder estado"
     },
     "lines": {
       "title": "Productos del pedido",

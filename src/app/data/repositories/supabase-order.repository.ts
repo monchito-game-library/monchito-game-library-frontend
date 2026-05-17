@@ -65,11 +65,12 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
         `
         )
         .eq('id', orderId)
-        .single(),
+        .maybeSingle(),
       this._supabase.rpc('get_order_members_info', { p_order_id: orderId })
     ]);
 
     if (orderError) throw new Error(`Failed to fetch order: ${orderError.message}`);
+    if (!orderData) throw new Error('Order not found or access denied');
     if (membersError) throw new Error(`Failed to fetch order members: ${membersError.message}`);
 
     const dto = orderData as OrderDetailDto;

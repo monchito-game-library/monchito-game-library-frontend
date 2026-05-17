@@ -568,7 +568,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * If the order is in 'ordering' and the user is the owner, pre-loads the products catalogue.
    */
   private async _loadOrder(): Promise<void> {
-    if (!this._orderId) return;
+    if (!this._orderId || !this.userContext.userId()) return;
 
     this.loading.set(true);
     try {
@@ -587,7 +587,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Used by the realtime subscription to avoid flickering.
    */
   private async _loadOrderSilent(): Promise<void> {
-    if (!this._orderId) return;
+    if (!this._orderId || !this.userContext.userId()) return;
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);

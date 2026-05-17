@@ -318,7 +318,8 @@
       "pending": "Pending",
       "markReady": "Mark as ready",
       "cancelReady": "Cancel ready",
-      "ready": "Ready"
+      "ready": "Ready",
+      "regressStatus": "Previous status"
     },
     "lines": {
       "title": "Order products",
