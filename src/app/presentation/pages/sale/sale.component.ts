@@ -12,7 +12,8 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
-import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
+import { LibTabsComponent } from '@/lib/lib-tabs/lib-tabs.component';
+import { LibTabComponent } from '@/lib/lib-tabs/lib-tab.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
@@ -35,9 +36,8 @@ import { Router } from '@angular/router';
     CurrencyPipe,
     DatePipe,
     LibIconComponent,
-    MatTab,
-    MatTabGroup,
-    MatTabLabel,
+    LibTabsComponent,
+    LibTabComponent,
     TranslocoPipe,
     LibSpinnerComponent
   ]
@@ -117,6 +117,16 @@ export class SaleComponent implements OnInit {
   setTab(tab: SaleTab): void {
     this.activeTab.set(tab);
     this.activeFilter.set('all');
+  }
+
+  /**
+   * Callback para selectedIndexChange de lib-tabs.
+   * Mapea el índice numérico a la clave SaleTab correspondiente.
+   *
+   * @param {number} index - Índice del tab seleccionado (0 = available, 1 = history).
+   */
+  onTabIndexChange(index: number): void {
+    this.setTab(index === 0 ? 'available' : 'history');
   }
 
   /**
