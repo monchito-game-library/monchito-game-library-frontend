@@ -1,6 +1,6 @@
 <span class="retro-chip retro-chip--{{ color() }}" [class.retro-chip--filled]="filled()">
   @if (icon()) {
-    <retro-icon class="retro-chip__icon" [name]="icon()!" />
+    <retro-icon class="retro-chip__icon" [name]="icon()!" size="xs" />
   }
   <span class="retro-chip__label">{{ label() }}</span>
   @if (closable()) {
@@ -9,7 +9,7 @@
       type="button"
       aria-label="Eliminar filtro"
       (click)="closed.emit(); $event.stopPropagation()">
-      <retro-icon class="retro-chip__close-icon" name="close" />
+      <retro-icon class="retro-chip__close-icon" name="close" size="xs" />
     </button>
   }
 </span>

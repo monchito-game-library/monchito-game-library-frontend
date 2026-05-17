@@ -104,9 +104,7 @@
   color: white;
 
   retro-icon {
-    font-size: var(--text-2xl);
-    width: var(--text-2xl);
-    height: var(--text-2xl);
+    --_size: var(--icon-xl);
   }
 }
 
@@ -167,9 +165,7 @@
   transition: opacity var(--transition-fast);
 
   retro-icon {
-    font-size: var(--text-sm);
-    width: var(--text-sm);
-    height: var(--text-sm);
+    --_size: var(--icon-sm);
   }
 
   &:hover {
@@ -285,9 +281,7 @@
   color: white;
 
   retro-icon {
-    font-size: var(--text-2xl);
-    width: var(--text-2xl);
-    height: var(--text-2xl);
+    --_size: var(--icon-xl);
   }
 }
 
@@ -324,9 +318,7 @@
     background var(--transition-fast);
 
   retro-icon {
-    font-size: var(--text-3xl);
-    width: var(--text-3xl);
-    height: var(--text-3xl);
+    --_size: var(--icon-2xl);
     opacity: 0.6;
   }
 
@@ -397,10 +389,8 @@
   background: rgba(0, 0, 0, 0.3);
 
   retro-icon {
+    --_size: var(--icon-lg);
     color: var(--primary);
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
   }
 }
@@ -431,9 +421,7 @@
   color: var(--text-hi);
 
   retro-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+    --_size: var(--icon-lg);
     color: var(--text-mid);
   }
 }

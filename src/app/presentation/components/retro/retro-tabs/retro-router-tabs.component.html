@@ -14,7 +14,7 @@
       [class.retro-router-tabs__link--active]="rla.isActive"
       [attr.aria-current]="rla.isActive ? 'page' : null">
       @if (item.icon) {
-        <retro-icon [name]="item.icon" />
+        <retro-icon [name]="item.icon" size="sm" />
       }
       <span>{{ item.label | transloco }}</span>
     </a>

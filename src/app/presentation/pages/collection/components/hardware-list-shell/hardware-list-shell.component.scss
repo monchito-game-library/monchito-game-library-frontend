@@ -59,9 +59,7 @@
   color: var(--text-lo);
 
   retro-icon {
-    font-size: 2rem;
-    width: 2rem;
-    height: 2rem;
+    --_size: var(--icon-2xl);
   }
 
   p {

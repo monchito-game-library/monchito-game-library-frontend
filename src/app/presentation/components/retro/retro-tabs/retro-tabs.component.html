@@ -13,7 +13,7 @@
         (click)="select(i)"
         (keydown)="onKeydown($event, i)">
         @if (tab.icon()) {
-          <retro-icon [name]="tab.icon()!" />
+          <retro-icon [name]="tab.icon()!" size="sm" />
         }
         <span>{{ tab.label() }}</span>
       </button>

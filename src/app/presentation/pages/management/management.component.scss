@@ -52,9 +52,7 @@
     color var(--transition-fast);
 
   retro-icon {
-    font-size: var(--text-lg);
-    width: var(--text-lg);
-    height: var(--text-lg);
+    --_size: var(--icon-md);
     flex-shrink: 0;
   }
 

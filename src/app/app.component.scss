@@ -35,9 +35,7 @@
     gap: 0.25rem;
 
     retro-icon {
-      font-size: var(--text-3xl);
-      width: var(--text-3xl);
-      height: var(--text-3xl);
+      --_size: var(--icon-2xl);
     }
 
     .nav-rail__brand-version {

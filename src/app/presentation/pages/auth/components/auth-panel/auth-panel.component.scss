@@ -43,9 +43,7 @@
   margin-bottom: 1.75rem;
 
   retro-icon {
-    font-size: var(--text-display);
-    width: var(--text-display);
-    height: var(--text-display);
+    --_size: var(--text-display);
     color: var(--primary);
   }
 }
@@ -98,9 +96,7 @@
     line-height: 1.4;
 
     retro-icon {
-      font-size: var(--text-lg);
-      width: var(--text-lg);
-      height: var(--text-lg);
+      --_size: var(--icon-md);
       flex-shrink: 0;
     }
 

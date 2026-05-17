@@ -115,9 +115,7 @@
     color: var(--text-mid);
 
     retro-icon {
-      font-size: 2.25rem;
-      width: 2.25rem;
-      height: 2.25rem;
+      --_size: 2.25rem;
     }
   }
 }
@@ -317,9 +315,7 @@
   color: var(--text-mid);
 
   retro-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+    --_size: var(--icon-lg);
   }
 }
 

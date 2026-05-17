@@ -62,9 +62,7 @@
   color: var(--bg-void);
 
   retro-icon {
-    font-size: 0.75rem;
-    width: 0.75rem;
-    height: 0.75rem;
+    --_size: var(--icon-xs);
   }
 }
 
@@ -124,9 +122,7 @@
   justify-content: center;
 
   retro-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+    --_size: var(--icon-lg);
   }
 }
 

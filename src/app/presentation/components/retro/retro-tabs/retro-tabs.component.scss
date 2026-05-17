@@ -38,12 +38,6 @@
     color 120ms linear,
     border-color 120ms linear;
 
-  retro-icon {
-    font-size: 1rem;
-    width: 1rem;
-    height: 1rem;
-  }
-
   &--active {
     color: var(--text-hi);
     border-bottom-color: var(--primary);

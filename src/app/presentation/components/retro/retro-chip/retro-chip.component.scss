@@ -39,12 +39,6 @@
     color: var(--bg-void);
   }
 
-  .retro-chip__icon {
-    font-size: 0.75rem;
-    width: 0.75rem;
-    height: 0.75rem;
-  }
-
   .retro-chip__close {
     display: inline-flex;
     align-items: center;
@@ -56,12 +50,6 @@
     background: transparent;
     color: var(--c);
     cursor: pointer;
-
-    .retro-chip__close-icon {
-      font-size: 0.75rem;
-      width: 0.75rem;
-      height: 0.75rem;
-    }
   }
 }
 

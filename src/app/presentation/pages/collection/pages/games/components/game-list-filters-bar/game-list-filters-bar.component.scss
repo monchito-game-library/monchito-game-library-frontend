@@ -88,9 +88,7 @@
   }
 
   retro-icon {
-    font-size: 0.75rem;
-    width: 0.75rem;
-    height: 0.75rem;
+    --_size: var(--icon-xs);
   }
 }
 

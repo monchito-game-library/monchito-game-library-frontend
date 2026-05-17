@@ -133,9 +133,7 @@
   transition: color 0.15s;
 
   retro-icon {
-    font-size: var(--text-sm);
-    width: var(--text-sm);
-    height: var(--text-sm);
+    --_size: var(--icon-sm);
   }
 
   &:hover {
