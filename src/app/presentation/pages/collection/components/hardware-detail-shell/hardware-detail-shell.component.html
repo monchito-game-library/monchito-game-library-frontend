@@ -10,21 +10,18 @@
       </div>
     </div>
     <div class="hardware-detail__chips">
-      <app-skeleton width="72px" height="24px" borderRadius="var(--radius-full)" />
-      <app-skeleton width="56px" height="24px" borderRadius="var(--radius-full)" />
-      <app-skeleton width="64px" height="24px" borderRadius="var(--radius-full)" />
+      <app-skeleton width="72px" height="24px" />
+      <app-skeleton width="56px" height="24px" />
+      <app-skeleton width="64px" height="24px" />
     </div>
-    <div class="hardware-detail__purchase-row">
+    <div class="hardware-detail__purchase-section">
       @for (n of [0, 1, 2]; track n) {
-        <div class="hardware-detail__purchase-item">
-          <app-skeleton width="80px" height="12px" />
-          <app-skeleton width="60px" height="18px" />
-        </div>
+        <app-skeleton width="100%" height="28px" />
       }
     </div>
     <div class="hardware-detail__actions">
       @for (n of [0, 1, 2, 3]; track n) {
-        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="44px" width="120px" />
       }
     </div>
   } @else if (item()) {
@@ -49,19 +46,19 @@
     @if (forSale() || activeLoanId()) {
       <div class="hardware-detail__status-chips">
         @if (forSale()) {
-          <span class="hardware-detail__status-chip hardware-detail__status-chip--sale">
-            <mat-icon>sell</mat-icon>
-            {{ 'hardwareSale.forSaleBadge' | transloco }}
-            @if (salePrice() !== null) {
-              · {{ salePrice() | currency: 'EUR' }}
-            }
-          </span>
+          <app-lib-chip
+            color="amber"
+            icon="sell"
+            [label]="
+              ('hardwareSale.forSaleBadge' | transloco) +
+              (salePrice() !== null ? ' · ' + (salePrice() | currency: 'EUR') : '')
+            " />
         }
         @if (activeLoanId()) {
-          <span class="hardware-detail__status-chip hardware-detail__status-chip--loan">
-            <mat-icon>handshake</mat-icon>
-            {{ 'hardwareLoan.loanedBadge' | transloco }} {{ activeLoanTo() }}
-          </span>
+          <app-lib-chip
+            color="amber"
+            icon="handshake"
+            [label]="('hardwareLoan.loanedBadge' | transloco) + ' ' + activeLoanTo()" />
         }
       </div>
     }
@@ -85,53 +82,36 @@
     } @else {
       <!-- Section: item data -->
       <section class="hw-detail__section">
-        <h3 class="hw-detail__section-title">{{ i18nPagePrefix() + '.sectionUser' | transloco }}</h3>
+        <app-lib-section-header [label]="i18nPagePrefix() + '.sectionUser' | transloco" />
 
         <!-- Slot for entity-specific chips (condition, region, compatibility, color) -->
         <div class="hardware-detail__chips">
           <ng-content select="[hwChips]" />
         </div>
 
-        <div class="hardware-detail__purchase-row">
+        <div class="hardware-detail__purchase-section">
           @if (price() !== null) {
-            <div class="hardware-detail__purchase-item">
-              <div class="hardware-detail__purchase-header">
-                <mat-icon>payments</mat-icon>
-                <span class="hardware-detail__purchase-label">{{ i18nFieldPrefix() + '.price' | transloco }}</span>
-              </div>
-              <span class="hardware-detail__purchase-value">{{ price() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            </div>
+            <app-lib-data-row
+              [label]="i18nFieldPrefix() + '.price' | transloco"
+              icon="payments"
+              [value]="(price() | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
           }
           @if (storeLabel()) {
-            <div class="hardware-detail__purchase-item">
-              <div class="hardware-detail__purchase-header">
-                <mat-icon>storefront</mat-icon>
-                <span class="hardware-detail__purchase-label">{{ i18nFieldPrefix() + '.store' | transloco }}</span>
-              </div>
-              <span class="hardware-detail__purchase-value">{{ storeLabel() }}</span>
-            </div>
+            <app-lib-data-row
+              [label]="i18nFieldPrefix() + '.store' | transloco"
+              icon="storefront"
+              [value]="storeLabel()" />
           }
           @if (purchaseDate()) {
-            <div class="hardware-detail__purchase-item">
-              <div class="hardware-detail__purchase-header">
-                <mat-icon>calendar_today</mat-icon>
-                <span class="hardware-detail__purchase-label">{{
-                  i18nFieldPrefix() + '.purchaseDate' | transloco
-                }}</span>
-              </div>
-              <span class="hardware-detail__purchase-value">{{ purchaseDate() | date: 'dd/MM/yyyy' }}</span>
-            </div>
+            <app-lib-data-row
+              [label]="i18nFieldPrefix() + '.purchaseDate' | transloco"
+              icon="calendar_today"
+              [value]="(purchaseDate() | date: 'dd/MM/yyyy') ?? ''" />
+          }
+          @if (notes()) {
+            <app-lib-data-row [label]="i18nFieldPrefix() + '.notes' | transloco" icon="notes" [value]="notes()!" />
           }
         </div>
-
-        @if (notes()) {
-          <dl class="hw-detail__dl">
-            <div class="hw-detail__dl-row hw-detail__dl-row--full">
-              <dt><mat-icon>notes</mat-icon> {{ i18nFieldPrefix() + '.notes' | transloco }}</dt>
-              <dd>{{ notes() }}</dd>
-            </div>
-          </dl>
-        }
       </section>
 
       <!-- Slot for extra sections (console specs, etc.) -->
@@ -140,59 +120,58 @@
       @if (!soldAt()) {
         <!-- Actions -->
         <div class="hardware-detail__actions">
-          <button mat-stroked-button type="button" (click)="editClicked.emit()">
-            <mat-icon>edit</mat-icon>
-            {{ 'gameCard.menu.edit' | transloco }}
-          </button>
-          <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
-            <mat-icon>sell</mat-icon>
-            {{ 'hardwareSale.manageBtn' | transloco }}
-          </button>
-          <button mat-stroked-button type="button" (click)="openLoanClicked.emit()">
-            <mat-icon>handshake</mat-icon>
-            {{ activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco) }}
-          </button>
-          <button mat-stroked-button type="button" color="warn" (click)="deleteClicked.emit()" [disabled]="deleting()">
-            <mat-icon>delete</mat-icon>
-            {{ 'gameCard.menu.delete' | transloco }}
-          </button>
+          <app-lib-button
+            variant="ghost"
+            icon="edit"
+            [label]="'gameCard.menu.edit' | transloco"
+            (clicked)="editClicked.emit()" />
+          <app-lib-button
+            variant="ghost"
+            icon="sell"
+            [label]="'hardwareSale.manageBtn' | transloco"
+            (clicked)="openSaleClicked.emit()" />
+          <app-lib-button
+            variant="ghost"
+            icon="handshake"
+            [label]="activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco)"
+            (clicked)="openLoanClicked.emit()" />
+          <app-lib-button
+            variant="danger"
+            icon="delete"
+            [label]="'gameCard.menu.delete' | transloco"
+            [disabled]="deleting()"
+            (clicked)="deleteClicked.emit()" />
         </div>
       } @else {
         <!-- Sale info section -->
         <section class="hw-detail__section">
-          <h3 class="hw-detail__section-title">{{ 'hardwareSale.saleInfoSection' | transloco }}</h3>
-          <div class="hardware-detail__purchase-row">
+          <app-lib-section-header [label]="'hardwareSale.saleInfoSection' | transloco" />
+          <div class="hardware-detail__purchase-section">
             @if (soldPriceFinal() !== null) {
-              <div class="hardware-detail__purchase-item">
-                <div class="hardware-detail__purchase-header">
-                  <mat-icon>payments</mat-icon>
-                  <span class="hardware-detail__purchase-label">{{ 'hardwareSale.soldPriceFinal' | transloco }}</span>
-                </div>
-                <span class="hardware-detail__purchase-value">{{
-                  soldPriceFinal() | currency: 'EUR' : 'symbol' : '1.2-2'
-                }}</span>
-              </div>
+              <app-lib-data-row
+                [label]="'hardwareSale.soldPriceFinal' | transloco"
+                icon="payments"
+                [value]="(soldPriceFinal() | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
             }
-            <div class="hardware-detail__purchase-item">
-              <div class="hardware-detail__purchase-header">
-                <mat-icon>calendar_today</mat-icon>
-                <span class="hardware-detail__purchase-label">{{ 'hardwareSale.soldAt' | transloco }}</span>
-              </div>
-              <span class="hardware-detail__purchase-value">{{ soldAt() | date: 'dd/MM/yyyy' }}</span>
-            </div>
+            <app-lib-data-row
+              [label]="'hardwareSale.soldAt' | transloco"
+              icon="calendar_today"
+              [value]="(soldAt() | date: 'dd/MM/yyyy') ?? ''" />
           </div>
         </section>
 
         <!-- Sold item actions -->
         <div class="hardware-detail__actions">
-          <button mat-stroked-button type="button" (click)="openSaleClicked.emit()">
-            <mat-icon>edit</mat-icon>
-            {{ 'hardwareSale.editSaleBtn' | transloco }}
-          </button>
-          <button mat-stroked-button type="button" color="warn" (click)="undoSaleClicked.emit()">
-            <mat-icon>undo</mat-icon>
-            {{ 'hardwareSale.undoSaleBtn' | transloco }}
-          </button>
+          <app-lib-button
+            variant="ghost"
+            icon="edit"
+            [label]="'hardwareSale.editSaleBtn' | transloco"
+            (clicked)="openSaleClicked.emit()" />
+          <app-lib-button
+            variant="danger"
+            icon="undo"
+            [label]="'hardwareSale.undoSaleBtn' | transloco"
+            (clicked)="undoSaleClicked.emit()" />
         </div>
       }
     }

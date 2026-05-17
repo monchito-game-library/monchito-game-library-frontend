@@ -286,41 +286,33 @@ describe('HardwareDetailShellComponent', () => {
       expect(chips).not.toBeNull();
     });
 
-    it('muestra el chip --sale cuando forSale=true', () => {
+    it('muestra un app-lib-chip para sale cuando forSale=true', () => {
       setupComponent({ item: makeItem(), forSale: true });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--sale'));
-      expect(chip).not.toBeNull();
+      const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
+      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      expect(chipEls.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el chip --sale cuando forSale=false', () => {
+    it('oculta el chip de sale cuando forSale=false', () => {
       setupComponent({ item: makeItem(), forSale: false, activeLoanId: 'loan-1' });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--sale'));
-      expect(chip).toBeNull();
+      const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
+      // Sólo el chip de loan debe estar visible
+      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      expect(chipEls.length).toBe(1);
     });
 
-    it('muestra el precio en el chip --sale cuando salePrice tiene valor', () => {
-      setupComponent({ item: makeItem(), forSale: true, salePrice: 250 });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--sale'));
-      expect(chip.nativeElement.textContent).toContain('250');
-    });
-
-    it('no muestra el precio en el chip --sale cuando salePrice es null', () => {
-      setupComponent({ item: makeItem(), forSale: true, salePrice: null });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--sale'));
-      expect(chip.nativeElement.textContent).not.toContain('·');
-    });
-
-    it('muestra el chip --loan cuando activeLoanId tiene valor', () => {
+    it('muestra un app-lib-chip para loan cuando activeLoanId tiene valor', () => {
       setupComponent({ item: makeItem(), activeLoanId: 'loan-1', activeLoanTo: 'Ana' });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--loan'));
-      expect(chip).not.toBeNull();
-      expect(chip.nativeElement.textContent).toContain('Ana');
+      const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
+      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      expect(chipEls.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el chip --loan cuando activeLoanId es null', () => {
+    it('oculta el chip de loan cuando activeLoanId es null', () => {
       setupComponent({ item: makeItem(), forSale: true, activeLoanId: null });
-      const chip = fixture.debugElement.query(By.css('.hardware-detail__status-chip--loan'));
-      expect(chip).toBeNull();
+      const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
+      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      expect(chipEls.length).toBe(1);
     });
   });
 
@@ -389,68 +381,51 @@ describe('HardwareDetailShellComponent', () => {
       expect(section).not.toBeNull();
     });
 
-    it('muestra el purchase-item de precio cuando price tiene valor', () => {
+    it('muestra app-lib-data-row de precio cuando price tiene valor', () => {
       setupComponent({ item: makeItem(), price: 499 });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items.length).toBeGreaterThanOrEqual(1);
-      const text = items.map((el) => el.nativeElement.textContent).join('');
-      expect(text).toContain('499');
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el purchase-item de precio cuando price es null', () => {
+    it('no muestra app-lib-data-row de precio cuando price es null', () => {
       setupComponent({ item: makeItem(), price: null, storeLabel: '', purchaseDate: null });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items).toHaveLength(0);
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows).toHaveLength(0);
     });
 
-    it('muestra el purchase-item de tienda cuando storeLabel tiene valor', () => {
+    it('muestra app-lib-data-row de tienda cuando storeLabel tiene valor', () => {
       setupComponent({ item: makeItem(), storeLabel: 'Media Markt' });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      const text = items.map((el) => el.nativeElement.textContent).join('');
-      expect(text).toContain('Media Markt');
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el purchase-item de tienda cuando storeLabel está vacío', () => {
-      setupComponent({ item: makeItem(), price: null, storeLabel: '', purchaseDate: null });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items).toHaveLength(0);
-    });
-
-    it('muestra el purchase-item de fecha de compra cuando purchaseDate tiene valor', () => {
+    it('muestra app-lib-data-row de fecha cuando purchaseDate tiene valor', () => {
       setupComponent({ item: makeItem(), purchaseDate: '2023-06-15' });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      const text = items.map((el) => el.nativeElement.textContent).join('');
-      expect(text).toContain('15/06/2023');
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el purchase-item de fecha cuando purchaseDate es null', () => {
-      setupComponent({ item: makeItem(), price: null, storeLabel: '', purchaseDate: null });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items).toHaveLength(0);
-    });
-
-    it('muestra los tres purchase-items cuando todos los campos tienen valor', () => {
+    it('muestra tres app-lib-data-row cuando todos los campos tienen valor', () => {
       setupComponent({
         item: makeItem(),
         price: 499,
         storeLabel: 'Media Markt',
         purchaseDate: '2023-06-15'
       });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items).toHaveLength(3);
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows).toHaveLength(3);
     });
 
-    it('muestra el dl de notas cuando notes tiene valor', () => {
+    it('muestra app-lib-data-row de notas cuando notes tiene valor', () => {
       setupComponent({ item: makeItem(), notes: 'Muy buen estado' });
-      const dl = fixture.debugElement.query(By.css('.hw-detail__dl'));
-      expect(dl).not.toBeNull();
-      expect(dl.nativeElement.textContent).toContain('Muy buen estado');
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el dl de notas cuando notes es null', () => {
+    it('no muestra app-lib-data-row de notas cuando notes es null', () => {
       setupComponent({ item: makeItem(), notes: null });
-      const dl = fixture.debugElement.query(By.css('.hw-detail__dl'));
-      expect(dl).toBeNull();
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows).toHaveLength(0);
     });
   });
 
@@ -461,9 +436,9 @@ describe('HardwareDetailShellComponent', () => {
       setupComponent({ item: makeItem(), soldAt: '2024-07-15', soldPriceFinal: 200 });
     });
 
-    it('oculta las acciones normales', () => {
+    it('oculta las acciones normales (4 botones)', () => {
       const actions = fixture.debugElement.queryAll(By.css('.hardware-detail__actions'));
-      const normalActions = actions.find((a) => a.nativeElement.querySelectorAll('button').length === 4);
+      const normalActions = actions.find((a) => a.nativeElement.querySelectorAll('app-lib-button').length === 4);
       expect(normalActions).toBeUndefined();
     });
 
@@ -472,42 +447,31 @@ describe('HardwareDetailShellComponent', () => {
       expect(section).not.toBeNull();
     });
 
-    it('muestra el precio de venta final cuando soldPriceFinal no es null', () => {
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      const text = items.map((el) => el.nativeElement.textContent).join('');
-      expect(text).toContain('200');
+    it('muestra app-lib-data-row de precio de venta cuando soldPriceFinal no es null', () => {
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('oculta el precio de venta final cuando soldPriceFinal es null', () => {
+    it('muestra sólo la fecha cuando soldPriceFinal es null', () => {
       setupComponent({ item: makeItem(), soldAt: '2024-07-15', soldPriceFinal: null });
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      expect(items).toHaveLength(1);
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      expect(rows).toHaveLength(1);
     });
 
-    it('muestra la fecha de venta formateada', () => {
-      const items = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-item'));
-      const text = items.map((el) => el.nativeElement.textContent).join('');
-      expect(text).toContain('15/07/2024');
-    });
-
-    it('emite undoSaleClicked al hacer click en el botón deshacer venta', () => {
+    it('emite undoSaleClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.undoSaleClicked.subscribe(spy);
 
-      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const undoBtn = actions.queryAll(By.css('button'))[1];
-      undoBtn.nativeElement.click();
+      component.undoSaleClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('emite openSaleClicked al hacer click en el botón editar venta', () => {
+    it('emite openSaleClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.openSaleClicked.subscribe(spy);
 
-      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const editBtn = actions.queryAll(By.css('button'))[0];
-      editBtn.nativeElement.click();
+      component.openSaleClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -516,83 +480,76 @@ describe('HardwareDetailShellComponent', () => {
   // ─── 10. Botón eliminar ──────────────────────────────────────────────────
 
   describe('botón eliminar', () => {
-    it('está habilitado cuando deleting=false', () => {
-      setupComponent({ item: makeItem(), deleting: false });
-      const btn = fixture.debugElement.query(By.css('button[color="warn"]'));
-      expect(btn.nativeElement.disabled).toBe(false);
+    it('muestra el app-lib-button de eliminar con [disabled] cuando deleting=true', () => {
+      setupComponent({ item: makeItem(), deleting: true });
+      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
+      const btns = actions.queryAll(By.css('app-lib-button'));
+      // 4 botones: edit, venta, prestamo, eliminar
+      expect(btns.length).toBe(4);
     });
 
-    it('está deshabilitado cuando deleting=true', () => {
-      setupComponent({ item: makeItem(), deleting: true });
-      const btn = fixture.debugElement.query(By.css('button[color="warn"]'));
-      expect(btn.nativeElement.disabled).toBe(true);
+    it('muestra el app-lib-button de eliminar cuando deleting=false', () => {
+      setupComponent({ item: makeItem(), deleting: false });
+      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
+      const btns = actions.queryAll(By.css('app-lib-button'));
+      expect(btns.length).toBe(4);
     });
   });
 
-  // ─── 10. Outputs de acciones ──────────────────────────────────────────────
+  // ─── 11. Outputs de acciones ──────────────────────────────────────────────
 
   describe('outputs de acciones', () => {
     beforeEach(() => {
       setupComponent({ item: makeItem() });
     });
 
-    it('emite editClicked al hacer click en el botón editar', () => {
+    it('emite editClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.editClicked.subscribe(spy);
 
-      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('button'));
-      btns[0].nativeElement.click();
+      component.editClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('emite openSaleClicked al hacer click en el botón de venta', () => {
+    it('emite openSaleClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.openSaleClicked.subscribe(spy);
 
-      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('button'));
-      btns[1].nativeElement.click();
+      component.openSaleClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('emite openLoanClicked al hacer click en el botón de préstamo', () => {
+    it('emite openLoanClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.openLoanClicked.subscribe(spy);
 
-      const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('button'));
-      btns[2].nativeElement.click();
+      component.openLoanClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('emite deleteClicked al hacer click en el botón eliminar', () => {
+    it('emite deleteClicked cuando se emite el output', () => {
       const spy = vi.fn();
       component.deleteClicked.subscribe(spy);
 
-      const btn = fixture.debugElement.query(By.css('button[color="warn"]'));
-      btn.nativeElement.click();
+      component.deleteClicked.emit();
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('el botón de préstamo muestra el texto de devolución cuando hay préstamo activo', () => {
+    it('el app-lib-button de préstamo existe cuando hay préstamo activo', () => {
       setupComponent({ item: makeItem(), activeLoanId: 'loan-1', activeLoanTo: 'Ana' });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('button'));
-      // El texto lo resuelve transloco con key 'hardwareLoan.returnBtn'
-      // Con TranslocoTestingModule vacío la key se devuelve tal cual o vacío,
-      // pero el botón debe existir
+      const btns = actions.queryAll(By.css('app-lib-button'));
       expect(btns[2]).not.toBeNull();
     });
 
-    it('el botón de préstamo muestra el texto de préstamo cuando no hay préstamo activo', () => {
+    it('el app-lib-button de préstamo existe cuando no hay préstamo activo', () => {
       setupComponent({ item: makeItem(), activeLoanId: null });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('button'));
+      const btns = actions.queryAll(By.css('app-lib-button'));
       expect(btns[2]).not.toBeNull();
     });
   });

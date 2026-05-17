@@ -127,7 +127,7 @@ describe('HardwareListShellComponent', () => {
     });
 
     it('muestra el bloque de empty state', () => {
-      const empty = fixture.debugElement.query(By.css('.hw-list__empty'));
+      const empty = fixture.debugElement.query(By.css('app-lib-empty-state'));
       expect(empty).not.toBeNull();
     });
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -15,6 +15,10 @@ import {
 } from '@/pages/collection/components/hardware-loan-form/hardware-loan-form.component';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
+import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
+import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 /**
  * Presentational shell component that renders the shared layout for hardware
@@ -35,12 +39,15 @@ import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-
     CurrencyPipe,
     DatePipe,
     MatIconButton,
-    MatButton,
     MatIcon,
     TranslocoPipe,
     SkeletonComponent,
     HardwareLoanFormComponent,
-    SaleFormComponent
+    SaleFormComponent,
+    LibSectionHeaderComponent,
+    LibDataRowComponent,
+    LibChipComponent,
+    LibButtonComponent
   ]
 })
 export class HardwareDetailShellComponent {

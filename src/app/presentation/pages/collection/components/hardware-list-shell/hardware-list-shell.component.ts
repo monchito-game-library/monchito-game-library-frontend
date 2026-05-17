@@ -8,13 +8,14 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
+import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware
@@ -35,11 +36,12 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    MatFabButton,
     MatIcon,
     TranslocoPipe,
     SkeletonComponent,
-    ListPageHeaderComponent
+    ListPageHeaderComponent,
+    LibEmptyStateComponent,
+    LibDataRowComponent
   ]
 })
 export class HardwareListShellComponent {

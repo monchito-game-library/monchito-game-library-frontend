@@ -35,64 +35,51 @@
   (loanSaved)="onLoanSaved($event)">
   <!-- hwChips: condition + region chips -->
   <ng-container hwChips>
-    <app-badge-chip
+    <app-lib-chip
       [label]="
         (console()?.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
           | transloco
       "
-      [variant]="console()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+      [color]="console()?.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
     @if (console()?.region) {
-      <app-badge-chip [label]="console()!.region!" variant="neutral" />
+      <app-lib-chip [label]="console()!.region!" color="neutral" />
     }
   </ng-container>
 
   <!-- hwExtra: catalog specs section -->
   @if (specs()) {
     <section class="hw-detail__section" hwExtra>
-      <h3 class="hw-detail__section-title">{{ 'consoleDetailPage.sectionCatalog' | transloco }}</h3>
+      <app-lib-section-header [label]="'consoleDetailPage.sectionCatalog' | transloco" />
 
-      <dl class="hw-detail__dl">
+      <div class="hw-detail__dl">
         @if (model()?.generation) {
-          <div class="hw-detail__dl-row">
-            <dt>{{ 'consoleDetailPage.generation' | transloco }}</dt>
-            <dd>{{ model()!.generation }}ª gen.</dd>
-          </div>
+          <app-lib-data-row
+            [label]="'consoleDetailPage.generation' | transloco"
+            [value]="model()!.generation + 'ª gen.'" />
         }
-        <div class="hw-detail__dl-row">
-          <dt>{{ 'consoleDetailPage.launchYear' | transloco }}</dt>
-          <dd>{{ specs()!.launchYear }}</dd>
-        </div>
-        <div class="hw-detail__dl-row">
-          <dt>{{ 'consoleDetailPage.discontinuedYear' | transloco }}</dt>
-          <dd>
-            @if (specs()!.discontinuedYear) {
-              {{ specs()!.discontinuedYear }}
-            } @else {
-              {{ 'consoleDetailPage.stillOnSale' | transloco }}
-            }
-          </dd>
-        </div>
-        <div class="hw-detail__dl-row">
-          <dt>{{ 'consoleDetailPage.category' | transloco }}</dt>
-          <dd>{{ 'consoleDetailPage.category_' + specs()!.category | transloco }}</dd>
-        </div>
-        <div class="hw-detail__dl-row">
-          <dt>{{ 'consoleDetailPage.media' | transloco }}</dt>
-          <dd>{{ 'consoleDetailPage.media_' + specs()!.media | transloco }}</dd>
-        </div>
+        <app-lib-data-row [label]="'consoleDetailPage.launchYear' | transloco" [value]="specs()!.launchYear" />
+        <app-lib-data-row
+          [label]="'consoleDetailPage.discontinuedYear' | transloco"
+          [value]="
+            specs()!.discontinuedYear ? specs()!.discontinuedYear : ('consoleDetailPage.stillOnSale' | transloco)
+          " />
+        <app-lib-data-row
+          [label]="'consoleDetailPage.category' | transloco"
+          [value]="'consoleDetailPage.category_' + specs()!.category | transloco" />
+        <app-lib-data-row
+          [label]="'consoleDetailPage.media' | transloco"
+          [value]="'consoleDetailPage.media_' + specs()!.media | transloco" />
         @if (specs()!.videoResolution) {
-          <div class="hw-detail__dl-row">
-            <dt>{{ 'consoleDetailPage.videoResolution' | transloco }}</dt>
-            <dd>{{ specs()!.videoResolution }}</dd>
-          </div>
+          <app-lib-data-row
+            [label]="'consoleDetailPage.videoResolution' | transloco"
+            [value]="specs()!.videoResolution!" />
         }
         @if (specs()!.unitsSoldMillion !== null) {
-          <div class="hw-detail__dl-row">
-            <dt>{{ 'consoleDetailPage.unitsSoldMillion' | transloco }}</dt>
-            <dd>{{ specs()!.unitsSoldMillion }}M</dd>
-          </div>
+          <app-lib-data-row
+            [label]="'consoleDetailPage.unitsSoldMillion' | transloco"
+            [value]="specs()!.unitsSoldMillion + 'M'" />
         }
-      </dl>
+      </div>
     </section>
   }
 </app-hardware-detail-shell>
