@@ -15,8 +15,11 @@ import { LibDatepickerComponent } from './lib-datepicker.component';
  * Directiva aplicada al <input> nativo para conectarlo con LibDatepickerComponent.
  * Implementa ControlValueAccessor para funcionar con formControlName.
  *
- * Al seleccionar una fecha en el calendario:
- * - Actualiza el valor del FormControl (formato ISO YYYY-MM-DD).
+ * Contrato del FormControl:
+ * - writeValue acepta Date o string ISO (YYYY-MM-DD) — los strings se parsean
+ *   como fecha local para evitar el desfase de zona horaria de `new Date('YYYY-MM-DD')`.
+ * - El valor emitido a registerOnChange es siempre Date — compatible con
+ *   FormControl<Date | null>, el contrato heredado de Material datepicker.
  * - Actualiza el texto visible del input (dd/MM/yyyy).
  *
  * Uso:
@@ -45,10 +48,10 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
     const picker: LibDatepickerComponent = this.libDatepicker();
     picker.registerTrigger(this._elRef);
 
-    // Suscribirse a la selección de fecha.
+    // Suscribirse a la selección de fecha. Emite Date al FormControl
+    // (compatible con FormControl<Date | null>, contrato heredado de Material).
     picker.dateSelected.subscribe((date: Date | null) => {
-      const isoValue: string | null = date ? this._toIso(date) : null;
-      this._onChangeCallback(isoValue);
+      this._onChangeCallback(date);
       this._onTouchedCallback();
       this._updateDisplay(date);
       this._cdr.markForCheck();
@@ -58,15 +61,14 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
   // ── CVA ──────────────────────────────────────────────────────────────────────
 
   /** @inheritdoc */
-  writeValue(value: string | null): void {
+  writeValue(value: Date | string | null): void {
     if (!value) {
       this.libDatepicker().setDate(null);
       this._updateDisplay(null);
       return;
     }
-    const date: Date = new Date(value);
-    // Ignorar valores de fecha inválidos silenciosamente.
-    if (isNaN(date.getTime())) {
+    const date: Date | null = value instanceof Date ? (isNaN(value.getTime()) ? null : value) : this._parseLocal(value);
+    if (!date) {
       this.libDatepicker().setDate(null);
       this._updateDisplay(null);
       return;
@@ -76,7 +78,7 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
   }
 
   /** @inheritdoc */
-  registerOnChange(fn: (v: string | null) => void): void {
+  registerOnChange(fn: (v: Date | null) => void): void {
     this._onChangeCallback = fn;
   }
 
@@ -111,23 +113,31 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
   }
 
   /**
-   * Convierte una fecha a formato ISO YYYY-MM-DD.
+   * Parsea un string ISO (YYYY-MM-DD) como fecha local — evita el desfase
+   * causado por `new Date('YYYY-MM-DD')`, que se interpreta como UTC midnight.
    *
-   * @param {Date} date - Fecha a convertir.
+   * @param {string} value - String de fecha en formato YYYY-MM-DD.
+   * @returns {Date | null} Fecha local o null si el formato es inválido.
    */
-  private _toIso(date: Date): string {
-    const y: number = date.getFullYear();
-    const m: string = String(date.getMonth() + 1).padStart(2, '0');
-    const d: string = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+  private _parseLocal(value: string): Date | null {
+    const match: RegExpMatchArray | null = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const y: number = Number(match[1]);
+      const m: number = Number(match[2]) - 1;
+      const d: number = Number(match[3]);
+      const date: Date = new Date(y, m, d);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    const fallback: Date = new Date(value);
+    return isNaN(fallback.getTime()) ? null : fallback;
   }
 
   /**
    * Callback CVA onChange.
    *
-   * @param {string | null} _v - Nuevo valor.
+   * @param {Date | null} _v - Nuevo valor.
    */
-  private _onChangeCallback(_v: string | null): void {}
+  private _onChangeCallback(_v: Date | null): void {}
 
   /**
    * Callback CVA onTouched.

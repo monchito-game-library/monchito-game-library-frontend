@@ -38,14 +38,14 @@ export class LibInputDirective {
   @HostListener('focus')
   onFocus(): void {
     this.focusChange$.next(true);
-    if (this.ngControl?.control) {
-      this.ngControl.control.markAsTouched();
-    }
   }
 
-  /** Maneja el evento blur del host. */
+  /** Maneja el evento blur del host — marca el control como touched (estándar Angular). */
   @HostListener('blur')
   onBlur(): void {
     this.focusChange$.next(false);
+    if (this.ngControl?.control) {
+      this.ngControl.control.markAsTouched();
+    }
   }
 }

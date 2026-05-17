@@ -390,9 +390,10 @@ export class LibDatepickerComponent implements OnDestroy {
     this._activeDate.set(date);
     this._cdr.markForCheck();
 
-    // Enfocar la celda activa.
+    // Enfocar la celda activa dentro del overlay del datepicker (no global).
     Promise.resolve().then(() => {
-      const el: HTMLElement | null = document.querySelector<HTMLElement>('[tabindex="0"]');
+      const root: HTMLElement | undefined = this._overlayRef?.overlayElement;
+      const el: HTMLElement | null | undefined = root?.querySelector<HTMLElement>('[role="gridcell"][tabindex="0"]');
       el?.focus();
     });
   }
