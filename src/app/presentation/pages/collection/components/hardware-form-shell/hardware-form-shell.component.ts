@@ -10,7 +10,6 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -45,7 +44,6 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   imports: [
     NgTemplateOutlet,
     ReactiveFormsModule,
-    MatIcon,
     LibIconButtonComponent,
     MatFormField,
     MatLabel,
