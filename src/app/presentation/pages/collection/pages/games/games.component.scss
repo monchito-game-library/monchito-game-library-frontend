@@ -11,7 +11,7 @@
 .game-list__container {
   flex: 1;
   min-height: 0;
-  background-color: transparent;
+  background-color: var(--bg-void);
 }
 
 .game-list__content {
@@ -24,6 +24,8 @@
 .game-list__filters-drawer {
   width: 22rem;
   max-width: 90vw;
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border);
 }
 
 // ─── Projected stats ──────────────────────────────────────────────────────────
@@ -32,29 +34,25 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--mat-sys-on-surface-variant);
+  font-weight: 500;
+  color: var(--text-mid);
+  letter-spacing: 0.04em;
 
   mat-icon {
     font-size: var(--text-base);
     width: var(--text-base);
     height: var(--text-base);
-  }
-
-  &--rating {
-    color: var(--color-rating);
-
-    mat-icon {
-      color: var(--color-rating);
-    }
+    color: var(--text-lo);
   }
 }
 
-.game-list__stat-divider {
-  width: 1px;
-  height: 14px;
-  background-color: var(--mat-sys-outline-variant);
+.game-list__stat-sep {
+  font-family: var(--font-mono);
+  color: var(--text-lo);
+  font-size: var(--text-sm);
+  user-select: none;
 }
 
 // ─── Game grid ────────────────────────────────────────────────────────────────
@@ -63,11 +61,9 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   align-content: start;
-  // Without align-items: start, the grid stretches every cell to the tallest row,
-  // overriding the aspect-ratio of the cards and making them grow vertically.
   align-items: start;
-  gap: 1.25rem;
-  padding: 1.5rem;
+  gap: 0.75rem;
+  padding: 0.75rem;
   padding-bottom: 2.5rem;
   box-sizing: border-box;
   overflow-y: auto;
@@ -92,24 +88,20 @@
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   align-content: start;
   align-items: start;
-  gap: 1.25rem;
-  padding: 1.5rem;
+  gap: 0.75rem;
+  padding: 0.75rem;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-// One placeholder per card — title and price live ON TOP of the cover (gradient
-// overlay) in the real game-card, so the skeleton matches that with a single 3:4
-// rounded block instead of a stack of bars below the image. The aspect-ratio is
-// enforced via padding-top hack (133.33% = 4/3) which works reliably on every
-// grid implementation, including the cases where `aspect-ratio` is ignored on
-// items whose width comes from a `1fr` track.
 .game-list__skeleton-card {
   position: relative;
   width: 100%;
   padding-top: calc(100% * 4 / 3);
-  border-radius: var(--radius-md);
+  border-radius: 0;
   overflow: hidden;
+  border: 1px solid var(--border);
+  background-color: var(--bg-surface);
 
   app-skeleton {
     position: absolute;
@@ -118,62 +110,50 @@
   }
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
-
-.game-list__empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 4rem 1rem;
-  text-align: center;
-}
-
-.game-list__empty-svg {
-  width: 140px;
-  height: auto;
-  margin-bottom: 0.5rem;
-}
-
-.es-shape {
-  fill: var(--mat-sys-surface-variant);
-  stroke: var(--mat-sys-outline-variant);
-}
-
-.es-ring {
-  fill: none;
-  stroke: var(--mat-sys-outline-variant);
-}
-
-.es-accent {
-  fill: var(--mat-sys-primary);
-}
-
-.es-accent-stroke {
-  stroke: var(--mat-sys-primary);
-  fill: none;
-}
-
-.game-list__empty-title {
-  font-size: var(--text-lg);
-  font-weight: 600;
-  color: var(--mat-sys-on-surface);
-  margin: 0;
-}
-
-.game-list__empty-subtitle {
-  font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
-  margin: 0 0 1rem;
-}
-
-// ─── FABs ─────────────────────────────────────────────────────────────────────
+// ─── FABs — cuadrados, sin elevación, estética terminal ───────────────────────
 
 .game-list__filter-fab,
 .game-list__fab {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border-active);
+  background-color: var(--bg-surface);
+  color: var(--primary);
+  border-radius: 0;
+  cursor: pointer;
+  position: fixed;
+  z-index: var(--z-card);
+
+  mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.game-list__filter-fab {
+  position: relative; // reset, se sobreescribe en responsive
+}
+
+.game-list__filter-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 0;
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+  pointer-events: none;
 }
 
 // ────────────────────────── Responsive: ≤ 820px ──────────────────────────
@@ -184,28 +164,26 @@
   }
 
   .game-list__grid {
-    padding: 0.75rem;
-    gap: 0.75rem;
+    padding: 0.5rem;
+    gap: 0.5rem;
   }
 
   .game-list__skeleton {
-    padding: 0.75rem;
-    gap: 0.75rem;
+    padding: 0.5rem;
+    gap: 0.5rem;
   }
 
   .game-list__filter-fab {
     display: flex !important;
     position: fixed;
-    bottom: calc(var(--bottom-nav-height) + 16px);
-    left: 16px;
-    z-index: var(--z-card);
+    bottom: calc(var(--bottom-nav-height) + 1rem + env(safe-area-inset-bottom));
+    left: 1rem;
   }
 
   .game-list__fab {
     display: flex !important;
     position: fixed;
-    bottom: calc(var(--bottom-nav-height) + 16px);
-    right: 16px;
-    z-index: var(--z-card);
+    bottom: calc(var(--bottom-nav-height) + 1rem + env(safe-area-inset-bottom));
+    right: 1rem;
   }
 }

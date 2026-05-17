@@ -27,7 +27,7 @@
           <span>{{ ownedCount() }}</span>
         }
       </div>
-      <div class="game-list__stat-divider"></div>
+      <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
         <mat-icon>payments</mat-icon>
         @if (loading()) {
@@ -36,7 +36,7 @@
           <span>{{ totalPrice() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         }
       </div>
-      <div class="game-list__stat-divider"></div>
+      <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
         <mat-icon>emoji_events</mat-icon>
         @if (loading()) {
@@ -47,6 +47,9 @@
       </div>
     </app-list-page-header>
 
+    <!-- Command bar — only visible on desktop >= 1024px (hidden via CSS in the component) -->
+    <app-lib-command-bar path="monchito ~/library/games" [flags]="commandFlags()" />
+
     <!-- Active filters bar (only renders when there is at least one active filter) -->
     <app-game-list-filters-bar [data]="filtersData" />
 
@@ -55,7 +58,7 @@
       <div class="game-list__skeleton" [style.--grid-cols]="columnCount()">
         @for (n of skeletonItems(); track n) {
           <div class="game-list__skeleton-card">
-            <app-skeleton height="100%" borderRadius="var(--radius-md)" />
+            <app-skeleton height="100%" borderRadius="0" />
           </div>
         }
       </div>
@@ -78,49 +81,28 @@
 
       <!-- State: no filter results -->
     } @else if (allGames().length > 0) {
-      <div class="game-list__empty">
-        <svg class="game-list__empty-svg" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle class="es-shape" cx="68" cy="58" r="34" stroke-width="3" />
-          <line class="es-ring" x1="93" y1="84" x2="148" y2="112" stroke-width="10" stroke-linecap="round" />
-          <line class="es-accent-stroke" x1="56" y1="46" x2="80" y2="70" stroke-width="3.5" stroke-linecap="round" />
-          <line class="es-accent-stroke" x1="80" y1="46" x2="56" y2="70" stroke-width="3.5" stroke-linecap="round" />
-        </svg>
-        <p class="game-list__empty-title">{{ 'gameList.empty.noResults' | transloco }}</p>
-        <p class="game-list__empty-subtitle">{{ 'gameList.empty.noResultsSubtitle' | transloco }}</p>
+      <app-lib-empty-state
+        [title]="'gameList.empty.noResults' | transloco"
+        [subtitle]="'gameList.empty.noResultsSubtitle' | transloco"
+        hint="$ try --filter=reset">
         <button mat-stroked-button (click)="clearAllFilters()">
           <mat-icon>filter_alt_off</mat-icon>
           {{ 'gameList.empty.clearFilters' | transloco }}
         </button>
-      </div>
+      </app-lib-empty-state>
 
       <!-- State: empty collection -->
     } @else {
-      <div class="game-list__empty">
-        <svg class="game-list__empty-svg" viewBox="0 0 160 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            class="es-shape"
-            d="M28 38 C18 38 12 48 10 60 L6 86 C4 96 14 100 22 94 C30 88 32 80 42 70 H118 C128 80 130 88 138 94 C146 100 156 96 154 86 L150 60 C148 48 142 38 132 38 Z"
-            stroke-width="3"
-            stroke-linejoin="round" />
-          <rect class="es-accent" x="40" y="56" width="6" height="18" rx="3" />
-          <rect class="es-accent" x="34" y="62" width="18" height="6" rx="3" />
-          <circle class="es-ring" cx="70" cy="76" r="10" stroke-width="2.5" />
-          <circle class="es-ring" cx="98" cy="54" r="10" stroke-width="2.5" />
-          <circle class="es-accent" cx="112" cy="56" r="5" opacity="0.9" />
-          <circle class="es-accent" cx="121" cy="66" r="5" opacity="0.65" />
-          <circle class="es-accent" cx="112" cy="76" r="5" opacity="0.45" />
-          <circle class="es-accent" cx="103" cy="66" r="5" opacity="0.65" />
-        </svg>
-        <p class="game-list__empty-title">{{ 'gameList.empty.emptyCollection' | transloco }}</p>
-        <p class="game-list__empty-subtitle">{{ 'gameList.empty.emptyCollectionSubtitle' | transloco }}</p>
-      </div>
+      <app-lib-empty-state
+        [title]="'gameList.empty.emptyCollection' | transloco"
+        [subtitle]="'gameList.empty.emptyCollectionSubtitle' | transloco"
+        hint="$ add --game" />
     }
   </mat-drawer-content>
 </mat-drawer-container>
 
 <!-- FAB filters: only visible on mobile -->
 <button
-  mat-fab
   type="button"
   class="game-list__filter-fab"
   (click)="openFilters()"
@@ -133,7 +115,6 @@
 
 <!-- FAB add: only visible on mobile -->
 <button
-  mat-fab
   type="button"
   class="game-list__fab"
   routerLink="/collection/games/add"

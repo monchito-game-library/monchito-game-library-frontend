@@ -12,12 +12,14 @@ import {
   ViewChild,
   WritableSignal
 } from '@angular/core';
+import { LibCommandBarComponent } from '@/lib/lib-command-bar/lib-command-bar.component';
+import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -56,7 +58,6 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
   imports: [
     CurrencyPipe,
     MatButton,
-    MatFabButton,
     MatDrawer,
     MatDrawerContainer,
     MatDrawerContent,
@@ -68,7 +69,9 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     ListPageHeaderComponent,
     GameListFiltersBarComponent,
     GameListFiltersSheetComponent,
-    GameRowComponent
+    GameRowComponent,
+    LibCommandBarComponent,
+    LibEmptyStateComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {
@@ -239,6 +242,18 @@ export class GamesComponent implements OnInit, OnDestroy {
   readonly totalPrice: Signal<number> = computed((): number =>
     this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0)
   );
+
+  /**
+   * Flags dinámicos para el lib-command-bar según el estado actual de la lista.
+   * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
+   */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const flags: string[] = [];
+    if (this.viewMode() === 'list') flags.push('view=list');
+    if (this.searchTerm()) flags.push(`search="${this.searchTerm()}"`);
+    if (this.activeFilterCount() > 0) flags.push(`filters=${this.activeFilterCount()}`);
+    return flags;
+  });
 
   /** Bundle of writable signals shared with the desktop filters bar and the mobile filters sheet. */
   readonly filtersData: GameListFiltersSheetData = {
