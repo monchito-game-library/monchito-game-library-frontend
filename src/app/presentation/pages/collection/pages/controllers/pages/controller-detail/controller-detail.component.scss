@@ -17,11 +17,12 @@
   width: 2rem;
   height: 2rem;
   border-radius: var(--radius-full);
-  border: 2px solid var(--mat-sys-outline-variant);
+  border: 2px solid var(--border-glow);
   flex-shrink: 0;
 }
 
 .controller-detail__color-label {
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }

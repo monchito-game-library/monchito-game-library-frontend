@@ -5,3 +5,6 @@
   min-height: 0;
   overflow: hidden;
 }
+
+// Las reglas globales de .hw-detail__* en styles.scss cubren la tipografía
+// mono/display del dl/dt/dd. Solo se añaden overrides locales si son necesarios.

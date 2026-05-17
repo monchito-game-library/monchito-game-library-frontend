@@ -61,7 +61,7 @@
   justify-content: center;
   gap: 1rem;
   flex: 1;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .hw-list__empty-svg {
@@ -71,34 +71,36 @@
 }
 
 .es-shape {
-  fill: var(--mat-sys-surface-variant);
-  stroke: var(--mat-sys-outline-variant);
+  fill: var(--border-subtle);
+  stroke: var(--border-subtle);
 }
 
 .es-ring {
   fill: none;
-  stroke: var(--mat-sys-outline-variant);
+  stroke: var(--border-subtle);
 }
 
 .es-accent {
-  fill: var(--mat-sys-primary);
+  fill: var(--primary);
 }
 
 .es-accent-stroke {
-  stroke: var(--mat-sys-primary);
+  stroke: var(--primary);
   fill: none;
 }
 
 .hw-list__empty-title {
+  font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: 600;
   margin: 0;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .hw-list__empty-subtitle {
   margin: 0;
   font-size: var(--text-sm);
+  color: var(--text-mid);
 }
 
 .hw-list__no-results {
@@ -107,7 +109,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 2rem 0;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 
   mat-icon {
     font-size: var(--text-3xl);
@@ -139,23 +141,21 @@
 }
 
 .hw-list__card {
-  background-color: var(--mat-sys-surface-container);
+  background-color: var(--bg-surface-hi);
   border-radius: var(--radius-md);
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border: 1px solid var(--mat-sys-outline-variant);
+  border: 1px solid var(--border-subtle);
   text-align: left;
   cursor: pointer;
   width: 100%;
-  transition: background-color var(--transition-fast);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   animation: cardIn 280ms ease both;
   animation-delay: calc(min(var(--i, 0), 12) * 40ms);
-
-  &:hover {
-    background-color: var(--mat-sys-surface-container-high);
-  }
 }
 
 .hw-list__card-header {
@@ -173,21 +173,23 @@
 
 .hw-list__card-chevron {
   flex-shrink: 0;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-lo);
 }
 
 .hw-list__card-model {
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .hw-list__card-brand {
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .hw-list__card-chips {
@@ -212,20 +214,29 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
   font-weight: 600;
 
   mat-icon {
     font-size: var(--text-base);
     width: var(--text-base);
     height: var(--text-base);
-    color: var(--mat-sys-outline);
+    color: var(--primary-glow);
   }
 }
 
 .hw-list__fab {
   display: none;
+}
+
+// ────────────────────────── Responsive: hover (pointer devices) ──────────────────────────
+@media (hover: hover) {
+  .hw-list__card:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--glow-primary);
+  }
 }
 
 // ────────────────────────── Responsive: <= 768px ──────────────────────────
