@@ -38,21 +38,21 @@
       <section class="game-loan-form__section">
         <h3 class="game-loan-form__section-title">{{ 'gameDetail.loan.newSection' | transloco }}</h3>
 
-        <mat-form-field appearance="outline" class="game-loan-form__field">
-          <mat-label>{{ 'gameDetail.loan.loanedTo' | transloco }}</mat-label>
+        <app-lib-form-field class="game-loan-form__field">
+          <app-lib-label>{{ 'gameDetail.loan.loanedTo' | transloco }}</app-lib-label>
           <input
-            matInput
+            libInput
             type="text"
             formControlName="loanedTo"
             [placeholder]="'gameDetail.loan.loanedToPlaceholder' | transloco" />
-        </mat-form-field>
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline" class="game-loan-form__field" [appDatepickerFieldClick]="loanedAtPicker">
-          <mat-label>{{ 'gameDetail.loan.loanedAt' | transloco }}</mat-label>
-          <input matInput [matDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
-          <mat-datepicker-toggle matIconSuffix [for]="loanedAtPicker"></mat-datepicker-toggle>
-          <mat-datepicker #loanedAtPicker></mat-datepicker>
-        </mat-form-field>
+        <app-lib-form-field class="game-loan-form__field">
+          <app-lib-label>{{ 'gameDetail.loan.loanedAt' | transloco }}</app-lib-label>
+          <input libInput [libDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
+          <app-lib-icon libSuffix [libDatepickerToggle]="loanedAtPicker" name="calendar_today" />
+          <app-lib-datepicker #loanedAtPicker />
+        </app-lib-form-field>
 
         <app-lib-button
           [label]="'gameDetail.loan.loanBtn' | transloco"

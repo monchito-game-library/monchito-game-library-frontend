@@ -1,6 +1,5 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
@@ -65,7 +64,6 @@ describe('HardwareLoanFormComponent', () => {
         })
       ],
       providers: [
-        provideNativeDateAdapter(),
         { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
         { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
         {
@@ -320,7 +318,6 @@ describe('HardwareLoanFormComponent', () => {
           })
         ],
         providers: [
-          provideNativeDateAdapter(),
           { provide: CONSOLE_USE_CASES, useValue: mockConsoleUseCases },
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
           {
@@ -364,7 +361,6 @@ describe('HardwareLoanFormComponent', () => {
           })
         ],
         providers: [
-          provideNativeDateAdapter(),
           { provide: CONTROLLER_USE_CASES, useValue: mockControllerUseCases },
           {
             provide: LibSnackbarService,

@@ -110,12 +110,12 @@
         }
       </app-lib-form-field>
 
-      <mat-form-field appearance="outline" [appDatepickerFieldClick]="purchaseDatePicker">
-        <mat-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</mat-label>
-        <input matInput [matDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
-        <mat-datepicker-toggle matIconSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #purchaseDatePicker></mat-datepicker>
-      </mat-form-field>
+      <app-lib-form-field>
+        <app-lib-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</app-lib-label>
+        <input libInput [libDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
+        <app-lib-icon libSuffix [libDatepickerToggle]="purchaseDatePicker" name="calendar_today" />
+        <app-lib-datepicker #purchaseDatePicker />
+      </app-lib-form-field>
 
       <app-lib-form-field class="hw-form__field--full">
         <app-lib-label>{{ i18nPrefix() + '.notes' | transloco }}</app-lib-label>

@@ -16,15 +16,16 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-header.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
+import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
+import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -48,17 +49,15 @@ export type { HardwareLoanItem };
     ReactiveFormsModule,
     LibIconComponent,
     LibIconButtonComponent,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
     TranslocoPipe,
     LibButtonComponent,
-    LibSectionHeaderComponent
+    LibSectionHeaderComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibDatepickerComponent,
+    LibDatepickerDirective,
+    LibDatepickerToggleDirective
   ]
 })
 export class HardwareLoanFormComponent implements OnInit {

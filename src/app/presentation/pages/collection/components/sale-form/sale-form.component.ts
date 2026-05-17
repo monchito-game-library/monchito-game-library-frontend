@@ -16,11 +16,13 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibCheckboxComponent } from '@/lib/lib-checkbox/lib-checkbox.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
+import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
+import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
+import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -43,17 +45,15 @@ import {
     LibIconComponent,
     LibIconButtonComponent,
     LibCheckboxComponent,
-    MatError,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent,
+    LibDatepickerComponent,
+    LibDatepickerDirective,
+    LibDatepickerToggleDirective
   ]
 })
 export class SaleFormComponent implements OnInit {

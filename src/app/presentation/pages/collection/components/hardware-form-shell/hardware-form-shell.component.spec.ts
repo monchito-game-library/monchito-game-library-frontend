@@ -1,7 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA, TemplateRef, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { By } from '@angular/platform-browser';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { TranslocoTestingModule } from '@jsverse/transloco';
@@ -121,7 +120,6 @@ describe('HardwareFormShellComponent', () => {
           translocoConfig: { availableLangs: ['es'], defaultLang: 'es' }
         })
       ],
-      providers: [provideNativeDateAdapter()],
       schemas: [NO_ERRORS_SCHEMA]
     });
 

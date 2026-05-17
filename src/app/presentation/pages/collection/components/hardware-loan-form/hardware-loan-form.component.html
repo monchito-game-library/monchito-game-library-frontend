@@ -39,24 +39,21 @@
       <section class="hardware-loan-form__section">
         <app-lib-section-header [label]="'hardwareLoan.newSection' | transloco" />
 
-        <mat-form-field appearance="outline" class="hardware-loan-form__field">
-          <mat-label>{{ 'hardwareLoan.loanedTo' | transloco }}</mat-label>
+        <app-lib-form-field class="hardware-loan-form__field">
+          <app-lib-label>{{ 'hardwareLoan.loanedTo' | transloco }}</app-lib-label>
           <input
-            matInput
+            libInput
             type="text"
             formControlName="loanedTo"
             [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
-        </mat-form-field>
+        </app-lib-form-field>
 
-        <mat-form-field
-          appearance="outline"
-          class="hardware-loan-form__field"
-          [appDatepickerFieldClick]="loanedAtPicker">
-          <mat-label>{{ 'hardwareLoan.loanedAt' | transloco }}</mat-label>
-          <input matInput [matDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
-          <mat-datepicker-toggle matIconSuffix [for]="loanedAtPicker"></mat-datepicker-toggle>
-          <mat-datepicker #loanedAtPicker></mat-datepicker>
-        </mat-form-field>
+        <app-lib-form-field class="hardware-loan-form__field">
+          <app-lib-label>{{ 'hardwareLoan.loanedAt' | transloco }}</app-lib-label>
+          <input libInput [libDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
+          <app-lib-icon libSuffix [libDatepickerToggle]="loanedAtPicker" name="calendar_today" />
+          <app-lib-datepicker #loanedAtPicker />
+        </app-lib-form-field>
 
         <div class="hardware-loan-form__action-btn">
           <app-lib-button

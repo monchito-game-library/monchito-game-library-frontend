@@ -20,17 +20,17 @@
       </div>
 
       @if (isForSale) {
-        <mat-form-field appearance="outline" class="sale-form__field">
-          <mat-label>{{ i18nPrefix() + '.salePrice' | transloco }}</mat-label>
+        <app-lib-form-field class="sale-form__field">
+          <app-lib-label>{{ i18nPrefix() + '.salePrice' | transloco }}</app-lib-label>
           <input
-            matInput
+            libInput
             type="number"
             min="0"
             step="0.01"
             formControlName="salePrice"
             [placeholder]="i18nPrefix() + '.salePricePlaceholder' | transloco" />
-          <span matTextSuffix>€</span>
-        </mat-form-field>
+          <span libSuffix class="sale-form__currency">€</span>
+        </app-lib-form-field>
       }
 
       <app-lib-button
@@ -49,27 +49,27 @@
     <section class="sale-form__section">
       <h3 class="sale-form__section-title">{{ i18nPrefix() + '.registerSection' | transloco }}</h3>
 
-      <mat-form-field appearance="outline" class="sale-form__field">
-        <mat-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</mat-label>
+      <app-lib-form-field class="sale-form__field">
+        <app-lib-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</app-lib-label>
         <input
-          matInput
+          libInput
           type="number"
           min="0"
           step="0.01"
           formControlName="soldPriceFinal"
           [placeholder]="i18nPrefix() + '.soldPricePlaceholder' | transloco" />
-        <span matTextSuffix>€</span>
-      </mat-form-field>
+        <span libSuffix class="sale-form__currency">€</span>
+      </app-lib-form-field>
 
-      <mat-form-field appearance="outline" class="sale-form__field" [appDatepickerFieldClick]="soldAtPicker">
-        <mat-label>{{ i18nPrefix() + '.soldAt' | transloco }}</mat-label>
-        <input matInput [matDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
-        <mat-datepicker-toggle matIconSuffix [for]="soldAtPicker"></mat-datepicker-toggle>
-        <mat-datepicker #soldAtPicker></mat-datepicker>
-        @if (form.controls.soldAt.hasError('matDatepickerParse')) {
-          <mat-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</mat-error>
+      <app-lib-form-field class="sale-form__field">
+        <app-lib-label>{{ i18nPrefix() + '.soldAt' | transloco }}</app-lib-label>
+        <input libInput [libDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
+        <app-lib-icon libSuffix [libDatepickerToggle]="soldAtPicker" name="calendar_today" />
+        <app-lib-datepicker #soldAtPicker />
+        @if (form.controls.soldAt.hasError('invalidDate')) {
+          <app-lib-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</app-lib-error>
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <p class="sale-form__warning">
         <app-lib-icon name="warning" />

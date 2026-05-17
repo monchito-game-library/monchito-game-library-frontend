@@ -1,7 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -74,7 +73,6 @@ describe('GameLoanFormComponent', () => {
         })
       ],
       providers: [
-        provideNativeDateAdapter(),
         {
           provide: GAME_USE_CASES,
           useValue: {

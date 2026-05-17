@@ -21,3 +21,6 @@ export { LibSelectComponent } from './lib-select/lib-select.component';
 export { LibOptionComponent } from './lib-select/lib-option.component';
 export { LibAutocompleteComponent } from './lib-autocomplete/lib-autocomplete.component';
 export { LibAutocompleteTriggerDirective } from './lib-autocomplete/lib-autocomplete-trigger.directive';
+export { LibDatepickerComponent } from './lib-datepicker/lib-datepicker.component';
+export { LibDatepickerDirective } from './lib-datepicker/lib-datepicker.directive';
+export { LibDatepickerToggleDirective } from './lib-datepicker/lib-datepicker-toggle.directive';

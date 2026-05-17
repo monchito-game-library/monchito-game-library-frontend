@@ -10,9 +10,7 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { LibIconComponent } from '@/lib/lib-icon/lib-icon.component';
 import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
 import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
 import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
@@ -20,9 +18,11 @@ import { LibSelectComponent } from '@/lib/lib-select/lib-select.component';
 import { LibOptionComponent } from '@/lib/lib-select/lib-option.component';
 import { LibAutocompleteComponent } from '@/lib/lib-autocomplete/lib-autocomplete.component';
 import { LibAutocompleteTriggerDirective } from '@/lib/lib-autocomplete/lib-autocomplete-trigger.directive';
+import { LibDatepickerComponent } from '@/lib/lib-datepicker/lib-datepicker.component';
+import { LibDatepickerDirective } from '@/lib/lib-datepicker/lib-datepicker.directive';
+import { LibDatepickerToggleDirective } from '@/lib/lib-datepicker/lib-datepicker-toggle.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -49,14 +49,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     NgTemplateOutlet,
     ReactiveFormsModule,
     LibIconButtonComponent,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
+    LibIconComponent,
     TranslocoPipe,
     LibSkeletonComponent,
     LibButtonComponent,
@@ -66,7 +59,10 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     LibSelectComponent,
     LibOptionComponent,
     LibAutocompleteComponent,
-    LibAutocompleteTriggerDirective
+    LibAutocompleteTriggerDirective,
+    LibDatepickerComponent,
+    LibDatepickerDirective,
+    LibDatepickerToggleDirective
   ]
 })
 export class HardwareFormShellComponent {
