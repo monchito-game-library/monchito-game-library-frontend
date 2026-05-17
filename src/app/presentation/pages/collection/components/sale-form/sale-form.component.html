@@ -16,7 +16,7 @@
 
       <div class="sale-form__toggle-row">
         <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
-        <mat-slide-toggle formControlName="forSale" color="primary" />
+        <app-lib-checkbox formControlName="forSale" />
       </div>
 
       @if (isForSale) {
