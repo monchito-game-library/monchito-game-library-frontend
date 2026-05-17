@@ -46,4 +46,10 @@ describe('RetroRouterTabsComponent', () => {
     const nav = fixture.nativeElement.querySelector('nav');
     expect(nav.getAttribute('aria-label')).toBe('Colección');
   });
+
+  it('renders the animated indicator element', () => {
+    const indicator = fixture.nativeElement.querySelector('.retro-router-tabs__indicator');
+    expect(indicator).toBeTruthy();
+    expect(indicator.getAttribute('aria-hidden')).toBe('true');
+  });
 });

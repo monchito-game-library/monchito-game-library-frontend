@@ -1,6 +1,11 @@
-<nav class="retro-router-tabs" [attr.aria-label]="ariaLabel() || null">
+<nav
+  class="retro-router-tabs"
+  [attr.aria-label]="ariaLabel() || null"
+  [style.--ind-left.px]="indicatorLeft()"
+  [style.--ind-width.px]="indicatorWidth()">
   @for (item of items(); track item.path) {
     <a
+      #linkRef
       class="retro-router-tabs__link"
       [routerLink]="item.path"
       [routerLinkActiveOptions]="item.exact ? { exact: true } : {}"
@@ -14,5 +19,6 @@
       <span>{{ item.label | transloco }}</span>
     </a>
   }
+  <span class="retro-router-tabs__indicator" aria-hidden="true"></span>
 </nav>
 <router-outlet />
