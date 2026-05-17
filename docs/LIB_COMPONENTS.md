@@ -27,8 +27,21 @@
   - [4.10 `lib-empty-state`](#410-lib-empty-state)
   - [4.11 `lib-spinner`](#411-lib-spinner)
   - [4.12 `lib-skeleton`](#412-lib-skeleton)
-- [5. Resumen tabla](#5-resumen-tabla)
-- [6. Cuándo no usar `lib/`](#6-cuándo-no-usar-lib)
+  - [4.13 `lib-icon`](#413-lib-icon)
+  - [4.14 `lib-form-field`](#414-lib-form-field)
+  - [4.15 `lib-select`](#415-lib-select)
+  - [4.16 `lib-autocomplete`](#416-lib-autocomplete)
+  - [4.17 `lib-datepicker`](#417-lib-datepicker)
+  - [4.18 `lib-snackbar`](#418-lib-snackbar)
+  - [4.19 `lib-tooltip`](#419-lib-tooltip)
+  - [4.20 `lib-menu`](#420-lib-menu)
+  - [4.21 `lib-tabs` + `lib-router-tabs`](#421-lib-tabs--lib-router-tabs)
+  - [4.22 `lib-dialog`](#422-lib-dialog)
+  - [4.23 `lib-bottom-sheet`](#423-lib-bottom-sheet)
+  - [4.24 `lib-divider`](#424-lib-divider)
+- [5. Servicios infraestructurales](#5-servicios-infraestructurales)
+- [6. Resumen tabla](#6-resumen-tabla)
+- [7. Cuándo no usar `lib/`](#7-cuándo-no-usar-lib)
 
 ---
 
@@ -571,9 +584,340 @@ Bloque rectangular con shimmer mientras carga contenido.
 
 ---
 
-## 5. Resumen tabla
+### 4.13 `lib-icon`
 
-| Componente | Selector | Slot (`<ng-content>`) | Output principal | Variantes |
+Selector: `app-lib-icon`
+Renderiza un icono de la webfont Material Icons.
+
+**Cuándo usarlo**: iconos decorativos en cualquier componente. Reemplaza el uso directo de `<mat-icon>` en el DOM de la aplicación.
+
+**Inputs**
+
+| Input | Tipo | Default | Descripción |
+|---|---|---|---|
+| `name` | `string` (required) | — | Nombre del icono Material Icons (ej. `add`, `edit`, `delete`). |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Tamaño del icono. |
+| `ariaHidden` | `boolean` | `true` | Si `true`, aplica `aria-hidden="true"`. Poner `false` solo si el icono porta significado semántico sin texto alternativo. |
+
+**Nota**: requiere que la webfont "Material Icons" esté cargada en `index.html`.
+
+**Ejemplo**
+
+```html
+<app-lib-icon name="save" size="md" />
+<app-lib-icon name="warning" size="lg" [ariaHidden]="false" />
+```
+
+---
+
+### 4.14 `lib-form-field`
+
+Selector: `app-lib-form-field`
+Contenedor de campo de formulario con label fijo (sin floating), mensaje de error y hint. Alternativa Terminal Collector a `<mat-form-field>`.
+
+**Inputs**
+
+| Input | Tipo | Default | Descripción |
+|---|---|---|---|
+| `label` | `string` | `''` | Texto del label. |
+| `error` | `string \| null` | `null` | Mensaje de error visible cuando no es null. |
+| `hint` | `string` | `''` | Texto de ayuda bajo el campo. |
+| `required` | `boolean` | `false` | Añade asterisco al label. |
+
+**Junto a**
+
+- `LibInputDirective` (selector: `[libInput]`) — aplica estilos al `<input>` o `<textarea>` interno.
+- `LibLabelComponent` — label independiente si se necesita desacoplar.
+- `LibErrorComponent` — bloque de error reutilizable fuera de un form-field.
+- `LibHintComponent` — hint reutilizable fuera de un form-field.
+
+**Ejemplo**
+
+```html
+<app-lib-form-field label="TÍTULO" [error]="form.controls.title.errors ? 'Campo requerido' : null">
+  <input libInput formControlName="title" />
+</app-lib-form-field>
+```
+
+---
+
+### 4.15 `lib-select`
+
+Selector: `app-lib-select`
+Combobox accesible con ControlValueAccessor. Alternativa Terminal Collector a `<mat-select>`.
+
+**Inputs**
+
+| Input | Tipo | Default | Descripción |
+|---|---|---|---|
+| `options` | `LibSelectOption[]` | `[]` | Lista de opciones `{ value, label }`. |
+| `placeholder` | `string` | `''` | Texto cuando no hay selección. |
+| `multiple` | `boolean` | `false` | Permite selección múltiple. |
+
+**Junto a**
+
+- `LibOptionComponent` — opción individual para uso con `<ng-content>` cuando se necesita contenido rico.
+
+**Ejemplo**
+
+```html
+<app-lib-select
+  formControlName="platform"
+  [options]="platformOptions"
+  placeholder="SELECCIONAR PLATAFORMA" />
+```
+
+---
+
+### 4.16 `lib-autocomplete`
+
+Selector: `app-lib-autocomplete`
+Panel de sugerencias construido sobre CDK Overlay.
+
+**Outputs**
+
+| Output | Tipo | Notas |
+|---|---|---|
+| `optionSelected` | `LibSelectOption` | Emite la opción elegida por el usuario. |
+
+**Junto a**
+
+- `LibAutocompleteTriggerDirective` (selector: `[libAutocompleteTrigger]`) — conecta el `<input>` con el panel. Recibe la referencia al componente panel mediante `[libAutocompleteTrigger]="autocompleteRef"`.
+
+**Ejemplo**
+
+```html
+<input libInput [libAutocompleteTrigger]="ac" formControlName="search" />
+<app-lib-autocomplete #ac [options]="suggestions()" (optionSelected)="onSelect($event)" />
+```
+
+---
+
+### 4.17 `lib-datepicker`
+
+Selector: `app-lib-datepicker`
+Calendario completo con patrón APG (ARIA Authoring Practices Guide), locale `es-ES`.
+
+**Junto a**
+
+- `LibDatepickerDirective` (selector: `[libDatepicker]`) — conecta el `<input>` con el calendario. Recibe la referencia al componente mediante `[libDatepicker]="datepickerRef"`.
+- `LibDatepickerToggleDirective` (selector: `[libDatepickerToggle]`) — botón icónico que abre/cierra el calendario. Recibe la misma referencia.
+
+**Ejemplo**
+
+```html
+<input libInput [libDatepicker]="dp" formControlName="releaseDate" />
+<button [libDatepickerToggle]="dp" aria-label="Abrir calendario"></button>
+<app-lib-datepicker #dp />
+```
+
+---
+
+### 4.18 `lib-snackbar`
+
+No es un componente standalone de plantilla sino un **servicio singleton**.
+
+**Uso**: `inject(LibSnackbarService).open({ text, variant, duration })`
+
+| Parámetro | Tipo | Default | Descripción |
+|---|---|---|---|
+| `text` | `string` (required) | — | Mensaje mostrado. |
+| `variant` | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'` | Color semántico. |
+| `duration` | `number` | `4000` | Milisegundos antes del auto-dismiss. |
+
+**Junto a**
+
+- `LibSnackbarHostComponent` — contenedor que gestiona la cola de toasts. **Debe montarse una sola vez** en `app.component.html`.
+
+**Notas**
+
+- Cola FIFO: si hay un snackbar activo, el siguiente espera a que se cierre.
+- El usuario puede cerrar manualmente con el botón `×`.
+
+**Ejemplo**
+
+```typescript
+// En el componente
+private readonly _snackbar: LibSnackbarService = inject(LibSnackbarService);
+
+this._snackbar.open({ text: 'Guardado correctamente', variant: 'success' });
+```
+
+```html
+<!-- app.component.html -->
+<app-lib-snackbar-host />
+```
+
+---
+
+### 4.19 `lib-tooltip`
+
+No es un componente sino una **directiva DOM nativa**.
+
+Selector: `[libTooltip]`
+
+**Cuándo usarlo**: tooltips informativos en elementos desktop. La directiva es inactiva en dispositivos táctiles (sin hover real).
+
+**Notas**
+
+- Solo activo en desktop / hover. En táctil no se muestra nada.
+- Implementado sobre posicionamiento nativo sin CDK para mantener el bundle reducido.
+
+**Ejemplo**
+
+```html
+<app-lib-icon-button
+  icon="info"
+  ariaLabel="Información"
+  [libTooltip]="'Ver detalles del estado'" />
+```
+
+---
+
+### 4.20 `lib-menu`
+
+Selector: `app-lib-menu`
+Panel de menú contextual construido sobre CDK Overlay con navegación por teclado completa.
+
+**Junto a**
+
+- `LibMenuItemComponent` — ítem individual del menú. Acepta `label`, `icon` y `disabled`.
+- `LibMenuTriggerDirective` (selector: `[libMenuTriggerFor]`) — conecta el elemento trigger con el panel. Recibe la referencia al componente mediante `[libMenuTriggerFor]="menuRef"`.
+
+**Ejemplo**
+
+```html
+<app-lib-icon-button
+  icon="more_vert"
+  ariaLabel="Más opciones"
+  [libMenuTriggerFor]="contextMenu" />
+
+<app-lib-menu #contextMenu>
+  <app-lib-menu-item label="EDITAR" icon="edit" (clicked)="onEdit()" />
+  <app-lib-menu-item label="ELIMINAR" icon="delete" [disabled]="!canDelete()" (clicked)="onDelete()" />
+</app-lib-menu>
+```
+
+---
+
+### 4.21 `lib-tabs` + `lib-router-tabs`
+
+**`lib-tabs`** — Selector: `app-lib-tabs`
+Tablist ARIA con roving tabindex para tabs sin ruta.
+
+**`lib-router-tabs`** — Selector: `app-lib-router-tabs`
+Navegación por tabs con `routerLink` y `aria-current="page"` para tabs ligadas a rutas.
+
+**Ejemplo**
+
+```html
+<!-- Tabs sin ruta -->
+<app-lib-tabs [tabs]="tabs" [(activeTab)]="activeTab" />
+
+<!-- Tabs con ruta -->
+<app-lib-router-tabs [tabs]="routerTabs" />
+```
+
+---
+
+### 4.22 `lib-dialog`
+
+No es un componente standalone de plantilla sino un **servicio sobre `LibOverlayService`**.
+
+**Uso**: `inject(LibDialogService).open(Component, { data })`
+
+**Directivas de contenido** (aplicar al template del componente que se proyecta en el dialog):
+
+| Directiva | Descripción |
+|---|---|
+| `libDialogTitle` | Cabecera del dialog. |
+| `libDialogContent` | Cuerpo scrolleable. |
+| `libDialogActions` | Pie con botones de acción. |
+| `libDialogClose` | Botón que cierra el dialog al hacer click. |
+
+**Tokens de inyección**
+
+| Token | Descripción |
+|---|---|
+| `LIB_DIALOG_DATA` | Datos tipados pasados al `open()`. Inyectar con `inject(LIB_DIALOG_DATA)`. |
+| `LibDialogRef` | Referencia al dialog para cerrarlo programáticamente con `.close(result)`. |
+
+**Ejemplo**
+
+```typescript
+// Abrir
+inject(LibDialogService).open(ConfirmDialogComponent, { data: { message: '...' } });
+
+// Dentro del componente del dialog
+private readonly _data = inject(LIB_DIALOG_DATA);
+private readonly _dialogRef: LibDialogRef = inject(LibDialogRef);
+
+onConfirm(): void {
+  this._dialogRef.close(true);
+}
+```
+
+---
+
+### 4.23 `lib-bottom-sheet`
+
+No es un componente standalone de plantilla sino un **servicio sobre `LibOverlayService`**.
+
+**Uso**: `inject(LibBottomSheetService).open(Component, data)`
+
+**Tokens de inyección**
+
+| Token | Descripción |
+|---|---|
+| `LIB_BOTTOM_SHEET_DATA` | Datos tipados pasados al `open()`. Inyectar con `inject(LIB_BOTTOM_SHEET_DATA)`. |
+| `LibBottomSheetRef` | Referencia para cerrar el bottom-sheet con `.close(result)`. |
+
+**Ejemplo**
+
+```typescript
+// Abrir
+inject(LibBottomSheetService).open(FiltersSheetComponent, filtersData);
+
+// Dentro del componente del bottom-sheet
+private readonly _data = inject(LIB_BOTTOM_SHEET_DATA);
+private readonly _sheetRef: LibBottomSheetRef = inject(LibBottomSheetRef);
+
+onApply(): void {
+  this._sheetRef.close(this._filters);
+}
+```
+
+---
+
+### 4.24 `lib-divider`
+
+No es un componente Angular sino una **clase CSS utilitaria**.
+
+**Uso**: `<hr class="lib-divider">`
+
+**Notas**
+
+- Renderiza una línea horizontal de 1px con `--border-subtle`.
+- Sin márgenes propios — el espaciado lo gestiona el componente padre.
+- No usar `<mat-divider>` ni `<hr>` sin clase — siempre `class="lib-divider"` para mantener la consistencia visual Terminal Collector.
+
+---
+
+## 5. Servicios infraestructurales
+
+### `LibOverlayService`
+
+Engine base sobre el que se construyen los servicios de alto nivel: `LibDialogService`, `LibBottomSheetService`, `LibMenuTriggerDirective`, `LibSelectComponent`, `LibAutocompleteComponent` y `LibDatepickerComponent`.
+
+Gestiona el ciclo de vida del CDK Overlay (crear portal, posicionar, destruir) y aplica las animaciones de entrada/salida Terminal Collector.
+
+> **No usar `LibOverlayService` directamente en componentes de aplicación.** Usar siempre los servicios de alto nivel (`LibDialogService`, `LibBottomSheetService`) o las directivas trigger (`libMenuTriggerFor`, `libAutocompleteTrigger`, `libDatepicker`).
+
+---
+
+## 6. Resumen tabla
+
+| Componente / Servicio | Selector / API | Slot (`<ng-content>`) | Output principal | Variantes / Notas |
 |---|---|---|---|---|
 | `lib-button` | `app-lib-button` | sí (Fase 8) | `clicked` | `primary` / `ghost` / `danger` / `success` |
 | `lib-icon-button` | `app-lib-icon-button` | no | `clicked` | `primary` / `ghost` / `danger` × `sm` / `md` / `lg` |
@@ -587,10 +931,23 @@ Bloque rectangular con shimmer mientras carga contenido.
 | `lib-empty-state` | `app-lib-empty-state` | sí | — | — |
 | `lib-spinner` | `app-lib-spinner` | no | — | 4 tamaños × 3 glyphs |
 | `lib-skeleton` | `app-lib-skeleton` | no | — | — |
+| `lib-icon` | `app-lib-icon` | no | — | `sm` / `md` / `lg` |
+| `lib-form-field` | `app-lib-form-field` | sí (`<input libInput>`) | — | + `LibInputDirective`, `LibLabelComponent`, `LibErrorComponent`, `LibHintComponent` |
+| `lib-select` | `app-lib-select` | no (CVA) | — | `multiple?` + `LibOptionComponent` |
+| `lib-autocomplete` | `app-lib-autocomplete` + `[libAutocompleteTrigger]` | no | `optionSelected` | — |
+| `lib-datepicker` | `app-lib-datepicker` + `[libDatepicker]` + `[libDatepickerToggle]` | no | — | locale `es-ES`, patrón APG |
+| `lib-snackbar` | `LibSnackbarService.open()` + `app-lib-snackbar-host` | — | — | `info` / `success` / `warning` / `danger`, cola FIFO |
+| `lib-tooltip` | `[libTooltip]` (directiva) | — | — | Solo desktop/hover |
+| `lib-menu` | `app-lib-menu` + `[libMenuTriggerFor]` | sí (`LibMenuItemComponent`) | — | + `LibMenuItemComponent` |
+| `lib-tabs` | `app-lib-tabs` | no | — | roving tabindex |
+| `lib-router-tabs` | `app-lib-router-tabs` | no | — | `routerLink` + `aria-current="page"` |
+| `lib-dialog` | `LibDialogService.open()` | — | — | `LIB_DIALOG_DATA`, `LibDialogRef`, directivas de contenido |
+| `lib-bottom-sheet` | `LibBottomSheetService.open()` | — | — | `LIB_BOTTOM_SHEET_DATA`, `LibBottomSheetRef` |
+| `lib-divider` | `.lib-divider` (clase CSS en `<hr>`) | — | — | — |
 
 ---
 
-## 6. Cuándo no usar `lib/`
+## 7. Cuándo no usar `lib/`
 
 Los siguientes patrones quedan deliberadamente **fuera** del scope de `lib/`:
 
