@@ -12,6 +12,7 @@ import {
   ViewChild,
   WritableSignal
 } from '@angular/core';
+import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibCommandBarComponent } from '@/lib/lib-command-bar/lib-command-bar.component';
 import { LibEmptyStateComponent } from '@/lib/lib-empty-state/lib-empty-state.component';
 import { CurrencyPipe } from '@angular/common';
@@ -19,7 +20,6 @@ import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -57,7 +57,6 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    MatButton,
     MatDrawer,
     MatDrawerContainer,
     MatDrawerContent,
@@ -70,6 +69,7 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     GameListFiltersBarComponent,
     GameListFiltersSheetComponent,
     GameRowComponent,
+    LibButtonComponent,
     LibCommandBarComponent,
     LibEmptyStateComponent
   ]

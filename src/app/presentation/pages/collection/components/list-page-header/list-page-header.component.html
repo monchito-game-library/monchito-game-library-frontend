@@ -7,7 +7,7 @@
 <div class="list-page-header__filters">
   <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-page-header__search">
     <mat-label>{{ searchPlaceholder() | transloco }}</mat-label>
-    <mat-icon matPrefix>search</mat-icon>
+    <span matTextPrefix class="list-page-header__search-prefix">$ </span>
     <input
       matInput
       [value]="searchValue()"

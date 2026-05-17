@@ -303,7 +303,8 @@
   }
 
   .game-detail__body {
-    padding: 1.25rem 1rem calc(80px + 1.25rem);
+    // Incluir env(safe-area-inset-bottom) para que el contenido no quede bajo la bottom-nav en iPhones
+    padding: 1.25rem 1rem calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 1.25rem);
   }
 }
 
@@ -338,5 +339,12 @@
 
   .game-detail__section {
     gap: 0.5rem;
+  }
+}
+
+// ────────────────────────── Responsive: ≥ 2560px (ultra-wide) ──────────────────────────
+@media (min-width: 2560px) {
+  .game-detail__body {
+    max-width: 960px;
   }
 }

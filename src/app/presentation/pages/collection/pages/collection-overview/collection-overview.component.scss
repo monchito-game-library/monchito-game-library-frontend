@@ -130,7 +130,7 @@
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   :host {
-    padding-bottom: var(--bottom-nav-height);
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
     box-sizing: border-box;
   }
 
@@ -158,6 +158,15 @@
 
     .collection-overview__title {
       font-size: 1.25rem;
+    }
+  }
+}
+
+// ────────────────────────── Responsive: ≥ 1920px (ultra-wide) ──────────────────────────
+@media (min-width: 1920px) {
+  .collection-overview {
+    .collection-overview__grid {
+      max-width: 1200px;
     }
   }
 }

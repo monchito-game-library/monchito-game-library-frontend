@@ -180,6 +180,12 @@
 
 // ────────────────────────── Responsive: <= 768px ──────────────────────────
 @media (max-width: 768px) {
+  :host {
+    // safe-area fix: evitar que el contenido quede bajo la bottom-nav en iPhones
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+  }
+
   .hw-list__content {
     padding: 1rem;
   }

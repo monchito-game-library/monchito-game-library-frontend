@@ -282,7 +282,10 @@ input[type='number'] {
 }
 
 // Menu panel (generic, not profile-menu which has its own override in app.component.scss)
+// Issue B fix: añadir background-color y border para menús contextuales (kebab, etc.)
 .mat-mdc-menu-panel {
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
 }
@@ -416,5 +419,10 @@ input[type='number'] {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+
+  // Route fade-in: sin transform en reduced-motion
+  .app-content router-outlet + * {
+    animation: none;
   }
 }

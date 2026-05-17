@@ -34,10 +34,10 @@
       <div class="wishlist-page__list">
         @for (n of [0, 1, 2, 3]; track n) {
           <div class="wishlist-page__card-skeleton">
-            <app-skeleton width="72px" height="96px" borderRadius="var(--radius-sm)" />
+            <app-skeleton width="72px" height="96px" borderRadius="0" />
             <div class="wishlist-page__card-skeleton-body">
               <app-skeleton width="180px" height="18px" />
-              <app-skeleton width="80px" height="14px" borderRadius="var(--radius-full)" />
+              <app-skeleton width="80px" height="14px" borderRadius="0" />
               <app-skeleton width="60px" height="14px" />
             </div>
           </div>
@@ -108,14 +108,14 @@
 
     @if (editPlatformsLoading()) {
       <div class="wishlist-view__form">
-        <app-skeleton height="44px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="80px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="44px" borderRadius="0" />
+        <app-skeleton height="56px" borderRadius="0" />
+        <app-skeleton height="56px" borderRadius="0" />
+        <app-skeleton height="80px" borderRadius="0" />
       </div>
       <div class="wishlist-view__actions">
-        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
+        <app-skeleton height="36px" borderRadius="0" />
+        <app-skeleton height="36px" borderRadius="0" />
       </div>
     } @else {
       <!-- Selected game preview (add mode only) -->

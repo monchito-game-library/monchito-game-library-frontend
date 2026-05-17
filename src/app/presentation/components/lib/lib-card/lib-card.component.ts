@@ -26,4 +26,17 @@ export class LibCardComponent {
 
   /** Emite el MouseEvent cuando la tarjeta es interactiva y se hace clic. */
   readonly cardClicked: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
+
+  /**
+   * Gestiona el evento keydown.space condicionando tanto la emisión del click
+   * como el preventDefault al input interactive().
+   * Issue E fix: evita que preventDefault se ejecute en tarjetas no interactivas.
+   *
+   * @param {Event} event - Evento de teclado de la barra espaciadora
+   */
+  onKeydown(event: Event): void {
+    if (!this.interactive()) return;
+    event.preventDefault();
+    this.cardClicked.emit(event as unknown as MouseEvent);
+  }
 }

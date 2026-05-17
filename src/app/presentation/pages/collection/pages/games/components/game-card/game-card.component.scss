@@ -273,6 +273,12 @@
     .game-card__price {
       font-size: 0.8125rem;
     }
+
+    // Touch target fix: flip-btn mínimo 44×44px en mobile
+    .game-card__flip-btn {
+      width: 44px !important;
+      height: 44px !important;
+    }
   }
 }
 

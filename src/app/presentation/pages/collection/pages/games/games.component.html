@@ -85,10 +85,11 @@
         [title]="'gameList.empty.noResults' | transloco"
         [subtitle]="'gameList.empty.noResultsSubtitle' | transloco"
         hint="$ try --filter=reset">
-        <button mat-stroked-button (click)="clearAllFilters()">
-          <mat-icon>filter_alt_off</mat-icon>
-          {{ 'gameList.empty.clearFilters' | transloco }}
-        </button>
+        <app-lib-button
+          variant="ghost"
+          icon="filter_alt_off"
+          [label]="'gameList.empty.clearFilters' | transloco"
+          (clicked)="clearAllFilters()" />
       </app-lib-empty-state>
 
       <!-- State: empty collection -->
