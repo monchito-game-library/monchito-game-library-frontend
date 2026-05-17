@@ -75,6 +75,18 @@
     cursor: not-allowed;
   }
 
+  .lib-btn__slot {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    flex-shrink: 0;
+  }
+
+  /* Si hay contenido proyectado en el slot, ocultar el mat-icon del input icon */
+  .lib-btn__slot:not(:empty) ~ .lib-btn__icon {
+    display: none;
+  }
+
   .lib-btn__icon {
     font-size: 1rem;
     width: 1rem;

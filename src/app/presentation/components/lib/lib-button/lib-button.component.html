@@ -9,11 +9,13 @@
   [type]="type()"
   [disabled]="disabled() || loading()"
   (click)="clicked.emit($event)">
-  @if (icon() && !loading()) {
-    <mat-icon class="lib-btn__icon">{{ icon() }}</mat-icon>
-  }
   @if (loading()) {
     <mat-icon class="lib-btn__icon lib-btn__icon--spin">progress_activity</mat-icon>
+  } @else {
+    <span class="lib-btn__slot"><ng-content /></span>
+    @if (icon()) {
+      <mat-icon class="lib-btn__icon">{{ icon() }}</mat-icon>
+    }
   }
   <span class="lib-btn__label">{{ label() }}</span>
 </button>

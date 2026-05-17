@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LibButtonComponent } from './lib-button.component';
 
@@ -37,5 +38,43 @@ describe('LibButtonComponent', () => {
     fixture.detectChanges();
     const spinIcon = fixture.nativeElement.querySelector('.lib-btn__icon--spin');
     expect(spinIcon).not.toBeNull();
+  });
+
+  describe('ng-content slot (SVG projection)', () => {
+    @Component({
+      template: `
+        <app-lib-button label="With SVG">
+          <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
+        </app-lib-button>
+      `,
+      imports: [LibButtonComponent]
+    })
+    class TestHostWithSvgComponent {}
+
+    @Component({
+      template: `
+        <app-lib-button label="With SVG and icon" icon="star">
+          <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
+        </app-lib-button>
+      `,
+      imports: [LibButtonComponent]
+    })
+    class TestHostWithSvgAndIconComponent {}
+
+    it('should render projected SVG content in the slot', async () => {
+      const hostFixture = TestBed.createComponent(TestHostWithSvgComponent);
+      hostFixture.detectChanges();
+      const svg = hostFixture.nativeElement.querySelector('#test-svg');
+      expect(svg).not.toBeNull();
+    });
+
+    it('should render the slot wrapper when SVG is projected with icon input defined', async () => {
+      const hostFixture = TestBed.createComponent(TestHostWithSvgAndIconComponent);
+      hostFixture.detectChanges();
+      const slot = hostFixture.nativeElement.querySelector('.lib-btn__slot');
+      const svg = hostFixture.nativeElement.querySelector('#test-svg');
+      expect(slot).not.toBeNull();
+      expect(svg).not.toBeNull();
+    });
   });
 });
