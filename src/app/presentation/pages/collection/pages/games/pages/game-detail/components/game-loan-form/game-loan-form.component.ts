@@ -16,7 +16,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -38,7 +38,7 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatIcon,
+    LibIconComponent,
     LibIconButtonComponent,
     MatFormField,
     MatLabel,

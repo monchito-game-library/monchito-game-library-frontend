@@ -58,7 +58,7 @@
             priority />
         } @else {
           <div class="wishlist-detail__cover wishlist-detail__cover--placeholder">
-            <mat-icon>image_not_supported</mat-icon>
+            <app-lib-icon name="image_not_supported" />
           </div>
         }
       </div>
@@ -70,9 +70,10 @@
       <div class="wishlist-detail__meta">
         <div class="wishlist-detail__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
           @for (level of priorityRange; track level) {
-            <mat-icon class="wishlist-detail__star" [class.wishlist-detail__star--filled]="level <= i.priority">
-              {{ level <= i.priority ? 'star' : 'star_border' }}
-            </mat-icon>
+            <app-lib-icon
+              class="wishlist-detail__star"
+              [class.wishlist-detail__star--filled]="level <= i.priority"
+              [name]="level <= i.priority ? 'star' : 'star_border'" />
           }
         </div>
         @if (i.platform) {

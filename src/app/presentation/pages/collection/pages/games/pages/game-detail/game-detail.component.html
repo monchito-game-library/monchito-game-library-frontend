@@ -50,17 +50,17 @@
               <mat-menu #contextMenu="matMenu">
                 @if (g.soldAt) {
                   <button mat-menu-item (click)="openSaleView()">
-                    <mat-icon>edit</mat-icon>
+                    <app-lib-icon name="edit" />
                     <span>{{ 'gameDetail.sale.editSaleBtn' | transloco }}</span>
                   </button>
                   <button mat-menu-item (click)="undoSell()">
-                    <mat-icon>undo</mat-icon>
+                    <app-lib-icon name="undo" />
                     <span>{{ 'gameDetail.sale.undoSaleBtn' | transloco }}</span>
                   </button>
                 } @else {
                   @if (g.format === 'physical') {
                     <button mat-menu-item (click)="openLoanView()">
-                      <mat-icon>handshake</mat-icon>
+                      <app-lib-icon name="handshake" />
                       <span>
                         {{
                           g.activeLoanId
@@ -71,7 +71,7 @@
                     </button>
                   }
                   <button mat-menu-item (click)="deleteGame()" [disabled]="deleting()">
-                    <mat-icon>delete</mat-icon>
+                    <app-lib-icon name="delete" />
                     <span>{{ 'gameCard.menu.delete' | transloco }}</span>
                   </button>
                 }
@@ -124,7 +124,7 @@
       @if (g.soldAt && !showSaleForm() && !showLoanForm()) {
         <!-- Sold banner — resumen colapsado; acciones en el kebab del topbar -->
         <div class="game-detail__sold-banner">
-          <mat-icon class="game-detail__sold-banner-icon">sell</mat-icon>
+          <app-lib-icon class="game-detail__sold-banner-icon" name="sell" />
           <span class="game-detail__sold-banner-text">
             <strong>{{ 'gameDetail.sale.soldBannerPrefix' | transloco }}</strong>
             {{ g.soldAt | date: 'dd/MM/yyyy' }}
@@ -156,10 +156,10 @@
               <app-lib-data-row [label]="'gameForm.fields.rating' | transloco" icon="star">
                 <span class="game-detail__stars">
                   @for (_ of ratingStars(); track $index) {
-                    <mat-icon>star</mat-icon>
+                    <app-lib-icon name="star" />
                   }
                   @if (hasHalfStar()) {
-                    <mat-icon>star_half</mat-icon>
+                    <app-lib-icon name="star_half" />
                   }
                 </span>
                 <span>{{ g.personalRating }}/10</span>
@@ -216,7 +216,7 @@
                   [class.game-detail__copy-tab--active]="copy.uuid === g.uuid"
                   [attr.aria-selected]="copy.uuid === g.uuid"
                   (click)="selectCopyByUuid(copy.uuid!)">
-                  <mat-icon>{{ copy.format === 'physical' ? 'album' : 'cloud' }}</mat-icon>
+                  <app-lib-icon [name]="copy.format === 'physical' ? 'album' : 'cloud'" />
                   {{ 'gameList.filters.' + copy.format | transloco }}
                   @if (copy.edition) {
                     <span class="game-detail__copy-tab-edition">· {{ copy.edition }}</span>

@@ -10,5 +10,5 @@
   [disabled]="disabled()"
   [attr.aria-label]="ariaLabel()"
   (click)="clicked.emit($event)">
-  <mat-icon class="lib-icon-btn__icon">{{ icon() }}</mat-icon>
+  <app-lib-icon class="lib-icon-btn__icon" [name]="icon()" />
 </button>

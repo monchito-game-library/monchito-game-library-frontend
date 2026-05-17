@@ -16,7 +16,7 @@ import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -37,7 +37,7 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     MatLabel,
     MatPrefix,
     MatInput,
-    MatIcon,
+    LibIconComponent,
     LibSpinnerComponent,
     TranslocoPipe
   ]

@@ -15,8 +15,8 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -35,10 +35,10 @@ import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    MatIcon,
     MatMenu,
     MatMenuTrigger,
     LibSkeletonComponent,
+    LibIconComponent,
     TranslocoPipe,
     NgOptimizedImage
   ]

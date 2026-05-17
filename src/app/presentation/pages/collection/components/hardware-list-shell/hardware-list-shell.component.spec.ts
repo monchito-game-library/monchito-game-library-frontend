@@ -210,8 +210,8 @@ describe('HardwareListShellComponent', () => {
       const items = [makeItem({ id: 'item-1' }), makeItem({ id: 'item-2' })];
       setupComponent({ loading: false, items, filteredItems: items });
 
-      const statSpans = fixture.debugElement.queryAll(By.css('.hw-list__stat span'));
-      const countSpan = statSpans[0];
+      const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
+      const countSpan = statDivs[0].query(By.css('span:not(.lib-icon)'));
       expect(countSpan.nativeElement.textContent.trim()).toBe('2');
     });
 
@@ -223,8 +223,8 @@ describe('HardwareListShellComponent', () => {
         totalSpent: 300
       });
 
-      const statSpans = fixture.debugElement.queryAll(By.css('.hw-list__stat span'));
-      const spentSpan = statSpans[1];
+      const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
+      const spentSpan = statDivs[1].query(By.css('span:not(.lib-icon)'));
       expect(spentSpan.nativeElement.textContent).toContain('300');
     });
   });

@@ -90,7 +90,7 @@
     <!-- Error -->
     @if (errorMessage()) {
       <div class="auth-message auth-message--error">
-        <mat-icon>error_outline</mat-icon>
+        <app-lib-icon name="error_outline" />
         <span>{{ errorMessage() }}</span>
       </div>
     }
@@ -98,7 +98,7 @@
     <!-- Success -->
     @if (successMessage()) {
       <div class="auth-message auth-message--success">
-        <mat-icon>check_circle_outline</mat-icon>
+        <app-lib-icon name="check_circle_outline" />
         <span>{{ successMessage() }}</span>
       </div>
     }

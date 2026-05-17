@@ -9,7 +9,7 @@ import {
   Signal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -28,7 +28,7 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
   imports: [
     DecimalPipe,
     NgOptimizedImage,
-    MatIcon,
+    LibIconComponent,
     MatTooltip,
     LibIconButtonComponent,
     TranslocoPipe,

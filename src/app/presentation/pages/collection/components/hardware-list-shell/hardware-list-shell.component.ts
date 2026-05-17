@@ -8,7 +8,7 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -36,7 +36,7 @@ import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    MatIcon,
+    LibIconComponent,
     TranslocoPipe,
     LibSkeletonComponent,
     ListPageHeaderComponent,

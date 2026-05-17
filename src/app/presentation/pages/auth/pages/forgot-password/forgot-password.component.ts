@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -23,7 +23,7 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     MatFormField,
     MatLabel,
     MatInput,
-    MatIcon,
+    LibIconComponent,
     MatError,
     MatPrefix,
     TranslocoPipe,

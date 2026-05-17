@@ -18,7 +18,9 @@ describe('LibIconButtonComponent', () => {
     const btn = fixture.nativeElement.querySelector('button');
     expect(btn).toBeTruthy();
     expect(btn.getAttribute('aria-label')).toBe('Cerrar');
-    expect(fixture.nativeElement.querySelector('mat-icon').textContent.trim()).toBe('close');
+    const libIcon = fixture.nativeElement.querySelector('app-lib-icon');
+    expect(libIcon).toBeTruthy();
+    expect(libIcon.querySelector('.lib-icon').textContent.trim()).toBe('close');
   });
 
   it('emite clicked al pulsar', () => {

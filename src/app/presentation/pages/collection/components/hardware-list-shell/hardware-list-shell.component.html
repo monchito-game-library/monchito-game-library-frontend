@@ -9,7 +9,7 @@
     (addClick)="addClick.emit()">
     <!-- stat: item count -->
     <div class="hw-list__stat">
-      <mat-icon>{{ statIcon() }}</mat-icon>
+      <app-lib-icon [name]="statIcon()" />
       @if (loading()) {
         <app-lib-skeleton width="24px" height="12px" />
       } @else {
@@ -19,7 +19,7 @@
     <div class="hw-list__stat-divider"></div>
     <!-- stat: total spent -->
     <div class="hw-list__stat">
-      <mat-icon>payments</mat-icon>
+      <app-lib-icon name="payments" />
       @if (loading()) {
         <app-lib-skeleton width="60px" height="12px" />
       } @else {
@@ -55,7 +55,7 @@
         [subtitle]="i18nPrefix() + '.empty.subtitle' | transloco" />
     } @else if (filteredItems().length === 0) {
       <div class="hw-list__no-results">
-        <mat-icon>search_off</mat-icon>
+        <app-lib-icon name="search_off" />
         <p>{{ i18nPrefix() + '.noResults' | transloco }}</p>
       </div>
     } @else {
@@ -104,6 +104,6 @@
     class="hw-list__fab"
     [attr.aria-label]="i18nPrefix() + '.add' | transloco"
     (click)="addClick.emit()">
-    <mat-icon>add</mat-icon>
+    <app-lib-icon name="add" />
   </button>
 </div>

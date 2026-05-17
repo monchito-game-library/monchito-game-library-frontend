@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 
 @Component({
   selector: 'app-auth-panel',
@@ -7,6 +7,6 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './auth-panel.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon]
+  imports: [LibIconComponent]
 })
 export class AuthPanelComponent {}

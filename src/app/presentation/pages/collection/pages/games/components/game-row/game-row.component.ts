@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -38,7 +38,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
   imports: [
     CurrencyPipe,
     NgOptimizedImage,
-    MatIcon,
+    LibIconComponent,
     MatTooltip,
     TranslocoPipe,
     LibChipComponent,

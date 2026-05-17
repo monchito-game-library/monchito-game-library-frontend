@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -31,7 +31,14 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrls: ['./collection-overview.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, MatIcon, LibSkeletonComponent, TranslocoPipe, LibSectionHeaderComponent, LibDataRowComponent]
+  imports: [
+    CurrencyPipe,
+    LibIconComponent,
+    LibSkeletonComponent,
+    TranslocoPipe,
+    LibSectionHeaderComponent,
+    LibDataRowComponent
+  ]
 })
 export class CollectionOverviewComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
@@ -48,7 +48,7 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIcon,
+    LibIconComponent,
     LibSpinnerComponent,
     MatTooltip,
     LibIconButtonComponent,

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -38,7 +38,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   imports: [
     CurrencyPipe,
     DatePipe,
-    MatIcon,
+    LibIconComponent,
     LibIconButtonComponent,
     TranslocoPipe,
     LibSkeletonComponent,

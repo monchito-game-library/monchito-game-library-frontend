@@ -21,14 +21,14 @@
 
     @if (!searchQuery()) {
       <div class="catalog-search-panel__placeholder">
-        <mat-icon>sports_esports</mat-icon>
+        <app-lib-icon name="sports_esports" />
         <p>{{ 'gameForm.search.emptyHint' | transloco }}</p>
       </div>
     }
 
     @if (searchQuery() && !searchLoading() && !searchResults().length) {
       <div class="catalog-search-panel__placeholder">
-        <mat-icon>search_off</mat-icon>
+        <app-lib-icon name="search_off" />
         <p>{{ 'gameForm.search.noResults' | transloco: { query: searchQuery() } }}</p>
       </div>
     }
@@ -40,7 +40,7 @@
             <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" fill />
           } @else {
             <div class="search-result-card__cover-placeholder">
-              <mat-icon>videogame_asset</mat-icon>
+              <app-lib-icon name="videogame_asset" />
             </div>
           }
         </div>
@@ -55,7 +55,7 @@
             }
             @if (game.rating > 0) {
               <span class="search-result-card__rating">
-                <mat-icon>star</mat-icon>
+                <app-lib-icon name="star" />
                 {{ game.rating | number: '1.1-1' }}
               </span>
             }

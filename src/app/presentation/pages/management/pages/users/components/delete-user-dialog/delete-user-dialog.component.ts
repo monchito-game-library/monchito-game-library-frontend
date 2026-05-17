@@ -12,7 +12,7 @@ import {
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
@@ -39,7 +39,7 @@ import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/ma
     MatLabel,
     MatHint,
     MatInput,
-    MatIcon,
+    LibIconComponent,
     TranslocoPipe,
     LibButtonComponent
   ]

@@ -1,7 +1,7 @@
 <div class="models-page" [class.models-page--panel-open]="panelOpen() || brandPanelOpen()">
   <header class="models-page__header">
     <div class="models-page__header-left">
-      <mat-icon class="models-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
+      <app-lib-icon class="models-page__back-icon" name="arrow_back" (click)="onBack()" />
       <div class="models-page__titles">
         <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>

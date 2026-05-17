@@ -12,7 +12,7 @@
         [matTooltip]="section.label | transloco"
         matTooltipPosition="right"
         matTooltipClass="management__nav-tooltip">
-        <mat-icon>{{ section.icon }}</mat-icon>
+        <app-lib-icon [name]="section.icon" />
         <span class="management__nav-item-label">{{ section.label | transloco }}</span>
       </a>
     }

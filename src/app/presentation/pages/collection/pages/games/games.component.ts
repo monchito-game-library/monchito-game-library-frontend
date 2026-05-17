@@ -20,7 +20,7 @@ import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -60,7 +60,7 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     MatDrawer,
     MatDrawerContainer,
     MatDrawerContent,
-    MatIcon,
+    LibIconComponent,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,

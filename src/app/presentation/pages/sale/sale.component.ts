@@ -9,7 +9,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
@@ -31,7 +31,16 @@ import { Router } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [marketRepositoryProvider, marketUseCasesProvider],
-  imports: [CurrencyPipe, DatePipe, MatIcon, MatTab, MatTabGroup, MatTabLabel, TranslocoPipe, LibSpinnerComponent]
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    LibIconComponent,
+    MatTab,
+    MatTabGroup,
+    MatTabLabel,
+    TranslocoPipe,
+    LibSpinnerComponent
+  ]
 })
 export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);

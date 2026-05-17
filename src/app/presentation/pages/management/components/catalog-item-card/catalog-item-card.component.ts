@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 
 @Component({
   selector: 'app-catalog-item-card',
@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './catalog-item-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon],
+  imports: [LibIconComponent],
   host: {
     '(click)': 'cardClick.emit()',
     '[class.catalog-item-card--selected]': 'selected()'

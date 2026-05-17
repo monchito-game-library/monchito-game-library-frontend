@@ -9,13 +9,13 @@
   <div class="order-detail-page__section-body-inner">
     @if (!isOwner() && order().status === ORDER_STATUS.SELECTING_PACKS) {
       <div class="order-detail-page__selecting-banner">
-        <mat-icon>schedule</mat-icon>
+        <app-lib-icon name="schedule" />
         {{ 'orders.lines.selectingPacks' | transloco }}
       </div>
     }
     @if (!isOwner() && order().status === ORDER_STATUS.ORDERING) {
       <div class="order-detail-page__selecting-banner">
-        <mat-icon>shopping_cart</mat-icon>
+        <app-lib-icon name="shopping_cart" />
         {{ 'orders.lines.placingOrder' | transloco }}
       </div>
     }
@@ -47,7 +47,7 @@
                           target="_blank"
                           rel="noopener noreferrer"
                           [attr.aria-label]="line.productName">
-                          <mat-icon>open_in_new</mat-icon>
+                          <app-lib-icon name="open_in_new" />
                         </a>
                       }
                     </div>
@@ -103,7 +103,7 @@
                           target="_blank"
                           rel="noopener noreferrer"
                           [attr.aria-label]="line.productName">
-                          <mat-icon>open_in_new</mat-icon>
+                          <app-lib-icon name="open_in_new" />
                         </a>
                       }
                     </div>

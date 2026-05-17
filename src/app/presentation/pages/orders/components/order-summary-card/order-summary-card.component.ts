@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
@@ -11,7 +11,7 @@ import { OrderSummaryModel } from '@/models/order/order-summary.model';
   styleUrl: './order-summary-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MatIcon, TranslocoPipe]
+  imports: [DatePipe, LibIconComponent, TranslocoPipe]
 })
 export class OrderSummaryCardComponent {
   /** Order summary data to display. */

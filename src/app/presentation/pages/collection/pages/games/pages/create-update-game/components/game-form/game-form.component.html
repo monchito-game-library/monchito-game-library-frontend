@@ -43,7 +43,7 @@
               (clicked)="clearSelectedGame()" />
           } @else {
             <div class="game-cover-panel__placeholder">
-              <mat-icon>sports_esports</mat-icon>
+              <app-lib-icon name="sports_esports" />
               <span>{{ 'gameForm.cover.noCover' | transloco }}</span>
             </div>
           }
@@ -84,13 +84,13 @@
             <div class="game-cover-panel__info-meta">
               @if (selectedGame()!.released_date) {
                 <span>
-                  <mat-icon>calendar_today</mat-icon>
+                  <app-lib-icon name="calendar_today" />
                   {{ selectedGame()!.released_date | date: 'yyyy' }}
                 </span>
               }
               @if (selectedGame()!.rating > 0) {
                 <span>
-                  <mat-icon>star</mat-icon>
+                  <app-lib-icon name="star" />
                   {{ selectedGame()!.rating }}
                 </span>
               }
@@ -181,7 +181,7 @@
           <mat-select formControlName="status">
             @for (status of gameStatuses; track status.code) {
               <mat-option [value]="status.code">
-                <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+                <app-lib-icon [name]="status.icon" [style.color]="status.color" />
                 {{ status.labelKey | transloco }}
               </mat-option>
             }

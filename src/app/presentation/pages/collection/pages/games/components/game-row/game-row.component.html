@@ -4,7 +4,7 @@
     <img [ngSrc]="cover()" fill alt="Game cover" />
     @if (game().format === 'digital') {
       <span class="game-row__digital-badge" matTooltip="Digital">
-        <mat-icon>cloud</mat-icon>
+        <app-lib-icon name="cloud" />
       </span>
     }
   </div>
@@ -31,7 +31,7 @@
     <div class="game-row__status">
       @if (gameStatus(); as status) {
         <span class="game-row__status-pill" [matTooltip]="status.labelKey | transloco">
-          <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+          <app-lib-icon [name]="status.icon" [style.color]="status.color" />
         </span>
       }
     </div>
@@ -39,24 +39,22 @@
     <div class="game-row__rating">
       @if (game().personalRating !== null) {
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <mat-icon [class.game-row__star--filled]="i <= ratingStars()">
-            {{ i <= ratingStars() ? 'star' : 'star_border' }}
-          </mat-icon>
+          <app-lib-icon
+            [class.game-row__star--filled]="i <= ratingStars()"
+            [name]="i <= ratingStars() ? 'star' : 'star_border'" />
         }
       }
     </div>
 
     <div class="game-row__indicators">
       @if (game().isFavorite) {
-        <mat-icon class="game-row__indicator game-row__indicator--favorite" matTooltip="Favorito">favorite</mat-icon>
+        <app-lib-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
       }
       @if (game().activeLoanId !== null) {
-        <mat-icon class="game-row__indicator game-row__indicator--loan" [matTooltip]="game().activeLoanTo ?? ''">
-          handshake
-        </mat-icon>
+        <app-lib-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
       }
       @if (game().forSale) {
-        <mat-icon class="game-row__indicator game-row__indicator--sale" matTooltip="En venta">sell</mat-icon>
+        <app-lib-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
       }
     </div>
 

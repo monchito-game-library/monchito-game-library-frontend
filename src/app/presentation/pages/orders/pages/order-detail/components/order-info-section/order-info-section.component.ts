@@ -15,7 +15,7 @@ import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -41,7 +41,7 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     NgOptimizedImage,
     MatButtonToggle,
     MatButtonToggleGroup,
-    MatIcon,
+    LibIconComponent,
     MatFormField,
     MatLabel,
     MatInput,

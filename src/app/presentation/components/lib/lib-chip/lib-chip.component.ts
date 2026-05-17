@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibChipColor } from '@/types/lib-component.type';
 
 /**
@@ -11,7 +11,7 @@ import { LibChipColor } from '@/types/lib-component.type';
 @Component({
   selector: 'app-lib-chip',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [LibIconComponent],
   templateUrl: './lib-chip.component.html',
   styleUrl: './lib-chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

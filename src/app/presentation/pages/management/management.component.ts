@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -13,7 +13,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
   styleUrls: ['./management.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIcon, MatTooltip, TranslocoPipe]
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, LibIconComponent, MatTooltip, TranslocoPipe]
 })
 export class ManagementComponent {
   private readonly _userPreferences: UserPreferencesService = inject(UserPreferencesService);

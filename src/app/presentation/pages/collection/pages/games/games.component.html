@@ -20,7 +20,7 @@
       (viewModeToggle)="onToggleViewMode()"
       (addClick)="onAdd()">
       <div class="game-list__stat">
-        <mat-icon>{{ formatFilterIcon() }}</mat-icon>
+        <app-lib-icon [name]="formatFilterIcon()" />
         @if (loading()) {
           <app-lib-skeleton width="24px" height="12px" />
         } @else {
@@ -29,7 +29,7 @@
       </div>
       <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
-        <mat-icon>payments</mat-icon>
+        <app-lib-icon name="payments" />
         @if (loading()) {
           <app-lib-skeleton width="40px" height="12px" />
         } @else {
@@ -38,7 +38,7 @@
       </div>
       <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
-        <mat-icon>emoji_events</mat-icon>
+        <app-lib-icon name="emoji_events" />
         @if (loading()) {
           <app-lib-skeleton width="24px" height="12px" />
         } @else {
@@ -108,7 +108,7 @@
   class="game-list__filter-fab"
   (click)="openFilters()"
   [attr.aria-label]="'gameList.filters.filters' | transloco">
-  <mat-icon>tune</mat-icon>
+  <app-lib-icon name="tune" />
   @if (activeFilterCount() > 0) {
     <span class="game-list__filter-badge">{{ activeFilterCount() }}</span>
   }
@@ -120,5 +120,5 @@
   class="game-list__fab"
   routerLink="/collection/games/add"
   [attr.aria-label]="'nav.add' | transloco">
-  <mat-icon>add</mat-icon>
+  <app-lib-icon name="add" />
 </button>

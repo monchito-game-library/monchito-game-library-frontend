@@ -22,7 +22,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
 import { MatOption } from '@angular/material/core';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
@@ -78,7 +78,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatSelect,
     MatOption,
     LibCheckboxComponent,
-    MatIcon,
+    LibIconComponent,
     LibSpinnerComponent,
     LibIconButtonComponent,
     TranslocoPipe,

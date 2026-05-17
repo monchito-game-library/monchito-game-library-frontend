@@ -24,15 +24,15 @@
             referrerpolicy="no-referrer" />
         } @else {
           <div class="order-detail-page__info-section-avatar order-detail-page__info-section-avatar--placeholder">
-            <mat-icon>person</mat-icon>
+            <app-lib-icon name="person" />
           </div>
         }
       }
     </div>
   }
-  <mat-icon class="order-detail-page__info-section-chevron">
-    {{ sectionExpanded() ? 'expand_less' : 'expand_more' }}
-  </mat-icon>
+  <app-lib-icon
+    class="order-detail-page__info-section-chevron"
+    [name]="sectionExpanded() ? 'expand_less' : 'expand_more'" />
 </div>
 
 <!-- Collapsible body -->
@@ -106,7 +106,7 @@
                   referrerpolicy="no-referrer" />
               } @else {
                 <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
-                  <mat-icon>person</mat-icon>
+                  <app-lib-icon name="person" />
                 </div>
               }
               <span class="order-detail-page__member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>

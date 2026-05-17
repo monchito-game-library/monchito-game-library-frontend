@@ -5,7 +5,7 @@
       <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
     } @else {
       <div class="wishlist-card__cover--placeholder">
-        <mat-icon>image_not_supported</mat-icon>
+        <app-lib-icon name="image_not_supported" />
       </div>
     }
   </div>
@@ -18,9 +18,10 @@
       <!-- Priority stars -->
       <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
         @for (level of priorityRange; track level) {
-          <mat-icon class="wishlist-card__star" [class.wishlist-card__star--filled]="level <= item().priority">
-            {{ level <= item().priority ? 'star' : 'star_border' }}
-          </mat-icon>
+          <app-lib-icon
+            class="wishlist-card__star"
+            [class.wishlist-card__star--filled]="level <= item().priority"
+            [name]="level <= item().priority ? 'star' : 'star_border'" />
         }
       </div>
     </div>
@@ -91,7 +92,7 @@
 
   @if (mobileMode()) {
     <div class="wishlist-card__mobile-hint">
-      <mat-icon>chevron_right</mat-icon>
+      <app-lib-icon name="chevron_right" />
     </div>
   }
 </article>

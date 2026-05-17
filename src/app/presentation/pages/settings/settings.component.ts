@@ -19,7 +19,7 @@ import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatInput } from '@angular/material/input';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -56,7 +56,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatLabel,
     MatInput,
     MatPrefix,
-    MatIcon,
+    LibIconComponent,
     LibSpinnerComponent,
     MatTooltip,
     LibCheckboxComponent,

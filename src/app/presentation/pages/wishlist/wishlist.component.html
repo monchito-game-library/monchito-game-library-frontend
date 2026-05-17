@@ -7,12 +7,12 @@
         @if (!loading()) {
           <div class="wishlist-page__stats">
             <span class="wishlist-page__stat">
-              <mat-icon class="wishlist-page__stat-icon">bookmark</mat-icon>
+              <app-lib-icon class="wishlist-page__stat-icon" name="bookmark" />
               {{ items().length }}
             </span>
             @if (itemsWithPrice() > 0) {
               <span class="wishlist-page__stat">
-                <mat-icon class="wishlist-page__stat-icon">sell</mat-icon>
+                <app-lib-icon class="wishlist-page__stat-icon" name="sell" />
                 ~{{ totalEstimatedSpend() | number: '1.2-2' }} €
               </span>
             }
@@ -71,7 +71,7 @@
       class="wishlist-page__fab"
       (click)="onAddItem()"
       [attr.aria-label]="'wishlist.addBtn' | transloco">
-      <mat-icon>add</mat-icon>
+      <app-lib-icon name="add" />
     </button>
   </div>
 }

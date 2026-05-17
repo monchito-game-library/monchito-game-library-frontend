@@ -7,7 +7,7 @@
       routerLinkActive
       #rlaOverview="routerLinkActive"
       [active]="rlaOverview.isActive">
-      <mat-icon>home</mat-icon>
+      <app-lib-icon name="home" />
       <span class="games__tab-label">{{ 'collectionOverview.tabOverview' | transloco }}</span>
     </a>
 
@@ -17,7 +17,7 @@
       routerLinkActive
       #rlaGames="routerLinkActive"
       [active]="rlaGames.isActive">
-      <mat-icon>sports_esports</mat-icon>
+      <app-lib-icon name="sports_esports" />
       <span class="games__tab-label">{{ 'collectionOverview.tabGames' | transloco }}</span>
     </a>
 
@@ -27,7 +27,7 @@
       routerLinkActive
       #rlaConsoles="routerLinkActive"
       [active]="rlaConsoles.isActive">
-      <mat-icon>tv</mat-icon>
+      <app-lib-icon name="tv" />
       <span class="games__tab-label">{{ 'collectionOverview.tabConsoles' | transloco }}</span>
     </a>
 
@@ -37,7 +37,7 @@
       routerLinkActive
       #rlaControllers="routerLinkActive"
       [active]="rlaControllers.isActive">
-      <mat-icon>gamepad</mat-icon>
+      <app-lib-icon name="gamepad" />
       <span class="games__tab-label">{{ 'collectionOverview.tabControllers' | transloco }}</span>
     </a>
   </nav>

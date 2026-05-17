@@ -20,7 +20,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -57,7 +57,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatInput,
     MatSelect,
     MatOption,
-    MatIcon,
+    LibIconComponent,
     TranslocoPipe,
     WishlistCardComponent,
     CatalogSearchPanelComponent,

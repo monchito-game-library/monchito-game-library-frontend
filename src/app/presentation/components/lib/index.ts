@@ -1,4 +1,5 @@
 export { LibButtonComponent } from './lib-button/lib-button.component';
+export { LibIconComponent } from './lib-icon/lib-icon.component';
 export { LibCardComponent } from './lib-card/lib-card.component';
 export { LibChipComponent } from './lib-chip/lib-chip.component';
 export { LibDataRowComponent } from './lib-data-row/lib-data-row.component';

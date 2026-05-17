@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 
 /**
  * Fila de datos estilo `ls -la` de la lib Terminal Collector.
@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-lib-data-row',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [LibIconComponent],
   templateUrl: './lib-data-row.component.html',
   styleUrl: './lib-data-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

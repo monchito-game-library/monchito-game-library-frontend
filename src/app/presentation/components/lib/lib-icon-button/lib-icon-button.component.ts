@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonSize, LibIconButtonVariant, LibButtonType } from '@/types/lib-component.type';
 
 /**
@@ -10,7 +10,7 @@ import { LibIconButtonSize, LibIconButtonVariant, LibButtonType } from '@/types/
 @Component({
   selector: 'app-lib-icon-button',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [LibIconComponent],
   templateUrl: './lib-icon-button.component.html',
   styleUrl: './lib-icon-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

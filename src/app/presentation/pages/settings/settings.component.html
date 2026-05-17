@@ -28,7 +28,7 @@
             height="80"
             priority />
           <div class="settings__avatar-overlay">
-            <mat-icon>photo_camera</mat-icon>
+            <app-lib-icon name="photo_camera" />
           </div>
         }
       </label>
@@ -41,7 +41,7 @@
                 class="settings__name-edit-btn"
                 (click)="onEditName()"
                 [attr.aria-label]="'settings.profile.editNameAriaLabel' | transloco">
-                <mat-icon>edit</mat-icon>
+                <app-lib-icon name="edit" />
               </button>
             </div>
           } @else {
@@ -62,13 +62,13 @@
                   class="settings__name-action-btn settings__name-action-btn--confirm"
                   (click)="onSaveName()"
                   [attr.aria-label]="'settings.profile.confirmAriaLabel' | transloco">
-                  <mat-icon>check</mat-icon>
+                  <app-lib-icon name="check" />
                 </button>
                 <button
                   class="settings__name-action-btn settings__name-action-btn--cancel"
                   (click)="onCancelEditName()"
                   [attr.aria-label]="'settings.profile.cancelAriaLabel' | transloco">
-                  <mat-icon>close</mat-icon>
+                  <app-lib-icon name="close" />
                 </button>
               }
             </div>
@@ -108,12 +108,12 @@
             class="settings__banner-preview settings__banner-preview--loaded"
             [style.background-image]="'url(' + bannerImageUrl() + ')'">
             <div class="settings__banner-overlay">
-              <mat-icon>photo_camera</mat-icon>
+              <app-lib-icon name="photo_camera" />
             </div>
           </div>
         } @else {
           <div class="settings__banner-placeholder">
-            <mat-icon>add_photo_alternate</mat-icon>
+            <app-lib-icon name="add_photo_alternate" />
             <span>{{ 'settings.appearance.uploadOwnHint' | transloco }}</span>
           </div>
         }
@@ -145,7 +145,7 @@
               <img [ngSrc]="banner.imageUrl" [alt]="banner.title" fill [priority]="first" />
               @if (bannerImageUrl() === banner.imageUrl) {
                 <div class="settings__banner-thumb-check">
-                  <mat-icon>check_circle</mat-icon>
+                  <app-lib-icon name="check_circle" />
                 </div>
               }
             </button>
@@ -164,7 +164,7 @@
 
     <div class="settings__row">
       <span class="settings__row-label">
-        <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <app-lib-icon [name]="isDark() ? 'light_mode' : 'dark_mode'" />
         {{
           isDark()
             ? ('settings.appearance.switchToLight' | transloco)
@@ -180,7 +180,7 @@
     <h2 class="settings__card-title">{{ 'settings.language.title' | transloco }}</h2>
     <div class="settings__row">
       <span class="settings__row-label">
-        <mat-icon>language</mat-icon>
+        <app-lib-icon name="language" />
         {{ 'settings.language.interfaceLabel' | transloco }}
       </span>
       <div class="settings__lang-toggle">
@@ -201,7 +201,7 @@
     <h2 class="settings__card-title">{{ 'settings.session.title' | transloco }}</h2>
     <div class="settings__row">
       <span class="settings__row-label">
-        <mat-icon>logout</mat-icon>
+        <app-lib-icon name="logout" />
         {{ 'settings.session.logoutDescription' | transloco }}
       </span>
       <app-lib-button [label]="'nav.logout' | transloco" variant="danger" (clicked)="logout()" />

@@ -49,7 +49,7 @@
         <mat-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</mat-option>
         @for (status of gameStatuses; track status.code) {
           <mat-option [value]="status.code">
-            <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
+            <app-lib-icon [name]="status.icon" [style.color]="status.color" />
             {{ status.labelKey | transloco }}
           </mat-option>
         }
@@ -79,9 +79,9 @@
     <!-- Favourites toggle -->
     <div class="filters-sheet__toggle-row">
       <span class="filters-sheet__toggle-label">
-        <mat-icon [class.filters-sheet__fav-icon--active]="d.onlyFavorites()">
-          {{ d.onlyFavorites() ? 'favorite' : 'favorite_border' }}
-        </mat-icon>
+        <app-lib-icon
+          [class.filters-sheet__fav-icon--active]="d.onlyFavorites()"
+          [name]="d.onlyFavorites() ? 'favorite' : 'favorite_border'" />
         {{ 'gameList.aria.onlyFavorites' | transloco }}
       </span>
       <app-lib-checkbox [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
@@ -90,7 +90,7 @@
     <!-- Loaned toggle -->
     <div class="filters-sheet__toggle-row">
       <span class="filters-sheet__toggle-label">
-        <mat-icon>handshake</mat-icon>
+        <app-lib-icon name="handshake" />
         {{ 'gameList.aria.onlyLoaned' | transloco }}
       </span>
       <app-lib-checkbox [checked]="d.onlyLoaned()" (changed)="d.onlyLoaned.set($event)" />

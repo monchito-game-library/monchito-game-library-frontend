@@ -5,7 +5,7 @@ import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular
 import { MatInput } from '@angular/material/input';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -25,7 +25,7 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     MatLabel,
     MatInput,
     LibIconButtonComponent,
-    MatIcon,
+    LibIconComponent,
     MatError,
     MatPrefix,
     MatSuffix,

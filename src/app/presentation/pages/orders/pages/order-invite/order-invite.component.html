@@ -1,7 +1,7 @@
 <div class="order-invite-page">
   <div class="order-invite-page__card">
     @if (!authState.isAuthenticated()) {
-      <mat-icon class="order-invite-page__icon">group_add</mat-icon>
+      <app-lib-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.loginRequired' | transloco }}</div>
       <app-lib-button
@@ -14,11 +14,11 @@
       <app-lib-skeleton width="160px" height="20px" />
       <app-lib-skeleton width="220px" height="14px" />
     } @else if (invalid()) {
-      <mat-icon class="order-invite-page__icon order-invite-page__icon--error">link_off</mat-icon>
+      <app-lib-icon class="order-invite-page__icon order-invite-page__icon--error" name="link_off" />
       <div class="order-invite-page__title">{{ 'orders.invite.invalidTitle' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.invalid' | transloco }}</div>
     } @else if (alreadyMember() && invitation()) {
-      <mat-icon class="order-invite-page__icon order-invite-page__icon--success">check_circle</mat-icon>
+      <app-lib-icon class="order-invite-page__icon order-invite-page__icon--success" name="check_circle" />
       <div class="order-invite-page__title">{{ 'orders.invite.alreadyMemberTitle' | transloco }}</div>
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
       <app-lib-button
@@ -27,7 +27,7 @@
         variant="primary"
         [routerLink]="['/orders', invitation()!.orderId]" />
     } @else if (invitation()) {
-      <mat-icon class="order-invite-page__icon">group_add</mat-icon>
+      <app-lib-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
       @if (invitation()!.expiresAt) {
@@ -51,14 +51,14 @@
     <div class="order-invite-page__order-name">{{ inv.orderTitle ?? ('orders.invite.untitled' | transloco) }}</div>
     <div class="order-invite-page__order-meta">
       <div class="order-invite-page__order-meta-row">
-        <mat-icon class="order-invite-page__meta-icon">calendar_today</mat-icon>
+        <app-lib-icon class="order-invite-page__meta-icon" name="calendar_today" />
         <span>
           {{ 'orders.invite.createdAt' | transloco }}:
           {{ inv.orderDate ? (inv.orderDate | date: 'dd/MM/yyyy') : (inv.orderCreatedAt | date: 'dd/MM/yyyy') }}
         </span>
       </div>
       <div class="order-invite-page__order-meta-row">
-        <mat-icon class="order-invite-page__meta-icon">group</mat-icon>
+        <app-lib-icon class="order-invite-page__meta-icon" name="group" />
         <span>{{ inv.orderMemberCount }} {{ 'orders.invite.members' | transloco }}</span>
       </div>
     </div>

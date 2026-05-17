@@ -18,7 +18,7 @@
   <div class="collection-overview__grid">
     <!-- Games -->
     <button class="collection-overview__card" (click)="goToGames()">
-      <mat-icon class="collection-overview__card-icon">sports_esports</mat-icon>
+      <app-lib-icon class="collection-overview__card-icon" name="sports_esports" />
       <app-lib-section-header [label]="'collectionOverview.games.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.games.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">
@@ -43,7 +43,7 @@
 
     <!-- Consoles -->
     <button class="collection-overview__card" (click)="goToConsoles()">
-      <mat-icon class="collection-overview__card-icon">tv</mat-icon>
+      <app-lib-icon class="collection-overview__card-icon" name="tv" />
       <app-lib-section-header [label]="'collectionOverview.consolesCategory.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.consolesCategory.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">
@@ -68,7 +68,7 @@
 
     <!-- Controllers -->
     <button class="collection-overview__card" (click)="goToControllers()">
-      <mat-icon class="collection-overview__card-icon">gamepad</mat-icon>
+      <app-lib-icon class="collection-overview__card-icon" name="gamepad" />
       <app-lib-section-header [label]="'collectionOverview.controllers.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.controllers.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">

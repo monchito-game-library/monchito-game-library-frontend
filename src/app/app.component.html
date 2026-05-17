@@ -3,7 +3,7 @@
     <!-- Navigation Rail — desktop only -->
     <nav class="nav-rail" role="navigation" [attr.aria-label]="'nav.aria.mainNav' | transloco">
       <div class="nav-rail__brand">
-        <mat-icon>videogame_asset</mat-icon>
+        <app-lib-icon name="videogame_asset" />
         <span class="nav-rail__brand-version">v1.0</span>
       </div>
 
@@ -14,7 +14,7 @@
             [class.nav-rail__item--active]="isNavActive(item.route)"
             [routerLink]="item.route"
             [attr.aria-label]="item.label | transloco">
-            <mat-icon>{{ item.icon }}</mat-icon>
+            <app-lib-icon [name]="item.icon" />
             <span class="nav-rail__label">{{ item.label | transloco }}</span>
           </a>
         }
@@ -28,7 +28,7 @@
               [class.nav-rail__item--active]="isNavActive(item.route)"
               [routerLink]="item.route"
               [attr.aria-label]="item.label | transloco">
-              <mat-icon>{{ item.icon }}</mat-icon>
+              <app-lib-icon [name]="item.icon" />
               <span class="nav-rail__label">{{ item.label | transloco }}</span>
             </a>
           }
@@ -59,7 +59,7 @@
     <main class="app-main">
       <!-- Topbar — mobile only -->
       <header class="app-topbar" role="banner">
-        <mat-icon class="app-topbar__brand">videogame_asset</mat-icon>
+        <app-lib-icon class="app-topbar__brand" name="videogame_asset" />
         <span class="app-topbar__title">{{ getPageTitle() | transloco }}</span>
         <div
           class="app-topbar__user"
@@ -91,7 +91,7 @@
             [class.bottom-nav__item--active]="isNavActive(item.route)"
             [routerLink]="item.route"
             [attr.aria-label]="item.label | transloco">
-            <mat-icon>{{ item.icon }}</mat-icon>
+            <app-lib-icon [name]="item.icon" />
             <span class="bottom-nav__label">{{ item.label | transloco }}</span>
           </a>
         }
@@ -125,11 +125,11 @@
       <!-- Actions -->
       <div class="profile-menu__actions">
         <button class="profile-menu__action-btn" (click)="onNavigateToSettings()">
-          <mat-icon>settings</mat-icon>
+          <app-lib-icon name="settings" />
           <span>{{ 'nav.settings' | transloco }}</span>
         </button>
         <button class="profile-menu__action-btn profile-menu__action-btn--logout" (click)="logout()">
-          <mat-icon>logout</mat-icon>
+          <app-lib-icon name="logout" />
           <span>{{ 'nav.logout' | transloco }}</span>
         </button>
       </div>

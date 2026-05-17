@@ -13,7 +13,7 @@ import { CurrencyPipe, DatePipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -55,7 +55,7 @@ import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-
     CurrencyPipe,
     DatePipe,
     DecimalPipe,
-    MatIcon,
+    LibIconComponent,
     MatMenu,
     LibIconButtonComponent,
     MatMenuItem,

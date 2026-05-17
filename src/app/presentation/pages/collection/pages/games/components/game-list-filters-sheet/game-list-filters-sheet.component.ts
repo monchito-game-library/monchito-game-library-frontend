@@ -4,7 +4,7 @@ import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.co
 import { MatOption } from '@angular/material/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { MatSelect } from '@angular/material/select';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -30,7 +30,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatLabel,
     MatSelect,
     MatOption,
-    MatIcon,
+    LibIconComponent,
     LibCheckboxComponent,
     TranslocoPipe
   ]

@@ -1,6 +1,6 @@
 <span class="lib-chip lib-chip--{{ color() }}" [class.lib-chip--filled]="filled()">
   @if (icon()) {
-    <mat-icon class="lib-chip__icon">{{ icon() }}</mat-icon>
+    <app-lib-icon class="lib-chip__icon" [name]="icon()!" />
   }
   <span class="lib-chip__label">{{ label() }}</span>
   @if (closable()) {
@@ -9,7 +9,7 @@
       type="button"
       aria-label="Eliminar filtro"
       (click)="closed.emit(); $event.stopPropagation()">
-      <mat-icon class="lib-chip__close-icon">close</mat-icon>
+      <app-lib-icon class="lib-chip__close-icon" name="close" />
     </button>
   }
 </span>
