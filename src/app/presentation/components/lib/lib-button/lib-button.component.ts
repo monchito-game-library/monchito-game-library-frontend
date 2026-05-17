@@ -8,7 +8,7 @@ import { LibButtonType, LibButtonVariant } from '@/types/lib-component.type';
  * En mobile (≤ 768px) los corchetes se ocultan.
  */
 @Component({
-  selector: 'app-lib-button',
+  selector: 'retro-button',
   standalone: true,
   imports: [LibIconComponent],
   templateUrl: './lib-button.component.html',

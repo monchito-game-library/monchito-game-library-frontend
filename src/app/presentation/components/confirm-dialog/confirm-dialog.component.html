@@ -1,6 +1,6 @@
-<h2 libDialogTitle>{{ data.title }}</h2>
-<div libDialogContent>{{ data.message }}</div>
-<footer libDialogActions align="end">
-  <app-lib-button [label]="'common.no' | transloco" variant="ghost" libDialogClose />
-  <app-lib-button [label]="'common.yes' | transloco" variant="danger" [libDialogClose]="true" />
+<h2 retroDialogTitle>{{ data.title }}</h2>
+<div retroDialogContent>{{ data.message }}</div>
+<footer retroDialogActions align="end">
+  <retro-button [label]="'common.no' | transloco" variant="ghost" retroDialogClose />
+  <retro-button [label]="'common.yes' | transloco" variant="danger" [retroDialogClose]="true" />
 </footer>

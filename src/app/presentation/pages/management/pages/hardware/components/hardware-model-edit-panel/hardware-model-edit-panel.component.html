@@ -12,97 +12,97 @@
     <!-- Model fields -->
     <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionModel' | transloco }}</div>
     <div class="edit-panel__fields edit-panel__fields--model">
-      <app-lib-form-field>
-        <app-lib-label [required]="true">{{ 'management.hardware.models.nameLabel' | transloco }}</app-lib-label>
-        <input libInput formControlName="name" />
+      <retro-form-field>
+        <retro-label [required]="true">{{ 'management.hardware.models.nameLabel' | transloco }}</retro-label>
+        <input retroInput formControlName="name" />
         @if (form.controls.name.hasError('required')) {
-          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ 'management.hardware.models.typeLabel' | transloco }}</app-lib-label>
-        <app-lib-select formControlName="type">
-          <app-lib-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
+      <retro-form-field>
+        <retro-label>{{ 'management.hardware.models.typeLabel' | transloco }}</retro-label>
+        <retro-select formControlName="type">
+          <retro-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
             {{ 'management.hardware.models.typeConsole' | transloco }}
-          </app-lib-option>
-          <app-lib-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
+          </retro-option>
+          <retro-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
             {{ 'management.hardware.models.typeController' | transloco }}
-          </app-lib-option>
-        </app-lib-select>
-      </app-lib-form-field>
+          </retro-option>
+        </retro-select>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ 'management.hardware.models.generationLabel' | transloco }}</app-lib-label>
-        <input libInput type="number" formControlName="generation" min="1" max="99" step="1" />
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ 'management.hardware.models.generationLabel' | transloco }}</retro-label>
+        <input retroInput type="number" formControlName="generation" min="1" max="99" step="1" />
+      </retro-form-field>
     </div>
 
     <!-- Specs fields (consoles only) -->
     @if (isConsole()) {
       <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionSpecs' | transloco }}</div>
       <div class="edit-panel__fields edit-panel__fields--specs">
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.launchYearLabel' | transloco }}</app-lib-label>
-          <input libInput type="number" formControlName="launchYear" min="1970" max="2099" step="1" />
-        </app-lib-form-field>
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.launchYearLabel' | transloco }}</retro-label>
+          <input retroInput type="number" formControlName="launchYear" min="1970" max="2099" step="1" />
+        </retro-form-field>
 
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.discontinuedYearLabel' | transloco }}</app-lib-label>
-          <input libInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
-        </app-lib-form-field>
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.discontinuedYearLabel' | transloco }}</retro-label>
+          <input retroInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
+        </retro-form-field>
 
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</app-lib-label>
-          <app-lib-select formControlName="category">
-            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</retro-label>
+          <retro-select formControlName="category">
+            <retro-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
               {{ 'management.hardware.models.categoryHome' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
               {{ 'management.hardware.models.categoryPortable' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
               {{ 'management.hardware.models.categoryHybrid' | transloco }}
-            </app-lib-option>
-          </app-lib-select>
-        </app-lib-form-field>
+            </retro-option>
+          </retro-select>
+        </retro-form-field>
 
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.mediaLabel' | transloco }}</app-lib-label>
-          <app-lib-select formControlName="media">
-            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.mediaLabel' | transloco }}</retro-label>
+          <retro-select formControlName="media">
+            <retro-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
               {{ 'management.hardware.models.mediaOpticalDisc' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
               {{ 'management.hardware.models.mediaDigital' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
               {{ 'management.hardware.models.mediaCartridge' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
               {{ 'management.hardware.models.mediaHybrid' | transloco }}
-            </app-lib-option>
-            <app-lib-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
+            </retro-option>
+            <retro-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
               {{ 'management.hardware.models.mediaBuiltIn' | transloco }}
-            </app-lib-option>
-          </app-lib-select>
-        </app-lib-form-field>
+            </retro-option>
+          </retro-select>
+        </retro-form-field>
 
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</app-lib-label>
-          <input libInput formControlName="videoResolution" placeholder="4K, 1080p, 480×272…" />
-        </app-lib-form-field>
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</retro-label>
+          <input retroInput formControlName="videoResolution" placeholder="4K, 1080p, 480×272…" />
+        </retro-form-field>
 
-        <app-lib-form-field>
-          <app-lib-label>{{ 'management.hardware.models.unitsSoldLabel' | transloco }}</app-lib-label>
-          <input libInput type="number" formControlName="unitsSoldMillion" min="0" step="0.01" />
-        </app-lib-form-field>
+        <retro-form-field>
+          <retro-label>{{ 'management.hardware.models.unitsSoldLabel' | transloco }}</retro-label>
+          <input retroInput type="number" formControlName="unitsSoldMillion" min="0" step="0.01" />
+        </retro-form-field>
       </div>
     }
 
     <div class="edit-panel__actions">
       @if (model()) {
-        <app-lib-button
+        <retro-button
           [label]="'common.delete' | transloco"
           icon="delete_outline"
           variant="danger"
@@ -110,8 +110,8 @@
           (clicked)="deleted.emit()" />
       }
       <div class="edit-panel__actions-right">
-        <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
-        <app-lib-button
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <retro-button
           [label]="'common.save' | transloco"
           icon="save"
           variant="primary"

@@ -1,7 +1,7 @@
 <div class="hardware-loan-form">
   <!-- Header -->
   <div class="hardware-loan-form__header">
-    <app-lib-icon-button
+    <retro-icon-button
       icon="arrow_back"
       [ariaLabel]="'common.back' | transloco"
       class="hardware-loan-form__back-btn"
@@ -12,19 +12,19 @@
   @if (isLoaned()) {
     <!-- Return mode: active loan info -->
     <section class="hardware-loan-form__section">
-      <app-lib-section-header [label]="'hardwareLoan.activeSection' | transloco" />
+      <retro-section-header [label]="'hardwareLoan.activeSection' | transloco" />
 
       <div class="hardware-loan-form__info-row">
-        <app-lib-icon name="person" />
+        <retro-icon name="person" />
         <span>{{ item().activeLoanTo }}</span>
       </div>
       <div class="hardware-loan-form__info-row">
-        <app-lib-icon name="calendar_today" />
+        <retro-icon name="calendar_today" />
         <span>{{ item().activeLoanAt }}</span>
       </div>
 
       <div class="hardware-loan-form__action-btn">
-        <app-lib-button
+        <retro-button
           variant="primary"
           [icon]="returning() ? 'hourglass_empty' : 'undo'"
           [label]="'hardwareLoan.returnBtn' | transloco"
@@ -37,26 +37,26 @@
     <!-- Loan mode: create loan form -->
     <form [formGroup]="form" class="hardware-loan-form__content">
       <section class="hardware-loan-form__section">
-        <app-lib-section-header [label]="'hardwareLoan.newSection' | transloco" />
+        <retro-section-header [label]="'hardwareLoan.newSection' | transloco" />
 
-        <app-lib-form-field class="hardware-loan-form__field">
-          <app-lib-label>{{ 'hardwareLoan.loanedTo' | transloco }}</app-lib-label>
+        <retro-form-field class="hardware-loan-form__field">
+          <retro-label>{{ 'hardwareLoan.loanedTo' | transloco }}</retro-label>
           <input
-            libInput
+            retroInput
             type="text"
             formControlName="loanedTo"
             [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="hardware-loan-form__field">
-          <app-lib-label>{{ 'hardwareLoan.loanedAt' | transloco }}</app-lib-label>
-          <input libInput [libDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
-          <app-lib-icon libSuffix [libDatepickerToggle]="loanedAtPicker" name="calendar_today" />
-          <app-lib-datepicker #loanedAtPicker />
-        </app-lib-form-field>
+        <retro-form-field class="hardware-loan-form__field">
+          <retro-label>{{ 'hardwareLoan.loanedAt' | transloco }}</retro-label>
+          <input retroInput [retroDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
+          <retro-icon retroSuffix [retroDatepickerToggle]="loanedAtPicker" name="calendar_today" />
+          <retro-datepicker #loanedAtPicker />
+        </retro-form-field>
 
         <div class="hardware-loan-form__action-btn">
-          <app-lib-button
+          <retro-button
             variant="primary"
             [icon]="saving() ? 'hourglass_empty' : 'handshake'"
             [label]="'hardwareLoan.loanBtn' | transloco"

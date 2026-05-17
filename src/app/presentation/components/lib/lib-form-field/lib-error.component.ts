@@ -8,12 +8,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
  * Uso:
  * ```html
  * @if (form.controls.email.hasError('required')) {
- *   <app-lib-error>El email es requerido</app-lib-error>
+ *   <retro-error>El email es requerido</retro-error>
  * }
  * ```
  */
 @Component({
-  selector: 'app-lib-error',
+  selector: 'retro-error',
   standalone: true,
   imports: [],
   template: `<span class="lib-error" role="alert"><ng-content /></span>`,

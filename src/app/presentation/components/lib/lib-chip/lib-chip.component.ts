@@ -9,7 +9,7 @@ import { LibChipColor } from '@/types/lib-component.type';
  * Con closable=true muestra un botón X y emite closed.
  */
 @Component({
-  selector: 'app-lib-chip',
+  selector: 'retro-chip',
   standalone: true,
   imports: [LibIconComponent],
   templateUrl: './lib-chip.component.html',

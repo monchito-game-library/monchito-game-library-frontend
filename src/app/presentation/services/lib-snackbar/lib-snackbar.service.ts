@@ -8,7 +8,7 @@ export type { LibSnackbarMessage };
 /**
  * Servicio singleton que gestiona una cola de mensajes tipo snackbar.
  * Los mensajes se auto-descartan tras `duration` ms (por defecto 4000).
- * Se monta en `app.component.html` via `<app-lib-snackbar-host>`.
+ * Se monta en `app.component.html` via `<retro-snackbar-host>`.
  */
 @Injectable({ providedIn: 'root' })
 export class LibSnackbarService {

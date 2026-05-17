@@ -17,7 +17,7 @@ import { LibMenuItemComponent } from './lib-menu-item.component';
  * interno para proyectarlo en el overlay CDK.
  */
 @Component({
-  selector: 'app-lib-menu',
+  selector: 'retro-menu',
   standalone: true,
   imports: [],
   template: `

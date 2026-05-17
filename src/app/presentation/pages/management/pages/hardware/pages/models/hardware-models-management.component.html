@@ -1,19 +1,19 @@
 <div class="models-page" [class.models-page--panel-open]="panelOpen() || brandPanelOpen()">
   <header class="models-page__header">
     <div class="models-page__header-left">
-      <app-lib-icon class="models-page__back-icon" name="arrow_back" (click)="onBack()" />
+      <retro-icon class="models-page__back-icon" name="arrow_back" (click)="onBack()" />
       <div class="models-page__titles">
         <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>
       </div>
-      <app-lib-icon-button
+      <retro-icon-button
         icon="edit"
         size="sm"
         class="models-page__edit-btn"
         [ariaLabel]="'common.edit' | transloco"
         (clicked)="onEditBrand()" />
     </div>
-    <app-lib-button
+    <retro-button
       [label]="'management.hardware.models.addBtn' | transloco"
       icon="add"
       variant="primary"
@@ -47,10 +47,10 @@
       <div class="models-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="models-skeleton__card">
-            <app-lib-skeleton width="36px" height="36px" />
+            <retro-skeleton width="36px" height="36px" />
             <div class="models-skeleton__body">
-              <app-lib-skeleton width="60%" height="14px" />
-              <app-lib-skeleton width="40%" height="12px" />
+              <retro-skeleton width="60%" height="14px" />
+              <retro-skeleton width="40%" height="12px" />
             </div>
           </div>
         }

@@ -25,27 +25,27 @@
       (viewModeToggle)="onToggleViewMode()"
       (addClick)="onAdd()">
       <div class="game-list__stat">
-        <app-lib-icon [name]="formatFilterIcon()" />
+        <retro-icon [name]="formatFilterIcon()" />
         @if (loading()) {
-          <app-lib-skeleton width="24px" height="12px" />
+          <retro-skeleton width="24px" height="12px" />
         } @else {
           <span>{{ ownedCount() }}</span>
         }
       </div>
       <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
-        <app-lib-icon name="payments" />
+        <retro-icon name="payments" />
         @if (loading()) {
-          <app-lib-skeleton width="40px" height="12px" />
+          <retro-skeleton width="40px" height="12px" />
         } @else {
           <span>{{ totalPrice() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         }
       </div>
       <span class="game-list__stat-sep">|</span>
       <div class="game-list__stat">
-        <app-lib-icon name="emoji_events" />
+        <retro-icon name="emoji_events" />
         @if (loading()) {
-          <app-lib-skeleton width="24px" height="12px" />
+          <retro-skeleton width="24px" height="12px" />
         } @else {
           <span>{{ platinumCount() }}</span>
         }
@@ -53,7 +53,7 @@
     </app-list-page-header>
 
     <!-- Command bar — only visible on desktop >= 1024px (hidden via CSS in the component) -->
-    <app-lib-command-bar path="monchito ~/library/games" [flags]="commandFlags()" />
+    <retro-command-bar path="monchito ~/library/games" [flags]="commandFlags()" />
 
     <!-- Active filters bar (only renders when there is at least one active filter) -->
     <app-game-list-filters-bar [data]="filtersData" />
@@ -63,7 +63,7 @@
       <div class="game-list__skeleton" [style.--grid-cols]="columnCount()">
         @for (n of skeletonItems(); track n) {
           <div class="game-list__skeleton-card">
-            <app-lib-skeleton height="100%" />
+            <retro-skeleton height="100%" />
           </div>
         }
       </div>
@@ -86,20 +86,20 @@
 
       <!-- State: no filter results -->
     } @else if (allGames().length > 0) {
-      <app-lib-empty-state
+      <retro-empty-state
         [title]="'gameList.empty.noResults' | transloco"
         [subtitle]="'gameList.empty.noResultsSubtitle' | transloco"
         hint="$ try --filter=reset">
-        <app-lib-button
+        <retro-button
           variant="ghost"
           icon="filter_alt_off"
           [label]="'gameList.empty.clearFilters' | transloco"
           (clicked)="clearAllFilters()" />
-      </app-lib-empty-state>
+      </retro-empty-state>
 
       <!-- State: empty collection -->
     } @else {
-      <app-lib-empty-state
+      <retro-empty-state
         [title]="'gameList.empty.emptyCollection' | transloco"
         [subtitle]="'gameList.empty.emptyCollectionSubtitle' | transloco"
         hint="$ add --game" />
@@ -113,7 +113,7 @@
   class="game-list__filter-fab"
   (click)="openFilters()"
   [attr.aria-label]="'gameList.filters.filters' | transloco">
-  <app-lib-icon name="tune" />
+  <retro-icon name="tune" />
   @if (activeFilterCount() > 0) {
     <span class="game-list__filter-badge">{{ activeFilterCount() }}</span>
   }
@@ -125,5 +125,5 @@
   class="game-list__fab"
   routerLink="/collection/games/add"
   [attr.aria-label]="'nav.add' | transloco">
-  <app-lib-icon name="add" />
+  <retro-icon name="add" />
 </button>

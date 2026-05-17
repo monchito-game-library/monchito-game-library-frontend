@@ -22,14 +22,14 @@
 
 <ng-template #extraFieldsTpl>
   <ng-container [formGroup]="form">
-    <app-lib-form-field>
-      <app-lib-label>{{ 'consolePage.region' | transloco }}</app-lib-label>
-      <app-lib-select formControlName="region">
-        <app-lib-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</app-lib-option>
+    <retro-form-field>
+      <retro-label>{{ 'consolePage.region' | transloco }}</retro-label>
+      <retro-select formControlName="region">
+        <retro-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</retro-option>
         @for (region of availableRegions; track region.code) {
-          <app-lib-option [value]="region.code">{{ region.labelKey | transloco }}</app-lib-option>
+          <retro-option [value]="region.code">{{ region.labelKey | transloco }}</retro-option>
         }
-      </app-lib-select>
-    </app-lib-form-field>
+      </retro-select>
+    </retro-form-field>
   </ng-container>
 </ng-template>

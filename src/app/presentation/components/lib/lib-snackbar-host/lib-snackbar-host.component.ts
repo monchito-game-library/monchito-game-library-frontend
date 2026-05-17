@@ -10,7 +10,7 @@ import { LibSnackbarMessage, LibSnackbarService } from '@/services/lib-snackbar/
  * Renderiza la cola de mensajes del LibSnackbarService.
  */
 @Component({
-  selector: 'app-lib-snackbar-host',
+  selector: 'retro-snackbar-host',
   standalone: true,
   imports: [LibIconButtonComponent, TranslocoPipe],
   templateUrl: './lib-snackbar-host.component.html',

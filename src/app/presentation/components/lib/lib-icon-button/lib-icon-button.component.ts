@@ -8,7 +8,7 @@ import { LibIconButtonSize, LibIconButtonVariant, LibButtonType } from '@/types/
  * no UI Material). Sin ripple, sin Material Buttons. Borde 1px en hover.
  */
 @Component({
-  selector: 'app-lib-icon-button',
+  selector: 'retro-icon-button',
   standalone: true,
   imports: [LibIconComponent],
   templateUrl: './lib-icon-button.component.html',

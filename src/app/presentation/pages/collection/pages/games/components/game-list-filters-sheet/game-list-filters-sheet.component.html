@@ -3,7 +3,7 @@
   <!-- Header -->
   <div class="filters-sheet__header">
     <span class="filters-sheet__title">{{ 'gameList.filters.filters' | transloco }}</span>
-    <app-lib-icon-button icon="close" [ariaLabel]="'common.close' | transloco" (clicked)="close()" />
+    <retro-icon-button icon="close" [ariaLabel]="'common.close' | transloco" (clicked)="close()" />
   </div>
 
   <hr class="lib-divider" />
@@ -11,63 +11,63 @@
   <!-- Filter fields -->
   <div class="filters-sheet__body">
     <!-- Console -->
-    <app-lib-form-field class="filters-sheet__field">
-      <app-lib-label>{{ 'gameList.filters.console' | transloco }}</app-lib-label>
-      <app-lib-select [value]="d.selectedConsole()" (selectionChange)="d.selectedConsole.set($any($event))">
-        <app-lib-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</app-lib-option>
+    <retro-form-field class="filters-sheet__field">
+      <retro-label>{{ 'gameList.filters.console' | transloco }}</retro-label>
+      <retro-select [value]="d.selectedConsole()" (selectionChange)="d.selectedConsole.set($any($event))">
+        <retro-option value="">{{ 'gameList.filters.allConsoles' | transloco }}</retro-option>
         @for (c of consoles; track c.code) {
-          <app-lib-option [value]="c.code">{{ c.labelKey | transloco }}</app-lib-option>
+          <retro-option [value]="c.code">{{ c.labelKey | transloco }}</retro-option>
         }
-      </app-lib-select>
-    </app-lib-form-field>
+      </retro-select>
+    </retro-form-field>
 
     <!-- Store -->
-    <app-lib-form-field class="filters-sheet__field">
-      <app-lib-label>{{ 'gameList.filters.store' | transloco }}</app-lib-label>
-      <app-lib-select [value]="d.selectedStore()" (selectionChange)="d.selectedStore.set($any($event))">
-        <app-lib-option value="">{{ 'gameList.filters.allStores' | transloco }}</app-lib-option>
+    <retro-form-field class="filters-sheet__field">
+      <retro-label>{{ 'gameList.filters.store' | transloco }}</retro-label>
+      <retro-select [value]="d.selectedStore()" (selectionChange)="d.selectedStore.set($any($event))">
+        <retro-option value="">{{ 'gameList.filters.allStores' | transloco }}</retro-option>
         @for (s of d.stores(); track s.id) {
-          <app-lib-option [value]="s.id">{{ s.label }}</app-lib-option>
+          <retro-option [value]="s.id">{{ s.label }}</retro-option>
         }
-      </app-lib-select>
-    </app-lib-form-field>
+      </retro-select>
+    </retro-form-field>
 
     <!-- Format -->
-    <app-lib-form-field class="filters-sheet__field">
-      <app-lib-label>{{ 'gameList.filters.format' | transloco }}</app-lib-label>
-      <app-lib-select [value]="d.selectedFormat()" (selectionChange)="d.selectedFormat.set($any($event))">
-        <app-lib-option value="">{{ 'gameList.filters.allFormats' | transloco }}</app-lib-option>
-        <app-lib-option value="physical">{{ 'gameList.filters.physical' | transloco }}</app-lib-option>
-        <app-lib-option value="digital">{{ 'gameList.filters.digital' | transloco }}</app-lib-option>
-      </app-lib-select>
-    </app-lib-form-field>
+    <retro-form-field class="filters-sheet__field">
+      <retro-label>{{ 'gameList.filters.format' | transloco }}</retro-label>
+      <retro-select [value]="d.selectedFormat()" (selectionChange)="d.selectedFormat.set($any($event))">
+        <retro-option value="">{{ 'gameList.filters.allFormats' | transloco }}</retro-option>
+        <retro-option value="physical">{{ 'gameList.filters.physical' | transloco }}</retro-option>
+        <retro-option value="digital">{{ 'gameList.filters.digital' | transloco }}</retro-option>
+      </retro-select>
+    </retro-form-field>
 
     <!-- Status -->
-    <app-lib-form-field class="filters-sheet__field">
-      <app-lib-label>{{ 'gameList.filters.status' | transloco }}</app-lib-label>
-      <app-lib-select [value]="d.selectedStatus()" (selectionChange)="d.selectedStatus.set($any($event))">
-        <app-lib-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</app-lib-option>
+    <retro-form-field class="filters-sheet__field">
+      <retro-label>{{ 'gameList.filters.status' | transloco }}</retro-label>
+      <retro-select [value]="d.selectedStatus()" (selectionChange)="d.selectedStatus.set($any($event))">
+        <retro-option value="">{{ 'gameList.filters.allStatuses' | transloco }}</retro-option>
         @for (status of gameStatuses; track status.code) {
-          <app-lib-option [value]="status.code">
-            <app-lib-icon [name]="status.icon" [style.color]="status.color" />
+          <retro-option [value]="status.code">
+            <retro-icon [name]="status.icon" [style.color]="status.color" />
             {{ status.labelKey | transloco }}
-          </app-lib-option>
+          </retro-option>
         }
-      </app-lib-select>
-    </app-lib-form-field>
+      </retro-select>
+    </retro-form-field>
 
     <!-- Sort -->
     <div class="filters-sheet__sort-row">
-      <app-lib-form-field class="filters-sheet__field filters-sheet__field--sort">
-        <app-lib-label>{{ 'gameList.filters.sortBy' | transloco }}</app-lib-label>
-        <app-lib-select [value]="d.sortBy()" (selectionChange)="d.sortBy.set($any($event))">
-          <app-lib-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</app-lib-option>
-          <app-lib-option value="title">{{ 'gameList.sort.title' | transloco }}</app-lib-option>
-          <app-lib-option value="price">{{ 'gameList.sort.price' | transloco }}</app-lib-option>
-          <app-lib-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</app-lib-option>
-        </app-lib-select>
-      </app-lib-form-field>
-      <app-lib-icon-button
+      <retro-form-field class="filters-sheet__field filters-sheet__field--sort">
+        <retro-label>{{ 'gameList.filters.sortBy' | transloco }}</retro-label>
+        <retro-select [value]="d.sortBy()" (selectionChange)="d.sortBy.set($any($event))">
+          <retro-option value="created_at">{{ 'gameList.sort.recent' | transloco }}</retro-option>
+          <retro-option value="title">{{ 'gameList.sort.title' | transloco }}</retro-option>
+          <retro-option value="price">{{ 'gameList.sort.price' | transloco }}</retro-option>
+          <retro-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</retro-option>
+        </retro-select>
+      </retro-form-field>
+      <retro-icon-button
         [icon]="d.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward'"
         [ariaLabel]="'Sort direction: ' + d.sortDirection()"
         (clicked)="d.sortDirection.set(d.sortDirection() === 'asc' ? 'desc' : 'asc')" />
@@ -76,21 +76,21 @@
     <!-- Favourites toggle -->
     <div class="filters-sheet__toggle-row">
       <span class="filters-sheet__toggle-label">
-        <app-lib-icon
+        <retro-icon
           [class.filters-sheet__fav-icon--active]="d.onlyFavorites()"
           [name]="d.onlyFavorites() ? 'favorite' : 'favorite_border'" />
         {{ 'gameList.aria.onlyFavorites' | transloco }}
       </span>
-      <app-lib-checkbox [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
+      <retro-checkbox [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
     </div>
 
     <!-- Loaned toggle -->
     <div class="filters-sheet__toggle-row">
       <span class="filters-sheet__toggle-label">
-        <app-lib-icon name="handshake" />
+        <retro-icon name="handshake" />
         {{ 'gameList.aria.onlyLoaned' | transloco }}
       </span>
-      <app-lib-checkbox [checked]="d.onlyLoaned()" (changed)="d.onlyLoaned.set($event)" />
+      <retro-checkbox [checked]="d.onlyLoaned()" (changed)="d.onlyLoaned.set($event)" />
     </div>
   </div>
 
@@ -98,7 +98,7 @@
 
   <!-- Footer -->
   <div class="filters-sheet__footer">
-    <app-lib-button
+    <retro-button
       variant="danger"
       icon="filter_alt_off"
       [label]="'gameList.empty.clearFilters' | transloco"

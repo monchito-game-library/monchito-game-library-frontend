@@ -10,11 +10,11 @@
   [disabled]="disabled() || loading()"
   (click)="clicked.emit($event)">
   @if (loading()) {
-    <app-lib-icon class="lib-btn__icon lib-btn__icon--spin" name="progress_activity" />
+    <retro-icon class="lib-btn__icon lib-btn__icon--spin" name="progress_activity" />
   } @else {
     <span class="lib-btn__slot"><ng-content /></span>
     @if (icon()) {
-      <app-lib-icon class="lib-btn__icon" [name]="icon()!" />
+      <retro-icon class="lib-btn__icon" [name]="icon()!" />
     }
   }
   <span class="lib-btn__label">{{ label() }}</span>

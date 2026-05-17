@@ -1,7 +1,7 @@
 <div class="game-form-page" [class.game-form-page--search-mode]="searchMode()">
   <header class="game-form-page__header">
     @if (searchMode()) {
-      <app-lib-icon-button
+      <retro-icon-button
         icon="arrow_back"
         [ariaLabel]="'gameForm.aria.backToForm' | transloco"
         (clicked)="closeSearchMode()" />
@@ -15,7 +15,7 @@
 
   @if (loading()) {
     <div class="game-form-page__loading">
-      <app-lib-spinner size="md" />
+      <retro-spinner size="md" />
     </div>
   } @else if (!searchMode()) {
     <div class="game-form-page__content">
@@ -31,19 +31,19 @@
               [style.object-position]="coverObjectPosition()"
               [style.transform]="coverTransform()"
               class="game-cover-panel__image" />
-            <app-lib-icon-button
+            <retro-icon-button
               icon="open_with"
               class="game-cover-panel__reposition-btn"
               [ariaLabel]="'gameForm.cover.repositionTooltip' | transloco"
               (clicked)="openCoverPositionDialog()" />
-            <app-lib-icon-button
+            <retro-icon-button
               icon="close"
               class="game-cover-panel__clear-btn"
               [ariaLabel]="'gameForm.aria.clearSelection' | transloco"
               (clicked)="clearSelectedGame()" />
           } @else {
             <div class="game-cover-panel__placeholder">
-              <app-lib-icon name="sports_esports" />
+              <retro-icon name="sports_esports" />
               <span>{{ 'gameForm.cover.noCover' | transloco }}</span>
             </div>
           }
@@ -52,7 +52,7 @@
         @if (screenshotsLoading()) {
           <div class="game-cover-panel__thumbnails">
             @for (i of [1, 2, 3, 4, 5]; track i) {
-              <app-lib-skeleton width="72px" height="48px" class="game-cover-panel__thumb-skeleton" />
+              <retro-skeleton width="72px" height="48px" class="game-cover-panel__thumb-skeleton" />
             }
           </div>
         } @else if (coverImages().length > 1) {
@@ -69,7 +69,7 @@
           </div>
         }
 
-        <app-lib-button
+        <retro-button
           [label]="
             selectedGame() ? ('gameForm.cover.changeGame' | transloco) : ('gameForm.cover.searchCatalogue' | transloco)
           "
@@ -84,13 +84,13 @@
             <div class="game-cover-panel__info-meta">
               @if (selectedGame()!.released_date) {
                 <span>
-                  <app-lib-icon name="calendar_today" />
+                  <retro-icon name="calendar_today" />
                   {{ selectedGame()!.released_date | date: 'yyyy' }}
                 </span>
               }
               @if (selectedGame()!.rating > 0) {
                 <span>
-                  <app-lib-icon name="star" />
+                  <retro-icon name="star" />
                   {{ selectedGame()!.rating }}
                 </span>
               }
@@ -104,149 +104,156 @@
 
       <!-- Right column: form fields -->
       <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <app-lib-form-field class="game-form__field game-form__field--full">
-          <app-lib-label [required]="true">{{ 'gameForm.fields.title' | transloco }}</app-lib-label>
-          <input libInput formControlName="title" [readonly]="!!selectedGame()" />
+        <retro-form-field class="game-form__field game-form__field--full">
+          <retro-label [required]="true">{{ 'gameForm.fields.title' | transloco }}</retro-label>
+          <input retroInput formControlName="title" [readonly]="!!selectedGame()" />
           @if (selectedGame()) {
-            <app-lib-icon libSuffix name="lock" />
+            <retro-icon retroSuffix name="lock" />
           }
           @if (form.controls.title.hasError('required')) {
-            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field game-form__field--full">
-          <app-lib-label>{{ 'gameForm.fields.edition' | transloco }}</app-lib-label>
-          <input libInput formControlName="edition" [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
-          <app-lib-icon libSuffix name="local_offer" />
-        </app-lib-form-field>
+        <retro-form-field class="game-form__field game-form__field--full">
+          <retro-label>{{ 'gameForm.fields.edition' | transloco }}</retro-label>
+          <input
+            retroInput
+            formControlName="edition"
+            [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
+          <retro-icon retroSuffix name="local_offer" />
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label [required]="true">{{ 'gameForm.fields.platform' | transloco }}</app-lib-label>
-          <input type="text" libInput [libAutocompleteTrigger]="platformAuto" [formControl]="form.controls.platform" />
-          <app-lib-autocomplete
+        <retro-form-field class="game-form__field">
+          <retro-label [required]="true">{{ 'gameForm.fields.platform' | transloco }}</retro-label>
+          <input
+            type="text"
+            retroInput
+            [retroAutocompleteTrigger]="platformAuto"
+            [formControl]="form.controls.platform" />
+          <retro-autocomplete
             #platformAuto
             [displayWith]="displayPlatformLabel"
             (optionSelected)="onPlatformSelected($event)">
             @for (platform of filteredPlatforms(); track platform.code) {
-              <app-lib-option [value]="platform.code">{{ platform.labelKey | transloco }}</app-lib-option>
+              <retro-option [value]="platform.code">{{ platform.labelKey | transloco }}</retro-option>
             }
-          </app-lib-autocomplete>
+          </retro-autocomplete>
           @if (form.controls.platform.value) {
-            <app-lib-icon-button
-              libSuffix
+            <retro-icon-button
+              retroSuffix
               size="sm"
               icon="close"
               [ariaLabel]="'common.clear' | transloco"
               (clicked)="form.controls.platform.setValue(null)" />
           }
           @if (form.controls.platform.hasError('required')) {
-            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
           } @else if (form.controls.platform.hasError('invalidOption')) {
-            <app-lib-error>{{ 'gameForm.errors.invalidOption' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.invalidOption' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label>{{ 'gameForm.fields.store' | transloco }}</app-lib-label>
-          <input type="text" libInput [libAutocompleteTrigger]="storeAuto" [formControl]="form.controls.store" />
-          <app-lib-autocomplete #storeAuto [displayWith]="displayStoreLabel" (optionSelected)="onStoreSelected($event)">
+        <retro-form-field class="game-form__field">
+          <retro-label>{{ 'gameForm.fields.store' | transloco }}</retro-label>
+          <input type="text" retroInput [retroAutocompleteTrigger]="storeAuto" [formControl]="form.controls.store" />
+          <retro-autocomplete #storeAuto [displayWith]="displayStoreLabel" (optionSelected)="onStoreSelected($event)">
             @for (store of filteredStores(); track store.id) {
-              <app-lib-option [value]="store.id">{{ store.label }}</app-lib-option>
+              <retro-option [value]="store.id">{{ store.label }}</retro-option>
             }
-          </app-lib-autocomplete>
+          </retro-autocomplete>
           @if (form.controls.store.value) {
-            <app-lib-icon-button
-              libSuffix
+            <retro-icon-button
+              retroSuffix
               size="sm"
               icon="close"
               [ariaLabel]="'common.clear' | transloco"
               (clicked)="form.controls.store.setValue(null)" />
           }
           @if (form.controls.store.hasError('required')) {
-            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
           } @else if (form.controls.store.hasError('invalidOption')) {
-            <app-lib-error>{{ 'gameForm.errors.invalidOption' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.invalidOption' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label>{{ 'gameForm.fields.condition' | transloco }}</app-lib-label>
-          <app-lib-select [formControl]="form.controls.condition">
+        <retro-form-field class="game-form__field">
+          <retro-label>{{ 'gameForm.fields.condition' | transloco }}</retro-label>
+          <retro-select [formControl]="form.controls.condition">
             @for (condition of conditions; track condition.code) {
-              <app-lib-option [value]="condition.code">{{ condition.labelKey | transloco }}</app-lib-option>
+              <retro-option [value]="condition.code">{{ condition.labelKey | transloco }}</retro-option>
             }
-          </app-lib-select>
-        </app-lib-form-field>
+          </retro-select>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label>{{ 'gameForm.fields.status' | transloco }}</app-lib-label>
-          <app-lib-select formControlName="status">
+        <retro-form-field class="game-form__field">
+          <retro-label>{{ 'gameForm.fields.status' | transloco }}</retro-label>
+          <retro-select formControlName="status">
             @for (status of gameStatuses; track status.code) {
-              <app-lib-option [value]="status.code">
-                <app-lib-icon [name]="status.icon" [style.color]="status.color" />
+              <retro-option [value]="status.code">
+                <retro-icon [name]="status.icon" [style.color]="status.color" />
                 {{ status.labelKey | transloco }}
-              </app-lib-option>
+              </retro-option>
             }
-          </app-lib-select>
-        </app-lib-form-field>
+          </retro-select>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label>{{ 'gameForm.fields.price' | transloco }}</app-lib-label>
-          <input libInput formControlName="price" type="number" placeholder="0" />
-          <app-lib-icon libSuffix name="euro" />
+        <retro-form-field class="game-form__field">
+          <retro-label>{{ 'gameForm.fields.price' | transloco }}</retro-label>
+          <input retroInput formControlName="price" type="number" placeholder="0" />
+          <retro-icon retroSuffix name="euro" />
           @if (form.controls.price.hasError('required')) {
-            <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field">
-          <app-lib-label>{{ 'gameForm.fields.rating' | transloco }}</app-lib-label>
+        <retro-form-field class="game-form__field">
+          <retro-label>{{ 'gameForm.fields.rating' | transloco }}</retro-label>
           <input
-            libInput
+            retroInput
             formControlName="personal_rating"
             type="number"
             min="0"
             max="10"
             step="0.1"
             [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco" />
-          <app-lib-icon libSuffix name="star_rate" />
+          <retro-icon retroSuffix name="star_rate" />
           @if (form.controls.personal_rating.hasError('min')) {
-            <app-lib-error>{{ 'gameForm.errors.ratingMin' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.ratingMin' | transloco }}</retro-error>
           } @else if (form.controls.personal_rating.hasError('max')) {
-            <app-lib-error>{{ 'gameForm.errors.ratingMax' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.ratingMax' | transloco }}</retro-error>
           } @else if (form.controls.personal_rating.hasError('invalidStep')) {
-            <app-lib-error>{{ 'gameForm.errors.ratingStep' | transloco }}</app-lib-error>
+            <retro-error>{{ 'gameForm.errors.ratingStep' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
 
-        <app-lib-form-field class="game-form__field game-form__field--full game-form__field--description">
-          <app-lib-label>{{ 'gameForm.fields.description' | transloco }}</app-lib-label>
-          <textarea libInput formControlName="description"></textarea>
-        </app-lib-form-field>
+        <retro-form-field class="game-form__field game-form__field--full game-form__field--description">
+          <retro-label>{{ 'gameForm.fields.description' | transloco }}</retro-label>
+          <textarea retroInput formControlName="description"></textarea>
+        </retro-form-field>
 
         <div class="game-form__footer">
           <div class="game-form__toggles">
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
-              <app-lib-checkbox
+              <retro-checkbox
                 [checked]="formatValue() === 'digital'"
                 (changed)="onFormatChange($event ? 'digital' : 'physical')" />
             </div>
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
-              <app-lib-checkbox formControlName="is_favorite" />
+              <retro-checkbox formControlName="is_favorite" />
             </div>
           </div>
 
           <div class="game-form__footer-actions">
-            <app-lib-button
+            <retro-button
               [label]="'common.cancel' | transloco"
               icon="close"
               variant="ghost"
               [disabled]="saving()"
               (clicked)="onCancel()" />
-            <app-lib-button
+            <retro-button
               [label]="isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco)"
               [icon]="isEditMode ? 'save' : 'add'"
               variant="primary"

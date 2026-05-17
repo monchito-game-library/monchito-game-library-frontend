@@ -3,8 +3,8 @@
   <div class="game-row__cover">
     <img [ngSrc]="cover()" fill alt="Game cover" />
     @if (game().format === 'digital') {
-      <span class="game-row__digital-badge" libTooltip="Digital">
-        <app-lib-icon name="cloud" />
+      <span class="game-row__digital-badge" retroTooltip="Digital">
+        <retro-icon name="cloud" />
       </span>
     }
   </div>
@@ -20,7 +20,7 @@
   <!-- Platform badge -->
   <div class="game-row__platform">
     @if (game().platform) {
-      <app-lib-chip [label]="game().platform!" color="neutral" />
+      <retro-chip [label]="game().platform!" color="neutral" />
     }
   </div>
 
@@ -30,8 +30,8 @@
   <div class="game-row__meta">
     <div class="game-row__status">
       @if (gameStatus(); as status) {
-        <span class="game-row__status-pill" [libTooltip]="status.labelKey | transloco">
-          <app-lib-icon [name]="status.icon" [style.color]="status.color" />
+        <span class="game-row__status-pill" [retroTooltip]="status.labelKey | transloco">
+          <retro-icon [name]="status.icon" [style.color]="status.color" />
         </span>
       }
     </div>
@@ -39,7 +39,7 @@
     <div class="game-row__rating">
       @if (game().personalRating !== null) {
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <app-lib-icon
+          <retro-icon
             [class.game-row__star--filled]="i <= ratingStars()"
             [name]="i <= ratingStars() ? 'star' : 'star_border'" />
         }
@@ -48,13 +48,13 @@
 
     <div class="game-row__indicators">
       @if (game().isFavorite) {
-        <app-lib-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
+        <retro-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
       }
       @if (game().activeLoanId !== null) {
-        <app-lib-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
+        <retro-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
       }
       @if (game().forSale) {
-        <app-lib-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
+        <retro-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
       }
     </div>
 
@@ -66,7 +66,7 @@
   </div>
 
   <!-- Delete -->
-  <app-lib-icon-button
+  <retro-icon-button
     icon="delete"
     variant="danger"
     size="sm"

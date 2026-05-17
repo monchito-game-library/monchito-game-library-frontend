@@ -16,14 +16,14 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
  * Implementa Highlightable para compatibilidad con CDK ActiveDescendantKeyManager.
  */
 @Component({
-  selector: 'app-lib-menu-item',
+  selector: 'retro-menu-item',
   standalone: true,
   imports: [LibIconComponent],
   template: `
     <li class="lib-menu-item" role="none">
       <button type="button" role="menuitem" [disabled]="isDisabled() || null" (click)="onClick($event)">
         @if (icon()) {
-          <app-lib-icon [name]="icon()!" class="lib-menu-item__icon" />
+          <retro-icon [name]="icon()!" class="lib-menu-item__icon" />
         }
         <span class="lib-menu-item__label"><ng-content /></span>
       </button>

@@ -1,6 +1,6 @@
 <div class="hw-form">
   <div class="hw-form__header">
-    <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="cancelClick.emit()" />
+    <retro-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="cancelClick.emit()" />
     <h2 class="hw-form__title">
       @if (isEditMode()) {
         {{ i18nPrefix() + '.editTitle' | transloco }}
@@ -12,119 +12,115 @@
 
   @if (loading()) {
     <div class="hw-form__form">
-      <app-lib-skeleton class="hw-form__field--full" height="56px" />
-      <app-lib-skeleton class="hw-form__field--full" height="56px" />
-      <app-lib-skeleton class="hw-form__field--full" height="56px" />
-      <app-lib-skeleton height="56px" />
-      <app-lib-skeleton height="56px" />
-      <app-lib-skeleton height="56px" />
-      <app-lib-skeleton height="56px" />
-      <app-lib-skeleton class="hw-form__field--full" height="80px" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="80px" />
       <div class="hw-form__footer">
-        <app-lib-skeleton width="100px" height="36px" />
-        <app-lib-skeleton width="80px" height="36px" />
+        <retro-skeleton width="100px" height="36px" />
+        <retro-skeleton width="80px" height="36px" />
       </div>
     </div>
   } @else {
     <form [formGroup]="form()" class="hw-form__form">
-      <app-lib-form-field class="hw-form__field--full">
-        <app-lib-label>{{ i18nPrefix() + '.brand' | transloco }}</app-lib-label>
-        <input type="text" libInput [libAutocompleteTrigger]="brandAuto" formControlName="brandId" />
-        <app-lib-autocomplete #brandAuto [displayWith]="displayBrandLabel()" (optionSelected)="onBrandSelected($event)">
+      <retro-form-field class="hw-form__field--full">
+        <retro-label>{{ i18nPrefix() + '.brand' | transloco }}</retro-label>
+        <input type="text" retroInput [retroAutocompleteTrigger]="brandAuto" formControlName="brandId" />
+        <retro-autocomplete #brandAuto [displayWith]="displayBrandLabel()" (optionSelected)="onBrandSelected($event)">
           @for (brand of filteredBrands(); track brand.id) {
-            <app-lib-option [value]="brand.id">{{ brand.name }}</app-lib-option>
+            <retro-option [value]="brand.id">{{ brand.name }}</retro-option>
           }
-        </app-lib-autocomplete>
+        </retro-autocomplete>
         @if (form().get('brandId')?.value) {
-          <app-lib-icon-button
-            libSuffix
+          <retro-icon-button
+            retroSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('brandId')?.setValue(null); brandChange.emit(null)" />
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field class="hw-form__field--full">
-        <app-lib-label>{{ i18nPrefix() + '.model' | transloco }}</app-lib-label>
-        <input type="text" libInput [libAutocompleteTrigger]="modelAuto" formControlName="modelId" />
-        <app-lib-autocomplete #modelAuto [displayWith]="displayModelLabel()" (optionSelected)="onModelSelected($event)">
+      <retro-form-field class="hw-form__field--full">
+        <retro-label>{{ i18nPrefix() + '.model' | transloco }}</retro-label>
+        <input type="text" retroInput [retroAutocompleteTrigger]="modelAuto" formControlName="modelId" />
+        <retro-autocomplete #modelAuto [displayWith]="displayModelLabel()" (optionSelected)="onModelSelected($event)">
           @for (model of filteredModels(); track model.id) {
-            <app-lib-option [value]="model.id">{{ model.name }}</app-lib-option>
+            <retro-option [value]="model.id">{{ model.name }}</retro-option>
           }
-        </app-lib-autocomplete>
+        </retro-autocomplete>
         @if (form().get('modelId')?.value) {
-          <app-lib-icon-button
-            libSuffix
+          <retro-icon-button
+            retroSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('modelId')?.setValue(null); modelChange.emit(null)" />
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field class="hw-form__field--full">
-        <app-lib-label>{{ i18nPrefix() + '.edition' | transloco }}</app-lib-label>
-        <app-lib-select formControlName="editionId">
-          <app-lib-option [value]="null">—</app-lib-option>
+      <retro-form-field class="hw-form__field--full">
+        <retro-label>{{ i18nPrefix() + '.edition' | transloco }}</retro-label>
+        <retro-select formControlName="editionId">
+          <retro-option [value]="null">—</retro-option>
           @for (edition of editions(); track edition.id) {
-            <app-lib-option [value]="edition.id">{{ edition.name }}</app-lib-option>
+            <retro-option [value]="edition.id">{{ edition.name }}</retro-option>
           }
-        </app-lib-select>
-      </app-lib-form-field>
+        </retro-select>
+      </retro-form-field>
 
       <ng-container [ngTemplateOutlet]="extraFieldsTpl()" />
 
-      <app-lib-form-field>
-        <app-lib-label>{{ i18nPrefix() + '.condition.label' | transloco }}</app-lib-label>
-        <app-lib-select formControlName="condition">
-          <app-lib-option [value]="GAME_CONDITION.NEW">{{
-            i18nPrefix() + '.condition.new' | transloco
-          }}</app-lib-option>
-          <app-lib-option [value]="GAME_CONDITION.USED">{{
-            i18nPrefix() + '.condition.used' | transloco
-          }}</app-lib-option>
-        </app-lib-select>
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ i18nPrefix() + '.condition.label' | transloco }}</retro-label>
+        <retro-select formControlName="condition">
+          <retro-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + '.condition.new' | transloco }}</retro-option>
+          <retro-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + '.condition.used' | transloco }}</retro-option>
+        </retro-select>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ i18nPrefix() + '.price' | transloco }}</app-lib-label>
-        <input libInput type="number" formControlName="price" min="0" step="0.01" />
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ i18nPrefix() + '.price' | transloco }}</retro-label>
+        <input retroInput type="number" formControlName="price" min="0" step="0.01" />
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ i18nPrefix() + '.store' | transloco }}</app-lib-label>
-        <input type="text" libInput [libAutocompleteTrigger]="storeAuto" formControlName="store" />
-        <app-lib-autocomplete #storeAuto [displayWith]="displayStoreLabel()" (optionSelected)="onStoreSelected($event)">
+      <retro-form-field>
+        <retro-label>{{ i18nPrefix() + '.store' | transloco }}</retro-label>
+        <input type="text" retroInput [retroAutocompleteTrigger]="storeAuto" formControlName="store" />
+        <retro-autocomplete #storeAuto [displayWith]="displayStoreLabel()" (optionSelected)="onStoreSelected($event)">
           @for (store of filteredStores(); track store.id) {
-            <app-lib-option [value]="store.id">{{ store.label }}</app-lib-option>
+            <retro-option [value]="store.id">{{ store.label }}</retro-option>
           }
-        </app-lib-autocomplete>
+        </retro-autocomplete>
         @if (form().get('store')?.value) {
-          <app-lib-icon-button
-            libSuffix
+          <retro-icon-button
+            retroSuffix
             size="sm"
             icon="close"
             [ariaLabel]="'common.clear' | transloco"
             (clicked)="form().get('store')?.setValue(null)" />
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</app-lib-label>
-        <input libInput [libDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
-        <app-lib-icon libSuffix [libDatepickerToggle]="purchaseDatePicker" name="calendar_today" />
-        <app-lib-datepicker #purchaseDatePicker />
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</retro-label>
+        <input retroInput [retroDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
+        <retro-icon retroSuffix [retroDatepickerToggle]="purchaseDatePicker" name="calendar_today" />
+        <retro-datepicker #purchaseDatePicker />
+      </retro-form-field>
 
-      <app-lib-form-field class="hw-form__field--full">
-        <app-lib-label>{{ i18nPrefix() + '.notes' | transloco }}</app-lib-label>
-        <textarea libInput formControlName="notes" rows="3"></textarea>
-      </app-lib-form-field>
+      <retro-form-field class="hw-form__field--full">
+        <retro-label>{{ i18nPrefix() + '.notes' | transloco }}</retro-label>
+        <textarea retroInput formControlName="notes" rows="3"></textarea>
+      </retro-form-field>
 
       <div class="hw-form__footer">
-        <app-lib-button variant="ghost" [label]="i18nPrefix() + '.cancel' | transloco" (clicked)="cancelClick.emit()" />
-        <app-lib-button
+        <retro-button variant="ghost" [label]="i18nPrefix() + '.cancel' | transloco" (clicked)="cancelClick.emit()" />
+        <retro-button
           variant="primary"
           [label]="i18nPrefix() + '.save' | transloco"
           [disabled]="form().invalid || saving()"

@@ -110,7 +110,7 @@ Cualquier ampliación de un `lib-*` debe respetar:
 
 ### 4.1 `lib-button`
 
-Selector: `app-lib-button`
+Selector: `retro-button`
 Botón textual con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos en mobile ≤768px).
 
 **Cuándo usarlo**: cualquier CTA con texto. Submit de formularios, acciones de header, footer de dialogs.
@@ -136,7 +136,7 @@ Botón textual con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos e
 **Ejemplo**
 
 ```html
-<app-lib-button
+<retro-button
   [label]="'common.save' | transloco"
   icon="save"
   variant="primary"
@@ -157,13 +157,13 @@ Botón textual con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos e
 Cuando el botón necesita un SVG inline o contenido custom (icono de marca OAuth), proyectar el contenido entre las tags del componente. El `label` sigue siendo requerido (usado como aria-label si no hay texto visible).
 
 ```html
-<app-lib-button
+<retro-button
   [label]="'auth.continueWithGoogle' | transloco"
   variant="ghost"
   [fullWidth]="true"
   (clicked)="onOAuthSignIn('google')">
   <svg viewBox="0 0 24 24" aria-hidden="true">...</svg>
-</app-lib-button>
+</retro-button>
 ```
 
 > El SVG proyectado se renderiza antes del label en el orden `[ <SVG> LABEL ]`. Si `icon` está definido junto a `<ng-content>`, gana el ng-content (precedencia explícita).
@@ -172,7 +172,7 @@ Cuando el botón necesita un SVG inline o contenido custom (icono de marca OAuth
 
 ### 4.2 `lib-icon-button`
 
-Selector: `app-lib-icon-button`
+Selector: `retro-icon-button`
 Botón icónico cuadrado, 32/40/44px, sin label visible.
 
 **Cuándo usarlo**: kebabs, back buttons, header actions, row actions, toggles standalone. Cualquier acción cuyo único contenido sea un `<mat-icon>`.
@@ -200,14 +200,14 @@ El SCSS aplica `:host { display: contents }`, lo que permite que las directivas 
 
 ```html
 <!-- Tooltip -->
-<app-lib-icon-button
+<retro-icon-button
   icon="edit"
   [ariaLabel]="'common.edit' | transloco"
   [matTooltip]="'common.edit' | transloco"
   (clicked)="onEdit()" />
 
 <!-- Trigger de menú -->
-<app-lib-icon-button
+<retro-icon-button
   icon="more_vert"
   [ariaLabel]="'common.more' | transloco"
   [matMenuTriggerFor]="contextMenu"
@@ -216,7 +216,7 @@ El SCSS aplica `:host { display: contents }`, lo que permite que las directivas 
 <!-- Slot de form-field (Fase 8 — viable, ver §4.2.1) -->
 <mat-form-field appearance="outline">
   <input matInput [type]="hidden() ? 'password' : 'text'" formControlName="password" />
-  <app-lib-icon-button
+  <retro-icon-button
     matSuffix
     [icon]="hidden() ? 'visibility' : 'visibility_off'"
     [ariaLabel]="(hidden() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
@@ -228,18 +228,18 @@ El SCSS aplica `:host { display: contents }`, lo que permite que las directivas 
 
 Material proyecta el suffix vía `<ng-content select="[matSuffix], [matIconSuffix]">`. La directiva `[matSuffix]` se aplica al **host** del componente, que actúa como ancla para el slot. Como el SCSS usa `display: contents`, el `<button>` interno queda directamente dentro de `.mat-mdc-form-field-icon-suffix` y Material puede alinearlo verticalmente.
 
-> **Restricción**: el `<app-lib-icon-button matSuffix>` queda dentro del flujo del form-field. No combinarlo con `[hideClearButton]` ni otras directivas custom de form-field. Si el botón se solapa con el outline del input por alineación, revisar el SCSS local del componente consumidor (en el 99% de los casos no hace falta tocar nada).
+> **Restricción**: el `<retro-icon-button matSuffix>` queda dentro del flujo del form-field. No combinarlo con `[hideClearButton]` ni otras directivas custom de form-field. Si el botón se solapa con el outline del input por alineación, revisar el SCSS local del componente consumidor (en el 99% de los casos no hace falta tocar nada).
 
 **A11y / notas**
 
 - `ariaLabel` siempre requerido — el componente no tiene texto visible.
-- `:host { display: contents }` significa que el host no genera box propio. Si se aplican estilos al host externamente (ej. `app-lib-icon-button { margin: 0 1rem }`), no funcionan. Aplicar márgenes a un wrapper padre.
+- `:host { display: contents }` significa que el host no genera box propio. Si se aplican estilos al host externamente (ej. `retro-icon-button { margin: 0 1rem }`), no funcionan. Aplicar márgenes a un wrapper padre.
 
 ---
 
 ### 4.3 `lib-card`
 
-Selector: `app-lib-card`
+Selector: `retro-card`
 Contenedor rectangular plano para agrupar contenido.
 
 **Cuándo usarlo**: card de listado (game-card, hardware-card), bloque de settings, contenedor de información agrupada.
@@ -265,10 +265,10 @@ Contenedor rectangular plano para agrupar contenido.
 **Ejemplo**
 
 ```html
-<app-lib-card [interactive]="true" (cardClicked)="onOpen(game)">
+<retro-card [interactive]="true" (cardClicked)="onOpen(game)">
   <h3>{{ game.title }}</h3>
-  <app-lib-data-row label="PLATFORM" [value]="game.platform" />
-</app-lib-card>
+  <retro-data-row label="PLATFORM" [value]="game.platform" />
+</retro-card>
 ```
 
 **Notas**
@@ -280,7 +280,7 @@ Contenedor rectangular plano para agrupar contenido.
 
 ### 4.4 `lib-chip`
 
-Selector: `app-lib-chip`
+Selector: `retro-chip`
 Etiqueta inline con color semántico. Mono uppercase, borde 1px.
 
 **Cuándo usarlo**: tags de plataforma, edición, estado en card. Filtros activos en chip-row de listados.
@@ -304,12 +304,12 @@ Etiqueta inline con color semántico. Mono uppercase, borde 1px.
 **Ejemplo**
 
 ```html
-<app-lib-chip label="PS5" color="primary" />
-<app-lib-chip label="DIGITAL" color="blue" icon="cloud" />
-<app-lib-chip label="FOR_SALE" color="amber" [filled]="true" />
+<retro-chip label="PS5" color="primary" />
+<retro-chip label="DIGITAL" color="blue" icon="cloud" />
+<retro-chip label="FOR_SALE" color="amber" [filled]="true" />
 
 <!-- Chip de filtro activo -->
-<app-lib-chip
+<retro-chip
   [label]="'filters.favorites' | transloco"
   color="primary"
   [closable]="true"
@@ -325,7 +325,7 @@ Etiqueta inline con color semántico. Mono uppercase, borde 1px.
 
 ### 4.5 `lib-badge`
 
-Selector: `app-lib-badge`
+Selector: `retro-badge`
 Contador o indicador de estado pequeño.
 
 **Cuándo usarlo**: contadores numéricos junto a un icono (notificaciones, count en section-header), indicador de estado puntual (dot).
@@ -341,8 +341,8 @@ Contador o indicador de estado pequeño.
 **Ejemplo**
 
 ```html
-<app-lib-badge [label]="unreadCount()" variant="danger" />
-<app-lib-badge label="" variant="success" [dot]="true" />
+<retro-badge [label]="unreadCount()" variant="danger" />
+<retro-badge label="" variant="success" [dot]="true" />
 ```
 
 **vs. `lib-chip`**: usar `badge` para 1-3 caracteres pequeños / dot; usar `chip` para tags con label legible.
@@ -351,7 +351,7 @@ Contador o indicador de estado pequeño.
 
 ### 4.6 `lib-checkbox`
 
-Selector: `app-lib-checkbox`
+Selector: `retro-checkbox`
 Toggle `[X]` / `[ ]` mono. Implementa `ControlValueAccessor`.
 
 **Cuándo usarlo**: checkboxes de formularios reactivos, switches binarios en filtros, toggles de settings.
@@ -374,7 +374,7 @@ Toggle `[X]` / `[ ]` mono. Implementa `ControlValueAccessor`.
 **Modo standalone**
 
 ```html
-<app-lib-checkbox
+<retro-checkbox
   [checked]="onlyFavorites()"
   label="Solo favoritos"
   (changed)="onlyFavorites.set($event)" />
@@ -383,8 +383,8 @@ Toggle `[X]` / `[ ]` mono. Implementa `ControlValueAccessor`.
 **Modo formulario reactivo**
 
 ```html
-<app-lib-checkbox formControlName="forSale" label="EN VENTA" />
-<app-lib-checkbox formControlName="is_favorite" />
+<retro-checkbox formControlName="forSale" label="EN VENTA" />
+<retro-checkbox formControlName="is_favorite" />
 ```
 
 En modo CVA, `[checked]` y `[disabled]` son ignorados.
@@ -399,7 +399,7 @@ En modo CVA, `[checked]` y `[disabled]` son ignorados.
 
 ### 4.7 `lib-data-row`
 
-Selector: `app-lib-data-row`
+Selector: `retro-data-row`
 Fila estilo `ls -la` con label izquierda + dots + value derecha.
 
 **Cuándo usarlo**: detalles de un juego, hardware, copia, order. Listas de pares clave-valor en game-detail, hardware-detail.
@@ -420,13 +420,13 @@ Fila estilo `ls -la` con label izquierda + dots + value derecha.
 **Ejemplo**
 
 ```html
-<app-lib-data-row label="PLATFORM" [value]="game.platform" icon="videogame_asset" />
-<app-lib-data-row label="CONDITION" [emphasized]="true" [value]="game.condition" />
+<retro-data-row label="PLATFORM" [value]="game.platform" icon="videogame_asset" />
+<retro-data-row label="CONDITION" [emphasized]="true" [value]="game.condition" />
 
 <!-- Valor complejo -->
-<app-lib-data-row label="RATING">
+<retro-data-row label="RATING">
   <app-rating-stars [value]="game.rating" />
-</app-lib-data-row>
+</retro-data-row>
 ```
 
 **Notas**
@@ -437,7 +437,7 @@ Fila estilo `ls -la` con label izquierda + dots + value derecha.
 
 ### 4.8 `lib-section-header`
 
-Selector: `app-lib-section-header`
+Selector: `retro-section-header`
 Cabecera `> SECTION_NAME [count]` con borde inferior 1px.
 
 **Cuándo usarlo**: divisores semánticos dentro de una página (sección "GAMES", "HARDWARE", etc.).
@@ -456,16 +456,16 @@ Cabecera `> SECTION_NAME [count]` con borde inferior 1px.
 **Ejemplo**
 
 ```html
-<app-lib-section-header label="GAMES" [count]="games().length">
-  <app-lib-button slot="actions" label="ADD" icon="add" variant="primary" />
-</app-lib-section-header>
+<retro-section-header label="GAMES" [count]="games().length">
+  <retro-button slot="actions" label="ADD" icon="add" variant="primary" />
+</retro-section-header>
 ```
 
 ---
 
 ### 4.9 `lib-command-bar`
 
-Selector: `app-lib-command-bar`
+Selector: `retro-command-bar`
 Barra decorativa de prompt terminal `path $ --flag1 --flag2 ▋`.
 
 **Cuándo usarlo**: encabezado decorativo de listas (games-list, hardware-list). Solo visible en desktop ≥1024px.
@@ -481,7 +481,7 @@ Barra decorativa de prompt terminal `path $ --flag1 --flag2 ▋`.
 **Ejemplo**
 
 ```html
-<app-lib-command-bar
+<retro-command-bar
   path="monchito ~/library/games"
   [flags]="activeFilterFlags()" />
 ```
@@ -495,7 +495,7 @@ Barra decorativa de prompt terminal `path $ --flag1 --flag2 ▋`.
 
 ### 4.10 `lib-empty-state`
 
-Selector: `app-lib-empty-state`
+Selector: `retro-empty-state`
 Estado vacío con bloque ASCII + título + hint mono.
 
 **Cuándo usarlo**: listas sin resultados, búsqueda sin matches, secciones vacías.
@@ -510,24 +510,24 @@ Estado vacío con bloque ASCII + título + hint mono.
 
 **Slots**
 
-- `<ng-content>` — botones de acción (típicamente un `app-lib-button`).
+- `<ng-content>` — botones de acción (típicamente un `retro-button`).
 
 **Ejemplo**
 
 ```html
-<app-lib-empty-state
+<retro-empty-state
   [title]="'games.empty.title' | transloco"
   [subtitle]="'games.empty.subtitle' | transloco"
   [hint]="'$ add your first game'">
-  <app-lib-button [label]="'games.add' | transloco" icon="add" variant="primary" (clicked)="onAdd()" />
-</app-lib-empty-state>
+  <retro-button [label]="'games.add' | transloco" icon="add" variant="primary" (clicked)="onAdd()" />
+</retro-empty-state>
 ```
 
 ---
 
 ### 4.11 `lib-spinner`
 
-Selector: `app-lib-spinner`
+Selector: `retro-spinner`
 Spinner ASCII (`|/-\`, `...`, `▖▘▝▗`) sin Material.
 
 **Cuándo usarlo**: indicador de loading inline o en bloque. Reemplaza `mat-spinner`.
@@ -543,7 +543,7 @@ Spinner ASCII (`|/-\`, `...`, `▖▘▝▗`) sin Material.
 **Ejemplo**
 
 ```html
-<app-lib-spinner size="md" variant="bars" [ariaLabel]="'common.loading' | transloco" />
+<retro-spinner size="md" variant="bars" [ariaLabel]="'common.loading' | transloco" />
 ```
 
 **Notas**
@@ -555,7 +555,7 @@ Spinner ASCII (`|/-\`, `...`, `▖▘▝▗`) sin Material.
 
 ### 4.12 `lib-skeleton`
 
-Selector: `app-lib-skeleton`
+Selector: `retro-skeleton`
 Bloque rectangular con shimmer mientras carga contenido.
 
 **Cuándo usarlo**: placeholders de cards, listas, avatares y textos mientras se hace fetch.
@@ -571,9 +571,9 @@ Bloque rectangular con shimmer mientras carga contenido.
 **Ejemplo**
 
 ```html
-<app-lib-skeleton width="200px" height="1rem" />
-<app-lib-skeleton width="40px" height="40px" shape="square" />
-<app-lib-skeleton width="100%" height="120px" shape="block" />
+<retro-skeleton width="200px" height="1rem" />
+<retro-skeleton width="40px" height="40px" shape="square" />
+<retro-skeleton width="100%" height="120px" shape="block" />
 ```
 
 **Notas**
@@ -586,7 +586,7 @@ Bloque rectangular con shimmer mientras carga contenido.
 
 ### 4.13 `lib-icon`
 
-Selector: `app-lib-icon`
+Selector: `retro-icon`
 Renderiza un icono de la webfont Material Icons.
 
 **Cuándo usarlo**: iconos decorativos en cualquier componente. Reemplaza el uso directo de `<mat-icon>` en el DOM de la aplicación.
@@ -604,15 +604,15 @@ Renderiza un icono de la webfont Material Icons.
 **Ejemplo**
 
 ```html
-<app-lib-icon name="save" size="md" />
-<app-lib-icon name="warning" size="lg" [ariaHidden]="false" />
+<retro-icon name="save" size="md" />
+<retro-icon name="warning" size="lg" [ariaHidden]="false" />
 ```
 
 ---
 
 ### 4.14 `lib-form-field`
 
-Selector: `app-lib-form-field`
+Selector: `retro-form-field`
 Contenedor de campo de formulario con label fijo (sin floating), mensaje de error y hint. Alternativa Terminal Collector a `<mat-form-field>`.
 
 **Inputs**
@@ -626,7 +626,7 @@ Contenedor de campo de formulario con label fijo (sin floating), mensaje de erro
 
 **Junto a**
 
-- `LibInputDirective` (selector: `[libInput]`) — aplica estilos al `<input>` o `<textarea>` interno.
+- `LibInputDirective` (selector: `[retroInput]`) — aplica estilos al `<input>` o `<textarea>` interno.
 - `LibLabelComponent` — label independiente si se necesita desacoplar.
 - `LibErrorComponent` — bloque de error reutilizable fuera de un form-field.
 - `LibHintComponent` — hint reutilizable fuera de un form-field.
@@ -634,16 +634,16 @@ Contenedor de campo de formulario con label fijo (sin floating), mensaje de erro
 **Ejemplo**
 
 ```html
-<app-lib-form-field label="TÍTULO" [error]="form.controls.title.errors ? 'Campo requerido' : null">
-  <input libInput formControlName="title" />
-</app-lib-form-field>
+<retro-form-field label="TÍTULO" [error]="form.controls.title.errors ? 'Campo requerido' : null">
+  <input retroInput formControlName="title" />
+</retro-form-field>
 ```
 
 ---
 
 ### 4.15 `lib-select`
 
-Selector: `app-lib-select`
+Selector: `retro-select`
 Combobox accesible con ControlValueAccessor. Alternativa Terminal Collector a `<mat-select>`.
 
 **Inputs**
@@ -661,7 +661,7 @@ Combobox accesible con ControlValueAccessor. Alternativa Terminal Collector a `<
 **Ejemplo**
 
 ```html
-<app-lib-select
+<retro-select
   formControlName="platform"
   [options]="platformOptions"
   placeholder="SELECCIONAR PLATAFORMA" />
@@ -671,7 +671,7 @@ Combobox accesible con ControlValueAccessor. Alternativa Terminal Collector a `<
 
 ### 4.16 `lib-autocomplete`
 
-Selector: `app-lib-autocomplete`
+Selector: `retro-autocomplete`
 Panel de sugerencias construido sobre CDK Overlay.
 
 **Outputs**
@@ -682,33 +682,33 @@ Panel de sugerencias construido sobre CDK Overlay.
 
 **Junto a**
 
-- `LibAutocompleteTriggerDirective` (selector: `[libAutocompleteTrigger]`) — conecta el `<input>` con el panel. Recibe la referencia al componente panel mediante `[libAutocompleteTrigger]="autocompleteRef"`.
+- `LibAutocompleteTriggerDirective` (selector: `[retroAutocompleteTrigger]`) — conecta el `<input>` con el panel. Recibe la referencia al componente panel mediante `[retroAutocompleteTrigger]="autocompleteRef"`.
 
 **Ejemplo**
 
 ```html
-<input libInput [libAutocompleteTrigger]="ac" formControlName="search" />
-<app-lib-autocomplete #ac [options]="suggestions()" (optionSelected)="onSelect($event)" />
+<input retroInput [retroAutocompleteTrigger]="ac" formControlName="search" />
+<retro-autocomplete #ac [options]="suggestions()" (optionSelected)="onSelect($event)" />
 ```
 
 ---
 
 ### 4.17 `lib-datepicker`
 
-Selector: `app-lib-datepicker`
+Selector: `retro-datepicker`
 Calendario completo con patrón APG (ARIA Authoring Practices Guide), locale `es-ES`.
 
 **Junto a**
 
-- `LibDatepickerDirective` (selector: `[libDatepicker]`) — conecta el `<input>` con el calendario. Recibe la referencia al componente mediante `[libDatepicker]="datepickerRef"`.
-- `LibDatepickerToggleDirective` (selector: `[libDatepickerToggle]`) — botón icónico que abre/cierra el calendario. Recibe la misma referencia.
+- `LibDatepickerDirective` (selector: `[retroDatepicker]`) — conecta el `<input>` con el calendario. Recibe la referencia al componente mediante `[retroDatepicker]="datepickerRef"`.
+- `LibDatepickerToggleDirective` (selector: `[retroDatepickerToggle]`) — botón icónico que abre/cierra el calendario. Recibe la misma referencia.
 
 **Ejemplo**
 
 ```html
-<input libInput [libDatepicker]="dp" formControlName="releaseDate" />
-<button [libDatepickerToggle]="dp" aria-label="Abrir calendario"></button>
-<app-lib-datepicker #dp />
+<input retroInput [retroDatepicker]="dp" formControlName="releaseDate" />
+<button [retroDatepickerToggle]="dp" aria-label="Abrir calendario"></button>
+<retro-datepicker #dp />
 ```
 
 ---
@@ -745,7 +745,7 @@ this._snackbar.open({ text: 'Guardado correctamente', variant: 'success' });
 
 ```html
 <!-- app.component.html -->
-<app-lib-snackbar-host />
+<retro-snackbar-host />
 ```
 
 ---
@@ -754,7 +754,7 @@ this._snackbar.open({ text: 'Guardado correctamente', variant: 'success' });
 
 No es un componente sino una **directiva DOM nativa**.
 
-Selector: `[libTooltip]`
+Selector: `[retroTooltip]`
 
 **Cuándo usarlo**: tooltips informativos en elementos desktop. La directiva es inactiva en dispositivos táctiles (sin hover real).
 
@@ -766,56 +766,56 @@ Selector: `[libTooltip]`
 **Ejemplo**
 
 ```html
-<app-lib-icon-button
+<retro-icon-button
   icon="info"
   ariaLabel="Información"
-  [libTooltip]="'Ver detalles del estado'" />
+  [retroTooltip]="'Ver detalles del estado'" />
 ```
 
 ---
 
 ### 4.20 `lib-menu`
 
-Selector: `app-lib-menu`
+Selector: `retro-menu`
 Panel de menú contextual construido sobre CDK Overlay con navegación por teclado completa.
 
 **Junto a**
 
 - `LibMenuItemComponent` — ítem individual del menú. Acepta `label`, `icon` y `disabled`.
-- `LibMenuTriggerDirective` (selector: `[libMenuTriggerFor]`) — conecta el elemento trigger con el panel. Recibe la referencia al componente mediante `[libMenuTriggerFor]="menuRef"`.
+- `LibMenuTriggerDirective` (selector: `[retroMenuTriggerFor]`) — conecta el elemento trigger con el panel. Recibe la referencia al componente mediante `[retroMenuTriggerFor]="menuRef"`.
 
 **Ejemplo**
 
 ```html
-<app-lib-icon-button
+<retro-icon-button
   icon="more_vert"
   ariaLabel="Más opciones"
-  [libMenuTriggerFor]="contextMenu" />
+  [retroMenuTriggerFor]="contextMenu" />
 
-<app-lib-menu #contextMenu>
-  <app-lib-menu-item label="EDITAR" icon="edit" (clicked)="onEdit()" />
-  <app-lib-menu-item label="ELIMINAR" icon="delete" [disabled]="!canDelete()" (clicked)="onDelete()" />
-</app-lib-menu>
+<retro-menu #contextMenu>
+  <retro-menu-item label="EDITAR" icon="edit" (clicked)="onEdit()" />
+  <retro-menu-item label="ELIMINAR" icon="delete" [disabled]="!canDelete()" (clicked)="onDelete()" />
+</retro-menu>
 ```
 
 ---
 
 ### 4.21 `lib-tabs` + `lib-router-tabs`
 
-**`lib-tabs`** — Selector: `app-lib-tabs`
+**`lib-tabs`** — Selector: `retro-tabs`
 Tablist ARIA con roving tabindex para tabs sin ruta.
 
-**`lib-router-tabs`** — Selector: `app-lib-router-tabs`
+**`lib-router-tabs`** — Selector: `retro-router-tabs`
 Navegación por tabs con `routerLink` y `aria-current="page"` para tabs ligadas a rutas.
 
 **Ejemplo**
 
 ```html
 <!-- Tabs sin ruta -->
-<app-lib-tabs [tabs]="tabs" [(activeTab)]="activeTab" />
+<retro-tabs [tabs]="tabs" [(activeTab)]="activeTab" />
 
 <!-- Tabs con ruta -->
-<app-lib-router-tabs [tabs]="routerTabs" />
+<retro-router-tabs [tabs]="routerTabs" />
 ```
 
 ---
@@ -830,10 +830,10 @@ No es un componente standalone de plantilla sino un **servicio sobre `LibOverlay
 
 | Directiva | Descripción |
 |---|---|
-| `libDialogTitle` | Cabecera del dialog. |
-| `libDialogContent` | Cuerpo scrolleable. |
-| `libDialogActions` | Pie con botones de acción. |
-| `libDialogClose` | Botón que cierra el dialog al hacer click. |
+| `retroDialogTitle` | Cabecera del dialog. |
+| `retroDialogContent` | Cuerpo scrolleable. |
+| `retroDialogActions` | Pie con botones de acción. |
+| `retroDialogClose` | Botón que cierra el dialog al hacer click. |
 
 **Tokens de inyección**
 
@@ -919,28 +919,28 @@ Gestiona el ciclo de vida del CDK Overlay (crear portal, posicionar, destruir) y
 
 | Componente / Servicio | Selector / API | Slot (`<ng-content>`) | Output principal | Variantes / Notas |
 |---|---|---|---|---|
-| `lib-button` | `app-lib-button` | sí (Fase 8) | `clicked` | `primary` / `ghost` / `danger` / `success` |
-| `lib-icon-button` | `app-lib-icon-button` | no | `clicked` | `primary` / `ghost` / `danger` × `sm` / `md` / `lg` |
-| `lib-card` | `app-lib-card` | sí (único) | `cardClicked` | `default` / `accent` / `muted` |
-| `lib-chip` | `app-lib-chip` | no | `closed` | 6 colores × `filled?` |
-| `lib-badge` | `app-lib-badge` | no | — | 6 variants × `dot?` |
-| `lib-checkbox` | `app-lib-checkbox` | no | `changed` (+ CVA) | `sm` / `md` |
-| `lib-data-row` | `app-lib-data-row` | sí (sustituto de `value`) | — | `emphasized?` |
-| `lib-section-header` | `app-lib-section-header` | sí (`[slot=actions]`) | — | — |
-| `lib-command-bar` | `app-lib-command-bar` | no | — | — |
-| `lib-empty-state` | `app-lib-empty-state` | sí | — | — |
-| `lib-spinner` | `app-lib-spinner` | no | — | 4 tamaños × 3 glyphs |
-| `lib-skeleton` | `app-lib-skeleton` | no | — | — |
-| `lib-icon` | `app-lib-icon` | no | — | `sm` / `md` / `lg` |
-| `lib-form-field` | `app-lib-form-field` | sí (`<input libInput>`) | — | + `LibInputDirective`, `LibLabelComponent`, `LibErrorComponent`, `LibHintComponent` |
-| `lib-select` | `app-lib-select` | no (CVA) | — | `multiple?` + `LibOptionComponent` |
-| `lib-autocomplete` | `app-lib-autocomplete` + `[libAutocompleteTrigger]` | no | `optionSelected` | — |
-| `lib-datepicker` | `app-lib-datepicker` + `[libDatepicker]` + `[libDatepickerToggle]` | no | — | locale `es-ES`, patrón APG |
-| `lib-snackbar` | `LibSnackbarService.open()` + `app-lib-snackbar-host` | — | — | `info` / `success` / `warning` / `danger`, cola FIFO |
-| `lib-tooltip` | `[libTooltip]` (directiva) | — | — | Solo desktop/hover |
-| `lib-menu` | `app-lib-menu` + `[libMenuTriggerFor]` | sí (`LibMenuItemComponent`) | — | + `LibMenuItemComponent` |
-| `lib-tabs` | `app-lib-tabs` | no | — | roving tabindex |
-| `lib-router-tabs` | `app-lib-router-tabs` | no | — | `routerLink` + `aria-current="page"` |
+| `lib-button` | `retro-button` | sí (Fase 8) | `clicked` | `primary` / `ghost` / `danger` / `success` |
+| `lib-icon-button` | `retro-icon-button` | no | `clicked` | `primary` / `ghost` / `danger` × `sm` / `md` / `lg` |
+| `lib-card` | `retro-card` | sí (único) | `cardClicked` | `default` / `accent` / `muted` |
+| `lib-chip` | `retro-chip` | no | `closed` | 6 colores × `filled?` |
+| `lib-badge` | `retro-badge` | no | — | 6 variants × `dot?` |
+| `lib-checkbox` | `retro-checkbox` | no | `changed` (+ CVA) | `sm` / `md` |
+| `lib-data-row` | `retro-data-row` | sí (sustituto de `value`) | — | `emphasized?` |
+| `lib-section-header` | `retro-section-header` | sí (`[slot=actions]`) | — | — |
+| `lib-command-bar` | `retro-command-bar` | no | — | — |
+| `lib-empty-state` | `retro-empty-state` | sí | — | — |
+| `lib-spinner` | `retro-spinner` | no | — | 4 tamaños × 3 glyphs |
+| `lib-skeleton` | `retro-skeleton` | no | — | — |
+| `lib-icon` | `retro-icon` | no | — | `sm` / `md` / `lg` |
+| `lib-form-field` | `retro-form-field` | sí (`<input retroInput>`) | — | + `LibInputDirective`, `LibLabelComponent`, `LibErrorComponent`, `LibHintComponent` |
+| `lib-select` | `retro-select` | no (CVA) | — | `multiple?` + `LibOptionComponent` |
+| `lib-autocomplete` | `retro-autocomplete` + `[retroAutocompleteTrigger]` | no | `optionSelected` | — |
+| `lib-datepicker` | `retro-datepicker` + `[retroDatepicker]` + `[retroDatepickerToggle]` | no | — | locale `es-ES`, patrón APG |
+| `lib-snackbar` | `LibSnackbarService.open()` + `retro-snackbar-host` | — | — | `info` / `success` / `warning` / `danger`, cola FIFO |
+| `lib-tooltip` | `[retroTooltip]` (directiva) | — | — | Solo desktop/hover |
+| `lib-menu` | `retro-menu` + `[retroMenuTriggerFor]` | sí (`LibMenuItemComponent`) | — | + `LibMenuItemComponent` |
+| `lib-tabs` | `retro-tabs` | no | — | roving tabindex |
+| `lib-router-tabs` | `retro-router-tabs` | no | — | `routerLink` + `aria-current="page"` |
 | `lib-dialog` | `LibDialogService.open()` | — | — | `LIB_DIALOG_DATA`, `LibDialogRef`, directivas de contenido |
 | `lib-bottom-sheet` | `LibBottomSheetService.open()` | — | — | `LIB_BOTTOM_SHEET_DATA`, `LibBottomSheetRef` |
 | `lib-divider` | `.lib-divider` (clase CSS en `<hr>`) | — | — | — |

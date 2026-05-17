@@ -1,7 +1,7 @@
 <div class="stores-page" [class.stores-page--panel-open]="panelOpen()">
   <header class="stores-page__header">
     <h1 class="stores-page__title">{{ 'management.stores.title' | transloco }}</h1>
-    <app-lib-button
+    <retro-button
       [label]="'management.stores.addBtn' | transloco"
       icon="add"
       variant="primary"
@@ -24,8 +24,8 @@
       <div class="stores-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="stores-skeleton__card">
-            <app-lib-skeleton width="36px" height="36px" />
-            <app-lib-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>

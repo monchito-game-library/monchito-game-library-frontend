@@ -10,8 +10,8 @@ import { LibAutocompleteComponent } from './lib-autocomplete.component';
   standalone: true,
   imports: [LibAutocompleteTriggerDirective, LibAutocompleteComponent],
   template: `
-    <input type="text" [libAutocompleteTrigger]="auto" />
-    <app-lib-autocomplete #auto />
+    <input type="text" [retroAutocompleteTrigger]="auto" />
+    <retro-autocomplete #auto />
   `,
   schemas: [NO_ERRORS_SCHEMA]
 })

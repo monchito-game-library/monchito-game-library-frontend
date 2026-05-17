@@ -43,9 +43,9 @@ describe('LibButtonComponent', () => {
   describe('ng-content slot (SVG projection)', () => {
     @Component({
       template: `
-        <app-lib-button label="With SVG">
+        <retro-button label="With SVG">
           <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
-        </app-lib-button>
+        </retro-button>
       `,
       imports: [LibButtonComponent]
     })
@@ -53,9 +53,9 @@ describe('LibButtonComponent', () => {
 
     @Component({
       template: `
-        <app-lib-button label="With SVG and icon" icon="star">
+        <retro-button label="With SVG and icon" icon="star">
           <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
-        </app-lib-button>
+        </retro-button>
       `,
       imports: [LibButtonComponent]
     })

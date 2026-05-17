@@ -35,47 +35,47 @@
   (loanSaved)="onLoanSaved($event)">
   <!-- hwChips: condition + region chips -->
   <ng-container hwChips>
-    <app-lib-chip
+    <retro-chip
       [label]="
         (console()?.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
           | transloco
       "
       [color]="console()?.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
     @if (console()?.region) {
-      <app-lib-chip [label]="console()!.region!" color="neutral" />
+      <retro-chip [label]="console()!.region!" color="neutral" />
     }
   </ng-container>
 
   <!-- hwExtra: catalog specs section -->
   @if (specs()) {
     <section class="hw-detail__section" hwExtra>
-      <app-lib-section-header [label]="'consoleDetailPage.sectionCatalog' | transloco" />
+      <retro-section-header [label]="'consoleDetailPage.sectionCatalog' | transloco" />
 
       <div class="hw-detail__dl">
         @if (model()?.generation) {
-          <app-lib-data-row
+          <retro-data-row
             [label]="'consoleDetailPage.generation' | transloco"
             [value]="model()!.generation + 'ª gen.'" />
         }
-        <app-lib-data-row [label]="'consoleDetailPage.launchYear' | transloco" [value]="specs()!.launchYear" />
-        <app-lib-data-row
+        <retro-data-row [label]="'consoleDetailPage.launchYear' | transloco" [value]="specs()!.launchYear" />
+        <retro-data-row
           [label]="'consoleDetailPage.discontinuedYear' | transloco"
           [value]="
             specs()!.discontinuedYear ? specs()!.discontinuedYear : ('consoleDetailPage.stillOnSale' | transloco)
           " />
-        <app-lib-data-row
+        <retro-data-row
           [label]="'consoleDetailPage.category' | transloco"
           [value]="'consoleDetailPage.category_' + specs()!.category | transloco" />
-        <app-lib-data-row
+        <retro-data-row
           [label]="'consoleDetailPage.media' | transloco"
           [value]="'consoleDetailPage.media_' + specs()!.media | transloco" />
         @if (specs()!.videoResolution) {
-          <app-lib-data-row
+          <retro-data-row
             [label]="'consoleDetailPage.videoResolution' | transloco"
             [value]="specs()!.videoResolution!" />
         }
         @if (specs()!.unitsSoldMillion !== null) {
-          <app-lib-data-row
+          <retro-data-row
             [label]="'consoleDetailPage.unitsSoldMillion' | transloco"
             [value]="specs()!.unitsSoldMillion + 'M'" />
         }

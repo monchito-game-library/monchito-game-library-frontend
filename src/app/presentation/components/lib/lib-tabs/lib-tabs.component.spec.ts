@@ -9,14 +9,14 @@ import { LibTabComponent } from './lib-tab.component';
   standalone: true,
   imports: [LibTabsComponent, LibTabComponent],
   template: `
-    <app-lib-tabs (selectedIndexChange)="onTabChange($event)">
-      <app-lib-tab label="Disponible" icon="sell">
+    <retro-tabs (selectedIndexChange)="onTabChange($event)">
+      <retro-tab label="Disponible" icon="sell">
         <ng-template>Panel disponible</ng-template>
-      </app-lib-tab>
-      <app-lib-tab label="Historial" icon="history">
+      </retro-tab>
+      <retro-tab label="Historial" icon="history">
         <ng-template>Panel historial</ng-template>
-      </app-lib-tab>
-    </app-lib-tabs>
+      </retro-tab>
+    </retro-tabs>
   `
 })
 class TabsIntegrationHostComponent {

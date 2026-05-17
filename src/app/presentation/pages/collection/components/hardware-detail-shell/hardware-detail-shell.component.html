@@ -1,30 +1,30 @@
 <div class="hardware-detail">
   @if (loading()) {
     <div class="hardware-detail__header">
-      <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
+      <retro-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
       <div class="hardware-detail__header-titles">
-        <app-lib-skeleton width="160px" height="20px" />
-        <app-lib-skeleton width="100px" height="14px" />
+        <retro-skeleton width="160px" height="20px" />
+        <retro-skeleton width="100px" height="14px" />
       </div>
     </div>
     <div class="hardware-detail__chips">
-      <app-lib-skeleton width="72px" height="24px" />
-      <app-lib-skeleton width="56px" height="24px" />
-      <app-lib-skeleton width="64px" height="24px" />
+      <retro-skeleton width="72px" height="24px" />
+      <retro-skeleton width="56px" height="24px" />
+      <retro-skeleton width="64px" height="24px" />
     </div>
     <div class="hardware-detail__purchase-section">
       @for (n of [0, 1, 2]; track n) {
-        <app-lib-skeleton width="100%" height="28px" />
+        <retro-skeleton width="100%" height="28px" />
       }
     </div>
     <div class="hardware-detail__actions">
       @for (n of [0, 1, 2, 3]; track n) {
-        <app-lib-skeleton height="44px" width="120px" />
+        <retro-skeleton height="44px" width="120px" />
       }
     </div>
   } @else if (item()) {
     <div class="hardware-detail__header">
-      <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
+      <retro-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="backClicked.emit()" />
       <div class="hardware-detail__header-titles">
         <h2 class="hardware-detail__title">{{ model()?.name ?? '—' }}</h2>
         <span class="hardware-detail__subtitle">{{ brand()?.name ?? '—' }}</span>
@@ -33,7 +33,7 @@
 
     @if (edition()) {
       <div class="hardware-detail__edition">
-        <app-lib-icon name="star" />
+        <retro-icon name="star" />
         {{ edition()!.name }}
       </div>
     }
@@ -42,7 +42,7 @@
     @if (forSale() || activeLoanId()) {
       <div class="hardware-detail__status-chips">
         @if (forSale()) {
-          <app-lib-chip
+          <retro-chip
             color="amber"
             icon="sell"
             [label]="
@@ -51,7 +51,7 @@
             " />
         }
         @if (activeLoanId()) {
-          <app-lib-chip
+          <retro-chip
             color="amber"
             icon="handshake"
             [label]="('hardwareLoan.loanedBadge' | transloco) + ' ' + activeLoanTo()" />
@@ -78,7 +78,7 @@
     } @else {
       <!-- Section: item data -->
       <section class="hw-detail__section">
-        <app-lib-section-header [label]="i18nPagePrefix() + '.sectionUser' | transloco" />
+        <retro-section-header [label]="i18nPagePrefix() + '.sectionUser' | transloco" />
 
         <!-- Slot for entity-specific chips (condition, region, compatibility, color) -->
         <div class="hardware-detail__chips">
@@ -87,25 +87,25 @@
 
         <div class="hardware-detail__purchase-section">
           @if (price() !== null) {
-            <app-lib-data-row
+            <retro-data-row
               [label]="i18nFieldPrefix() + '.price' | transloco"
               icon="payments"
               [value]="(price() | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
           }
           @if (storeLabel()) {
-            <app-lib-data-row
+            <retro-data-row
               [label]="i18nFieldPrefix() + '.store' | transloco"
               icon="storefront"
               [value]="storeLabel()" />
           }
           @if (purchaseDate()) {
-            <app-lib-data-row
+            <retro-data-row
               [label]="i18nFieldPrefix() + '.purchaseDate' | transloco"
               icon="calendar_today"
               [value]="(purchaseDate() | date: 'dd/MM/yyyy') ?? ''" />
           }
           @if (notes()) {
-            <app-lib-data-row [label]="i18nFieldPrefix() + '.notes' | transloco" icon="notes" [value]="notes()!" />
+            <retro-data-row [label]="i18nFieldPrefix() + '.notes' | transloco" icon="notes" [value]="notes()!" />
           }
         </div>
       </section>
@@ -116,22 +116,22 @@
       @if (!soldAt()) {
         <!-- Actions -->
         <div class="hardware-detail__actions">
-          <app-lib-button
+          <retro-button
             variant="ghost"
             icon="edit"
             [label]="'gameCard.menu.edit' | transloco"
             (clicked)="editClicked.emit()" />
-          <app-lib-button
+          <retro-button
             variant="ghost"
             icon="sell"
             [label]="'hardwareSale.manageBtn' | transloco"
             (clicked)="openSaleClicked.emit()" />
-          <app-lib-button
+          <retro-button
             variant="ghost"
             icon="handshake"
             [label]="activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco)"
             (clicked)="openLoanClicked.emit()" />
-          <app-lib-button
+          <retro-button
             variant="danger"
             icon="delete"
             [label]="'gameCard.menu.delete' | transloco"
@@ -141,15 +141,15 @@
       } @else {
         <!-- Sale info section -->
         <section class="hw-detail__section">
-          <app-lib-section-header [label]="'hardwareSale.saleInfoSection' | transloco" />
+          <retro-section-header [label]="'hardwareSale.saleInfoSection' | transloco" />
           <div class="hardware-detail__purchase-section">
             @if (soldPriceFinal() !== null) {
-              <app-lib-data-row
+              <retro-data-row
                 [label]="'hardwareSale.soldPriceFinal' | transloco"
                 icon="payments"
                 [value]="(soldPriceFinal() | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
             }
-            <app-lib-data-row
+            <retro-data-row
               [label]="'hardwareSale.soldAt' | transloco"
               icon="calendar_today"
               [value]="(soldAt() | date: 'dd/MM/yyyy') ?? ''" />
@@ -158,12 +158,12 @@
 
         <!-- Sold item actions -->
         <div class="hardware-detail__actions">
-          <app-lib-button
+          <retro-button
             variant="ghost"
             icon="edit"
             [label]="'hardwareSale.editSaleBtn' | transloco"
             (clicked)="openSaleClicked.emit()" />
-          <app-lib-button
+          <retro-button
             variant="danger"
             icon="undo"
             [label]="'hardwareSale.undoSaleBtn' | transloco"

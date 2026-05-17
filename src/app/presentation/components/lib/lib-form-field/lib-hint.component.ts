@@ -7,11 +7,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
  *
  * Uso:
  * ```html
- * <app-lib-hint>Introduce el precio en euros</app-lib-hint>
+ * <retro-hint>Introduce el precio en euros</retro-hint>
  * ```
  */
 @Component({
-  selector: 'app-lib-hint',
+  selector: 'retro-hint',
   standalone: true,
   imports: [],
   template: `<span class="lib-hint"><ng-content /></span>`,

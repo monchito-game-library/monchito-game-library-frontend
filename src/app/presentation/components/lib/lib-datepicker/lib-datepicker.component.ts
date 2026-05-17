@@ -25,7 +25,7 @@ let _nextDatepickerId: number = 0;
 
 /**
  * Datepicker Terminal Collector. Vista mes con grid accesible.
- * Se conecta con la directiva [libDatepicker] aplicada a un input nativo.
+ * Se conecta con la directiva [retroDatepicker] aplicada a un input nativo.
  *
  * Patrón ARIA: APG Date Picker Dialog Grid Pattern.
  * - Dialog: role="dialog", aria-modal="true", aria-labelledby (mes + año).
@@ -37,13 +37,13 @@ let _nextDatepickerId: number = 0;
  *
  * Uso:
  * ```html
- * <input libInput [libDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
- * <app-lib-icon libSuffix [libDatepickerToggle]="picker" name="calendar_today" />
- * <app-lib-datepicker #picker [min]="minDate" [max]="maxDate" />
+ * <input retroInput [retroDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
+ * <retro-icon retroSuffix [retroDatepickerToggle]="picker" name="calendar_today" />
+ * <retro-datepicker #picker [min]="minDate" [max]="maxDate" />
  * ```
  */
 @Component({
-  selector: 'app-lib-datepicker',
+  selector: 'retro-datepicker',
   standalone: true,
   imports: [PortalModule, LibIconButtonComponent],
   template: `
@@ -56,11 +56,11 @@ let _nextDatepickerId: number = 0;
         (keydown)="onDialogKeydown($event)">
         <!-- Header -->
         <div class="lib-datepicker__header">
-          <app-lib-icon-button icon="chevron_left" [ariaLabel]="'Mes anterior'" (clicked)="prevMonth()" />
+          <retro-icon-button icon="chevron_left" [ariaLabel]="'Mes anterior'" (clicked)="prevMonth()" />
           <span class="lib-datepicker__header-label" [id]="headerId">
             {{ headerLabel() }}
           </span>
-          <app-lib-icon-button icon="chevron_right" [ariaLabel]="'Mes siguiente'" (clicked)="nextMonth()" />
+          <retro-icon-button icon="chevron_right" [ariaLabel]="'Mes siguiente'" (clicked)="nextMonth()" />
         </div>
 
         <!-- Day-of-week headers -->

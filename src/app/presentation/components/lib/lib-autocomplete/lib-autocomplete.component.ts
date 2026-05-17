@@ -27,26 +27,26 @@ let _nextAutocompleteId: number = 0;
 
 /**
  * Panel de autocomplete Terminal Collector.
- * Se combina con la directiva LibAutocompleteTriggerDirective ([libAutocompleteTrigger])
- * aplicada a un <input libInput> para abrir/cerrar el panel y gestionar la selección.
+ * Se combina con la directiva LibAutocompleteTriggerDirective ([retroAutocompleteTrigger])
+ * aplicada a un <input retroInput> para abrir/cerrar el panel y gestionar la selección.
  *
  * La lógica de filtrado vive en el componente padre (computed signal o pipe).
  *
  * Uso:
  * ```html
- * <app-lib-form-field>
- *   <app-lib-label>Plataforma</app-lib-label>
- *   <input libInput type="text" [libAutocompleteTrigger]="auto" [formControl]="form.controls.platform" />
- *   <app-lib-autocomplete #auto [displayWith]="displayPlatformLabel">
+ * <retro-form-field>
+ *   <retro-label>Plataforma</retro-label>
+ *   <input retroInput type="text" [retroAutocompleteTrigger]="auto" [formControl]="form.controls.platform" />
+ *   <retro-autocomplete #auto [displayWith]="displayPlatformLabel">
  *     @for (p of filteredPlatforms(); track p.code) {
- *       <app-lib-option [value]="p.code">{{ p.labelKey | transloco }}</app-lib-option>
+ *       <retro-option [value]="p.code">{{ p.labelKey | transloco }}</retro-option>
  *     }
- *   </app-lib-autocomplete>
- * </app-lib-form-field>
+ *   </retro-autocomplete>
+ * </retro-form-field>
  * ```
  */
 @Component({
-  selector: 'app-lib-autocomplete',
+  selector: 'retro-autocomplete',
   standalone: true,
   imports: [PortalModule],
   template: `

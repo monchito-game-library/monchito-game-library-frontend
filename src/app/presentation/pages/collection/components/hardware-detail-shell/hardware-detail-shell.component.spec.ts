@@ -154,7 +154,7 @@ describe('HardwareDetailShellComponent', () => {
     });
 
     it('muestra los skeletons de carga', () => {
-      const skeletons = fixture.debugElement.queryAll(By.css('app-lib-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('retro-skeleton'));
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
@@ -286,10 +286,10 @@ describe('HardwareDetailShellComponent', () => {
       expect(chips).not.toBeNull();
     });
 
-    it('muestra un app-lib-chip para sale cuando forSale=true', () => {
+    it('muestra un retro-chip para sale cuando forSale=true', () => {
       setupComponent({ item: makeItem(), forSale: true });
       const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
-      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      const chipEls = chipsContainer.queryAll(By.css('retro-chip'));
       expect(chipEls.length).toBeGreaterThanOrEqual(1);
     });
 
@@ -297,21 +297,21 @@ describe('HardwareDetailShellComponent', () => {
       setupComponent({ item: makeItem(), forSale: false, activeLoanId: 'loan-1' });
       const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
       // Sólo el chip de loan debe estar visible
-      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      const chipEls = chipsContainer.queryAll(By.css('retro-chip'));
       expect(chipEls.length).toBe(1);
     });
 
-    it('muestra un app-lib-chip para loan cuando activeLoanId tiene valor', () => {
+    it('muestra un retro-chip para loan cuando activeLoanId tiene valor', () => {
       setupComponent({ item: makeItem(), activeLoanId: 'loan-1', activeLoanTo: 'Ana' });
       const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
-      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      const chipEls = chipsContainer.queryAll(By.css('retro-chip'));
       expect(chipEls.length).toBeGreaterThanOrEqual(1);
     });
 
     it('oculta el chip de loan cuando activeLoanId es null', () => {
       setupComponent({ item: makeItem(), forSale: true, activeLoanId: null });
       const chipsContainer = fixture.debugElement.query(By.css('.hardware-detail__status-chips'));
-      const chipEls = chipsContainer.queryAll(By.css('app-lib-chip'));
+      const chipEls = chipsContainer.queryAll(By.css('retro-chip'));
       expect(chipEls.length).toBe(1);
     });
   });
@@ -381,50 +381,50 @@ describe('HardwareDetailShellComponent', () => {
       expect(section).not.toBeNull();
     });
 
-    it('muestra app-lib-data-row de precio cuando price tiene valor', () => {
+    it('muestra retro-data-row de precio cuando price tiene valor', () => {
       setupComponent({ item: makeItem(), price: 499 });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('no muestra app-lib-data-row de precio cuando price es null', () => {
+    it('no muestra retro-data-row de precio cuando price es null', () => {
       setupComponent({ item: makeItem(), price: null, storeLabel: '', purchaseDate: null });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows).toHaveLength(0);
     });
 
-    it('muestra app-lib-data-row de tienda cuando storeLabel tiene valor', () => {
+    it('muestra retro-data-row de tienda cuando storeLabel tiene valor', () => {
       setupComponent({ item: makeItem(), storeLabel: 'Media Markt' });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('muestra app-lib-data-row de fecha cuando purchaseDate tiene valor', () => {
+    it('muestra retro-data-row de fecha cuando purchaseDate tiene valor', () => {
       setupComponent({ item: makeItem(), purchaseDate: '2023-06-15' });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('muestra tres app-lib-data-row cuando todos los campos tienen valor', () => {
+    it('muestra tres retro-data-row cuando todos los campos tienen valor', () => {
       setupComponent({
         item: makeItem(),
         price: 499,
         storeLabel: 'Media Markt',
         purchaseDate: '2023-06-15'
       });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows).toHaveLength(3);
     });
 
-    it('muestra app-lib-data-row de notas cuando notes tiene valor', () => {
+    it('muestra retro-data-row de notas cuando notes tiene valor', () => {
       setupComponent({ item: makeItem(), notes: 'Muy buen estado' });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
-    it('no muestra app-lib-data-row de notas cuando notes es null', () => {
+    it('no muestra retro-data-row de notas cuando notes es null', () => {
       setupComponent({ item: makeItem(), notes: null });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows).toHaveLength(0);
     });
   });
@@ -438,7 +438,7 @@ describe('HardwareDetailShellComponent', () => {
 
     it('oculta las acciones normales (4 botones)', () => {
       const actions = fixture.debugElement.queryAll(By.css('.hardware-detail__actions'));
-      const normalActions = actions.find((a) => a.nativeElement.querySelectorAll('app-lib-button').length === 4);
+      const normalActions = actions.find((a) => a.nativeElement.querySelectorAll('retro-button').length === 4);
       expect(normalActions).toBeUndefined();
     });
 
@@ -447,14 +447,14 @@ describe('HardwareDetailShellComponent', () => {
       expect(section).not.toBeNull();
     });
 
-    it('muestra app-lib-data-row de precio de venta cuando soldPriceFinal no es null', () => {
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+    it('muestra retro-data-row de precio de venta cuando soldPriceFinal no es null', () => {
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows.length).toBeGreaterThanOrEqual(1);
     });
 
     it('muestra sólo la fecha cuando soldPriceFinal es null', () => {
       setupComponent({ item: makeItem(), soldAt: '2024-07-15', soldPriceFinal: null });
-      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section app-lib-data-row'));
+      const rows = fixture.debugElement.queryAll(By.css('.hardware-detail__purchase-section retro-data-row'));
       expect(rows).toHaveLength(1);
     });
 
@@ -480,18 +480,18 @@ describe('HardwareDetailShellComponent', () => {
   // ─── 10. Botón eliminar ──────────────────────────────────────────────────
 
   describe('botón eliminar', () => {
-    it('muestra el app-lib-button de eliminar con [disabled] cuando deleting=true', () => {
+    it('muestra el retro-button de eliminar con [disabled] cuando deleting=true', () => {
       setupComponent({ item: makeItem(), deleting: true });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('app-lib-button'));
+      const btns = actions.queryAll(By.css('retro-button'));
       // 4 botones: edit, venta, prestamo, eliminar
       expect(btns.length).toBe(4);
     });
 
-    it('muestra el app-lib-button de eliminar cuando deleting=false', () => {
+    it('muestra el retro-button de eliminar cuando deleting=false', () => {
       setupComponent({ item: makeItem(), deleting: false });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('app-lib-button'));
+      const btns = actions.queryAll(By.css('retro-button'));
       expect(btns.length).toBe(4);
     });
   });
@@ -539,17 +539,17 @@ describe('HardwareDetailShellComponent', () => {
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('el app-lib-button de préstamo existe cuando hay préstamo activo', () => {
+    it('el retro-button de préstamo existe cuando hay préstamo activo', () => {
       setupComponent({ item: makeItem(), activeLoanId: 'loan-1', activeLoanTo: 'Ana' });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('app-lib-button'));
+      const btns = actions.queryAll(By.css('retro-button'));
       expect(btns[2]).not.toBeNull();
     });
 
-    it('el app-lib-button de préstamo existe cuando no hay préstamo activo', () => {
+    it('el retro-button de préstamo existe cuando no hay préstamo activo', () => {
       setupComponent({ item: makeItem(), activeLoanId: null });
       const actions = fixture.debugElement.query(By.css('.hardware-detail__actions'));
-      const btns = actions.queryAll(By.css('app-lib-button'));
+      const btns = actions.queryAll(By.css('retro-button'));
       expect(btns[2]).not.toBeNull();
     });
   });

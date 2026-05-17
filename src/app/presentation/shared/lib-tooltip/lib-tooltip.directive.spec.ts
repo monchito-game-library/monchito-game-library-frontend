@@ -5,7 +5,7 @@ import { describe, beforeEach, it, expect } from 'vitest';
 import { LibTooltipDirective } from './lib-tooltip.directive';
 
 @Component({
-  template: `<button [libTooltip]="'Test tooltip'" [libTooltipDelay]="0">Hover me</button>`,
+  template: `<button [retroTooltip]="'Test tooltip'" [retroTooltipDelay]="0">Hover me</button>`,
   standalone: true,
   imports: [LibTooltipDirective]
 })

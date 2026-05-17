@@ -5,13 +5,13 @@ import { ChangeDetectionStrategy, Component, ContentChild, InputSignal, Template
  * El contenido debe pasarse envuelto en un `<ng-template>`:
  *
  * ```html
- * <app-lib-tab label="Mi Tab" icon="home">
+ * <retro-tab label="Mi Tab" icon="home">
  *   <ng-template>...contenido...</ng-template>
- * </app-lib-tab>
+ * </retro-tab>
  * ```
  */
 @Component({
-  selector: 'app-lib-tab',
+  selector: 'retro-tab',
   standalone: true,
   imports: [],
   template: ``,

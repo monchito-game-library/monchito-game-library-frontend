@@ -49,7 +49,7 @@ describe('LibMenuItemComponent', () => {
   it('should render icon when icon input is provided', () => {
     fixture.componentRef.setInput('icon', 'delete');
     fixture.detectChanges();
-    const icon = fixture.nativeElement.querySelector('app-lib-icon');
+    const icon = fixture.nativeElement.querySelector('retro-icon');
     expect(icon).toBeTruthy();
   });
 });

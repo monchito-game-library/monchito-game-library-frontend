@@ -16,11 +16,7 @@
           {{ msg.action.label }}
         </button>
       }
-      <app-lib-icon-button
-        icon="close"
-        size="sm"
-        [ariaLabel]="'common.close' | transloco"
-        (clicked)="dismiss(msg.id)" />
+      <retro-icon-button icon="close" size="sm" [ariaLabel]="'common.close' | transloco" (clicked)="dismiss(msg.id)" />
     </div>
   }
 </aside>

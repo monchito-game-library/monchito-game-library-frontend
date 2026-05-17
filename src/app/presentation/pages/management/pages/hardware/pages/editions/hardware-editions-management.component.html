@@ -1,19 +1,19 @@
 <div class="editions-page" [class.editions-page--panel-open]="panelOpen() || modelPanelOpen()">
   <header class="editions-page__header">
     <div class="editions-page__header-left">
-      <app-lib-icon class="editions-page__back-icon" name="arrow_back" (click)="onBack()" />
+      <retro-icon class="editions-page__back-icon" name="arrow_back" (click)="onBack()" />
       <div class="editions-page__titles">
         <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
       </div>
-      <app-lib-icon-button
+      <retro-icon-button
         icon="edit"
         size="sm"
         class="editions-page__edit-btn"
         [ariaLabel]="'common.edit' | transloco"
         (clicked)="onEditModel()" />
     </div>
-    <app-lib-button
+    <retro-button
       [label]="'management.hardware.editions.addBtn' | transloco"
       icon="add"
       variant="primary"
@@ -47,8 +47,8 @@
       <div class="editions-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="editions-skeleton__card">
-            <app-lib-skeleton width="36px" height="36px" />
-            <app-lib-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>

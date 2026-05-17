@@ -127,7 +127,7 @@ describe('HardwareListShellComponent', () => {
     });
 
     it('muestra el bloque de empty state', () => {
-      const empty = fixture.debugElement.query(By.css('app-lib-empty-state'));
+      const empty = fixture.debugElement.query(By.css('retro-empty-state'));
       expect(empty).not.toBeNull();
     });
 
@@ -202,7 +202,7 @@ describe('HardwareListShellComponent', () => {
   describe('stats', () => {
     it('muestra skeletons cuando loading es true', () => {
       setupComponent({ loading: true, items: [], filteredItems: [] });
-      const skeletons = fixture.debugElement.queryAll(By.css('app-lib-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('retro-skeleton'));
       expect(skeletons.length).toBeGreaterThanOrEqual(2);
     });
 

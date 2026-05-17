@@ -1,29 +1,29 @@
 <div class="order-detail-page">
   @if (loading()) {
     <div class="order-detail-page__title-row">
-      <app-lib-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
-      <app-lib-skeleton width="200px" height="20px" />
+      <retro-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
+      <retro-skeleton width="200px" height="20px" />
     </div>
     <div class="order-detail-page__section">
-      <app-lib-skeleton width="100px" height="14px" />
+      <retro-skeleton width="100px" height="14px" />
       <div class="order-detail-page__skeleton-rows">
         @for (n of [0, 1, 2, 3]; track n) {
-          <app-lib-skeleton height="16px" />
+          <retro-skeleton height="16px" />
         }
       </div>
     </div>
     <div class="order-detail-page__section">
-      <app-lib-skeleton width="80px" height="14px" />
+      <retro-skeleton width="80px" height="14px" />
       <div class="order-detail-page__skeleton-rows">
         @for (n of [0, 1, 2]; track n) {
-          <app-lib-skeleton height="44px" />
+          <retro-skeleton height="44px" />
         }
       </div>
     </div>
   } @else if (order(); as ord) {
     <!-- Header -->
     <div class="order-detail-page__title-row">
-      <app-lib-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
+      <retro-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
       <div class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</div>
 
       <div
@@ -34,14 +34,14 @@
             @for (m of ord.members; track m.id) {
               @if (m.userId === userContext.userId()) {
                 @if (!m.isReady) {
-                  <app-lib-button
+                  <retro-button
                     [label]="'orders.header.markReady' | transloco"
                     icon="check_circle"
                     variant="success"
                     [disabled]="saving()"
                     (clicked)="onToggleMemberReady()" />
                 } @else {
-                  <app-lib-button
+                  <retro-button
                     [label]="'orders.header.cancelReady' | transloco"
                     icon="cancel"
                     variant="ghost"
@@ -53,36 +53,36 @@
           }
           @if (isOwner()) {
             @if (ord.status === ORDER_STATUS.DRAFT) {
-              <app-lib-icon-button
+              <retro-icon-button
                 icon="link"
                 [ariaLabel]="'orders.header.shareInvite' | transloco"
-                [libTooltip]="'orders.header.shareInvite' | transloco"
+                [retroTooltip]="'orders.header.shareInvite' | transloco"
                 [disabled]="saving()"
                 (clicked)="onShareInvitation()" />
             }
             @if (ord.status === ORDER_STATUS.DRAFT) {
-              <app-lib-icon-button
+              <retro-icon-button
                 icon="edit"
                 [ariaLabel]="'orders.header.edit' | transloco"
-                [libTooltip]="'orders.header.edit' | transloco"
+                [retroTooltip]="'orders.header.edit' | transloco"
                 (clicked)="onEditHeader()" />
             }
-            <app-lib-icon-button
+            <retro-icon-button
               icon="delete"
               variant="danger"
               [ariaLabel]="'orders.header.delete' | transloco"
-              [libTooltip]="'orders.header.delete' | transloco"
+              [retroTooltip]="'orders.header.delete' | transloco"
               (clicked)="onDeleteOrder()" />
-            <app-lib-icon-button
+            <retro-icon-button
               icon="arrow_back"
               [ariaLabel]="'orders.header.advanceStatus' | transloco"
-              [libTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
+              [retroTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
               [disabled]="saving() || !prevStatus()"
               (clicked)="onRegressStatus()" />
-            <app-lib-icon-button
+            <retro-icon-button
               icon="arrow_forward"
               [ariaLabel]="'orders.header.nextStep' | transloco"
-              [libTooltip]="'orders.header.nextStep' | transloco"
+              [retroTooltip]="'orders.header.nextStep' | transloco"
               [disabled]="
                 saving() ||
                 !nextStatus() ||
@@ -92,52 +92,52 @@
           }
         }
         @if (selectingPacks() && isOwner()) {
-          <app-lib-icon-button
+          <retro-icon-button
             icon="edit"
             [ariaLabel]="'orders.header.edit' | transloco"
-            [libTooltip]="'orders.header.edit' | transloco"
+            [retroTooltip]="'orders.header.edit' | transloco"
             (clicked)="onEditHeader()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="delete"
             variant="danger"
             [ariaLabel]="'orders.header.delete' | transloco"
-            [libTooltip]="'orders.header.delete' | transloco"
+            [retroTooltip]="'orders.header.delete' | transloco"
             (clicked)="onDeleteOrder()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="arrow_back"
             [ariaLabel]="'orders.header.regressStatus' | transloco"
-            [libTooltip]="'orders.status.' + prevStatus() | transloco"
+            [retroTooltip]="'orders.status.' + prevStatus() | transloco"
             [disabled]="saving()"
             (clicked)="onRegressStatus()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="arrow_forward"
             [ariaLabel]="'orders.header.nextStep' | transloco"
-            [libTooltip]="'orders.header.nextStep' | transloco"
+            [retroTooltip]="'orders.header.nextStep' | transloco"
             [disabled]="saving() || !allPacksSelected()"
             (clicked)="onConfirmPacks()" />
         }
         @if (placingOrder() && isOwner()) {
-          <app-lib-icon-button
+          <retro-icon-button
             icon="edit"
             [ariaLabel]="'orders.header.edit' | transloco"
-            [libTooltip]="'orders.header.edit' | transloco"
+            [retroTooltip]="'orders.header.edit' | transloco"
             (clicked)="onEditHeader()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="delete"
             variant="danger"
             [ariaLabel]="'orders.header.delete' | transloco"
-            [libTooltip]="'orders.header.delete' | transloco"
+            [retroTooltip]="'orders.header.delete' | transloco"
             (clicked)="onDeleteOrder()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="arrow_back"
             [ariaLabel]="'orders.header.regressStatus' | transloco"
-            [libTooltip]="'orders.status.' + prevStatus() | transloco"
+            [retroTooltip]="'orders.status.' + prevStatus() | transloco"
             [disabled]="saving()"
             (clicked)="onRegressStatus()" />
-          <app-lib-icon-button
+          <retro-icon-button
             icon="arrow_forward"
             [ariaLabel]="'orders.header.nextStep' | transloco"
-            [libTooltip]="'orders.header.nextStep' | transloco"
+            [retroTooltip]="'orders.header.nextStep' | transloco"
             [disabled]="saving()"
             (clicked)="onAdvanceStatus()" />
         }

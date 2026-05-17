@@ -7,7 +7,7 @@ import { LibCardVariant } from '@/types/lib-component.type';
  * Cuando interactive=true expone role=button y emite cardClicked.
  */
 @Component({
-  selector: 'app-lib-card',
+  selector: 'retro-card',
   standalone: true,
   imports: [],
   templateUrl: './lib-card.component.html',

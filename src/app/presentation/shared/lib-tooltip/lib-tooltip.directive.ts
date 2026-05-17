@@ -9,11 +9,11 @@ import { Directive, ElementRef, HostListener, inject, input, InputSignal, OnDest
  * - Solo actúa en dispositivos con hover (`@media (hover: none)` → inactiva).
  * - Accesible: añade `role="tooltip"` al panel y `aria-describedby` al host.
  * - Deuda a11y declarada: no muestra tooltip al focus en elementos que no
- *   reciben focus de teclado (p.ej. `<div libTooltip>`). Para icon-buttons
+ *   reciben focus de teclado (p.ej. `<div retroTooltip>`). Para icon-buttons
  *   el aria-label del botón padre es suficiente.
  */
 @Directive({
-  selector: '[libTooltip]',
+  selector: '[retroTooltip]',
   standalone: true
 })
 /* eslint-disable @typescript-eslint/member-ordering --
@@ -33,10 +33,10 @@ export class LibTooltipDirective implements OnDestroy {
   private _timer?: ReturnType<typeof setTimeout>;
 
   /** Texto del tooltip. */
-  readonly libTooltip: InputSignal<string> = input.required<string>();
+  readonly retroTooltip: InputSignal<string> = input.required<string>();
 
   /** Retardo en ms antes de mostrar el tooltip (por defecto 500ms). */
-  readonly libTooltipDelay: InputSignal<number> = input<number>(500);
+  readonly retroTooltipDelay: InputSignal<number> = input<number>(500);
 
   /** Comprueba si el dispositivo soporta hover (excluye táctiles). */
   private get _hasHover(): boolean {
@@ -86,7 +86,7 @@ export class LibTooltipDirective implements OnDestroy {
    */
   private _scheduleShow(): void {
     clearTimeout(this._timer);
-    this._timer = setTimeout(() => this._show(), this.libTooltipDelay());
+    this._timer = setTimeout(() => this._show(), this.retroTooltipDelay());
   }
 
   /**
@@ -94,7 +94,7 @@ export class LibTooltipDirective implements OnDestroy {
    */
   private _show(): void {
     if (this._tooltipEl) return;
-    const text = this.libTooltip();
+    const text = this.retroTooltip();
     if (!text) return;
 
     const panel: HTMLElement = this._renderer.createElement('div');

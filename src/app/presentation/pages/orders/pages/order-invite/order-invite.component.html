@@ -1,33 +1,33 @@
 <div class="order-invite-page">
   <div class="order-invite-page__card">
     @if (!authState.isAuthenticated()) {
-      <app-lib-icon class="order-invite-page__icon" name="group_add" />
+      <retro-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.loginRequired' | transloco }}</div>
-      <app-lib-button
+      <retro-button
         [label]="'orders.invite.loginBtn' | transloco"
         icon="login"
         variant="primary"
         (clicked)="onGoToLogin()" />
     } @else if (loading()) {
-      <app-lib-skeleton width="48px" height="48px" />
-      <app-lib-skeleton width="160px" height="20px" />
-      <app-lib-skeleton width="220px" height="14px" />
+      <retro-skeleton width="48px" height="48px" />
+      <retro-skeleton width="160px" height="20px" />
+      <retro-skeleton width="220px" height="14px" />
     } @else if (invalid()) {
-      <app-lib-icon class="order-invite-page__icon order-invite-page__icon--error" name="link_off" />
+      <retro-icon class="order-invite-page__icon order-invite-page__icon--error" name="link_off" />
       <div class="order-invite-page__title">{{ 'orders.invite.invalidTitle' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.invalid' | transloco }}</div>
     } @else if (alreadyMember() && invitation()) {
-      <app-lib-icon class="order-invite-page__icon order-invite-page__icon--success" name="check_circle" />
+      <retro-icon class="order-invite-page__icon order-invite-page__icon--success" name="check_circle" />
       <div class="order-invite-page__title">{{ 'orders.invite.alreadyMemberTitle' | transloco }}</div>
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
-      <app-lib-button
+      <retro-button
         [label]="'orders.invite.goToOrder' | transloco"
         icon="open_in_new"
         variant="primary"
         [routerLink]="['/orders', invitation()!.orderId]" />
     } @else if (invitation()) {
-      <app-lib-icon class="order-invite-page__icon" name="group_add" />
+      <retro-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
       @if (invitation()!.expiresAt) {
@@ -35,7 +35,7 @@
           {{ 'orders.invite.expires' | transloco }}: {{ invitation()!.expiresAt | date: 'dd/MM/yyyy HH:mm' }}
         </div>
       }
-      <app-lib-button
+      <retro-button
         [label]="joining() ? ('orders.invite.joining' | transloco) : ('orders.invite.join' | transloco)"
         icon="group_add"
         variant="primary"
@@ -51,14 +51,14 @@
     <div class="order-invite-page__order-name">{{ inv.orderTitle ?? ('orders.invite.untitled' | transloco) }}</div>
     <div class="order-invite-page__order-meta">
       <div class="order-invite-page__order-meta-row">
-        <app-lib-icon class="order-invite-page__meta-icon" name="calendar_today" />
+        <retro-icon class="order-invite-page__meta-icon" name="calendar_today" />
         <span>
           {{ 'orders.invite.createdAt' | transloco }}:
           {{ inv.orderDate ? (inv.orderDate | date: 'dd/MM/yyyy') : (inv.orderCreatedAt | date: 'dd/MM/yyyy') }}
         </span>
       </div>
       <div class="order-invite-page__order-meta-row">
-        <app-lib-icon class="order-invite-page__meta-icon" name="group" />
+        <retro-icon class="order-invite-page__meta-icon" name="group" />
         <span>{{ inv.orderMemberCount }} {{ 'orders.invite.members' | transloco }}</span>
       </div>
     </div>

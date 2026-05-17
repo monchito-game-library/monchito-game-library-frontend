@@ -1,34 +1,34 @@
 <div class="catalog-search-panel">
   <div class="catalog-search-panel__input-wrapper">
-    <app-lib-form-field class="catalog-search-panel__field">
-      <app-lib-label>{{ 'gameForm.search.inputLabel' | transloco }}</app-lib-label>
-      <app-lib-icon libPrefix name="search" />
+    <retro-form-field class="catalog-search-panel__field">
+      <retro-label>{{ 'gameForm.search.inputLabel' | transloco }}</retro-label>
+      <retro-icon retroPrefix name="search" />
       <input
-        libInput
+        retroInput
         [value]="searchQuery()"
         (input)="onSearchInput($event)"
         [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
         autofocus />
-    </app-lib-form-field>
+    </retro-form-field>
   </div>
 
   <div class="catalog-search-panel__results">
     @if (searchLoading()) {
       <div class="catalog-search-panel__placeholder">
-        <app-lib-spinner size="md" />
+        <retro-spinner size="md" />
       </div>
     }
 
     @if (!searchQuery()) {
       <div class="catalog-search-panel__placeholder">
-        <app-lib-icon name="sports_esports" />
+        <retro-icon name="sports_esports" />
         <p>{{ 'gameForm.search.emptyHint' | transloco }}</p>
       </div>
     }
 
     @if (searchQuery() && !searchLoading() && !searchResults().length) {
       <div class="catalog-search-panel__placeholder">
-        <app-lib-icon name="search_off" />
+        <retro-icon name="search_off" />
         <p>{{ 'gameForm.search.noResults' | transloco: { query: searchQuery() } }}</p>
       </div>
     }
@@ -40,7 +40,7 @@
             <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" fill />
           } @else {
             <div class="search-result-card__cover-placeholder">
-              <app-lib-icon name="videogame_asset" />
+              <retro-icon name="videogame_asset" />
             </div>
           }
         </div>
@@ -55,7 +55,7 @@
             }
             @if (game.rating > 0) {
               <span class="search-result-card__rating">
-                <app-lib-icon name="star" />
+                <retro-icon name="star" />
                 {{ game.rating | number: '1.1-1' }}
               </span>
             }

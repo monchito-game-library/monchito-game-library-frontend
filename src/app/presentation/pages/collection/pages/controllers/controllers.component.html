@@ -22,8 +22,8 @@
 </ng-template>
 
 <ng-template #cardChipsTpl let-controller>
-  <app-lib-chip [label]="controller.compatibility" color="neutral" />
-  <app-lib-chip
+  <retro-chip [label]="controller.compatibility" color="neutral" />
+  <retro-chip
     [label]="
       (controller.condition === GAME_CONDITION.NEW ? 'controllersPage.condition.new' : 'controllersPage.condition.used')
         | transloco

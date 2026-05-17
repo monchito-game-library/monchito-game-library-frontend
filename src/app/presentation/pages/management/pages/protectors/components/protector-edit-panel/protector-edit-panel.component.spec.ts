@@ -81,7 +81,7 @@ describe('ProtectorEditPanelComponent — template real', () => {
     fixture.detectChanges();
     const spy = vi.spyOn(component.toggled, 'emit');
     const toggleHost: HTMLElement = fixture.nativeElement.querySelector(
-      'app-lib-button.edit-panel__deactivate-btn, app-lib-button.edit-panel__activate-btn'
+      'retro-button.edit-panel__deactivate-btn, retro-button.edit-panel__activate-btn'
     );
     const toggleBtn: HTMLButtonElement | null = toggleHost?.querySelector('button.lib-btn') ?? null;
     toggleBtn?.click();
@@ -99,7 +99,7 @@ describe('ProtectorEditPanelComponent — template real', () => {
     });
     fixture.detectChanges();
     const spy = vi.spyOn(component.deleted, 'emit');
-    const deleteHost: HTMLElement = fixture.nativeElement.querySelector('app-lib-button.edit-panel__delete-btn');
+    const deleteHost: HTMLElement = fixture.nativeElement.querySelector('retro-button.edit-panel__delete-btn');
     const deleteBtn: HTMLButtonElement | null = deleteHost?.querySelector('button.lib-btn') ?? null;
     deleteBtn?.click();
     expect(spy).toHaveBeenCalled();

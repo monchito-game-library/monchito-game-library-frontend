@@ -16,12 +16,12 @@ import { Subject } from 'rxjs';
  *
  * Uso:
  * ```html
- * <input libInput formControlName="email" type="email" />
- * <textarea libInput formControlName="notes" rows="3"></textarea>
+ * <input retroInput formControlName="email" type="email" />
+ * <textarea retroInput formControlName="notes" rows="3"></textarea>
  * ```
  */
 @Directive({
-  selector: 'input[libInput], textarea[libInput]',
+  selector: 'input[retroInput], textarea[retroInput]',
   standalone: true,
   host: {
     class: 'lib-input__control'

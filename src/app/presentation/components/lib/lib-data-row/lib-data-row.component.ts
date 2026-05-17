@@ -8,7 +8,7 @@ import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
  * Para valores complejos (estrellas, chips...) usar ng-content en lugar de value.
  */
 @Component({
-  selector: 'app-lib-data-row',
+  selector: 'retro-data-row',
   standalone: true,
   imports: [LibIconComponent],
   templateUrl: './lib-data-row.component.html',

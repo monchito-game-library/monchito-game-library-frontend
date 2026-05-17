@@ -11,12 +11,12 @@ import { LibMenuTriggerDirective } from './lib-menu-trigger.directive';
   standalone: true,
   imports: [LibMenuComponent, LibMenuItemComponent, LibMenuTriggerDirective],
   template: `
-    <button [libMenuTriggerFor]="menu" aria-label="Abrir menú">Trigger</button>
-    <app-lib-menu #menu>
-      <app-lib-menu-item (clicked)="onItemA()">Opción A</app-lib-menu-item>
-      <app-lib-menu-item (clicked)="onItemB()">Opción B</app-lib-menu-item>
-      <app-lib-menu-item [isDisabled]="true">Deshabilitada</app-lib-menu-item>
-    </app-lib-menu>
+    <button [retroMenuTriggerFor]="menu" aria-label="Abrir menú">Trigger</button>
+    <retro-menu #menu>
+      <retro-menu-item (clicked)="onItemA()">Opción A</retro-menu-item>
+      <retro-menu-item (clicked)="onItemB()">Opción B</retro-menu-item>
+      <retro-menu-item [isDisabled]="true">Deshabilitada</retro-menu-item>
+    </retro-menu>
   `
 })
 class MenuHostComponent {

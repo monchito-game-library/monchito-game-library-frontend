@@ -4,7 +4,7 @@
     [style.mask-image]="'url(' + svgIcon() + ')'"
     aria-hidden="true"></span>
 } @else {
-  <app-lib-icon class="catalog-item-card__icon" [name]="icon()" />
+  <retro-icon class="catalog-item-card__icon" [name]="icon()" />
 }
 
 <div class="catalog-item-card__info">
@@ -19,5 +19,5 @@
 </div>
 
 @if (showChevron()) {
-  <app-lib-icon class="catalog-item-card__chevron" name="chevron_right" />
+  <retro-icon class="catalog-item-card__chevron" name="chevron_right" />
 }

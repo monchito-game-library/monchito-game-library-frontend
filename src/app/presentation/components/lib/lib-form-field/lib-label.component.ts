@@ -7,12 +7,12 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
  *
  * Uso:
  * ```html
- * <app-lib-label [for]="inputId">Título</app-lib-label>
- * <app-lib-label [required]="true">Email</app-lib-label>
+ * <retro-label [for]="inputId">Título</retro-label>
+ * <retro-label [required]="true">Email</retro-label>
  * ```
  */
 @Component({
-  selector: 'app-lib-label',
+  selector: 'retro-label',
   standalone: true,
   imports: [],
   template: `

@@ -9,14 +9,14 @@ import { LibTabComponent } from './lib-tab.component';
   standalone: true,
   imports: [LibTabsComponent, LibTabComponent],
   template: `
-    <app-lib-tabs>
-      <app-lib-tab label="Tab A" icon="home">
+    <retro-tabs>
+      <retro-tab label="Tab A" icon="home">
         <ng-template>Contenido A</ng-template>
-      </app-lib-tab>
-      <app-lib-tab label="Tab B" icon="settings">
+      </retro-tab>
+      <retro-tab label="Tab B" icon="settings">
         <ng-template>Contenido B</ng-template>
-      </app-lib-tab>
-    </app-lib-tabs>
+      </retro-tab>
+    </retro-tabs>
   `
 })
 class TabsHostComponent {}

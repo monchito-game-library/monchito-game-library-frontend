@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular
  * Deuda a11y: ninguna; es paridad funcional con mat-icon.
  */
 @Component({
-  selector: 'app-lib-icon',
+  selector: 'retro-icon',
   standalone: true,
   templateUrl: './lib-icon.component.html',
   styleUrl: './lib-icon.component.scss',

@@ -1,8 +1,8 @@
-<h2 libDialogTitle>
+<h2 retroDialogTitle>
   {{ (config.mode === 'add' ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
 </h2>
 
-<div libDialogContent>
+<div retroDialogContent>
   @if (showSearch()) {
     <!-- Step 1 (add mode): search for a game -->
     <p class="wishlist-item-dialog__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
@@ -23,7 +23,7 @@
             <span class="wishlist-item-dialog__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
           }
         </div>
-        <app-lib-icon-button
+        <retro-icon-button
           icon="close"
           [ariaLabel]="'wishlist.dialog.changeGame' | transloco"
           (clicked)="onChangGame()" />
@@ -36,7 +36,7 @@
         <span class="wishlist-item-dialog__priority-label">{{ 'wishlist.fields.priority' | transloco }}</span>
         <div class="wishlist-item-dialog__priority-stars">
           @for (level of priorityOptions; track level) {
-            <app-lib-icon-button
+            <retro-icon-button
               [icon]="level <= form.controls.priority.value ? 'star' : 'star_border'"
               [ariaLabel]="'' + level"
               variant="primary"
@@ -47,17 +47,17 @@
 
       <!-- Platform (required in add mode, static in edit mode) -->
       @if (config.mode === 'add') {
-        <app-lib-form-field class="wishlist-item-dialog__field">
-          <app-lib-label [required]="true">{{ 'wishlist.fields.platform' | transloco }}</app-lib-label>
-          <app-lib-select formControlName="platform">
+        <retro-form-field class="wishlist-item-dialog__field">
+          <retro-label [required]="true">{{ 'wishlist.fields.platform' | transloco }}</retro-label>
+          <retro-select formControlName="platform">
             @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
-              <app-lib-option [value]="platform">{{ platform }}</app-lib-option>
+              <retro-option [value]="platform">{{ platform }}</retro-option>
             }
-          </app-lib-select>
+          </retro-select>
           @if (form.controls.platform.hasError('required')) {
-            <app-lib-error>{{ 'wishlist.fields.platformRequired' | transloco }}</app-lib-error>
+            <retro-error>{{ 'wishlist.fields.platformRequired' | transloco }}</retro-error>
           }
-        </app-lib-form-field>
+        </retro-form-field>
       } @else if (config.item?.platform) {
         <div class="wishlist-item-dialog__platform-display">
           <span class="wishlist-item-dialog__platforms-label">{{ 'wishlist.fields.platform' | transloco }}</span>
@@ -68,37 +68,37 @@
       }
 
       <!-- Desired price (required) -->
-      <app-lib-form-field class="wishlist-item-dialog__field">
-        <app-lib-label [required]="true">{{ 'wishlist.fields.desiredPrice' | transloco }}</app-lib-label>
+      <retro-form-field class="wishlist-item-dialog__field">
+        <retro-label [required]="true">{{ 'wishlist.fields.desiredPrice' | transloco }}</retro-label>
         <input
-          libInput
+          retroInput
           type="number"
           min="0"
           step="0.01"
           formControlName="desiredPrice"
           [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
         @if (form.controls.desiredPrice.hasError('required')) {
-          <app-lib-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</app-lib-error>
+          <retro-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</retro-error>
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
       <!-- Notes (optional) -->
-      <app-lib-form-field class="wishlist-item-dialog__field">
-        <app-lib-label>{{ 'wishlist.fields.notes' | transloco }}</app-lib-label>
+      <retro-form-field class="wishlist-item-dialog__field">
+        <retro-label>{{ 'wishlist.fields.notes' | transloco }}</retro-label>
         <textarea
-          libInput
+          retroInput
           formControlName="notes"
           rows="3"
           [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-      </app-lib-form-field>
+      </retro-form-field>
     </form>
   }
 </div>
 
-<footer libDialogActions align="end">
-  <app-lib-button variant="ghost" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
+<footer retroDialogActions align="end">
+  <retro-button variant="ghost" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
   @if (!showSearch()) {
-    <app-lib-button
+    <retro-button
       variant="primary"
       [label]="'common.confirm' | transloco"
       [disabled]="!canConfirm()"

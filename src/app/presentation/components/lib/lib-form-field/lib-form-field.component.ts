@@ -17,7 +17,7 @@ import { LibInputDirective } from './lib-input.directive';
 
 /**
  * Contenedor de campo de formulario Terminal Collector.
- * Agrupa label, input nativo (con libInput), mensajes de error y hint.
+ * Agrupa label, input nativo (con retroInput), mensajes de error y hint.
  * Detecta automáticamente el control proyectado vía @ContentChild(LibInputDirective)
  * y observa su estado para calcular invalid() y focused().
  *
@@ -25,15 +25,15 @@ import { LibInputDirective } from './lib-input.directive';
  *
  * Uso:
  * ```html
- * <app-lib-form-field>
- *   <app-lib-label>Título</app-lib-label>
- *   <input libInput formControlName="title" />
- *   <app-lib-error>Campo requerido</app-lib-error>
- * </app-lib-form-field>
+ * <retro-form-field>
+ *   <retro-label>Título</retro-label>
+ *   <input retroInput formControlName="title" />
+ *   <retro-error>Campo requerido</retro-error>
+ * </retro-form-field>
  * ```
  */
 @Component({
-  selector: 'app-lib-form-field',
+  selector: 'retro-form-field',
   standalone: true,
   imports: [],
   templateUrl: './lib-form-field.component.html',
@@ -46,7 +46,7 @@ export class LibFormFieldComponent implements AfterContentInit {
 
   // ── ContentChild privado ─────────────────────────────────────────────────────
 
-  /** Directiva libInput proyectada dentro de este form-field. */
+  /** Directiva retroInput proyectada dentro de este form-field. */
   @ContentChild(LibInputDirective)
   private _inputDir?: LibInputDirective;
 

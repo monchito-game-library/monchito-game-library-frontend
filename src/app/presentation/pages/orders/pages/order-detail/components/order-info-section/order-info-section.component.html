@@ -24,13 +24,13 @@
             referrerpolicy="no-referrer" />
         } @else {
           <div class="order-detail-page__info-section-avatar order-detail-page__info-section-avatar--placeholder">
-            <app-lib-icon name="person" />
+            <retro-icon name="person" />
           </div>
         }
       }
     </div>
   }
-  <app-lib-icon
+  <retro-icon
     class="order-detail-page__info-section-chevron"
     [name]="sectionExpanded() ? 'expand_less' : 'expand_more'" />
 </div>
@@ -106,7 +106,7 @@
                   referrerpolicy="no-referrer" />
               } @else {
                 <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
-                  <app-lib-icon name="person" />
+                  <retro-icon name="person" />
                 </div>
               }
               <span class="order-detail-page__member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
@@ -138,27 +138,30 @@
           <div class="order-detail-page__form-columns">
             <!-- Left column -->
             <div class="order-detail-page__form-col">
-              <app-lib-form-field class="order-detail-page__form-field">
-                <app-lib-label>{{ 'orders.header.title' | transloco }}</app-lib-label>
-                <input libInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
-              </app-lib-form-field>
+              <retro-form-field class="order-detail-page__form-field">
+                <retro-label>{{ 'orders.header.title' | transloco }}</retro-label>
+                <input
+                  retroInput
+                  formControlName="title"
+                  [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+              </retro-form-field>
 
               <div class="order-detail-page__form-costs-row">
-                <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <app-lib-label>{{ 'orders.header.shippingCost' | transloco }}</app-lib-label>
-                  <input libInput type="number" formControlName="shippingCost" min="0" step="0.01" />
-                </app-lib-form-field>
+                <retro-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <retro-label>{{ 'orders.header.shippingCost' | transloco }}</retro-label>
+                  <input retroInput type="number" formControlName="shippingCost" min="0" step="0.01" />
+                </retro-form-field>
 
-                <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <app-lib-label>{{ 'orders.header.paypalFee' | transloco }}</app-lib-label>
-                  <input libInput type="number" formControlName="paypalFee" min="0" step="0.01" />
-                </app-lib-form-field>
+                <retro-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <retro-label>{{ 'orders.header.paypalFee' | transloco }}</retro-label>
+                  <input retroInput type="number" formControlName="paypalFee" min="0" step="0.01" />
+                </retro-form-field>
 
                 <div class="order-detail-page__discount-row">
-                  <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
-                    <app-lib-label>{{ 'orders.header.discountAmount' | transloco }}</app-lib-label>
-                    <input libInput type="number" formControlName="discountAmount" min="0" step="0.01" />
-                  </app-lib-form-field>
+                  <retro-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                    <retro-label>{{ 'orders.header.discountAmount' | transloco }}</retro-label>
+                    <input retroInput type="number" formControlName="discountAmount" min="0" step="0.01" />
+                  </retro-form-field>
                   <fieldset
                     class="lib-radio-group"
                     role="radiogroup"
@@ -178,14 +181,14 @@
 
             <!-- Right column -->
             <div class="order-detail-page__form-col">
-              <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--full-height">
-                <app-lib-label>{{ 'orders.header.notes' | transloco }}</app-lib-label>
+              <retro-form-field class="order-detail-page__form-field order-detail-page__form-field--full-height">
+                <retro-label>{{ 'orders.header.notes' | transloco }}</retro-label>
                 <textarea
-                  libInput
+                  retroInput
                   formControlName="notes"
                   [placeholder]="'orders.header.notesPlaceholder' | transloco"
                   rows="5"></textarea>
-              </app-lib-form-field>
+              </retro-form-field>
             </div>
           </div>
         </form>
@@ -194,8 +197,8 @@
 
     @if (editingHeader() || hidingActions()) {
       <div class="order-detail-page__form-actions" [class.order-detail-page__form-actions--hiding]="hidingActions()">
-        <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancelEdit()" />
-        <app-lib-button
+        <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancelEdit()" />
+        <retro-button
           [label]="'orders.header.save' | transloco"
           icon="save"
           variant="primary"

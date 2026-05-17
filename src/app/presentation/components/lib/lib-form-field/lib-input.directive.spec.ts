@@ -8,7 +8,7 @@ import { LibInputDirective } from './lib-input.directive';
 @Component({
   standalone: true,
   imports: [LibInputDirective],
-  template: `<input libInput type="text" />`
+  template: `<input retroInput type="text" />`
 })
 class TestHostComponent {}
 

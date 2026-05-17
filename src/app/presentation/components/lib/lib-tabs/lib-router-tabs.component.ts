@@ -11,11 +11,11 @@ import { LibRouterTabItemInterface } from '@/interfaces/lib-router-tab-item.inte
  *
  * Uso:
  * ```html
- * <app-lib-router-tabs [items]="navItems" ariaLabel="Navegación colección" />
+ * <retro-router-tabs [items]="navItems" ariaLabel="Navegación colección" />
  * ```
  */
 @Component({
-  selector: 'app-lib-router-tabs',
+  selector: 'retro-router-tabs',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, RouterOutlet, LibIconComponent, TranslocoPipe],
   templateUrl: './lib-router-tabs.component.html',

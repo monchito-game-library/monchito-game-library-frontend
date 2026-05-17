@@ -6,7 +6,7 @@ import { LibBadgeVariant } from '@/types/lib-component.type';
  * Con dot=true muestra solo un punto de color (sin label), útil como indicador de estado.
  */
 @Component({
-  selector: 'app-lib-badge',
+  selector: 'retro-badge',
   standalone: true,
   imports: [],
   templateUrl: './lib-badge.component.html',

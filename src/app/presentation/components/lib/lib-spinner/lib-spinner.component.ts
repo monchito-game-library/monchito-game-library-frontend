@@ -7,7 +7,7 @@ import { LibSpinnerSize, LibSpinnerVariant } from '@/types/lib-component.type';
  * En `prefers-reduced-motion` se muestra un frame estático.
  */
 @Component({
-  selector: 'app-lib-spinner',
+  selector: 'retro-spinner',
   standalone: true,
   templateUrl: './lib-spinner.component.html',
   styleUrl: './lib-spinner.component.scss',

@@ -1,7 +1,7 @@
 <div class="sale-form">
   <!-- Header -->
   <div class="sale-form__header">
-    <app-lib-icon-button
+    <retro-icon-button
       icon="arrow_back"
       [ariaLabel]="'common.back' | transloco"
       class="sale-form__back-btn"
@@ -16,24 +16,24 @@
 
       <div class="sale-form__toggle-row">
         <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
-        <app-lib-checkbox formControlName="forSale" />
+        <retro-checkbox formControlName="forSale" />
       </div>
 
       @if (isForSale) {
-        <app-lib-form-field class="sale-form__field">
-          <app-lib-label>{{ i18nPrefix() + '.salePrice' | transloco }}</app-lib-label>
+        <retro-form-field class="sale-form__field">
+          <retro-label>{{ i18nPrefix() + '.salePrice' | transloco }}</retro-label>
           <input
-            libInput
+            retroInput
             type="number"
             min="0"
             step="0.01"
             formControlName="salePrice"
             [placeholder]="i18nPrefix() + '.salePricePlaceholder' | transloco" />
-          <span libSuffix class="sale-form__currency">€</span>
-        </app-lib-form-field>
+          <span retroSuffix class="sale-form__currency">€</span>
+        </retro-form-field>
       }
 
-      <app-lib-button
+      <retro-button
         [label]="i18nPrefix() + '.saveBtn' | transloco"
         icon="save"
         variant="primary"
@@ -49,34 +49,34 @@
     <section class="sale-form__section">
       <h3 class="sale-form__section-title">{{ i18nPrefix() + '.registerSection' | transloco }}</h3>
 
-      <app-lib-form-field class="sale-form__field">
-        <app-lib-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</app-lib-label>
+      <retro-form-field class="sale-form__field">
+        <retro-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</retro-label>
         <input
-          libInput
+          retroInput
           type="number"
           min="0"
           step="0.01"
           formControlName="soldPriceFinal"
           [placeholder]="i18nPrefix() + '.soldPricePlaceholder' | transloco" />
-        <span libSuffix class="sale-form__currency">€</span>
-      </app-lib-form-field>
+        <span retroSuffix class="sale-form__currency">€</span>
+      </retro-form-field>
 
-      <app-lib-form-field class="sale-form__field">
-        <app-lib-label>{{ i18nPrefix() + '.soldAt' | transloco }}</app-lib-label>
-        <input libInput [libDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
-        <app-lib-icon libSuffix [libDatepickerToggle]="soldAtPicker" name="calendar_today" />
-        <app-lib-datepicker #soldAtPicker />
+      <retro-form-field class="sale-form__field">
+        <retro-label>{{ i18nPrefix() + '.soldAt' | transloco }}</retro-label>
+        <input retroInput [retroDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
+        <retro-icon retroSuffix [retroDatepickerToggle]="soldAtPicker" name="calendar_today" />
+        <retro-datepicker #soldAtPicker />
         @if (form.controls.soldAt.hasError('invalidDate')) {
-          <app-lib-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</app-lib-error>
+          <retro-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</retro-error>
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
       <p class="sale-form__warning">
-        <app-lib-icon name="warning" />
+        <retro-icon name="warning" />
         {{ i18nPrefix() + '.soldWarning' | transloco }}
       </p>
 
-      <app-lib-button
+      <retro-button
         [label]="i18nPrefix() + '.markAsSoldBtn' | transloco"
         icon="sell"
         variant="danger"

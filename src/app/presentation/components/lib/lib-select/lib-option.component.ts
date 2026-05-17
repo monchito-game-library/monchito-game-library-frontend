@@ -21,11 +21,11 @@ let _nextId: number = 0;
  *
  * Uso:
  * ```html
- * <app-lib-option [value]="platform.code">{{ platform.label }}</app-lib-option>
+ * <retro-option [value]="platform.code">{{ platform.label }}</retro-option>
  * ```
  */
 @Component({
-  selector: 'app-lib-option',
+  selector: 'retro-option',
   standalone: true,
   imports: [],
   template: `

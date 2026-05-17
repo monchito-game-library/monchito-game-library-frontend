@@ -5,7 +5,7 @@
       <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
     } @else {
       <div class="wishlist-card__cover--placeholder">
-        <app-lib-icon name="image_not_supported" />
+        <retro-icon name="image_not_supported" />
       </div>
     }
   </div>
@@ -18,7 +18,7 @@
       <!-- Priority stars -->
       <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
         @for (level of priorityRange; track level) {
-          <app-lib-icon
+          <retro-icon
             class="wishlist-card__star"
             [class.wishlist-card__star--filled]="level <= item().priority"
             [name]="level <= item().priority ? 'star' : 'star_border'" />
@@ -28,19 +28,19 @@
 
     <!-- Platform badge -->
     @if (item().platform) {
-      <app-lib-chip [label]="item().platform!" color="primary" />
+      <retro-chip [label]="item().platform!" color="primary" />
     }
 
     <!-- Price -->
     @if (item().desiredPrice !== null) {
-      <app-lib-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
+      <retro-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
     }
 
     <!-- Genres -->
     @if (item().genres.length > 0) {
       <div class="wishlist-card__genres">
         @for (genre of item().genres.slice(0, 3); track genre) {
-          <app-lib-chip [label]="genre" color="neutral" />
+          <retro-chip [label]="genre" color="neutral" />
         }
       </div>
     }
@@ -59,7 +59,7 @@
             [href]="link.url"
             target="_blank"
             rel="noopener noreferrer"
-            [libTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
+            [retroTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
             {{ link.label }}
           </a>
         }
@@ -67,24 +67,24 @@
 
       <!-- Actions -->
       <div class="wishlist-card__actions">
-        <app-lib-icon-button
+        <retro-icon-button
           icon="shopping_bag"
           variant="primary"
           class="wishlist-card__own-btn"
           [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
-          [libTooltip]="'wishlist.card.ownTooltip' | transloco"
+          [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
           (clicked)="onOwn()" />
-        <app-lib-icon-button
+        <retro-icon-button
           icon="edit"
           [ariaLabel]="'common.edit' | transloco"
-          [libTooltip]="'common.edit' | transloco"
+          [retroTooltip]="'common.edit' | transloco"
           (clicked)="onEdit()" />
-        <app-lib-icon-button
+        <retro-icon-button
           icon="delete"
           variant="danger"
           class="wishlist-card__delete-btn"
           [ariaLabel]="'common.delete' | transloco"
-          [libTooltip]="'common.delete' | transloco"
+          [retroTooltip]="'common.delete' | transloco"
           (clicked)="onDelete()" />
       </div>
     }
@@ -92,7 +92,7 @@
 
   @if (mobileMode()) {
     <div class="wishlist-card__mobile-hint">
-      <app-lib-icon name="chevron_right" />
+      <retro-icon name="chevron_right" />
     </div>
   }
 </article>

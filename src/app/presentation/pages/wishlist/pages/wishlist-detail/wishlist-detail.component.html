@@ -1,21 +1,21 @@
 <div class="wishlist-detail">
   <!-- ─── Toolbar ──────────────────────────────────────────────────────────── -->
   <header class="wishlist-detail__toolbar">
-    <app-lib-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="onBack()" />
+    <retro-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="onBack()" />
     <h1 class="wishlist-detail__toolbar-title">{{ 'nav.wishlist' | transloco }}</h1>
     @if (item()) {
       <div class="wishlist-detail__toolbar-actions">
-        <app-lib-icon-button
+        <retro-icon-button
           icon="edit"
           [ariaLabel]="'common.edit' | transloco"
-          [libTooltip]="'common.edit' | transloco"
+          [retroTooltip]="'common.edit' | transloco"
           (clicked)="onEdit()" />
-        <app-lib-icon-button
+        <retro-icon-button
           icon="delete"
           variant="danger"
           class="wishlist-detail__delete-btn"
           [ariaLabel]="'common.delete' | transloco"
-          [libTooltip]="'common.delete' | transloco"
+          [retroTooltip]="'common.delete' | transloco"
           (clicked)="onDelete()" />
       </div>
     }
@@ -25,20 +25,20 @@
   @if (loading()) {
     <div class="wishlist-detail__content">
       <div class="wishlist-detail__cover-wrapper">
-        <app-lib-skeleton width="100%" height="180px" />
+        <retro-skeleton width="100%" height="180px" />
       </div>
-      <app-lib-skeleton width="80%" height="24px" />
+      <retro-skeleton width="80%" height="24px" />
       <div class="wishlist-detail__meta">
-        <app-lib-skeleton width="120px" height="20px" />
-        <app-lib-skeleton width="60px" height="20px" />
+        <retro-skeleton width="120px" height="20px" />
+        <retro-skeleton width="60px" height="20px" />
       </div>
-      <app-lib-skeleton width="80px" height="18px" />
+      <retro-skeleton width="80px" height="18px" />
       <div class="wishlist-detail__genres">
         @for (n of [0, 1, 2]; track n) {
-          <app-lib-skeleton width="64px" height="20px" />
+          <retro-skeleton width="64px" height="20px" />
         }
       </div>
-      <app-lib-skeleton height="56px" />
+      <retro-skeleton height="56px" />
     </div>
   }
 
@@ -58,7 +58,7 @@
             priority />
         } @else {
           <div class="wishlist-detail__cover wishlist-detail__cover--placeholder">
-            <app-lib-icon name="image_not_supported" />
+            <retro-icon name="image_not_supported" />
           </div>
         }
       </div>
@@ -70,27 +70,27 @@
       <div class="wishlist-detail__meta">
         <div class="wishlist-detail__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
           @for (level of priorityRange; track level) {
-            <app-lib-icon
+            <retro-icon
               class="wishlist-detail__star"
               [class.wishlist-detail__star--filled]="level <= i.priority"
               [name]="level <= i.priority ? 'star' : 'star_border'" />
           }
         </div>
         @if (i.platform) {
-          <app-lib-chip [label]="i.platform" color="primary" />
+          <retro-chip [label]="i.platform" color="primary" />
         }
       </div>
 
       <!-- Price -->
       @if (i.desiredPrice !== null) {
-        <app-lib-data-row label="PRECIO" icon="sell" [value]="(i.desiredPrice | number: '1.2-2') + ' €'" />
+        <retro-data-row label="PRECIO" icon="sell" [value]="(i.desiredPrice | number: '1.2-2') + ' €'" />
       }
 
       <!-- Genres -->
       @if (i.genres.length > 0) {
         <div class="wishlist-detail__genres">
           @for (genre of i.genres; track genre) {
-            <app-lib-chip [label]="genre" color="neutral" />
+            <retro-chip [label]="genre" color="neutral" />
           }
         </div>
       }
@@ -117,7 +117,7 @@
 
       <!-- Own button -->
       <div class="wishlist-detail__own-btn">
-        <app-lib-button
+        <retro-button
           variant="success"
           icon="shopping_bag"
           [label]="'wishlist.card.ownTooltip' | transloco"

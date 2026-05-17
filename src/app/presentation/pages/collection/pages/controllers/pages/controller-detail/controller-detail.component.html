@@ -39,8 +39,8 @@
       <div class="controller-detail__color-swatch" [style.background-color]="controller()?.color"></div>
       <span class="controller-detail__color-label">{{ controller()?.color }}</span>
     </div>
-    <app-lib-chip [label]="controller()?.compatibility ?? ''" color="neutral" />
-    <app-lib-chip
+    <retro-chip [label]="controller()?.compatibility ?? ''" color="neutral" />
+    <retro-chip
       [label]="
         (controller()?.condition === GAME_CONDITION.NEW
           ? 'controllersPage.condition.new'

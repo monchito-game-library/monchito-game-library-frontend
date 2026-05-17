@@ -9,7 +9,7 @@
       [class.lib-router-tabs__link--active]="rla.isActive"
       [attr.aria-current]="rla.isActive ? 'page' : null">
       @if (item.icon) {
-        <app-lib-icon [name]="item.icon" />
+        <retro-icon [name]="item.icon" />
       }
       <span>{{ item.label | transloco }}</span>
     </a>

@@ -22,7 +22,7 @@ import { LibCheckboxSize } from '@/types/lib-component.type';
  * (frame único, regla 3 Terminal Collector).
  */
 @Component({
-  selector: 'app-lib-checkbox',
+  selector: 'retro-checkbox',
   standalone: true,
   imports: [],
   templateUrl: './lib-checkbox.component.html',

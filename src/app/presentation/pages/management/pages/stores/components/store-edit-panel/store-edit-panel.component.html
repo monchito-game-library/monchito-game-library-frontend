@@ -10,27 +10,27 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <app-lib-form-field>
-        <app-lib-label [required]="true">{{ 'management.stores.nameLabel' | transloco }}</app-lib-label>
-        <input libInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
+      <retro-form-field>
+        <retro-label [required]="true">{{ 'management.stores.nameLabel' | transloco }}</retro-label>
+        <input retroInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
         @if (form.controls.name.hasError('required')) {
-          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ 'management.stores.formatHintLabel' | transloco }}</app-lib-label>
-        <app-lib-select formControlName="formatHint">
-          <app-lib-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</app-lib-option>
-          <app-lib-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</app-lib-option>
-          <app-lib-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</app-lib-option>
-        </app-lib-select>
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ 'management.stores.formatHintLabel' | transloco }}</retro-label>
+        <retro-select formControlName="formatHint">
+          <retro-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</retro-option>
+          <retro-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</retro-option>
+          <retro-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</retro-option>
+        </retro-select>
+      </retro-form-field>
     </div>
 
     <div class="edit-panel__actions">
       @if (store()) {
-        <app-lib-button
+        <retro-button
           [label]="'common.delete' | transloco"
           icon="delete_outline"
           variant="danger"
@@ -38,8 +38,8 @@
           (clicked)="deleted.emit()" />
       }
       <div class="edit-panel__actions-right">
-        <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
-        <app-lib-button
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <retro-button
           [label]="'common.save' | transloco"
           icon="save"
           variant="primary"

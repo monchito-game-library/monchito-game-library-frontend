@@ -9,9 +9,9 @@
     (addClick)="addClick.emit()">
     <!-- stat: item count -->
     <div class="hw-list__stat">
-      <app-lib-icon [name]="statIcon()" />
+      <retro-icon [name]="statIcon()" />
       @if (loading()) {
-        <app-lib-skeleton width="24px" height="12px" />
+        <retro-skeleton width="24px" height="12px" />
       } @else {
         <span>{{ filteredItems().length }}</span>
       }
@@ -19,9 +19,9 @@
     <div class="hw-list__stat-divider"></div>
     <!-- stat: total spent -->
     <div class="hw-list__stat">
-      <app-lib-icon name="payments" />
+      <retro-icon name="payments" />
       @if (loading()) {
-        <app-lib-skeleton width="60px" height="12px" />
+        <retro-skeleton width="60px" height="12px" />
       } @else {
         <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
       }
@@ -35,27 +35,27 @@
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="hw-list__card hw-list__card--skeleton">
             <div class="hw-list__card-header">
-              <app-lib-skeleton width="32px" height="32px" />
+              <retro-skeleton width="32px" height="32px" />
               <div class="hw-list__card-titles">
-                <app-lib-skeleton width="140px" height="16px" />
-                <app-lib-skeleton width="90px" height="12px" />
+                <retro-skeleton width="140px" height="16px" />
+                <retro-skeleton width="90px" height="12px" />
               </div>
             </div>
             <div class="hw-list__card-chips">
-              <app-lib-skeleton width="64px" height="22px" />
-              <app-lib-skeleton width="48px" height="22px" />
+              <retro-skeleton width="64px" height="22px" />
+              <retro-skeleton width="48px" height="22px" />
             </div>
-            <app-lib-skeleton width="110px" height="12px" />
+            <retro-skeleton width="110px" height="12px" />
           </div>
         }
       </div>
     } @else if (items().length === 0) {
-      <app-lib-empty-state
+      <retro-empty-state
         [title]="i18nPrefix() + '.empty.title' | transloco"
         [subtitle]="i18nPrefix() + '.empty.subtitle' | transloco" />
     } @else if (filteredItems().length === 0) {
       <div class="hw-list__no-results">
-        <app-lib-icon name="search_off" />
+        <retro-icon name="search_off" />
         <p>{{ i18nPrefix() + '.noResults' | transloco }}</p>
       </div>
     } @else {
@@ -77,19 +77,19 @@
 
             <div class="hw-list__card-meta">
               @if (item.price !== null) {
-                <app-lib-data-row
+                <retro-data-row
                   label="PRECIO"
                   icon="payments"
                   [value]="(item.price | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
               }
               @if (item.purchaseDate) {
-                <app-lib-data-row
+                <retro-data-row
                   label="FECHA"
                   icon="calendar_today"
                   [value]="(item.purchaseDate | date: 'dd/MM/yyyy') ?? ''" />
               }
               @if (item.store) {
-                <app-lib-data-row label="TIENDA" icon="storefront" [value]="resolveStoreName()(item.store)" />
+                <retro-data-row label="TIENDA" icon="storefront" [value]="resolveStoreName()(item.store)" />
               }
             </div>
           </button>
@@ -104,6 +104,6 @@
     class="hw-list__fab"
     [attr.aria-label]="i18nPrefix() + '.add' | transloco"
     (click)="addClick.emit()">
-    <app-lib-icon name="add" />
+    <retro-icon name="add" />
   </button>
 </div>

@@ -10,41 +10,41 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <app-lib-form-field>
-        <app-lib-label [required]="true">{{ 'management.products.nameLabel' | transloco }}</app-lib-label>
-        <input libInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
+      <retro-form-field>
+        <retro-label [required]="true">{{ 'management.products.nameLabel' | transloco }}</retro-label>
+        <input retroInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
         @if (form.controls.name.hasError('required')) {
-          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
         }
-      </app-lib-form-field>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ 'management.products.categoryLabel' | transloco }}</app-lib-label>
-        <app-lib-select formControlName="category">
-          <app-lib-option value="box">{{ 'management.products.categoryBox' | transloco }}</app-lib-option>
-          <app-lib-option value="console">{{ 'management.products.categoryConsole' | transloco }}</app-lib-option>
-          <app-lib-option value="other">{{ 'management.products.categoryOther' | transloco }}</app-lib-option>
-        </app-lib-select>
-      </app-lib-form-field>
+      <retro-form-field>
+        <retro-label>{{ 'management.products.categoryLabel' | transloco }}</retro-label>
+        <retro-select formControlName="category">
+          <retro-option value="box">{{ 'management.products.categoryBox' | transloco }}</retro-option>
+          <retro-option value="console">{{ 'management.products.categoryConsole' | transloco }}</retro-option>
+          <retro-option value="other">{{ 'management.products.categoryOther' | transloco }}</retro-option>
+        </retro-select>
+      </retro-form-field>
 
-      <app-lib-form-field>
-        <app-lib-label>{{ 'management.products.notesLabel' | transloco }}</app-lib-label>
+      <retro-form-field>
+        <retro-label>{{ 'management.products.notesLabel' | transloco }}</retro-label>
         <textarea
-          libInput
+          retroInput
           formControlName="notes"
           rows="1"
           [placeholder]="'management.products.notesPlaceholder' | transloco"></textarea>
-      </app-lib-form-field>
+      </retro-form-field>
     </div>
 
     <div class="packs-section">
       <div class="packs-section__header">
         <span class="packs-section__title">{{ 'management.products.packsTitle' | transloco }}</span>
-        <app-lib-icon-button
+        <retro-icon-button
           icon="add"
           size="sm"
           [ariaLabel]="'management.products.addPack' | transloco"
-          [libTooltip]="'management.products.addPack' | transloco"
+          [retroTooltip]="'management.products.addPack' | transloco"
           (clicked)="addPack()" />
       </div>
 
@@ -55,29 +55,29 @@
       <div class="packs-list">
         @for (packGroup of packsArray.controls; track $index) {
           <div class="pack-row" [formGroup]="asFormGroup(packGroup)">
-            <app-lib-form-field class="pack-row__qty">
-              <app-lib-label [required]="true">{{ 'management.products.packQty' | transloco }}</app-lib-label>
-              <input libInput formControlName="quantity" type="number" min="1" step="1" />
+            <retro-form-field class="pack-row__qty">
+              <retro-label [required]="true">{{ 'management.products.packQty' | transloco }}</retro-label>
+              <input retroInput formControlName="quantity" type="number" min="1" step="1" />
               @if (asFormGroup(packGroup).controls['quantity'].hasError('required')) {
-                <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+                <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
               }
-            </app-lib-form-field>
+            </retro-form-field>
 
-            <app-lib-form-field class="pack-row__price">
-              <app-lib-label [required]="true">{{ 'management.products.packPrice' | transloco }}</app-lib-label>
-              <input libInput formControlName="price" type="number" min="0.01" step="0.01" />
-              <app-lib-icon libSuffix name="euro" />
+            <retro-form-field class="pack-row__price">
+              <retro-label [required]="true">{{ 'management.products.packPrice' | transloco }}</retro-label>
+              <input retroInput formControlName="price" type="number" min="0.01" step="0.01" />
+              <retro-icon retroSuffix name="euro" />
               @if (asFormGroup(packGroup).controls['price'].hasError('required')) {
-                <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
+                <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
               }
-            </app-lib-form-field>
+            </retro-form-field>
 
-            <app-lib-form-field class="pack-row__url">
-              <app-lib-label>{{ 'management.products.packUrl' | transloco }}</app-lib-label>
-              <input libInput formControlName="url" type="url" placeholder="https://..." />
-            </app-lib-form-field>
+            <retro-form-field class="pack-row__url">
+              <retro-label>{{ 'management.products.packUrl' | transloco }}</retro-label>
+              <input retroInput formControlName="url" type="url" placeholder="https://..." />
+            </retro-form-field>
 
-            <app-lib-icon-button
+            <retro-icon-button
               icon="delete"
               variant="danger"
               size="sm"
@@ -91,7 +91,7 @@
 
     <div class="edit-panel__actions">
       @if (protector()) {
-        <app-lib-button
+        <retro-button
           [label]="
             (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
               | transloco
@@ -101,7 +101,7 @@
           [class.edit-panel__deactivate-btn]="protector()!.isActive"
           [class.edit-panel__activate-btn]="!protector()!.isActive"
           (clicked)="toggled.emit()" />
-        <app-lib-button
+        <retro-button
           [label]="'management.products.deleteBtn' | transloco"
           icon="delete"
           variant="danger"
@@ -109,8 +109,8 @@
           (clicked)="deleted.emit()" />
       }
       <div class="edit-panel__actions-right">
-        <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
-        <app-lib-button
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <retro-button
           [label]="'common.save' | transloco"
           icon="save"
           variant="primary"

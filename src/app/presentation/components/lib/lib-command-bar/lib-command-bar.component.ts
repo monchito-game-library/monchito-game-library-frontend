@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular
  * Puramente decorativa (aria-hidden). Muestra: `PATH $ --flag1 --flag2 ▋`
  */
 @Component({
-  selector: 'app-lib-command-bar',
+  selector: 'retro-command-bar',
   standalone: true,
   imports: [],
   templateUrl: './lib-command-bar.component.html',

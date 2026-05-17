@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular
  * Acepta ng-content para botones de acción.
  */
 @Component({
-  selector: 'app-lib-empty-state',
+  selector: 'retro-empty-state',
   standalone: true,
   imports: [],
   templateUrl: './lib-empty-state.component.html',

@@ -45,18 +45,18 @@ let _nextSelectId: number = 0;
  *
  * Uso:
  * ```html
- * <app-lib-form-field>
- *   <app-lib-label>Estado</app-lib-label>
- *   <app-lib-select formControlName="status">
+ * <retro-form-field>
+ *   <retro-label>Estado</retro-label>
+ *   <retro-select formControlName="status">
  *     @for (s of statuses; track s.code) {
- *       <app-lib-option [value]="s.code">{{ s.label }}</app-lib-option>
+ *       <retro-option [value]="s.code">{{ s.label }}</retro-option>
  *     }
- *   </app-lib-select>
- * </app-lib-form-field>
+ *   </retro-select>
+ * </retro-form-field>
  * ```
  */
 @Component({
-  selector: 'app-lib-select',
+  selector: 'retro-select',
   standalone: true,
   imports: [PortalModule, LibIconComponent],
   templateUrl: './lib-select.component.html',

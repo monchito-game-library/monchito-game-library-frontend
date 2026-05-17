@@ -3,7 +3,7 @@ import { NgControl } from '@angular/forms';
 import { LibAutocompleteComponent } from './lib-autocomplete.component';
 
 /**
- * Directiva para conectar un <input libInput> con un LibAutocompleteComponent.
+ * Directiva para conectar un <input retroInput> con un LibAutocompleteComponent.
  * Se encarga de:
  * - Abrir el panel al hacer focus o al teclear.
  * - Navegar opciones con ArrowDown/ArrowUp.
@@ -14,12 +14,12 @@ import { LibAutocompleteComponent } from './lib-autocomplete.component';
  *
  * Uso:
  * ```html
- * <input libInput type="text" [libAutocompleteTrigger]="auto" [formControl]="form.controls.platform" />
- * <app-lib-autocomplete #auto [displayWith]="displayFn">...</app-lib-autocomplete>
+ * <input retroInput type="text" [retroAutocompleteTrigger]="auto" [formControl]="form.controls.platform" />
+ * <retro-autocomplete #auto [displayWith]="displayFn">...</retro-autocomplete>
  * ```
  */
 @Directive({
-  selector: 'input[libAutocompleteTrigger], textarea[libAutocompleteTrigger]',
+  selector: 'input[retroAutocompleteTrigger], textarea[retroAutocompleteTrigger]',
   standalone: true
 })
 export class LibAutocompleteTriggerDirective implements OnInit {
@@ -29,13 +29,13 @@ export class LibAutocompleteTriggerDirective implements OnInit {
   // ── Inputs públicos ──────────────────────────────────────────────────────────
 
   /** Referencia al LibAutocompleteComponent asociado. */
-  readonly libAutocompleteTrigger: InputSignal<LibAutocompleteComponent> = input.required<LibAutocompleteComponent>();
+  readonly retroAutocompleteTrigger: InputSignal<LibAutocompleteComponent> = input.required<LibAutocompleteComponent>();
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     // Registrar el trigger en el autocomplete.
-    this.libAutocompleteTrigger().registerTrigger(this._elRef);
+    this.retroAutocompleteTrigger().registerTrigger(this._elRef);
   }
 
   // ── Handlers de host ─────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ export class LibAutocompleteTriggerDirective implements OnInit {
    */
   @HostListener('focus')
   onFocus(): void {
-    this.libAutocompleteTrigger().openPanel();
+    this.retroAutocompleteTrigger().openPanel();
   }
 
   /**
@@ -53,8 +53,8 @@ export class LibAutocompleteTriggerDirective implements OnInit {
    */
   @HostListener('input')
   onInput(): void {
-    if (!this.libAutocompleteTrigger().isOpen()) {
-      this.libAutocompleteTrigger().openPanel();
+    if (!this.retroAutocompleteTrigger().isOpen()) {
+      this.retroAutocompleteTrigger().openPanel();
     }
   }
 
@@ -69,7 +69,7 @@ export class LibAutocompleteTriggerDirective implements OnInit {
   @HostListener('keydown', ['$event'])
   onKeydown(event: Event): void {
     const keyEvent = event as KeyboardEvent;
-    const ac: LibAutocompleteComponent = this.libAutocompleteTrigger();
+    const ac: LibAutocompleteComponent = this.retroAutocompleteTrigger();
     const key: string = keyEvent.key;
 
     if (key === 'ArrowDown') {
@@ -107,7 +107,7 @@ export class LibAutocompleteTriggerDirective implements OnInit {
    * @param {unknown} value - Valor seleccionado.
    */
   handleSelected(value: unknown): void {
-    const displayFn: ((v: any) => string) | null = this.libAutocompleteTrigger().displayWith();
+    const displayFn: ((v: any) => string) | null = this.retroAutocompleteTrigger().displayWith();
     if (displayFn) {
       this._elRef.nativeElement.value = displayFn(value);
     }

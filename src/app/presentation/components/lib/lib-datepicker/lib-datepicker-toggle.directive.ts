@@ -7,12 +7,12 @@ import { LibDatepickerComponent } from './lib-datepicker.component';
  *
  * Uso:
  * ```html
- * <app-lib-icon libSuffix [libDatepickerToggle]="picker" name="calendar_today" />
- * <app-lib-datepicker #picker />
+ * <retro-icon retroSuffix [retroDatepickerToggle]="picker" name="calendar_today" />
+ * <retro-datepicker #picker />
  * ```
  */
 @Directive({
-  selector: '[libDatepickerToggle]',
+  selector: '[retroDatepickerToggle]',
   standalone: true,
   host: {
     style: 'cursor: pointer;'
@@ -20,14 +20,14 @@ import { LibDatepickerComponent } from './lib-datepicker.component';
 })
 export class LibDatepickerToggleDirective {
   /** Referencia al LibDatepickerComponent que controla. */
-  readonly libDatepickerToggle: InputSignal<LibDatepickerComponent> = input.required<LibDatepickerComponent>();
+  readonly retroDatepickerToggle: InputSignal<LibDatepickerComponent> = input.required<LibDatepickerComponent>();
 
   /**
    * Abre o cierra el calendario al hacer click.
    */
   @HostListener('click')
   onClick(): void {
-    const picker: LibDatepickerComponent = this.libDatepickerToggle();
+    const picker: LibDatepickerComponent = this.retroDatepickerToggle();
     if (picker.isOpen()) {
       picker.close();
     } else {

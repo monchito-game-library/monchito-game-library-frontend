@@ -25,15 +25,15 @@ import { LibTabComponent } from './lib-tab.component';
  *
  * Uso:
  * ```html
- * <app-lib-tabs [selectedIndex]="0" (selectedIndexChange)="onTabChange($event)">
- *   <app-lib-tab label="Tab 1" icon="sell">
+ * <retro-tabs [selectedIndex]="0" (selectedIndexChange)="onTabChange($event)">
+ *   <retro-tab label="Tab 1" icon="sell">
  *     <ng-template>...contenido...</ng-template>
- *   </app-lib-tab>
- * </app-lib-tabs>
+ *   </retro-tab>
+ * </retro-tabs>
  * ```
  */
 @Component({
-  selector: 'app-lib-tabs',
+  selector: 'retro-tabs',
   standalone: true,
   imports: [LibIconComponent, NgTemplateOutlet],
   templateUrl: './lib-tabs.component.html',

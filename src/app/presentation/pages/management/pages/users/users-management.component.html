@@ -7,18 +7,18 @@
     @if (loading()) {
       <!-- Hero skeleton -->
       <div class="users-page__skeleton-hero">
-        <app-lib-skeleton width="72px" height="72px" />
+        <retro-skeleton width="72px" height="72px" />
         <div class="users-page__skeleton-hero-info">
-          <app-lib-skeleton width="80px" height="12px" />
-          <app-lib-skeleton width="240px" height="20px" />
-          <app-lib-skeleton width="180px" height="14px" />
+          <retro-skeleton width="80px" height="12px" />
+          <retro-skeleton width="240px" height="20px" />
+          <retro-skeleton width="180px" height="14px" />
         </div>
       </div>
 
       <!-- Stats skeleton -->
       <div class="users-page__skeleton-stats">
         @for (n of [0, 1, 2]; track n) {
-          <app-lib-skeleton height="72px" />
+          <retro-skeleton height="72px" />
         }
       </div>
 
@@ -26,12 +26,12 @@
       <div class="users-page__skeleton-list">
         @for (n of [0, 1, 2]; track n) {
           <div class="users-page__skeleton-row">
-            <app-lib-skeleton width="40px" height="40px" />
+            <retro-skeleton width="40px" height="40px" />
             <div class="users-page__skeleton-info">
-              <app-lib-skeleton width="200px" height="14px" />
-              <app-lib-skeleton width="120px" height="12px" />
+              <retro-skeleton width="200px" height="14px" />
+              <retro-skeleton width="120px" height="12px" />
             </div>
-            <app-lib-skeleton width="120px" height="36px" />
+            <retro-skeleton width="120px" height="36px" />
           </div>
         }
       </div>
@@ -44,7 +44,7 @@
               <img class="owner-hero__avatar" [ngSrc]="owner.avatarUrl" width="72" height="72" [alt]="owner.email" />
             } @else {
               <div class="owner-hero__avatar owner-hero__avatar--fallback">
-                <app-lib-icon name="person" />
+                <retro-icon name="person" />
               </div>
             }
           </div>
@@ -98,7 +98,7 @@
       <!-- Empty state cuando el filtro no devuelve resultados -->
       @if (hasNoVisibleUsers()) {
         <div class="users-empty">
-          <app-lib-icon class="users-empty__icon" name="group_off" />
+          <retro-icon class="users-empty__icon" name="group_off" />
           <p class="users-empty__text">{{ 'management.users.empty' | transloco }}</p>
         </div>
       }
@@ -123,7 +123,7 @@
                       [alt]="user.email"
                       class="user-card__avatar-img" />
                   } @else {
-                    <app-lib-icon name="person" />
+                    <retro-icon name="person" />
                   }
                 </div>
 
@@ -136,22 +136,22 @@
 
                 <div class="user-card__action">
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <app-lib-spinner size="sm" />
+                    <retro-spinner size="sm" />
                   } @else {
-                    <app-lib-button
+                    <retro-button
                       [label]="'management.users.action.demote' | transloco"
                       icon="person_remove"
                       variant="ghost"
                       class="user-card__action-btn user-card__action-btn--demote"
                       (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
-                      <app-lib-icon-button
+                      <retro-icon-button
                         icon="delete"
                         variant="danger"
                         size="sm"
                         class="user-card__action-delete"
                         [ariaLabel]="'management.users.action.delete' | transloco"
-                        [libTooltip]="'management.users.action.delete' | transloco"
+                        [retroTooltip]="'management.users.action.delete' | transloco"
                         (clicked)="onDeleteUser(user)" />
                     }
                   }
@@ -182,7 +182,7 @@
                       [alt]="user.email"
                       class="user-card__avatar-img" />
                   } @else {
-                    <app-lib-icon name="person" />
+                    <retro-icon name="person" />
                   }
                 </div>
 
@@ -195,22 +195,22 @@
 
                 <div class="user-card__action">
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <app-lib-spinner size="sm" />
+                    <retro-spinner size="sm" />
                   } @else {
-                    <app-lib-button
+                    <retro-button
                       [label]="'management.users.action.promote' | transloco"
                       icon="person_add"
                       variant="primary"
                       class="user-card__action-btn user-card__action-btn--promote"
                       (clicked)="onTogglePromotion(user)" />
                     @if (!isSelf(user)) {
-                      <app-lib-icon-button
+                      <retro-icon-button
                         icon="delete"
                         variant="danger"
                         size="sm"
                         class="user-card__action-delete"
                         [ariaLabel]="'management.users.action.delete' | transloco"
-                        [libTooltip]="'management.users.action.delete' | transloco"
+                        [retroTooltip]="'management.users.action.delete' | transloco"
                         (clicked)="onDeleteUser(user)" />
                     }
                   }

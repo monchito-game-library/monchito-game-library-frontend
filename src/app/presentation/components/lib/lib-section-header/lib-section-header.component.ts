@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular
  * Acepta slot `[slot=actions]` para botones a la derecha.
  */
 @Component({
-  selector: 'app-lib-section-header',
+  selector: 'retro-section-header',
   standalone: true,
   imports: [],
   templateUrl: './lib-section-header.component.html',

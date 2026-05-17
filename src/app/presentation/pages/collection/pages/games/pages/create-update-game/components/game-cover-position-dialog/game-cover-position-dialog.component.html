@@ -1,6 +1,6 @@
-<h2 libDialogTitle>{{ 'gameForm.cover.repositionTitle' | transloco }}</h2>
+<h2 retroDialogTitle>{{ 'gameForm.cover.repositionTitle' | transloco }}</h2>
 
-<div libDialogContent>
+<div retroDialogContent>
   <div
     class="cover-pos-dialog__preview"
     [class.cover-pos-dialog__preview--grabbing]="isDragging()"
@@ -28,9 +28,9 @@
   <p class="cover-pos-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
 </div>
 
-<footer libDialogActions align="end">
-  <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
-  <app-lib-button
+<footer retroDialogActions align="end">
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+  <retro-button
     [label]="'common.confirm' | transloco"
     variant="primary"
     [disabled]="!imageLoaded()"

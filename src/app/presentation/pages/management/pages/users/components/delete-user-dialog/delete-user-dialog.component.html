@@ -1,9 +1,9 @@
-<h2 libDialogTitle class="delete-user-dialog__title">
-  <app-lib-icon class="delete-user-dialog__title-icon" name="warning" />
+<h2 retroDialogTitle class="delete-user-dialog__title">
+  <retro-icon class="delete-user-dialog__title-icon" name="warning" />
   <span>{{ 'management.users.delete.title' | transloco }}</span>
 </h2>
 
-<div libDialogContent class="delete-user-dialog__content">
+<div retroDialogContent class="delete-user-dialog__content">
   <p class="delete-user-dialog__warning">
     {{ 'management.users.delete.warning' | transloco: { email: data.email } }}
   </p>
@@ -20,17 +20,22 @@
   </p>
 
   <form [formGroup]="form" class="delete-user-dialog__form" (ngSubmit)="onConfirm()">
-    <app-lib-form-field class="delete-user-dialog__field">
-      <app-lib-label>{{ 'management.users.delete.field.label' | transloco }}</app-lib-label>
-      <input libInput type="email" autocomplete="off" formControlName="emailConfirmation" [placeholder]="data.email" />
-      <app-lib-hint>{{ 'management.users.delete.field.hint' | transloco }}</app-lib-hint>
-    </app-lib-form-field>
+    <retro-form-field class="delete-user-dialog__field">
+      <retro-label>{{ 'management.users.delete.field.label' | transloco }}</retro-label>
+      <input
+        retroInput
+        type="email"
+        autocomplete="off"
+        formControlName="emailConfirmation"
+        [placeholder]="data.email" />
+      <retro-hint>{{ 'management.users.delete.field.hint' | transloco }}</retro-hint>
+    </retro-form-field>
   </form>
 </div>
 
-<footer libDialogActions align="end" class="delete-user-dialog__actions">
-  <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" libDialogClose />
-  <app-lib-button
+<footer retroDialogActions align="end" class="delete-user-dialog__actions">
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" retroDialogClose />
+  <retro-button
     [label]="'management.users.delete.confirm' | transloco"
     icon="delete_forever"
     variant="danger"

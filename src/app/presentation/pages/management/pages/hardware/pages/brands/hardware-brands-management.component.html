@@ -3,7 +3,7 @@
     <div class="brands-page__header-left">
       <h1 class="brands-page__title">{{ 'management.hardware.title' | transloco }}</h1>
     </div>
-    <app-lib-button
+    <retro-button
       [label]="'management.hardware.brands.addBtn' | transloco"
       icon="add"
       variant="primary"
@@ -26,8 +26,8 @@
       <div class="brands-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="brands-skeleton__card">
-            <app-lib-skeleton width="36px" height="36px" />
-            <app-lib-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>

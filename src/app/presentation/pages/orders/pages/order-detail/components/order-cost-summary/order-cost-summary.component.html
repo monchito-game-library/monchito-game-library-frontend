@@ -3,7 +3,7 @@
   <div class="order-detail-page__cost-row" (click)="onToggleMyPart()">
     <div class="order-detail-page__cost-total-label">
       <span>{{ 'orders.cost.mySubtotal' | transloco }}</span>
-      <app-lib-icon class="order-detail-page__cost-chevron" [name]="myPartExpanded() ? 'expand_less' : 'expand_more'" />
+      <retro-icon class="order-detail-page__cost-chevron" [name]="myPartExpanded() ? 'expand_less' : 'expand_more'" />
     </div>
     <div>{{ myTotal() | number: '1.2-2' }} €</div>
   </div>
@@ -38,7 +38,7 @@
   <div class="order-detail-page__cost-row" (click)="onToggleCostDetail()">
     <div class="order-detail-page__cost-total-label">
       <span>{{ 'orders.cost.orderTotal' | transloco }}</span>
-      <app-lib-icon
+      <retro-icon
         class="order-detail-page__cost-chevron"
         [name]="costDetailExpanded() ? 'expand_less' : 'expand_more'" />
     </div>
@@ -61,7 +61,7 @@
                 referrerpolicy="no-referrer" />
             } @else {
               <div class="order-detail-page__cost-member-avatar order-detail-page__cost-member-avatar--placeholder">
-                <app-lib-icon name="person" />
+                <retro-icon name="person" />
               </div>
             }
             <span>{{ m.displayName ?? m.email ?? m.userId }}</span>

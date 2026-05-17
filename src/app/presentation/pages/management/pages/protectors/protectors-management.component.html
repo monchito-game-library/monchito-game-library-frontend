@@ -1,7 +1,7 @@
 <div class="protectors-page" [class.protectors-page--panel-open]="panelOpen()">
   <header class="protectors-page__header">
     <h1 class="protectors-page__title">{{ 'management.products.title' | transloco }}</h1>
-    <app-lib-button
+    <retro-button
       [label]="'management.products.addBtn' | transloco"
       icon="add"
       variant="primary"
@@ -26,13 +26,13 @@
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="protectors-skeleton__card">
             <div class="protectors-skeleton__header">
-              <app-lib-skeleton width="55%" height="14px" />
-              <app-lib-skeleton width="60px" height="20px" />
+              <retro-skeleton width="55%" height="14px" />
+              <retro-skeleton width="60px" height="20px" />
             </div>
-            <app-lib-skeleton width="70%" height="12px" />
+            <retro-skeleton width="70%" height="12px" />
             <div class="protectors-skeleton__chips">
-              <app-lib-skeleton width="48px" height="20px" />
-              <app-lib-skeleton width="48px" height="20px" />
+              <retro-skeleton width="48px" height="20px" />
+              <retro-skeleton width="48px" height="20px" />
             </div>
           </div>
         }

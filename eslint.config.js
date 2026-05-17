@@ -238,5 +238,14 @@ module.exports = [
       '@angular-eslint/template/banana-in-box': 'error',
       '@angular-eslint/template/no-negated-async': 'warn'
     }
+  },
+  // Sección para componentes lib/ con prefijo retro (va al final para sobreescribir la regla global)
+  {
+    files: ['src/app/presentation/components/lib/**/*.ts', 'src/app/presentation/shared/**/*.ts', 'src/app/presentation/services/lib-*/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      '@angular-eslint/component-selector': ['error', { prefix: 'retro', style: 'kebab-case', type: 'element' }],
+      '@angular-eslint/directive-selector': ['error', { prefix: 'retro', style: 'camelCase', type: 'attribute' }]
+    }
   }
 ];

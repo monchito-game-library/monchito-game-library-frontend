@@ -20,10 +20,10 @@ import { LibMenuItemComponent } from './lib-menu-item.component';
  * Directiva que convierte cualquier elemento en el disparador de un LibMenuComponent.
  * Gestiona apertura/cierre del overlay CDK, navegación con teclado y atributos a11y.
  *
- * Uso: `<button [libMenuTriggerFor]="miMenu">...</button>`
+ * Uso: `<button [retroMenuTriggerFor]="miMenu">...</button>`
  */
 @Directive({
-  selector: '[libMenuTriggerFor]',
+  selector: '[retroMenuTriggerFor]',
   standalone: true,
   host: {
     '[attr.aria-haspopup]': '"menu"',
@@ -39,7 +39,7 @@ export class LibMenuTriggerDirective implements OnDestroy {
   private _keyManager: ActiveDescendantKeyManager<LibMenuItemComponent> | null = null;
 
   /** Referencia al LibMenuComponent que este trigger va a abrir. */
-  readonly libMenuTriggerFor: InputSignal<LibMenuComponent> = input.required<LibMenuComponent>();
+  readonly retroMenuTriggerFor: InputSignal<LibMenuComponent> = input.required<LibMenuComponent>();
 
   /** Estado de apertura del menú (reactivo para aria-expanded). */
   readonly _isOpen = signal<boolean>(false);
@@ -90,7 +90,7 @@ export class LibMenuTriggerDirective implements OnDestroy {
    * Abre el overlay con el template del LibMenuComponent anclado al trigger.
    */
   private _openMenu(): void {
-    const menuComponent = this.libMenuTriggerFor();
+    const menuComponent = this.retroMenuTriggerFor();
     if (!menuComponent?.templateRef) {
       return;
     }
@@ -142,7 +142,7 @@ export class LibMenuTriggerDirective implements OnDestroy {
    * Configura el ListKeyManager para navegación con teclado dentro del menú.
    */
   private _setupKeyManager(): void {
-    const menuComponent = this.libMenuTriggerFor();
+    const menuComponent = this.retroMenuTriggerFor();
     if (!menuComponent?.menuItems) {
       return;
     }

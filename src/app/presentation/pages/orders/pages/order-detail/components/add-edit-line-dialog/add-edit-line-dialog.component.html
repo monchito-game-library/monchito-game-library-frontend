@@ -1,4 +1,4 @@
-<div libDialogTitle>
+<div retroDialogTitle>
   @if (isEditMode) {
     {{ 'orders.lines.dialogEditTitle' | transloco }}
   } @else {
@@ -6,40 +6,40 @@
   }
 </div>
 
-<div libDialogContent>
+<div retroDialogContent>
   <form [formGroup]="form" class="add-edit-line-dialog__form">
-    <app-lib-form-field class="add-edit-line-dialog__field">
-      <app-lib-label>{{ 'orders.lines.productLabel' | transloco }}</app-lib-label>
-      <input libInput [formControl]="productSearchControl" [libAutocompleteTrigger]="productAuto" />
-      <app-lib-autocomplete #productAuto (optionSelected)="onProductSelected($event)">
+    <retro-form-field class="add-edit-line-dialog__field">
+      <retro-label>{{ 'orders.lines.productLabel' | transloco }}</retro-label>
+      <input retroInput [formControl]="productSearchControl" [retroAutocompleteTrigger]="productAuto" />
+      <retro-autocomplete #productAuto (optionSelected)="onProductSelected($event)">
         @for (product of filteredProducts(); track product.id) {
-          <app-lib-option [value]="product.id">{{ product.name }} ({{ product.category }})</app-lib-option>
+          <retro-option [value]="product.id">{{ product.name }} ({{ product.category }})</retro-option>
         }
-      </app-lib-autocomplete>
+      </retro-autocomplete>
       @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
-        <app-lib-error>{{ 'orders.lines.productRequired' | transloco }}</app-lib-error>
+        <retro-error>{{ 'orders.lines.productRequired' | transloco }}</retro-error>
       }
       @if (productSearchControl.hasError('alreadyExists')) {
-        <app-lib-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</app-lib-error>
+        <retro-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</retro-error>
       }
-    </app-lib-form-field>
+    </retro-form-field>
 
-    <app-lib-form-field class="add-edit-line-dialog__field">
-      <app-lib-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</app-lib-label>
-      <input libInput type="number" formControlName="quantityNeeded" min="1" />
+    <retro-form-field class="add-edit-line-dialog__field">
+      <retro-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</retro-label>
+      <input retroInput type="number" formControlName="quantityNeeded" min="1" />
       @if (form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')) {
-        <app-lib-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</app-lib-error>
+        <retro-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</retro-error>
       }
-    </app-lib-form-field>
+    </retro-form-field>
 
-    <app-lib-form-field class="add-edit-line-dialog__field">
-      <app-lib-label>{{ 'orders.lines.notesLabel' | transloco }}</app-lib-label>
-      <textarea libInput formControlName="notes" rows="3"></textarea>
-    </app-lib-form-field>
+    <retro-form-field class="add-edit-line-dialog__field">
+      <retro-label>{{ 'orders.lines.notesLabel' | transloco }}</retro-label>
+      <textarea retroInput formControlName="notes" rows="3"></textarea>
+    </retro-form-field>
   </form>
 </div>
 
-<footer libDialogActions align="end">
-  <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
-  <app-lib-button [label]="'orders.header.save' | transloco" icon="save" variant="primary" (clicked)="onSubmit()" />
+<footer retroDialogActions align="end">
+  <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+  <retro-button [label]="'orders.header.save' | transloco" icon="save" variant="primary" (clicked)="onSubmit()" />
 </footer>

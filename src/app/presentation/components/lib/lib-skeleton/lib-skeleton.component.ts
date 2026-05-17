@@ -17,7 +17,7 @@ import { LibSkeletonShape } from '@/types/lib-component.type';
  * se descarta — todas las skeletons son rectángulos planos.
  */
 @Component({
-  selector: 'app-lib-skeleton',
+  selector: 'retro-skeleton',
   standalone: true,
   imports: [NgStyle],
   templateUrl: './lib-skeleton.component.html',

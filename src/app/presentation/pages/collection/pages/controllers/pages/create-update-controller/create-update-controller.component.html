@@ -29,12 +29,12 @@
     </div>
   </div>
 
-  <app-lib-form-field>
-    <app-lib-label>{{ 'controllerPage.compatibility' | transloco }}</app-lib-label>
-    <app-lib-select [formControl]="form.controls.compatibility">
+  <retro-form-field>
+    <retro-label>{{ 'controllerPage.compatibility' | transloco }}</retro-label>
+    <retro-select [formControl]="form.controls.compatibility">
       @for (compat of availableCompatibilities; track compat.code) {
-        <app-lib-option [value]="compat.code">{{ compat.labelKey | transloco }}</app-lib-option>
+        <retro-option [value]="compat.code">{{ compat.labelKey | transloco }}</retro-option>
       }
-    </app-lib-select>
-  </app-lib-form-field>
+    </retro-select>
+  </retro-form-field>
 </ng-template>

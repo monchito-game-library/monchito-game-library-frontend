@@ -124,10 +124,10 @@ export class LibDialogService {
 /**
  * Directiva de título del dialog.
  * Aplica role="heading" y aria-level="2" para semántica accesible.
- * Selector: [libDialogTitle]
+ * Selector: [retroDialogTitle]
  */
 @Directive({
-  selector: '[libDialogTitle]',
+  selector: '[retroDialogTitle]',
   standalone: true,
   host: {
     class: 'lib-dialog__title',
@@ -140,10 +140,10 @@ export class LibDialogTitleDirective {}
 /**
  * Directiva de contenido del dialog.
  * Aplica la clase CSS lib-dialog__content para scroll y padding.
- * Selector: [libDialogContent]
+ * Selector: [retroDialogContent]
  */
 @Directive({
-  selector: '[libDialogContent]',
+  selector: '[retroDialogContent]',
   standalone: true,
   host: {
     class: 'lib-dialog__content'
@@ -154,10 +154,10 @@ export class LibDialogContentDirective {}
 /**
  * Directiva de acciones del dialog.
  * Aplica flex-row con justify-end por defecto.
- * Selector: [libDialogActions]
+ * Selector: [retroDialogActions]
  */
 @Directive({
-  selector: '[libDialogActions]',
+  selector: '[retroDialogActions]',
   standalone: true,
   host: {
     class: 'lib-dialog__actions',
@@ -174,10 +174,10 @@ export class LibDialogActionsDirective {
 /**
  * Directiva para cerrar el dialog al hacer click.
  * Equivale a mat-dialog-close.
- * Selector: [libDialogClose]
+ * Selector: [retroDialogClose]
  */
 @Directive({
-  selector: '[libDialogClose]',
+  selector: '[retroDialogClose]',
   standalone: true,
   host: {
     '(click)': '_onClick()'
@@ -187,7 +187,7 @@ export class LibDialogCloseDirective {
   private readonly _dialogRef: LibDialogRef<unknown> = inject(LibDialogRef);
 
   /** Valor que se pasará como resultado al cerrar. */
-  @Input('libDialogClose') result: unknown = undefined;
+  @Input('retroDialogClose') result: unknown = undefined;
 
   /**
    * Cierra el dialog con el valor de result al hacer click.

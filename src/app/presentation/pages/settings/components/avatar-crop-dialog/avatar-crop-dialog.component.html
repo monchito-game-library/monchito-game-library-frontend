@@ -1,10 +1,10 @@
-<h2 libDialogTitle>{{ config.title }}</h2>
+<h2 retroDialogTitle>{{ config.title }}</h2>
 
-<div libDialogContent>
+<div retroDialogContent>
   <div class="crop-dialog__wrap">
     @if (!imageLoaded()) {
       <div class="crop-dialog__loading">
-        <app-lib-spinner size="md" />
+        <retro-spinner size="md" />
       </div>
     }
     <div
@@ -36,8 +36,8 @@
 </div>
 
 @if (imageLoaded()) {
-  <footer libDialogActions align="end">
-    <app-lib-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
-    <app-lib-button [label]="'common.save' | transloco" variant="primary" icon="save" (clicked)="onConfirm()" />
+  <footer retroDialogActions align="end">
+    <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+    <retro-button [label]="'common.save' | transloco" variant="primary" icon="save" (clicked)="onConfirm()" />
   </footer>
 }

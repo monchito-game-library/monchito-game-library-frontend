@@ -24,12 +24,12 @@ import { LibDatepickerComponent } from './lib-datepicker.component';
  *
  * Uso:
  * ```html
- * <input libInput [libDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
- * <app-lib-datepicker #picker />
+ * <input retroInput [retroDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
+ * <retro-datepicker #picker />
  * ```
  */
 @Directive({
-  selector: 'input[libDatepicker]',
+  selector: 'input[retroDatepicker]',
   standalone: true,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => LibDatepickerDirective), multi: true }]
 })
@@ -40,12 +40,12 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
   // ── Inputs públicos ──────────────────────────────────────────────────────────
 
   /** Referencia al LibDatepickerComponent asociado. */
-  readonly libDatepicker: InputSignal<LibDatepickerComponent> = input.required<LibDatepickerComponent>();
+  readonly retroDatepicker: InputSignal<LibDatepickerComponent> = input.required<LibDatepickerComponent>();
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-    const picker: LibDatepickerComponent = this.libDatepicker();
+    const picker: LibDatepickerComponent = this.retroDatepicker();
     picker.registerTrigger(this._elRef);
 
     // Suscribirse a la selección de fecha. Emite Date al FormControl
@@ -63,17 +63,17 @@ export class LibDatepickerDirective implements ControlValueAccessor, OnInit {
   /** @inheritdoc */
   writeValue(value: Date | string | null): void {
     if (!value) {
-      this.libDatepicker().setDate(null);
+      this.retroDatepicker().setDate(null);
       this._updateDisplay(null);
       return;
     }
     const date: Date | null = value instanceof Date ? (isNaN(value.getTime()) ? null : value) : this._parseLocal(value);
     if (!date) {
-      this.libDatepicker().setDate(null);
+      this.retroDatepicker().setDate(null);
       this._updateDisplay(null);
       return;
     }
-    this.libDatepicker().setDate(date);
+    this.retroDatepicker().setDate(date);
     this._updateDisplay(date);
   }
 
