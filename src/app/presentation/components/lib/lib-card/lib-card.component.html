@@ -7,6 +7,7 @@
   [attr.role]="interactive() ? 'button' : null"
   [attr.tabindex]="interactive() ? 0 : null"
   (click)="interactive() && cardClicked.emit($event)"
-  (keydown.enter)="interactive() && cardClicked.emit($any($event))">
+  (keydown.enter)="interactive() && cardClicked.emit($any($event))"
+  (keydown.space)="interactive() && cardClicked.emit($any($event)); $event.preventDefault()">
   <ng-content />
 </div>

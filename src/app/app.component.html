@@ -1,9 +1,10 @@
 @if (isAuthenticated()) {
-  <div class="app-shell" [style.--banner-url]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : 'none'">
+  <div class="app-shell">
     <!-- Navigation Rail — desktop only -->
     <nav class="nav-rail" role="navigation" [attr.aria-label]="'nav.aria.mainNav' | transloco">
       <div class="nav-rail__brand">
         <mat-icon>videogame_asset</mat-icon>
+        <span class="nav-rail__brand-version">v1.0</span>
       </div>
 
       <div class="nav-rail__items">
@@ -48,7 +49,7 @@
               width="40"
               height="40" />
           } @else {
-            <app-skeleton width="40px" height="40px" borderRadius="50%" />
+            <app-skeleton width="40px" height="40px" borderRadius="0" />
           }
         </div>
       </div>
@@ -73,7 +74,7 @@
               width="36"
               height="36" />
           } @else {
-            <app-skeleton width="36px" height="36px" borderRadius="50%" />
+            <app-skeleton width="36px" height="36px" borderRadius="0" />
           }
         </div>
       </header>
@@ -83,13 +84,7 @@
       </div>
 
       <!-- Bottom Navigation — mobile only -->
-      <nav
-        class="bottom-nav"
-        role="navigation"
-        [attr.aria-label]="'nav.aria.bottomNav' | transloco"
-        [style.--active-i]="activeNavIndex()"
-        [style.--nav-count]="navItemCount()">
-        <div class="bottom-nav__pill" aria-hidden="true"></div>
+      <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
         @for (item of bottomNavItems(); track item.route) {
           <a
             class="bottom-nav__item"
@@ -109,10 +104,7 @@
 
 <!-- Profile menu shared between rail and topbar -->
 <mat-menu #profileMenu="matMenu" panelClass="profile-menu">
-  <div
-    class="profile-menu__panel"
-    [style.background-image]="bannerImageUrl() ? 'url(' + bannerImageUrl() + ')' : null"
-    (click)="$event.stopPropagation()">
+  <div class="profile-menu__panel" (click)="$event.stopPropagation()">
     <div class="profile-menu__overlay">
       <!-- Identity -->
       <div class="profile-menu__identity">
@@ -124,7 +116,7 @@
             width="64"
             height="64" />
         } @else {
-          <app-skeleton width="64px" height="64px" borderRadius="50%" />
+          <app-skeleton width="64px" height="64px" borderRadius="0" />
         }
         <span class="profile-menu__name">{{ getDisplayName() }}</span>
         <span class="profile-menu__email">{{ getUserEmail() }}</span>

@@ -301,6 +301,106 @@ input[type='number'] {
   }
 }
 
+// ────────────────────────── Material overrides — Terminal Collector ──────────────────────────
+
+// Dialog
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+// Select panel
+.mat-mdc-select-panel {
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+// Menu panel (generic, not profile-menu which has its own override in app.component.scss)
+.mat-mdc-menu-panel {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+// Snackbar
+.mat-mdc-snack-bar-container {
+  border: 1px solid var(--border-active) !important;
+  border-radius: 0 !important;
+  background-color: var(--bg-elev) !important;
+  box-shadow: none !important;
+
+  .mdc-snackbar__surface {
+    background-color: var(--bg-elev) !important;
+    border-radius: 0 !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    font-family: var(--font-mono) !important;
+    color: var(--text-hi) !important;
+  }
+
+  .mat-mdc-button {
+    font-family: var(--font-mono) !important;
+    color: var(--primary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+// Form field — outline filled, label mono uppercase
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    border-radius: 0 !important;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-radius: 0 !important;
+    border-color: var(--border) !important;
+  }
+
+  .mdc-notched-outline__leading {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+
+  .mdc-notched-outline__trailing {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing {
+    border-color: var(--border-active) !important;
+  }
+
+  .mat-mdc-floating-label {
+    font-family: var(--font-mono) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-lo) !important;
+  }
+
+  .mat-mdc-input-element {
+    font-family: var(--font-mono) !important;
+    color: var(--text-hi) !important;
+  }
+}
+
+// Tooltip
+.mat-mdc-tooltip {
+  font-family: var(--font-mono) !important;
+  font-size: 0.6875rem !important;
+  border-radius: 0 !important;
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+}
+
 // ────────────────────────── Datepicker ──────────────────────────
 .mat-datepicker-content .mat-calendar-content {
   padding: 0 1rem 1rem 1rem;
