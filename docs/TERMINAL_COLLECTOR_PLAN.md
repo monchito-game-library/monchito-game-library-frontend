@@ -17,6 +17,8 @@
    - [FASE 3 — Hardware, wishlist, collection-overview](#fase-3--hardware-wishlist-collection-overview)
    - [FASE 4 — Responsive PWA](#fase-4--responsive-pwa)
    - [FASE 5 — Material overrides y lib extras](#fase-5--material-overrides-y-lib-extras)
+   - [FASE 6 — Migración y rediseño de componentes ad-hoc](#fase-6--migración-y-rediseño-de-componentes-ad-hoc)
+   - [FASE 7 — Migración de botones, mat-card, mat-menu y mat-slide-toggle](#fase-7--migración-de-botones-mat-card-mat-menu-y-mat-slide-toggle)
 5. [Checkpoints](#5-checkpoints)
 6. [Notas operativas](#6-notas-operativas)
 
@@ -1717,7 +1719,7 @@ Specs afectados por la sustitución de mat-spinner: cualquier spec que hiciera `
 - `lib-icon-button` instanciado en un harness de demo (página de desarrollo opcional) muestra los tres tamaños con borde transparente, hover `--border-active`, focus ring visible al tabular.
 - No hay regresión visual en los `mat-icon-button` existentes (siguen invariantes gracias al commit 9).
 
-→ **CHECKPOINT 5 FINAL**: revisión integral terminal pulida.
+→ **CHECKPOINT 5**: revisión integral terminal pulida (intermedia — falta migrar ad-hoc en Fase 6).
 
 Criterios objetivos:
 - `mat-slide-toggle` renderiza como `[X]` / `[ ]` mono y sigue editando el formControl.
@@ -1727,7 +1729,1043 @@ Criterios objetivos:
 - Lighthouse a11y ≥ baseline pre-Fase 5 (sin regresiones).
 - `prefers-reduced-motion` deja los spinners en estado estático.
 
-Si OK → PR único `feat: terminal collector redesign` contra `master` con squash merge (acumula commits 0a, 0b, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).
+---
+
+### FASE 6 — Migración y rediseño de componentes ad-hoc
+
+> **Objetivo**: cerrar el rediseño Terminal Collector eliminando el último foco de estética Material residual: la carpeta `src/app/presentation/components/ad-hoc/`. Tres componentes (`badge-chip`, `skeleton`, `toggle-switch`) se rediseñan o se migran a `lib/` según su naturaleza (primitiva vs ad-hoc funcional). Tras esta fase el directorio `ad-hoc/` queda **vacío y se elimina**.
+>
+> **Estado al entrar en FASE 6**:
+> - `app-badge-chip` ya fue sustituido por `<lib-chip>` en `game-card` (Commit 1) y en `game-row` (Commit 4). Queda confirmar que no hay más usos y borrar el componente y su tipo.
+> - `app-skeleton` se ha mantenido invariante: lo siguen consumiendo ≈80 puntos en 18 templates. La estética Material (gradient `--mat-sys-surface-variant`, radius arbitrario por input) sigue presente y rompe la regla 1 (border-radius 0) y la regla 2 (sin tokens Material). Aunque el Commit 5 le forzó `borderRadius="0"` en hardware-list, en el resto de pantallas siguen pasando `"50%"`, `"6px"`, `"10px"`, `"var(--radius-full)"`, `"var(--radius-sm)"`.
+> - `app-toggle-switch` no fue tocado por ninguna fase previa (el Commit 9 sí redefine `mat-slide-toggle`, pero `app-toggle-switch` es un componente CVA propio, no Material). Mantiene `border-radius: var(--radius-full)`, thumb circular, animación translateX y `mat-icon` interno — incompatible con Terminal Collector.
+>
+> **Esta fase migra primitivas a `lib/` (cambia selector + estética) y, en el caso de toggle-switch, rediseña el componente sin moverlo de carpeta porque su CVA + iconos Material no encaja en la API genérica de las primitivas terminales — se decide **eliminarlo y reemplazarlo por un nuevo `lib-checkbox`** que cumpla el patrón `[X] / [ ]` decidido en el Commit 9 para `mat-slide-toggle`. Coherencia visual: el `lib-checkbox` se ve idéntico al `mat-slide-toggle` overrideado y al `mat-mdc-checkbox` overrideado.
+
+#### Inventario y decisiones
+
+| Ad-hoc | Decisión | Razón |
+|---|---|---|
+| `badge-chip` | **C — Eliminar** | Ya sustituido por `lib-chip` en sus 2 usos (game-card por Commit 1, game-row por Commit 4). Queda código muerto. |
+| `skeleton` | **A — Migrar a `lib/` como `lib-skeleton`** | Primitiva pura (geometría + animación), API genérica (`width/height`), reutilizada en 18 pantallas. Encaja perfectamente en la lib. La migración aprovecha para forzar estética terminal (sin radius, shimmer mono `--bg-surface` ↔ `--bg-surface-hi`). |
+| `toggle-switch` | **A — Migrar a `lib/` como `lib-checkbox`** + cambio de patrón | El widget de pildora redondeada con thumb no encaja en Terminal Collector. La decisión del Commit 9 (que `mat-slide-toggle` se vea como `[X]/[ ]` mono) marca el patrón canónico de "boolean control" del sistema. `lib-checkbox` lo materializa como primitiva, deprecando `app-toggle-switch`. Mantiene CVA y el contrato `(changed)`. Como el patrón visual cambia (de toggle a checkbox-mono), los iconos `light_mode/dark_mode` (settings) y `favorite_border/favorite` (game-form) pasan a ser **decoración en el label adyacente**, no glyphs dentro del control. |
+
+> **Por qué `lib-checkbox` y no `lib-toggle`**: el patrón `[X] / [ ]` no es un toggle (que requiere thumb y track) sino un checkbox mono. Forzar `lib-toggle` perpetuaría el modelo mental Material (pildora con thumb), que es exactamente lo que la Fase 5 ya elimina vía override de `mat-slide-toggle`. Coherencia gana sobre paralelismo de nombres.
+
+#### Commit 11 — `feat(lib): lib-skeleton mono terminal + migración de todos los usos de app-skeleton`
+
+Ficheros nuevos:
+- `src/app/presentation/components/lib/lib-skeleton/lib-skeleton.component.ts`
+- `src/app/presentation/components/lib/lib-skeleton/lib-skeleton.component.html`
+- `src/app/presentation/components/lib/lib-skeleton/lib-skeleton.component.scss`
+- `src/app/presentation/components/lib/lib-skeleton/lib-skeleton.component.spec.ts`
+- `src/app/entities/types/lib-component.type.ts` — extender con `LibSkeletonShape`.
+
+Ficheros editados:
+- `src/app/presentation/components/lib/index.ts` — añadir `export { LibSkeletonComponent } ...`.
+- Los 18 templates con `<app-skeleton>` (lista exhaustiva más abajo).
+- Los `.ts` correspondientes — sustituir `imports: [..., SkeletonComponent]` por `imports: [..., LibSkeletonComponent]`.
+
+Ficheros eliminados (al final del commit):
+- `src/app/presentation/components/ad-hoc/skeleton/skeleton.component.ts`
+- `src/app/presentation/components/ad-hoc/skeleton/skeleton.component.html`
+- `src/app/presentation/components/ad-hoc/skeleton/skeleton.component.scss`
+- `src/app/presentation/components/ad-hoc/skeleton/skeleton.component.spec.ts`
+
+---
+
+**`LibSkeletonComponent` — spec**
+
+```typescript
+// lib-skeleton.component.ts
+import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
+import { NgStyle } from '@angular/common';
+import { LibSkeletonShape } from '@/types/lib-component.type';
+
+/**
+ * Skeleton de carga reutilizable de la lib Terminal Collector.
+ * Geometría: rectángulo plano sin border-radius (la prop `shape="square"` o `shape="line"`
+ * son meros alias semánticos; ambos producen un rectángulo terminal).
+ * Animación: shimmer horizontal entre `--bg-surface` (25%) → `--bg-surface-hi` (50%)
+ *   → `--bg-surface` (75%), 1.4s lineal infinita.
+ * En `prefers-reduced-motion: reduce` la animación se detiene en un fondo plano
+ * `--bg-surface-hi`.
+ *
+ * NOTA: el componente legacy `app-skeleton` aceptaba `borderRadius` como input;
+ * `lib-skeleton` lo elimina por construcción (regla 1 Terminal Collector). La
+ * migración mapea: cualquier valor previo de `borderRadius` (50%, 6px, --radius-*)
+ * se descarta — todas las skeletons son rectángulos planos.
+ */
+@Component({
+  selector: 'app-lib-skeleton',
+  standalone: true,
+  imports: [NgStyle],
+  templateUrl: './lib-skeleton.component.html',
+  styleUrl: './lib-skeleton.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class LibSkeletonComponent {
+  /** Anchura del bloque (p.ej. '120px', '100%'). Default '100%'. */
+  readonly width: InputSignal<string> = input<string>('100%');
+
+  /** Altura del bloque (p.ej. '1rem', '120px'). Default '1rem'. */
+  readonly height: InputSignal<string> = input<string>('1rem');
+
+  /** Alias semántico opcional. No altera la geometría (siempre rectangular). */
+  readonly shape: InputSignal<LibSkeletonShape> = input<LibSkeletonShape>('line');
+}
+```
+
+```html
+<!-- lib-skeleton.component.html -->
+<div
+  class="lib-skeleton lib-skeleton--{{ shape() }}"
+  role="status"
+  aria-busy="true"
+  aria-live="polite"
+  [ngStyle]="{ width: width(), height: height() }">
+</div>
+```
+
+```scss
+// lib-skeleton.component.scss
+.lib-skeleton {
+  display: block;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-surface-hi) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: lib-skeleton-shimmer 1.4s linear infinite;
+
+  // Alias semánticos — no cambian la geometría
+  &--line,
+  &--square,
+  &--block {
+    // sin overrides; reservado para tweaks futuros
+  }
+}
+
+@keyframes lib-skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ────────────────────────── prefers-reduced-motion ──────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .lib-skeleton {
+    animation: none;
+    background: var(--bg-surface-hi);
+  }
+}
+```
+
+`lib-component.type.ts` — añadir:
+```typescript
+export type LibSkeletonShape = 'line' | 'square' | 'block';
+```
+
+Spec mínimo (vitest, mismo patrón que el resto de specs `lib-*`):
+- crea componente con `TestBed`.
+- comprueba defaults: `width()='100%'`, `height()='1rem'`, `shape()='line'`.
+- setea `width` y `height` con `componentRef.setInput` y verifica que el `ngStyle` aplica.
+- verifica `aria-busy="true"` y `role="status"` en el host renderizado.
+
+---
+
+**Migración de los usos**
+
+Sustitución 1-a-1: `<app-skeleton ...>` → `<app-lib-skeleton ...>`. El input `borderRadius` **se elimina** del template (cualquier valor previo se descarta). Si la sustitución es lo único que cambia en un fichero, no se toca su SCSS.
+
+Templates afectados (exhaustivo — coincide con la salida de `grep -rn "<app-skeleton" src --include="*.html"`):
+
+| Fichero | Ocurrencias | Notas de migración |
+|---|---|---|
+| `src/app/app.component.html` | 3 | Ya pasaban `borderRadius="0"`. Sólo cambia selector. |
+| `src/app/presentation/pages/settings/settings.component.html` | 5 | `borderRadius="50%"` (avatar) y `"10px"` (banner) y `"6px"` (thumbnails) → eliminados. Avatar pasa a cuadrado plano (intencional). |
+| `src/app/presentation/pages/collection/components/hardware-list-shell/hardware-list-shell.component.html` | 7 | Ya `borderRadius="0"` o sin radius. Sólo selector. |
+| `src/app/presentation/pages/collection/components/hardware-form-shell/hardware-form-shell.component.html` | 9 | Ya `borderRadius="0"`. Sólo selector. |
+| `src/app/presentation/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.html` | 6 | Sin radius. Sólo selector. |
+| `src/app/presentation/pages/collection/pages/collection-overview/collection-overview.component.html` | 7 | Sin radius. Sólo selector. |
+| `src/app/presentation/pages/collection/pages/games/games.component.html` | 4 | Ya `borderRadius="0"`. Sólo selector. |
+| `src/app/presentation/pages/collection/pages/games/components/game-card/game-card.component.html` | 1 | Ya `borderRadius="0"`. Sólo selector. |
+| `src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.html` | 1 | `borderRadius="6px"` (thumbnails) → eliminado. |
+| `src/app/presentation/pages/management/pages/hardware/pages/editions/hardware-editions-management.component.html` | 2 | `borderRadius="var(--radius-sm)"` → eliminado. |
+| `src/app/presentation/pages/management/pages/hardware/pages/brands/hardware-brands-management.component.html` | 2 | `borderRadius="var(--radius-sm)"` → eliminado. |
+| `src/app/presentation/pages/management/pages/hardware/pages/models/hardware-models-management.component.html` | 3 | `borderRadius="var(--radius-sm)"` → eliminado. |
+| `src/app/presentation/pages/management/pages/stores/stores-management.component.html` | 2 | `borderRadius="var(--radius-sm)"` → eliminado. |
+| `src/app/presentation/pages/management/pages/audit-log/audit-log-management.component.html` | 4 | `borderRadius="var(--radius-full)"` (avatar) → eliminado. Avatar cuadrado. |
+| `src/app/presentation/pages/management/pages/protectors/protectors-management.component.html` | 5 | `borderRadius="var(--radius-lg|sm)"` → eliminados. |
+| `src/app/presentation/pages/management/pages/users/users-management.component.html` | 8 | `borderRadius="var(--radius-full)"` (avatares) y `"var(--radius-md|sm)"` → eliminados. Avatares cuadrados. |
+| `src/app/presentation/pages/orders/pages/orders-list/orders-list.component.html` | 4 | `borderRadius="var(--radius-full)"` (status pill) → eliminado. |
+| `src/app/presentation/pages/orders/pages/order-invite/order-invite.component.html` | 3 | `borderRadius="var(--radius-full)"` (avatar) → eliminado. |
+| `src/app/presentation/pages/orders/pages/order-detail/order-detail.component.html` | 5 | `borderRadius="var(--radius-sm)"` → eliminados. |
+| `src/app/presentation/pages/wishlist/wishlist.component.html` | 7 | Mezcla `"0"` y sin radius. Sólo selector. |
+| `src/app/presentation/pages/wishlist/pages/wishlist-detail/wishlist-detail.component.html` | 6 | Sin radius. Sólo selector. |
+
+Operación recomendada (en el commit):
+```bash
+# 1. Reemplazo en bloque de selectores
+grep -rln "<app-skeleton" src --include="*.html" | xargs sed -i '' 's|<app-skeleton |<app-lib-skeleton |g; s|</app-skeleton>|</app-lib-skeleton>|g'
+
+# 2. Eliminación del input borderRadius (cualquier valor)
+grep -rln "borderRadius=" src --include="*.html" | xargs sed -i '' -E 's/[[:space:]]+borderRadius="[^"]*"//g'
+
+# 3. Verificación: 0 resultados esperados
+grep -rn "<app-skeleton\\b\\|borderRadius=" src --include="*.html"
+
+# 4. Refactor de imports TS: sustituir SkeletonComponent por LibSkeletonComponent
+grep -rln "SkeletonComponent" src --include="*.ts" | grep -v "lib-skeleton" | xargs sed -i '' "s|from '@/components/ad-hoc/skeleton/skeleton.component'|from '@/components/lib/lib-skeleton/lib-skeleton.component'|g; s|\\bSkeletonComponent\\b|LibSkeletonComponent|g"
+```
+
+Después de la verificación de los grep, eliminar la carpeta `src/app/presentation/components/ad-hoc/skeleton/` completa.
+
+**Specs afectados** (cualquier spec que use `By.css('app-skeleton')` o importe `SkeletonComponent`):
+- Detección: `grep -rn "app-skeleton\\|SkeletonComponent" src --include="*.spec.ts"`.
+- Por el grep inicial se cuentan 16 specs candidatos en `hardware-list-shell`, `hardware-form-shell`, `hardware-detail-shell`, `collection-overview`, `games.component`, `game-card`, `game-form`, management pages, orders y wishlist. Cada uno debe migrar `By.css('app-skeleton')` a `By.css('app-lib-skeleton')` y actualizar imports.
+
+**Responsive — resumen del commit 11**
+
+- `lib-skeleton` no tiene breakpoints propios: hereda el `width`/`height` que le pasa el padre, así que el responsive vive en el componente consumidor (sin cambios).
+- `prefers-reduced-motion` queda cubierto: shimmer detenido en `--bg-surface-hi`.
+- Sin touch target (es un elemento no interactivo: `role="status"`).
+- Sin `border-radius` (regla 1 OK).
+
+**Criterio de aceptación 11**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "app-skeleton\\b" src` devuelve **0 resultados** (sólo aparece `app-lib-skeleton`).
+- `grep -rn "borderRadius=" src --include="*.html"` devuelve **0 resultados** (el input ya no existe).
+- `grep -rn "from '@/components/ad-hoc/skeleton" src` devuelve **0 resultados**.
+- La carpeta `src/app/presentation/components/ad-hoc/skeleton/` está eliminada.
+- Revisión visual en settings (avatar y banner), users-management (avatares), audit-log (status pills): los antes-redondos ahora son cuadrados y tienen shimmer entre `#0A0A0A` y `#141414`.
+
+---
+
+#### Commit 12 — `feat(lib): lib-checkbox terminal + migración de app-toggle-switch + eliminación de badge-chip`
+
+Dos operaciones en un mismo commit (ambas son la "última limpieza ad-hoc"):
+
+1. **Crear `lib-checkbox`** como primitiva `[X] / [ ]` con CVA, sustituir los 4 usos de `<app-toggle-switch>`, eliminar el componente legacy y su constante `TOGGLE_SWITCH_DEFAULT_ICON*`.
+2. **Eliminar `app-badge-chip`** (código muerto tras Commits 1 y 4) — junto con su tipo `BadgeChipVariant`, su spec y su carpeta.
+
+Ficheros nuevos:
+- `src/app/presentation/components/lib/lib-checkbox/lib-checkbox.component.ts`
+- `src/app/presentation/components/lib/lib-checkbox/lib-checkbox.component.html`
+- `src/app/presentation/components/lib/lib-checkbox/lib-checkbox.component.scss`
+- `src/app/presentation/components/lib/lib-checkbox/lib-checkbox.component.spec.ts`
+- `src/app/entities/types/lib-component.type.ts` — añadir `LibCheckboxSize`.
+
+Ficheros editados:
+- `src/app/presentation/components/lib/index.ts` — añadir `export { LibCheckboxComponent } ...`.
+- `src/app/presentation/pages/settings/settings.component.{html,ts}` — sustituir toggle-switch del theme switcher.
+- `src/app/presentation/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.{html,ts}` — sustituir 2 toggle-switch (`onlyFavorites`, `onlyLoaned`).
+- `src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.{html,ts}` — sustituir 2 toggle-switch (`is_favorite`, presumiblemente uno más con formControlName) y mantener integración formControlName.
+- `src/app/presentation/pages/collection/pages/games/components/game-row/game-row.component.ts` — eliminar import legacy `BadgeChipComponent` (ya no se usa tras Commit 4).
+
+Ficheros eliminados:
+- `src/app/presentation/components/ad-hoc/toggle-switch/` (carpeta entera con `.ts`, `.html`, `.scss`, `.spec.ts`)
+- `src/app/entities/constants/toggle-switch.constant.ts`
+- `src/app/presentation/components/ad-hoc/badge-chip/` (carpeta entera)
+- `src/app/entities/types/badge-chip-variant.type.ts`
+- `src/app/presentation/components/ad-hoc/` (la carpeta padre queda vacía y se elimina; queda registrado en commit message: "removes ad-hoc directory").
+
+---
+
+**`LibCheckboxComponent` — spec**
+
+Decisiones de diseño (consensuadas con el override de `mat-slide-toggle` del Commit 9):
+- **No es un toggle con thumb**: render `[X]` ↔ `[ ]` en JetBrains Mono, color `--primary` cuando está checked, `--text-mid` cuando no.
+- **Label opcional adyacente** (a la derecha): si se proporciona, se renderiza inline en mono uppercase. Permite usar el componente tanto como control puro (`<lib-checkbox formControlName="x" />`) como con label embebido (`<lib-checkbox formControlName="x" label="FAVORITO" />`).
+- **CVA completo**: `writeValue`, `registerOnChange`, `registerOnTouched`, `setDisabledState` — mismo contrato que `app-toggle-switch` para que `formControlName` siga funcionando sin tocar los formularios.
+- **Sin iconos Material dentro del control**: los iconos decorativos (`light_mode`, `favorite`) que `app-toggle-switch` mostraba dentro del thumb pasan a vivir en el label adyacente del componente consumidor (no del control). Esto significa que para mantener el icono `light_mode/dark_mode` en settings, el `<mat-icon>` queda en el `<span class="settings__row-label">` (que ya lo tenía) y el control sólo expone `[X]/[ ]`.
+- **Tamaño**: `sm` (14px font) y `md` (16px font, default). No hay `lg`.
+- **Sin animación** de transición — el cambio entre `[X]` y `[ ]` es discreto (frame único, regla 3 Terminal Collector).
+
+```typescript
+// lib-checkbox.component.ts
+import {
+  ChangeDetectionStrategy,
+  Component,
+  forwardRef,
+  input,
+  InputSignal,
+  output,
+  OutputEmitterRef,
+  signal,
+  WritableSignal
+} from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { LibCheckboxSize } from '@/types/lib-component.type';
+
+/**
+ * Checkbox terminal `[X] / [ ]` reutilizable de la lib Terminal Collector.
+ * Compatible con `formControlName` (ControlValueAccessor completo).
+ * Reemplaza `app-toggle-switch` (deprecado): mismo contrato `(changed)` + CVA,
+ * pero patrón visual `[X]/[ ]` mono en vez de pildora con thumb.
+ */
+@Component({
+  selector: 'app-lib-checkbox',
+  standalone: true,
+  imports: [],
+  templateUrl: './lib-checkbox.component.html',
+  styleUrl: './lib-checkbox.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => LibCheckboxComponent), multi: true }
+  ]
+})
+export class LibCheckboxComponent implements ControlValueAccessor {
+  /** Estado checked (modo standalone — se ignora si hay formControlName). */
+  readonly checked: InputSignal<boolean> = input<boolean>(false);
+
+  /** Etiqueta opcional a la derecha del control, mono uppercase. */
+  readonly label: InputSignal<string | undefined> = input<string | undefined>(undefined);
+
+  /** Tamaño del glyph: 'sm' (0.875rem) o 'md' (1rem, default). */
+  readonly size: InputSignal<LibCheckboxSize> = input<LibCheckboxSize>('md');
+
+  /** Deshabilita el control (modo standalone — CVA usa setDisabledState). */
+  readonly disabled: InputSignal<boolean> = input<boolean>(false);
+
+  /** Emite el nuevo valor booleano tras cada interacción. */
+  readonly changed: OutputEmitterRef<boolean> = output<boolean>();
+
+  /** Valor interno, alimentado por [checked] (standalone) o writeValue (CVA). */
+  readonly _value: WritableSignal<boolean> = signal(false);
+
+  /** Disabled interno, alimentado por [disabled] (standalone) o setDisabledState (CVA). */
+  readonly _isDisabled: WritableSignal<boolean> = signal(false);
+
+  private _cvaMode = false;
+  private _onChange: (v: boolean) => void = () => {};
+  private _onTouched: () => void = () => {};
+
+  // Sincronización [checked] → _value (equivalente al ngOnChanges del legacy)
+  constructor() {
+    // implementar con effect() o ngOnChanges según preferencia del tech.
+    // Recomendado: effect(() => { if (!this._cvaMode) this._value.set(this.checked()); });
+  }
+
+  writeValue(v: boolean): void { this._value.set(!!v); }
+  registerOnChange(fn: (v: boolean) => void): void { this._onChange = fn; this._cvaMode = true; }
+  registerOnTouched(fn: () => void): void { this._onTouched = fn; }
+  setDisabledState(d: boolean): void { this._isDisabled.set(d); }
+
+  /** Toggla el valor, notifica a Forms y emite (changed). */
+  onToggle(): void {
+    if (this._isDisabled()) return;
+    const v = !this._value();
+    this._value.set(v);
+    this._onChange(v);
+    this._onTouched();
+    this.changed.emit(v);
+  }
+}
+```
+
+```html
+<!-- lib-checkbox.component.html -->
+<button
+  class="lib-cb"
+  [class.lib-cb--on]="_value()"
+  [class.lib-cb--disabled]="_isDisabled()"
+  [class.lib-cb--sm]="size() === 'sm'"
+  [class.lib-cb--md]="size() === 'md'"
+  type="button"
+  role="switch"
+  [attr.aria-checked]="_value()"
+  [attr.aria-disabled]="_isDisabled() ? 'true' : null"
+  [disabled]="_isDisabled()"
+  (click)="onToggle()">
+  <span class="lib-cb__box">{{ _value() ? '[X]' : '[ ]' }}</span>
+  @if (label()) {
+    <span class="lib-cb__label">{{ label() }}</span>
+  }
+</button>
+```
+
+```scss
+// lib-checkbox.component.scss
+.lib-cb {
+  --color: var(--text-mid);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 0;
+  transition: color 120ms linear;
+
+  &--sm { font-size: 0.875rem; }
+  &--md { font-size: 1rem; }
+
+  &--on { --color: var(--primary); }
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &__box {
+    display: inline-block;
+    min-width: 2.25ch; /* asegura ancho fijo entre '[ ]' y '[X]' (kerning mono) */
+    text-align: center;
+    color: var(--color);
+  }
+
+  &__label {
+    color: var(--text-mid);
+    font-size: 0.8125rem;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover { --color: var(--border-active); }
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .lib-cb {
+    /* touch target ≥ 44px sin alterar la apariencia visual */
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: flex-start;
+  }
+}
+```
+
+`lib-component.type.ts` — añadir:
+```typescript
+export type LibCheckboxSize = 'sm' | 'md';
+```
+
+Spec mínimo (vitest, copiar el patrón del legacy `toggle-switch.component.spec.ts` que ya es muy completo): writeValue, registerOnChange (entra en modo CVA), setDisabledState, onToggle (invierte valor, notifica, emite), forwardRef del NG_VALUE_ACCESSOR resoluble. **Conservar la cobertura de líneas del legacy** — no perder casos al migrar el patrón.
+
+---
+
+**Migración de los 4 usos de `app-toggle-switch`**
+
+1. **`settings.component.html`** (línea 181 — theme switcher, modo standalone con `[checked]` e iconos `light_mode/dark_mode`):
+
+   _Antes_:
+   ```html
+   <app-toggle-switch
+     [checked]="isDark()"
+     icon="light_mode"
+     iconChecked="dark_mode"
+     (changed)="toggleTheme()" />
+   ```
+   _Después_:
+   ```html
+   <app-lib-checkbox
+     [checked]="isDark()"
+     (changed)="toggleTheme()" />
+   ```
+   El `<mat-icon>` `light_mode/dark_mode` que estaba **dentro** del thumb pasa a vivir en el `<span class="settings__row-label">` adyacente (que ya tenía un `<mat-icon>` decorativo justamente con esos mismos nombres — ver línea 174 del template). No se duplica: el label ya muestra el icono correcto. El control queda como `[X]/[ ]` puro.
+
+2. **`game-list-filters-sheet.component.html`** (líneas 91 y 100 — flags `onlyFavorites`, `onlyLoaned`):
+
+   _Antes_:
+   ```html
+   <app-toggle-switch [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
+   ```
+   _Después_:
+   ```html
+   <app-lib-checkbox [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
+   ```
+   Sin cambios de label (el label vive en el contenedor `<div class="filter-row">` o equivalente que ya está pintado al lado del control).
+
+3. **`game-form.component.html`** (líneas 243 y 251 — `is_favorite` y otro flag con `formControlName`):
+
+   _Antes_:
+   ```html
+   <app-toggle-switch formControlName="is_favorite" icon="favorite_border" iconChecked="favorite" />
+   ```
+   _Después_:
+   ```html
+   <app-lib-checkbox formControlName="is_favorite" />
+   ```
+   Mismo razonamiento: los iconos `favorite_border/favorite` que estaban dentro del thumb pasan a un `<mat-icon>` decorativo en el label de la fila del form, o se eliminan si el label textual ("FAVORITO") es suficiente. Decisión: **eliminarlos**. El estado checked se transmite por el color del `[X]` (violet `--primary`).
+
+4. Actualizar los `.ts` correspondientes: eliminar import `ToggleSwitchComponent`, añadir `LibCheckboxComponent` al array `imports` del `@Component`.
+
+**Eliminación de `app-badge-chip`**:
+- Verificar primero con `grep -rn "app-badge-chip\\|BadgeChipComponent\\|BadgeChipVariant" src` que devuelve 0 resultados (los commits 1 y 4 ya migraron `game-card` y `game-row`). Si quedara algún uso, hay regresión en aquellos commits — abortar y revisar.
+- Eliminar carpeta `src/app/presentation/components/ad-hoc/badge-chip/`.
+- Eliminar `src/app/entities/types/badge-chip-variant.type.ts`.
+- Validar que ningún `tsconfig path` u otro fichero referencia el tipo o el componente.
+
+**Eliminación de la carpeta `ad-hoc/`**:
+- Tras los `rm` de skeleton (commit 11), toggle-switch (este commit) y badge-chip (este commit), la carpeta `src/app/presentation/components/ad-hoc/` queda vacía → `rmdir` final. El commit message lo recoge: `feat(lib): lib-checkbox terminal + migración de app-toggle-switch + eliminación de ad-hoc/`.
+
+**Specs afectados**:
+- `toggle-switch.component.spec.ts` → migrar a `lib-checkbox.component.spec.ts` (mismos casos, distinto componente; mantener la cobertura ≥ baseline).
+- `badge-chip.component.spec.ts` → eliminado junto con el componente.
+- Cualquier spec que importe `ToggleSwitchComponent` o `BadgeChipComponent` por `By.css(...)` o por import directo (esperado 0 al revisar el grep inicial, pero verificar).
+
+**Responsive — resumen del commit 12**
+
+- `lib-checkbox` infla `min-height` y `min-width` a 44px en `@media (max-width: 768px)` para garantizar touch target sin alterar la apariencia visual (el padding del control y el ancho del label crecen, no el glyph).
+- Sin animaciones (frame único entre `[X]` y `[ ]`), por tanto `prefers-reduced-motion` no añade reglas.
+- Focus ring 1px `--border-active` con offset 2px, igual que el resto de la lib.
+- Sin `border-radius` (regla 1 OK).
+
+**Criterio de aceptación 12**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "app-toggle-switch\\|ToggleSwitchComponent\\|TOGGLE_SWITCH_DEFAULT_ICON" src` devuelve **0 resultados**.
+- `grep -rn "app-badge-chip\\|BadgeChipComponent\\|BadgeChipVariant" src` devuelve **0 resultados**.
+- `ls src/app/presentation/components/ad-hoc` falla (carpeta no existe).
+- Revisión visual en settings (theme switch), game-list filters sheet (flags) y game-form (flags): el control aparece como `[X]` (en estado on, violet) o `[ ]` (en estado off, gris `--text-mid`), con label adyacente en mono uppercase. Sin pildora, sin thumb, sin animación translateX.
+- `formControlName="is_favorite"` sigue editando el control reactive (TestBed). El `(changed)` standalone emite tras click (TestBed).
+- Lighthouse a11y ≥ baseline post-Fase 5: el `role="switch"` con `aria-checked` mantiene la accesibilidad equivalente al `<input type="checkbox">` material.
+
+→ **CHECKPOINT 6 FINAL**: revisión integral terminal sin residuos ad-hoc.
+
+Criterios objetivos:
+- Carpeta `ad-hoc/` eliminada.
+- 0 ocurrencias de `<app-skeleton>`, `<app-toggle-switch>`, `<app-badge-chip>` en `src`.
+- Todos los skeletons son rectángulos planos con shimmer `--bg-surface` ↔ `--bg-surface-hi` (no Material colors).
+- Toggle theme en settings = `[X] DARK_MODE` / `[ ] LIGHT_MODE` (label decorativo a elección, contenido textual del row no cambia).
+- Filters sheet con `[X]` / `[ ]` para favoritos y prestados.
+- Form de game con `[X]` para "FAVORITO".
+- Lighthouse a11y, perf y best-practices ≥ baseline pre-Fase 6.
+- `prefers-reduced-motion` deja `lib-skeleton` en fondo plano.
+
+Si OK → continuar con Fase 7 (la rama no se cierra hasta superar el CHECKPOINT 7 FINAL).
+
+---
+
+### FASE 7 — Migración de botones, mat-card, mat-menu y mat-slide-toggle
+
+> **Objetivo**: cerrar definitivamente el rediseño Terminal Collector eliminando el último islote de Angular Material residual que aún se renderiza como UI Material (button shapes, card chrome, menu panel, slide-toggle widget). Tras esta fase la app solo conserva Material como capa de servicios no visuales (`MatDialog`, `MatSnackBar`, `MatTooltip`, `MatMenu` como overlay engine, `MatFormField`/`MatInput`/`MatDatepicker` reskinneados en Fase 5, `mat-icon` como font-set tipográfico). La nueva primitiva `lib-button` cubre los 53 + 15 botones Material textuales, `lib-icon-button` cubre los 64 icon-buttons, `lib-card` cubre las 4 cards de settings (28 elementos), `mat-menu` se mantiene como overlay engine bajo override CSS, y el último `mat-slide-toggle` se elimina migrándolo a `lib-checkbox`.
+>
+> **Estado al entrar en FASE 7** (verificable con grep tras Fase 6):
+> - `<button mat-flat-button>` / `<button mat-stroked-button>`: **53 ocurrencias en 31 ficheros** (auth × 4, dialogs × 4, management × 13, orders × 8, collection forms y sale-form × 5, settings × 1). Todavía pintan como Material Buttons (radius, color="warn"|"primary", typography Roboto).
+> - `<button mat-button>`: **15 ocurrencias en 11 ficheros** — variante text-button (sin background) usada predominantemente para "Cancelar" en footers de dialogs y edit-panels. **No estaba en el inventario inicial del usuario pero comparte target de migración** (`lib-button variant="ghost"`).
+> - `<button mat-icon-button>`: **64 ocurrencias en 24 ficheros** (10 de ellas con `matTooltip` host-bound, 2 con `matMenuTriggerFor`, una en `<input matSuffix>` de auth con icono de visibility toggle).
+> - `<mat-card>` y derivados (`<mat-card-header>`, `<mat-card-title>`, `<mat-card-content>`): **28 ocurrencias concentradas en `settings.component.html`** (4 secciones × 7 elementos por sección entre apertura, header, title, content y cierres).
+> - `<mat-menu>` con `mat-menu-item`: **8 ocurrencias en 2 ficheros** — `app.component.html` (profile menu sin `mat-menu-item`, usa overlay como contenedor de un panel custom) y `game-detail.component.html` (context menu kebab clásico con 4 `mat-menu-item`).
+> - `<mat-slide-toggle>`: **1 ocurrencia en `sale-form.component.html`** (control `forSale`, último vestigio del widget tras la migración de `app-toggle-switch` en Fase 6 — el override de la Fase 5 lo dejaba como `[X]/[ ]` mono pero el DOM Material seguía ahí).
+> - **No detectados en inventario pero presentes**: 1 `<mat-button-toggle-group>` en `order-info-section.component.html` (toggle €/% para descuentos) — se mantiene fuera de Fase 7 (sigue siendo un control segmentado pequeño, no un botón; queda dependiente de override CSS futuro o aceptado como Material residual).
+>
+> **Sorpresas frente al brief inicial** (a tener en cuenta antes de empezar la implementación):
+>
+> 1. **`mat-button` (15 usos)**: no estaba contemplado pero usa la misma API que `mat-flat/stroked` y todos están en footers de dialogs/forms como cancelar. Se mete en el Commit 13 sin coste adicional (mismo destino: `lib-button variant="ghost"`).
+> 2. **`mat-card` no es solo `<mat-card>`**: el template de settings usa `<mat-card-header>`, `<mat-card-title>` y `<mat-card-content>` como subcomponentes Material. La API actual de `lib-card` es un único `<ng-content>` plano sin slots — no replica esa estructura. Decisión en el Commit 15: o bien se traducen los subcomponentes a divs/headings semánticos dentro del slot único, o se amplía `lib-card` con un input `[title]` opcional. Se elige la primera opción (mantener `lib-card` minimal, los títulos pasan a `<h2 class="settings__card-title">`) — menos API, más control en cada consumidor, alineado con la regla de minimalismo de la lib.
+> 3. **`mat-menu` del `app.component` NO usa `mat-menu-item`**: el profile menu (`#profileMenu`) inyecta un `<div class="profile-menu__panel">` con sus propios `<button class="profile-menu__action-btn">`. Sólo consume Material como **motor de overlay** (posicionamiento bottom-end del trigger, animación, outside-click, focus-trap, escape-key). Esto cambia la complejidad real de la decisión de menu (ver §Decisión sobre `mat-menu`).
+> 4. **`mat-menu` del game-detail SÍ es clásico**: 4 `<button mat-menu-item>` con icono + texto. El override CSS ya existente en `styles.scss` (línea 432 `.mat-mdc-menu-item` mono uppercase, líneas 303 panel mono sin radius) **ya cubre la estética terminal** de este menú — se puede ver hoy abriendo el kebab del detalle.
+> 5. **`mat-stroked-button` con SVG inline (no `<mat-icon>`)**: los 3 botones OAuth de `login.component.html` y `register.component.html` (6 ocurrencias) llevan un `<svg viewBox="0 0 24 24">` embebido con paths de marca (Google, Discord, Twitch). La API actual de `lib-button` solo acepta `icon: string` que se pinta como `<mat-icon>{{ icon() }}</mat-icon>`. Decisión en el Commit 13: mantener el `<svg>` como primer hijo del `lib-button` aprovechando que el contenido proyectado funciona vía `<ng-content>` **si** se amplía el template — o bien dejar esos 6 botones como excepción documentada (botones nativos `<button class="auth-oauth-btn">` con clase propia que mimetiza la estética terminal, sin `app-lib-button`). Se elige la **segunda opción**: las auth-pages no son parte del scope visual del rediseño (ya marcadas como tales) y forzar `lib-button` con projection rompe la API uniforme del componente. Se les aplica clase `auth-oauth-btn` con override SCSS local que iguala visualmente al `lib-btn` (mismo border 1px, mismo padding, mismo mono).
+> 6. **`matTooltip` en `mat-icon-button` (10 ocurrencias)**: la directiva `matTooltip` se aplica al host element. Al migrar a `<app-lib-icon-button>`, la directiva queda en el host del componente (el `<app-lib-icon-button>` tag), no en el `<button>` interno. Verificar comportamiento en tres casos representativos (order-detail, wishlist-card, game-card chips) — si el tooltip no se dispara correctamente porque el host es el componente y no el button, el fix es añadir `inputs: ['matTooltip']` y un host binding interno, o más simple: convertir el `<button>` interno en `[attr.aria-label]` y dejar el matTooltip en el host componente con override SCSS para `display: contents` sobre el host. Decisión: **dejar `matTooltip` en el host del `app-lib-icon-button` y aplicar `display: contents` al `:host`** para que el tooltip se dispare sobre el `<button>` real al hacer hover. Sin tocar el código del componente, solo añadir una regla SCSS en `lib-icon-button.component.scss`: `:host { display: contents; }`. Es una micro-optimización trivial y reversible.
+> 7. **`mat-icon-button` con `matSuffix`**: el toggle de visibility password en `login`, `register`, `reset-password` (3 ocurrencias) usa `matSuffix` como input para que `mat-form-field` lo coloque en el slot suffix. La migración a `lib-icon-button` requiere que el host del componente acepte la directiva `matSuffix` y se la pase al wrapper, lo cual no es trivial. **Decisión**: estos 3 botones quedan como excepción **dentro del propio Commit 14** — se mantienen como `<button mat-icon-button matSuffix>` porque están funcionalmente ligados al motor de `mat-form-field` (no son un icon-button independiente, son un slot del input). El override CSS de Fase 5 (`mat-icon-button` plano sin ripple) ya los neutraliza visualmente. No son code-smell, son uso correcto de la API de form-field.
+>
+> **Resumen tras Fase 7**: la app queda sin un solo `<button mat-*-button>` visible salvo los 3 `matSuffix` documentados arriba. Sin `<mat-card>` en ningún template. Con `<mat-menu>` solo como motor de overlay (sin estética Material gracias al override existente). Sin `<mat-slide-toggle>` en ningún template.
+
+#### Decisión sobre `mat-menu` (justificación de la opción elegida)
+
+| Opción | Trabajo | Pros | Contras |
+|---|---|---|---|
+| **A — CDK Overlay puro + `lib-menu` desde cero** | Crear componente `lib-menu` con `<ng-template>`, `Overlay`, `OverlayRef`, `PositionStrategy`, focus-trap, outside-click, keyboard nav, animaciones, ARIA `role="menu"` + `role="menuitem"`. Migrar `profile-menu` y `context-menu`. Spec con ≈25 casos. | Identidad terminal pura, control total, sin acoplamiento Material. | ≈3 días de trabajo para un componente con 2 únicos consumidores. Riesgo a11y (focus-trap, escape-key, arrow-key navigation son fáciles de hacer mal). Duplica funcionalidad que ya tenemos vía Material. |
+| **B — Mantener `mat-menu`, override CSS** | Cero código. El override de `styles.scss` ya está en su sitio (líneas 303 `.mat-mdc-menu-panel`, 432 `.mat-mdc-menu-item`). Verificar visualmente que panel y items pintan terminal en producción y reforzar selectores si hay regresiones. | Cero coste de implementación. A11y y keyboard nav delegados a Material (probados, accesibles). El "motor" del overlay es invisible al usuario. Coherente con la decisión ya tomada para `MatDialog`, `MatSnackBar`, `MatTooltip` (servicios Material que se reskinean sin ser sustituidos). | El bundle sigue importando `MatMenuModule` (≈8 KB gzip). Cualquier nueva regresión visual requiere chasing en CSS de Material. |
+| **C — `lib-menu` como wrapper de `MatMenu`** | Crear `lib-menu` que internamente declara un `<mat-menu>` y proyecta hijos. Migrar consumidores a `<app-lib-menu>` + `<app-lib-menu-item>`. | API más limpia para el consumidor. Permite migrar a CDK puro en el futuro sin tocar callers. | Coste real ≈1.5 días sólo para ocultar el detalle de implementación. No aporta ninguna mejora visual ni de a11y inmediata. Aporta un wrapper con poca ganancia mientras solo hay 2 consumidores. |
+>
+> **Decisión: opción B**. Razones:
+>
+> 1. **Coherencia con el patrón ya adoptado** para `MatDialog`, `MatSnackBar`, `MatTooltip` y `MatDatepicker` (overrideados en Fase 5, no sustituidos). `MatMenu` es de la misma familia: un overlay con servicios A11y/keyboard ya implementados. Sustituirlo sería gratuitamente inconsistente.
+> 2. **Coste/beneficio**: 0 horas vs ≈3 días para 2 únicos consumidores, sin diferencia visual perceptible (el override CSS ya entrega la estética terminal).
+> 3. **Riesgo A11y**: re-implementar focus-trap + arrow-key navigation + escape + outside-click es exactamente el tipo de trabajo donde un componente custom suele regresionar accesibilidad. La guía del skill UI/UX Pro Max (resultado 1 de la búsqueda ux) recalca "All functionality accessible via keyboard, Tab order matches visual order" — Material lo garantiza, un wrapper custom no.
+> 4. **Reversibilidad**: si en el futuro queremos eliminar `MatMenuModule` del bundle por peso, podemos volver a la opción C sin tocar callers; opción B no nos cierra puertas.
+>
+> Lo que hace Commit 16 entonces: **verificar y reforzar los overrides existentes**, no crear código nuevo. El "código del Commit 16" es CSS de refinamiento (ajustar animación de apertura para que no haya `transform scale`, garantizar que el panel no usa `box-shadow`, que `cdk-overlay-pane` no impone radius).
+
+#### Commit 13 — `style(buttons): mat-flat/stroked/text-button → lib-button en toda la app`
+
+**Objetivo**: sustituir las 53 ocurrencias de `mat-flat-button`/`mat-stroked-button` y las 15 de `mat-button` por `<app-lib-button>`. Total 68 botones en 31 ficheros (no se cuenta dos veces los ficheros que tienen ambos tipos).
+
+**Ficheros afectados (con conteo combinado mat-flat + mat-stroked + mat-button)**:
+
+| # | Path (absoluto) | Botones | Contexto principal |
+|---|---|---|---|
+| 1 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/components/confirm-dialog/confirm-dialog.component.html` | 2 (1 flat + 1 button) | `mat-dialog-actions` (No/Sí) |
+| 2 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/forgot-password/forgot-password.component.html` | 1 | Submit form auth |
+| 3 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/login/login.component.html` | 4 (1 flat submit + 3 stroked OAuth) | Auth — **OAuth con SVG inline, ver excepción** |
+| 4 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/register/register.component.html` | 4 (1 flat + 3 stroked OAuth) | Auth — **OAuth con SVG inline, ver excepción** |
+| 5 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/reset-password/reset-password.component.html` | 1 | Submit form auth |
+| 6 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/sale-form/sale-form.component.html` | 2 flat | Botones "Guardar" y "Marcar vendido" (variant primary y danger) |
+| 7 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.html` | 2 | Dialog actions (cancel/save) |
+| 8 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.html` | 3 | Form footer (cancel/submit/delete) |
+| 9 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.html` | 2 | Form footer |
+| 10 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/components/hardware-brand-edit-panel/hardware-brand-edit-panel.component.html` | 3 (1 button + 2 flat) | Edit-panel actions (cancel/save/delete) |
+| 11 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/components/hardware-edition-edit-panel/hardware-edition-edit-panel.component.html` | 3 (1 button + 2 flat) | Edit-panel actions |
+| 12 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/components/hardware-model-edit-panel/hardware-model-edit-panel.component.html` | 3 (1 button + 2 flat) | Edit-panel actions |
+| 13 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/pages/brands/hardware-brands-management.component.html` | 1 | Action button (crear marca) |
+| 14 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/pages/editions/hardware-editions-management.component.html` | 1 | Action button (crear edición) |
+| 15 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/pages/models/hardware-models-management.component.html` | 1 | Action button (crear modelo) |
+| 16 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.html` | 4 (1 button + 3 flat) | Edit-panel actions |
+| 17 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/protectors/protectors-management.component.html` | 1 | Action button |
+| 18 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.html` | 3 (1 button + 2 flat) | Edit-panel actions |
+| 19 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/stores/stores-management.component.html` | 1 | Action button |
+| 20 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/users/components/delete-user-dialog/delete-user-dialog.component.html` | 2 (1 button + 1 flat) | Dialog actions (cancel/delete) |
+| 21 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/users/users-management.component.html` | 2 | Action buttons |
+| 22 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-create/order-create.component.html` | 3 (2 button + 1 flat) | Back link + form footer |
+| 23 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.html` | 2 (1 button + 1 flat) | Dialog actions |
+| 24 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.html` | 2 (1 button + 1 flat) | Inline edit cancel/save |
+| 25 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.html` | 1 | Action button |
+| 26 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.html` | 2 | Navigation buttons |
+| 27 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.html` | 2 (1 button + 1 flat) | Dialog actions |
+| 28 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/order-detail.component.html` | 2 | Action buttons |
+| 29 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-invite/order-invite.component.html` | 3 | Action buttons (accept/reject) |
+| 30 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.html` | 2 (1 button + 1 flat) | Dialog actions |
+| 31 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/settings/settings.component.html` | 1 stroked | Logout button (`color="warn"`) |
+
+**Mapeo Material → `lib-button`**:
+
+| Material | `lib-button variant` | Notas |
+|---|---|---|
+| `mat-flat-button color="primary"` (default) | `primary` | CTA principal del flow |
+| `mat-flat-button color="warn"` | `danger` | Destructivo (delete, mark-sold, logout) |
+| `mat-flat-button` (sin color) | `primary` | Submit form |
+| `mat-stroked-button` (sin color) | `ghost` | Secundario |
+| `mat-stroked-button color="warn"` | `danger` (visualmente: `ghost` con `--color: var(--accent-rose)`) | Logout en settings — usar `ghost` con CSS si no se quiere "filled danger" |
+| `mat-button` (sin color) | `ghost` | Cancelar |
+
+**Patrón canónico para `mat-dialog-actions`** (aplica a confirm-dialog, delete-user-dialog, avatar-crop-dialog, add-edit-line-dialog, ready-dialog, game-cover-position-dialog):
+
+_Antes_:
+```html
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>{{ 'common.no' | transloco }}</button>
+  <button mat-flat-button color="warn" [mat-dialog-close]="true">{{ 'common.yes' | transloco }}</button>
+</mat-dialog-actions>
+```
+_Después_:
+```html
+<mat-dialog-actions align="end">
+  <app-lib-button
+    [label]="'common.no' | transloco"
+    variant="ghost"
+    mat-dialog-close />
+  <app-lib-button
+    [label]="'common.yes' | transloco"
+    variant="danger"
+    [mat-dialog-close]="true" />
+</mat-dialog-actions>
+```
+
+> Verificar que `mat-dialog-close` (directiva) sigue funcionando aplicada al host del componente — Material la procesa por selector `[mat-dialog-close]`, así que técnicamente sigue funcionando en cualquier elemento. Si no resolviera el click interno (porque el componente intercepta `click` antes), una pequeña refactor: el `lib-button` ya emite `clicked`, así que se puede usar `(clicked)="dialogRef.close(true)"` en su lugar con `MatDialogRef` inyectado en el componente padre. Para confirm-dialog (template-only) prefiero la primera vía; si falla, fallback al patrón con `(clicked)`.
+
+**Patrón para footers de form** (sale-form, game-form, game-loan-form, hardware-loan-form, edit-panels):
+
+_Antes_:
+```html
+<button mat-flat-button color="primary" (click)="onSave()" [disabled]="saving()">
+  @if (saving()) { <mat-icon>hourglass_empty</mat-icon> } @else { <mat-icon>save</mat-icon> }
+  {{ 'common.save' | transloco }}
+</button>
+```
+_Después_:
+```html
+<app-lib-button
+  [label]="'common.save' | transloco"
+  icon="save"
+  variant="primary"
+  [loading]="saving()"
+  [disabled]="saving()"
+  (clicked)="onSave()" />
+```
+
+> `lib-button` ya gestiona el spinner internamente cuando `loading()=true` (template usa `progress_activity` con clase `lib-btn__icon--spin`). El icono `hourglass_empty` en los originales se elimina (lo cubre `loading`). El icono "save" se pasa como `icon` input. **No se proyecta contenido** — la API de `lib-button` exige `label` como input. Esto fuerza simplificar templates que metían iconos+texto+condicionales dentro del `<button>`.
+
+**Caso especial — botones con icono leading + label condicional** (ej. order-create back-btn con routerLink):
+
+_Antes_:
+```html
+<button mat-button routerLink="/orders" class="order-create-page__back-btn">
+  <mat-icon>arrow_back</mat-icon>
+  {{ 'common.back' | transloco }}
+</button>
+```
+_Después_:
+```html
+<app-lib-button
+  [label]="'common.back' | transloco"
+  icon="arrow_back"
+  variant="ghost"
+  routerLink="/orders"
+  class="order-create-page__back-btn" />
+```
+
+> `routerLink` aplicado al host del componente funciona si el `<app-lib-button>` es la raíz del `<button>` interno; pero Material's `routerLink` está pensado para `<a>` o `<button>`. Hay que verificar que el motor de Router aplica `routerLink` al elemento que produce el click del componente, no al tag custom (que es un wrapper transparente). **Riesgo conocido**: `routerLink` necesita ser aplicado al `<button>` interno, no al host. Solución (opciones, ordenadas por preferencia):
+> 1. Aceptar un input opcional `[routerLink]` en `lib-button` y propagarlo al botón interno + manejar el click internamente vía `Router.navigateByUrl`.
+> 2. Mantener `routerLink` en el host con `display: contents` igual que la solución para `matTooltip`.
+> 3. Eliminar `routerLink` y usar `(clicked)="router.navigate(['/orders'])"`.
+>
+> **Decisión**: opción 2 (`display: contents` en el host del `lib-button`) por simetría con la solución de matTooltip en `lib-icon-button` (Commit 14). Si Router se queja del tipo de elemento al que aplica `routerLink`, fallback a opción 3 con el handler inyectado. Verificar al implementar.
+
+**Excepción: botones OAuth con SVG inline (6 ocurrencias en `login` y `register`)**:
+
+Esos botones se mantienen como `<button class="auth-oauth-btn">` con `<svg>` interno. NO se migran a `lib-button`. Justificación:
+- Las páginas de auth están explícitamente fuera del scope visual del rediseño (ver §1).
+- Forzar `lib-button` con `<ng-content>` para SVG rompe la API uniforme del componente.
+- El SCSS `.auth-oauth-btn` ya existe en `login.component.scss` / `register.component.scss` — se mantiene tal cual.
+
+Sin embargo, se aprovecha el commit 13 para **alinear visualmente** `.auth-oauth-btn` con la estética terminal:
+- `border: 1px solid var(--border)` (era `var(--mat-sys-outline)`).
+- `border-radius: 0` (era `var(--mat-sys-corner-extra-small)`).
+- `font-family: var(--font-mono)`.
+- `text-transform: uppercase`.
+- `min-height: 44px`.
+- Hover: `border-color: var(--border-active)`.
+
+Esto deja los 6 OAuth visualmente coherentes con el resto sin pasar por `lib-button`.
+
+**Responsive a verificar**:
+- En `< 768px`, los botones de dialog-actions (especialmente `confirm-dialog` y `delete-user-dialog`) deben mantener un touch-target ≥ 44px. `lib-button` ya impone `min-height: 44px` (línea 251 del plan §3.2.1), OK.
+- En `< 768px`, los corchetes `[ ]` del `lib-button` se ocultan via media query (línea 254 § 3.2.1, ya implementado). Verificar visualmente que no se solapan en pantallas estrechas.
+- Form footers con 2 botones (cancel+save) en `< 480px`: deben apilarse vertical si el ancho no llega. Esto depende del SCSS local del consumidor (ej. `.sale-form__sold-btn { width: 100%; }`), no de `lib-button`. Verificar en sale-form, game-form, edit-panels.
+
+**Specs afectados**:
+- Los componentes que se editan no tienen specs DOM intrusivos sobre `mat-flat-button`/`mat-stroked-button` (los specs miran funcionalmente: `By.css('button[type=submit]')`, `getByText`, `dialogRef.close`). Aún así, ejecutar `npm test` tras cada lote de 5 ficheros y arreglar lo que rompa al vuelo. Los que sí pueden romper:
+  - `confirm-dialog.component.spec.ts` — si usa `By.css('button[mat-flat-button]')`.
+  - `delete-user-dialog.component.spec.ts` — idem.
+  - `sale-form.component.spec.ts` — botones `Guardar`/`Marcar vendido`.
+  - Auth specs (`login.component.spec.ts`, `register.component.spec.ts`) — submit + OAuth.
+- En todos los casos: cambiar selector a `By.css('app-lib-button[variant="primary"]')` o similar. La cobertura no debería bajar.
+
+**Otros ficheros a actualizar (.ts)**:
+- Cada `.ts` correspondiente: eliminar de `imports` `MatButtonModule` (si solo se usaba para flat/stroked/button) y añadir `LibButtonComponent` desde `@/components/lib`. **Mantener `MatButtonModule`** en ficheros donde aún haya `mat-icon-button` que se migrará en Commit 14 (sale-form, game-form, etc.) — se quita en Commit 14.
+
+**Criterio de aceptación 13**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-flat-button\\|mat-stroked-button" src --include="*.html"` devuelve **0 resultados** (los 6 OAuth ya no usan stroked).
+- `grep -rn "mat-button\\b" src --include="*.html"` devuelve **solo** los 3 `mat-button-toggle*` de `order-info-section.component.html` (que NO se migran en esta fase).
+- Revisión visual: todos los botones primarios de la app son `[ ACCIÓN ]` (mono uppercase, corchetes en desktop), todos los secundarios son ghost (mismo tipo, sin fondo). Auth OAuth queda como bloque coherente con borde 1px y mono.
+- Dialogs (confirm, delete-user, avatar-crop, add-edit-line, ready) se cierran correctamente al pulsar el botón (verifica que `mat-dialog-close` o el handler `(clicked)` reemplazado funcionan).
+- Submit de formularios de auth, sale-form, game-form siguen funcionando (envío + estado loading + disabled).
+
+#### Commit 14 — `style(buttons): mat-icon-button → lib-icon-button en toda la app`
+
+**Objetivo**: sustituir las 64 ocurrencias de `mat-icon-button` por `<app-lib-icon-button>`, excepto las 3 ocurrencias `matSuffix` documentadas como excepción.
+
+**Ficheros afectados (con conteo)**:
+
+| # | Path (absoluto) | Iconos | Contexto |
+|---|---|---|---|
+| 1 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/login/login.component.html` | 1 | `matSuffix` visibility toggle — **EXCEPCIÓN, no migrar** |
+| 2 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/register/register.component.html` | 2 | 2× `matSuffix` visibility — **EXCEPCIÓN, no migrar** |
+| 3 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/auth/pages/reset-password/reset-password.component.html` | 2 | 2× `matSuffix` visibility — **EXCEPCIÓN, no migrar** |
+| 4 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.html` | 2 | Header actions |
+| 5 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/hardware-form-shell/hardware-form-shell.component.html` | 4 | Header actions + form internal buttons |
+| 6 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/hardware-loan-form/hardware-loan-form.component.html` | 1 | Back button |
+| 7 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/list-page-header/list-page-header.component.html` | 2 | Back + search/filter |
+| 8 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/sale-form/sale-form.component.html` | 1 | Back button |
+| 9 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/components/game-card/game-card.component.html` | 2 | Kebab + favorite toggle |
+| 10 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.html` | 2 | Close + clear |
+| 11 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/components/game-row/game-row.component.html` | 1 | Inline action |
+| 12 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.html` | 5 | Multiple inline actions (clear field, remove tag, etc.) |
+| 13 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.html` | 1 | Back |
+| 14 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.html` | 4 | Edit + sell + share + kebab trigger (**con `matMenuTriggerFor`**) |
+| 15 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/pages/editions/hardware-editions-management.component.html` | 1 | Row action |
+| 16 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/hardware/pages/models/hardware-models-management.component.html` | 1 | Row action |
+| 17 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.html` | 2 | Form internal buttons (con matTooltip) |
+| 18 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/management/pages/users/users-management.component.html` | 2 | Row actions (con matTooltip) |
+| 19 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.html` | 2 | Row actions (con matTooltip) |
+| 20 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/orders/pages/order-detail/order-detail.component.html` | 15 | Header actions, stepper, inline edit, etc. (varios con matTooltip) |
+| 21 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/wishlist/components/wishlist-card/wishlist-card.component.html` | 3 | Card actions (own/edit/delete) |
+| 22 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.html` | 2 | Dialog header + close |
+| 23 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/wishlist/pages/wishlist-detail/wishlist-detail.component.html` | 3 | Header actions (con matTooltip) |
+| 24 | `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/wishlist/wishlist.component.html` | 3 | Header actions |
+
+> **Total a migrar**: 64 - 5 (matSuffix excepciones) = **59 botones en 22 ficheros** (los ficheros 1-3 de auth quedan parcialmente intactos).
+
+**Mapeo Material → `lib-icon-button`**:
+
+| Material | `lib-icon-button` | Notas |
+|---|---|---|
+| `mat-icon-button` (sin color) | `variant="ghost" size="md"` | Default |
+| `mat-icon-button color="warn"` | `variant="danger"` | Delete/destructive |
+| `mat-icon-button color="primary"` | `variant="primary"` | Acento positivo |
+| `mat-icon-button` en topbar móvil | `size="lg"` | Touch target 44px (mobile) |
+| `mat-icon-button` en row (inline) | `size="sm"` | Compacto (32px) |
+
+**Patrón canónico**:
+
+_Antes_:
+```html
+<button
+  mat-icon-button
+  (click)="onEdit()"
+  [matTooltip]="'common.edit' | transloco"
+  [attr.aria-label]="'common.edit' | transloco">
+  <mat-icon>edit</mat-icon>
+</button>
+```
+_Después_:
+```html
+<app-lib-icon-button
+  icon="edit"
+  [ariaLabel]="'common.edit' | transloco"
+  [matTooltip]="'common.edit' | transloco"
+  (clicked)="onEdit()" />
+```
+
+**Manejo de `matTooltip` (10 ocurrencias)**: la directiva queda en el **host del componente**. Para que dispare correctamente sobre el `<button>` interno, se añade a `lib-icon-button.component.scss`:
+
+```scss
+:host {
+  display: contents;
+}
+```
+
+Esto hace que el host no genere un box propio, y el `<button>` interno actúa como elemento visible/hover-target sobre el que `matTooltip` se dispara. Es un cambio de **una línea CSS** en `lib-icon-button.component.scss`, sin tocar el TS.
+
+> **Riesgo**: `display: contents` puede afectar accesibilidad (el host pierde su rol semántico) — pero como el host no tiene rol (sólo es un wrapper), no hay impacto. Verificar con un screen reader en una página representativa (order-detail, que concentra 15 icon-buttons con tooltip). Si hay regresión a11y, alternativa: añadir input `[tooltip]` al `lib-icon-button` que se aplique al `<button>` interno via `[matTooltip]` — más limpio pero requiere importar `MatTooltipModule` desde el componente lib.
+
+**Manejo de `matMenuTriggerFor` (2 ocurrencias)**: ver Commit 16. En este commit, los dos botones que actúan como trigger del menu (`app.component.html` línea 41 y `game-detail.component.html` línea 54) **se migran a `lib-icon-button`** con el mismo patrón `display: contents` — la directiva `matMenuTriggerFor` se aplica al host. **Comprobar**: el trigger funciona porque `matMenuTriggerFor` se activa al click en el host del elemento al que se aplica. Con `display: contents` el click se delega al button interno. Si falla, fallback igual que arriba: añadir input `[menuTrigger]` al componente.
+
+**Touch targets en mobile**:
+
+Verificar visualmente en 375px que los icon-buttons en kebabs (game-card, game-row, game-detail topbar) tienen ≥ 44px de área tocable. `lib-icon-button` ya impone `min-height: 44px; min-width: 44px` en `@media (max-width: 768px)` (ver Commit 10 § 3.2 del plan). OK.
+
+**Excepciones a NO migrar**:
+- 3 `mat-icon-button matSuffix` en `login.component.html`, `register.component.html`, `reset-password.component.html` (visibility password toggle). Razón: son slots de `mat-form-field`, dependen de la directiva `matSuffix`. Quedan como `<button mat-icon-button matSuffix>` y el override CSS de Fase 5 los neutraliza visualmente (sin ripple, sin radius).
+- Documentar esto en el SCSS local del propio componente con comentario "// HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14)".
+
+**Otros ficheros a actualizar (.ts)**:
+- En cada `.ts`: añadir `LibIconButtonComponent` desde `@/components/lib` al array `imports`. Eliminar `MatButtonModule` solo en ficheros donde no quede ningún `mat-*-button` (mantenerlo en los 3 de auth por las excepciones).
+
+**Specs afectados**:
+- Tests con `By.css('button[mat-icon-button]')` o `getAllByRole('button')` que filtren por aria-label: cambiar a `By.css('app-lib-icon-button')` o seguir filtrando por aria-label (más estable).
+- Específico a verificar: `wishlist-card.component.spec.ts`, `game-card.component.spec.ts`, `order-detail.component.spec.ts`, `game-detail.component.spec.ts`. Si rompen, actualizar selectores DOM, no cambiar la lógica.
+
+**Criterio de aceptación 14**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-icon-button" src --include="*.html" | wc -l` devuelve **5** (los 5 `matSuffix` excepciones, todas en `auth/pages/login`, `auth/pages/register` y `auth/pages/reset-password`).
+- `matTooltip` se dispara correctamente en order-detail al hacer hover sobre los icon-buttons del header.
+- El kebab del game-detail abre el `mat-menu` correctamente al pulsar el `lib-icon-button` con `[matMenuTriggerFor]="contextMenu"`.
+- El profile menu en el nav-rail/topbar abre el panel al pulsar el avatar (que es un div, no se migra — sigue funcionando porque `matMenuTriggerFor` está en el div, no en un button).
+- Touch targets ≥ 44px en mobile verificados manualmente en game-card, game-row, game-detail, order-detail.
+
+#### Commit 15 — `style(settings): mat-card → lib-card + reskin terminal`
+
+**Objetivo**: sustituir las 4 `<mat-card>` (con 7 subelementos cada una) de `settings.component.html` por `<app-lib-card>` y descartar la dependencia de subcomponentes Material (`mat-card-header`, `mat-card-title`, `mat-card-content`).
+
+**Fichero único**:
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/settings/settings.component.html` (4 mat-card)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/settings/settings.component.scss` (limpiar `--mat-sys-*` y reescribir tokens a Terminal Collector)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/settings/settings.component.ts` (cambiar imports: fuera `MatCardModule`, dentro `LibCardComponent`)
+
+**Patrón canónico** (aplicado a las 4 secciones: Profile, Appearance, Language, Session):
+
+_Antes_:
+```html
+<mat-card class="settings__card">
+  <mat-card-header>
+    <mat-card-title>{{ 'settings.profile.title' | transloco }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- contenido -->
+  </mat-card-content>
+</mat-card>
+```
+_Después_:
+```html
+<app-lib-card class="settings__card">
+  <h2 class="settings__card-title">{{ 'settings.profile.title' | transloco }}</h2>
+  <!-- contenido directo, sin subwrapper card-content -->
+</app-lib-card>
+```
+
+> Justificación de no añadir input `[title]` a `lib-card`: una de las 4 secciones (Appearance) tiene **subtítulos** internos (`settings.appearance.bannerPanel`, `settings.appearance.theme`) además del título principal — la estructura no es plana `title + content` sino `title + body con subsecciones`. Un input `[title]` simple no la cubriría sin un slot adicional. Mantener `lib-card` con un único `<ng-content>` y dejar al consumidor componer su jerarquía interna es más flexible y consistente con el resto de la lib (lib-card no impone estructura).
+
+**Nuevos estilos en `settings.component.scss`**:
+
+Añadir clase `.settings__card-title` (uppercase mono, mismo tratamiento que `lib-section-header`):
+```scss
+.settings__card-title {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-hi);
+  margin: 0 0 1rem;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+```
+
+**Limpieza adicional en `settings.component.scss`** (deuda de la Fase 1-6, debe acometerse aquí porque el fichero se toca):
+
+- Sustituir todas las referencias a `--mat-sys-*` por tokens Terminal Collector:
+  - `--mat-sys-primary` → `--primary`
+  - `--mat-sys-primary-container` → `--bg-surface-hi`
+  - `--mat-sys-on-surface-variant` → `--text-mid`
+  - `--mat-sys-surface-container-highest` → `--bg-elev`
+  - `--mat-sys-outline` → `--border`
+- Sustituir `var(--radius-md)` (en `.settings__banner-preview`) → `0` (regla de oro 1: sin border-radius).
+- Eliminar `::ng-deep .settings__card { overflow: visible !important; }` (línea 219) — `lib-card` no impone `overflow: hidden` por defecto, así que la regla deja de ser necesaria.
+- Eliminar `animation: banner-fade-in 300ms ease` del `.settings__banner-preview--loaded` (regla de oro: sin animaciones decorativas).
+
+**Responsive**:
+- Settings ya es un layout simple de cards apiladas verticalmente. Verificar en 375px que `lib-card` mantiene padding apropiado (la `lib-card` ya tiene `padded=true` por defecto con padding `1rem` y gap entre hijos `0.75rem`).
+- El grid de banner thumbs (`settings__banner-grid`) debe seguir scrollando horizontal en mobile — no se toca su grid.
+
+**Specs afectados**:
+- `settings.component.spec.ts` — si hace aserciones DOM sobre `mat-card-title` (`By.css('mat-card-title')`), cambiar a `By.css('.settings__card-title')` o usar texto.
+- Verificar selectores en setUp por si hay `getByCss('mat-card')`.
+
+**Otros ficheros a actualizar (.ts)**:
+- `settings.component.ts`: eliminar `MatCardModule` de `imports`, añadir `LibCardComponent`.
+
+**Criterio de aceptación 15**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-card" src --include="*.html"` devuelve **0 resultados**.
+- `grep -rn "mat-card-title\\|mat-card-header\\|mat-card-content" src --include="*.html"` devuelve **0 resultados**.
+- `grep -n "--mat-sys-" src/app/presentation/pages/settings/settings.component.scss` devuelve **0 resultados**.
+- Settings se ve como 4 bloques con borde 1px `--border`, fondo `--bg-surface`, sin radius, sin sombras. Títulos mono uppercase con divider 1px debajo. Las 3 funcionalidades clave (cambiar avatar, cambiar banner, toggle theme, cambiar idioma, logout) siguen funcionando.
+
+#### Commit 16 — `style(chrome): mat-menu reskinneado terminal (verificación + refinamiento de overrides)`
+
+**Objetivo**: mantener `<mat-menu>` como motor de overlay/posicionamiento y consolidar el override CSS existente para que ambos consumidores (profile-menu en app-shell, context-menu en game-detail) pinten 100% Terminal Collector sin Material residual visible. **No se crea ningún componente nuevo.** El commit es CSS y, si es necesario, una pequeña actualización del template para alinear semántica.
+
+**Ficheros editados**:
+- `/Users/alcheca/git/personal/monchito-game-library/src/styles.scss` (refinar `.mat-mdc-menu-panel`, `.mat-mdc-menu-item`, `.cdk-overlay-pane`)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/app.component.scss` (revisar `.profile-menu__overlay/identity/actions/action-btn` para alinear con `--border`, `--text-mid`, `--font-mono`)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/app.component.html` (los `mat-icon` dentro de `.profile-menu__action-btn` siguen como tipografía, sin cambio)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.html` (no cambia: los `mat-menu-item` ya pintan terminal vía override)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/pages/games/pages/game-detail/game-detail.component.scss` (verificar que no hay overrides locales que pisen el override global)
+
+**Selectores reforzados en `styles.scss`** (extender los existentes):
+
+```scss
+// Panel — añadir reset de animación scale (transform sin elevación)
+.mat-mdc-menu-panel {
+  background-color: var(--bg-elev) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  // Sin animación de escala — sólo opacidad para no romper regla "no transform en hover"
+  animation: none !important;
+  transform: none !important;
+}
+
+// Item — refinar focus visible para no usar el background-hover de cdk-focused
+.mat-mdc-menu-item {
+  // ... (ya existe)
+  &.cdk-program-focused,
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: -1px;
+    background-color: var(--bg-surface-hi) !important;
+  }
+}
+
+// Overlay container — sin radius en el pane host
+.cdk-overlay-pane.mat-mdc-menu-panel-animations-enabled {
+  border-radius: 0 !important;
+}
+```
+
+**Refinar `.profile-menu__action-btn`** (`app.component.scss`):
+
+Inspeccionar líneas 313+ y asegurar:
+- `border-radius: 0` (regla 1).
+- `font-family: var(--font-mono)`.
+- `text-transform: uppercase`.
+- Hover: `background-color: var(--bg-surface-hi)` (sin transform, sin shadow).
+- Focus visible: `outline: 1px solid var(--border-active)`.
+- Variant `--logout`: `color: var(--accent-rose)`.
+
+**Verificación**:
+- Profile menu (avatar nav-rail en desktop, avatar topbar en mobile): panel terminal, items "SETTINGS" y "LOGOUT" en mono uppercase, hover plano sin sombra.
+- Context menu del game-detail (kebab): se abre, muestra 1-4 items según estado (sold, format, etc.), cada item mono uppercase con icono leading, hover plano. Selecciones disparan los handlers correctos (`openSaleView`, `undoSell`, `openLoanView`, `deleteGame`).
+
+**Responsive**:
+- En mobile (375px), el panel del context-menu del game-detail no debe salirse del viewport. Material's `PositionStrategy` ya lo gestiona; verificar manualmente.
+- El profile-menu en mobile (trigger en topbar avatar) abre el panel por debajo del avatar, full-width si hay espacio. Sin cambio.
+
+**Specs afectados**:
+- `app.component.spec.ts` — si hay tests para abrir profile menu, mantener selector `By.css('mat-menu')` (el menu component sigue existiendo en el DOM).
+- `game-detail.component.spec.ts` — idem.
+
+**Criterio de aceptación 16**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "<mat-menu" src --include="*.html" | wc -l` devuelve **2** (los dos consumidores legítimos: profile-menu y game-detail kebab). **No se elimina nada** — la decisión es B (mantener mat-menu como overlay engine).
+- Verificación visual: ambos menus abren en panel `--bg-elev` con borde 1px `--border`, sin radius, sin shadow, sin animación scale. Items mono uppercase. Hover plano `--bg-surface-hi`. Focus visible con outline `--border-active`.
+- No hay regresiones funcionales: ambos menus se cierran al hacer click fuera, con escape, y disparan los handlers correctos al elegir un item.
+
+#### Commit 17 — `style(sale): mat-slide-toggle → lib-checkbox en sale-form`
+
+**Objetivo**: eliminar la última `mat-slide-toggle` del proyecto, presente en `sale-form.component.html` línea 21 para el control `forSale`.
+
+**Fichero único**:
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/sale-form/sale-form.component.html` (1 mat-slide-toggle)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/sale-form/sale-form.component.ts` (cambiar imports: fuera `MatSlideToggleModule`, dentro `LibCheckboxComponent`)
+- `/Users/alcheca/git/personal/monchito-game-library/src/app/presentation/pages/collection/components/sale-form/sale-form.component.scss` (verificar layout: probablemente el `.sale-form__toggle-row` no necesita cambios, sólo confirmar que el espaciado entre label y control sigue bien con el `[X]` mono).
+
+**Patrón canónico**:
+
+_Antes_:
+```html
+<div class="sale-form__toggle-row">
+  <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
+  <mat-slide-toggle formControlName="forSale" color="primary" />
+</div>
+```
+_Después_:
+```html
+<div class="sale-form__toggle-row">
+  <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
+  <app-lib-checkbox formControlName="forSale" />
+</div>
+```
+
+> `lib-checkbox` ya implementa CVA (Commit 12, Fase 6), por lo que `formControlName="forSale"` funciona out-of-the-box sin cambios en el TS del componente (el form-control sigue siendo `FormControl<boolean>`).
+
+**Specs afectados**:
+- `sale-form.component.spec.ts` — si hay aserciones `By.css('mat-slide-toggle')` cambiar a `By.css('app-lib-checkbox')`. Si comprueban el valor del control (`form.controls.forSale.value`), no cambia.
+
+**Otros ficheros a actualizar (.ts)**:
+- `sale-form.component.ts`: en `imports`, quitar `MatSlideToggleModule`, añadir `LibCheckboxComponent`.
+
+**Responsive**:
+- Sin cambios. El control es más estrecho que el slide-toggle anterior (`[X]` vs pildora 36px), pero el layout `flex` del row se ajusta automáticamente. Verificar visualmente en 375px que el label y el control no se solapan ni dejan demasiado hueco.
+
+**Criterio de aceptación 17**:
+- `npm run build`, `npm test`, `npm run lint` verdes.
+- `grep -rn "mat-slide-toggle\\|MatSlideToggleModule" src` devuelve **0 resultados**.
+- Sale-form se abre desde el detalle de un juego, se puede activar/desactivar "En venta" (el `[X]/[ ]` cambia de color), el campo "Precio de venta" aparece/desaparece según el toggle, y al guardar el formulario el flag `for_sale` se persiste correctamente en la BD.
+
+→ **CHECKPOINT 7 FINAL**: rediseño Terminal Collector 100% completo — sin un solo `mat-*-button` visible, sin `mat-card`, sin `mat-slide-toggle`, con `mat-menu` reskinneado como motor de overlay invisible.
+
+Criterios objetivos:
+- `grep -rn "mat-flat-button\\|mat-stroked-button\\|mat-card\\b\\|mat-card-title\\|mat-card-header\\|mat-card-content\\|mat-slide-toggle\\|MatSlideToggleModule" src` devuelve **0 resultados**.
+- `grep -rn "<button mat-button\\b" src --include="*.html"` devuelve **0 resultados** (los 3 `mat-button-toggle*` de order-info-section quedan documentados como excepción aceptada).
+- `grep -rn "mat-icon-button" src --include="*.html" | wc -l` devuelve **5** (las 5 excepciones `matSuffix` de auth, documentadas).
+- `grep -rn "<mat-menu" src --include="*.html" | wc -l` devuelve **2** (profile-menu y game-detail kebab, manteniendo `MatMenuModule` como overlay engine).
+- Revisión visual de los 6 viewports: ningún componente pinta como Material Buttons/Cards/Toggles. La estética terminal es total.
+- Lighthouse a11y ≥ baseline pre-Fase 7.
+- `matTooltip` funciona sobre `lib-icon-button` en order-detail (verificado en hover desktop).
+- `matMenuTriggerFor` dispara el menu desde `lib-icon-button` en game-detail (verificado en click).
+
+Si OK → PR único `feat: terminal collector redesign` contra `master` con squash merge (acumula commits 0a, 0b, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17).
 
 ---
 
@@ -1742,7 +2780,9 @@ Resumen de revisiones visuales requeridas:
 | 2 | 4 | games-list (toolbar, filtros, command-bar, FABs) + chrome global (nav-rail, bottom-nav, dialogs, snackbar) |
 | 3 | 7 | hardware (lista + detail), wishlist (lista + dialogs), collection-overview |
 | 4 | 8 | Auditoría responsive integral en los 6 viewports |
-| 5 (final) | 10 | Material residual pulido (slide-toggle, icon-button, datepicker, spinner) + lib extras + PR |
+| 5 | 10 | Material residual pulido (slide-toggle, icon-button, datepicker, spinner) + lib extras |
+| 6 | 12 | Migración y eliminación de ad-hoc (skeleton → lib-skeleton, toggle-switch → lib-checkbox, badge-chip eliminado) |
+| 7 (final) | 17 | Migración integral de botones (`mat-flat`/`stroked`/`button` → `lib-button`), `mat-icon-button` → `lib-icon-button`, `mat-card` → `lib-card` en settings, `mat-menu` reskinneado como overlay engine, último `mat-slide-toggle` → `lib-checkbox` + PR |
 
 Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 
@@ -1763,7 +2803,13 @@ Criterios objetivos de aceptación visual (válidos en cada checkpoint):
 ## 6. Notas operativas
 
 - **Sin PRs intermedios**. Toda la rama acumula commits y se mergea con squash al final. Mientras tanto, el feedback se hace localmente con build/test/lint verde tras cada commit.
-- **Tests existentes**: pueden romperse en commits 1, 2, 5, 6, 7, 10 si los specs hacen aserciones DOM sobre clases CSS específicas (`By.css('mat-spinner')`, ripple del icon-button, switch toggle). El tech agent debe actualizar los specs en el mismo commit donde modifica el componente.
+- **Tests existentes**: pueden romperse en commits 1, 2, 5, 6, 7, 10, 13, 14, 15, 17 si los specs hacen aserciones DOM sobre clases CSS específicas (`By.css('mat-spinner')`, `By.css('button[mat-flat-button]')`, `By.css('mat-card-title')`, `By.css('mat-slide-toggle')`). El tech agent debe actualizar los specs en el mismo commit donde modifica el componente.
+- **Fase 7 — recordatorios concretos**:
+  - `display: contents` en `:host` de `lib-icon-button` desbloquea `matTooltip` y `matMenuTriggerFor` aplicados al wrapper. Es la pieza clave para evitar refactorizar la API del componente.
+  - Las 5 excepciones `matSuffix` de auth (login, register, reset-password) **se quedan como `mat-icon-button`** porque dependen del motor de `mat-form-field`. Documentar con comentario inline en el HTML.
+  - Los 6 botones OAuth de auth (`login.html`, `register.html`) **no se migran a `lib-button`** porque llevan SVG inline; se alinean visualmente vía SCSS local `.auth-oauth-btn`.
+  - `mat-menu` se mantiene como overlay engine (decisión documentada en Fase 7). El "código" del Commit 16 es CSS de refinamiento, no nuevo componente.
+  - Tras Fase 7, `MatCardModule`, `MatSlideToggleModule` y `MatButtonModule` se quedan únicamente como peer deps invisibles del bundle (no se importan desde ningún componente). `MatMenuModule` sigue importándose en `app.component.ts` y `game-detail.component.ts`. `MatTooltipModule`, `MatDialogModule`, `MatFormFieldModule`, `MatInputModule`, `MatDatepickerModule`, `MatSnackBarModule` siguen activos como servicios reskinneados.
 - **i18n**: los labels nuevos como "ADD_COPY", "LIMPIAR", "APLICAR", "FILTROS" se traducen vía clave i18n existente cuando exista; si no, **se añade en `src/assets/i18n/es.json` y `en.json`** en el mismo commit que los usa.
 - **Sin migración de BD**: este rediseño es 100% frontend.
 - **PWA manifest**: revisar `src/manifest.webmanifest` al final — `theme_color` y `background_color` deben pasar a `#000000`.
