@@ -88,7 +88,7 @@
         </mat-icon>
         {{ 'gameList.aria.onlyFavorites' | transloco }}
       </span>
-      <app-toggle-switch [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
+      <app-lib-checkbox [checked]="d.onlyFavorites()" (changed)="d.onlyFavorites.set($event)" />
     </div>
 
     <!-- Loaned toggle -->
@@ -97,7 +97,7 @@
         <mat-icon>handshake</mat-icon>
         {{ 'gameList.aria.onlyLoaned' | transloco }}
       </span>
-      <app-toggle-switch [checked]="d.onlyLoaned()" (changed)="d.onlyLoaned.set($event)" />
+      <app-lib-checkbox [checked]="d.onlyLoaned()" (changed)="d.onlyLoaned.set($event)" />
     </div>
   </div>
 

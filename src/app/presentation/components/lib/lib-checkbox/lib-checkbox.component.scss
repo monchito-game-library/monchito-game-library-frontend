@@ -1,0 +1,67 @@
+.lib-cb {
+  --color: var(--text-mid);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 0;
+  transition: color 120ms linear;
+
+  &--sm {
+    font-size: 0.875rem;
+  }
+  &--md {
+    font-size: 1rem;
+  }
+
+  &--on {
+    --color: var(--primary);
+  }
+
+  &--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .lib-cb__box {
+    display: inline-block;
+    min-width: 2.25ch; /* asegura ancho fijo entre '[ ]' y '[X]' (kerning mono) */
+    text-align: center;
+    color: var(--color);
+  }
+
+  .lib-cb__label {
+    color: var(--text-mid);
+    font-size: 0.8125rem;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover {
+      --color: var(--border-active);
+    }
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .lib-cb {
+    /* touch target >= 44px sin alterar la apariencia visual */
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: flex-start;
+  }
+}

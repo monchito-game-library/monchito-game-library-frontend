@@ -240,15 +240,13 @@
           <div class="game-form__toggles">
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
-              <app-toggle-switch
+              <app-lib-checkbox
                 [checked]="formatValue() === 'digital'"
-                (changed)="onFormatChange($event ? 'digital' : 'physical')"
-                icon="album"
-                iconChecked="cloud" />
+                (changed)="onFormatChange($event ? 'digital' : 'physical')" />
             </div>
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
-              <app-toggle-switch formControlName="is_favorite" icon="favorite" iconChecked="favorite" />
+              <app-lib-checkbox formControlName="is_favorite" />
             </div>
           </div>
 

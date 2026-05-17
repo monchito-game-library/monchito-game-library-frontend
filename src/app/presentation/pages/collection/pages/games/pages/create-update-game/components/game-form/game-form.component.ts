@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
-import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatOption } from '@angular/material/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -76,7 +76,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatInput,
     MatSelect,
     MatOption,
-    ToggleSwitchComponent,
+    LibCheckboxComponent,
     MatButton,
     MatIcon,
     MatIconButton,

@@ -39,7 +39,7 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
-import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 
 @Component({
@@ -63,7 +63,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
     MatIcon,
     LibSpinnerComponent,
     MatTooltip,
-    ToggleSwitchComponent,
+    LibCheckboxComponent,
     LibSkeletonComponent,
     TranslocoPipe
   ]

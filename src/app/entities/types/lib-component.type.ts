@@ -27,3 +27,6 @@ export type LibSpinnerVariant = 'bars' | 'dots' | 'blocks';
 
 /** Alias semántico de forma del lib-skeleton (no altera la geometría rectangular). */
 export type LibSkeletonShape = 'line' | 'square' | 'block';
+
+/** Tamaños del lib-checkbox: sm (0.875rem) o md (1rem, default). */
+export type LibCheckboxSize = 'sm' | 'md';

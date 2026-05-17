@@ -22,7 +22,7 @@ import { availableGameStatuses } from '@/constants/game-status.constant';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { LibChipComponent } from '@/components/lib/lib-chip/lib-chip.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -35,7 +35,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrl: './game-row.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, NgOptimizedImage, MatIconButton, MatIcon, MatTooltip, TranslocoPipe, BadgeChipComponent]
+  imports: [CurrencyPipe, NgOptimizedImage, MatIconButton, MatIcon, MatTooltip, TranslocoPipe, LibChipComponent]
 })
 export class GameRowComponent {
   private readonly _router: Router = inject(Router);

@@ -178,7 +178,7 @@
               : ('settings.appearance.switchToDark' | transloco)
           }}
         </span>
-        <app-toggle-switch [checked]="isDark()" icon="light_mode" iconChecked="dark_mode" (changed)="toggleTheme()" />
+        <app-lib-checkbox [checked]="isDark()" (changed)="toggleTheme()" />
       </div>
     </mat-card-content>
   </mat-card>

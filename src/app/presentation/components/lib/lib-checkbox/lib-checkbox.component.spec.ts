@@ -1,23 +1,24 @@
-import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
-import { ToggleSwitchComponent } from './toggle-switch.component';
+import { LibCheckboxComponent } from './lib-checkbox.component';
 
-describe('ToggleSwitchComponent', () => {
-  let component: ToggleSwitchComponent;
+describe('LibCheckboxComponent', () => {
+  let component: LibCheckboxComponent;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     TestBed.configureTestingModule({
-      imports: [ToggleSwitchComponent],
+      imports: [LibCheckboxComponent],
       schemas: [NO_ERRORS_SCHEMA]
     });
 
-    const fixture = TestBed.createComponent(ToggleSwitchComponent);
+    const fixture = TestBed.createComponent(LibCheckboxComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   describe('writeValue (CVA)', () => {
@@ -108,65 +109,39 @@ describe('ToggleSwitchComponent', () => {
     });
   });
 
-  describe('getIcon', () => {
-    it('devuelve el icono por defecto cuando _value es false', () => {
-      expect(component.getIcon()).toBe('remove');
-    });
-
-    it('devuelve el icono checked por defecto cuando _value es true', () => {
-      component.writeValue(true);
-
-      expect(component.getIcon()).toBe('check');
-    });
-  });
-
   describe('registerOnTouched', () => {
     it('registra el callback de onTouched', () => {
       const onTouched = vi.fn();
       component.registerOnTouched(onTouched);
-      expect((component as any)._onTouched).toBe(onTouched);
+      // Verificamos invocación indirecta: llamar onToggle dispara onTouched
+      component.onToggle();
+      expect(onTouched).toHaveBeenCalled();
     });
   });
 
   describe('forwardRef (NG_VALUE_ACCESSOR)', () => {
     it('resuelve el forwardRef al inyectar NG_VALUE_ACCESSOR desde el injector del componente', () => {
-      const fixture = TestBed.createComponent(ToggleSwitchComponent);
+      const fixture = TestBed.createComponent(LibCheckboxComponent);
       const accessor = fixture.componentRef.injector.get(NG_VALUE_ACCESSOR);
       expect(accessor).toBeTruthy();
     });
   });
 
-  describe('ngOnChanges', () => {
-    it('actualiza _value cuando cambia checked y no está en modo CVA', () => {
-      component.ngOnChanges({ checked: new SimpleChange(false, true, false) });
-      expect(component._value()).toBe(true);
-    });
-
-    it('no actualiza _value cuando está en modo CVA', () => {
-      component.registerOnChange(() => {});
-      component.ngOnChanges({ checked: new SimpleChange(false, true, false) });
+  describe('defaults', () => {
+    it('renderiza con checked=false por defecto', () => {
       expect(component._value()).toBe(false);
     });
 
-    it('actualiza _isDisabled cuando cambia disabled', () => {
-      component.ngOnChanges({ disabled: new SimpleChange(false, true, false) });
-      expect(component._isDisabled()).toBe(true);
+    it('renderiza con size="md" por defecto', () => {
+      expect(component.size()).toBe('md');
     });
 
-    it('usa false como fallback si checked.currentValue es undefined', () => {
-      component.ngOnChanges({ checked: new SimpleChange(true, undefined, false) });
-      expect(component._value()).toBe(false);
+    it('renderiza sin label por defecto', () => {
+      expect(component.label()).toBeUndefined();
     });
 
-    it('usa false como fallback si disabled.currentValue es undefined', () => {
-      component.ngOnChanges({ disabled: new SimpleChange(true, undefined, false) });
+    it('renderiza con disabled=false por defecto', () => {
       expect(component._isDisabled()).toBe(false);
-    });
-
-    it('no actualiza _value cuando el cambio no incluye "checked"', () => {
-      component._value.set(true);
-      component.ngOnChanges({ disabled: new SimpleChange(false, true, false) });
-      expect(component._value()).toBe(true);
     });
   });
 });

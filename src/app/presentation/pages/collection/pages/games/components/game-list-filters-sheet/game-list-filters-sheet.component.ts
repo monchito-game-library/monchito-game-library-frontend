@@ -12,7 +12,7 @@ import { availablePlatformsConstant } from '@/constants/available-platforms.cons
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
+import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 
@@ -31,7 +31,7 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatSelect,
     MatOption,
     MatIcon,
-    ToggleSwitchComponent,
+    LibCheckboxComponent,
     TranslocoPipe
   ]
 })
