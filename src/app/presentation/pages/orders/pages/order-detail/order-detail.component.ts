@@ -268,6 +268,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Advances the order to 'ordering'. Lines are already saved per-step; only the status changes.
    */
   async onConfirmPacks(): Promise<void> {
+    if (!this.isOwner()) return;
     this.saving.set(true);
     try {
       await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.ORDERING });
@@ -494,6 +495,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Sets order status to 'selecting_packs' in the DB and initializes the stepper.
    */
   private async _onAdvanceToSelectingPacks(): Promise<void> {
+    if (!this.isOwner()) return;
     this.saving.set(true);
     try {
       if (this.products().length === 0) await this._loadProducts();

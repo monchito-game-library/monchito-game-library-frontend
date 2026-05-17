@@ -834,6 +834,7 @@ describe('OrderDetailComponent', () => {
 
   describe('onConfirmPacks()', () => {
     it('calls update with ordering status', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       mockOrdersUseCases.update.mockResolvedValue(undefined);
       mockOrdersUseCases.getById.mockResolvedValue(makeOrder({ status: 'ordering' }));
       await component.onConfirmPacks();
@@ -841,6 +842,7 @@ describe('OrderDetailComponent', () => {
     });
 
     it('resets packSteps and allPacksSelected', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       component.packSteps.set([
         { productId: 'p1', productName: 'P', totalNeeded: 1, suggestions: [], lineIds: [], memberBreakdown: [] }
       ]);
@@ -853,10 +855,18 @@ describe('OrderDetailComponent', () => {
     });
 
     it('shows snackbar and saving false on error', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       mockOrdersUseCases.update.mockRejectedValue(new Error('error'));
       await component.onConfirmPacks();
       expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
+    });
+
+    it('does nothing when user is not the owner', async () => {
+      mockUserContext.userId.mockReturnValue('other-user');
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
+      await component.onConfirmPacks();
+      expect(mockOrdersUseCases.update).not.toHaveBeenCalled();
     });
   });
 
