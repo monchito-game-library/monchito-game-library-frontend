@@ -4,20 +4,16 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  Injector,
   InputSignal,
   NgZone,
   Signal,
   WritableSignal,
-  effect,
   inject,
   input,
   signal,
   viewChildren
 } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs/operators';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.interface';
@@ -44,15 +40,14 @@ import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.in
 export class RetroRouterTabsComponent implements AfterViewInit {
   // ── Inyecciones privadas ──────────────────────────────────────────────────
 
-  private readonly _router: Router = inject(Router);
   private readonly _zone: NgZone = inject(NgZone);
   private readonly _host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly _injector: Injector = inject(Injector);
 
   // ── Variables privadas ────────────────────────────────────────────────────
 
   private _resizeObserver?: ResizeObserver;
+  private _mutationObserver?: MutationObserver;
 
   // ── Inputs públicos ───────────────────────────────────────────────────────
 
@@ -80,32 +75,28 @@ export class RetroRouterTabsComponent implements AfterViewInit {
   // ── Lifecycle hooks ───────────────────────────────────────────────────────
 
   ngAfterViewInit(): void {
-    // Recalcular en cada cambio de ruta
-    this._router.events
-      .pipe(
-        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe((): void => this._updateIndicator());
-
-    // Recalcular si el nav cambia de tamaño (responsive)
     this._zone.runOutsideAngular((): void => {
       const nav = this._host.nativeElement.querySelector('nav') as HTMLElement;
+
+      // Recalcula posición si cambia el tamaño del nav (responsive)
       this._resizeObserver = new ResizeObserver((): void => this._updateIndicator());
       this._resizeObserver.observe(nav);
-      this._destroyRef.onDestroy(() => this._resizeObserver?.disconnect());
+
+      // Recalcula cuando RouterLinkActive aplica/quita la clase --active en los <a>
+      this._mutationObserver = new MutationObserver((): void => this._updateIndicator());
+      this._mutationObserver.observe(nav, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class']
+      });
+
+      this._destroyRef.onDestroy((): void => {
+        this._resizeObserver?.disconnect();
+        this._mutationObserver?.disconnect();
+      });
     });
 
-    // Reaccionar cuando cambian los items (viewChildren re-emite)
-    effect(
-      () => {
-        this.linkRefs();
-        queueMicrotask((): void => this._updateIndicator());
-      },
-      { injector: this._injector }
-    );
-
-    // Primer cálculo
+    // Primer cálculo después del render inicial
     queueMicrotask((): void => this._updateIndicator());
   }
 
