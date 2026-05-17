@@ -13,7 +13,7 @@ import {
   signal,
   viewChildren
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.interface';
@@ -22,17 +22,18 @@ import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.in
  * Componente de navegación por rutas con estética de tabs Terminal Collector.
  * Genera un `<nav>` con `<a routerLink>` + `aria-current="page"` en el activo.
  * Incluye un indicador deslizante con glow neón que sigue el tab activo.
- * No necesita panels — el `<router-outlet>` es el contenido.
+ * No incluye `<router-outlet>` — el padre debe colocarlo tras este componente.
  *
  * Uso:
  * ```html
  * <retro-router-tabs [items]="navItems" ariaLabel="Navegación colección" />
+ * <router-outlet />
  * ```
  */
 @Component({
   selector: 'retro-router-tabs',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, RetroIconComponent, TranslocoPipe],
+  imports: [RouterLink, RouterLinkActive, RetroIconComponent, TranslocoPipe],
   templateUrl: './retro-router-tabs.component.html',
   styleUrl: './retro-router-tabs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

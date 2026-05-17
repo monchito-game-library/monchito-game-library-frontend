@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { RetroRouterTabsComponent } from '@/retro/retro-tabs/retro-router-tabs.component';
 import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.interface';
 
@@ -8,7 +9,7 @@ import { LibRouterTabItemInterface } from '@/interfaces/retro-router-tab-item.in
   styleUrls: ['./collection.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RetroRouterTabsComponent]
+  imports: [RetroRouterTabsComponent, RouterOutlet]
 })
 export class CollectionComponent {
   /** Items de navegación de la colección para retro-router-tabs. */
