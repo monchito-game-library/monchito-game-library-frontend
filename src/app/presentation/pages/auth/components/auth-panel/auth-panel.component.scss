@@ -186,24 +186,11 @@
     gap: 0.5rem;
   }
 
-  .auth-oauth-btn {
-    height: 44px;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-
-    .mdc-button__label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    svg {
-      width: 1.25rem;
-      height: 1.25rem;
-      flex-shrink: 0;
-    }
+  /* Tamaño del SVG proyectado en los botones OAuth */
+  app-lib-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
   }
 }
 
