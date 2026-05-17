@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatFabButton } from '@angular/material/button';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
@@ -17,7 +16,7 @@ import { OrderSummaryCardComponent } from '@/pages/orders/components/order-summa
   styleUrl: './orders-list.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibIconComponent, MatFabButton, TranslocoPipe, OrderSummaryCardComponent, LibSkeletonComponent]
+  imports: [LibIconComponent, TranslocoPipe, OrderSummaryCardComponent, LibSkeletonComponent]
 })
 export class OrdersListComponent implements OnInit {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

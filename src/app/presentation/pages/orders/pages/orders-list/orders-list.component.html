@@ -40,7 +40,11 @@
     </div>
   }
 
-  <button mat-fab class="orders-page__fab" (click)="onCreateOrder()" [attr.aria-label]="'orders.create' | transloco">
+  <button
+    type="button"
+    class="orders-page__fab"
+    (click)="onCreateOrder()"
+    [attr.aria-label]="'orders.create' | transloco">
     <app-lib-icon name="add" />
   </button>
 </div>

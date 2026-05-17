@@ -1,10 +1,15 @@
-<mat-drawer-container class="game-list__container" [hasBackdrop]="true">
-  <!-- Filters drawer (desktop) — opens from the right when openFilters() is called on non-mobile viewports -->
-  <mat-drawer #filtersDrawer mode="over" position="end" class="game-list__filters-drawer">
-    <app-game-list-filters-sheet [dataInput]="filtersData" (closed)="filtersDrawer.close()" />
-  </mat-drawer>
+<div class="game-list__container">
+  <!-- Backdrop (desktop only) — closes the filters panel when clicked -->
+  @if (filtersOpen()) {
+    <div class="game-list__drawer-backdrop" (click)="filtersOpen.set(false)"></div>
+  }
 
-  <mat-drawer-content class="game-list__content">
+  <!-- Filters side panel (desktop) — opens from the right when openFilters() is called on non-mobile viewports -->
+  <aside class="game-list__filters-drawer" [class.game-list__filters-drawer--open]="filtersOpen()">
+    <app-game-list-filters-sheet [dataInput]="filtersData" (closed)="filtersOpen.set(false)" />
+  </aside>
+
+  <div class="game-list__content">
     <!-- Header: stats, search input and add button -->
     <app-list-page-header
       [searchValue]="searchTerm()"
@@ -99,8 +104,8 @@
         [subtitle]="'gameList.empty.emptyCollectionSubtitle' | transloco"
         hint="$ add --game" />
     }
-  </mat-drawer-content>
-</mat-drawer-container>
+  </div>
+</div>
 
 <!-- FAB filters: only visible on mobile -->
 <button

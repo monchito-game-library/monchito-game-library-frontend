@@ -8,7 +8,6 @@ import {
   OnInit,
   Signal,
   signal,
-  viewChild,
   ViewChild,
   WritableSignal
 } from '@angular/core';
@@ -21,7 +20,6 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { LibBottomSheetService } from '@/services/lib-bottom-sheet/lib-bottom-sheet.service';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -57,9 +55,6 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    MatDrawer,
-    MatDrawerContainer,
-    MatDrawerContent,
     LibIconComponent,
     TranslocoPipe,
     GameCardComponent,
@@ -92,8 +87,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer')
   private _scrollContainer?: ElementRef<HTMLElement>;
 
-  /** Reference to the desktop filters drawer; toggled by openFilters() in non-mobile viewports. */
-  readonly filtersDrawer = viewChild<MatDrawer>('filtersDrawer');
+  /** Whether the desktop filters side panel is open. */
+  readonly filtersOpen: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -361,7 +356,7 @@ export class GamesComponent implements OnInit, OnDestroy {
       this._bottomSheet.open(GameListFiltersSheetComponent, this.filtersData);
       return;
     }
-    void this.filtersDrawer()?.toggle();
+    this.filtersOpen.update((open: boolean) => !open);
   }
 
   // Saves scroll position on each scroll event so it survives the browser resetting
