@@ -38,7 +38,7 @@
       <div class="nav-rail__footer">
         <div
           class="nav-rail__user"
-          [matMenuTriggerFor]="profileMenu"
+          [libMenuTriggerFor]="profileMenu"
           role="button"
           [attr.aria-label]="'nav.aria.userMenu' | transloco: { name: getDisplayName() }">
           @if (preferencesLoaded()) {
@@ -103,7 +103,7 @@
 }
 
 <!-- Profile menu shared between rail and topbar -->
-<mat-menu #profileMenu="matMenu" panelClass="profile-menu">
+<app-lib-menu #profileMenu>
   <div class="profile-menu__panel" (click)="$event.stopPropagation()">
     <div class="profile-menu__overlay">
       <!-- Identity -->
@@ -124,18 +124,16 @@
 
       <!-- Actions -->
       <div class="profile-menu__actions">
-        <button class="profile-menu__action-btn" (click)="onNavigateToSettings()">
-          <app-lib-icon name="settings" />
-          <span>{{ 'nav.settings' | transloco }}</span>
-        </button>
-        <button class="profile-menu__action-btn profile-menu__action-btn--logout" (click)="logout()">
-          <app-lib-icon name="logout" />
-          <span>{{ 'nav.logout' | transloco }}</span>
-        </button>
+        <app-lib-menu-item icon="settings" (clicked)="onNavigateToSettings()">
+          {{ 'nav.settings' | transloco }}
+        </app-lib-menu-item>
+        <app-lib-menu-item icon="logout" (clicked)="logout()">
+          {{ 'nav.logout' | transloco }}
+        </app-lib-menu-item>
       </div>
     </div>
   </div>
-</mat-menu>
+</app-lib-menu>
 
 <!-- Snackbar host — mensajes globales de la app -->
 <app-lib-snackbar-host />

@@ -16,7 +16,9 @@ import { firstValueFrom } from 'rxjs';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { LibMenuComponent } from '@/lib/lib-menu/lib-menu.component';
+import { LibMenuItemComponent } from '@/lib/lib-menu/lib-menu-item.component';
+import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directive';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -56,10 +58,10 @@ import { LibSectionHeaderComponent } from '@/lib/lib-section-header/lib-section-
     DatePipe,
     DecimalPipe,
     LibIconComponent,
-    MatMenu,
+    LibMenuComponent,
+    LibMenuItemComponent,
+    LibMenuTriggerDirective,
     LibIconButtonComponent,
-    MatMenuItem,
-    MatMenuTrigger,
     LibSpinnerComponent,
     TranslocoPipe,
     SaleFormComponent,

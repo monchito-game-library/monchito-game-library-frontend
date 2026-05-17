@@ -6,16 +6,13 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  QueryList,
   Signal,
   signal,
-  ViewChildren,
   WritableSignal
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -26,6 +23,9 @@ import { UserPreferencesInitService } from '@/services/user-preferences-init/use
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 import { LibSnackbarHostComponent } from '@/components/lib/lib-snackbar-host/lib-snackbar-host.component';
+import { LibMenuComponent } from '@/lib/lib-menu/lib-menu.component';
+import { LibMenuItemComponent } from '@/lib/lib-menu/lib-menu-item.component';
+import { LibMenuTriggerDirective } from '@/lib/lib-menu/lib-menu-trigger.directive';
 
 @Component({
   selector: 'app-root',
@@ -36,13 +36,14 @@ import { LibSnackbarHostComponent } from '@/components/lib/lib-snackbar-host/lib
   imports: [
     RouterOutlet,
     RouterLink,
-    MatMenu,
-    MatMenuTrigger,
     LibSkeletonComponent,
     LibIconComponent,
     TranslocoPipe,
     NgOptimizedImage,
-    LibSnackbarHostComponent
+    LibSnackbarHostComponent,
+    LibMenuComponent,
+    LibMenuItemComponent,
+    LibMenuTriggerDirective
   ]
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -105,9 +106,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Total number of visible bottom-nav items, used to size the pill. */
   readonly navItemCount: Signal<number> = computed((): number => this.bottomNavItems().length);
 
-  /** References to the profile menu triggers (rail + topbar). */
-  @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
-
   constructor() {
     effect(() => {
       const userId: string | null = this.userContext.userId();
@@ -138,10 +136,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navigates to the settings page and closes the profile menu.
+   * Navigates to the settings page.
    */
   onNavigateToSettings(): void {
-    this._closeMenu();
     void this._router.navigate(['/settings']);
   }
 
@@ -207,12 +204,5 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   logout(): void {
     this.userContext.clearUser();
-  }
-
-  /**
-   * Closes all active profile menu triggers.
-   */
-  private _closeMenu(): void {
-    this.menuTriggers?.forEach((trigger: MatMenuTrigger) => trigger.closeMenu());
   }
 }

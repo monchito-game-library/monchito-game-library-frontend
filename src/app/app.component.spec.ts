@@ -70,8 +70,6 @@ describe('AppComponent', () => {
   it('se crea correctamente', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-    // Acceder a menuTriggers para cubrir la propiedad @ViewChildren
-    expect(component.menuTriggers).toBeDefined();
   });
 
   describe('isAuthenticated', () => {

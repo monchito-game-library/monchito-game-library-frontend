@@ -45,37 +45,31 @@
               <app-lib-icon-button
                 icon="more_vert"
                 class="game-detail__topbar-menu-btn"
-                [matMenuTriggerFor]="contextMenu"
+                [libMenuTriggerFor]="contextMenu"
                 [ariaLabel]="(g.soldAt ? 'gameDetail.aria.soldActions' : 'gameDetail.aria.moreActions') | transloco" />
-              <mat-menu #contextMenu="matMenu">
+              <app-lib-menu #contextMenu>
                 @if (g.soldAt) {
-                  <button mat-menu-item (click)="openSaleView()">
-                    <app-lib-icon name="edit" />
-                    <span>{{ 'gameDetail.sale.editSaleBtn' | transloco }}</span>
-                  </button>
-                  <button mat-menu-item (click)="undoSell()">
-                    <app-lib-icon name="undo" />
-                    <span>{{ 'gameDetail.sale.undoSaleBtn' | transloco }}</span>
-                  </button>
+                  <app-lib-menu-item icon="edit" (clicked)="openSaleView()">
+                    {{ 'gameDetail.sale.editSaleBtn' | transloco }}
+                  </app-lib-menu-item>
+                  <app-lib-menu-item icon="undo" (clicked)="undoSell()">
+                    {{ 'gameDetail.sale.undoSaleBtn' | transloco }}
+                  </app-lib-menu-item>
                 } @else {
                   @if (g.format === 'physical') {
-                    <button mat-menu-item (click)="openLoanView()">
-                      <app-lib-icon name="handshake" />
-                      <span>
-                        {{
-                          g.activeLoanId
-                            ? ('gameDetail.loan.returnBtn' | transloco)
-                            : ('gameDetail.loan.loanBtn' | transloco)
-                        }}
-                      </span>
-                    </button>
+                    <app-lib-menu-item icon="handshake" (clicked)="openLoanView()">
+                      {{
+                        g.activeLoanId
+                          ? ('gameDetail.loan.returnBtn' | transloco)
+                          : ('gameDetail.loan.loanBtn' | transloco)
+                      }}
+                    </app-lib-menu-item>
                   }
-                  <button mat-menu-item (click)="deleteGame()" [disabled]="deleting()">
-                    <app-lib-icon name="delete" />
-                    <span>{{ 'gameCard.menu.delete' | transloco }}</span>
-                  </button>
+                  <app-lib-menu-item icon="delete" [isDisabled]="deleting()" (clicked)="deleteGame()">
+                    {{ 'gameCard.menu.delete' | transloco }}
+                  </app-lib-menu-item>
                 }
-              </mat-menu>
+              </app-lib-menu>
             </div>
           }
         </div>
