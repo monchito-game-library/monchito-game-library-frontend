@@ -11,7 +11,7 @@ import { DecimalPipe } from '@angular/common';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -30,7 +30,14 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     class: 'order-detail-page__section order-detail-page__section--lines',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, LibIconComponent, MatTooltip, TranslocoPipe, LibButtonComponent, LibIconButtonComponent]
+  imports: [
+    DecimalPipe,
+    LibIconComponent,
+    LibTooltipDirective,
+    TranslocoPipe,
+    LibButtonComponent,
+    LibIconButtonComponent
+  ]
 })
 export class OrderProductListComponent {
   private readonly _userContext: UserContextService = inject(UserContextService);

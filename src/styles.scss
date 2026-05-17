@@ -698,3 +698,23 @@ mat-progress-spinner {
     animation: none;
   }
 }
+
+// ────────────────────────── lib-tooltip ──────────────────────────
+.lib-tooltip {
+  position: fixed;
+  background: var(--bg-void);
+  color: var(--text-hi);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1100;
+  pointer-events: none;
+  width: max-content;
+  max-width: 16rem;
+
+  @media (hover: none) {
+    display: none;
+  }
+}

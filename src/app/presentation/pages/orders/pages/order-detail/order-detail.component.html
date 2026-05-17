@@ -56,7 +56,7 @@
               <app-lib-icon-button
                 icon="link"
                 [ariaLabel]="'orders.header.shareInvite' | transloco"
-                [matTooltip]="'orders.header.shareInvite' | transloco"
+                [libTooltip]="'orders.header.shareInvite' | transloco"
                 [disabled]="saving()"
                 (clicked)="onShareInvitation()" />
             }
@@ -64,25 +64,25 @@
               <app-lib-icon-button
                 icon="edit"
                 [ariaLabel]="'orders.header.edit' | transloco"
-                [matTooltip]="'orders.header.edit' | transloco"
+                [libTooltip]="'orders.header.edit' | transloco"
                 (clicked)="onEditHeader()" />
             }
             <app-lib-icon-button
               icon="delete"
               variant="danger"
               [ariaLabel]="'orders.header.delete' | transloco"
-              [matTooltip]="'orders.header.delete' | transloco"
+              [libTooltip]="'orders.header.delete' | transloco"
               (clicked)="onDeleteOrder()" />
             <app-lib-icon-button
               icon="arrow_back"
               [ariaLabel]="'orders.header.advanceStatus' | transloco"
-              [matTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
+              [libTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
               [disabled]="saving() || !prevStatus()"
               (clicked)="onRegressStatus()" />
             <app-lib-icon-button
               icon="arrow_forward"
               [ariaLabel]="'orders.header.nextStep' | transloco"
-              [matTooltip]="'orders.header.nextStep' | transloco"
+              [libTooltip]="'orders.header.nextStep' | transloco"
               [disabled]="
                 saving() ||
                 !nextStatus() ||
@@ -95,24 +95,24 @@
           <app-lib-icon-button
             icon="edit"
             [ariaLabel]="'orders.header.edit' | transloco"
-            [matTooltip]="'orders.header.edit' | transloco"
+            [libTooltip]="'orders.header.edit' | transloco"
             (clicked)="onEditHeader()" />
           <app-lib-icon-button
             icon="delete"
             variant="danger"
             [ariaLabel]="'orders.header.delete' | transloco"
-            [matTooltip]="'orders.header.delete' | transloco"
+            [libTooltip]="'orders.header.delete' | transloco"
             (clicked)="onDeleteOrder()" />
           <app-lib-icon-button
             icon="arrow_back"
             [ariaLabel]="'orders.header.regressStatus' | transloco"
-            [matTooltip]="'orders.status.' + prevStatus() | transloco"
+            [libTooltip]="'orders.status.' + prevStatus() | transloco"
             [disabled]="saving()"
             (clicked)="onRegressStatus()" />
           <app-lib-icon-button
             icon="arrow_forward"
             [ariaLabel]="'orders.header.nextStep' | transloco"
-            [matTooltip]="'orders.header.nextStep' | transloco"
+            [libTooltip]="'orders.header.nextStep' | transloco"
             [disabled]="saving() || !allPacksSelected()"
             (clicked)="onConfirmPacks()" />
         }
@@ -120,24 +120,24 @@
           <app-lib-icon-button
             icon="edit"
             [ariaLabel]="'orders.header.edit' | transloco"
-            [matTooltip]="'orders.header.edit' | transloco"
+            [libTooltip]="'orders.header.edit' | transloco"
             (clicked)="onEditHeader()" />
           <app-lib-icon-button
             icon="delete"
             variant="danger"
             [ariaLabel]="'orders.header.delete' | transloco"
-            [matTooltip]="'orders.header.delete' | transloco"
+            [libTooltip]="'orders.header.delete' | transloco"
             (clicked)="onDeleteOrder()" />
           <app-lib-icon-button
             icon="arrow_back"
             [ariaLabel]="'orders.header.regressStatus' | transloco"
-            [matTooltip]="'orders.status.' + prevStatus() | transloco"
+            [libTooltip]="'orders.status.' + prevStatus() | transloco"
             [disabled]="saving()"
             (clicked)="onRegressStatus()" />
           <app-lib-icon-button
             icon="arrow_forward"
             [ariaLabel]="'orders.header.nextStep' | transloco"
-            [matTooltip]="'orders.header.nextStep' | transloco"
+            [libTooltip]="'orders.header.nextStep' | transloco"
             [disabled]="saving()"
             (clicked)="onAdvanceStatus()" />
         }

@@ -8,7 +8,7 @@
       <label
         class="settings__avatar-wrapper"
         [class.settings__avatar-wrapper--disabled]="!preferencesLoaded()"
-        [matTooltip]="'settings.profile.changePhotoTooltip' | transloco">
+        [libTooltip]="'settings.profile.changePhotoTooltip' | transloco">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -92,7 +92,7 @@
     @if (!preferencesLoaded()) {
       <app-lib-skeleton class="settings__banner-skeleton" width="100%" height="120px" />
     } @else {
-      <label class="settings__banner-upload-label" [matTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
+      <label class="settings__banner-upload-label" [libTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"

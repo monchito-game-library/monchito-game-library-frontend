@@ -58,14 +58,14 @@
                       icon="edit"
                       size="sm"
                       [ariaLabel]="'orders.lines.edit' | transloco"
-                      [matTooltip]="'orders.lines.edit' | transloco"
+                      [libTooltip]="'orders.lines.edit' | transloco"
                       (clicked)="lineEdit.emit(line)" />
                     <app-lib-icon-button
                       icon="delete"
                       variant="danger"
                       size="sm"
                       [ariaLabel]="'orders.lines.delete' | transloco"
-                      [matTooltip]="'orders.lines.delete' | transloco"
+                      [libTooltip]="'orders.lines.delete' | transloco"
                       (clicked)="lineDelete.emit(line.id)" />
                   </td>
                 </tr>
