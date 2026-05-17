@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -20,12 +22,12 @@ import { DiscountType } from '@/types/discount-type.type';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
   ]
 })
 export class OrderCreateComponent {

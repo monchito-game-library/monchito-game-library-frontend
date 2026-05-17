@@ -1,15 +1,15 @@
 <div class="catalog-search-panel">
   <div class="catalog-search-panel__input-wrapper">
-    <mat-form-field appearance="outline" class="catalog-search-panel__field">
-      <mat-label>{{ 'gameForm.search.inputLabel' | transloco }}</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
+    <app-lib-form-field class="catalog-search-panel__field">
+      <app-lib-label>{{ 'gameForm.search.inputLabel' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="search" />
       <input
-        matInput
+        libInput
         [value]="searchQuery()"
         (input)="onSearchInput($event)"
         [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
         autofocus />
-    </mat-form-field>
+    </app-lib-form-field>
   </div>
 
   <div class="catalog-search-panel__results">

@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibHintComponent } from '@/lib/lib-form-field/lib-hint.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
@@ -35,13 +37,13 @@ import {
     LibDialogContentDirective,
     LibDialogActionsDirective,
     LibDialogCloseDirective,
-    MatFormField,
-    MatLabel,
-    MatHint,
-    MatInput,
     LibIconComponent,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibHintComponent
   ]
 })
 export class DeleteUserDialogComponent {

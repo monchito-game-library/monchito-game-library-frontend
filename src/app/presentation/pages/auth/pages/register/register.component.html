@@ -3,89 +3,88 @@
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
     <!-- Display name -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'auth.register.displayName' | transloco }}</mat-label>
-      <mat-icon matPrefix>person</mat-icon>
+    <app-lib-form-field class="full-width">
+      <app-lib-label>{{ 'auth.register.displayName' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="person" />
       <input
-        matInput
+        libInput
         type="text"
         formControlName="displayName"
         [placeholder]="'auth.register.displayNamePlaceholder' | transloco"
         autocomplete="name" />
       @if (registerForm.get('displayName')?.hasError('required') && registerForm.get('displayName')?.touched) {
-        <mat-error>{{ 'auth.register.displayNameRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.displayNameRequired' | transloco }}</app-lib-error>
       }
       @if (registerForm.get('displayName')?.hasError('minlength') && registerForm.get('displayName')?.touched) {
-        <mat-error>{{ 'auth.register.displayNameMinLength' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.displayNameMinLength' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
     <!-- Email -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'auth.register.email' | transloco }}</mat-label>
-      <mat-icon matPrefix>email</mat-icon>
+    <app-lib-form-field class="full-width">
+      <app-lib-label>{{ 'auth.register.email' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="email" />
       <input
-        matInput
+        libInput
         type="email"
         formControlName="email"
         [placeholder]="'auth.register.emailPlaceholder' | transloco"
         autocomplete="email" />
       @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
-        <mat-error>{{ 'auth.register.emailRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.emailRequired' | transloco }}</app-lib-error>
       }
       @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
-        <mat-error>{{ 'auth.register.emailInvalid' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.emailInvalid' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
     <!-- Password -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'auth.register.password' | transloco }}</mat-label>
-      <mat-icon matPrefix>lock</mat-icon>
+    <app-lib-form-field class="full-width">
+      <app-lib-label>{{ 'auth.register.password' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="lock" />
       <input
-        matInput
+        libInput
         [type]="hidePassword() ? 'password' : 'text'"
         formControlName="password"
         [placeholder]="'auth.register.passwordPlaceholder' | transloco"
         autocomplete="new-password" />
       <app-lib-icon-button
-        matSuffix
+        libSuffix
         size="sm"
         [icon]="hidePassword() ? 'visibility' : 'visibility_off'"
         [ariaLabel]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
         (clicked)="togglePasswordVisibility()" />
       @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
-        <mat-error>{{ 'auth.register.passwordRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.passwordRequired' | transloco }}</app-lib-error>
       }
       @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
-        <mat-error>{{ 'auth.register.passwordMinLength' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.passwordMinLength' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
     <!-- Confirm password -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>{{ 'auth.register.confirmPassword' | transloco }}</mat-label>
-      <mat-icon matPrefix>lock</mat-icon>
+    <app-lib-form-field class="full-width">
+      <app-lib-label>{{ 'auth.register.confirmPassword' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="lock" />
       <input
-        matInput
+        libInput
         [type]="hideConfirmPassword() ? 'password' : 'text'"
         formControlName="confirmPassword"
-        [errorStateMatcher]="passwordMismatchMatcher"
         [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
         autocomplete="new-password" />
       <app-lib-icon-button
-        matSuffix
+        libSuffix
         size="sm"
         [icon]="hideConfirmPassword() ? 'visibility' : 'visibility_off'"
         [ariaLabel]="(hideConfirmPassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
         (clicked)="toggleConfirmPasswordVisibility()" />
       @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
-        <mat-error>{{ 'auth.register.confirmPasswordRequired' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.confirmPasswordRequired' | transloco }}</app-lib-error>
       }
       @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-        <mat-error>{{ 'auth.register.passwordMismatch' | transloco }}</mat-error>
+        <app-lib-error>{{ 'auth.register.passwordMismatch' | transloco }}</app-lib-error>
       }
-    </mat-form-field>
+    </app-lib-form-field>
 
     <!-- Error -->
     @if (errorMessage()) {

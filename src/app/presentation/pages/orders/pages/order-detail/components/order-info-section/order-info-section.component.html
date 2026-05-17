@@ -138,36 +138,27 @@
           <div class="order-detail-page__form-columns">
             <!-- Left column -->
             <div class="order-detail-page__form-col">
-              <mat-form-field appearance="outline" class="order-detail-page__form-field">
-                <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
-                <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
-              </mat-form-field>
+              <app-lib-form-field class="order-detail-page__form-field">
+                <app-lib-label>{{ 'orders.header.title' | transloco }}</app-lib-label>
+                <input libInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+              </app-lib-form-field>
 
               <div class="order-detail-page__form-costs-row">
-                <mat-form-field
-                  appearance="outline"
-                  subscriptSizing="dynamic"
-                  class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <mat-label>{{ 'orders.header.shippingCost' | transloco }}</mat-label>
-                  <input matInput type="number" formControlName="shippingCost" min="0" step="0.01" />
-                </mat-form-field>
+                <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <app-lib-label>{{ 'orders.header.shippingCost' | transloco }}</app-lib-label>
+                  <input libInput type="number" formControlName="shippingCost" min="0" step="0.01" />
+                </app-lib-form-field>
 
-                <mat-form-field
-                  appearance="outline"
-                  subscriptSizing="dynamic"
-                  class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <mat-label>{{ 'orders.header.paypalFee' | transloco }}</mat-label>
-                  <input matInput type="number" formControlName="paypalFee" min="0" step="0.01" />
-                </mat-form-field>
+                <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                  <app-lib-label>{{ 'orders.header.paypalFee' | transloco }}</app-lib-label>
+                  <input libInput type="number" formControlName="paypalFee" min="0" step="0.01" />
+                </app-lib-form-field>
 
                 <div class="order-detail-page__discount-row">
-                  <mat-form-field
-                    appearance="outline"
-                    subscriptSizing="dynamic"
-                    class="order-detail-page__form-field order-detail-page__form-field--grow">
-                    <mat-label>{{ 'orders.header.discountAmount' | transloco }}</mat-label>
-                    <input matInput type="number" formControlName="discountAmount" min="0" step="0.01" />
-                  </mat-form-field>
+                  <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--grow">
+                    <app-lib-label>{{ 'orders.header.discountAmount' | transloco }}</app-lib-label>
+                    <input libInput type="number" formControlName="discountAmount" min="0" step="0.01" />
+                  </app-lib-form-field>
                   <fieldset
                     class="lib-radio-group"
                     role="radiogroup"
@@ -187,16 +178,14 @@
 
             <!-- Right column -->
             <div class="order-detail-page__form-col">
-              <mat-form-field
-                appearance="outline"
-                class="order-detail-page__form-field order-detail-page__form-field--full-height">
-                <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
+              <app-lib-form-field class="order-detail-page__form-field order-detail-page__form-field--full-height">
+                <app-lib-label>{{ 'orders.header.notes' | transloco }}</app-lib-label>
                 <textarea
-                  matInput
+                  libInput
                   formControlName="notes"
                   [placeholder]="'orders.header.notesPlaceholder' | transloco"
                   rows="5"></textarea>
-              </mat-form-field>
+              </app-lib-form-field>
             </div>
           </div>
         </form>

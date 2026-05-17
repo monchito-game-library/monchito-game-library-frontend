@@ -3,11 +3,14 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -23,16 +26,17 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
-    MatError,
-    MatSuffix,
-    MatInput,
     MatSelect,
     MatOption,
-    MatIcon,
+    LibIconComponent,
     LibIconButtonComponent,
     LibTooltipDirective,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
   ],
   templateUrl: './protector-edit-panel.component.html',
   styleUrl: './protector-edit-panel.component.scss'

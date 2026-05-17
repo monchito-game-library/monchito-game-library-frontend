@@ -20,11 +20,11 @@
   </p>
 
   <form [formGroup]="form" class="delete-user-dialog__form" (ngSubmit)="onConfirm()">
-    <mat-form-field appearance="outline" class="delete-user-dialog__field">
-      <mat-label>{{ 'management.users.delete.field.label' | transloco }}</mat-label>
-      <input matInput type="email" autocomplete="off" formControlName="emailConfirmation" [placeholder]="data.email" />
-      <mat-hint>{{ 'management.users.delete.field.hint' | transloco }}</mat-hint>
-    </mat-form-field>
+    <app-lib-form-field class="delete-user-dialog__field">
+      <app-lib-label>{{ 'management.users.delete.field.label' | transloco }}</app-lib-label>
+      <input libInput type="email" autocomplete="off" formControlName="emailConfirmation" [placeholder]="data.email" />
+      <app-lib-hint>{{ 'management.users.delete.field.hint' | transloco }}</app-lib-hint>
+    </app-lib-form-field>
   </form>
 </div>
 

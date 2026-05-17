@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
@@ -12,7 +14,15 @@ import { HardwareEditionFormResult } from '@/interfaces/management/hardware-edit
   selector: 'app-hardware-edition-edit-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, MatFormField, MatLabel, MatError, MatInput, TranslocoPipe, LibButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    TranslocoPipe,
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
+  ],
   templateUrl: './hardware-edition-edit-panel.component.html',
   styleUrl: './hardware-edition-edit-panel.component.scss'
 })

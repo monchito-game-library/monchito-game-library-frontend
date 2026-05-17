@@ -11,22 +11,22 @@
 
   <div class="order-create-page__card">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="order-create-page__form">
-      <mat-form-field appearance="outline" class="order-create-page__field">
-        <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
-        <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
+      <app-lib-form-field class="order-create-page__field">
+        <app-lib-label [required]="true">{{ 'orders.header.title' | transloco }}</app-lib-label>
+        <input libInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
         @if (form.controls.title.hasError('required')) {
-          <mat-error>{{ 'orders.header.titleRequired' | transloco }}</mat-error>
+          <app-lib-error>{{ 'orders.header.titleRequired' | transloco }}</app-lib-error>
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
-      <mat-form-field appearance="outline" class="order-create-page__field">
-        <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
+      <app-lib-form-field class="order-create-page__field">
+        <app-lib-label>{{ 'orders.header.notes' | transloco }}</app-lib-label>
         <textarea
-          matInput
+          libInput
           formControlName="notes"
           [placeholder]="'orders.header.notesPlaceholder' | transloco"
           rows="4"></textarea>
-      </mat-form-field>
+      </app-lib-form-field>
 
       <div class="order-create-page__actions">
         <app-lib-button [label]="'orders.header.cancel' | transloco" variant="ghost" routerLink="/orders" />

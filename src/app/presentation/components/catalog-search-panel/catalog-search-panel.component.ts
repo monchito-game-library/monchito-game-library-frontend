@@ -14,10 +14,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
@@ -33,13 +34,12 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     DatePipe,
     DecimalPipe,
     NgOptimizedImage,
-    MatFormField,
-    MatLabel,
-    MatPrefix,
-    MatInput,
     LibIconComponent,
     LibSpinnerComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent
   ]
 })
 export class CatalogSearchPanelComponent implements OnInit {

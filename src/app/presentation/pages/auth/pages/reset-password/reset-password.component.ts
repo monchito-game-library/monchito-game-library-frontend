@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -21,17 +23,15 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
     LibIconButtonComponent,
     LibIconComponent,
-    MatError,
-    MatPrefix,
-    MatSuffix,
     TranslocoPipe,
     AuthPanelComponent,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
   ]
 })
 /** Reset-password page component. Validates the recovery session and updates the user's password. */

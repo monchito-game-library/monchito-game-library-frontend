@@ -10,13 +10,13 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.stores.nameLabel' | transloco }}</mat-label>
-        <input matInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
+      <app-lib-form-field>
+        <app-lib-label [required]="true">{{ 'management.stores.nameLabel' | transloco }}</app-lib-label>
+        <input libInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
         @if (form.controls.name.hasError('required')) {
-          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>{{ 'management.stores.formatHintLabel' | transloco }}</mat-label>

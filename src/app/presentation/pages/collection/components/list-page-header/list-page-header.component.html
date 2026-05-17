@@ -5,15 +5,15 @@
 
 <!-- Search and actions -->
 <div class="list-page-header__filters">
-  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-page-header__search">
-    <mat-label>{{ searchPlaceholder() | transloco }}</mat-label>
-    <span matTextPrefix class="list-page-header__search-prefix">$ </span>
+  <app-lib-form-field class="list-page-header__search" [disabled]="disabled()">
+    <app-lib-label>{{ searchPlaceholder() | transloco }}</app-lib-label>
+    <span libPrefix class="list-page-header__search-prefix">$ </span>
     <input
-      matInput
+      libInput
       [value]="searchValue()"
       [disabled]="disabled()"
       (input)="searchChange.emit($any($event.target).value)" />
-  </mat-form-field>
+  </app-lib-form-field>
 
   @if (showViewModeBtn()) {
     <app-lib-icon-button

@@ -10,13 +10,13 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.nameLabel' | transloco }}</mat-label>
-        <input matInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
+      <app-lib-form-field>
+        <app-lib-label [required]="true">{{ 'management.products.nameLabel' | transloco }}</app-lib-label>
+        <input libInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
         @if (form.controls.name.hasError('required')) {
-          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>{{ 'management.products.categoryLabel' | transloco }}</mat-label>
@@ -27,14 +27,14 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.notesLabel' | transloco }}</mat-label>
+      <app-lib-form-field>
+        <app-lib-label>{{ 'management.products.notesLabel' | transloco }}</app-lib-label>
         <textarea
-          matInput
+          libInput
           formControlName="notes"
           rows="1"
           [placeholder]="'management.products.notesPlaceholder' | transloco"></textarea>
-      </mat-form-field>
+      </app-lib-form-field>
     </div>
 
     <div class="packs-section">
@@ -55,27 +55,27 @@
       <div class="packs-list">
         @for (packGroup of packsArray.controls; track $index) {
           <div class="pack-row" [formGroup]="asFormGroup(packGroup)">
-            <mat-form-field appearance="outline" class="pack-row__qty">
-              <mat-label>{{ 'management.products.packQty' | transloco }}</mat-label>
-              <input matInput formControlName="quantity" type="number" min="1" step="1" />
+            <app-lib-form-field class="pack-row__qty">
+              <app-lib-label [required]="true">{{ 'management.products.packQty' | transloco }}</app-lib-label>
+              <input libInput formControlName="quantity" type="number" min="1" step="1" />
               @if (asFormGroup(packGroup).controls['quantity'].hasError('required')) {
-                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+                <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
               }
-            </mat-form-field>
+            </app-lib-form-field>
 
-            <mat-form-field appearance="outline" class="pack-row__price">
-              <mat-label>{{ 'management.products.packPrice' | transloco }}</mat-label>
-              <input matInput formControlName="price" type="number" min="0.01" step="0.01" />
-              <mat-icon matSuffix>euro</mat-icon>
+            <app-lib-form-field class="pack-row__price">
+              <app-lib-label [required]="true">{{ 'management.products.packPrice' | transloco }}</app-lib-label>
+              <input libInput formControlName="price" type="number" min="0.01" step="0.01" />
+              <app-lib-icon libSuffix name="euro" />
               @if (asFormGroup(packGroup).controls['price'].hasError('required')) {
-                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+                <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
               }
-            </mat-form-field>
+            </app-lib-form-field>
 
-            <mat-form-field appearance="outline" class="pack-row__url">
-              <mat-label>{{ 'management.products.packUrl' | transloco }}</mat-label>
-              <input matInput formControlName="url" type="url" placeholder="https://..." />
-            </mat-form-field>
+            <app-lib-form-field class="pack-row__url">
+              <app-lib-label>{{ 'management.products.packUrl' | transloco }}</app-lib-label>
+              <input libInput formControlName="url" type="url" placeholder="https://..." />
+            </app-lib-form-field>
 
             <app-lib-icon-button
               icon="delete"

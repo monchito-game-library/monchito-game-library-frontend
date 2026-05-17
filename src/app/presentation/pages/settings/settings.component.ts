@@ -17,9 +17,10 @@ import { NgOptimizedImage } from '@angular/common';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
 import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
-import { MatInput } from '@angular/material/input';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
 import { LibSpinnerComponent } from '@/lib/lib-spinner/lib-spinner.component';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { LibTooltipDirective } from '@/shared/lib-tooltip/lib-tooltip.directive';
@@ -50,17 +51,16 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   imports: [
     NgOptimizedImage,
     LibCardComponent,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatPrefix,
     LibIconComponent,
     LibSpinnerComponent,
     LibTooltipDirective,
     LibCheckboxComponent,
     LibSkeletonComponent,
     TranslocoPipe,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {

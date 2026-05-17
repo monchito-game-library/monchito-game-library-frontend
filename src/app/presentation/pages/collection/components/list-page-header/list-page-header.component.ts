@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
@@ -12,7 +13,14 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
   styleUrl: './list-page-header.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LibButtonComponent, LibIconButtonComponent, MatFormField, MatLabel, MatPrefix, MatInput, TranslocoPipe]
+  imports: [
+    LibButtonComponent,
+    LibIconButtonComponent,
+    TranslocoPipe,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent
+  ]
 })
 export class ListPageHeaderComponent {
   /** Transloco key for the search field label. */

@@ -12,13 +12,13 @@
     <!-- Model fields -->
     <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionModel' | transloco }}</div>
     <div class="edit-panel__fields edit-panel__fields--model">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.hardware.models.nameLabel' | transloco }}</mat-label>
-        <input matInput formControlName="name" />
+      <app-lib-form-field>
+        <app-lib-label [required]="true">{{ 'management.hardware.models.nameLabel' | transloco }}</app-lib-label>
+        <input libInput formControlName="name" />
         @if (form.controls.name.hasError('required')) {
-          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
+          <app-lib-error>{{ 'gameForm.errors.required' | transloco }}</app-lib-error>
         }
-      </mat-form-field>
+      </app-lib-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>{{ 'management.hardware.models.typeLabel' | transloco }}</mat-label>
@@ -32,25 +32,25 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.hardware.models.generationLabel' | transloco }}</mat-label>
-        <input matInput type="number" formControlName="generation" min="1" max="99" step="1" />
-      </mat-form-field>
+      <app-lib-form-field>
+        <app-lib-label>{{ 'management.hardware.models.generationLabel' | transloco }}</app-lib-label>
+        <input libInput type="number" formControlName="generation" min="1" max="99" step="1" />
+      </app-lib-form-field>
     </div>
 
     <!-- Specs fields (consoles only) -->
     @if (isConsole()) {
       <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionSpecs' | transloco }}</div>
       <div class="edit-panel__fields edit-panel__fields--specs">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.launchYearLabel' | transloco }}</mat-label>
-          <input matInput type="number" formControlName="launchYear" min="1970" max="2099" step="1" />
-        </mat-form-field>
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.launchYearLabel' | transloco }}</app-lib-label>
+          <input libInput type="number" formControlName="launchYear" min="1970" max="2099" step="1" />
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.discontinuedYearLabel' | transloco }}</mat-label>
-          <input matInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
-        </mat-form-field>
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.discontinuedYearLabel' | transloco }}</app-lib-label>
+          <input libInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
+        </app-lib-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</mat-label>
@@ -88,15 +88,15 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</mat-label>
-          <input matInput formControlName="videoResolution" placeholder="4K, 1080p, 480×272…" />
-        </mat-form-field>
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</app-lib-label>
+          <input libInput formControlName="videoResolution" placeholder="4K, 1080p, 480×272…" />
+        </app-lib-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'management.hardware.models.unitsSoldLabel' | transloco }}</mat-label>
-          <input matInput type="number" formControlName="unitsSoldMillion" min="0" step="0.01" />
-        </mat-form-field>
+        <app-lib-form-field>
+          <app-lib-label>{{ 'management.hardware.models.unitsSoldLabel' | transloco }}</app-lib-label>
+          <input libInput type="number" formControlName="unitsSoldMillion" min="0" step="0.01" />
+        </app-lib-form-field>
       </div>
     }
 

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -20,15 +22,14 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
     LibIconComponent,
-    MatError,
-    MatPrefix,
     TranslocoPipe,
     AuthPanelComponent,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
   ]
 })
 /** Forgot-password page component. Sends a password-reset email and redirects to login on success. */

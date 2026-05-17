@@ -17,10 +17,13 @@ import { firstValueFrom, map } from 'rxjs';
 import { LibDialogService } from '@/services/lib-dialog/lib-dialog.service';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { LibIconComponent } from '@/components/lib/lib-icon/lib-icon.component';
+import { LibFormFieldComponent } from '@/lib/lib-form-field/lib-form-field.component';
+import { LibInputDirective } from '@/lib/lib-form-field/lib-input.directive';
+import { LibLabelComponent } from '@/lib/lib-form-field/lib-label.component';
+import { LibErrorComponent } from '@/lib/lib-form-field/lib-error.component';
 import { LibSnackbarService } from '@/services/lib-snackbar/lib-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -54,7 +57,6 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     MatFormField,
     MatLabel,
     MatError,
-    MatInput,
     MatSelect,
     MatOption,
     LibIconComponent,
@@ -63,7 +65,11 @@ import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
     CatalogSearchPanelComponent,
     LibSkeletonComponent,
     LibEmptyStateComponent,
-    LibButtonComponent
+    LibButtonComponent,
+    LibFormFieldComponent,
+    LibInputDirective,
+    LibLabelComponent,
+    LibErrorComponent
   ]
 })
 export class WishlistComponent implements OnInit {

@@ -121,11 +121,11 @@
     }
 
     <!-- Search -->
-    <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
-      <mat-icon matPrefix>search</mat-icon>
-      <mat-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</mat-label>
-      <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
-    </mat-form-field>
+    <app-lib-form-field class="settings__banner-search">
+      <app-lib-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</app-lib-label>
+      <app-lib-icon libPrefix name="search" />
+      <input libInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
+    </app-lib-form-field>
 
     <!-- Grid: popular or search results -->
     <div class="settings__banner-results">

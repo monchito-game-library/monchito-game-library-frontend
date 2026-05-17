@@ -181,29 +181,29 @@
         }
 
         <!-- Desired price (required) -->
-        <mat-form-field appearance="outline" class="wishlist-view__field">
-          <mat-label>{{ 'wishlist.fields.desiredPrice' | transloco }}</mat-label>
+        <app-lib-form-field class="wishlist-view__field">
+          <app-lib-label [required]="true">{{ 'wishlist.fields.desiredPrice' | transloco }}</app-lib-label>
           <input
-            matInput
+            libInput
             type="number"
             min="0"
             step="0.01"
             formControlName="desiredPrice"
             [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
           @if (mobileForm.controls.desiredPrice.hasError('required')) {
-            <mat-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</mat-error>
+            <app-lib-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</app-lib-error>
           }
-        </mat-form-field>
+        </app-lib-form-field>
 
         <!-- Notes (optional) -->
-        <mat-form-field appearance="outline" class="wishlist-view__field">
-          <mat-label>{{ 'wishlist.fields.notes' | transloco }}</mat-label>
+        <app-lib-form-field class="wishlist-view__field">
+          <app-lib-label>{{ 'wishlist.fields.notes' | transloco }}</app-lib-label>
           <textarea
-            matInput
+            libInput
             formControlName="notes"
             rows="3"
             [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-        </mat-form-field>
+        </app-lib-form-field>
       </form>
 
       <div class="wishlist-view__actions">
