@@ -952,8 +952,7 @@ Gestiona el ciclo de vida del CDK Overlay (crear portal, posicionar, destruir) y
 Los siguientes patrones quedan deliberadamente **fuera** del scope de `lib/`:
 
 - **Componentes específicos de una page** (e.g. `app-game-card`, `app-order-summary-card`, `app-rating-stars`). Estos consumen los `lib-*` pero viven en `pages/<route>/components/`.
-- **Dialogs concretos** (`app-confirm-dialog`, `app-wishlist-item-dialog`). Material Dialog sigue siendo el motor.
-- **Form-field engine**: los `<mat-form-field>` + `<input matInput>` + `<mat-select>` + `<mat-autocomplete>` + `<mat-datepicker>` se mantienen porque son el motor de Reactive Forms con validators. El reskin es vía variables `--mat-sys-*` globales en `styles.scss`.
+- **Dialogs concretos** (`app-confirm-dialog`, `app-wishlist-item-dialog`). Son componentes de aplicación que se abren con `LibDialogService` pero contienen lógica/copy específicos de un caso de uso.
 
 Si te encuentras escribiendo un componente que crees que debería ser `lib-*`, antes pregunta:
 
