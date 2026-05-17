@@ -183,9 +183,6 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Fichero | Tests | Estado |
 |---|---|---|
-| `components/ad-hoc/badge-chip/badge-chip.component.spec.ts` | 7 | ✅ Cubierto |
-| `components/ad-hoc/skeleton/skeleton.component.spec.ts` | 4 | ✅ Cubierto |
-| `components/ad-hoc/toggle-switch/toggle-switch.component.spec.ts` | 21 | ✅ Cubierto |
 | `components/catalog-search-panel/catalog-search-panel.component.spec.ts` | 10 | ✅ Cubierto |
 | `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
 
@@ -282,8 +279,6 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts` | 23 | ✅ Cubierto |
 
 **Qué se cubre** (componentes):
-- `ToggleSwitchComponent`: lógica CVA (`writeValue`, `registerOnChange`, `setDisabledState`), `onToggle`, output `changed`, `getIcon`.
-- `BadgeChipComponent` / `SkeletonComponent`: inputs y valores por defecto; `BadgeChipComponent` cubre además el binding de la variable CSS `--chip-bg` vía `bgColor`.
 - `CatalogSearchPanelComponent`: valores iniciales, `onSearchInput`, `onSelectGame`.
 - `ConfirmDialogComponent`: existencia y datos inyectados.
 - `LoginComponent` / `RegisterComponent` / `ForgotPasswordComponent` / `ResetPasswordComponent`: validaciones de formulario, estados de `loading`, emisión de errores, integración con use cases. Para `RegisterComponent` y `ResetPasswordComponent` se cubren además las ramas early-return del validador privado `_passwordMatchValidator` invocándolo directamente vía `(component as any)._passwordMatchValidator(group)` con grupos sintéticos que carecen de uno de los controles.

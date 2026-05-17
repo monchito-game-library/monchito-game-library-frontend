@@ -39,14 +39,12 @@
           }
         </mat-autocomplete>
         @if (form().get('brandId')?.value) {
-          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
-          <button
+          <app-lib-icon-button
             matSuffix
-            mat-icon-button
-            type="button"
-            (click)="form().get('brandId')?.setValue(null); brandChange.emit(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+            size="sm"
+            icon="close"
+            [ariaLabel]="'common.clear' | transloco"
+            (clicked)="form().get('brandId')?.setValue(null); brandChange.emit(null)" />
         }
       </mat-form-field>
 
@@ -62,14 +60,12 @@
           }
         </mat-autocomplete>
         @if (form().get('modelId')?.value) {
-          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
-          <button
+          <app-lib-icon-button
             matSuffix
-            mat-icon-button
-            type="button"
-            (click)="form().get('modelId')?.setValue(null); modelChange.emit(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+            size="sm"
+            icon="close"
+            [ariaLabel]="'common.clear' | transloco"
+            (clicked)="form().get('modelId')?.setValue(null); modelChange.emit(null)" />
         }
       </mat-form-field>
 
@@ -107,10 +103,12 @@
           }
         </mat-autocomplete>
         @if (form().get('store')?.value) {
-          <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
-          <button matSuffix mat-icon-button type="button" (click)="form().get('store')?.setValue(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+          <app-lib-icon-button
+            matSuffix
+            size="sm"
+            icon="close"
+            [ariaLabel]="'common.clear' | transloco"
+            (clicked)="form().get('store')?.setValue(null)" />
         }
       </mat-form-field>
 

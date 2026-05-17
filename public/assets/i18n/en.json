@@ -58,7 +58,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "back": "Back",
-    "loading": "Loading"
+    "loading": "Loading",
+    "clear": "Clear"
   },
   "cropDialog": {
     "hint": "Drag to reposition · Pinch or use the scroll wheel to zoom"

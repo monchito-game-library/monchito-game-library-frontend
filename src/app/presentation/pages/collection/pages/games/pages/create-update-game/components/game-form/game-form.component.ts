@@ -20,7 +20,6 @@ import { MatSelect } from '@angular/material/select';
 import { LibCheckboxComponent } from '@/components/lib/lib-checkbox/lib-checkbox.component';
 import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton.component';
 import { MatOption } from '@angular/material/core';
-import { MatIconButton } from '@angular/material/button'; // Mantener: matSuffix en form-field (Commit 14)
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
 import { LibIconButtonComponent } from '@/lib/lib-icon-button/lib-icon-button.component';
 import { MatIcon } from '@angular/material/icon';
@@ -80,7 +79,6 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     MatOption,
     LibCheckboxComponent,
     MatIcon,
-    MatIconButton, // matSuffix en form-field (Commit 14)
     LibSpinnerComponent,
     LibIconButtonComponent,
     TranslocoPipe,

@@ -30,15 +30,12 @@
         formControlName="password"
         [placeholder]="'auth.login.passwordPlaceholder' | transloco"
         autocomplete="current-password" />
-      <!-- HACK: matSuffix obliga a mantener mat-icon-button (Fase 7 — Commit 14) -->
-      <button
-        mat-icon-button
+      <app-lib-icon-button
         matSuffix
-        type="button"
-        (click)="togglePasswordVisibility()"
-        [attr.aria-label]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco">
-        <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
-      </button>
+        size="sm"
+        [icon]="hidePassword() ? 'visibility' : 'visibility_off'"
+        [ariaLabel]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
+        (clicked)="togglePasswordVisibility()" />
       @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
         <mat-error>{{ 'auth.login.passwordRequired' | transloco }}</mat-error>
       }
