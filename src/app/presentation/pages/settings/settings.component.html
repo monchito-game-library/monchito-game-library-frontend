@@ -2,225 +2,209 @@
   <h1 class="settings__title">{{ 'settings.title' | transloco }}</h1>
 
   <!-- Section: Profile -->
-  <mat-card class="settings__card">
-    <mat-card-header>
-      <mat-card-title>{{ 'settings.profile.title' | transloco }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="settings__avatar-section">
-        <label
-          class="settings__avatar-wrapper"
-          [class.settings__avatar-wrapper--disabled]="!preferencesLoaded()"
-          [matTooltip]="'settings.profile.changePhotoTooltip' | transloco">
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            class="settings__avatar-input"
-            [disabled]="!preferencesLoaded()"
-            (change)="onAvatarFileSelected($event)" />
-          @if (uploadingAvatar()) {
-            <app-lib-spinner size="lg" />
-          } @else if (!preferencesLoaded()) {
-            <app-lib-skeleton width="80px" height="80px" />
+  <app-lib-card class="settings__card">
+    <h2 class="settings__card-title">{{ 'settings.profile.title' | transloco }}</h2>
+    <div class="settings__avatar-section">
+      <label
+        class="settings__avatar-wrapper"
+        [class.settings__avatar-wrapper--disabled]="!preferencesLoaded()"
+        [matTooltip]="'settings.profile.changePhotoTooltip' | transloco">
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          class="settings__avatar-input"
+          [disabled]="!preferencesLoaded()"
+          (change)="onAvatarFileSelected($event)" />
+        @if (uploadingAvatar()) {
+          <app-lib-spinner size="lg" />
+        } @else if (!preferencesLoaded()) {
+          <app-lib-skeleton width="80px" height="80px" />
+        } @else {
+          <img
+            class="settings__avatar settings__avatar--loaded"
+            [ngSrc]="getAvatarUrl()"
+            [alt]="getDisplayName()"
+            width="80"
+            height="80"
+            priority />
+          <div class="settings__avatar-overlay">
+            <mat-icon>photo_camera</mat-icon>
+          </div>
+        }
+      </label>
+      <div class="settings__identity">
+        @if (preferencesLoaded()) {
+          @if (!editingName()) {
+            <div class="settings__name-row">
+              <span class="settings__name">{{ getDisplayName() }}</span>
+              <button
+                class="settings__name-edit-btn"
+                (click)="onEditName()"
+                [attr.aria-label]="'settings.profile.editNameAriaLabel' | transloco">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
           } @else {
-            <img
-              class="settings__avatar settings__avatar--loaded"
-              [ngSrc]="getAvatarUrl()"
-              [alt]="getDisplayName()"
-              width="80"
-              height="80"
-              priority />
-            <div class="settings__avatar-overlay">
-              <mat-icon>photo_camera</mat-icon>
+            <div class="settings__name-row settings__name-row--editing">
+              <input
+                #nameInput
+                class="settings__name-input"
+                [value]="nameInputValue()"
+                (input)="nameInputValue.set($any($event.target).value)"
+                (keydown.enter)="onSaveName()"
+                (keydown.escape)="onCancelEditName()"
+                maxlength="30"
+                [placeholder]="'settings.profile.namePlaceholder' | transloco" />
+              @if (savingName()) {
+                <app-lib-spinner size="inline" />
+              } @else {
+                <button
+                  class="settings__name-action-btn settings__name-action-btn--confirm"
+                  (click)="onSaveName()"
+                  [attr.aria-label]="'settings.profile.confirmAriaLabel' | transloco">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button
+                  class="settings__name-action-btn settings__name-action-btn--cancel"
+                  (click)="onCancelEditName()"
+                  [attr.aria-label]="'settings.profile.cancelAriaLabel' | transloco">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
             </div>
           }
-        </label>
-        <div class="settings__identity">
-          @if (preferencesLoaded()) {
-            @if (!editingName()) {
-              <div class="settings__name-row">
-                <span class="settings__name">{{ getDisplayName() }}</span>
-                <button
-                  class="settings__name-edit-btn"
-                  (click)="onEditName()"
-                  [attr.aria-label]="'settings.profile.editNameAriaLabel' | transloco">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </div>
-            } @else {
-              <div class="settings__name-row settings__name-row--editing">
-                <input
-                  #nameInput
-                  class="settings__name-input"
-                  [value]="nameInputValue()"
-                  (input)="nameInputValue.set($any($event.target).value)"
-                  (keydown.enter)="onSaveName()"
-                  (keydown.escape)="onCancelEditName()"
-                  maxlength="30"
-                  [placeholder]="'settings.profile.namePlaceholder' | transloco" />
-                @if (savingName()) {
-                  <app-lib-spinner size="inline" />
-                } @else {
-                  <button
-                    class="settings__name-action-btn settings__name-action-btn--confirm"
-                    (click)="onSaveName()"
-                    [attr.aria-label]="'settings.profile.confirmAriaLabel' | transloco">
-                    <mat-icon>check</mat-icon>
-                  </button>
-                  <button
-                    class="settings__name-action-btn settings__name-action-btn--cancel"
-                    (click)="onCancelEditName()"
-                    [attr.aria-label]="'settings.profile.cancelAriaLabel' | transloco">
-                    <mat-icon>close</mat-icon>
-                  </button>
-                }
-              </div>
-            }
-            <span class="settings__email">{{ getUserEmail() }}</span>
-          } @else {
-            <app-lib-skeleton width="120px" height="1rem" />
-            <app-lib-skeleton width="160px" height="0.8rem" />
-          }
-          <span class="settings__avatar-hint">{{ 'settings.profile.tapToChange' | transloco }}</span>
-        </div>
+          <span class="settings__email">{{ getUserEmail() }}</span>
+        } @else {
+          <app-lib-skeleton width="120px" height="1rem" />
+          <app-lib-skeleton width="160px" height="0.8rem" />
+        }
+        <span class="settings__avatar-hint">{{ 'settings.profile.tapToChange' | transloco }}</span>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </app-lib-card>
 
   <!-- Section: Appearance -->
-  <mat-card class="settings__card">
-    <mat-card-header>
-      <mat-card-title>{{ 'settings.appearance.title' | transloco }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p class="settings__section-subtitle">{{ 'settings.appearance.bannerPanel' | transloco }}</p>
+  <app-lib-card class="settings__card">
+    <h2 class="settings__card-title">{{ 'settings.appearance.title' | transloco }}</h2>
+    <p class="settings__section-subtitle">{{ 'settings.appearance.bannerPanel' | transloco }}</p>
 
-      <!-- Clickable preview / placeholder for custom image upload -->
-      @if (!preferencesLoaded()) {
-        <app-lib-skeleton class="settings__banner-skeleton" width="100%" height="120px" />
-      } @else {
-        <label class="settings__banner-upload-label" [matTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            class="settings__banner-input"
-            [disabled]="uploadingBanner()"
-            (change)="onBannerFileSelected($event)" />
-          @if (uploadingBanner()) {
-            <div class="settings__banner-preview settings__banner-upload-loading">
-              <app-lib-spinner size="sm" />
-            </div>
-          } @else if (bannerImageUrl()) {
-            <div
-              class="settings__banner-preview settings__banner-preview--loaded"
-              [style.background-image]="'url(' + bannerImageUrl() + ')'">
-              <div class="settings__banner-overlay">
-                <mat-icon>photo_camera</mat-icon>
-              </div>
-            </div>
-          } @else {
-            <div class="settings__banner-placeholder">
-              <mat-icon>add_photo_alternate</mat-icon>
-              <span>{{ 'settings.appearance.uploadOwnHint' | transloco }}</span>
-            </div>
-          }
-        </label>
-      }
-
-      <!-- Search -->
-      <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
-        <mat-icon matPrefix>search</mat-icon>
-        <mat-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</mat-label>
-        <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
-      </mat-form-field>
-
-      <!-- Grid: popular or search results -->
-      <div class="settings__banner-results">
-        @if (rawgSearchLoading()) {
-          <div class="settings__banner-grid">
-            @for (_ of skeletonThumbs; track $index) {
-              <app-lib-skeleton width="88px" height="58px" />
-            }
+    <!-- Clickable preview / placeholder for custom image upload -->
+    @if (!preferencesLoaded()) {
+      <app-lib-skeleton class="settings__banner-skeleton" width="100%" height="120px" />
+    } @else {
+      <label class="settings__banner-upload-label" [matTooltip]="'settings.appearance.uploadOwnTooltip' | transloco">
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          class="settings__banner-input"
+          [disabled]="uploadingBanner()"
+          (change)="onBannerFileSelected($event)" />
+        @if (uploadingBanner()) {
+          <div class="settings__banner-preview settings__banner-upload-loading">
+            <app-lib-spinner size="sm" />
           </div>
-        } @else if (rawgResults().length) {
-          <div class="settings__banner-grid">
-            @for (banner of rawgResults(); track banner.imageUrl; let first = $first) {
-              <button
-                class="settings__banner-thumb"
-                [class.settings__banner-thumb--active]="bannerImageUrl() === banner.imageUrl"
-                (click)="onSelectBanner(banner.imageUrl)">
-                <img [ngSrc]="banner.imageUrl" [alt]="banner.title" fill [priority]="first" />
-                @if (bannerImageUrl() === banner.imageUrl) {
-                  <div class="settings__banner-thumb-check">
-                    <mat-icon>check_circle</mat-icon>
-                  </div>
-                }
-              </button>
-            }
+        } @else if (bannerImageUrl()) {
+          <div
+            class="settings__banner-preview settings__banner-preview--loaded"
+            [style.background-image]="'url(' + bannerImageUrl() + ')'">
+            <div class="settings__banner-overlay">
+              <mat-icon>photo_camera</mat-icon>
+            </div>
           </div>
-        } @else if (rawgSearchQuery() && !rawgSearchLoading()) {
-          <p class="settings__banner-empty">
-            {{ 'settings.appearance.noResultsFor' | transloco: { query: rawgSearchQuery() } }}
-          </p>
+        } @else {
+          <div class="settings__banner-placeholder">
+            <mat-icon>add_photo_alternate</mat-icon>
+            <span>{{ 'settings.appearance.uploadOwnHint' | transloco }}</span>
+          </div>
         }
-      </div>
+      </label>
+    }
 
-      <mat-divider class="settings__section-divider" />
+    <!-- Search -->
+    <mat-form-field class="settings__banner-search" appearance="outline" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</mat-label>
+      <input matInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
+    </mat-form-field>
 
-      <p class="settings__section-subtitle">{{ 'settings.appearance.theme' | transloco }}</p>
-
-      <div class="settings__row">
-        <span class="settings__row-label">
-          <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-          {{
-            isDark()
-              ? ('settings.appearance.switchToLight' | transloco)
-              : ('settings.appearance.switchToDark' | transloco)
-          }}
-        </span>
-        <app-lib-checkbox [checked]="isDark()" (changed)="toggleTheme()" />
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Section: Language -->
-  <mat-card class="settings__card">
-    <mat-card-header>
-      <mat-card-title>{{ 'settings.language.title' | transloco }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="settings__row">
-        <span class="settings__row-label">
-          <mat-icon>language</mat-icon>
-          {{ 'settings.language.interfaceLabel' | transloco }}
-        </span>
-        <div class="settings__lang-toggle">
-          @for (lang of availableLanguages; track lang.code) {
+    <!-- Grid: popular or search results -->
+    <div class="settings__banner-results">
+      @if (rawgSearchLoading()) {
+        <div class="settings__banner-grid">
+          @for (_ of skeletonThumbs; track $index) {
+            <app-lib-skeleton width="88px" height="58px" />
+          }
+        </div>
+      } @else if (rawgResults().length) {
+        <div class="settings__banner-grid">
+          @for (banner of rawgResults(); track banner.imageUrl; let first = $first) {
             <button
-              class="settings__lang-btn"
-              [class.settings__lang-btn--active]="selectedLangControl.value === lang.code"
-              (click)="selectedLangControl.setValue(lang.code)">
-              {{ lang.code.toUpperCase() }}
+              class="settings__banner-thumb"
+              [class.settings__banner-thumb--active]="bannerImageUrl() === banner.imageUrl"
+              (click)="onSelectBanner(banner.imageUrl)">
+              <img [ngSrc]="banner.imageUrl" [alt]="banner.title" fill [priority]="first" />
+              @if (bannerImageUrl() === banner.imageUrl) {
+                <div class="settings__banner-thumb-check">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+              }
             </button>
           }
         </div>
+      } @else if (rawgSearchQuery() && !rawgSearchLoading()) {
+        <p class="settings__banner-empty">
+          {{ 'settings.appearance.noResultsFor' | transloco: { query: rawgSearchQuery() } }}
+        </p>
+      }
+    </div>
+
+    <mat-divider class="settings__section-divider" />
+
+    <p class="settings__section-subtitle">{{ 'settings.appearance.theme' | transloco }}</p>
+
+    <div class="settings__row">
+      <span class="settings__row-label">
+        <mat-icon>{{ isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        {{
+          isDark()
+            ? ('settings.appearance.switchToLight' | transloco)
+            : ('settings.appearance.switchToDark' | transloco)
+        }}
+      </span>
+      <app-lib-checkbox [checked]="isDark()" (changed)="toggleTheme()" />
+    </div>
+  </app-lib-card>
+
+  <!-- Section: Language -->
+  <app-lib-card class="settings__card">
+    <h2 class="settings__card-title">{{ 'settings.language.title' | transloco }}</h2>
+    <div class="settings__row">
+      <span class="settings__row-label">
+        <mat-icon>language</mat-icon>
+        {{ 'settings.language.interfaceLabel' | transloco }}
+      </span>
+      <div class="settings__lang-toggle">
+        @for (lang of availableLanguages; track lang.code) {
+          <button
+            class="settings__lang-btn"
+            [class.settings__lang-btn--active]="selectedLangControl.value === lang.code"
+            (click)="selectedLangControl.setValue(lang.code)">
+            {{ lang.code.toUpperCase() }}
+          </button>
+        }
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </app-lib-card>
 
   <!-- Section: Session -->
-  <mat-card class="settings__card">
-    <mat-card-header>
-      <mat-card-title>{{ 'settings.session.title' | transloco }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="settings__row">
-        <span class="settings__row-label">
-          <mat-icon>logout</mat-icon>
-          {{ 'settings.session.logoutDescription' | transloco }}
-        </span>
-        <app-lib-button [label]="'nav.logout' | transloco" variant="danger" (clicked)="logout()" />
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <app-lib-card class="settings__card">
+    <h2 class="settings__card-title">{{ 'settings.session.title' | transloco }}</h2>
+    <div class="settings__row">
+      <span class="settings__row-label">
+        <mat-icon>logout</mat-icon>
+        {{ 'settings.session.logoutDescription' | transloco }}
+      </span>
+      <app-lib-button [label]="'nav.logout' | transloco" variant="danger" (clicked)="logout()" />
+    </div>
+  </app-lib-card>
 </div>

@@ -15,7 +15,7 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
 import { LibButtonComponent } from '@/lib/lib-button/lib-button.component';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { LibCardComponent } from '@/lib/lib-card/lib-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
@@ -50,10 +50,7 @@ import { LibSkeletonComponent } from '@/components/lib/lib-skeleton/lib-skeleton
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    LibCardComponent,
     MatDivider,
     MatFormField,
     MatLabel,
