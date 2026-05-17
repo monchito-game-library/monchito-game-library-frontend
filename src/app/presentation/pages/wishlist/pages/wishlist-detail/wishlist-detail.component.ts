@@ -26,6 +26,8 @@ import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constan
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 
 @Component({
   selector: 'app-wishlist-detail',
@@ -41,7 +43,9 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     MatButton,
     MatTooltip,
     TranslocoPipe,
-    SkeletonComponent
+    SkeletonComponent,
+    LibChipComponent,
+    LibDataRowComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {

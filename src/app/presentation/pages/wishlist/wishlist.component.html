@@ -20,12 +20,7 @@
         }
       </div>
       @if (!loading() && items().length > 0) {
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          class="wishlist-page__header-add-btn"
-          (click)="onAddItem()">
+        <button mat-stroked-button type="button" class="wishlist-page__header-add-btn" (click)="onAddItem()">
           <mat-icon>add</mat-icon>
           {{ 'wishlist.addBtn' | transloco }}
         </button>
@@ -46,22 +41,14 @@
         }
       </div>
     } @else if (items().length === 0) {
-      <div class="wishlist-page__empty">
-        <svg class="wishlist-page__empty-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            class="es-shape"
-            d="M24 14 H96 C102 14 106 18 106 24 V126 L60 100 L14 126 V24 C14 18 18 14 24 14 Z"
-            stroke-width="3"
-            stroke-linejoin="round" />
-          <path class="es-accent" d="M60 52 L64 62 H76 L66 70 L70 80 L60 72 L50 80 L54 70 L44 62 H56 Z" opacity="0.8" />
-        </svg>
-        <p class="wishlist-page__empty-title">{{ 'wishlist.empty.title' | transloco }}</p>
-        <p class="wishlist-page__empty-subtitle">{{ 'wishlist.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button type="button" (click)="onAddItem()">
+      <app-lib-empty-state
+        [title]="'wishlist.empty.title' | transloco"
+        [subtitle]="'wishlist.empty.subtitle' | transloco">
+        <button mat-stroked-button type="button" (click)="onAddItem()">
           <mat-icon>add</mat-icon>
           {{ 'wishlist.addBtn' | transloco }}
         </button>
-      </div>
+      </app-lib-empty-state>
     } @else {
       <div class="wishlist-page__list">
         @for (item of items(); track item.id; let first = $first; let i = $index) {
@@ -80,7 +67,6 @@
 
     <!-- FAB: solo visible en mobile cuando hay items -->
     <button
-      mat-fab
       type="button"
       class="wishlist-page__fab"
       (click)="onAddItem()"

@@ -27,22 +27,19 @@
 
     <!-- Platform badge -->
     @if (item().platform) {
-      <span class="wishlist-card__platform-badge">{{ item().platform }}</span>
+      <app-lib-chip [label]="item().platform!" color="primary" />
     }
 
     <!-- Price -->
     @if (item().desiredPrice !== null) {
-      <p class="wishlist-card__price">
-        <mat-icon class="wishlist-card__price-icon">sell</mat-icon>
-        {{ item().desiredPrice | number: '1.2-2' }} €
-      </p>
+      <app-lib-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
     }
 
     <!-- Genres -->
     @if (item().genres.length > 0) {
       <div class="wishlist-card__genres">
         @for (genre of item().genres.slice(0, 3); track genre) {
-          <span class="wishlist-card__genre-chip">{{ genre }}</span>
+          <app-lib-chip [label]="genre" color="neutral" />
         }
       </div>
     }

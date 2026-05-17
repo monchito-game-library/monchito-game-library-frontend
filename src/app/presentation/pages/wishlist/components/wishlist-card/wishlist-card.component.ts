@@ -16,6 +16,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
+import { LibChipComponent } from '@/lib/lib-chip/lib-chip.component';
+import { LibDataRowComponent } from '@/lib/lib-data-row/lib-data-row.component';
 
 @Component({
   selector: 'app-wishlist-card',
@@ -23,7 +25,16 @@ import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constan
   styleUrl: './wishlist-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, NgOptimizedImage, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
+  imports: [
+    DecimalPipe,
+    NgOptimizedImage,
+    MatIcon,
+    MatIconButton,
+    MatTooltip,
+    TranslocoPipe,
+    LibChipComponent,
+    LibDataRowComponent
+  ]
 })
 export class WishlistCardComponent {
   /** Wishlist item to display. */

@@ -32,20 +32,20 @@
   @if (loading()) {
     <div class="wishlist-detail__content">
       <div class="wishlist-detail__cover-wrapper">
-        <app-skeleton width="100%" height="180px" borderRadius="var(--radius-sm)" />
+        <app-skeleton width="100%" height="180px" />
       </div>
       <app-skeleton width="80%" height="24px" />
       <div class="wishlist-detail__meta">
         <app-skeleton width="120px" height="20px" />
-        <app-skeleton width="60px" height="20px" borderRadius="var(--radius-full)" />
+        <app-skeleton width="60px" height="20px" />
       </div>
       <app-skeleton width="80px" height="18px" />
       <div class="wishlist-detail__genres">
         @for (n of [0, 1, 2]; track n) {
-          <app-skeleton width="64px" height="20px" borderRadius="var(--radius-full)" />
+          <app-skeleton width="64px" height="20px" />
         }
       </div>
-      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
+      <app-skeleton height="56px" />
     </div>
   }
 
@@ -83,23 +83,20 @@
           }
         </div>
         @if (i.platform) {
-          <span class="wishlist-detail__platform-badge">{{ i.platform }}</span>
+          <app-lib-chip [label]="i.platform" color="primary" />
         }
       </div>
 
       <!-- Price -->
       @if (i.desiredPrice !== null) {
-        <p class="wishlist-detail__price">
-          <mat-icon class="wishlist-detail__price-icon">sell</mat-icon>
-          {{ i.desiredPrice | number: '1.2-2' }} €
-        </p>
+        <app-lib-data-row label="PRECIO" icon="sell" [value]="(i.desiredPrice | number: '1.2-2') + ' €'" />
       }
 
       <!-- Genres -->
       @if (i.genres.length > 0) {
         <div class="wishlist-detail__genres">
           @for (genre of i.genres; track genre) {
-            <span class="wishlist-detail__genre-chip">{{ genre }}</span>
+            <app-lib-chip [label]="genre" color="neutral" />
           }
         </div>
       }
