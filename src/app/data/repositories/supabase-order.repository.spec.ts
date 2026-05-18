@@ -8,7 +8,7 @@ import { SupabaseOrderRepository } from './supabase-order.repository';
 
 function makeBuilder(result: { data?: unknown; error: { message: string } | null }) {
   const b: any = {};
-  for (const m of ['select', 'eq', 'order', 'insert', 'update', 'delete', 'upsert', 'single']) {
+  for (const m of ['select', 'eq', 'order', 'insert', 'update', 'delete', 'upsert', 'single', 'maybeSingle']) {
     b[m] = vi.fn().mockReturnValue(b);
   }
   b.then = (resolve: any, reject?: any) => Promise.resolve(result).then(resolve, reject);
