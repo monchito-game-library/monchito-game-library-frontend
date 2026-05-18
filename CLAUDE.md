@@ -24,6 +24,7 @@
 - [Arquitectura de capas](#arquitectura-de-capas)
 - [Estructura de pages y components](#estructura-de-pages-y-components)
 - [Tests — mocks compartidos](#tests--mocks-compartidos)
+- [Librería retro — sincronía de README](#librería-retro--sincronía-de-readme)
 
 ---
 
@@ -331,3 +332,14 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 | `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
 
 Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
+
+## Librería retro — sincronía de README
+
+Cada componente de `lib/retro/retro-[x]/` tiene un `README.md` que documenta su API pública (inputs, outputs, slots, tipos y ejemplo de uso).
+
+**Regla:** al modificar cualquier fichero `.component.ts`, `.types.ts` o `.component.html` de un componente retro, actualizar su `README.md` en el mismo commit.
+
+- Cambios que **sí** requieren actualizar el README: nuevo input/output, slot nuevo, tipo añadido o modificado, cambio de default, ejemplo de uso obsoleto.
+- Cambios que **no** requieren actualizar el README: refactors internos sin impacto en API pública, `*.spec.ts`, `*.scss`.
+
+El pre-commit hook (`scripts/check-retro-readme-sync.mjs`) bloquea commits que tocan ficheros de API sin incluir el README en el staged area. Si el cambio es trivial y no afecta a la API, se puede saltarse con `git commit --no-verify`.

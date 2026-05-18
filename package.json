@@ -23,7 +23,8 @@
     "vercel-build": "node scripts/set-env.js && ng build --configuration production",
     "lighthouse": "node --import tsx/esm scripts/lighthouse.mts",
     "db:apply": "node --env-file=.env scripts/db-apply.mjs",
-    "db:dump": "node --env-file=.env scripts/db-dump.mjs"
+    "db:dump": "node --env-file=.env scripts/db-dump.mjs",
+    "docs:retro-check": "node scripts/check-retro-readme-sync.mjs"
   },
   "dependencies": {
     "@angular-eslint/eslint-plugin": "21.3.1",
