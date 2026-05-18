@@ -32,7 +32,7 @@ import { defaultGameCover } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { RetroChipColor } from '@/types/retro-component.type';
+import { RetroChipColor } from '@/types/retro-chip.type';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 

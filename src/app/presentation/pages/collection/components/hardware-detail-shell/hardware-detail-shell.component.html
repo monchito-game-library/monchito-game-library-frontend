@@ -45,6 +45,7 @@
           <retro-chip
             color="amber"
             icon="sell"
+            size="lg"
             [label]="
               ('hardwareSale.forSaleBadge' | transloco) +
               (salePrice() !== null ? ' · ' + (salePrice() | currency: 'EUR') : '')
@@ -54,6 +55,7 @@
           <retro-chip
             color="amber"
             icon="handshake"
+            size="lg"
             [label]="('hardwareLoan.loanedBadge' | transloco) + ' ' + activeLoanTo()" />
         }
       </div>

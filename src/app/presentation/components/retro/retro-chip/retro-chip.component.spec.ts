@@ -47,4 +47,22 @@ describe('RetroChipComponent', () => {
     fixture.nativeElement.querySelector('.retro-chip__close')?.click();
     expect(emitted).toBe(true);
   });
+
+  describe('size variants', () => {
+    it('should apply --md modifier by default', () => {
+      expect(fixture.nativeElement.querySelector('.retro-chip--md')).toBeTruthy();
+    });
+
+    it('should apply --sm modifier when size is sm', () => {
+      fixture.componentRef.setInput('size', 'sm');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-chip--sm')).toBeTruthy();
+    });
+
+    it('should apply --lg modifier when size is lg', () => {
+      fixture.componentRef.setInput('size', 'lg');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-chip--lg')).toBeTruthy();
+    });
+  });
 });

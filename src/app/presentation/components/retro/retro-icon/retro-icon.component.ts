@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostBinding, InputSignal, input } from '@angular/core';
-import { LibIconSize } from '@/types/retro-component.type';
+import { LibIconSize } from '@/types/retro-icon.type';
 
 /**
  * Icono reutilizable de la lib Terminal Collector.

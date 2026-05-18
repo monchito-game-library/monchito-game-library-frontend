@@ -82,19 +82,21 @@
                 [label]="gameStatus()!.labelKey | transloco"
                 [icon]="gameStatus()!.icon"
                 color="primary"
+                size="lg"
                 [filled]="true" />
             }
             @if (g.platform) {
-              <retro-chip [label]="g.platform!" color="neutral" [filled]="true" />
+              <retro-chip [label]="g.platform!" color="neutral" size="lg" [filled]="true" />
             }
             @if (g.isFavorite) {
-              <retro-chip label="FAV" icon="favorite" color="rose" [filled]="true" />
+              <retro-chip label="FAV" icon="favorite" color="rose" size="lg" [filled]="true" />
             }
             @if (g.forSale) {
               <retro-chip
                 [label]="'gameDetail.sale.forSaleBadge' | transloco"
                 icon="sell"
                 color="green"
+                size="lg"
                 [filled]="true" />
             }
             @if (g.activeLoanId) {
@@ -102,6 +104,7 @@
                 [label]="('gameDetail.loan.loanedBadge' | transloco) + ' ' + g.activeLoanTo"
                 icon="handshake"
                 color="amber"
+                size="lg"
                 [filled]="true" />
             }
           </div>
@@ -188,7 +191,7 @@
             @if (g.genres.length) {
               <div class="game-detail__genres">
                 @for (genre of g.genres; track genre) {
-                  <retro-chip [label]="genre" color="neutral" />
+                  <retro-chip [label]="genre" color="neutral" size="sm" />
                 }
               </div>
             }

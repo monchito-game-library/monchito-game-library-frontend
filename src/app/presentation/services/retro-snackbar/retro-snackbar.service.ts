@@ -1,7 +1,6 @@
 import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 
-import { LibSnackbarVariant } from '@/types/retro-component.type';
-import { RetroSnackbarMessage } from '@/interfaces/retro-snackbar-message.interface';
+import { LibSnackbarVariant, RetroSnackbarMessage } from '@/interfaces/retro-snackbar-message.interface';
 
 export type { RetroSnackbarMessage };
 

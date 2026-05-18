@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
-import { RetroBadgeVariant } from '@/types/retro-component.type';
+import { RetroBadgeVariant } from '@/types/retro-badge.type';
 
 /**
  * Badge de contador o indicador de estado de la lib Terminal Collector.

@@ -11,7 +11,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { LibCheckboxSize } from '@/types/retro-component.type';
+import { LibCheckboxSize } from '@/types/retro-checkbox.type';
 
 /**
  * Checkbox terminal `[X] / [ ]` reutilizable de la lib Terminal Collector.

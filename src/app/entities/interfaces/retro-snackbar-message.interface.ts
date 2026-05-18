@@ -1,4 +1,5 @@
-import { LibSnackbarVariant } from '@/types/retro-component.type';
+/** Variantes de color del retro-snackbar Terminal Collector. */
+export type LibSnackbarVariant = 'info' | 'success' | 'warning' | 'error';
 
 /** Representa un mensaje en la cola del snackbar. */
 export interface RetroSnackbarMessage {

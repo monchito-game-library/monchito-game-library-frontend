@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
 import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { LibIconButtonSize, LibIconButtonVariant, LibButtonType } from '@/types/retro-component.type';
+import { LibIconButtonSize, LibIconButtonVariant } from '@/types/retro-icon-button.type';
+import { LibButtonType } from '@/types/retro-button.type';
 
 /**
  * Botón de icono reutilizable de la lib Terminal Collector.

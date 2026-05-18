@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
-import { LibSpinnerSize, LibSpinnerVariant } from '@/types/retro-component.type';
+import { LibSpinnerSize, LibSpinnerVariant } from '@/types/retro-spinner.type';
 
 /**
  * Spinner ASCII reutilizable de la lib Terminal Collector.

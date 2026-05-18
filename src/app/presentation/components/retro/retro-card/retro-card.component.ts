@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-import { LibCardVariant } from '@/types/retro-component.type';
+import { LibCardVariant } from '@/types/retro-card.type';
 
 /**
  * Contenedor neutro de la lib Terminal Collector.

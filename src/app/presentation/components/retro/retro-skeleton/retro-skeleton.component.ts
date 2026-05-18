@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { NgStyle } from '@angular/common';
-import { LibSkeletonShape } from '@/types/retro-component.type';
+import { LibSkeletonShape } from '@/types/retro-skeleton.type';
 
 /**
  * Skeleton de carga reutilizable de la lib Terminal Collector.

@@ -28,7 +28,7 @@
 
     <!-- Platform badge -->
     @if (item().platform) {
-      <retro-chip [label]="item().platform!" color="primary" />
+      <retro-chip [label]="item().platform!" color="primary" size="sm" />
     }
 
     <!-- Price -->
@@ -40,7 +40,7 @@
     @if (item().genres.length > 0) {
       <div class="wishlist-card__genres">
         @for (genre of item().genres.slice(0, 3); track genre) {
-          <retro-chip [label]="genre" color="neutral" />
+          <retro-chip [label]="genre" color="neutral" size="sm" />
         }
       </div>
     }

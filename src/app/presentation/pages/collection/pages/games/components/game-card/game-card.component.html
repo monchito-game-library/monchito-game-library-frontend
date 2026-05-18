@@ -32,6 +32,7 @@
             [label]="gameStatus()!.code"
             [icon]="gameStatus()!.icon"
             [color]="statusColor()"
+            size="sm"
             [filled]="true"
             [retroTooltip]="gameStatus()!.labelKey | transloco" />
         }
@@ -43,6 +44,7 @@
             label="FAV"
             icon="favorite"
             color="rose"
+            size="sm"
             [filled]="true"
             retroTooltip="Favorito" />
         }
@@ -52,7 +54,7 @@
           <div class="game-card__chips-area">
             <div class="game-card__platform-row">
               @if (game().platform) {
-                <retro-chip [label]="game().platform!" color="primary" />
+                <retro-chip [label]="game().platform!" color="primary" size="sm" />
               }
             </div>
             @if (isLoaned() || game().forSale) {
@@ -63,6 +65,7 @@
                     [label]="loanChipLabel()"
                     icon="handshake"
                     color="amber"
+                    size="sm"
                     [filled]="true"
                     [retroTooltip]="game().activeLoanTo ?? ''" />
                 }
@@ -72,6 +75,7 @@
                     label="VENTA"
                     icon="sell"
                     color="green"
+                    size="sm"
                     [filled]="true"
                     retroTooltip="En venta" />
                 }

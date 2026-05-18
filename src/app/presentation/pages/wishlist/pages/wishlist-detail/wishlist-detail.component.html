@@ -77,7 +77,7 @@
           }
         </div>
         @if (i.platform) {
-          <retro-chip [label]="i.platform" color="primary" />
+          <retro-chip [label]="i.platform" color="primary" size="sm" />
         }
       </div>
 
@@ -90,7 +90,7 @@
       @if (i.genres.length > 0) {
         <div class="wishlist-detail__genres">
           @for (genre of i.genres; track genre) {
-            <retro-chip [label]="genre" color="neutral" />
+            <retro-chip [label]="genre" color="neutral" size="sm" />
           }
         </div>
       }

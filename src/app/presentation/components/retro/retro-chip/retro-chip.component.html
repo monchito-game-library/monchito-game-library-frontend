@@ -1,6 +1,6 @@
-<span class="retro-chip retro-chip--{{ color() }}" [class.retro-chip--filled]="filled()">
+<span class="retro-chip retro-chip--{{ color() }} retro-chip--{{ size() }}" [class.retro-chip--filled]="filled()">
   @if (icon()) {
-    <retro-icon class="retro-chip__icon" [name]="icon()!" size="xs" />
+    <retro-icon class="retro-chip__icon" [name]="icon()!" [size]="iconSize()" />
   }
   <span class="retro-chip__label">{{ label() }}</span>
   @if (closable()) {

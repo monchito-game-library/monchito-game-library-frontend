@@ -27,12 +27,13 @@
 
 <ng-template #cardChipsTpl let-console>
   <retro-chip
+    size="sm"
     [label]="
       (console.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
         | transloco
     "
     [color]="console.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
   @if (console.region) {
-    <retro-chip [label]="console.region" color="neutral" />
+    <retro-chip [label]="console.region" color="neutral" size="sm" />
   }
 </ng-template>
