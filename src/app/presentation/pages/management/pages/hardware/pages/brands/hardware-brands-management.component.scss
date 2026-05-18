@@ -81,6 +81,24 @@
   align-content: start;
 }
 
+.brand-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.brand-card__name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-hi);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .brands-page__header {

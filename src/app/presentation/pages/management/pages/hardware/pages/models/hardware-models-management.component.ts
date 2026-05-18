@@ -29,7 +29,8 @@ import { HardwareModelType } from '@/types/hardware-model.type';
 import { HARDWARE_MODEL_TYPE } from '@/constants/hardware-model.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
 
@@ -43,7 +44,8 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
   imports: [
     HardwareBrandEditPanelComponent,
     HardwareModelEditPanelComponent,
-    CatalogItemCardComponent,
+    RetroCardComponent,
+    RetroChipComponent,
     RetroIconComponent,
     RetroIconButtonComponent,
     TranslocoPipe,

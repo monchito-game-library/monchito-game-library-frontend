@@ -124,6 +124,48 @@
   align-content: start;
 }
 
+.model-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.model-card__icon-svg {
+  display: inline-block;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  background-color: var(--primary);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-mode: luminance;
+  flex-shrink: 0;
+}
+
+.model-card__name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-hi);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.model-card__divider {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.model-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   .models-page__header {

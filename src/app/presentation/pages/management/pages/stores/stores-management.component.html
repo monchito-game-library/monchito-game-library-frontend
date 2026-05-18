@@ -35,12 +35,23 @@
     } @else {
       <div class="stores-grid">
         @for (store of stores(); track store.id) {
-          <app-catalog-item-card
-            icon="storefront"
-            [name]="store.label"
-            [chips]="store.formatHint ? [getFormatHintLabel(store.formatHint)] : []"
+          <retro-card
+            class="store-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedStore()?.id === store.id"
-            (cardClick)="onSelectStore(store)" />
+            (cardClicked)="onSelectStore(store)">
+            <div class="store-card__top">
+              <retro-icon name="storefront" size="lg" />
+              <span class="store-card__name">{{ store.label }}</span>
+            </div>
+            @if (store.formatHint) {
+              <hr class="store-card__divider" />
+              <div class="store-card__chips">
+                <retro-chip [label]="getFormatHintLabel(store.formatHint)" size="sm" />
+              </div>
+            }
+          </retro-card>
         }
       </div>
     }

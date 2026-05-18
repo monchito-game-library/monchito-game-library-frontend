@@ -58,11 +58,17 @@
     } @else {
       <div class="editions-grid">
         @for (edition of editions(); track edition.id) {
-          <app-catalog-item-card
-            icon="star_outline"
-            [name]="edition.name"
+          <retro-card
+            class="edition-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedEdition()?.id === edition.id"
-            (cardClick)="onSelectEdition(edition)" />
+            (cardClicked)="onSelectEdition(edition)">
+            <div class="edition-card__top">
+              <retro-icon name="star_outline" size="lg" />
+              <span class="edition-card__name">{{ edition.name }}</span>
+            </div>
+          </retro-card>
         }
       </div>
     }

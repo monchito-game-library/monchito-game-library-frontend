@@ -15,7 +15,7 @@ import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model
 import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-form-result.interface';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 
 /** Management page for hardware brands. Entry point of the hardware catalog drill-down. */
@@ -28,7 +28,7 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
   imports: [
     HardwareBrandEditPanelComponent,
     TranslocoPipe,
-    CatalogItemCardComponent,
+    RetroCardComponent,
     RetroSkeletonComponent,
     RetroButtonComponent,
     RetroIconComponent

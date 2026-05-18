@@ -8,6 +8,7 @@ import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snack
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
@@ -35,7 +36,8 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
     DecimalPipe,
     RetroSkeletonComponent,
     RetroButtonComponent,
-    RetroIconComponent
+    RetroIconComponent,
+    RetroCardComponent
   ]
 })
 export class ProtectorsManagementComponent implements OnInit {

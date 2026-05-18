@@ -37,12 +37,18 @@
     } @else {
       <div class="brands-grid">
         @for (brand of brands(); track brand.id) {
-          <app-catalog-item-card
-            icon="memory"
-            [name]="brand.name"
+          <retro-card
+            class="brand-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedBrand()?.id === brand.id"
-            [showChevron]="true"
-            (cardClick)="onOpenModels(brand)" />
+            (cardClicked)="onOpenModels(brand)">
+            <div class="brand-card__top">
+              <retro-icon name="memory" size="lg" />
+              <span class="brand-card__name">{{ brand.name }}</span>
+              <retro-icon name="chevron_right" size="sm" />
+            </div>
+          </retro-card>
         }
       </div>
     }

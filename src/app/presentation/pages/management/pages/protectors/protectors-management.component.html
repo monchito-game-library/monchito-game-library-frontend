@@ -43,11 +43,13 @@
     } @else {
       <div class="protectors-grid">
         @for (protector of protectors(); track protector.id) {
-          <div
+          <retro-card
             class="protector-card"
             [class.protector-card--inactive]="!protector.isActive"
-            [class.protector-card--selected]="selectedProtector()?.id === protector.id"
-            (click)="onSelectProtector(protector)">
+            padding="md"
+            [interactive]="true"
+            [selected]="selectedProtector()?.id === protector.id"
+            (cardClicked)="onSelectProtector(protector)">
             <div class="protector-card__header">
               <span class="protector-card__name">{{ protector.name }}</span>
               <span class="protector-card__category-chip protector-card__category-chip--{{ protector.category }}">
@@ -76,7 +78,7 @@
             @if (!protector.isActive) {
               <span class="protector-card__inactive-badge">{{ 'management.products.inactive' | transloco }}</span>
             }
-          </div>
+          </retro-card>
         }
       </div>
     }

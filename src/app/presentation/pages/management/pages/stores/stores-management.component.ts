@@ -18,7 +18,8 @@ import { GameFormatType } from '@/types/game-format.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { StoreFormResult } from '@/interfaces/management/store-form-result.interface';
-import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { StoreEditPanelComponent } from './components/store-edit-panel/store-edit-panel.component';
 
 /** Page for managing the shared store catalog. */
@@ -31,7 +32,8 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   imports: [
     StoreEditPanelComponent,
     TranslocoPipe,
-    CatalogItemCardComponent,
+    RetroCardComponent,
+    RetroChipComponent,
     RetroSkeletonComponent,
     RetroButtonComponent,
     RetroIconComponent
