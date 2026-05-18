@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { RetroIconComponent } from '../../../../retro-icon/retro-icon.component';
+import { RetroIconComponent } from '../../../retro-icon/retro-icon.component';
 import { LibRouterTabItemInterface } from '../../interfaces/retro-router-tab-item.interface';
 
 /**

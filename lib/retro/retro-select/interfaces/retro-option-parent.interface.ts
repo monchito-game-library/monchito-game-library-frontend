@@ -1,4 +1,4 @@
-import { RetroOptionComponent } from '../retro-option.component';
+import { RetroOptionComponent } from '../components/retro-option/retro-option.component';
 
 /**
  * Contrato que deben implementar los componentes padre de RetroOptionComponent
