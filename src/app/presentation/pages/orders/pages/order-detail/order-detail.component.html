@@ -37,6 +37,7 @@
                   <retro-button
                     [label]="'orders.header.markReady' | transloco"
                     variant="success"
+                    size="md"
                     [disabled]="saving()"
                     (clicked)="onToggleMemberReady()">
                     <retro-icon slot="start" name="check_circle" size="sm" />
@@ -45,6 +46,7 @@
                   <retro-button
                     [label]="'orders.header.cancelReady' | transloco"
                     variant="ghost"
+                    size="md"
                     [disabled]="saving()"
                     (clicked)="onToggleMemberReady()">
                     <retro-icon slot="start" name="cancel" size="sm" />

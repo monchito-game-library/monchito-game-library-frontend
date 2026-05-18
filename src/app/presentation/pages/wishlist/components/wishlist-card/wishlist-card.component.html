@@ -70,18 +70,21 @@
         <retro-icon-button
           icon="shopping_bag"
           variant="primary"
+          size="sm"
           class="wishlist-card__own-btn"
           [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
           [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
           (clicked)="onOwn()" />
         <retro-icon-button
           icon="edit"
+          size="sm"
           [ariaLabel]="'common.edit' | transloco"
           [retroTooltip]="'common.edit' | transloco"
           (clicked)="onEdit()" />
         <retro-icon-button
           icon="delete"
           variant="danger"
+          size="sm"
           class="wishlist-card__delete-btn"
           [ariaLabel]="'common.delete' | transloco"
           [retroTooltip]="'common.delete' | transloco"
