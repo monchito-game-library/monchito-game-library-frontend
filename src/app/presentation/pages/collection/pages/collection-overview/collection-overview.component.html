@@ -17,7 +17,7 @@
 
   <div class="collection-overview__grid">
     <!-- Games -->
-    <button class="collection-overview__card" (click)="goToGames()">
+    <retro-card class="collection-overview__card" [interactive]="true" padding="lg" (cardClicked)="goToGames()">
       <retro-icon class="collection-overview__card-icon" name="sports_esports" />
       <retro-section-header [label]="'collectionOverview.games.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.games.subtitle' | transloco }}</p>
@@ -39,10 +39,10 @@
           }
         </retro-data-row>
       </div>
-    </button>
+    </retro-card>
 
     <!-- Consoles -->
-    <button class="collection-overview__card" (click)="goToConsoles()">
+    <retro-card class="collection-overview__card" [interactive]="true" padding="lg" (cardClicked)="goToConsoles()">
       <retro-icon class="collection-overview__card-icon" name="tv" />
       <retro-section-header [label]="'collectionOverview.consolesCategory.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.consolesCategory.subtitle' | transloco }}</p>
@@ -64,10 +64,10 @@
           }
         </retro-data-row>
       </div>
-    </button>
+    </retro-card>
 
     <!-- Controllers -->
-    <button class="collection-overview__card" (click)="goToControllers()">
+    <retro-card class="collection-overview__card" [interactive]="true" padding="lg" (cardClicked)="goToControllers()">
       <retro-icon class="collection-overview__card-icon" name="gamepad" />
       <retro-section-header [label]="'collectionOverview.controllers.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.controllers.subtitle' | transloco }}</p>
@@ -89,6 +89,6 @@
           }
         </retro-data-row>
       </div>
-    </button>
+    </retro-card>
   </div>
 </div>

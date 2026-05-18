@@ -185,21 +185,13 @@
   gap: 0.75rem;
 }
 
-.users-stats__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 1rem 1.25rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-
-  &--admins {
-    border-color: var(--primary);
-  }
-  &--members {
-    border-color: var(--text-mid);
-  }
+retro-card.users-stats__card {
+}
+retro-card.users-stats__card--admins .retro-card {
+  border-color: var(--primary);
+}
+retro-card.users-stats__card--members .retro-card {
+  border-color: var(--text-mid);
 }
 
 .users-stats__label {
@@ -215,39 +207,6 @@
   font-weight: 700;
   color: var(--text-hi);
   line-height: 1.1;
-}
-
-.users-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.users-toolbar__chip {
-  appearance: none;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-mid);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
-
-  &:hover {
-    background: var(--bg-surface-hi);
-    color: var(--text-hi);
-  }
-
-  &--active {
-    background: var(--bg-surface-hi);
-    color: var(--text-hi);
-    border-color: transparent;
-  }
 }
 
 .users-section {
@@ -406,9 +365,6 @@
     width: 60px;
     height: 60px;
   }
-  .users-stats__card {
-    padding: 0.75rem 1rem;
-  }
   .users-stats__value {
     font-size: var(--text-xl);
   }
@@ -452,7 +408,6 @@
   }
 
   .users-stats,
-  .users-toolbar,
   .users-page__skeleton-stats {
     margin: 0 -1rem;
     padding: 0 1rem;
@@ -471,19 +426,10 @@
     scroll-snap-type: x mandatory;
   }
 
-  .users-stats__card {
+  retro-card.users-stats__card {
     flex: 0 0 auto;
     min-width: 110px;
     scroll-snap-align: start;
-  }
-
-  .users-toolbar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-
-  .users-toolbar__chip {
-    flex-shrink: 0;
   }
 
   .user-card {

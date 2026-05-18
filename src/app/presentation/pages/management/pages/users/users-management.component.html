@@ -68,32 +68,37 @@
 
       <!-- Stats -->
       <section class="users-stats" [attr.aria-label]="'management.users.stats.aria' | transloco">
-        <div class="users-stats__card">
+        <retro-card
+          class="users-stats__card"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'all'"
+          [attr.aria-pressed]="activeFilter() === 'all'"
+          (cardClicked)="onFilterChange('all')">
           <span class="users-stats__label">{{ 'management.users.stats.total' | transloco }}</span>
           <span class="users-stats__value">{{ stats().total }}</span>
-        </div>
-        <div class="users-stats__card users-stats__card--admins">
+        </retro-card>
+        <retro-card
+          class="users-stats__card users-stats__card--admins"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'admin'"
+          [attr.aria-pressed]="activeFilter() === 'admin'"
+          (cardClicked)="onFilterChange('admin')">
           <span class="users-stats__label">{{ 'management.users.stats.admins' | transloco }}</span>
           <span class="users-stats__value">{{ stats().admins }}</span>
-        </div>
-        <div class="users-stats__card users-stats__card--members">
+        </retro-card>
+        <retro-card
+          class="users-stats__card users-stats__card--members"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'member'"
+          [attr.aria-pressed]="activeFilter() === 'member'"
+          (cardClicked)="onFilterChange('member')">
           <span class="users-stats__label">{{ 'management.users.stats.members' | transloco }}</span>
           <span class="users-stats__value">{{ stats().members }}</span>
-        </div>
+        </retro-card>
       </section>
-
-      <!-- Toolbar de filtros -->
-      <nav class="users-toolbar" [attr.aria-label]="'management.users.filter.aria' | transloco">
-        @for (filter of filters; track filter.id) {
-          <button
-            type="button"
-            class="users-toolbar__chip"
-            [class.users-toolbar__chip--active]="activeFilter() === filter.id"
-            (click)="onFilterChange(filter.id)">
-            {{ filter.labelKey | transloco }}
-          </button>
-        }
-      </nav>
 
       <!-- Empty state cuando el filtro no devuelve resultados -->
       @if (hasNoVisibleUsers()) {

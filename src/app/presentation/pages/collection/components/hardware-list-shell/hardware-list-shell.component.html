@@ -61,7 +61,7 @@
     } @else {
       <div class="hw-list__grid">
         @for (item of filteredItems(); track item.id) {
-          <button type="button" class="hw-list__card" (click)="detailClick.emit(item)">
+          <retro-card class="hw-list__card" [interactive]="true" padding="md" (cardClicked)="detailClick.emit(item)">
             <div class="hw-list__card-header">
               <ng-container [ngTemplateOutlet]="cardHeaderTpl()" [ngTemplateOutletContext]="{ $implicit: item }" />
               <div class="hw-list__card-titles">
@@ -92,7 +92,7 @@
                 <retro-data-row label="TIENDA" icon="storefront" [value]="resolveStoreName()(item.store)" />
               }
             </div>
-          </button>
+          </retro-card>
         }
       </div>
     }

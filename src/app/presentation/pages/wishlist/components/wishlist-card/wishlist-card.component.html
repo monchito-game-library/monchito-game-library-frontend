@@ -1,101 +1,108 @@
-<article class="wishlist-card" [class.wishlist-card--mobile]="mobileMode()" (click)="onCardClick()">
-  <!-- Cover -->
-  <div class="wishlist-card__cover-wrapper">
-    @if (item().imageUrl) {
-      <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
-    } @else {
-      <div class="wishlist-card__cover--placeholder">
-        <retro-icon name="image_not_supported" />
+<retro-card class="wishlist-card" [interactive]="mobileMode()" padding="sm" (cardClicked)="onCardClick()">
+  <div class="wishlist-card__row">
+    <!-- Cover -->
+    <div class="wishlist-card__cover-wrapper">
+      @if (item().imageUrl) {
+        <img
+          class="wishlist-card__cover"
+          [ngSrc]="item().imageUrl!"
+          [alt]="item().title"
+          fill
+          [priority]="priority()" />
+      } @else {
+        <div class="wishlist-card__cover--placeholder">
+          <retro-icon name="image_not_supported" />
+        </div>
+      }
+    </div>
+
+    <!-- Content -->
+    <div class="wishlist-card__content">
+      <div class="wishlist-card__header">
+        <h3 class="wishlist-card__title">{{ item().title }}</h3>
+
+        <!-- Priority stars -->
+        <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
+          @for (level of priorityRange; track level) {
+            <retro-icon
+              class="wishlist-card__star"
+              [class.wishlist-card__star--filled]="level <= item().priority"
+              [name]="level <= item().priority ? 'star' : 'star_border'" />
+          }
+        </div>
+      </div>
+
+      <!-- Platform badge -->
+      @if (item().platform) {
+        <retro-chip [label]="item().platform!" color="primary" size="sm" />
+      }
+
+      <!-- Price -->
+      @if (item().desiredPrice !== null) {
+        <retro-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
+      }
+
+      <!-- Genres -->
+      @if (item().genres.length > 0) {
+        <div class="wishlist-card__genres">
+          @for (genre of item().genres.slice(0, 3); track genre) {
+            <retro-chip [label]="genre" color="neutral" size="sm" />
+          }
+        </div>
+      }
+
+      <!-- Notes -->
+      @if (item().notes) {
+        <p class="wishlist-card__notes">{{ item().notes }}</p>
+      }
+
+      @if (!mobileMode()) {
+        <!-- Store search links -->
+        <div class="wishlist-card__store-links">
+          @for (link of storeLinks(); track link.label) {
+            <a
+              class="wishlist-card__store-link"
+              [href]="link.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              [retroTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+
+        <!-- Actions -->
+        <div class="wishlist-card__actions">
+          <retro-icon-button
+            icon="shopping_bag"
+            variant="primary"
+            size="sm"
+            class="wishlist-card__own-btn"
+            [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
+            [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
+            (clicked)="onOwn()" />
+          <retro-icon-button
+            icon="edit"
+            size="sm"
+            [ariaLabel]="'common.edit' | transloco"
+            [retroTooltip]="'common.edit' | transloco"
+            (clicked)="onEdit()" />
+          <retro-icon-button
+            icon="delete"
+            variant="danger"
+            size="sm"
+            class="wishlist-card__delete-btn"
+            [ariaLabel]="'common.delete' | transloco"
+            [retroTooltip]="'common.delete' | transloco"
+            (clicked)="onDelete()" />
+        </div>
+      }
+    </div>
+
+    @if (mobileMode()) {
+      <div class="wishlist-card__mobile-hint">
+        <retro-icon name="chevron_right" />
       </div>
     }
   </div>
-
-  <!-- Content -->
-  <div class="wishlist-card__content">
-    <div class="wishlist-card__header">
-      <h3 class="wishlist-card__title">{{ item().title }}</h3>
-
-      <!-- Priority stars -->
-      <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
-        @for (level of priorityRange; track level) {
-          <retro-icon
-            class="wishlist-card__star"
-            [class.wishlist-card__star--filled]="level <= item().priority"
-            [name]="level <= item().priority ? 'star' : 'star_border'" />
-        }
-      </div>
-    </div>
-
-    <!-- Platform badge -->
-    @if (item().platform) {
-      <retro-chip [label]="item().platform!" color="primary" size="sm" />
-    }
-
-    <!-- Price -->
-    @if (item().desiredPrice !== null) {
-      <retro-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
-    }
-
-    <!-- Genres -->
-    @if (item().genres.length > 0) {
-      <div class="wishlist-card__genres">
-        @for (genre of item().genres.slice(0, 3); track genre) {
-          <retro-chip [label]="genre" color="neutral" size="sm" />
-        }
-      </div>
-    }
-
-    <!-- Notes -->
-    @if (item().notes) {
-      <p class="wishlist-card__notes">{{ item().notes }}</p>
-    }
-
-    @if (!mobileMode()) {
-      <!-- Store search links -->
-      <div class="wishlist-card__store-links">
-        @for (link of storeLinks(); track link.label) {
-          <a
-            class="wishlist-card__store-link"
-            [href]="link.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            [retroTooltip]="'wishlist.card.searchIn' | transloco: { label: link.label }">
-            {{ link.label }}
-          </a>
-        }
-      </div>
-
-      <!-- Actions -->
-      <div class="wishlist-card__actions">
-        <retro-icon-button
-          icon="shopping_bag"
-          variant="primary"
-          size="sm"
-          class="wishlist-card__own-btn"
-          [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
-          [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
-          (clicked)="onOwn()" />
-        <retro-icon-button
-          icon="edit"
-          size="sm"
-          [ariaLabel]="'common.edit' | transloco"
-          [retroTooltip]="'common.edit' | transloco"
-          (clicked)="onEdit()" />
-        <retro-icon-button
-          icon="delete"
-          variant="danger"
-          size="sm"
-          class="wishlist-card__delete-btn"
-          [ariaLabel]="'common.delete' | transloco"
-          [retroTooltip]="'common.delete' | transloco"
-          (clicked)="onDelete()" />
-      </div>
-    }
-  </div>
-
-  @if (mobileMode()) {
-    <div class="wishlist-card__mobile-hint">
-      <retro-icon name="chevron_right" />
-    </div>
-  }
-</article>
+</retro-card>

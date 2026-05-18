@@ -23,6 +23,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
@@ -55,7 +56,8 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
     TranslocoPipe,
     NgOptimizedImage,
     RetroSkeletonComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroCardComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {
@@ -80,13 +82,6 @@ export class UsersManagementComponent implements OnInit {
 
   /** Active role filter applied to the lists. */
   readonly activeFilter: WritableSignal<RoleFilterType> = signal('all');
-
-  /** Available filter chips shown in the toolbar. */
-  readonly filters: ReadonlyArray<{ id: RoleFilterType; labelKey: string }> = [
-    { id: 'all', labelKey: 'management.users.filter.all' },
-    { id: 'admin', labelKey: 'management.users.filter.admins' },
-    { id: 'member', labelKey: 'management.users.filter.members' }
-  ];
 
   /** Owner row extracted from the loaded users — rendered as hero, never in the list. */
   readonly ownerUser: Signal<UserAdminModel | null> = computed((): UserAdminModel | null => {

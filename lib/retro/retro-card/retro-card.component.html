@@ -1,7 +1,11 @@
 <div
   class="retro-card"
   [class.retro-card--interactive]="interactive()"
-  [class.retro-card--padded]="padded()"
+  [class.retro-card--padding-none]="resolvedPadding() === 'none'"
+  [class.retro-card--padding-sm]="resolvedPadding() === 'sm'"
+  [class.retro-card--padding-md]="resolvedPadding() === 'md'"
+  [class.retro-card--padding-lg]="resolvedPadding() === 'lg'"
+  [class.retro-card--selected]="selected()"
   [class.retro-card--accent]="variant() === 'accent'"
   [class.retro-card--muted]="variant() === 'muted'"
   [attr.role]="interactive() ? 'button' : null"

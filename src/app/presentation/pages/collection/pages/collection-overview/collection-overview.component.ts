@@ -16,6 +16,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
 import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -37,7 +38,8 @@ import { UserContextService } from '@/services/user-context/user-context.service
     RetroSkeletonComponent,
     TranslocoPipe,
     RetroSectionHeaderComponent,
-    RetroDataRowComponent
+    RetroDataRowComponent,
+    RetroCardComponent
   ]
 })
 export class CollectionOverviewComponent implements OnInit {

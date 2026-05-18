@@ -270,15 +270,15 @@ describe('HardwareListShellComponent', () => {
   });
 
   describe('onDetail (detailClick)', () => {
-    it('emite detailClick con el item correcto al hacer click en una card', () => {
+    it('emite detailClick con el item correcto al disparar cardClicked en la retro-card', () => {
       const item = makeItem({ id: 'item-click' });
       setupComponent({ loading: false, items: [item], filteredItems: [item] });
 
       const spy = vi.fn();
       component.detailClick.subscribe(spy);
 
-      const card = fixture.debugElement.query(By.css('.hw-list__card'));
-      card.nativeElement.click();
+      const card = fixture.debugElement.query(By.css('retro-card.hw-list__card'));
+      card.triggerEventHandler('cardClicked', new MouseEvent('click'));
 
       expect(spy).toHaveBeenCalledWith(item);
     });

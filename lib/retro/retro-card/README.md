@@ -12,7 +12,9 @@ Contenedor neutro Terminal Collector. Rectángulo 1px sin sombras ni border-radi
 | Nombre | Tipo | Default | Descripción |
 |---|---|---|---|
 | `interactive` | `boolean` | `false` | Activa hover, focus y emite `cardClicked`. |
-| `padded` | `boolean` | `true` | Aplica padding 1rem y gap 0.75rem entre hijos. |
+| `padding` | `'none' \| 'sm' \| 'md' \| 'lg'` | `'md'` | Padding interno. none=0, sm=0.75rem, md=1rem (mobile 0.875rem), lg=1.5rem/1rem (mobile 1rem). |
+| `padded` | `boolean` | `undefined` | **Deprecated** — usar `padding`. `true`→`md`, `false`→`none`. |
+| `selected` | `boolean` | `false` | Estado visual de selección (box-shadow inset 2px `--border-active` + fondo `--bg-surface-hi`). Independiente de `interactive`. No compite con `border-color` del consumidor. |
 | `variant` | `'default' \| 'accent' \| 'muted'` | `'default'` | Variante visual. |
 
 ### Outputs
@@ -28,6 +30,7 @@ Contenedor neutro Terminal Collector. Rectángulo 1px sin sombras ni border-radi
 ### Types
 
 - `LibCardVariant` en `retro-card.types.ts`.
+- `RetroCardPadding` en `retro-card.types.ts`.
 
 ## Ejemplo
 

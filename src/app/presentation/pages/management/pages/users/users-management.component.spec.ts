@@ -69,7 +69,6 @@ describe('UsersManagementComponent', () => {
     it('updatingUserId es null', () => expect(component.updatingUserId()).toBeNull());
     it('users es []', () => expect(component.users()).toEqual([]));
     it('activeFilter por defecto es "all"', () => expect(component.activeFilter()).toBe('all'));
-    it('filters expone los 3 chips', () => expect(component.filters).toHaveLength(3));
   });
 
   describe('computed signals con el listado completo', () => {

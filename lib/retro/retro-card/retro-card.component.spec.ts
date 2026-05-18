@@ -17,8 +17,61 @@ describe('RetroCardComponent', () => {
     expect(fixture.nativeElement.querySelector('.retro-card')).toBeTruthy();
   });
 
-  it('should apply --padded modifier by default', () => {
-    expect(fixture.nativeElement.querySelector('.retro-card--padded')).toBeTruthy();
+  it('should apply --padding-md modifier by default', () => {
+    expect(fixture.nativeElement.querySelector('.retro-card--padding-md')).toBeTruthy();
+  });
+
+  describe('padding', () => {
+    it('should apply --padding-none when padding is none', () => {
+      fixture.componentRef.setInput('padding', 'none');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-none')).toBeTruthy();
+    });
+
+    it('should apply --padding-sm when padding is sm', () => {
+      fixture.componentRef.setInput('padding', 'sm');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-sm')).toBeTruthy();
+    });
+
+    it('should apply --padding-lg when padding is lg', () => {
+      fixture.componentRef.setInput('padding', 'lg');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-lg')).toBeTruthy();
+    });
+
+    it('should apply --padding-none when padded=false (deprecated)', () => {
+      fixture.componentRef.setInput('padded', false);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-none')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-md')).toBeNull();
+    });
+
+    it('should apply --padding-md when padded=true (deprecated)', () => {
+      fixture.componentRef.setInput('padded', true);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-md')).toBeTruthy();
+    });
+
+    it('should prioritize padded over padding when both are set', () => {
+      fixture.componentRef.setInput('padding', 'lg');
+      fixture.componentRef.setInput('padded', false);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-none')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-card--padding-lg')).toBeNull();
+    });
+  });
+
+  describe('selected', () => {
+    it('should not have --selected class by default', () => {
+      expect(fixture.nativeElement.querySelector('.retro-card--selected')).toBeNull();
+    });
+
+    it('should apply --selected when selected=true', () => {
+      fixture.componentRef.setInput('selected', true);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-card--selected')).toBeTruthy();
+    });
   });
 
   it('should apply --accent modifier when variant is accent', () => {
