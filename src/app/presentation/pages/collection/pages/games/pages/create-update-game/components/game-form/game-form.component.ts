@@ -22,7 +22,7 @@ import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.compone
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
 import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';

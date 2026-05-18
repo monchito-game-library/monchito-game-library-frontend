@@ -18,7 +18,7 @@ import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
 import { TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { RetroIconButtonComponent } from '../retro-icon-button/retro-icon-button.component';
-import { RETRO_DATEPICKER_DAY_HEADERS } from './retro-datepicker-day-headers.constant';
+import { RETRO_DATEPICKER_DAY_HEADERS } from './constants/retro-datepicker-day-headers.constant';
 import { RetroDatepickerDay } from './interfaces/retro-datepicker-day.interface';
 
 let _nextDatepickerId: number = 0;

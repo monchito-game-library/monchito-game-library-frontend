@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { describe, beforeEach, it, expect } from 'vitest';
-import { RetroMenuComponent } from './retro-menu.component';
-import { RetroMenuItemComponent } from './retro-menu-item.component';
+import { RetroMenuComponent } from '../retro-menu.component';
+import { RetroMenuItemComponent } from '../retro-menu-item.component';
 import { RetroMenuTriggerDirective } from './retro-menu-trigger.directive';
 
 @Component({

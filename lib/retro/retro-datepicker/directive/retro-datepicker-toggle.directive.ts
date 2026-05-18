@@ -1,5 +1,5 @@
 import { Directive, HostListener, input, InputSignal } from '@angular/core';
-import { RetroDatepickerComponent } from './retro-datepicker.component';
+import { RetroDatepickerComponent } from '../retro-datepicker.component';
 
 /**
  * Directiva para el icono que abre/cierra el RetroDatepickerComponent.

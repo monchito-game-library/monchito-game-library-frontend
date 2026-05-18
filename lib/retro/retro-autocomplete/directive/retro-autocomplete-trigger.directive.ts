@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, inject, input, InputSignal, OnInit } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { RetroAutocompleteComponent } from './retro-autocomplete.component';
+import { RetroAutocompleteComponent } from '../retro-autocomplete.component';
 
 /**
  * Directiva para conectar un <input retroInput> con un RetroAutocompleteComponent.

@@ -8,7 +8,7 @@ import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directi
 import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
 import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
 import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 

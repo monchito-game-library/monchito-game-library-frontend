@@ -12,9 +12,9 @@ import {
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { RETRO_MENU_POSITIONS } from './retro-menu-positions.constant';
-import { RetroMenuComponent } from './retro-menu.component';
-import { RetroMenuItemComponent } from './retro-menu-item.component';
+import { RETRO_MENU_POSITIONS } from '../constants/retro-menu-positions.constant';
+import { RetroMenuComponent } from '../retro-menu.component';
+import { RetroMenuItemComponent } from '../retro-menu-item.component';
 
 /**
  * Directiva que convierte cualquier elemento en el disparador de un RetroMenuComponent.

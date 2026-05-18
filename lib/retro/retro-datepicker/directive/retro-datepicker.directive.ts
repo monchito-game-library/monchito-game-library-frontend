@@ -9,7 +9,7 @@ import {
   OnInit
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { RetroDatepickerComponent } from './retro-datepicker.component';
+import { RetroDatepickerComponent } from '../retro-datepicker.component';
 
 /**
  * Directiva aplicada al <input> nativo para conectarlo con RetroDatepickerComponent.

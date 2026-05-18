@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { describe, beforeEach, expect, it } from 'vitest';
 
 import { RetroAutocompleteTriggerDirective } from './retro-autocomplete-trigger.directive';
-import { RetroAutocompleteComponent } from './retro-autocomplete.component';
+import { RetroAutocompleteComponent } from '../retro-autocomplete.component';
 
 @Component({
   standalone: true,

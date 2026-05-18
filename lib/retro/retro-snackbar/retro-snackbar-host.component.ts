@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroIconButtonComponent } from '../retro-icon-button/retro-icon-button.component';
-import { RetroSnackbarMessage, RetroSnackbarService } from '../retro-snackbar/services/retro-snackbar.service';
+import { RetroSnackbarMessage, RetroSnackbarService } from './services/retro-snackbar.service';
 
 /**
  * Host global de snackbars Terminal Collector.

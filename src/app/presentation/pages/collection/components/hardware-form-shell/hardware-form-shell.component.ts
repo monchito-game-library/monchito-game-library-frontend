@@ -17,10 +17,10 @@ import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.compone
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
 import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';

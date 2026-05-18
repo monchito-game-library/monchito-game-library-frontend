@@ -12,7 +12,7 @@ export { RetroIconButtonComponent } from './retro-icon-button/retro-icon-button.
 export { RetroSpinnerComponent } from './retro-spinner/retro-spinner.component';
 export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.component';
 export { RetroCheckboxComponent } from './retro-checkbox/retro-checkbox.component';
-export { RetroSnackbarHostComponent } from './retro-snackbar-host/retro-snackbar-host.component';
+export { RetroSnackbarHostComponent } from './retro-snackbar/retro-snackbar-host.component';
 export { RetroFormFieldComponent } from './retro-form-field/retro-form-field.component';
 export { RetroInputDirective } from './retro-form-field/retro-input.directive';
 export { RetroLabelComponent } from './retro-form-field/retro-label.component';
@@ -21,13 +21,45 @@ export { RetroHintComponent } from './retro-form-field/retro-hint.component';
 export { RetroSelectComponent } from './retro-select/retro-select.component';
 export { RetroOptionComponent } from './retro-select/retro-option.component';
 export { RetroAutocompleteComponent } from './retro-autocomplete/retro-autocomplete.component';
-export { RetroAutocompleteTriggerDirective } from './retro-autocomplete/retro-autocomplete-trigger.directive';
+export { RetroAutocompleteTriggerDirective } from './retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 export { RetroDatepickerComponent } from './retro-datepicker/retro-datepicker.component';
-export { RetroDatepickerDirective } from './retro-datepicker/retro-datepicker.directive';
-export { RetroDatepickerToggleDirective } from './retro-datepicker/retro-datepicker-toggle.directive';
+export { RetroDatepickerDirective } from './retro-datepicker/directive/retro-datepicker.directive';
+export { RetroDatepickerToggleDirective } from './retro-datepicker/directive/retro-datepicker-toggle.directive';
+export { RetroMenuComponent } from './retro-menu/retro-menu.component';
+export { RetroMenuItemComponent } from './retro-menu/retro-menu-item.component';
+export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-trigger.directive';
+export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
+export { RetroTabComponent } from './retro-tabs/retro-tab.component';
+export { RetroRouterTabsComponent } from './retro-tabs/retro-router-tabs.component';
+export { RetroTooltipDirective } from './retro-tooltip/directive/retro-tooltip.directive';
+
+// ─── Servicios ────────────────────────────────────────────────────────────────
+export { RetroSnackbarService } from './retro-snackbar/services/retro-snackbar.service';
+export {
+  RetroDialogService,
+  RetroDialogRef,
+  RETRO_DIALOG_DATA,
+  RetroDialogTitleDirective,
+  RetroDialogContentDirective,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective
+} from './retro-dialog/services/retro-dialog.service';
+export {
+  RetroOverlayService,
+  RetroOverlayRef,
+  RETRO_OVERLAY_REF,
+  RETRO_OVERLAY_DATA
+} from './retro-overlay/services/retro-overlay.service';
+export {
+  RetroBottomSheetService,
+  RETRO_BOTTOM_SHEET_DATA
+} from './retro-bottom-sheet/services/retro-bottom-sheet.service';
 
 // ─── Tipos expuestos a consumidores externos ──────────────────────────────────
 export type { RetroChipColor } from './retro-chip/retro-chip.types';
+export type { LibSnackbarVariant } from './retro-snackbar/interfaces/retro-snackbar-message.interface';
+export type { RetroSnackbarMessage } from './retro-snackbar/services/retro-snackbar.service';
 
 // ─── Interfaces expuestas a consumidores externos ─────────────────────────────
 export type { LibRouterTabItemInterface } from './retro-tabs/interfaces/retro-router-tab-item.interface';
+export type { RetroDialogConfig } from './retro-dialog/interfaces/retro-dialog-config.interface';

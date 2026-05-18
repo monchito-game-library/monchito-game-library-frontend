@@ -24,8 +24,8 @@ import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-fiel
 import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {

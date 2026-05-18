@@ -21,8 +21,8 @@ import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directi
 import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
 import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
