@@ -37,19 +37,38 @@
 
   &--interactive {
     cursor: pointer;
-    transition: border-color 120ms linear;
-
-    @media (hover: hover) {
-      &:hover {
-        // --retro-card-hover-border permite que el consumidor sobreescriba el color de hover
-        // (e.g. game-card lo usa con --dominant-glow); cae a --border-active por defecto
-        border-color: var(--retro-card-hover-border, var(--border-active));
-      }
-    }
 
     &:focus-visible {
       outline: 1px solid var(--border-active);
       outline-offset: 2px;
+    }
+  }
+
+  &--hoverable {
+    transition: border-color 120ms linear;
+
+    @media (hover: hover) {
+      &:hover {
+        // --retro-card-hover-border permite que el consumidor sobreescriba el
+        // color de hover (e.g. game-card lo usa con --dominant-glow); cae a
+        // --border-active por defecto.
+        border-color: var(--retro-card-hover-border, var(--border-active));
+      }
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: var(--border);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
     }
   }
 
