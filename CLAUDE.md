@@ -358,4 +358,3 @@ Todo lo demás va en subcarpetas:
 - Constantes → `constants/`
 - Tokens de inyección → `tokens/`
 
-Esta regla NO aplica a componentes hermanos sin relación parental (ej. `retro-list-item` es hermano de `retro-list`, no hijo).

@@ -3,7 +3,7 @@ export { RetroButtonComponent } from './retro-button/retro-button.component';
 export { RetroIconComponent } from './retro-icon/retro-icon.component';
 export { RetroCardComponent } from './retro-card/retro-card.component';
 export { RetroListComponent } from './retro-list/retro-list.component';
-export { RetroListItemComponent } from './retro-list-item/retro-list-item.component';
+export { RetroListItemComponent } from './retro-list/components/retro-list-item/retro-list-item.component';
 export { RetroChipComponent } from './retro-chip/retro-chip.component';
 export { RetroDataRowComponent } from './retro-data-row/retro-data-row.component';
 export { RetroSectionHeaderComponent } from './retro-section-header/retro-section-header.component';
@@ -61,7 +61,10 @@ export {
 export type { RetroChipColor } from './retro-chip/retro-chip.types';
 export type { LibSnackbarVariant } from './retro-snackbar/interfaces/retro-snackbar-message.interface';
 export type { RetroSnackbarMessage } from './retro-snackbar/services/retro-snackbar.service';
-export type { RetroListItemVariant, RetroListItemPadding } from './retro-list-item/retro-list-item.types';
+export type {
+  RetroListItemVariant,
+  RetroListItemPadding
+} from './retro-list/components/retro-list-item/retro-list-item.types';
 
 // ─── Interfaces expuestas a consumidores externos ─────────────────────────────
 export type { LibRouterTabItemInterface } from './retro-tabs/interfaces/retro-router-tab-item.interface';

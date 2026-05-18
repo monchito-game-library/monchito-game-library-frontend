@@ -10,8 +10,8 @@ import {
   output
 } from '@angular/core';
 import { RetroListItemPadding, RetroListItemVariant } from './retro-list-item.types';
-import { RETRO_LIST_PARENT } from '../retro-list/tokens/retro-list-parent.token';
-import { RetroListParent } from '../retro-list/interfaces/retro-list-parent.interface';
+import { RETRO_LIST_PARENT } from '../../tokens/retro-list-parent.token';
+import { RetroListParent } from '../../interfaces/retro-list-parent.interface';
 
 export const RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR =
   'RetroListItemComponent must be used inside a <retro-list> container.';

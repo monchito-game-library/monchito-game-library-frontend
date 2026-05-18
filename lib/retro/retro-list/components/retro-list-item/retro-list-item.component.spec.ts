@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RetroListItemComponent, RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR } from './retro-list-item.component';
-import { RetroListComponent } from '../retro-list/retro-list.component';
+import { RetroListComponent } from '../../retro-list.component';
 import { RetroListItemVariant, RetroListItemPadding } from './retro-list-item.types';
 
 /** Componente host para tests de RetroListItemComponent dentro de su padre retro-list. */
