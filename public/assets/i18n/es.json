@@ -723,12 +723,6 @@
         "admins": "Administradores",
         "members": "Miembros"
       },
-      "filter": {
-        "aria": "Filtrar por rol",
-        "all": "Todos",
-        "admins": "Administradores",
-        "members": "Miembros"
-      },
       "section": {
         "admins": "Administradores",
         "members": "Miembros"
