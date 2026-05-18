@@ -3,10 +3,11 @@
     <h1 class="stores-page__title">{{ 'management.stores.title' | transloco }}</h1>
     <retro-button
       [label]="'management.stores.addBtn' | transloco"
-      icon="add"
       variant="primary"
       [disabled]="loading()"
-      (clicked)="onAddStore()" />
+      (clicked)="onAddStore()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
 
   @if (panelOpen()) {

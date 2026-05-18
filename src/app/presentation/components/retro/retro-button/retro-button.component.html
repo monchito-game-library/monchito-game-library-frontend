@@ -10,12 +10,12 @@
   [disabled]="disabled() || loading()"
   (click)="clicked.emit($event)">
   @if (loading()) {
-    <retro-icon class="retro-btn__icon retro-btn__icon--spin" name="progress_activity" size="sm" />
+    <span class="retro-btn__spinner" aria-hidden="true">
+      <retro-icon class="retro-btn__icon retro-btn__icon--spin" name="progress_activity" size="sm" />
+    </span>
   } @else {
-    <span class="retro-btn__slot"><ng-content /></span>
-    @if (icon()) {
-      <retro-icon class="retro-btn__icon" [name]="icon()!" size="sm" />
-    }
+    <span class="retro-btn__slot retro-btn__slot--start"><ng-content select="[slot=start]" /></span>
+    <span class="retro-btn__slot retro-btn__slot--end"><ng-content select="[slot=end]" /></span>
   }
   <span class="retro-btn__label">{{ label() }}</span>
 </button>

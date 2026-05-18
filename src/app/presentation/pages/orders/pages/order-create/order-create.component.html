@@ -2,10 +2,11 @@
   <div class="order-create-page__header">
     <retro-button
       [label]="'orders.backToList' | transloco"
-      icon="arrow_back"
       variant="ghost"
       class="order-create-page__back-btn"
-      routerLink="/orders" />
+      routerLink="/orders">
+      <retro-icon slot="start" name="arrow_back" size="sm" />
+    </retro-button>
     <h1 class="order-create-page__title">{{ 'orders.create' | transloco }}</h1>
   </div>
 

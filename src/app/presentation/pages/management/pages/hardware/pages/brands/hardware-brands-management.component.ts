@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -29,7 +30,8 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
     TranslocoPipe,
     CatalogItemCardComponent,
     RetroSkeletonComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroIconComponent
   ]
 })
 export class HardwareBrandsManagementComponent implements OnInit {

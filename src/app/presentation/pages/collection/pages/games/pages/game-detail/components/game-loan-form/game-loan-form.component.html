@@ -25,12 +25,13 @@
 
       <retro-button
         [label]="'gameDetail.loan.returnBtn' | transloco"
-        icon="undo"
         variant="primary"
         class="game-loan-form__action-btn"
         [loading]="returning()"
         [disabled]="returning()"
-        (clicked)="onReturn()" />
+        (clicked)="onReturn()">
+        <retro-icon slot="start" name="undo" size="sm" />
+      </retro-button>
     </section>
   } @else {
     <!-- Loan mode: create loan form -->
@@ -56,12 +57,13 @@
 
         <retro-button
           [label]="'gameDetail.loan.loanBtn' | transloco"
-          icon="handshake"
           variant="primary"
           class="game-loan-form__action-btn"
           [loading]="saving()"
           [disabled]="saving()"
-          (clicked)="onLoan()" />
+          (clicked)="onLoan()">
+          <retro-icon slot="start" name="handshake" size="sm" />
+        </retro-button>
       </section>
     </form>
   }

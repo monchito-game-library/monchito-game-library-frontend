@@ -42,9 +42,10 @@
     <retro-button
       class="list-page-header__add-btn"
       variant="primary"
-      icon="add"
       [label]="'nav.add' | transloco"
       [disabled]="disabled()"
-      (clicked)="addClick.emit()" />
+      (clicked)="addClick.emit()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   }
 </div>

@@ -98,10 +98,8 @@
 
   <!-- Footer -->
   <div class="filters-sheet__footer">
-    <retro-button
-      variant="danger"
-      icon="filter_alt_off"
-      [label]="'gameList.empty.clearFilters' | transloco"
-      (clicked)="onClearAll()" />
+    <retro-button variant="danger" [label]="'gameList.empty.clearFilters' | transloco" (clicked)="onClearAll()">
+      <retro-icon slot="start" name="filter_alt_off" size="sm" />
+    </retro-button>
   </div>
 </div>

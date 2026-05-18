@@ -96,26 +96,29 @@
             (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
               | transloco
           "
-          [icon]="protector()!.isActive ? 'toggle_on' : 'toggle_off'"
           variant="ghost"
           [class.edit-panel__deactivate-btn]="protector()!.isActive"
           [class.edit-panel__activate-btn]="!protector()!.isActive"
-          (clicked)="toggled.emit()" />
+          (clicked)="toggled.emit()">
+          <retro-icon slot="start" [name]="protector()!.isActive ? 'toggle_on' : 'toggle_off'" size="sm" />
+        </retro-button>
         <retro-button
           [label]="'management.products.deleteBtn' | transloco"
-          icon="delete"
           variant="danger"
           class="edit-panel__delete-btn"
-          (clicked)="deleted.emit()" />
+          (clicked)="deleted.emit()">
+          <retro-icon slot="start" name="delete" size="sm" />
+        </retro-button>
       }
       <div class="edit-panel__actions-right">
         <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
         <retro-button
           [label]="'common.save' | transloco"
-          icon="save"
           variant="primary"
           [disabled]="form.invalid || packsArray.length === 0"
-          (clicked)="onSave()" />
+          (clicked)="onSave()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     </div>
   </form>

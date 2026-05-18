@@ -140,10 +140,11 @@
                   } @else {
                     <retro-button
                       [label]="'management.users.action.demote' | transloco"
-                      icon="person_remove"
                       variant="ghost"
                       class="user-card__action-btn user-card__action-btn--demote"
-                      (clicked)="onTogglePromotion(user)" />
+                      (clicked)="onTogglePromotion(user)">
+                      <retro-icon slot="start" name="person_remove" size="sm" />
+                    </retro-button>
                     @if (!isSelf(user)) {
                       <retro-icon-button
                         icon="delete"
@@ -199,10 +200,11 @@
                   } @else {
                     <retro-button
                       [label]="'management.users.action.promote' | transloco"
-                      icon="person_add"
                       variant="primary"
                       class="user-card__action-btn user-card__action-btn--promote"
-                      (clicked)="onTogglePromotion(user)" />
+                      (clicked)="onTogglePromotion(user)">
+                      <retro-icon slot="start" name="person_add" size="sm" />
+                    </retro-button>
                     @if (!isSelf(user)) {
                       <retro-icon-button
                         icon="delete"

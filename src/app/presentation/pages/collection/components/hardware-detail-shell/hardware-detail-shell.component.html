@@ -116,27 +116,28 @@
       @if (!soldAt()) {
         <!-- Actions -->
         <div class="hardware-detail__actions">
+          <retro-button variant="ghost" [label]="'gameCard.menu.edit' | transloco" (clicked)="editClicked.emit()">
+            <retro-icon slot="start" name="edit" size="sm" />
+          </retro-button>
           <retro-button
             variant="ghost"
-            icon="edit"
-            [label]="'gameCard.menu.edit' | transloco"
-            (clicked)="editClicked.emit()" />
-          <retro-button
-            variant="ghost"
-            icon="sell"
             [label]="'hardwareSale.manageBtn' | transloco"
-            (clicked)="openSaleClicked.emit()" />
+            (clicked)="openSaleClicked.emit()">
+            <retro-icon slot="start" name="sell" size="sm" />
+          </retro-button>
           <retro-button
             variant="ghost"
-            icon="handshake"
             [label]="activeLoanId() ? ('hardwareLoan.returnBtn' | transloco) : ('hardwareLoan.loanBtn' | transloco)"
-            (clicked)="openLoanClicked.emit()" />
+            (clicked)="openLoanClicked.emit()">
+            <retro-icon slot="start" name="handshake" size="sm" />
+          </retro-button>
           <retro-button
             variant="danger"
-            icon="delete"
             [label]="'gameCard.menu.delete' | transloco"
             [disabled]="deleting()"
-            (clicked)="deleteClicked.emit()" />
+            (clicked)="deleteClicked.emit()">
+            <retro-icon slot="start" name="delete" size="sm" />
+          </retro-button>
         </div>
       } @else {
         <!-- Sale info section -->
@@ -160,14 +161,16 @@
         <div class="hardware-detail__actions">
           <retro-button
             variant="ghost"
-            icon="edit"
             [label]="'hardwareSale.editSaleBtn' | transloco"
-            (clicked)="openSaleClicked.emit()" />
+            (clicked)="openSaleClicked.emit()">
+            <retro-icon slot="start" name="edit" size="sm" />
+          </retro-button>
           <retro-button
             variant="danger"
-            icon="undo"
             [label]="'hardwareSale.undoSaleBtn' | transloco"
-            (clicked)="undoSaleClicked.emit()" />
+            (clicked)="undoSaleClicked.emit()">
+            <retro-icon slot="start" name="undo" size="sm" />
+          </retro-button>
         </div>
       }
     }

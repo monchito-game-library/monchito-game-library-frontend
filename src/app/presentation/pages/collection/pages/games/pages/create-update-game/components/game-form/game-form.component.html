@@ -73,10 +73,11 @@
           [label]="
             selectedGame() ? ('gameForm.cover.changeGame' | transloco) : ('gameForm.cover.searchCatalogue' | transloco)
           "
-          [icon]="selectedGame() ? 'swap_horiz' : 'search'"
           variant="ghost"
           class="game-cover-panel__search-btn"
-          (clicked)="openSearchMode()" />
+          (clicked)="openSearchMode()">
+          <retro-icon slot="start" [name]="selectedGame() ? 'swap_horiz' : 'search'" size="sm" />
+        </retro-button>
 
         @if (selectedGame()) {
           <div class="game-cover-panel__info">
@@ -249,18 +250,20 @@
           <div class="game-form__footer-actions">
             <retro-button
               [label]="'common.cancel' | transloco"
-              icon="close"
               variant="ghost"
               [disabled]="saving()"
-              (clicked)="onCancel()" />
+              (clicked)="onCancel()">
+              <retro-icon slot="start" name="close" size="sm" />
+            </retro-button>
             <retro-button
               [label]="isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco)"
-              [icon]="isEditMode ? 'save' : 'add'"
               variant="primary"
               type="submit"
               class="game-form__submit-btn"
               [loading]="saving()"
-              [disabled]="form.invalid || saving() || !hasChanges()" />
+              [disabled]="form.invalid || saving() || !hasChanges()">
+              <retro-icon slot="start" [name]="isEditMode ? 'save' : 'add'" size="sm" />
+            </retro-button>
           </div>
         </div>
       </form>

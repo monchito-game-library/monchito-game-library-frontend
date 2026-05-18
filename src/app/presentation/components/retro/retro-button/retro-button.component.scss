@@ -80,11 +80,17 @@
     align-items: center;
     line-height: 0;
     flex-shrink: 0;
+
+    &:empty {
+      display: none;
+    }
   }
 
-  /* Si hay contenido proyectado en el slot, ocultar el retro-icon del input icon */
-  .retro-btn__slot:not(:empty) ~ .retro-btn__icon {
-    display: none;
+  .retro-btn__spinner {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    flex-shrink: 0;
   }
 
   .retro-btn__icon--spin {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -25,7 +26,8 @@ import {
     RetroDialogActionsDirective,
     TranslocoPipe,
     RetroSpinnerComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroIconComponent
   ]
 })
 export class AvatarCropDialogComponent extends CropInteractionBase implements OnDestroy {

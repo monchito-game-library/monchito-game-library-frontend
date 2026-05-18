@@ -90,11 +90,9 @@
         [title]="'gameList.empty.noResults' | transloco"
         [subtitle]="'gameList.empty.noResultsSubtitle' | transloco"
         hint="$ try --filter=reset">
-        <retro-button
-          variant="ghost"
-          icon="filter_alt_off"
-          [label]="'gameList.empty.clearFilters' | transloco"
-          (clicked)="clearAllFilters()" />
+        <retro-button variant="ghost" [label]="'gameList.empty.clearFilters' | transloco" (clicked)="clearAllFilters()">
+          <retro-icon slot="start" name="filter_alt_off" size="sm" />
+        </retro-button>
       </retro-empty-state>
 
       <!-- State: empty collection -->

@@ -6,6 +6,7 @@ import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.compon
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 
 @Component({
   selector: 'app-list-page-header',
@@ -15,6 +16,7 @@ import { RetroButtonComponent } from '@/retro/retro-button/retro-button.componen
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RetroButtonComponent,
+    RetroIconComponent,
     RetroIconButtonComponent,
     TranslocoPipe,
     RetroFormFieldComponent,

@@ -200,10 +200,11 @@
         <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancelEdit()" />
         <retro-button
           [label]="'orders.header.save' | transloco"
-          icon="save"
           variant="primary"
           [disabled]="saving()"
-          (clicked)="onSaveHeader()" />
+          (clicked)="onSaveHeader()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     }
   </div>

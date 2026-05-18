@@ -89,16 +89,18 @@
     <div class="order-detail-page__stepper-nav">
       <retro-button
         [label]="'orders.ready.prev' | transloco"
-        icon="arrow_back"
         variant="ghost"
         [disabled]="currentStep() === 0"
-        (clicked)="onPrevStep()" />
+        (clicked)="onPrevStep()">
+        <retro-icon slot="start" name="arrow_back" size="sm" />
+      </retro-button>
       <retro-button
         [label]="'orders.ready.next' | transloco"
-        icon="arrow_forward"
         variant="ghost"
         [disabled]="currentStep() === packSteps().length - 1"
-        (clicked)="onNextStep()" />
+        (clicked)="onNextStep()">
+        <retro-icon slot="end" name="arrow_forward" size="sm" />
+      </retro-button>
     </div>
   </div>
 </div>

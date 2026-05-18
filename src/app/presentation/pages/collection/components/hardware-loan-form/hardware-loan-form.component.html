@@ -26,11 +26,12 @@
       <div class="hardware-loan-form__action-btn">
         <retro-button
           variant="primary"
-          [icon]="returning() ? 'hourglass_empty' : 'undo'"
           [label]="'hardwareLoan.returnBtn' | transloco"
           [disabled]="returning()"
           [loading]="returning()"
-          (clicked)="onReturn()" />
+          (clicked)="onReturn()">
+          <retro-icon slot="start" [name]="returning() ? 'hourglass_empty' : 'undo'" size="sm" />
+        </retro-button>
       </div>
     </section>
   } @else {
@@ -58,11 +59,12 @@
         <div class="hardware-loan-form__action-btn">
           <retro-button
             variant="primary"
-            [icon]="saving() ? 'hourglass_empty' : 'handshake'"
             [label]="'hardwareLoan.loanBtn' | transloco"
             [disabled]="saving()"
             [loading]="saving()"
-            (clicked)="onLoan()" />
+            (clicked)="onLoan()">
+            <retro-icon slot="start" [name]="saving() ? 'hourglass_empty' : 'handshake'" size="sm" />
+          </retro-button>
         </div>
       </section>
     </form>

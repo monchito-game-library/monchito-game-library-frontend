@@ -36,17 +36,19 @@
                 @if (!m.isReady) {
                   <retro-button
                     [label]="'orders.header.markReady' | transloco"
-                    icon="check_circle"
                     variant="success"
                     [disabled]="saving()"
-                    (clicked)="onToggleMemberReady()" />
+                    (clicked)="onToggleMemberReady()">
+                    <retro-icon slot="start" name="check_circle" size="sm" />
+                  </retro-button>
                 } @else {
                   <retro-button
                     [label]="'orders.header.cancelReady' | transloco"
-                    icon="cancel"
                     variant="ghost"
                     [disabled]="saving()"
-                    (clicked)="onToggleMemberReady()" />
+                    (clicked)="onToggleMemberReady()">
+                    <retro-icon slot="start" name="cancel" size="sm" />
+                  </retro-button>
                 }
               }
             }

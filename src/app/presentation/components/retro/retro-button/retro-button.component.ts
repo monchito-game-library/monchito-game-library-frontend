@@ -6,6 +6,12 @@ import { LibButtonType, LibButtonVariant } from '@/types/retro-component.type';
  * Botón reutilizable de la lib Terminal Collector.
  * En desktop muestra corchetes `[ LABEL ]` via pseudo-elementos.
  * En mobile (≤ 768px) los corchetes se ocultan.
+ *
+ * Acepta dos slots opcionales de contenido proyectado:
+ * - `[slot=start]`: contenido a la izquierda del label (típicamente un `<retro-icon size="sm" />`).
+ * - `[slot=end]`: contenido a la derecha del label (chevrons, badges, kbd, etc.).
+ *
+ * Cuando `loading()` es true, ambos slots quedan ocultos y se muestra el spinner interno.
  */
 @Component({
   selector: 'retro-button',
@@ -18,9 +24,6 @@ import { LibButtonType, LibButtonVariant } from '@/types/retro-component.type';
 export class RetroButtonComponent {
   /** Texto del botón, en uppercase en pantalla. */
   readonly label: InputSignal<string> = input.required<string>();
-
-  /** Nombre del icono de Material Icons. Opcional. */
-  readonly icon: InputSignal<string | undefined> = input<string | undefined>(undefined);
 
   /** Variante visual del botón. */
   readonly variant: InputSignal<LibButtonVariant> = input<LibButtonVariant>('ghost');

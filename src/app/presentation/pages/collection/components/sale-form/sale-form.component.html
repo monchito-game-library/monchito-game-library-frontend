@@ -35,12 +35,13 @@
 
       <retro-button
         [label]="i18nPrefix() + '.saveBtn' | transloco"
-        icon="save"
         variant="primary"
         class="sale-form__save-btn"
         [loading]="saving()"
         [disabled]="saving() || selling()"
-        (clicked)="onSave()" />
+        (clicked)="onSave()">
+        <retro-icon slot="start" name="save" size="sm" />
+      </retro-button>
     </section>
 
     <hr class="retro-divider" />
@@ -78,12 +79,13 @@
 
       <retro-button
         [label]="i18nPrefix() + '.markAsSoldBtn' | transloco"
-        icon="sell"
         variant="danger"
         class="sale-form__sold-btn"
         [loading]="selling()"
         [disabled]="!canMarkAsSold || saving() || selling()"
-        (clicked)="onMarkAsSold()" />
+        (clicked)="onMarkAsSold()">
+        <retro-icon slot="start" name="sell" size="sm" />
+      </retro-button>
     </section>
   </form>
 </div>

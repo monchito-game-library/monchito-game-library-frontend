@@ -3,10 +3,11 @@
     <h1 class="protectors-page__title">{{ 'management.products.title' | transloco }}</h1>
     <retro-button
       [label]="'management.products.addBtn' | transloco"
-      icon="add"
       variant="primary"
       [disabled]="loading()"
-      (clicked)="onAddProtector()" />
+      (clicked)="onAddProtector()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
 
   @if (panelOpen()) {

@@ -1,7 +1,9 @@
 <div class="order-detail-page__section-header" [class.order-detail-page__section-header--collapsed]="editingHeader()">
   <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
   @if (order().status === ORDER_STATUS.DRAFT && !editingHeader()) {
-    <retro-button [label]="'orders.lines.add' | transloco" icon="add" variant="primary" (clicked)="lineAdd.emit()" />
+    <retro-button [label]="'orders.lines.add' | transloco" variant="primary" (clicked)="lineAdd.emit()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   }
 </div>
 

@@ -119,10 +119,11 @@
       <div class="wishlist-detail__own-btn">
         <retro-button
           variant="success"
-          icon="shopping_bag"
           [label]="'wishlist.card.ownTooltip' | transloco"
           [fullWidth]="true"
-          (clicked)="onOwn()" />
+          (clicked)="onOwn()">
+          <retro-icon slot="start" name="shopping_bag" size="sm" />
+        </retro-button>
       </div>
     </div>
   }

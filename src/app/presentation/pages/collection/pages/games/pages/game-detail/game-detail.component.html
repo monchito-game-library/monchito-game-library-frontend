@@ -262,9 +262,10 @@
           <div class="game-detail__add-copy-row">
             <retro-button
               [label]="'gameDetail.addAnotherCopy' | transloco"
-              icon="library_add"
               variant="ghost"
-              (clicked)="addAnotherCopy()" />
+              (clicked)="addAnotherCopy()">
+              <retro-icon slot="start" name="library_add" size="sm" />
+            </retro-button>
           </div>
         }
       }

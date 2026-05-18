@@ -41,5 +41,7 @@
 
 <footer retroDialogActions align="end">
   <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
-  <retro-button [label]="'orders.header.save' | transloco" icon="save" variant="primary" (clicked)="onSubmit()" />
+  <retro-button [label]="'orders.header.save' | transloco" variant="primary" (clicked)="onSubmit()">
+    <retro-icon slot="start" name="save" size="sm" />
+  </retro-button>
 </footer>

@@ -4,11 +4,9 @@
       <retro-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
       <div class="order-invite-page__message">{{ 'orders.invite.loginRequired' | transloco }}</div>
-      <retro-button
-        [label]="'orders.invite.loginBtn' | transloco"
-        icon="login"
-        variant="primary"
-        (clicked)="onGoToLogin()" />
+      <retro-button [label]="'orders.invite.loginBtn' | transloco" variant="primary" (clicked)="onGoToLogin()">
+        <retro-icon slot="start" name="login" size="sm" />
+      </retro-button>
     } @else if (loading()) {
       <retro-skeleton width="48px" height="48px" />
       <retro-skeleton width="160px" height="20px" />
@@ -23,9 +21,10 @@
       <ng-container *ngTemplateOutlet="orderInfo; context: { inv: invitation()! }" />
       <retro-button
         [label]="'orders.invite.goToOrder' | transloco"
-        icon="open_in_new"
         variant="primary"
-        [routerLink]="['/orders', invitation()!.orderId]" />
+        [routerLink]="['/orders', invitation()!.orderId]">
+        <retro-icon slot="end" name="open_in_new" size="sm" />
+      </retro-button>
     } @else if (invitation()) {
       <retro-icon class="order-invite-page__icon" name="group_add" />
       <div class="order-invite-page__title">{{ 'orders.invite.title' | transloco }}</div>
@@ -37,11 +36,12 @@
       }
       <retro-button
         [label]="joining() ? ('orders.invite.joining' | transloco) : ('orders.invite.join' | transloco)"
-        icon="group_add"
         variant="primary"
         [loading]="joining()"
         [disabled]="joining()"
-        (clicked)="onJoin()" />
+        (clicked)="onJoin()">
+        <retro-icon slot="start" name="group_add" size="sm" />
+      </retro-button>
     }
   </div>
 </div>

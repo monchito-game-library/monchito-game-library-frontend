@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSig
 import { DecimalPipe } from '@angular/common';
 
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -28,7 +29,14 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   styleUrl: './protectors-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProtectorEditPanelComponent, TranslocoPipe, DecimalPipe, RetroSkeletonComponent, RetroButtonComponent]
+  imports: [
+    ProtectorEditPanelComponent,
+    TranslocoPipe,
+    DecimalPipe,
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    RetroIconComponent
+  ]
 })
 export class ProtectorsManagementComponent implements OnInit {
   private readonly _dialog: RetroDialogService = inject(RetroDialogService);

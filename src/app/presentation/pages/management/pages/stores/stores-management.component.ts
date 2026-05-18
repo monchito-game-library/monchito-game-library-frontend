@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -32,7 +33,8 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
     TranslocoPipe,
     CatalogItemCardComponent,
     RetroSkeletonComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroIconComponent
   ]
 })
 export class StoresManagementComponent implements OnInit {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RetroButtonComponent } from './retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 
 describe('RetroButtonComponent', () => {
   let fixture: ComponentFixture<RetroButtonComponent>;
@@ -40,56 +41,98 @@ describe('RetroButtonComponent', () => {
     expect(spinIcon).not.toBeNull();
   });
 
-  describe('ng-content slot (SVG projection)', () => {
+  describe('named slots', () => {
     @Component({
       template: `
-        <retro-button label="With SVG">
-          <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
+        <retro-button label="With start slot">
+          <retro-icon slot="start" name="save" size="sm" />
         </retro-button>
       `,
-      imports: [RetroButtonComponent]
+      imports: [RetroButtonComponent, RetroIconComponent]
     })
-    class TestHostWithSvgComponent {}
+    class TestHostWithStartSlotComponent {}
 
     @Component({
       template: `
-        <retro-button label="With SVG and icon" icon="star">
-          <svg id="test-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /></svg>
+        <retro-button label="With end slot">
+          <retro-icon slot="end" name="chevron_right" size="sm" />
         </retro-button>
       `,
+      imports: [RetroButtonComponent, RetroIconComponent]
+    })
+    class TestHostWithEndSlotComponent {}
+
+    @Component({
+      template: `
+        <retro-button label="With both slots">
+          <retro-icon slot="start" name="save" size="sm" />
+          <retro-icon slot="end" name="chevron_right" size="sm" />
+        </retro-button>
+      `,
+      imports: [RetroButtonComponent, RetroIconComponent]
+    })
+    class TestHostWithBothSlotsComponent {}
+
+    @Component({
+      template: `<retro-button label="No slots" />`,
       imports: [RetroButtonComponent]
     })
-    class TestHostWithSvgAndIconComponent {}
+    class TestHostNoSlotsComponent {}
 
-    it('should render projected SVG content in the slot', async () => {
-      const hostFixture = TestBed.createComponent(TestHostWithSvgComponent);
+    @Component({
+      template: `
+        <retro-button label="Loading with start" [loading]="true">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
+      `,
+      imports: [RetroButtonComponent, RetroIconComponent]
+    })
+    class TestHostLoadingWithStartComponent {}
+
+    it('should project retro-icon into slot--start', () => {
+      const hostFixture = TestBed.createComponent(TestHostWithStartSlotComponent);
       hostFixture.detectChanges();
-      const svg = hostFixture.nativeElement.querySelector('#test-svg');
-      expect(svg).not.toBeNull();
+      const startSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--start');
+      expect(startSlot).not.toBeNull();
+      const icon = startSlot?.querySelector('retro-icon');
+      expect(icon).not.toBeNull();
     });
 
-    it('should render the slot wrapper when SVG is projected with icon input defined', async () => {
-      const hostFixture = TestBed.createComponent(TestHostWithSvgAndIconComponent);
+    it('should project retro-icon into slot--end', () => {
+      const hostFixture = TestBed.createComponent(TestHostWithEndSlotComponent);
       hostFixture.detectChanges();
-      const slot = hostFixture.nativeElement.querySelector('.retro-btn__slot');
-      const svg = hostFixture.nativeElement.querySelector('#test-svg');
-      expect(slot).not.toBeNull();
-      expect(svg).not.toBeNull();
+      const endSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--end');
+      expect(endSlot).not.toBeNull();
+      const icon = endSlot?.querySelector('retro-icon');
+      expect(icon).not.toBeNull();
     });
 
-    it('should hide the icon (mat-icon) when ng-content has projected SVG (precedence CSS rule)', async () => {
-      const hostFixture = TestBed.createComponent(TestHostWithSvgAndIconComponent);
+    it('should render both slots simultaneously when both are projected', () => {
+      const hostFixture = TestBed.createComponent(TestHostWithBothSlotsComponent);
       hostFixture.detectChanges();
-      const slot: HTMLElement | null = hostFixture.nativeElement.querySelector('.retro-btn__slot');
-      const matIcon: HTMLElement | null = hostFixture.nativeElement.querySelector('.retro-btn__icon');
-      expect(slot).not.toBeNull();
-      expect(matIcon).not.toBeNull();
-      // The slot is non-empty -> sibling .retro-btn__icon must be hidden by CSS rule
-      // `.retro-btn__slot:not(:empty) ~ .retro-btn__icon { display: none }`
-      const matIconDisplay = (matIcon as HTMLElement).ownerDocument.defaultView?.getComputedStyle(
-        matIcon as HTMLElement
-      ).display;
-      expect(matIconDisplay).toBe('none');
+      const startSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--start');
+      const endSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--end');
+      expect(startSlot?.querySelector('retro-icon')).not.toBeNull();
+      expect(endSlot?.querySelector('retro-icon')).not.toBeNull();
+    });
+
+    it('should render slot--start with no content when no projection is used', () => {
+      const hostFixture = TestBed.createComponent(TestHostNoSlotsComponent);
+      hostFixture.detectChanges();
+      const startSlot: HTMLElement | null = hostFixture.nativeElement.querySelector('.retro-btn__slot--start');
+      expect(startSlot).not.toBeNull();
+      expect(startSlot?.children.length).toBe(0);
+    });
+
+    it('should show spinner and not render slot--start when loading is true', () => {
+      const hostFixture = TestBed.createComponent(TestHostLoadingWithStartComponent);
+      hostFixture.detectChanges();
+      const spinIcon = hostFixture.nativeElement.querySelector('.retro-btn__icon--spin');
+      const startSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--start');
+      const endSlot = hostFixture.nativeElement.querySelector('.retro-btn__slot--end');
+      expect(spinIcon).not.toBeNull();
+      expect(startSlot).toBeNull();
+      expect(endSlot).toBeNull();
     });
   });
 });

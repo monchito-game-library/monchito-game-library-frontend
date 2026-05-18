@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, ou
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
 import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
@@ -28,6 +29,7 @@ import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
     ReactiveFormsModule,
     TranslocoPipe,
     RetroButtonComponent,
+    RetroIconComponent,
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,

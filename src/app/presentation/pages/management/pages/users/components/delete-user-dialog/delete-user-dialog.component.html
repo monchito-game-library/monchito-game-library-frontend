@@ -37,8 +37,9 @@
   <retro-button [label]="'common.cancel' | transloco" variant="ghost" retroDialogClose />
   <retro-button
     [label]="'management.users.delete.confirm' | transloco"
-    icon="delete_forever"
     variant="danger"
     [disabled]="!canConfirm()"
-    (clicked)="onConfirm()" />
+    (clicked)="onConfirm()">
+    <retro-icon slot="start" name="delete_forever" size="sm" />
+  </retro-button>
 </footer>

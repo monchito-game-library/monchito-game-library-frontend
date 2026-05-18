@@ -32,19 +32,21 @@
       @if (store()) {
         <retro-button
           [label]="'common.delete' | transloco"
-          icon="delete_outline"
           variant="danger"
           class="edit-panel__delete-btn"
-          (clicked)="deleted.emit()" />
+          (clicked)="deleted.emit()">
+          <retro-icon slot="start" name="delete_outline" size="sm" />
+        </retro-button>
       }
       <div class="edit-panel__actions-right">
         <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
         <retro-button
           [label]="'common.save' | transloco"
-          icon="save"
           variant="primary"
           [disabled]="form.invalid"
-          (clicked)="onSave()" />
+          (clicked)="onSave()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     </div>
   </form>

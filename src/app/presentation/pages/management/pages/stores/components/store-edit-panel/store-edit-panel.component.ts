@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output } fro
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
 import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
@@ -22,6 +23,7 @@ import { StoreFormResult } from '@/interfaces/management/store-form-result.inter
     ReactiveFormsModule,
     TranslocoPipe,
     RetroButtonComponent,
+    RetroIconComponent,
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,

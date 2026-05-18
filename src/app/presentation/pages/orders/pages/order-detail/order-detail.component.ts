@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
 import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
 import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
 import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
 import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -57,7 +58,8 @@ import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-
     OrderProductListComponent,
     OrderStepperComponent,
     OrderPlacingComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroIconComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
