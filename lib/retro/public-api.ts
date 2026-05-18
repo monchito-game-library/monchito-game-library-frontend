@@ -21,7 +21,7 @@ export { RetroLabelComponent } from './retro-form-field/retro-label.component';
 export { RetroErrorComponent } from './retro-form-field/retro-error.component';
 export { RetroHintComponent } from './retro-form-field/retro-hint.component';
 export { RetroSelectComponent } from './retro-select/retro-select.component';
-export { RetroOptionComponent } from './retro-select/retro-option.component';
+export { RetroOptionComponent } from './retro-select/components/retro-option/retro-option.component';
 export { RetroAutocompleteComponent } from './retro-autocomplete/retro-autocomplete.component';
 export { RetroAutocompleteTriggerDirective } from './retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 export { RetroDatepickerComponent } from './retro-datepicker/retro-datepicker.component';

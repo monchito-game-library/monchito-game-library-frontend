@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
-import { RetroOptionParent } from './interfaces/retro-option-parent.interface';
+import { RetroOptionParent } from '../interfaces/retro-option-parent.interface';
 
-export type { RetroOptionParent } from './interfaces/retro-option-parent.interface';
+export type { RetroOptionParent } from '../interfaces/retro-option-parent.interface';
 
 /**
  * Token de inyección para el componente padre de una RetroOptionComponent.

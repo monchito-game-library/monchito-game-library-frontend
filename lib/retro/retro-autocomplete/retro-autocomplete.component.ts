@@ -19,8 +19,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
 import { TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
-import { RetroOptionComponent } from '../retro-select/retro-option.component';
-import { RETRO_OPTION_PARENT, RetroOptionParent } from '../retro-select/retro-option-parent.token';
+import { RetroOptionComponent } from '../retro-select/components/retro-option/retro-option.component';
+import { RETRO_OPTION_PARENT, RetroOptionParent } from '../retro-select/tokens/retro-option-parent.token';
 import { startWith } from 'rxjs';
 
 let _nextAutocompleteId: number = 0;

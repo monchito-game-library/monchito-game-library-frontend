@@ -9,7 +9,7 @@ import {
   signal,
   WritableSignal
 } from '@angular/core';
-import { RETRO_OPTION_PARENT } from './retro-option-parent.token';
+import { RETRO_OPTION_PARENT } from '../../tokens/retro-option-parent.token';
 
 let _nextId: number = 0;
 

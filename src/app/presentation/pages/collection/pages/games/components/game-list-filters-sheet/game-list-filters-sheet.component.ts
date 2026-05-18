@@ -6,7 +6,7 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';

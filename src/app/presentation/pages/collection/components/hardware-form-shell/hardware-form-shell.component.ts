@@ -15,7 +15,7 @@ import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-fiel
 import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
 import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';

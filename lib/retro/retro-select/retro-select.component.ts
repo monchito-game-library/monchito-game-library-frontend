@@ -26,8 +26,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
-import { RetroOptionComponent } from './retro-option.component';
-import { RETRO_OPTION_PARENT, RetroOptionParent } from './retro-option-parent.token';
+import { RetroOptionComponent } from './components/retro-option/retro-option.component';
+import { RETRO_OPTION_PARENT, RetroOptionParent } from './tokens/retro-option-parent.token';
 import { RetroIconComponent } from '../retro-icon/retro-icon.component';
 import { merge, startWith } from 'rxjs';
 

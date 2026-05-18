@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } fr
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
