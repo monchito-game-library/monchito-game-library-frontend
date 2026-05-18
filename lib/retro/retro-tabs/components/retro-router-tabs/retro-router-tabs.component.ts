@@ -15,8 +15,8 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { RetroIconComponent } from '../retro-icon/retro-icon.component';
-import { LibRouterTabItemInterface } from './interfaces/retro-router-tab-item.interface';
+import { RetroIconComponent } from '../../../../retro-icon/retro-icon.component';
+import { LibRouterTabItemInterface } from '../../interfaces/retro-router-tab-item.interface';
 
 /**
  * Componente de navegación por rutas con estética de tabs Terminal Collector.

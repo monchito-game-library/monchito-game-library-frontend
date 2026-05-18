@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RetroIconComponent } from '../retro-icon/retro-icon.component';
-import { RetroTabComponent } from './retro-tab.component';
+import { RetroTabComponent } from './components/retro-tab/retro-tab.component';
 
 /**
  * Componente de tabs accesible con role="tablist".

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { RetroRouterTabsComponent } from '@retro/retro-tabs/retro-router-tabs.component';
+import { RetroRouterTabsComponent } from '@retro/retro-tabs/components/retro-router-tabs/retro-router-tabs.component';
 import { LibRouterTabItemInterface } from '@retro/retro-tabs/interfaces/retro-router-tab-item.interface';
 
 @Component({

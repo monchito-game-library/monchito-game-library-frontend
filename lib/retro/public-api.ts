@@ -31,8 +31,8 @@ export { RetroMenuComponent } from './retro-menu/retro-menu.component';
 export { RetroMenuItemComponent } from './retro-menu/retro-menu-item.component';
 export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-trigger.directive';
 export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
-export { RetroTabComponent } from './retro-tabs/retro-tab.component';
-export { RetroRouterTabsComponent } from './retro-tabs/retro-router-tabs.component';
+export { RetroTabComponent } from './retro-tabs/components/retro-tab/retro-tab.component';
+export { RetroRouterTabsComponent } from './retro-tabs/components/retro-router-tabs/retro-router-tabs.component';
 export { RetroTooltipDirective } from './retro-tooltip/directive/retro-tooltip.directive';
 
 // ─── Servicios ────────────────────────────────────────────────────────────────

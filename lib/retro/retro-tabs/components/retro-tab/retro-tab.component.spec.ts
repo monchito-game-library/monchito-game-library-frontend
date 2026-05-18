@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { describe, beforeEach, it, expect } from 'vitest';
-import { RetroTabsComponent } from './retro-tabs.component';
+import { RetroTabsComponent } from '../../retro-tabs.component';
 import { RetroTabComponent } from './retro-tab.component';
 
 @Component({

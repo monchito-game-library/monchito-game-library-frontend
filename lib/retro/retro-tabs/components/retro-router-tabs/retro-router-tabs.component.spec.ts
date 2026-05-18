@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, it, expect } from 'vitest';
 import { RetroRouterTabsComponent } from './retro-router-tabs.component';
-import { LibRouterTabItemInterface } from './interfaces/retro-router-tab-item.interface';
+import { LibRouterTabItemInterface } from '../../interfaces/retro-router-tab-item.interface';
 
 const testItems: readonly LibRouterTabItemInterface[] = [
   { path: '/collection', label: 'tabOverview', icon: 'home', exact: true },
