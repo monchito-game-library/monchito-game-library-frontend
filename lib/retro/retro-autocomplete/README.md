@@ -33,7 +33,7 @@ Panel de autocomplete Terminal Collector que se ancla a un `<input retroInput>` 
 - `RetroOptionComponent`, `RETRO_OPTION_PARENT` (token).
 - CDK Overlay + Portal.
 
-## Directiva — RetroAutocompleteTriggerDirective
+## Directiva — RetroAutocompleteTriggerDirective (`directive/`)
 
 - **Selector:** `input[retroAutocompleteTrigger], textarea[retroAutocompleteTrigger]`
 - **Hace:** conecta un input nativo con el `RetroAutocompleteComponent`. Abre el panel en focus/input, navega con ArrowDown/Up, selecciona con Enter, cierra con Escape/blur.
