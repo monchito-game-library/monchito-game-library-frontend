@@ -5,10 +5,16 @@ import {
   OutputEmitterRef,
   Signal,
   computed,
+  inject,
   input,
   output
 } from '@angular/core';
 import { RetroListItemPadding, RetroListItemVariant } from './retro-list-item.types';
+import { RETRO_LIST_PARENT } from '../retro-list/tokens/retro-list-parent.token';
+import { RetroListParent } from '../retro-list/interfaces/retro-list-parent.interface';
+
+export const RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR =
+  'RetroListItemComponent must be used inside a <retro-list> container.';
 
 /**
  * Fila de lista retro de la lib Terminal Collector.
@@ -32,6 +38,8 @@ import { RetroListItemPadding, RetroListItemVariant } from './retro-list-item.ty
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RetroListItemComponent {
+  private readonly _parent: RetroListParent | null = inject(RETRO_LIST_PARENT, { optional: true });
+
   /** Activa comportamiento de fila clicable (role=button, hover, focus). */
   readonly interactive: InputSignal<boolean> = input<boolean>(false);
 
@@ -70,6 +78,12 @@ export class RetroListItemComponent {
 
   /** Emite el MouseEvent cuando la fila es interactiva y se hace clic. */
   readonly itemClicked: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
+
+  constructor() {
+    if (!this._parent) {
+      throw new Error(RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR);
+    }
+  }
 
   /**
    * Emite `itemClicked` cuando la fila es clicable. Si está `disabled` o no

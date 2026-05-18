@@ -1,5 +1,7 @@
 # retro-list-item
 
+> **Requisito:** este componente debe usarse siempre dentro de un `<retro-list>`. Usarlo sin padre lanza un error en runtime.
+
 Fila de lista Terminal Collector. Layout horizontal leading | cuerpo | trailing. Borde 1px, fondo `--bg-surface`, sin border-radius.
 
 ## Componente — RetroListItemComponent

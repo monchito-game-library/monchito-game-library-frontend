@@ -51,3 +51,11 @@ Ninguno.
   </retro-list>
 }
 ```
+
+## Contrato con retro-list-item
+
+`<retro-list-item>` solo puede renderizarse dentro de un `<retro-list>`. Usarlo fuera lanza:
+
+> RetroListItemComponent must be used inside a \<retro-list\> container.
+
+`RetroListComponent` se auto-provee bajo el token interno `RETRO_LIST_PARENT` (no expuesto en la API pública). Este mecanismo permite en el futuro exponer configuración compartida (densidad, padding por defecto) sin cambiar la API externa.

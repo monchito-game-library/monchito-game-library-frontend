@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import { RETRO_LIST_PARENT } from './tokens/retro-list-parent.token';
+import { RetroListParent } from './interfaces/retro-list-parent.interface';
 
 /**
  * Contenedor flex-column para listas Terminal Collector.
@@ -13,6 +15,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   imports: [],
   templateUrl: './retro-list.component.html',
   styleUrl: './retro-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{ provide: RETRO_LIST_PARENT, useExisting: forwardRef(() => RetroListComponent) }]
 })
-export class RetroListComponent {}
+export class RetroListComponent implements RetroListParent {}
