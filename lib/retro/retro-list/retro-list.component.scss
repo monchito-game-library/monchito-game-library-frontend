@@ -1,0 +1,5 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--retro-list-gap, 0.5rem);
+}
