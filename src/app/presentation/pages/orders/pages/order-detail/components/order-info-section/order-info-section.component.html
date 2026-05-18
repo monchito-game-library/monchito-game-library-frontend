@@ -197,10 +197,15 @@
 
     @if (editingHeader() || hidingActions()) {
       <div class="order-detail-page__form-actions" [class.order-detail-page__form-actions--hiding]="hidingActions()">
-        <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" (clicked)="onCancelEdit()" />
+        <retro-button
+          [label]="'orders.header.cancel' | transloco"
+          variant="ghost"
+          size="md"
+          (clicked)="onCancelEdit()" />
         <retro-button
           [label]="'orders.header.save' | transloco"
           variant="primary"
+          size="md"
           [disabled]="saving()"
           (clicked)="onSaveHeader()">
           <retro-icon slot="start" name="save" size="sm" />

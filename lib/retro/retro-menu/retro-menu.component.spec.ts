@@ -4,7 +4,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { describe, beforeEach, it, expect } from 'vitest';
 import { RetroMenuComponent } from './retro-menu.component';
 import { RetroMenuItemComponent } from './retro-menu-item.component';
-import { RetroMenuTriggerDirective } from './retro-menu-trigger.directive';
+import { RetroMenuTriggerDirective } from './directive/retro-menu-trigger.directive';
 
 @Component({
   selector: 'app-menu-host',

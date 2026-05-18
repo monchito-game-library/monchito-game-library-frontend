@@ -37,8 +37,8 @@
 
 @if (imageLoaded()) {
   <footer retroDialogActions align="end">
-    <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
-    <retro-button [label]="'common.save' | transloco" variant="primary" (clicked)="onConfirm()">
+    <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="onCancel()" />
+    <retro-button [label]="'common.save' | transloco" variant="primary" size="md" (clicked)="onConfirm()">
       <retro-icon slot="start" name="save" size="sm" />
     </retro-button>
   </footer>

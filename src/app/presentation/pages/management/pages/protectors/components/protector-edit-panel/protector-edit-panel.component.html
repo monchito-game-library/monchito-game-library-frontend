@@ -97,6 +97,7 @@
               | transloco
           "
           variant="ghost"
+          size="md"
           [class.edit-panel__deactivate-btn]="protector()!.isActive"
           [class.edit-panel__activate-btn]="!protector()!.isActive"
           (clicked)="toggled.emit()">
@@ -105,16 +106,18 @@
         <retro-button
           [label]="'management.products.deleteBtn' | transloco"
           variant="danger"
+          size="md"
           class="edit-panel__delete-btn"
           (clicked)="deleted.emit()">
           <retro-icon slot="start" name="delete" size="sm" />
         </retro-button>
       }
       <div class="edit-panel__actions-right">
-        <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="cancelled.emit()" />
         <retro-button
           [label]="'common.save' | transloco"
           variant="primary"
+          size="md"
           [disabled]="form.invalid || packsArray.length === 0"
           (clicked)="onSave()">
           <retro-icon slot="start" name="save" size="sm" />

@@ -41,6 +41,36 @@ describe('RetroButtonComponent', () => {
     expect(spinIcon).not.toBeNull();
   });
 
+  describe('size', () => {
+    it('should apply --lg modifier by default', () => {
+      expect(fixture.nativeElement.querySelector('.retro-btn--lg')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-btn--sm')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.retro-btn--md')).toBeNull();
+    });
+
+    it('should apply --sm modifier when size is sm', () => {
+      fixture.componentRef.setInput('size', 'sm');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-btn--sm')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-btn--lg')).toBeNull();
+    });
+
+    it('should apply --md modifier when size is md', () => {
+      fixture.componentRef.setInput('size', 'md');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-btn--md')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-btn--lg')).toBeNull();
+    });
+
+    it('should apply --lg modifier when size is lg', () => {
+      fixture.componentRef.setInput('size', 'lg');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.retro-btn--lg')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('.retro-btn--sm')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.retro-btn--md')).toBeNull();
+    });
+  });
+
   describe('named slots', () => {
     @Component({
       template: `

@@ -96,10 +96,11 @@
 </div>
 
 <footer retroDialogActions align="end">
-  <retro-button variant="ghost" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
+  <retro-button variant="ghost" size="md" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
   @if (!showSearch()) {
     <retro-button
       variant="primary"
+      size="md"
       [label]="'common.confirm' | transloco"
       [disabled]="!canConfirm()"
       (clicked)="onConfirm()" />

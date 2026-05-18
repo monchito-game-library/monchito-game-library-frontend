@@ -29,10 +29,11 @@
 </div>
 
 <footer retroDialogActions align="end">
-  <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="onCancel()" />
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="onCancel()" />
   <retro-button
     [label]="'common.confirm' | transloco"
     variant="primary"
+    size="md"
     [disabled]="!imageLoaded()"
     (clicked)="onConfirm()" />
 </footer>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
 import { RetroIconComponent } from '../retro-icon/retro-icon.component';
-import { LibButtonType, LibButtonVariant } from './retro-button.types';
+import { LibButtonType, LibButtonVariant, RetroButtonSize } from './retro-button.types';
 
 /**
  * Botón reutilizable de la lib Terminal Collector.
@@ -27,6 +27,9 @@ export class RetroButtonComponent {
 
   /** Variante visual del botón. */
   readonly variant: InputSignal<LibButtonVariant> = input<LibButtonVariant>('ghost');
+
+  /** Tamaño del botón: sm (32px, denso), md (40px, compacto), lg (44px, default). En mobile sm/md se promocionan a 44px. */
+  readonly size: InputSignal<RetroButtonSize> = input<RetroButtonSize>('lg');
 
   /** Deshabilita el botón cuando es true. */
   readonly disabled: InputSignal<boolean> = input<boolean>(false);

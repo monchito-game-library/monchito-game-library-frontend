@@ -33,16 +33,18 @@
         <retro-button
           [label]="'common.delete' | transloco"
           variant="danger"
+          size="md"
           class="edit-panel__delete-btn"
           (clicked)="deleted.emit()">
           <retro-icon slot="start" name="delete_outline" size="sm" />
         </retro-button>
       }
       <div class="edit-panel__actions-right">
-        <retro-button [label]="'common.cancel' | transloco" variant="ghost" (clicked)="cancelled.emit()" />
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="cancelled.emit()" />
         <retro-button
           [label]="'common.save' | transloco"
           variant="primary"
+          size="md"
           [disabled]="form.invalid"
           (clicked)="onSave()">
           <retro-icon slot="start" name="save" size="sm" />

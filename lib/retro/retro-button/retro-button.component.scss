@@ -5,19 +5,26 @@
 .retro-btn {
   --color: var(--text-hi);
   --bg: transparent;
+  --_h: 44px;
+  --_py: 0.5rem;
+  --_px: 1rem;
+  --_fs: 0.8125rem;
+  --_gap: 0.5rem;
+  --_bracket-w: 0.4rem;
+  --_bracket-mx: 0.25rem;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.5rem 1rem;
+  gap: var(--_gap);
+  min-height: var(--_h);
+  padding: var(--_py) var(--_px);
   border: 1px solid var(--color);
   background: var(--bg);
   color: var(--color);
   font-family: 'JetBrains Mono', monospace;
   font-weight: 500;
-  font-size: 0.8125rem;
+  font-size: var(--_fs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -30,7 +37,7 @@
   &::after {
     content: '';
     display: inline-block;
-    width: 0.4rem;
+    width: var(--_bracket-w);
     height: 1ch;
     border-color: var(--color);
     border-style: solid;
@@ -38,26 +45,60 @@
 
   &::before {
     border-width: 1px 0 1px 1px;
-    margin-right: 0.25rem; /* "[" */
+    margin-right: var(--_bracket-mx);
   }
 
   &::after {
     border-width: 1px 1px 1px 0;
-    margin-left: 0.25rem; /* "]" */
+    margin-left: var(--_bracket-mx);
+  }
+
+  &--sm {
+    --_h: 32px;
+    --_py: 0.25rem;
+    --_px: 0.75rem;
+    --_fs: 0.6875rem;
+    --_gap: 0.375rem;
+    --_bracket-w: 0.3rem;
+    --_bracket-mx: 0.2rem;
+  }
+
+  &--md {
+    --_h: 40px;
+    --_py: 0.5rem;
+    --_px: 0.875rem;
+    --_fs: 0.75rem;
+    --_gap: 0.5rem;
+    --_bracket-w: 0.35rem;
+    --_bracket-mx: 0.25rem;
+  }
+
+  &--lg {
+    --_h: 44px;
+    --_py: 0.5rem;
+    --_px: 1rem;
+    --_fs: 0.8125rem;
+    --_gap: 0.5rem;
+    --_bracket-w: 0.4rem;
+    --_bracket-mx: 0.25rem;
   }
 
   &--primary {
     --color: var(--primary);
   }
+
   &--danger {
     --color: var(--accent-rose);
   }
+
   &--success {
     --color: var(--accent-green);
   }
+
   &--ghost {
     --color: var(--text-mid);
   }
+
   &--full {
     width: 100%;
   }
@@ -110,9 +151,17 @@
     padding: 0.625rem 0.875rem;
     font-size: 0.875rem;
 
+    &--sm,
+    &--md {
+      --_h: 44px;
+      --_py: 0.625rem;
+      --_px: 0.875rem;
+      --_fs: 0.875rem;
+    }
+
     &::before,
     &::after {
-      display: none; /* corchetes ocultos en mobile */
+      display: none;
     }
   }
 }

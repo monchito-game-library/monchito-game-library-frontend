@@ -1,6 +1,6 @@
 # retro-button
 
-Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos en mobile ≤ 768px).
+Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos en mobile ≤ 768px). Disponible en tres tamaños: `sm` (32px), `md` (40px), `lg` (44px, default).
 
 ## Componente — RetroButtonComponent
 
@@ -13,6 +13,7 @@ Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop
 |---|---|---|---|
 | `label` | `string` (required) | — | Texto del botón (uppercase en pantalla). |
 | `variant` | `'primary' \| 'ghost' \| 'danger' \| 'success'` | `'ghost'` | Variante visual. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura: 32 / 40 / 44 px. En mobile sm/md se promocionan a 44 px. |
 | `disabled` | `boolean` | `false` | Deshabilita el botón. |
 | `loading` | `boolean` | `false` | Muestra spinner interno y deshabilita. |
 | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Tipo HTML. |
@@ -32,7 +33,7 @@ Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop
 
 ### Types
 
-- `LibButtonVariant`, `LibButtonType` en `retro-button.types.ts`.
+- `LibButtonVariant`, `LibButtonType`, `RetroButtonSize` en `retro-button.types.ts`.
 
 ### Dependencias
 

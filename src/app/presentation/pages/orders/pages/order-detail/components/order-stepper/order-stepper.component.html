@@ -90,6 +90,7 @@
       <retro-button
         [label]="'orders.ready.prev' | transloco"
         variant="ghost"
+        size="md"
         [disabled]="currentStep() === 0"
         (clicked)="onPrevStep()">
         <retro-icon slot="start" name="arrow_back" size="sm" />
@@ -97,6 +98,7 @@
       <retro-button
         [label]="'orders.ready.next' | transloco"
         variant="ghost"
+        size="md"
         [disabled]="currentStep() === packSteps().length - 1"
         (clicked)="onNextStep()">
         <retro-icon slot="end" name="arrow_forward" size="sm" />

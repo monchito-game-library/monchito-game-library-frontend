@@ -34,10 +34,11 @@
 </div>
 
 <footer retroDialogActions align="end" class="delete-user-dialog__actions">
-  <retro-button [label]="'common.cancel' | transloco" variant="ghost" retroDialogClose />
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" retroDialogClose />
   <retro-button
     [label]="'management.users.delete.confirm' | transloco"
     variant="danger"
+    size="md"
     [disabled]="!canConfirm()"
     (clicked)="onConfirm()">
     <retro-icon slot="start" name="delete_forever" size="sm" />
