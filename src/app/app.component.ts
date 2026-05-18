@@ -22,7 +22,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
-import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/retro-snackbar-host.component';
+import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
 import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
 import { RetroMenuItemComponent } from '@retro/retro-menu/retro-menu-item.component';
 import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';

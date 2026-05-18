@@ -343,3 +343,19 @@ Cada componente de `lib/retro/retro-[x]/` tiene un `README.md` que documenta su 
 - Cambios que **no** requieren actualizar el README: refactors internos sin impacto en API pública, `*.spec.ts`, `*.scss`.
 
 El pre-commit hook (`scripts/check-retro-readme-sync.mjs`) bloquea commits que tocan ficheros de API sin incluir el README en el staged area. Si el cambio es trivial y no afecta a la API, se puede saltarse con `git commit --no-verify`.
+
+## Estructura de carpetas en lib/retro/
+
+En cada carpeta `lib/retro/retro-xxx/`, la raíz contiene únicamente:
+- `retro-xxx.component.ts/.html/.scss/.spec.ts`
+- `retro-xxx.types.ts` (si existe)
+- `README.md`
+
+Todo lo demás va en subcarpetas:
+- Componentes/directivas hijos → `components/retro-xxx-yyy/` (carpeta propia por pieza)
+- Directivas auxiliares internas → `directive/`
+- Interfaces → `interfaces/`
+- Constantes → `constants/`
+- Tokens de inyección → `tokens/`
+
+Esta regla NO aplica a componentes hermanos sin relación parental (ej. `retro-list-item` es hermano de `retro-list`, no hijo).

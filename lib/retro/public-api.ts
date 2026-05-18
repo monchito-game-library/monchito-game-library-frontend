@@ -14,7 +14,7 @@ export { RetroIconButtonComponent } from './retro-icon-button/retro-icon-button.
 export { RetroSpinnerComponent } from './retro-spinner/retro-spinner.component';
 export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.component';
 export { RetroCheckboxComponent } from './retro-checkbox/retro-checkbox.component';
-export { RetroSnackbarHostComponent } from './retro-snackbar/retro-snackbar-host.component';
+export { RetroSnackbarHostComponent } from './retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
 export { RetroFormFieldComponent } from './retro-form-field/retro-form-field.component';
 export { RetroInputDirective } from './retro-form-field/retro-input.directive';
 export { RetroLabelComponent } from './retro-form-field/retro-label.component';

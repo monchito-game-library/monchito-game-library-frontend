@@ -3,7 +3,7 @@ import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { RetroSnackbarHostComponent } from './retro-snackbar-host.component';
-import { RetroSnackbarService } from './services/retro-snackbar.service';
+import { RetroSnackbarService } from '../../services/retro-snackbar.service';
 import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
 
 describe('RetroSnackbarHostComponent', () => {
