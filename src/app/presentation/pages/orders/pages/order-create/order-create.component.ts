@@ -4,9 +4,9 @@ import { Router, RouterLink } from '@angular/router';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
+import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';

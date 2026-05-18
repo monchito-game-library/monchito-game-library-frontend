@@ -17,8 +17,8 @@ import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';

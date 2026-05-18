@@ -20,9 +20,9 @@ import { RetroSelectComponent } from '@retro/retro-select/retro-select.component
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
+import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 

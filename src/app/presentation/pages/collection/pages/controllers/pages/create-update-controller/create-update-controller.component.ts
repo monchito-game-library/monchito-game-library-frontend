@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@a
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';

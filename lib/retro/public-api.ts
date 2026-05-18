@@ -16,10 +16,10 @@ export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.componen
 export { RetroCheckboxComponent } from './retro-checkbox/retro-checkbox.component';
 export { RetroSnackbarHostComponent } from './retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
 export { RetroFormFieldComponent } from './retro-form-field/retro-form-field.component';
-export { RetroInputDirective } from './retro-form-field/retro-input.directive';
-export { RetroLabelComponent } from './retro-form-field/retro-label.component';
-export { RetroErrorComponent } from './retro-form-field/retro-error.component';
-export { RetroHintComponent } from './retro-form-field/retro-hint.component';
+export { RetroInputDirective } from './retro-form-field/components/retro-input/retro-input.directive';
+export { RetroLabelComponent } from './retro-form-field/components/retro-label/retro-label.component';
+export { RetroErrorComponent } from './retro-form-field/components/retro-error/retro-error.component';
+export { RetroHintComponent } from './retro-form-field/components/retro-hint/retro-hint.component';
 export { RetroSelectComponent } from './retro-select/retro-select.component';
 export { RetroOptionComponent } from './retro-select/components/retro-option/retro-option.component';
 export { RetroAutocompleteComponent } from './retro-autocomplete/retro-autocomplete.component';

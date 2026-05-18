@@ -17,9 +17,9 @@ import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.com
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
+import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
 import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
 import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';

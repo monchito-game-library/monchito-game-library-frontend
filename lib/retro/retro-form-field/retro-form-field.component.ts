@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
-import { RetroInputDirective } from './retro-input.directive';
+import { RetroInputDirective } from './components/retro-input/retro-input.directive';
 
 /**
  * Contenedor de campo de formulario Terminal Collector.
