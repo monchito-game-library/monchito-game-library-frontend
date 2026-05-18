@@ -17,7 +17,7 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
-import { RetroMenuItemComponent } from '@retro/retro-menu/retro-menu-item.component';
+import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
 import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';

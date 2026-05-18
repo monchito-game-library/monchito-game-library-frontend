@@ -9,7 +9,7 @@ import {
   output
 } from '@angular/core';
 import { Highlightable } from '@angular/cdk/a11y';
-import { RetroIconComponent } from '../retro-icon/retro-icon.component';
+import { RetroIconComponent } from '../../../../retro-icon/retro-icon.component';
 
 /**
  * Item individual de un RetroMenuComponent.

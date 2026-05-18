@@ -24,7 +24,7 @@ import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
 import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
-import { RetroMenuItemComponent } from '@retro/retro-menu/retro-menu-item.component';
+import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
 import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
 
 @Component({

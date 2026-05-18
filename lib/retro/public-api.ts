@@ -28,7 +28,7 @@ export { RetroDatepickerComponent } from './retro-datepicker/retro-datepicker.co
 export { RetroDatepickerDirective } from './retro-datepicker/directive/retro-datepicker.directive';
 export { RetroDatepickerToggleDirective } from './retro-datepicker/directive/retro-datepicker-toggle.directive';
 export { RetroMenuComponent } from './retro-menu/retro-menu.component';
-export { RetroMenuItemComponent } from './retro-menu/retro-menu-item.component';
+export { RetroMenuItemComponent } from './retro-menu/components/retro-menu-item/retro-menu-item.component';
 export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-trigger.directive';
 export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
 export { RetroTabComponent } from './retro-tabs/components/retro-tab/retro-tab.component';

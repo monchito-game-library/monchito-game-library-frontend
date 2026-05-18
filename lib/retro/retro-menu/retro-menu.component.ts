@@ -8,7 +8,7 @@ import {
   ViewChild,
   input
 } from '@angular/core';
-import { RetroMenuItemComponent } from './retro-menu-item.component';
+import { RetroMenuItemComponent } from './components/retro-menu-item/retro-menu-item.component';
 
 /**
  * Panel de menú contextual Terminal Collector.
