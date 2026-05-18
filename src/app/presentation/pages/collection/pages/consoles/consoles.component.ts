@@ -6,7 +6,7 @@ import { ConsoleModel } from '@/models/console/console.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { ConsoleSpecsCategoryType } from '@/types/console-specs-category.type';
 
 @Component({

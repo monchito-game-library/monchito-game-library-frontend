@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ManagementSection } from '@/interfaces/management-section.interface';

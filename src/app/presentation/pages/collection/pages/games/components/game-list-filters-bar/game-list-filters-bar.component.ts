@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, Signal } from '@angular/core';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availableGameStatuses } from '@/constants/game-status.constant';

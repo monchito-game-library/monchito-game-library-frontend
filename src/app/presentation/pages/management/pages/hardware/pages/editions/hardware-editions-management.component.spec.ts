@@ -7,7 +7,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';

@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
-import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
-import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';

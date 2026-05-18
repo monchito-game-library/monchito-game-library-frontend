@@ -5,7 +5,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { AuditLogManagementComponent } from './audit-log-management.component';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 
 describe('AuditLogManagementComponent', () => {
   let component: AuditLogManagementComponent;

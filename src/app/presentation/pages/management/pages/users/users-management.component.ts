@@ -10,19 +10,19 @@ import {
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 

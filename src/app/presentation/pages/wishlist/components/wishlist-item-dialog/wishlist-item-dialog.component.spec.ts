@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { WishlistItemDialogComponent } from './wishlist-item-dialog.component';
-import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@retro/retro-dialog/services/retro-dialog.service';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { TranslocoService } from '@jsverse/transloco';
 

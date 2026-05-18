@@ -1,7 +1,7 @@
 import { Directive, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { StoreModel } from '@/models/store/store.model';

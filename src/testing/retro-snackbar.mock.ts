@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-import { RetroSnackbarMessage } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarMessage } from '@retro/retro-snackbar/services/retro-snackbar.service';
 
 export const mockRetroSnackbar: {
   open: ReturnType<typeof vi.fn>;

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
@@ -12,7 +12,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-avatar-crop-dialog',

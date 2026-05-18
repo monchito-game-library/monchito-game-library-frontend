@@ -7,7 +7,7 @@ import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contra
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { StoreModel } from '@/models/store/store.model';
 
 function makeStore(overrides: Partial<StoreModel> = {}): StoreModel {

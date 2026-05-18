@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -25,10 +25,10 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
-import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-wishlist-detail',

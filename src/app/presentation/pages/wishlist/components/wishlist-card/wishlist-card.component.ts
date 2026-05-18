@@ -9,15 +9,15 @@ import {
   Signal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
-import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 
 @Component({
   selector: 'app-wishlist-card',

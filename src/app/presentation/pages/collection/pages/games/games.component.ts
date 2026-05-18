@@ -11,16 +11,16 @@ import {
   ViewChild,
   WritableSignal
 } from '@angular/core';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroCommandBarComponent } from '@/retro/retro-command-bar/retro-command-bar.component';
-import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { RetroBottomSheetService } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameListModel } from '@/models/game/game-list.model';
@@ -38,7 +38,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
 import { GameRowComponent } from '@/pages/collection/pages/games/components/game-row/game-row.component';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';

@@ -15,16 +15,16 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
-import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
-import { RetroCardComponent } from '@/retro/retro-card/retro-card.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -32,7 +32,7 @@ import { defaultGameCover } from '@/constants/game-library.constant';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { RetroChipColor } from '@/types/retro-chip.type';
+import { RetroChipColor } from '@retro/retro-chip/retro-chip.types';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
 

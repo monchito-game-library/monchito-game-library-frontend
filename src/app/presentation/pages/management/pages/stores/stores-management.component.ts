@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 import { STORE_USE_CASES, StoreUseCasesContract } from '@/domain/use-cases/store/store.use-cases.contract';
 import {

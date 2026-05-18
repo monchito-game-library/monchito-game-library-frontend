@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';

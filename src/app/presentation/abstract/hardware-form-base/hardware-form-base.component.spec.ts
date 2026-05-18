@@ -2,7 +2,7 @@ import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 

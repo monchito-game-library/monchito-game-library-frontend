@@ -13,8 +13,8 @@ import {
   WritableSignal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';

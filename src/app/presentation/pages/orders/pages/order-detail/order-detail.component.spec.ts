@@ -1,8 +1,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { of } from 'rxjs';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';

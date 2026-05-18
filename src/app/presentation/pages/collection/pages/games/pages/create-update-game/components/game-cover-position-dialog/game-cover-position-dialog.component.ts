@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
@@ -12,7 +12,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-game-cover-position-dialog',

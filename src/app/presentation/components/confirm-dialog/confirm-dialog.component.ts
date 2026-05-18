@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import {
@@ -9,7 +9,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 /**
  * Reusable confirmation dialog component.

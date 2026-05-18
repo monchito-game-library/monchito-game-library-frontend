@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';

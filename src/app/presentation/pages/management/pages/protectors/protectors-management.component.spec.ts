@@ -6,8 +6,8 @@ import { ProtectorsManagementComponent } from './protectors-management.component
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { ProtectorModel } from '@/models/protector/protector.model';
 
 function makeProtector(overrides: Partial<ProtectorModel> = {}): ProtectorModel {

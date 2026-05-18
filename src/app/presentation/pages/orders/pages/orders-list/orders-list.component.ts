@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 import { OrderSummaryModel } from '@/models/order/order-summary.model';
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';

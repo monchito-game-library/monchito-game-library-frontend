@@ -14,16 +14,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -37,9 +37,9 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
-import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-wishlist',

@@ -14,16 +14,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroCardComponent } from '@/retro/retro-card/retro-card.component';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -39,8 +39,8 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
-import { RetroCheckboxComponent } from '@/components/retro/retro-checkbox/retro-checkbox.component';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 @Component({
   selector: 'app-settings',

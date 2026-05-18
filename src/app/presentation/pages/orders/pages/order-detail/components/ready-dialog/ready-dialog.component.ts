@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
@@ -12,7 +12,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-ready-dialog',

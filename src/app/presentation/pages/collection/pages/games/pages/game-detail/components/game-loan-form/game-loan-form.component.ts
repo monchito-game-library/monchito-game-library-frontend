@@ -14,17 +14,17 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroDatepickerComponent } from '@/retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@/retro/retro-datepicker/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@/retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
+import { RetroDatepickerDirective } from '@retro/retro-datepicker/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/retro-datepicker-toggle.directive';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';

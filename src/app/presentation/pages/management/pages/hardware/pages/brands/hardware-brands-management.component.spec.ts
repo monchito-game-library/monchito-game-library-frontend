@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { HardwareBrandsManagementComponent } from './hardware-brands-management.component';
 import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router } from '@angular/router';
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 

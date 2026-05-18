@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
-import { RetroAutocompleteComponent } from '@/retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@/retro/retro-autocomplete/retro-autocomplete-trigger.directive';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
+import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
+import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { OrderProductModel } from '@/models/order/order-product.model';
@@ -21,7 +21,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-add-edit-line-dialog',

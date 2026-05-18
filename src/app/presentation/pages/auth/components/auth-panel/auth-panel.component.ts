@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 
 @Component({
   selector: 'app-auth-panel',

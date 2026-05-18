@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RETRO_BOTTOM_SHEET_DATA } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
-import { RETRO_OVERLAY_REF } from '@/services/retro-overlay/retro-overlay.service';
+import { RETRO_BOTTOM_SHEET_DATA } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
+import { RETRO_OVERLAY_REF } from '@retro/retro-overlay/services/retro-overlay.service';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GameListFiltersSheetComponent } from './game-list-filters-sheet.component';

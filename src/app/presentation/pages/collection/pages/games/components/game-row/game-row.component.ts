@@ -12,17 +12,17 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroDialogRef, RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroTooltipDirective } from '@/shared/retro-tooltip/retro-tooltip.directive';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
-import { RetroChipComponent } from '@/components/retro/retro-chip/retro-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameListModel } from '@/models/game/game-list.model';

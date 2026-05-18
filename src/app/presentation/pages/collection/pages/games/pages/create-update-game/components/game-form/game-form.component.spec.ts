@@ -15,8 +15,8 @@ import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 
 const mockCatalogDto: GameCatalogDto = {
   rawg_id: null,

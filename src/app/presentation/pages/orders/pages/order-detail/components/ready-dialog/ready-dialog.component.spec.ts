@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RETRO_DIALOG_DATA, RetroDialogRef } from '@/services/retro-dialog/retro-dialog.service';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 

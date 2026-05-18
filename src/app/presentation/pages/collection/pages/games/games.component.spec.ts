@@ -10,11 +10,11 @@ import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contra
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { RetroBottomSheetService } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
 import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {

@@ -9,28 +9,28 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroIconComponent } from '@/retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
-import { RetroAutocompleteComponent } from '@/retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@/retro/retro-autocomplete/retro-autocomplete-trigger.directive';
-import { RetroDatepickerComponent } from '@/retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@/retro/retro-datepicker/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@/retro/retro-datepicker/retro-datepicker-toggle.directive';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
+import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/retro-autocomplete-trigger.directive';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
+import { RetroDatepickerDirective } from '@retro/retro-datepicker/retro-datepicker.directive';
+import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/retro-datepicker-toggle.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 /**
  * Presentational shell component that renders the shared form layout for hardware

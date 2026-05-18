@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@/retro/retro-form-field/retro-input.directive';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroErrorComponent } from '@/retro/retro-form-field/retro-error.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '@retro/retro-form-field/retro-input.directive';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroErrorComponent } from '@retro/retro-form-field/retro-error.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -22,7 +22,7 @@ import {
   RetroDialogContentDirective,
   RetroDialogRef,
   RetroDialogTitleDirective
-} from '@/services/retro-dialog/retro-dialog.service';
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-wishlist-item-dialog',

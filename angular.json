@@ -85,7 +85,8 @@
           "options": {
             "tsConfig": "tsconfig.spec.json",
             "include": [
-              "src/**/*.spec.ts"
+              "src/**/*.spec.ts",
+              "lib/**/*.spec.ts"
             ],
             "coverageReporters": [
               "text",
@@ -117,7 +118,9 @@
           "options": {
             "lintFilePatterns": [
               "src/**/*.ts",
-              "src/**/*.html"
+              "src/**/*.html",
+              "lib/**/*.ts",
+              "lib/**/*.html"
             ]
           }
         },

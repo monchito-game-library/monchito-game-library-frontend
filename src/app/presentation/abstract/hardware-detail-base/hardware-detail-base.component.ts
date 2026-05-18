@@ -1,7 +1,7 @@
 import { Directive, inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';

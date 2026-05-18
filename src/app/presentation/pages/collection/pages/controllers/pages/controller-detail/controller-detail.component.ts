@@ -10,7 +10,7 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 
 @Component({
   selector: 'app-controller-detail',

@@ -8,14 +8,14 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
-import { RetroEmptyStateComponent } from '@/retro/retro-empty-state/retro-empty-state.component';
-import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware

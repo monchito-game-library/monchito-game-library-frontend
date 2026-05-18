@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { RetroSkeletonComponent } from '@/components/retro/retro-skeleton/retro-skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 import {
   AUDIT_LOG_USE_CASES,

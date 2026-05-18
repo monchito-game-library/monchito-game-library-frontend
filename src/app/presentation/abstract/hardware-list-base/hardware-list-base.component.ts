@@ -1,6 +1,6 @@
 import { computed, Directive, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';

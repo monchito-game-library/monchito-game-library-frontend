@@ -8,7 +8,7 @@ import {
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
 import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 
 @Component({
   selector: 'app-controllers',

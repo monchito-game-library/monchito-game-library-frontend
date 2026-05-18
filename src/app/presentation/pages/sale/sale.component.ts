@@ -9,11 +9,11 @@ import {
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
-import { RetroTabsComponent } from '@/retro/retro-tabs/retro-tabs.component';
-import { RetroTabComponent } from '@/retro/retro-tabs/retro-tab.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
+import { RetroTabComponent } from '@retro/retro-tabs/retro-tab.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';

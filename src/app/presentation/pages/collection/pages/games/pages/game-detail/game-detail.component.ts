@@ -13,14 +13,14 @@ import { CurrencyPipe, DatePipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
-import { RetroMenuComponent } from '@/retro/retro-menu/retro-menu.component';
-import { RetroMenuItemComponent } from '@/retro/retro-menu/retro-menu-item.component';
-import { RetroMenuTriggerDirective } from '@/retro/retro-menu/retro-menu-trigger.directive';
-import { RetroSpinnerComponent } from '@/retro/retro-spinner/retro-spinner.component';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
+import { RetroMenuItemComponent } from '@retro/retro-menu/retro-menu-item.component';
+import { RetroMenuTriggerDirective } from '@retro/retro-menu/retro-menu-trigger.directive';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -42,10 +42,10 @@ import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
-import { RetroChipComponent } from '@/retro/retro-chip/retro-chip.component';
-import { RetroDataRowComponent } from '@/retro/retro-data-row/retro-data-row.component';
-import { RetroSectionHeaderComponent } from '@/retro/retro-section-header/retro-section-header.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
 
 @Component({
   selector: 'app-game-detail',

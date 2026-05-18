@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { RetroDialogService } from '@/services/retro-dialog/retro-dialog.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';

@@ -5,7 +5,7 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { OrderInfoSectionComponent } from './order-info-section.component';
 import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { RetroSnackbarService } from '@/services/retro-snackbar/retro-snackbar.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { OrderModel } from '@/models/order/order.model';
 import { OrderMemberModel } from '@/models/order/order-member.model';
 

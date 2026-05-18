@@ -1,21 +1,21 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, Signal } from '@angular/core';
-import { RETRO_BOTTOM_SHEET_DATA } from '@/services/retro-bottom-sheet/retro-bottom-sheet.service';
-import { RETRO_OVERLAY_REF, RetroOverlayRef } from '@/services/retro-overlay/retro-overlay.service';
-import { RetroIconButtonComponent } from '@/retro/retro-icon-button/retro-icon-button.component';
-import { RetroIconComponent } from '@/components/retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@/retro/retro-form-field/retro-form-field.component';
-import { RetroLabelComponent } from '@/retro/retro-form-field/retro-label.component';
-import { RetroSelectComponent } from '@/retro/retro-select/retro-select.component';
-import { RetroOptionComponent } from '@/retro/retro-select/retro-option.component';
+import { RETRO_BOTTOM_SHEET_DATA } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
+import { RETRO_OVERLAY_REF, RetroOverlayRef } from '@retro/retro-overlay/services/retro-overlay.service';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
+import { RetroLabelComponent } from '@retro/retro-form-field/retro-label.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
 import { AvailablePlatformInterface } from '@/interfaces/available-platform.interface';
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { GameStatusOption } from '@/interfaces/game-status-option.interface';
-import { RetroCheckboxComponent } from '@/components/retro/retro-checkbox/retro-checkbox.component';
+import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
-import { RetroButtonComponent } from '@/retro/retro-button/retro-button.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-game-list-filters-sheet',
