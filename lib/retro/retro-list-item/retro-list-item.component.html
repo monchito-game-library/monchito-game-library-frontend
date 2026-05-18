@@ -1,0 +1,29 @@
+<div
+  class="retro-list-item"
+  [class.retro-list-item--interactive]="interactive()"
+  [class.retro-list-item--hoverable]="_isHoverable()"
+  [class.retro-list-item--disabled]="disabled()"
+  [class.retro-list-item--padding-none]="padding() === 'none'"
+  [class.retro-list-item--padding-sm]="padding() === 'sm'"
+  [class.retro-list-item--padding-md]="padding() === 'md'"
+  [class.retro-list-item--padding-lg]="padding() === 'lg'"
+  [class.retro-list-item--selected]="selected()"
+  [class.retro-list-item--accent]="variant() === 'accent'"
+  [class.retro-list-item--muted]="variant() === 'muted'"
+  [class.retro-list-item--staggered]="staggered()"
+  [attr.role]="interactive() ? 'button' : null"
+  [attr.tabindex]="interactive() ? (disabled() ? -1 : 0) : null"
+  [attr.aria-disabled]="disabled() ? 'true' : null"
+  (click)="onClick($event)"
+  (keydown.enter)="onEnter($event)"
+  (keydown.space)="onKeydown($event)">
+  <div class="retro-list-item__leading">
+    <ng-content select="[retroListItemLeading]" />
+  </div>
+  <div class="retro-list-item__body">
+    <ng-content />
+  </div>
+  <div class="retro-list-item__trailing">
+    <ng-content select="[retroListItemTrailing]" />
+  </div>
+</div>
