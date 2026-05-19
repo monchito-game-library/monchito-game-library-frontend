@@ -21,6 +21,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
 | `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay valor. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
+| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error); usar en campos sin validación visible (p.ej. búsqueda). |
 | `type` | `'text' \| 'email' \| 'password' \| 'number' \| 'tel' \| 'url'` | `'text'` | Tipo del input nativo. |
 | `autocomplete` | `string` | `'off'` | Atributo `autocomplete` del input nativo. |
 | `maxlength` | `number \| null` | `null` | Longitud máxima de caracteres. |

@@ -125,6 +125,9 @@ export class RetroInputComponent implements ControlValueAccessor, RetroFormField
   /** Texto del aria-label del botón limpiar. */
   readonly clearAriaLabel: InputSignal<string> = input<string>('Limpiar');
 
+  /** Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. */
+  readonly hideSubscript: InputSignal<boolean> = input<boolean>(false);
+
   /** Tipo del input nativo. */
   readonly type: InputSignal<'text' | 'email' | 'password' | 'number' | 'tel' | 'url'> = input<
     'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
