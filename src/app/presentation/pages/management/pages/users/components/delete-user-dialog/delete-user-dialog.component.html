@@ -20,16 +20,14 @@
   </p>
 
   <form [formGroup]="form" class="delete-user-dialog__form" (ngSubmit)="onConfirm()">
-    <retro-form-field class="delete-user-dialog__field">
-      <retro-label>{{ 'management.users.delete.field.label' | transloco }}</retro-label>
-      <input
-        retroInput
-        type="email"
-        autocomplete="off"
-        formControlName="emailConfirmation"
-        [placeholder]="data.email" />
-      <retro-hint>{{ 'management.users.delete.field.hint' | transloco }}</retro-hint>
-    </retro-form-field>
+    <retro-input
+      class="delete-user-dialog__field"
+      [label]="'management.users.delete.field.label' | transloco"
+      type="email"
+      autocomplete="off"
+      formControlName="emailConfirmation"
+      [placeholder]="data.email"
+      [hint]="'management.users.delete.field.hint' | transloco" />
   </form>
 </div>
 

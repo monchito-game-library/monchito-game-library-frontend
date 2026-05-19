@@ -10,13 +10,10 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <retro-form-field>
-        <retro-label [required]="true">{{ 'management.hardware.brands.nameLabel' | transloco }}</retro-label>
-        <input retroInput formControlName="name" />
-        @if (form.controls.name.hasError('required')) {
-          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        [label]="'management.hardware.brands.nameLabel' | transloco"
+        formControlName="name"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
     </div>
 
     <div class="edit-panel__actions">

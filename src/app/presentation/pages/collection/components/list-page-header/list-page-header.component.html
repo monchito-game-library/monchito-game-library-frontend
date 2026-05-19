@@ -5,6 +5,7 @@
 
 <!-- Search and actions -->
 <div class="list-page-header__filters">
+  <!-- retro-form-field: prefix textual "$ " no soportado por retro-input -->
   <retro-form-field class="list-page-header__search" [disabled]="disabled()">
     <retro-label>{{ searchPlaceholder() | transloco }}</retro-label>
     <span retroPrefix class="list-page-header__search-prefix">$ </span>

@@ -302,9 +302,8 @@ describe('SettingsComponent', () => {
   });
 
   describe('onRawgSearch', () => {
-    it('actualiza rawgSearchQuery con el valor del input', () => {
-      const event = { target: { value: 'zelda' } } as unknown as Event;
-      component.onRawgSearch(event);
+    it('actualiza rawgSearchQuery con el valor recibido', () => {
+      component.onRawgSearch('zelda');
       expect(mockRawgSearchState.rawgSearchQuery()).toBe('zelda');
     });
   });

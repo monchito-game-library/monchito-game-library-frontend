@@ -19,12 +19,8 @@ import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-bu
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -43,12 +39,8 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
     RetroIconButtonComponent,
     TranslocoPipe,
     RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
-    RetroDatepickerComponent,
-    RetroDatepickerDirective,
-    RetroDatepickerToggleDirective
+    RetroInputComponent,
+    RetroDatepickerComponent
   ]
 })
 export class GameLoanFormComponent implements OnInit {

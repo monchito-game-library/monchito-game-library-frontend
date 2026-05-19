@@ -47,17 +47,17 @@
 
       <!-- Platform (required in add mode, static in edit mode) -->
       @if (config.mode === 'add') {
-        <retro-form-field class="wishlist-item-dialog__field">
-          <retro-label [required]="true">{{ 'wishlist.fields.platform' | transloco }}</retro-label>
-          <retro-select formControlName="platform">
-            @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
-              <retro-option [value]="platform">{{ platform }}</retro-option>
-            }
-          </retro-select>
-          @if (form.controls.platform.hasError('required')) {
-            <retro-error>{{ 'wishlist.fields.platformRequired' | transloco }}</retro-error>
+        <retro-select
+          class="wishlist-item-dialog__field"
+          [label]="'wishlist.fields.platform' | transloco"
+          formControlName="platform"
+          [error]="
+            form.controls.platform.hasError('required') ? ('wishlist.fields.platformRequired' | transloco) : null
+          ">
+          @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
+            <retro-option [value]="platform">{{ platform }}</retro-option>
           }
-        </retro-form-field>
+        </retro-select>
       } @else if (config.item?.platform) {
         <div class="wishlist-item-dialog__platform-display">
           <span class="wishlist-item-dialog__platforms-label">{{ 'wishlist.fields.platform' | transloco }}</span>
@@ -68,19 +68,17 @@
       }
 
       <!-- Desired price (required) -->
-      <retro-form-field class="wishlist-item-dialog__field">
-        <retro-label [required]="true">{{ 'wishlist.fields.desiredPrice' | transloco }}</retro-label>
-        <input
-          retroInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="desiredPrice"
-          [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
-        @if (form.controls.desiredPrice.hasError('required')) {
-          <retro-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        class="wishlist-item-dialog__field"
+        [label]="'wishlist.fields.desiredPrice' | transloco"
+        type="number"
+        min="0"
+        step="0.01"
+        formControlName="desiredPrice"
+        [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco"
+        [error]="
+          form.controls.desiredPrice.hasError('required') ? ('wishlist.fields.desiredPriceRequired' | transloco) : null
+        " />
 
       <!-- Notes (optional) -->
       <retro-form-field class="wishlist-item-dialog__field">

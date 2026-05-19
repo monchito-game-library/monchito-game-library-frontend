@@ -16,20 +16,18 @@
   [extraFieldsTpl]="extraFieldsTpl"
   (cancelClick)="onCancel()"
   (submitClick)="onSubmit()"
-  (brandChange)="onBrandChange($event)"
-  (modelChange)="onModelChange($event)">
+  (brandQuery)="onBrandQuery($event)"
+  (modelQuery)="onModelQuery($event)"
+  (storeQuery)="onStoreQuery($event)">
 </app-hardware-form-shell>
 
 <ng-template #extraFieldsTpl>
   <ng-container [formGroup]="form">
-    <retro-form-field>
-      <retro-label>{{ 'consolePage.region' | transloco }}</retro-label>
-      <retro-select formControlName="region">
-        <retro-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</retro-option>
-        @for (region of availableRegions; track region.code) {
-          <retro-option [value]="region.code">{{ region.labelKey | transloco }}</retro-option>
-        }
-      </retro-select>
-    </retro-form-field>
+    <retro-select [label]="'consolePage.region' | transloco" formControlName="region">
+      <retro-option [value]="null">{{ 'consolePage.regionNone' | transloco }}</retro-option>
+      @for (region of availableRegions; track region.code) {
+        <retro-option [value]="region.code">{{ region.labelKey | transloco }}</retro-option>
+      }
+    </retro-select>
   </ng-container>
 </ng-template>

@@ -29,7 +29,7 @@ export class PasswordMismatchErrorStateMatcher implements ErrorStateMatcher {
  */
 export abstract class AuthBaseComponent {
   protected readonly _router: Router = inject(Router);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
+  protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether an auth request is in progress. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);

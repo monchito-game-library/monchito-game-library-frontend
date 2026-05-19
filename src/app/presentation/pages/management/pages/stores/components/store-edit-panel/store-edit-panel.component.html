@@ -10,22 +10,17 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <retro-form-field>
-        <retro-label [required]="true">{{ 'management.stores.nameLabel' | transloco }}</retro-label>
-        <input retroInput formControlName="name" [placeholder]="'management.stores.namePlaceholder' | transloco" />
-        @if (form.controls.name.hasError('required')) {
-          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        [label]="'management.stores.nameLabel' | transloco"
+        formControlName="name"
+        [placeholder]="'management.stores.namePlaceholder' | transloco"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
 
-      <retro-form-field>
-        <retro-label>{{ 'management.stores.formatHintLabel' | transloco }}</retro-label>
-        <retro-select formControlName="formatHint">
-          <retro-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</retro-option>
-          <retro-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</retro-option>
-          <retro-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</retro-option>
-        </retro-select>
-      </retro-form-field>
+      <retro-select [label]="'management.stores.formatHintLabel' | transloco" formControlName="formatHint">
+        <retro-option [value]="null">{{ 'management.stores.formatHintNone' | transloco }}</retro-option>
+        <retro-option value="digital">{{ 'management.stores.formatHintDigital' | transloco }}</retro-option>
+        <retro-option value="physical">{{ 'management.stores.formatHintPhysical' | transloco }}</retro-option>
+      </retro-select>
     </div>
 
     <div class="edit-panel__actions">

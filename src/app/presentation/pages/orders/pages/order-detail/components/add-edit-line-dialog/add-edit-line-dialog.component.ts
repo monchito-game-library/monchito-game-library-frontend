@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
-import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroSearchComponent } from '@retro/retro-search/retro-search.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -40,9 +39,8 @@ import {
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,
-    RetroErrorComponent,
-    RetroAutocompleteComponent,
-    RetroAutocompleteTriggerDirective,
+    RetroInputComponent,
+    RetroSearchComponent,
     RetroOptionComponent
   ]
 })
@@ -58,14 +56,8 @@ export class AddEditLineDialogComponent {
   /** Whether the dialog is in edit mode (line already exists). */
   readonly isEditMode: boolean = !!this.data.line;
 
-  /** Text input control used to search and display the selected product name. */
-  readonly productSearchControl: FormControl<string | null> = this._fb.control<string | null>({
-    value: this.data.line ? (this.data.products.find((p) => p.id === this.data.line!.productId)?.name ?? null) : null,
-    disabled: this.isEditMode
-  });
-
   /** Filtered list of products based on the current search term. */
-  readonly filteredProducts: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>(this.data.products);
+  readonly filteredProducts: WritableSignal<OrderProductModel[]> = signal<OrderProductModel[]>([]);
 
   /** Reactive form for adding or editing an order line. */
   readonly form: FormGroup<OrderLineForm> = this._fb.group<OrderLineForm>({
@@ -81,33 +73,61 @@ export class AddEditLineDialogComponent {
   });
 
   constructor() {
-    this.productSearchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {
-      const q = (value ?? '').toLowerCase().trim();
-      this.filteredProducts.set(
-        q.length > 0
-          ? this.data.products.filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q))
-          : []
-      );
-    });
+    this.form.controls.productId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((id: string | null) => this.onProductValueChange(id));
   }
 
   /**
-   * Sets the productId form control when the user selects a product from the autocomplete.
+   * Función displayWith para retro-search: mapea el ID del producto a su nombre legible.
    *
-   * @param {unknown} productId - ID del producto seleccionado.
+   * @param {string | null} id - ID del producto seleccionado
    */
-  onProductSelected(productId: unknown): void {
-    const id: string = productId as string;
-    const product = this.data.products.find((p) => p.id === id);
-    this.form.controls.productId.setValue(id);
-    this.productSearchControl.setValue(product?.name ?? null, { emitEvent: false });
+  readonly displayProductName = (id: string | null): string => {
+    if (!id) return '';
+    return this.data.products.find((p) => p.id === id)?.name ?? '';
+  };
+
+  /**
+   * Filtra los productos visibles cuando el usuario escribe en el campo de búsqueda.
+   *
+   * @param {string} query - Texto escrito por el usuario
+   */
+  onProductQuery(query: string): void {
+    const q: string = query.toLowerCase().trim();
+    this.filteredProducts.set(
+      q.length > 0
+        ? this.data.products.filter(
+            (p: OrderProductModel) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+          )
+        : []
+    );
+  }
+
+  /**
+   * Valida si el producto seleccionado ya está tomado (alreadyExists).
+   * Se llama cuando el FormControl de productId cambia.
+   *
+   * @param {string | null} id - ID del producto seleccionado
+   */
+  onProductValueChange(id: string | null): void {
+    if (!id) return;
     if (this.data.takenProductIds?.includes(id)) {
       this.form.controls.productId.setErrors({ alreadyExists: true });
-      this.productSearchControl.setErrors({ alreadyExists: true });
     } else {
       this.form.controls.productId.setErrors(null);
-      this.productSearchControl.setErrors(null);
     }
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo product, o null si no hay error visible.
+   */
+  _getProductError(): string | null {
+    const ctrl = this.form.controls.productId;
+    if (!ctrl.touched) return null;
+    if (ctrl.hasError('required')) return 'orders.lines.productRequired';
+    if (ctrl.hasError('alreadyExists')) return 'orders.lines.productAlreadyExists';
+    return null;
   }
 
   /**

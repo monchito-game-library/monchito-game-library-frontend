@@ -10,17 +10,14 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
-import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
-import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
+import { RetroSearchComponent } from '@retro/retro-search/retro-search.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
@@ -49,20 +46,17 @@ import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.com
     NgTemplateOutlet,
     ReactiveFormsModule,
     RetroIconButtonComponent,
-    RetroIconComponent,
     TranslocoPipe,
     RetroSkeletonComponent,
     RetroButtonComponent,
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,
+    RetroInputComponent,
     RetroSelectComponent,
     RetroOptionComponent,
-    RetroAutocompleteComponent,
-    RetroAutocompleteTriggerDirective,
-    RetroDatepickerComponent,
-    RetroDatepickerDirective,
-    RetroDatepickerToggleDirective
+    RetroSearchComponent,
+    RetroDatepickerComponent
   ]
 })
 export class HardwareFormShellComponent {
@@ -90,13 +84,13 @@ export class HardwareFormShellComponent {
   /** Hardware editions filtered by the selected model. */
   readonly editions: InputSignal<HardwareEditionModel[]> = input.required<HardwareEditionModel[]>();
 
-  /** Brands filtered by the current autocomplete input value. */
+  /** Brands filtered by the current search query. */
   readonly filteredBrands: InputSignal<HardwareBrandModel[]> = input.required<HardwareBrandModel[]>();
 
-  /** Models filtered by the current autocomplete input value. */
+  /** Models filtered by the current search query. */
   readonly filteredModels: InputSignal<HardwareModelModel[]> = input.required<HardwareModelModel[]>();
 
-  /** Stores filtered by the current autocomplete input value. */
+  /** Stores filtered by the current search query. */
   readonly filteredStores: InputSignal<StoreModel[]> = input.required<StoreModel[]>();
 
   /** The reactive form group managed by the parent component. */
@@ -123,50 +117,15 @@ export class HardwareFormShellComponent {
   /** Emitted when the user submits the form. */
   readonly submitClick: OutputEmitterRef<void> = output<void>();
 
-  /** Emitted when the user selects a brand from the autocomplete. */
-  readonly brandChange: OutputEmitterRef<string | null> = output<string | null>();
+  /** Emitted when the brand search query changes, so the parent can filter the brands list. */
+  readonly brandQuery: OutputEmitterRef<string> = output<string>();
 
-  /** Emitted when the user selects a model from the autocomplete. */
-  readonly modelChange: OutputEmitterRef<string | null> = output<string | null>();
+  /** Emitted when the model search query changes, so the parent can filter the models list. */
+  readonly modelQuery: OutputEmitterRef<string> = output<string>();
+
+  /** Emitted when the store search query changes, so the parent can filter the stores list. */
+  readonly storeQuery: OutputEmitterRef<string> = output<string>();
 
   /** GAME_CONDITION constant exposed to the template. */
   readonly GAME_CONDITION = GAME_CONDITION;
-
-  // ── Métodos públicos ─────────────────────────────────────────────────────────
-
-  /**
-   * Maneja la selección de marca desde el autocomplete.
-   * Actualiza el formControl y emite brandChange.
-   *
-   * @param {unknown} value - ID de marca seleccionado.
-   */
-  onBrandSelected(value: unknown): void {
-    const id: string | null = value as string | null;
-    this.form().get('brandId')?.setValue(id);
-    this.brandChange.emit(id);
-  }
-
-  /**
-   * Maneja la selección de modelo desde el autocomplete.
-   * Actualiza el formControl y emite modelChange.
-   *
-   * @param {unknown} value - ID de modelo seleccionado.
-   */
-  onModelSelected(value: unknown): void {
-    const id: string | null = value as string | null;
-    this.form().get('modelId')?.setValue(id);
-    this.modelChange.emit(id);
-  }
-
-  /**
-   * Maneja la selección de tienda desde el autocomplete.
-   * Actualiza el formControl.
-   *
-   * @param {unknown} value - ID de tienda seleccionado.
-   */
-  onStoreSelected(value: unknown): void {
-    this.form()
-      .get('store')
-      ?.setValue(value as string | null);
-  }
 }

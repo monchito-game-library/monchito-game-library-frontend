@@ -4,10 +4,7 @@ import { RouterLink } from '@angular/router';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -28,17 +25,13 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
     TranslocoPipe,
     AuthPanelComponent,
     RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
-    RetroErrorComponent
+    RetroInputComponent
   ]
 })
 /** Reset-password page component. Validates the recovery session and updates the user's password. */
 export class ResetPasswordComponent extends AuthBaseComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
-
   /** Whether the recovery session from the email link has been established. */
   readonly recoveryReady: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -62,6 +55,30 @@ export class ResetPasswordComponent extends AuthBaseComponent implements OnInit 
     this._authUseCases.onPasswordRecovery(() => {
       this.recoveryReady.set(true);
     });
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo password, o null si no hay error visible.
+   */
+  _getPasswordError(): string | null {
+    const ctrl = this.resetPasswordForm.get('password');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.resetPassword.passwordRequired');
+    if (ctrl.hasError('minlength')) return this._transloco.translate('auth.resetPassword.passwordMinLength');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo confirmPassword.
+   * Combina el error de nivel control (required) y el de nivel formulario (passwordMismatch).
+   */
+  _getConfirmPasswordError(): string | null {
+    const ctrl = this.resetPasswordForm.get('confirmPassword');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.resetPassword.confirmPasswordRequired');
+    if (this.resetPasswordForm.hasError('passwordMismatch'))
+      return this._transloco.translate('auth.resetPassword.passwordMismatch');
+    return null;
   }
 
   /**

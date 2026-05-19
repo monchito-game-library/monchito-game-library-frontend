@@ -39,21 +39,17 @@
       <section class="game-loan-form__section">
         <h3 class="game-loan-form__section-title">{{ 'gameDetail.loan.newSection' | transloco }}</h3>
 
-        <retro-form-field class="game-loan-form__field">
-          <retro-label>{{ 'gameDetail.loan.loanedTo' | transloco }}</retro-label>
-          <input
-            retroInput
-            type="text"
-            formControlName="loanedTo"
-            [placeholder]="'gameDetail.loan.loanedToPlaceholder' | transloco" />
-        </retro-form-field>
+        <retro-input
+          class="game-loan-form__field"
+          [label]="'gameDetail.loan.loanedTo' | transloco"
+          type="text"
+          formControlName="loanedTo"
+          [placeholder]="'gameDetail.loan.loanedToPlaceholder' | transloco" />
 
-        <retro-form-field class="game-loan-form__field">
-          <retro-label>{{ 'gameDetail.loan.loanedAt' | transloco }}</retro-label>
-          <input retroInput [retroDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
-          <retro-icon retroSuffix [retroDatepickerToggle]="loanedAtPicker" name="calendar_today" />
-          <retro-datepicker #loanedAtPicker />
-        </retro-form-field>
+        <retro-datepicker
+          class="game-loan-form__field"
+          [label]="'gameDetail.loan.loanedAt' | transloco"
+          formControlName="loanedAt" />
 
         <retro-button
           [label]="'gameDetail.loan.loanBtn' | transloco"

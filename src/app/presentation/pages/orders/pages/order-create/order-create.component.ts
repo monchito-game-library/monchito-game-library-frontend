@@ -6,7 +6,7 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -29,7 +29,7 @@ import { DiscountType } from '@/types/discount-type.type';
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,
-    RetroErrorComponent
+    RetroInputComponent
   ]
 })
 export class OrderCreateComponent {

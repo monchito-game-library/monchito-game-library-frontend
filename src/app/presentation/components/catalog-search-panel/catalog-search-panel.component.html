@@ -1,15 +1,12 @@
 <div class="catalog-search-panel">
   <div class="catalog-search-panel__input-wrapper">
-    <retro-form-field class="catalog-search-panel__field">
-      <retro-label>{{ 'gameForm.search.inputLabel' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="search" />
-      <input
-        retroInput
-        [value]="searchQuery()"
-        (input)="onSearchInput($event)"
-        [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
-        autofocus />
-    </retro-form-field>
+    <retro-input
+      class="catalog-search-panel__field"
+      prefixIcon="search"
+      [label]="'gameForm.search.inputLabel' | transloco"
+      [placeholder]="'gameForm.search.inputPlaceholder' | transloco"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="onSearchChange($event)" />
   </div>
 
   <div class="catalog-search-panel__results">

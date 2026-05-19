@@ -465,11 +465,14 @@ input[type='number'] {
   overflow-y: auto;
   overscroll-behavior: contain;
   z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-// ─── retro-autocomplete — panel (fuera del shadow DOM) ─────────────────────────
+// ─── retro-search — panel de autocompletado (fuera del shadow DOM) ─────────────
+// Mismos estilos base que retro-select__panel; se aplica como panelClass en el overlay.
 
-.retro-autocomplete__panel {
+.retro-search__panel {
   background: var(--bg-elev);
   border: 1px solid var(--border-strong);
   padding: 0.25rem 0;
@@ -479,4 +482,8 @@ input[type='number'] {
   overflow-y: auto;
   overscroll-behavior: contain;
   z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
 }
+
+@import '@angular/cdk/overlay-prebuilt.css';

@@ -1,41 +1,62 @@
 # retro-select
 
-Select accesible Terminal Collector (combobox + listbox APG). `ControlValueAccessor` completo.
+Select accesible Terminal Collector (combobox + listbox APG). Componente self-contained.
+Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngModel`.
 
-## Componente — RetroSelectComponent
+## Selector
 
-- **Selector:** `retro-select`
-- **ControlValueAccessor:** sí.
-- **A11y:** `role="combobox"` + `role="listbox"`, `aria-expanded`, `aria-activedescendant`, `aria-selected`.
+`retro-select`
 
-### Inputs
+## Inputs
 
 | Nombre | Tipo | Default | Descripción |
 |---|---|---|---|
-| `placeholder` | `string` | `''` | Texto si no hay selección. |
-| `ariaLabelledBy` | `string \| undefined` | `undefined` | ID del label externo. |
-| `value` | `unknown` | `undefined` | Valor en modo standalone. |
+| `label` | `string` | — (requerido) | Texto del label del campo. |
+| `placeholder` | `string` | `''` | Texto cuando no hay selección. |
+| `hint` | `string \| null` | `null` | Mensaje de ayuda bajo el campo. |
+| `error` | `string \| null` | `null` | Mensaje de error bajo el campo. |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo (32/40/44px). |
+| `prefixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en prefix. |
+| `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
+| `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay selección. |
+| `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
+| `value` | `unknown` | `undefined` | Valor en modo standalone (sin formControlName). |
 
-### Outputs: `selectionChange: unknown`.
+## Outputs
 
-### Teclado: ArrowUp/Down, Home/End, Enter/Space, Escape, Tab, type-ahead.
+| Nombre | Tipo | Descripción |
+|---|---|---|
+| `selectionChange` | `unknown` | Emite el nuevo valor al seleccionar una opción. |
+| `cleared` | `void` | Emite al pulsar el botón limpiar. |
+
+## Slots (ng-content)
+
+| Selector | Descripción |
+|---|---|
+| Default | Se proyectan `<retro-option>` como opciones del listbox. |
+| `[retroPrefix]` | Elementos con comportamiento propio en el prefix (botones, badges, etc.). |
+| `[retroSuffix]` | Elementos con comportamiento propio en el suffix. |
+
+## A11y
+
+- Trigger: `role="combobox"`, `aria-expanded`, `aria-haspopup="listbox"`, `aria-controls`, `aria-activedescendant`.
+- Listbox: `role="listbox"`.
+- Opciones: `role="option"`, `aria-selected`.
+- Teclado: ArrowUp/Down, Home/End, Enter/Space, Escape, Tab.
+- Disabled via `aria-disabled` (el trigger es un `<div>`, no un `<button>`).
 
 ## Componente — RetroOptionComponent
 
 - **Selector:** `retro-option`
 - **Inputs:** `value: unknown` (required), `disabled: boolean`.
 - **Slots:** Default (label).
-- **Reutilizable** también dentro de `<retro-autocomplete>`.
 
 ## Ejemplo
 
 ```html
-<retro-form-field>
-  <retro-label>Estado</retro-label>
-  <retro-select formControlName="status" placeholder="Selecciona...">
-    @for (s of statuses; track s.code) {
-      <retro-option [value]="s.code">{{ s.label }}</retro-option>
-    }
-  </retro-select>
-</retro-form-field>
+<retro-select label="Estado" formControlName="status" placeholder="Selecciona...">
+  @for (s of statuses; track s.code) {
+    <retro-option [value]="s.code">{{ s.label }}</retro-option>
+  }
+</retro-select>
 ```

@@ -2,10 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, output } fro
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
@@ -15,16 +12,7 @@ import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-
   selector: 'app-hardware-brand-edit-panel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    TranslocoPipe,
-    RetroButtonComponent,
-    RetroIconComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
-    RetroErrorComponent
-  ],
+  imports: [ReactiveFormsModule, TranslocoPipe, RetroButtonComponent, RetroIconComponent, RetroInputComponent],
   templateUrl: './hardware-brand-edit-panel.component.html',
   styleUrl: './hardware-brand-edit-panel.component.scss'
 })

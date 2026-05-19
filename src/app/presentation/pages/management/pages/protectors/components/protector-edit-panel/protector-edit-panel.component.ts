@@ -9,7 +9,7 @@ import { RetroOptionComponent } from '@retro/retro-select/components/retro-optio
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -31,7 +31,7 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,
-    RetroErrorComponent,
+    RetroInputComponent,
     RetroSelectComponent,
     RetroOptionComponent
   ],

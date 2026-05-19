@@ -15,18 +15,11 @@ export { RetroSpinnerComponent } from './retro-spinner/retro-spinner.component';
 export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.component';
 export { RetroCheckboxComponent } from './retro-checkbox/retro-checkbox.component';
 export { RetroSnackbarHostComponent } from './retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
-export { RetroFormFieldComponent } from './retro-form-field/retro-form-field.component';
-export { RetroInputDirective } from './retro-form-field/components/retro-input/retro-input.directive';
-export { RetroLabelComponent } from './retro-form-field/components/retro-label/retro-label.component';
-export { RetroErrorComponent } from './retro-form-field/components/retro-error/retro-error.component';
-export { RetroHintComponent } from './retro-form-field/components/retro-hint/retro-hint.component';
+export { RetroInputComponent } from './retro-input/retro-input.component';
 export { RetroSelectComponent } from './retro-select/retro-select.component';
 export { RetroOptionComponent } from './retro-select/components/retro-option/retro-option.component';
-export { RetroAutocompleteComponent } from './retro-autocomplete/retro-autocomplete.component';
-export { RetroAutocompleteTriggerDirective } from './retro-autocomplete/directive/retro-autocomplete-trigger.directive';
+export { RetroSearchComponent } from './retro-search/retro-search.component';
 export { RetroDatepickerComponent } from './retro-datepicker/retro-datepicker.component';
-export { RetroDatepickerDirective } from './retro-datepicker/directive/retro-datepicker.directive';
-export { RetroDatepickerToggleDirective } from './retro-datepicker/directive/retro-datepicker-toggle.directive';
 export { RetroMenuComponent } from './retro-menu/retro-menu.component';
 export { RetroMenuItemComponent } from './retro-menu/components/retro-menu-item/retro-menu-item.component';
 export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-trigger.directive';
@@ -56,6 +49,10 @@ export {
   RetroBottomSheetService,
   RETRO_BOTTOM_SHEET_DATA
 } from './retro-bottom-sheet/services/retro-bottom-sheet.service';
+
+// ─── Tokens expuestos a consumidores externos ─────────────────────────────────
+export { RETRO_FORM_FIELD_CONTROL } from './retro-form-field/tokens/retro-form-field-control.token';
+export type { RetroFormFieldControl } from './retro-form-field/tokens/retro-form-field-control.token';
 
 // ─── Tipos expuestos a consumidores externos ──────────────────────────────────
 export type { RetroChipColor } from './retro-chip/retro-chip.types';

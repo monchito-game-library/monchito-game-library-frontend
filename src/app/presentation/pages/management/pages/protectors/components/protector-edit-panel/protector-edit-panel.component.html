@@ -10,22 +10,17 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <retro-form-field>
-        <retro-label [required]="true">{{ 'management.products.nameLabel' | transloco }}</retro-label>
-        <input retroInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
-        @if (form.controls.name.hasError('required')) {
-          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        [label]="'management.products.nameLabel' | transloco"
+        formControlName="name"
+        [placeholder]="'management.products.namePlaceholder' | transloco"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
 
-      <retro-form-field>
-        <retro-label>{{ 'management.products.categoryLabel' | transloco }}</retro-label>
-        <retro-select formControlName="category">
-          <retro-option value="box">{{ 'management.products.categoryBox' | transloco }}</retro-option>
-          <retro-option value="console">{{ 'management.products.categoryConsole' | transloco }}</retro-option>
-          <retro-option value="other">{{ 'management.products.categoryOther' | transloco }}</retro-option>
-        </retro-select>
-      </retro-form-field>
+      <retro-select [label]="'management.products.categoryLabel' | transloco" formControlName="category">
+        <retro-option value="box">{{ 'management.products.categoryBox' | transloco }}</retro-option>
+        <retro-option value="console">{{ 'management.products.categoryConsole' | transloco }}</retro-option>
+        <retro-option value="other">{{ 'management.products.categoryOther' | transloco }}</retro-option>
+      </retro-select>
 
       <retro-form-field>
         <retro-label>{{ 'management.products.notesLabel' | transloco }}</retro-label>
@@ -55,27 +50,39 @@
       <div class="packs-list">
         @for (packGroup of packsArray.controls; track $index) {
           <div class="pack-row" [formGroup]="asFormGroup(packGroup)">
-            <retro-form-field class="pack-row__qty">
-              <retro-label [required]="true">{{ 'management.products.packQty' | transloco }}</retro-label>
-              <input retroInput formControlName="quantity" type="number" min="1" step="1" />
-              @if (asFormGroup(packGroup).controls['quantity'].hasError('required')) {
-                <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-              }
-            </retro-form-field>
+            <retro-input
+              class="pack-row__qty"
+              [label]="'management.products.packQty' | transloco"
+              formControlName="quantity"
+              type="number"
+              min="1"
+              step="1"
+              [error]="
+                asFormGroup(packGroup).controls['quantity'].hasError('required')
+                  ? ('gameForm.errors.required' | transloco)
+                  : null
+              " />
 
-            <retro-form-field class="pack-row__price">
-              <retro-label [required]="true">{{ 'management.products.packPrice' | transloco }}</retro-label>
-              <input retroInput formControlName="price" type="number" min="0.01" step="0.01" />
-              <retro-icon retroSuffix name="euro" />
-              @if (asFormGroup(packGroup).controls['price'].hasError('required')) {
-                <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-              }
-            </retro-form-field>
+            <retro-input
+              class="pack-row__price"
+              [label]="'management.products.packPrice' | transloco"
+              formControlName="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              suffixIcon="euro"
+              [error]="
+                asFormGroup(packGroup).controls['price'].hasError('required')
+                  ? ('gameForm.errors.required' | transloco)
+                  : null
+              " />
 
-            <retro-form-field class="pack-row__url">
-              <retro-label>{{ 'management.products.packUrl' | transloco }}</retro-label>
-              <input retroInput formControlName="url" type="url" placeholder="https://..." />
-            </retro-form-field>
+            <retro-input
+              class="pack-row__url"
+              [label]="'management.products.packUrl' | transloco"
+              formControlName="url"
+              type="url"
+              placeholder="https://..." />
 
             <retro-icon-button
               icon="delete"

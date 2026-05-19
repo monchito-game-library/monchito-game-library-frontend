@@ -2,7 +2,7 @@ import { RetroOptionComponent } from '../components/retro-option/retro-option.co
 
 /**
  * Contrato que deben implementar los componentes padre de RetroOptionComponent
- * (RetroSelectComponent, RetroAutocompleteComponent) para recibir notificaciones
+ * (RetroSelectComponent, RetroSearchComponent) para recibir notificaciones
  * de selección desde las opciones.
  */
 export interface RetroOptionParent {

@@ -151,26 +151,28 @@
 
         <!-- Platform (required in add, static chip in edit) -->
         @if (pendingCatalogEntry()) {
-          <retro-form-field class="wishlist-view__field">
-            <retro-label [required]="true">{{ 'wishlist.fields.platform' | transloco }}</retro-label>
-            <retro-select formControlName="platform">
-              @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
-                <retro-option [value]="platform">{{ platform }}</retro-option>
-              }
-            </retro-select>
-            @if (mobileForm.controls.platform.hasError('required')) {
-              <retro-error>{{ 'wishlist.fields.platformRequired' | transloco }}</retro-error>
+          <retro-select
+            class="wishlist-view__field"
+            [label]="'wishlist.fields.platform' | transloco"
+            formControlName="platform"
+            [error]="
+              mobileForm.controls.platform.hasError('required')
+                ? ('wishlist.fields.platformRequired' | transloco)
+                : null
+            ">
+            @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
+              <retro-option [value]="platform">{{ platform }}</retro-option>
             }
-          </retro-form-field>
+          </retro-select>
         } @else if (editPlatforms().length > 0) {
-          <retro-form-field class="wishlist-view__field">
-            <retro-label>{{ 'wishlist.fields.platform' | transloco }}</retro-label>
-            <retro-select formControlName="platform">
-              @for (platform of editPlatforms(); track platform) {
-                <retro-option [value]="platform">{{ platform }}</retro-option>
-              }
-            </retro-select>
-          </retro-form-field>
+          <retro-select
+            class="wishlist-view__field"
+            [label]="'wishlist.fields.platform' | transloco"
+            formControlName="platform">
+            @for (platform of editPlatforms(); track platform) {
+              <retro-option [value]="platform">{{ platform }}</retro-option>
+            }
+          </retro-select>
         } @else if (mobileForm.controls.platform.value) {
           <div class="wishlist-view__platform-display">
             <span class="wishlist-view__label">{{ 'wishlist.fields.platform' | transloco }}</span>
@@ -181,19 +183,19 @@
         }
 
         <!-- Desired price (required) -->
-        <retro-form-field class="wishlist-view__field">
-          <retro-label [required]="true">{{ 'wishlist.fields.desiredPrice' | transloco }}</retro-label>
-          <input
-            retroInput
-            type="number"
-            min="0"
-            step="0.01"
-            formControlName="desiredPrice"
-            [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
-          @if (mobileForm.controls.desiredPrice.hasError('required')) {
-            <retro-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</retro-error>
-          }
-        </retro-form-field>
+        <retro-input
+          class="wishlist-view__field"
+          [label]="'wishlist.fields.desiredPrice' | transloco"
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="desiredPrice"
+          [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco"
+          [error]="
+            mobileForm.controls.desiredPrice.hasError('required')
+              ? ('wishlist.fields.desiredPriceRequired' | transloco)
+              : null
+          " />
 
         <!-- Notes (optional) -->
         <retro-form-field class="wishlist-view__field">

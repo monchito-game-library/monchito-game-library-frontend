@@ -18,6 +18,7 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -44,7 +45,8 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     RetroButtonComponent,
     RetroFormFieldComponent,
     RetroInputDirective,
-    RetroLabelComponent
+    RetroLabelComponent,
+    RetroInputComponent
   ]
 })
 export class OrderInfoSectionComponent implements OnDestroy {

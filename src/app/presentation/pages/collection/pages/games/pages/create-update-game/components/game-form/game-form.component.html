@@ -105,128 +105,83 @@
 
       <!-- Right column: form fields -->
       <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <retro-form-field class="game-form__field game-form__field--full">
-          <retro-label [required]="true">{{ 'gameForm.fields.title' | transloco }}</retro-label>
-          <input retroInput formControlName="title" [readonly]="!!selectedGame()" />
-          @if (selectedGame()) {
-            <retro-icon retroSuffix name="lock" />
-          }
-          @if (form.controls.title.hasError('required')) {
-            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-          }
-        </retro-form-field>
+        <retro-input
+          class="game-form__field game-form__field--full"
+          [label]="'gameForm.fields.title' | transloco"
+          formControlName="title"
+          [readonly]="!!selectedGame()"
+          [error]="form.controls.title.hasError('required') ? ('gameForm.errors.required' | transloco) : null"
+          [suffixIcon]="selectedGame() ? 'lock' : null" />
 
-        <retro-form-field class="game-form__field game-form__field--full">
-          <retro-label>{{ 'gameForm.fields.edition' | transloco }}</retro-label>
-          <input
-            retroInput
-            formControlName="edition"
-            [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
-          <retro-icon retroSuffix name="local_offer" />
-        </retro-form-field>
+        <retro-input
+          class="game-form__field game-form__field--full"
+          [label]="'gameForm.fields.edition' | transloco"
+          formControlName="edition"
+          [placeholder]="'gameForm.fields.editionPlaceholder' | transloco"
+          suffixIcon="local_offer" />
 
-        <retro-form-field class="game-form__field">
-          <retro-label [required]="true">{{ 'gameForm.fields.platform' | transloco }}</retro-label>
-          <input
-            type="text"
-            retroInput
-            [retroAutocompleteTrigger]="platformAuto"
-            [formControl]="form.controls.platform" />
-          <retro-autocomplete
-            #platformAuto
-            [displayWith]="displayPlatformLabel"
-            (optionSelected)="onPlatformSelected($event)">
-            @for (platform of filteredPlatforms(); track platform.code) {
-              <retro-option [value]="platform.code">{{ platform.labelKey | transloco }}</retro-option>
-            }
-          </retro-autocomplete>
-          @if (form.controls.platform.value) {
-            <retro-icon-button
-              retroSuffix
-              size="sm"
-              icon="close"
-              [ariaLabel]="'common.clear' | transloco"
-              (clicked)="form.controls.platform.setValue(null)" />
+        <retro-search
+          class="game-form__field"
+          [label]="'gameForm.fields.platform' | transloco"
+          [formControl]="form.controls.platform"
+          [displayWith]="displayPlatformLabel"
+          [error]="_getPlatformError()"
+          (queryChange)="onPlatformQuery($event)">
+          @for (platform of filteredPlatforms(); track platform.code) {
+            <retro-option [value]="platform.code">{{ platform.labelKey | transloco }}</retro-option>
           }
-          @if (form.controls.platform.hasError('required')) {
-            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-          } @else if (form.controls.platform.hasError('invalidOption')) {
-            <retro-error>{{ 'gameForm.errors.invalidOption' | transloco }}</retro-error>
-          }
-        </retro-form-field>
+        </retro-search>
 
-        <retro-form-field class="game-form__field">
-          <retro-label>{{ 'gameForm.fields.store' | transloco }}</retro-label>
-          <input type="text" retroInput [retroAutocompleteTrigger]="storeAuto" [formControl]="form.controls.store" />
-          <retro-autocomplete #storeAuto [displayWith]="displayStoreLabel" (optionSelected)="onStoreSelected($event)">
-            @for (store of filteredStores(); track store.id) {
-              <retro-option [value]="store.id">{{ store.label }}</retro-option>
-            }
-          </retro-autocomplete>
-          @if (form.controls.store.value) {
-            <retro-icon-button
-              retroSuffix
-              size="sm"
-              icon="close"
-              [ariaLabel]="'common.clear' | transloco"
-              (clicked)="form.controls.store.setValue(null)" />
+        <retro-search
+          class="game-form__field"
+          [label]="'gameForm.fields.store' | transloco"
+          [formControl]="form.controls.store"
+          [displayWith]="displayStoreLabel"
+          [error]="_getStoreError()"
+          (queryChange)="onStoreQuery($event)">
+          @for (store of filteredStores(); track store.id) {
+            <retro-option [value]="store.id">{{ store.label }}</retro-option>
           }
-          @if (form.controls.store.hasError('required')) {
-            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-          } @else if (form.controls.store.hasError('invalidOption')) {
-            <retro-error>{{ 'gameForm.errors.invalidOption' | transloco }}</retro-error>
+        </retro-search>
+
+        <retro-select
+          class="game-form__field"
+          [label]="'gameForm.fields.condition' | transloco"
+          [formControl]="form.controls.condition">
+          @for (condition of conditions; track condition.code) {
+            <retro-option [value]="condition.code">{{ condition.labelKey | transloco }}</retro-option>
           }
-        </retro-form-field>
+        </retro-select>
 
-        <retro-form-field class="game-form__field">
-          <retro-label>{{ 'gameForm.fields.condition' | transloco }}</retro-label>
-          <retro-select [formControl]="form.controls.condition">
-            @for (condition of conditions; track condition.code) {
-              <retro-option [value]="condition.code">{{ condition.labelKey | transloco }}</retro-option>
-            }
-          </retro-select>
-        </retro-form-field>
-
-        <retro-form-field class="game-form__field">
-          <retro-label>{{ 'gameForm.fields.status' | transloco }}</retro-label>
-          <retro-select formControlName="status">
-            @for (status of gameStatuses; track status.code) {
-              <retro-option [value]="status.code">
-                <retro-icon [name]="status.icon" [style.color]="status.color" />
-                {{ status.labelKey | transloco }}
-              </retro-option>
-            }
-          </retro-select>
-        </retro-form-field>
-
-        <retro-form-field class="game-form__field">
-          <retro-label>{{ 'gameForm.fields.price' | transloco }}</retro-label>
-          <input retroInput formControlName="price" type="number" placeholder="0" />
-          <retro-icon retroSuffix name="euro" />
-          @if (form.controls.price.hasError('required')) {
-            <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
+        <retro-select class="game-form__field" [label]="'gameForm.fields.status' | transloco" formControlName="status">
+          @for (status of gameStatuses; track status.code) {
+            <retro-option [value]="status.code">
+              <retro-icon [name]="status.icon" [style.color]="status.color" />
+              {{ status.labelKey | transloco }}
+            </retro-option>
           }
-        </retro-form-field>
+        </retro-select>
 
-        <retro-form-field class="game-form__field">
-          <retro-label>{{ 'gameForm.fields.rating' | transloco }}</retro-label>
-          <input
-            retroInput
-            formControlName="personal_rating"
-            type="number"
-            min="0"
-            max="10"
-            step="0.1"
-            [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco" />
-          <retro-icon retroSuffix name="star_rate" />
-          @if (form.controls.personal_rating.hasError('min')) {
-            <retro-error>{{ 'gameForm.errors.ratingMin' | transloco }}</retro-error>
-          } @else if (form.controls.personal_rating.hasError('max')) {
-            <retro-error>{{ 'gameForm.errors.ratingMax' | transloco }}</retro-error>
-          } @else if (form.controls.personal_rating.hasError('invalidStep')) {
-            <retro-error>{{ 'gameForm.errors.ratingStep' | transloco }}</retro-error>
-          }
-        </retro-form-field>
+        <retro-input
+          class="game-form__field"
+          [label]="'gameForm.fields.price' | transloco"
+          formControlName="price"
+          type="number"
+          placeholder="0"
+          suffixIcon="euro"
+          [error]="form.controls.price.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
+
+        <retro-input
+          class="game-form__field"
+          [label]="'gameForm.fields.rating' | transloco"
+          formControlName="personal_rating"
+          type="number"
+          min="0"
+          max="10"
+          step="0.1"
+          [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco"
+          suffixIcon="star_rate"
+          [error]="_getRatingError()" />
 
         <retro-form-field class="game-form__field game-form__field--full game-form__field--description">
           <retro-label>{{ 'gameForm.fields.description' | transloco }}</retro-label>

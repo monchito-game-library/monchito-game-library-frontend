@@ -3,10 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroHintComponent } from '@retro/retro-form-field/components/retro-hint/retro-hint.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
@@ -40,10 +37,7 @@ import {
     RetroIconComponent,
     TranslocoPipe,
     RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
-    RetroHintComponent
+    RetroInputComponent
   ]
 })
 export class DeleteUserDialogComponent {

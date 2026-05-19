@@ -13,9 +13,3 @@ export const mockDialog: { open: ReturnType<typeof vi.fn> } = {
     componentInstance: null
   })
 };
-
-/** Mock de RetroDialogRef para inyectar en specs de componentes dialog. */
-export const mockDialogRef = {
-  close: vi.fn(),
-  afterClosed: () => of(undefined)
-};

@@ -12,91 +12,90 @@
     <!-- Model fields -->
     <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionModel' | transloco }}</div>
     <div class="edit-panel__fields edit-panel__fields--model">
-      <retro-form-field>
-        <retro-label [required]="true">{{ 'management.hardware.models.nameLabel' | transloco }}</retro-label>
-        <input retroInput formControlName="name" />
-        @if (form.controls.name.hasError('required')) {
-          <retro-error>{{ 'gameForm.errors.required' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        [label]="'management.hardware.models.nameLabel' | transloco"
+        formControlName="name"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
 
-      <retro-form-field>
-        <retro-label>{{ 'management.hardware.models.typeLabel' | transloco }}</retro-label>
-        <retro-select formControlName="type">
-          <retro-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
-            {{ 'management.hardware.models.typeConsole' | transloco }}
-          </retro-option>
-          <retro-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
-            {{ 'management.hardware.models.typeController' | transloco }}
-          </retro-option>
-        </retro-select>
-      </retro-form-field>
+      <retro-select [label]="'management.hardware.models.typeLabel' | transloco" formControlName="type">
+        <retro-option [value]="HARDWARE_MODEL_TYPE.CONSOLE">
+          {{ 'management.hardware.models.typeConsole' | transloco }}
+        </retro-option>
+        <retro-option [value]="HARDWARE_MODEL_TYPE.CONTROLLER">
+          {{ 'management.hardware.models.typeController' | transloco }}
+        </retro-option>
+      </retro-select>
 
-      <retro-form-field>
-        <retro-label>{{ 'management.hardware.models.generationLabel' | transloco }}</retro-label>
-        <input retroInput type="number" formControlName="generation" min="1" max="99" step="1" />
-      </retro-form-field>
+      <retro-input
+        [label]="'management.hardware.models.generationLabel' | transloco"
+        formControlName="generation"
+        type="number"
+        min="1"
+        max="99"
+        step="1" />
     </div>
 
     <!-- Specs fields (consoles only) -->
     @if (isConsole()) {
       <div class="edit-panel__section-title">{{ 'management.hardware.models.sectionSpecs' | transloco }}</div>
       <div class="edit-panel__fields edit-panel__fields--specs">
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.launchYearLabel' | transloco }}</retro-label>
-          <input retroInput type="number" formControlName="launchYear" min="1970" max="2099" step="1" />
-        </retro-form-field>
+        <retro-input
+          [label]="'management.hardware.models.launchYearLabel' | transloco"
+          formControlName="launchYear"
+          type="number"
+          min="1970"
+          max="2099"
+          step="1" />
 
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.discontinuedYearLabel' | transloco }}</retro-label>
-          <input retroInput type="number" formControlName="discontinuedYear" min="1970" max="2099" step="1" />
-        </retro-form-field>
+        <retro-input
+          [label]="'management.hardware.models.discontinuedYearLabel' | transloco"
+          formControlName="discontinuedYear"
+          type="number"
+          min="1970"
+          max="2099"
+          step="1" />
 
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.categoryLabel' | transloco }}</retro-label>
-          <retro-select formControlName="category">
-            <retro-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
-              {{ 'management.hardware.models.categoryHome' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
-              {{ 'management.hardware.models.categoryPortable' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
-              {{ 'management.hardware.models.categoryHybrid' | transloco }}
-            </retro-option>
-          </retro-select>
-        </retro-form-field>
+        <retro-select [label]="'management.hardware.models.categoryLabel' | transloco" formControlName="category">
+          <retro-option [value]="CONSOLE_SPECS_CATEGORY.HOME">
+            {{ 'management.hardware.models.categoryHome' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_CATEGORY.PORTABLE">
+            {{ 'management.hardware.models.categoryPortable' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_CATEGORY.HYBRID">
+            {{ 'management.hardware.models.categoryHybrid' | transloco }}
+          </retro-option>
+        </retro-select>
 
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.mediaLabel' | transloco }}</retro-label>
-          <retro-select formControlName="media">
-            <retro-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
-              {{ 'management.hardware.models.mediaOpticalDisc' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
-              {{ 'management.hardware.models.mediaDigital' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
-              {{ 'management.hardware.models.mediaCartridge' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
-              {{ 'management.hardware.models.mediaHybrid' | transloco }}
-            </retro-option>
-            <retro-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
-              {{ 'management.hardware.models.mediaBuiltIn' | transloco }}
-            </retro-option>
-          </retro-select>
-        </retro-form-field>
+        <retro-select [label]="'management.hardware.models.mediaLabel' | transloco" formControlName="media">
+          <retro-option [value]="CONSOLE_SPECS_MEDIA.OPTICAL_DISC">
+            {{ 'management.hardware.models.mediaOpticalDisc' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_MEDIA.DIGITAL">
+            {{ 'management.hardware.models.mediaDigital' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_MEDIA.CARTRIDGE">
+            {{ 'management.hardware.models.mediaCartridge' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_MEDIA.HYBRID">
+            {{ 'management.hardware.models.mediaHybrid' | transloco }}
+          </retro-option>
+          <retro-option [value]="CONSOLE_SPECS_MEDIA.BUILT_IN">
+            {{ 'management.hardware.models.mediaBuiltIn' | transloco }}
+          </retro-option>
+        </retro-select>
 
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.videoResolutionLabel' | transloco }}</retro-label>
-          <input retroInput formControlName="videoResolution" placeholder="4K, 1080p, 480×272…" />
-        </retro-form-field>
+        <retro-input
+          [label]="'management.hardware.models.videoResolutionLabel' | transloco"
+          formControlName="videoResolution"
+          placeholder="4K, 1080p, 480×272…" />
 
-        <retro-form-field>
-          <retro-label>{{ 'management.hardware.models.unitsSoldLabel' | transloco }}</retro-label>
-          <input retroInput type="number" formControlName="unitsSoldMillion" min="0" step="0.01" />
-        </retro-form-field>
+        <retro-input
+          [label]="'management.hardware.models.unitsSoldLabel' | transloco"
+          formControlName="unitsSoldMillion"
+          type="number"
+          min="0"
+          step="0.01" />
       </div>
     }
 

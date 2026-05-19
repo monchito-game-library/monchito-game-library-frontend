@@ -121,11 +121,12 @@
     }
 
     <!-- Search -->
-    <retro-form-field class="settings__banner-search">
-      <retro-label>{{ 'settings.appearance.searchCoverLabel' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="search" />
-      <input retroInput [value]="rawgSearchQuery()" (input)="onRawgSearch($event)" />
-    </retro-form-field>
+    <retro-input
+      class="settings__banner-search"
+      prefixIcon="search"
+      [label]="'settings.appearance.searchCoverLabel' | transloco"
+      [ngModel]="rawgSearchQuery()"
+      (ngModelChange)="onRawgSearch($event)" />
 
     <!-- Grid: popular or search results -->
     <div class="settings__banner-results">

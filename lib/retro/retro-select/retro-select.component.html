@@ -1,27 +1,61 @@
-<button
-  #trigger
-  type="button"
-  class="retro-select__trigger"
-  role="combobox"
-  [attr.aria-expanded]="open()"
-  [attr.aria-haspopup]="'listbox'"
-  [attr.aria-controls]="listboxId"
-  [attr.aria-labelledby]="ariaLabelledBy() || null"
-  [attr.aria-activedescendant]="open() ? _activeOptionId() : null"
+<retro-form-field
+  [size]="size()"
   [disabled]="_isDisabled()"
-  (click)="toggle()"
-  (keydown)="onTriggerKeydown($event)">
-  <span
-    class="retro-select__value"
-    [class.retro-select__value--placeholder]="!_value() && _value() !== 0 && _value() !== false">
-    {{ displayValue() }}
+  [clearable]="clearable()"
+  [clearAriaLabel]="clearAriaLabel()"
+  [controlRef]="this"
+  (cleared)="onClear()">
+  <retro-label>{{ label() }}</retro-label>
+
+  @if (prefixIcon()) {
+    <retro-icon [name]="prefixIcon()!" size="sm" retroPrefix />
+  }
+
+  <span class="retro-form-field__slot" retroPrefix>
+    <ng-content select="[retroPrefix]" />
   </span>
-  <retro-icon name="expand_more" size="sm" class="retro-select__caret" [class.retro-select__caret--open]="open()" />
-</button>
+
+  <div
+    #trigger
+    class="retro-select__trigger"
+    role="combobox"
+    tabindex="0"
+    [attr.aria-expanded]="open()"
+    [attr.aria-haspopup]="'listbox'"
+    [attr.aria-controls]="listboxId"
+    [attr.aria-activedescendant]="open() ? _activeOptionId() : null"
+    [attr.aria-disabled]="_isDisabled() || null"
+    (click)="toggle()"
+    (focus)="onTriggerFocus()"
+    (blur)="onTriggerBlur()"
+    (keydown)="onTriggerKeydown($event)">
+    <span
+      class="retro-select__value"
+      [class.retro-select__value--placeholder]="!_value() && _value() !== 0 && _value() !== false">
+      {{ displayValue() }}
+    </span>
+    <retro-icon name="expand_more" size="sm" class="retro-select__caret" [class.retro-select__caret--open]="open()" />
+  </div>
+
+  @if (suffixIcon()) {
+    <retro-icon [name]="suffixIcon()!" size="sm" retroSuffix />
+  }
+
+  <span class="retro-form-field__slot" retroSuffix>
+    <ng-content select="[retroSuffix]" />
+  </span>
+
+  @if (error()) {
+    <retro-error>{{ error() }}</retro-error>
+  }
+  @if (hint()) {
+    <retro-hint>{{ hint() }}</retro-hint>
+  }
+</retro-form-field>
 
 <!-- Panel (teleportado via CDK Portal) -->
 <ng-template #panel>
-  <ul class="retro-select__panel" [id]="listboxId" role="listbox" [attr.aria-labelledby]="ariaLabelledBy() || null">
+  <ul class="retro-select__panel" [id]="listboxId" role="listbox" [attr.aria-label]="label()">
     <ng-content />
   </ul>
 </ng-template>

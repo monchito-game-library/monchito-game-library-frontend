@@ -1,7 +1,5 @@
-.retro-select {
+:host {
   display: block;
-  flex: 1;
-  min-width: 0;
 }
 
 .retro-select__trigger {
@@ -12,15 +10,21 @@
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: 0;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.875rem;
   color: var(--text-hi);
   text-align: left;
-  min-height: 44px;
   gap: 0.25rem;
+  user-select: none;
+  flex: 1;
+  min-width: 0;
 
-  &:disabled {
+  &:focus-visible {
+    outline: none;
+  }
+
+  &[aria-disabled='true'] {
     cursor: not-allowed;
     color: var(--text-lo);
   }

@@ -313,11 +313,12 @@ describe('GameFormComponent', () => {
   });
 
   describe('filteredStores', () => {
-    it('devuelve todas las tiendas cuando el input está vacío', () => {
+    it('devuelve todas las tiendas cuando el query está vacío', () => {
       (component as any)._storeModels.set([
         { id: '1', label: 'Amazon', format: null },
         { id: '2', label: 'GAME', format: null }
       ]);
+      component.onStoreQuery('');
       expect(component.filteredStores()).toHaveLength(2);
     });
 
@@ -326,7 +327,7 @@ describe('GameFormComponent', () => {
         { id: '1', label: 'Amazon', format: null },
         { id: '2', label: 'GAME', format: null }
       ]);
-      component.form.controls.store.setValue('ama');
+      component.onStoreQuery('ama');
       expect(component.filteredStores()).toHaveLength(1);
       expect(component.filteredStores()[0].label).toBe('Amazon');
     });
@@ -619,13 +620,13 @@ describe('GameFormComponent', () => {
 
   describe('filteredPlatforms', () => {
     it('devuelve plataformas estáticas filtradas cuando gamePlatforms está vacío', () => {
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it('filtra plataformas estáticas por el input cuando gamePlatforms está vacío', () => {
-      component.form.controls.platform.setValue('PS5');
+    it('filtra plataformas estáticas por el query cuando gamePlatforms está vacío', () => {
+      component.onPlatformQuery('PS5');
       const result = component.filteredPlatforms();
       expect(
         result.every((p) => p.code.toLowerCase().includes('ps5') || p.labelKey.toLowerCase().includes('ps5'))
@@ -637,24 +638,24 @@ describe('GameFormComponent', () => {
         { name: 'PlayStation 5', code: 'PS5' },
         { name: 'Xbox Series X', code: 'XBOX-SERIES' }
       ]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result.length).toBe(2);
     });
 
-    it('filtra plataformas dinámicas por input cuando gamePlatforms tiene elementos', () => {
+    it('filtra plataformas dinámicas por query cuando gamePlatforms tiene elementos', () => {
       component.gamePlatforms.set([
         { name: 'PlayStation 5', code: 'PS5' },
         { name: 'Xbox Series X', code: 'XBOX-SERIES' }
       ]);
-      component.form.controls.platform.setValue('XBOX' as any);
+      component.onPlatformQuery('xbox');
       const result = component.filteredPlatforms();
       expect(result.every((p) => p.code !== 'PS5')).toBe(true);
     });
 
     it('usa plataforma existente de platforms cuando el código coincide', () => {
       component.gamePlatforms.set([{ name: 'PS5 Custom', code: 'PS5' }]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       const ps5 = result.find((p) => p.code === 'PS5');
       expect(ps5).toBeDefined();
@@ -662,7 +663,7 @@ describe('GameFormComponent', () => {
 
     it('usa el fallback cuando el código de gamePlatform no existe en la lista estática', () => {
       component.gamePlatforms.set([{ name: 'Consola Desconocida', code: 'UNKNOWN-CODE' as any }]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result).toHaveLength(1);
       expect(result[0].code).toBe('UNKNOWN-CODE');

@@ -18,11 +18,10 @@ import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.com
 import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
-import { RetroErrorComponent } from '@retro/retro-form-field/components/retro-error/retro-error.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
-import { RetroAutocompleteComponent } from '@retro/retro-autocomplete/retro-autocomplete.component';
-import { RetroAutocompleteTriggerDirective } from '@retro/retro-autocomplete/directive/retro-autocomplete-trigger.directive';
+import { RetroSearchComponent } from '@retro/retro-search/retro-search.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
@@ -85,11 +84,10 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     RetroFormFieldComponent,
     RetroInputDirective,
     RetroLabelComponent,
-    RetroErrorComponent,
+    RetroInputComponent,
     RetroSelectComponent,
     RetroOptionComponent,
-    RetroAutocompleteComponent,
-    RetroAutocompleteTriggerDirective
+    RetroSearchComponent
   ]
 })
 export class GameFormComponent implements OnInit {
@@ -113,6 +111,10 @@ export class GameFormComponent implements OnInit {
   private readonly _coverPosition: WritableSignal<string | null> = signal<string | null>(null);
   /** Increments on every form value change to trigger hasChanges recomputation. */
   private readonly _formVersion: WritableSignal<number> = signal(0);
+  /** Texto de búsqueda del campo platform, usado para filtrar las opciones. */
+  private readonly _platformSearchQuery: WritableSignal<string> = signal<string>('');
+  /** Texto de búsqueda del campo store, usado para filtrar las opciones. */
+  private readonly _storeSearchQuery: WritableSignal<string> = signal<string>('');
   private _gameId?: number;
   /** Supabase UUID of the user_games row — set in edit mode for direct DB updates. */
   private _gameUuid?: string;
@@ -176,13 +178,9 @@ export class GameFormComponent implements OnInit {
     is_favorite: [false]
   });
 
-  readonly platformInput = toSignal(this.form.controls.platform.valueChanges, {
-    initialValue: this.form.controls.platform.value
-  });
-
-  /** Platforms filtered by the current autocomplete input value. */
+  /** Platforms filtered by the current search query. */
   readonly filteredPlatforms: Signal<AvailablePlatformInterface[]> = computed((): AvailablePlatformInterface[] => {
-    const input: string = this.platformInput()?.toString().toLowerCase() ?? '';
+    const input: string = this._platformSearchQuery().toLowerCase();
     const gamePlatforms = this.gamePlatforms();
 
     if (gamePlatforms.length > 0) {
@@ -211,19 +209,15 @@ export class GameFormComponent implements OnInit {
     );
   });
 
-  readonly storeInput = toSignal(this.form.controls.store.valueChanges, {
-    initialValue: this.form.controls.store.value ?? null
-  });
-
   /** Reactive signal for the format control value — needed for OnPush compatibility with mat-button-toggle-group. */
   readonly formatValue = toSignal(this.form.controls.format.valueChanges, {
     initialValue: this.form.controls.format.value
   });
 
-  /** Stores filtered by the current autocomplete input value. */
+  /** Stores filtered by the current search query. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
-    const input: string = this.storeInput()?.toString().toLowerCase() ?? '';
-    return this.stores().filter((store: StoreModel): boolean => store.label.toLowerCase().includes(input));
+    const query: string = this._storeSearchQuery().toLowerCase();
+    return this.stores().filter((store: StoreModel): boolean => store.label.toLowerCase().includes(query));
   });
 
   /** CSS object-position part of the cover position (x% y%). */
@@ -668,23 +662,55 @@ export class GameFormComponent implements OnInit {
   };
 
   /**
-   * Maneja la selección de plataforma desde el autocomplete.
-   * Actualiza el formControl con el código seleccionado.
+   * Actualiza el query de búsqueda de plataforma para filtrar las opciones visibles.
    *
-   * @param {unknown} value - Código de plataforma seleccionado.
+   * @param {string} query - Texto escrito por el usuario en el campo de búsqueda de plataforma
    */
-  onPlatformSelected(value: unknown): void {
-    this.form.controls.platform.setValue(value as PlatformType | null);
+  onPlatformQuery(query: string): void {
+    this._platformSearchQuery.set(query);
   }
 
   /**
-   * Maneja la selección de tienda desde el autocomplete.
-   * Actualiza el formControl con el ID seleccionado.
+   * Actualiza el query de búsqueda de tienda para filtrar las opciones visibles.
    *
-   * @param {unknown} value - ID de tienda seleccionado.
+   * @param {string} query - Texto escrito por el usuario en el campo de búsqueda de tienda
    */
-  onStoreSelected(value: unknown): void {
-    this.form.controls.store.setValue(value as string | null);
+  onStoreQuery(query: string): void {
+    this._storeSearchQuery.set(query);
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo platform, o null si no hay error visible.
+   */
+  _getPlatformError(): string | null {
+    const ctrl = this.form.controls.platform;
+    if (!ctrl.touched && !ctrl.dirty) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('gameForm.errors.required');
+    if (ctrl.hasError('invalidOption')) return this._transloco.translate('gameForm.errors.invalidOption');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo store, o null si no hay error visible.
+   */
+  _getStoreError(): string | null {
+    const ctrl = this.form.controls.store;
+    if (!ctrl.touched && !ctrl.dirty) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('gameForm.errors.required');
+    if (ctrl.hasError('invalidOption')) return this._transloco.translate('gameForm.errors.invalidOption');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo personal_rating, o null si no hay error visible.
+   */
+  _getRatingError(): string | null {
+    const ctrl = this.form.controls.personal_rating;
+    if (!ctrl.touched && !ctrl.dirty) return null;
+    if (ctrl.hasError('min')) return this._transloco.translate('gameForm.errors.ratingMin');
+    if (ctrl.hasError('max')) return this._transloco.translate('gameForm.errors.ratingMax');
+    if (ctrl.hasError('invalidStep')) return this._transloco.translate('gameForm.errors.ratingStep');
+    return null;
   }
 
   /**

@@ -12,13 +12,12 @@
 
   <div class="order-create-page__card">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="order-create-page__form">
-      <retro-form-field class="order-create-page__field">
-        <retro-label [required]="true">{{ 'orders.header.title' | transloco }}</retro-label>
-        <input retroInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
-        @if (form.controls.title.hasError('required')) {
-          <retro-error>{{ 'orders.header.titleRequired' | transloco }}</retro-error>
-        }
-      </retro-form-field>
+      <retro-input
+        class="order-create-page__field"
+        [label]="'orders.header.title' | transloco"
+        formControlName="title"
+        [placeholder]="'orders.header.titlePlaceholder' | transloco"
+        [error]="form.controls.title.hasError('required') ? ('orders.header.titleRequired' | transloco) : null" />
 
       <retro-form-field class="order-create-page__field">
         <retro-label>{{ 'orders.header.notes' | transloco }}</retro-label>

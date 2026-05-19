@@ -4,130 +4,155 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  forwardRef,
   inject,
+  Injector,
   input,
   InputSignal,
   OnDestroy,
+  OnInit,
   output,
   OutputEmitterRef,
   signal,
+  ViewChild,
+  ViewContainerRef,
   WritableSignal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Subject, Observable } from 'rxjs';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
-import { TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { TemplateRef } from '@angular/core';
+import { RetroFormFieldComponent } from '../retro-form-field/retro-form-field.component';
+import { RetroInputDirective } from '../retro-form-field/components/retro-input/retro-input.directive';
+import { RetroLabelComponent } from '../retro-form-field/components/retro-label/retro-label.component';
+import { RetroErrorComponent } from '../retro-form-field/components/retro-error/retro-error.component';
+import { RetroHintComponent } from '../retro-form-field/components/retro-hint/retro-hint.component';
+import { RetroIconComponent } from '../retro-icon/retro-icon.component';
 import { RetroIconButtonComponent } from '../retro-icon-button/retro-icon-button.component';
+import {
+  RETRO_FORM_FIELD_CONTROL,
+  RetroFormFieldControl
+} from '../retro-form-field/tokens/retro-form-field-control.token';
 import { RETRO_DATEPICKER_DAY_HEADERS } from './constants/retro-datepicker-day-headers.constant';
 import { RetroDatepickerDay } from './interfaces/retro-datepicker-day.interface';
 
 let _nextDatepickerId: number = 0;
 
 /**
- * Datepicker Terminal Collector. Vista mes con grid accesible.
- * Se conecta con la directiva [retroDatepicker] aplicada a un input nativo.
+ * Datepicker Terminal Collector — componente self-contained.
+ * Internaliza retro-form-field, input nativo y el panel de calendario.
+ * El consumidor solo usa <retro-datepicker label="..." formControlName="...">
+ *
+ * Implementa ControlValueAccessor para funcionar con formControlName / ngModel.
+ * Implementa RetroFormFieldControl para comunicarse con el retro-form-field interno.
+ *
+ * Contrato del FormControl:
+ * - writeValue acepta Date o string ISO (YYYY-MM-DD).
+ * - El valor emitido a registerOnChange es siempre Date.
+ * - El texto visible en el input es dd/MM/yyyy.
  *
  * Patrón ARIA: APG Date Picker Dialog Grid Pattern.
  * - Dialog: role="dialog", aria-modal="true", aria-labelledby (mes + año).
  * - Grid: role="grid".
- * - Filas: role="row".
- * - Celdas: role="gridcell".
- * - Día actual: aria-current="date".
- * - Día seleccionado: aria-selected="true".
  *
  * Uso:
  * ```html
- * <input retroInput [retroDatepicker]="picker" formControlName="purchaseDate" [readonly]="true" />
- * <retro-icon retroSuffix [retroDatepickerToggle]="picker" name="calendar_today" />
- * <retro-datepicker #picker [min]="minDate" [max]="maxDate" />
+ * <retro-datepicker label="Fecha de compra" formControlName="purchaseDate" />
  * ```
  */
 @Component({
   selector: 'retro-datepicker',
   standalone: true,
-  imports: [PortalModule, RetroIconButtonComponent],
-  template: `
-    <ng-template #calendar>
-      <div
-        class="retro-datepicker__dialog"
-        role="dialog"
-        aria-modal="true"
-        [attr.aria-labelledby]="headerId"
-        (keydown)="onDialogKeydown($event)">
-        <!-- Header -->
-        <div class="retro-datepicker__header">
-          <retro-icon-button icon="chevron_left" [ariaLabel]="'Mes anterior'" (clicked)="prevMonth()" />
-          <span class="retro-datepicker__header-label" [id]="headerId">
-            {{ headerLabel() }}
-          </span>
-          <retro-icon-button icon="chevron_right" [ariaLabel]="'Mes siguiente'" (clicked)="nextMonth()" />
-        </div>
-
-        <!-- Day-of-week headers -->
-        <div class="retro-datepicker__grid-header">
-          @for (d of dayHeaders; track d) {
-            <span class="retro-datepicker__weekday" aria-hidden="true">{{ d }}</span>
-          }
-        </div>
-
-        <!-- Calendar grid -->
-        <table class="retro-datepicker__grid" role="grid" [attr.aria-labelledby]="headerId">
-          <tbody>
-            @for (week of weeks(); track $index) {
-              <tr role="row">
-                @for (day of week; track day.date?.toISOString()) {
-                  <td
-                    role="gridcell"
-                    [class.retro-datepicker__day--outside]="!day.inMonth"
-                    [class.retro-datepicker__day--today]="day.isToday"
-                    [class.retro-datepicker__day--selected]="day.isSelected"
-                    [class.retro-datepicker__day--active]="
-                      day.date && _activeDate() && isSameDay(day.date, _activeDate()!)
-                    "
-                    [class.retro-datepicker__day--disabled]="day.isDisabled"
-                    [attr.aria-selected]="day.isSelected ? true : null"
-                    [attr.aria-current]="day.isToday ? 'date' : null"
-                    [attr.aria-disabled]="day.isDisabled ? true : null"
-                    [attr.tabindex]="day.date && _activeDate() && isSameDay(day.date, _activeDate()!) ? 0 : -1"
-                    (click)="onDayClick(day)"
-                    (keydown)="onDayKeydown($event, day)">
-                    <span class="retro-datepicker__day-label">{{ day.label }}</span>
-                  </td>
-                }
-              </tr>
-            }
-          </tbody>
-        </table>
-
-        <!-- Today button -->
-        <div class="retro-datepicker__footer">
-          <button type="button" class="retro-datepicker__today-btn" (click)="selectToday()">Hoy</button>
-          <button type="button" class="retro-datepicker__close-btn" (click)="close()">Cerrar</button>
-        </div>
-      </div>
-    </ng-template>
-  `,
+  imports: [
+    PortalModule,
+    RetroFormFieldComponent,
+    RetroInputDirective,
+    RetroLabelComponent,
+    RetroErrorComponent,
+    RetroHintComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent
+  ],
+  templateUrl: './retro-datepicker.component.html',
   styleUrl: './retro-datepicker.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => RetroDatepickerComponent), multi: true },
+    { provide: RETRO_FORM_FIELD_CONTROL, useExisting: forwardRef(() => RetroDatepickerComponent) }
+  ]
 })
-export class RetroDatepickerComponent implements OnDestroy {
+export class RetroDatepickerComponent implements ControlValueAccessor, RetroFormFieldControl, OnInit, OnDestroy {
+  // ── Inyecciones privadas ─────────────────────────────────────────────────────
+
   private readonly _overlay: Overlay = inject(Overlay);
   private readonly _viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly _elRef: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly _injector: Injector = inject(Injector);
+  private readonly _focusSubject: Subject<boolean> = new Subject<boolean>();
+
+  /** Input nativo interno. */
+  @ViewChild('inputEl')
+  private readonly _inputEl!: ElementRef<HTMLInputElement>;
+
+  /** Template del calendario. */
+  @ViewChild('calendar')
+  private readonly _calendarTemplate!: TemplateRef<unknown>;
+
+  // ── Variables privadas ───────────────────────────────────────────────────────
 
   private _overlayRef: OverlayRef | null = null;
-  private _triggerRef: ElementRef<HTMLInputElement> | null = null;
 
-  @ViewChild('calendar')
-  private _calendarTemplate!: TemplateRef<unknown>;
+  // ── Variables públicas readonly (RetroFormFieldControl + inputs + outputs) ───
 
-  // ── Inputs / Outputs / Constantes públicos ───────────────────────────────────
+  /** Emite true al recibir foco, false al perderlo. */
+  readonly focused$: Observable<boolean> = this._focusSubject.asObservable();
 
-  /** Constante de cabeceras de días. */
-  readonly dayHeaders: string[] = RETRO_DATEPICKER_DAY_HEADERS;
+  /** Verdadero cuando el control tiene un error de validación visible. */
+  get errorState(): boolean {
+    const ctrl = this.ngControl?.control;
+    if (!ctrl) return false;
+    return ctrl.invalid && (ctrl.touched || ctrl.dirty);
+  }
 
-  // ── Inputs ───────────────────────────────────────────────────────────────────
+  /** Verdadero cuando el control está deshabilitado. */
+  get disabled(): boolean {
+    return this._isDisabled();
+  }
+
+  /** Verdadero cuando no hay fecha seleccionada. */
+  get empty(): boolean {
+    return this._selectedDate() === null;
+  }
+
+  // ── Inputs públicos ──────────────────────────────────────────────────────────
+
+  /** Texto del label del campo. Vacío si el consumidor no ha migrado aún a la API self-contained. */
+  readonly label: InputSignal<string> = input<string>('');
+
+  /** Placeholder del input. */
+  readonly placeholder: InputSignal<string> = input<string>('');
+
+  /** Mensaje de hint. Nulo si no hay. */
+  readonly hint: InputSignal<string | null> = input<string | null>(null);
+
+  /** Mensaje de error. Nulo si no hay. */
+  readonly error: InputSignal<string | null> = input<string | null>(null);
+
+  /** Tamaño del campo: sm (32px), md (40px), lg (44px). */
+  readonly size: InputSignal<'sm' | 'md' | 'lg'> = input<'sm' | 'md' | 'lg'>('lg');
+
+  /** Icono decorativo en el prefix. */
+  readonly prefixIcon: InputSignal<string | null> = input<string | null>(null);
+
+  /** Muestra el botón de limpiar cuando hay fecha seleccionada. */
+  readonly clearable: InputSignal<boolean> = input<boolean>(false);
+
+  /** Texto del aria-label del botón limpiar. */
+  readonly clearAriaLabel: InputSignal<string> = input<string>('Limpiar');
 
   /** Fecha mínima seleccionable. */
   readonly min: InputSignal<Date | null> = input<Date | null>(null);
@@ -135,95 +160,123 @@ export class RetroDatepickerComponent implements OnDestroy {
   /** Fecha máxima seleccionable. */
   readonly max: InputSignal<Date | null> = input<Date | null>(null);
 
-  // ── Outputs ──────────────────────────────────────────────────────────────────
+  // ── Signals públicos ─────────────────────────────────────────────────────────
 
-  /** Emite la fecha seleccionada cuando el usuario elige un día. */
-  readonly dateSelected: OutputEmitterRef<Date | null> = output<Date | null>();
+  /** Verdadero cuando el control está deshabilitado. */
+  readonly _isDisabled: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Mes/año visible actualmente en el calendario. */
+  readonly _viewDate: WritableSignal<Date> = signal<Date>(new Date());
+
+  /** Fecha actualmente seleccionada. */
+  readonly _selectedDate: WritableSignal<Date | null> = signal<Date | null>(null);
+
+  /** Fecha activa en el grid (la que tiene tabindex=0). */
+  readonly _activeDate: WritableSignal<Date | null> = signal<Date | null>(null);
+
+  /** Texto visible en el input nativo (dd/MM/yyyy). */
+  readonly _displayText: WritableSignal<string> = signal<string>('');
+
+  /** Verdadero cuando el panel está abierto. */
+  readonly _isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+  /** Semanas calculadas para el mes visible. */
+  readonly weeks: WritableSignal<RetroDatepickerDay[][]> = signal<RetroDatepickerDay[][]>([]);
+
+  /** Label del header (mes año en es-ES). */
+  readonly headerLabel: WritableSignal<string> = signal<string>('');
+
+  // ── Outputs públicos ─────────────────────────────────────────────────────────
+
+  /** Emite cuando el usuario pulsa el botón limpiar. */
+  readonly cleared: OutputEmitterRef<void> = output<void>();
+
+  // ── Constantes públicas ──────────────────────────────────────────────────────
+
+  /** Cabeceras de días de la semana. */
+  readonly dayHeaders: string[] = RETRO_DATEPICKER_DAY_HEADERS;
 
   // ── IDs ──────────────────────────────────────────────────────────────────────
 
   readonly headerId: string = `retro-datepicker-header-${++_nextDatepickerId}`;
 
-  // ── Signals internos ─────────────────────────────────────────────────────────
+  // ── Variables públicas (no readonly) ─────────────────────────────────────────
 
-  /** Mes/año visible actualmente en el calendario. */
-  readonly _viewDate: WritableSignal<Date> = signal(new Date());
-
-  /** Fecha actualmente seleccionada. */
-  readonly _selectedDate: WritableSignal<Date | null> = signal(null);
-
-  /** Fecha activa en el grid (la que tiene tabindex=0). */
-  readonly _activeDate: WritableSignal<Date | null> = signal(null);
-
-  /** Semanas calculadas para el mes visible. */
-  readonly weeks: WritableSignal<RetroDatepickerDay[][]> = signal([]);
-
-  /** Label del header (mes año en es-ES). */
-  readonly headerLabel: WritableSignal<string> = signal('');
+  /**
+   * NgControl del host — se obtiene en ngOnInit para evitar la dependencia circular
+   * con NG_VALUE_ACCESSOR. Permite leer estado de validación.
+   */
+  ngControl: NgControl | null = null;
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
+
+  ngOnInit(): void {
+    // Obtener NgControl aquí para evitar NG0200 (dependencia circular con NG_VALUE_ACCESSOR).
+    this.ngControl = this._injector.get(NgControl, null, { optional: true, self: true });
+  }
 
   ngOnDestroy(): void {
     this._overlayRef?.dispose();
   }
 
-  // ── Métodos públicos ─────────────────────────────────────────────────────────
+  // ── Métodos públicos (CVA) ───────────────────────────────────────────────────
 
-  /**
-   * Registra el input trigger.
-   * Llamado por RetroDatepickerDirective.
-   *
-   * @param {ElementRef<HTMLInputElement>} trigger - Referencia al input nativo.
-   */
-  registerTrigger(trigger: ElementRef<HTMLInputElement>): void {
-    this._triggerRef = trigger;
-  }
-
-  /**
-   * Devuelve si el calendario está abierto.
-   */
-  isOpen(): boolean {
-    return !!this._overlayRef;
-  }
-
-  /**
-   * Abre el calendario anclado al trigger.
-   */
-  open(): void {
-    if (this.isOpen() || !this._triggerRef) return;
-
+  /** @inheritdoc */
+  writeValue(value: Date | string | null): void {
+    if (!value) {
+      this._selectedDate.set(null);
+      this._displayText.set('');
+      this._rebuildCalendar(this._viewDate());
+      this._cdr.markForCheck();
+      return;
+    }
+    const date: Date | null =
+      value instanceof Date ? (isNaN(value.getTime()) ? null : value) : this._parseLocal(String(value));
+    if (!date) {
+      this._selectedDate.set(null);
+      this._displayText.set('');
+    } else {
+      this._selectedDate.set(date);
+      this._viewDate.set(new Date(date.getFullYear(), date.getMonth(), 1));
+      this._displayText.set(this._formatDate(date));
+    }
     this._rebuildCalendar(this._viewDate());
-
-    const positionStrategy = this._overlay
-      .position()
-      .flexibleConnectedTo(this._triggerRef)
-      .withPositions([
-        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
-        { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' }
-      ])
-      .withPush(true);
-
-    this._overlayRef = this._overlay.create({
-      hasBackdrop: true,
-      backdropClass: 'cdk-overlay-transparent-backdrop',
-      positionStrategy,
-      scrollStrategy: this._overlay.scrollStrategies.reposition()
-    });
-
-    this._overlayRef
-      .backdropClick()
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(() => this.close());
-    this._overlayRef
-      .keydownEvents()
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe((e: KeyboardEvent) => {
-        if (e.key === 'Escape') this.close();
-      });
-
-    const portal: TemplatePortal = new TemplatePortal(this._calendarTemplate, this._viewContainerRef);
-    this._overlayRef.attach(portal);
     this._cdr.markForCheck();
+  }
+
+  /** @inheritdoc */
+  registerOnChange(fn: (v: Date | null) => void): void {
+    this._onChangeCallback = fn;
+  }
+
+  /** @inheritdoc */
+  registerOnTouched(fn: () => void): void {
+    this._onTouchedCallback = fn;
+  }
+
+  /** @inheritdoc */
+  setDisabledState(disabled: boolean): void {
+    this._isDisabled.set(disabled);
+    this._cdr.markForCheck();
+  }
+
+  // ── Métodos públicos (handlers de template) ──────────────────────────────────
+
+  /**
+   * Alterna el estado del calendario: lo abre si está cerrado, lo cierra si está abierto.
+   * Llamado por el retro-icon-button del suffix.
+   */
+  toggle(): void {
+    if (this._isDisabled()) return;
+    this._isOpen() ? this.close() : this._openPanel();
+  }
+
+  /**
+   * Abre el calendario al pulsar el icono de toggle.
+   */
+  openCalendar(): void {
+    if (this._isDisabled() || this._isOpen()) return;
+    this._openPanel();
   }
 
   /**
@@ -233,26 +286,10 @@ export class RetroDatepickerComponent implements OnDestroy {
     this._overlayRef?.detach();
     this._overlayRef?.dispose();
     this._overlayRef = null;
-    this._triggerRef?.nativeElement?.focus();
-    this._cdr.markForCheck();
-  }
-
-  /**
-   * Establece la fecha seleccionada desde fuera (formControl.writeValue).
-   *
-   * @param {Date | string | null} value - Fecha a establecer.
-   */
-  setDate(value: Date | string | null): void {
-    if (!value) {
-      this._selectedDate.set(null);
-    } else {
-      const d: Date = typeof value === 'string' ? new Date(value) : value;
-      if (!isNaN(d.getTime())) {
-        this._selectedDate.set(d);
-        this._viewDate.set(new Date(d.getFullYear(), d.getMonth(), 1));
-      }
-    }
-    this._rebuildCalendar(this._viewDate());
+    this._isOpen.set(false);
+    this._focusSubject.next(false);
+    this._onTouchedCallback();
+    this._inputEl?.nativeElement?.focus();
     this._cdr.markForCheck();
   }
 
@@ -353,6 +390,36 @@ export class RetroDatepickerComponent implements OnDestroy {
   }
 
   /**
+   * Maneja el evento focus del input para notificar al form-field.
+   */
+  onInputFocus(): void {
+    this._focusSubject.next(true);
+  }
+
+  /**
+   * Maneja el evento blur del input.
+   */
+  onInputBlur(): void {
+    if (!this._isOpen()) {
+      this._focusSubject.next(false);
+      this._onTouchedCallback();
+    }
+  }
+
+  /**
+   * Limpia la fecha y emite el output cleared.
+   */
+  onClear(): void {
+    this._selectedDate.set(null);
+    this._displayText.set('');
+    this._onChangeCallback(null);
+    this._onTouchedCallback();
+    this.cleared.emit();
+    this._rebuildCalendar(this._viewDate());
+    this._cdr.markForCheck();
+  }
+
+  /**
    * Compara si dos fechas son el mismo día.
    *
    * @param {Date} a - Primera fecha.
@@ -365,14 +432,58 @@ export class RetroDatepickerComponent implements OnDestroy {
   // ── Métodos privados ─────────────────────────────────────────────────────────
 
   /**
-   * Selecciona un día, emite el output y cierra el calendario.
+   * Abre el panel de calendario anclado al ElementRef del host.
+   */
+  private _openPanel(): void {
+    if (this._isOpen() || !this._calendarTemplate) return;
+
+    this._rebuildCalendar(this._viewDate());
+
+    const positionStrategy = this._overlay
+      .position()
+      .flexibleConnectedTo(this._elRef)
+      .withPositions([
+        { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+        { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' }
+      ])
+      .withPush(true);
+
+    this._overlayRef = this._overlay.create({
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      positionStrategy,
+      scrollStrategy: this._overlay.scrollStrategies.reposition()
+    });
+
+    this._overlayRef
+      .backdropClick()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this.close());
+    this._overlayRef
+      .keydownEvents()
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe((e: KeyboardEvent) => {
+        if (e.key === 'Escape') this.close();
+      });
+
+    const portal: TemplatePortal = new TemplatePortal(this._calendarTemplate, this._viewContainerRef);
+    this._overlayRef.attach(portal);
+    this._isOpen.set(true);
+    this._focusSubject.next(true);
+    this._cdr.markForCheck();
+  }
+
+  /**
+   * Selecciona un día, actualiza el FormControl y cierra el calendario.
    *
    * @param {Date} date - Fecha seleccionada.
    */
   private _selectDay(date: Date): void {
     const selected: Date = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     this._selectedDate.set(selected);
-    this.dateSelected.emit(selected);
+    this._displayText.set(this._formatDate(selected));
+    this._onChangeCallback(selected);
+    this._onTouchedCallback();
     this.close();
   }
 
@@ -390,7 +501,7 @@ export class RetroDatepickerComponent implements OnDestroy {
     this._activeDate.set(date);
     this._cdr.markForCheck();
 
-    // Enfocar la celda activa dentro del overlay del datepicker (no global).
+    // Enfocar la celda activa dentro del overlay del datepicker.
     Promise.resolve().then(() => {
       const root: HTMLElement | undefined = this._overlayRef?.overlayElement;
       const el: HTMLElement | null | undefined = root?.querySelector<HTMLElement>('[role="gridcell"][tabindex="0"]');
@@ -440,12 +551,12 @@ export class RetroDatepickerComponent implements OnDestroy {
     }
 
     // Agrupar en semanas de 7
-    const weeks: RetroDatepickerDay[][] = [];
+    const weekGroups: RetroDatepickerDay[][] = [];
     for (let i: number = 0; i < days.length; i += 7) {
-      weeks.push(days.slice(i, i + 7));
+      weekGroups.push(days.slice(i, i + 7));
     }
 
-    this.weeks.set(weeks);
+    this.weeks.set(weekGroups);
 
     // Si no hay fecha activa, activar el día seleccionado o el primer día del mes.
     if (!this._activeDate()) {
@@ -486,6 +597,39 @@ export class RetroDatepickerComponent implements OnDestroy {
     if (min && date < new Date(min.getFullYear(), min.getMonth(), min.getDate())) return true;
     if (max && date > new Date(max.getFullYear(), max.getMonth(), max.getDate())) return true;
     return false;
+  }
+
+  /**
+   * Formatea una fecha como dd/MM/yyyy para el input visible.
+   *
+   * @param {Date} date - Fecha a formatear.
+   */
+  private _formatDate(date: Date): string {
+    return new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date);
+  }
+
+  /**
+   * Parsea un string ISO (YYYY-MM-DD) como fecha local — evita el desfase
+   * causado por `new Date('YYYY-MM-DD')`, que se interpreta como UTC midnight.
+   *
+   * @param {string} value - String de fecha en formato YYYY-MM-DD.
+   * @returns {Date | null} Fecha local o null si el formato es inválido.
+   */
+  private _parseLocal(value: string): Date | null {
+    const match: RegExpMatchArray | null = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const y: number = Number(match[1]);
+      const m: number = Number(match[2]) - 1;
+      const d: number = Number(match[3]);
+      const date: Date = new Date(y, m, d);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    const fallback: Date = new Date(value);
+    return isNaN(fallback.getTime()) ? null : fallback;
   }
 
   /**
@@ -545,4 +689,16 @@ export class RetroDatepickerComponent implements OnDestroy {
   private _endOfWeek(date: Date): Date {
     return this._addDays(this._startOfWeek(date), 6);
   }
+
+  /**
+   * Callback CVA onChange — notifica al formulario del nuevo valor.
+   *
+   * @param {Date | null} _v - Nuevo valor.
+   */
+  private _onChangeCallback(_v: Date | null): void {}
+
+  /**
+   * Callback CVA onTouched — marca el control como tocado.
+   */
+  private _onTouchedCallback(): void {}
 }

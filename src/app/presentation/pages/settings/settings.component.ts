@@ -11,16 +11,14 @@ import {
   WritableSignal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
@@ -50,17 +48,16 @@ import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
+    FormsModule,
+    RetroButtonComponent,
     RetroCardComponent,
+    RetroCheckboxComponent,
     RetroIconComponent,
+    RetroInputComponent,
+    RetroSkeletonComponent,
     RetroSpinnerComponent,
     RetroTooltipDirective,
-    RetroCheckboxComponent,
-    RetroSkeletonComponent,
-    TranslocoPipe,
-    RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent
+    TranslocoPipe
   ]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
@@ -163,12 +160,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Pushes the search term to the subject to apply to debounce.
+   * Empuja el término de búsqueda al sujeto debounce y actualiza el estado.
    *
-   * @param {Event} event - Input event from the search field
+   * @param {string} query - Valor actual del campo de búsqueda RAWG.
    */
-  onRawgSearch(event: Event): void {
-    const query: string = (event.target as HTMLInputElement).value;
+  onRawgSearch(query: string): void {
     this._rawgSearchState.rawgSearchQuery.set(query);
     this._searchSubject.next(query);
   }

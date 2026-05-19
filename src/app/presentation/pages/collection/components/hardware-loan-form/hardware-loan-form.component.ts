@@ -20,12 +20,8 @@ import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snack
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
-import { RetroDatepickerDirective } from '@retro/retro-datepicker/directive/retro-datepicker.directive';
-import { RetroDatepickerToggleDirective } from '@retro/retro-datepicker/directive/retro-datepicker-toggle.directive';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -52,12 +48,8 @@ export type { HardwareLoanItem };
     TranslocoPipe,
     RetroButtonComponent,
     RetroSectionHeaderComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
-    RetroDatepickerComponent,
-    RetroDatepickerDirective,
-    RetroDatepickerToggleDirective
+    RetroInputComponent,
+    RetroDatepickerComponent
   ]
 })
 export class HardwareLoanFormComponent implements OnInit {

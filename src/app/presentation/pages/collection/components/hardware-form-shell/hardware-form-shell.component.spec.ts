@@ -35,8 +35,9 @@ import { StoreModel } from '@/models/store/store.model';
       [extraFieldsTpl]="extraTpl"
       (cancelClick)="onCancel()"
       (submitClick)="onSubmit()"
-      (brandChange)="onBrandChange($event)"
-      (modelChange)="onModelChange($event)">
+      (brandQuery)="onBrandQuery($event)"
+      (modelQuery)="onModelQuery($event)"
+      (storeQuery)="onStoreQuery($event)">
     </app-hardware-form-shell>
 
     <ng-template #extraTpl>
@@ -74,8 +75,9 @@ class TestHostComponent {
 
   cancelCalled = false;
   submitCalled = false;
-  lastBrandChange: string | null | undefined = undefined;
-  lastModelChange: string | null | undefined = undefined;
+  lastBrandQuery: string | undefined = undefined;
+  lastModelQuery: string | undefined = undefined;
+  lastStoreQuery: string | undefined = undefined;
 
   displayBrandLabel = (_id: string | null): string => '';
   displayModelLabel = (_id: string | null): string => '';
@@ -92,13 +94,18 @@ class TestHostComponent {
   }
 
   // eslint-disable-next-line jsdoc/require-jsdoc
-  onBrandChange(id: string | null): void {
-    this.lastBrandChange = id;
+  onBrandQuery(query: string): void {
+    this.lastBrandQuery = query;
   }
 
   // eslint-disable-next-line jsdoc/require-jsdoc
-  onModelChange(id: string | null): void {
-    this.lastModelChange = id;
+  onModelQuery(query: string): void {
+    this.lastModelQuery = query;
+  }
+
+  // eslint-disable-next-line jsdoc/require-jsdoc
+  onStoreQuery(query: string): void {
+    this.lastStoreQuery = query;
   }
 }
 
@@ -225,63 +232,54 @@ describe('HardwareFormShellComponent', () => {
     });
   });
 
-  // ─── brandChange ─────────────────────────────────────────────────────────
+  // ─── brandQuery ──────────────────────────────────────────────────────────
 
-  describe('brandChange', () => {
-    it('llama al handler del host con el id de marca cuando brandChange se emite', async () => {
+  describe('brandQuery', () => {
+    it('llama al handler del host con el query de búsqueda cuando brandQuery se emite', async () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
       const shellFixture = fixture.debugElement.query(By.directive(HardwareFormShellComponent));
       const shellComponent = shellFixture.componentInstance as HardwareFormShellComponent;
 
-      shellComponent.brandChange.emit('brand-uuid-1');
+      shellComponent.brandQuery.emit('nintendo');
       fixture.detectChanges();
 
-      expect(host.lastBrandChange).toBe('brand-uuid-1');
-    });
-
-    it('llama al handler del host con null cuando brandChange emite null', async () => {
-      fixture.detectChanges();
-      await fixture.whenStable();
-
-      const shellFixture = fixture.debugElement.query(By.directive(HardwareFormShellComponent));
-      const shellComponent = shellFixture.componentInstance as HardwareFormShellComponent;
-
-      shellComponent.brandChange.emit(null);
-      fixture.detectChanges();
-
-      expect(host.lastBrandChange).toBeNull();
+      expect(host.lastBrandQuery).toBe('nintendo');
     });
   });
 
-  // ─── modelChange ─────────────────────────────────────────────────────────
+  // ─── modelQuery ──────────────────────────────────────────────────────────
 
-  describe('modelChange', () => {
-    it('llama al handler del host con el id de modelo cuando modelChange se emite', async () => {
+  describe('modelQuery', () => {
+    it('llama al handler del host con el query de búsqueda cuando modelQuery se emite', async () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
       const shellFixture = fixture.debugElement.query(By.directive(HardwareFormShellComponent));
       const shellComponent = shellFixture.componentInstance as HardwareFormShellComponent;
 
-      shellComponent.modelChange.emit('model-uuid-1');
+      shellComponent.modelQuery.emit('switch');
       fixture.detectChanges();
 
-      expect(host.lastModelChange).toBe('model-uuid-1');
+      expect(host.lastModelQuery).toBe('switch');
     });
+  });
 
-    it('llama al handler del host con null cuando modelChange emite null', async () => {
+  // ─── storeQuery ──────────────────────────────────────────────────────────
+
+  describe('storeQuery', () => {
+    it('llama al handler del host con el query de búsqueda cuando storeQuery se emite', async () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
       const shellFixture = fixture.debugElement.query(By.directive(HardwareFormShellComponent));
       const shellComponent = shellFixture.componentInstance as HardwareFormShellComponent;
 
-      shellComponent.modelChange.emit(null);
+      shellComponent.storeQuery.emit('amazon');
       fixture.detectChanges();
 
-      expect(host.lastModelChange).toBeNull();
+      expect(host.lastStoreQuery).toBe('amazon');
     });
   });
 

@@ -3,46 +3,33 @@
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
     <!-- Email -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.login.email' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="email" />
-      <input
-        retroInput
-        type="email"
-        formControlName="email"
-        [placeholder]="'auth.login.emailPlaceholder' | transloco"
-        autocomplete="email" />
-      @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-        <retro-error>{{ 'auth.login.emailRequired' | transloco }}</retro-error>
-      }
-      @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-        <retro-error>{{ 'auth.login.emailInvalid' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    <retro-input
+      class="full-width"
+      [label]="'auth.login.email' | transloco"
+      prefixIcon="email"
+      type="email"
+      formControlName="email"
+      [placeholder]="'auth.login.emailPlaceholder' | transloco"
+      autocomplete="email"
+      [error]="_getEmailError()" />
 
     <!-- Password -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.login.password' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="lock" />
-      <input
-        retroInput
-        [type]="hidePassword() ? 'password' : 'text'"
-        formControlName="password"
-        [placeholder]="'auth.login.passwordPlaceholder' | transloco"
-        autocomplete="current-password" />
+    <retro-input
+      class="full-width"
+      [label]="'auth.login.password' | transloco"
+      prefixIcon="lock"
+      [type]="hidePassword() ? 'password' : 'text'"
+      formControlName="password"
+      [placeholder]="'auth.login.passwordPlaceholder' | transloco"
+      autocomplete="current-password"
+      [error]="_getPasswordError()">
       <retro-icon-button
         retroSuffix
         size="sm"
         [icon]="hidePassword() ? 'visibility' : 'visibility_off'"
         [ariaLabel]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
         (clicked)="togglePasswordVisibility()" />
-      @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
-        <retro-error>{{ 'auth.login.passwordRequired' | transloco }}</retro-error>
-      }
-      @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
-        <retro-error>{{ 'auth.login.passwordMinLength' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    </retro-input>
 
     <!-- Error -->
     @if (errorMessage()) {

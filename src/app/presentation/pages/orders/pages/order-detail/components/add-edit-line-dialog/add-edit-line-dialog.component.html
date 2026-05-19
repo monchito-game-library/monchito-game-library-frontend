@@ -8,29 +8,29 @@
 
 <div retroDialogContent>
   <form [formGroup]="form" class="add-edit-line-dialog__form">
-    <retro-form-field class="add-edit-line-dialog__field">
-      <retro-label>{{ 'orders.lines.productLabel' | transloco }}</retro-label>
-      <input retroInput [formControl]="productSearchControl" [retroAutocompleteTrigger]="productAuto" />
-      <retro-autocomplete #productAuto (optionSelected)="onProductSelected($event)">
-        @for (product of filteredProducts(); track product.id) {
-          <retro-option [value]="product.id">{{ product.name }} ({{ product.category }})</retro-option>
-        }
-      </retro-autocomplete>
-      @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
-        <retro-error>{{ 'orders.lines.productRequired' | transloco }}</retro-error>
+    <retro-search
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.productLabel' | transloco"
+      [formControl]="form.controls.productId"
+      [displayWith]="displayProductName"
+      [error]="_getProductError()"
+      (queryChange)="onProductQuery($event)">
+      @for (product of filteredProducts(); track product.id) {
+        <retro-option [value]="product.id">{{ product.name }} ({{ product.category }})</retro-option>
       }
-      @if (productSearchControl.hasError('alreadyExists')) {
-        <retro-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    </retro-search>
 
-    <retro-form-field class="add-edit-line-dialog__field">
-      <retro-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</retro-label>
-      <input retroInput type="number" formControlName="quantityNeeded" min="1" />
-      @if (form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')) {
-        <retro-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    <retro-input
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.qtyNeededLabel' | transloco"
+      formControlName="quantityNeeded"
+      type="number"
+      min="1"
+      [error]="
+        form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')
+          ? ('orders.lines.qtyNeededRequired' | transloco)
+          : null
+      " />
 
     <retro-form-field class="add-edit-line-dialog__field">
       <retro-label>{{ 'orders.lines.notesLabel' | transloco }}</retro-label>

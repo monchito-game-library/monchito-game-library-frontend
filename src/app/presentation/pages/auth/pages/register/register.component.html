@@ -3,88 +3,62 @@
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
     <!-- Display name -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.register.displayName' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="person" />
-      <input
-        retroInput
-        type="text"
-        formControlName="displayName"
-        [placeholder]="'auth.register.displayNamePlaceholder' | transloco"
-        autocomplete="name" />
-      @if (registerForm.get('displayName')?.hasError('required') && registerForm.get('displayName')?.touched) {
-        <retro-error>{{ 'auth.register.displayNameRequired' | transloco }}</retro-error>
-      }
-      @if (registerForm.get('displayName')?.hasError('minlength') && registerForm.get('displayName')?.touched) {
-        <retro-error>{{ 'auth.register.displayNameMinLength' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    <retro-input
+      class="full-width"
+      [label]="'auth.register.displayName' | transloco"
+      prefixIcon="person"
+      type="text"
+      formControlName="displayName"
+      [placeholder]="'auth.register.displayNamePlaceholder' | transloco"
+      autocomplete="name"
+      [error]="_getDisplayNameError()" />
 
     <!-- Email -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.register.email' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="email" />
-      <input
-        retroInput
-        type="email"
-        formControlName="email"
-        [placeholder]="'auth.register.emailPlaceholder' | transloco"
-        autocomplete="email" />
-      @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
-        <retro-error>{{ 'auth.register.emailRequired' | transloco }}</retro-error>
-      }
-      @if (registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched) {
-        <retro-error>{{ 'auth.register.emailInvalid' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    <retro-input
+      class="full-width"
+      [label]="'auth.register.email' | transloco"
+      prefixIcon="email"
+      type="email"
+      formControlName="email"
+      [placeholder]="'auth.register.emailPlaceholder' | transloco"
+      autocomplete="email"
+      [error]="_getEmailError()" />
 
     <!-- Password -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.register.password' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="lock" />
-      <input
-        retroInput
-        [type]="hidePassword() ? 'password' : 'text'"
-        formControlName="password"
-        [placeholder]="'auth.register.passwordPlaceholder' | transloco"
-        autocomplete="new-password" />
+    <retro-input
+      class="full-width"
+      [label]="'auth.register.password' | transloco"
+      prefixIcon="lock"
+      [type]="hidePassword() ? 'password' : 'text'"
+      formControlName="password"
+      [placeholder]="'auth.register.passwordPlaceholder' | transloco"
+      autocomplete="new-password"
+      [error]="_getPasswordError()">
       <retro-icon-button
         retroSuffix
         size="sm"
         [icon]="hidePassword() ? 'visibility' : 'visibility_off'"
         [ariaLabel]="(hidePassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
         (clicked)="togglePasswordVisibility()" />
-      @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
-        <retro-error>{{ 'auth.register.passwordRequired' | transloco }}</retro-error>
-      }
-      @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
-        <retro-error>{{ 'auth.register.passwordMinLength' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    </retro-input>
 
     <!-- Confirm password -->
-    <retro-form-field class="full-width">
-      <retro-label>{{ 'auth.register.confirmPassword' | transloco }}</retro-label>
-      <retro-icon retroPrefix name="lock" />
-      <input
-        retroInput
-        [type]="hideConfirmPassword() ? 'password' : 'text'"
-        formControlName="confirmPassword"
-        [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
-        autocomplete="new-password" />
+    <retro-input
+      class="full-width"
+      [label]="'auth.register.confirmPassword' | transloco"
+      prefixIcon="lock"
+      [type]="hideConfirmPassword() ? 'password' : 'text'"
+      formControlName="confirmPassword"
+      [placeholder]="'auth.register.confirmPasswordPlaceholder' | transloco"
+      autocomplete="new-password"
+      [error]="_getConfirmPasswordError()">
       <retro-icon-button
         retroSuffix
         size="sm"
         [icon]="hideConfirmPassword() ? 'visibility' : 'visibility_off'"
         [ariaLabel]="(hideConfirmPassword() ? 'auth.showPassword' : 'auth.hidePassword') | transloco"
         (clicked)="toggleConfirmPasswordVisibility()" />
-      @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
-        <retro-error>{{ 'auth.register.confirmPasswordRequired' | transloco }}</retro-error>
-      }
-      @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-        <retro-error>{{ 'auth.register.passwordMismatch' | transloco }}</retro-error>
-      }
-    </retro-form-field>
+    </retro-input>
 
     <!-- Error -->
     @if (errorMessage()) {

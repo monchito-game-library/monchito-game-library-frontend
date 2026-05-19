@@ -2,12 +2,25 @@
   class="retro-form-field"
   [class.retro-form-field--focused]="focused()"
   [class.retro-form-field--invalid]="invalid()"
-  [class.retro-form-field--disabled]="disabled()">
+  [class.retro-form-field--disabled]="disabled()"
+  [class.retro-form-field--size-sm]="size() === 'sm'"
+  [class.retro-form-field--size-md]="size() === 'md'"
+  [class.retro-form-field--size-lg]="size() === 'lg'">
   <ng-content select="retro-label, [retroLabel]" />
 
   <div class="retro-form-field__control">
     <ng-content select="[retroPrefix]" />
     <ng-content />
+    @if (clearable() && hasValue() && !disabled()) {
+      <button
+        class="retro-form-field__clear"
+        type="button"
+        [attr.aria-label]="clearAriaLabel()"
+        (mousedown)="$event.preventDefault()"
+        (click)="onClear()">
+        <retro-icon name="close" size="sm" />
+      </button>
+    }
     <ng-content select="[retroSuffix]" />
   </div>
 

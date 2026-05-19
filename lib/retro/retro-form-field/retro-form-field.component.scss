@@ -3,6 +3,9 @@
   flex-direction: column;
   gap: 0.25rem;
 
+  // Tamaño por defecto (lg — retrocompatible con el valor hardcoded anterior).
+  --retro-form-field-min-height: 44px;
+
   .retro-form-field__control {
     display: flex;
     align-items: center;
@@ -10,7 +13,7 @@
     border: 1px solid var(--border);
     background: var(--bg-surface);
     padding: 0 0.75rem;
-    min-height: 44px;
+    min-height: var(--retro-form-field-min-height);
     transition: border-color 120ms linear;
     position: relative;
   }
@@ -32,5 +35,52 @@
   &--disabled {
     opacity: 0.5;
     pointer-events: none;
+  }
+
+  // ── Botón clear ───────────────────────────────────────────────────────────
+
+  .retro-form-field__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-mid);
+    cursor: pointer;
+    flex-shrink: 0;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--text-hi);
+      }
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--border-active);
+      outline-offset: 2px;
+    }
+  }
+
+  // ── Slots de proyección (wrapper transparente para propagar atributos al form-field) ──
+
+  .retro-form-field__slot {
+    display: contents;
+  }
+
+  // ── Tamaños ────────────────────────────────────────────────────────────────
+
+  &--size-sm {
+    --retro-form-field-min-height: 32px;
+  }
+
+  &--size-md {
+    --retro-form-field-min-height: 40px;
+  }
+
+  &--size-lg {
+    --retro-form-field-min-height: 44px;
   }
 }

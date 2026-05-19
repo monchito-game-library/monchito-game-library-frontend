@@ -14,9 +14,9 @@ import { RETRO_OPTION_PARENT } from '../../tokens/retro-option-parent.token';
 let _nextId: number = 0;
 
 /**
- * Opción individual para RetroSelectComponent y RetroAutocompleteComponent.
+ * Opción individual para RetroSelectComponent y RetroSearchComponent.
  * Renderiza un <li role="option"> con soporte de aria-selected y aria-disabled.
- * Se comunica con el componente padre (select o autocomplete) vía el token
+ * Se comunica con el componente padre (select o search) vía el token
  * RETRO_OPTION_PARENT cuando el padre lo proporciona.
  *
  * Uso:
@@ -81,10 +81,13 @@ export class RetroOptionComponent {
   }
 
   /**
-   * Devuelve el texto visible para type-ahead.
+   * Devuelve el texto visible para type-ahead, excluyendo el contenido de iconos
+   * (retro-icon, .material-icons) para que el trigger no muestre el nombre del icono.
    */
   getLabel(): string {
-    return this._elRef.nativeElement.textContent?.trim() ?? '';
+    const clone: HTMLElement = this._elRef.nativeElement.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll('retro-icon, .material-icons').forEach((el) => el.remove());
+    return clone.textContent?.trim() ?? '';
   }
 
   /**
