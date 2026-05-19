@@ -239,6 +239,21 @@ module.exports = [
       '@angular-eslint/template/no-negated-async': 'warn'
     }
   },
+  // Bloquea deep imports a @retro/retro-form-field/** desde src/ (componente @internal).
+  // lib/ queda excluido intencionalmente: los componentes retro sí pueden importarse entre sí.
+  {
+    files: ['src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@retro/retro-form-field/**'],
+            message: 'RetroFormFieldComponent es @internal. Usa retro-input, retro-select, retro-search o retro-datepicker según corresponda.'
+          }
+        ]
+      }]
+    }
+  },
   // Sección para la lib retro en lib/ con prefijo retro (va al final para sobreescribir la regla global)
   {
     files: ['lib/**/*.ts'],
