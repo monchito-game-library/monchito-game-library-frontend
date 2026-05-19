@@ -7,11 +7,12 @@
 <div class="list-page-header__filters">
   <retro-input
     class="list-page-header__search"
-    [label]="searchPlaceholder() | transloco"
+    [placeholder]="searchPlaceholder() | transloco"
     [ngModel]="searchValue()"
     [disabled]="disabled()"
     prefixText="$ "
     size="md"
+    [hideSubscript]="true"
     (ngModelChange)="searchChange.emit($event)" />
 
   @if (showViewModeBtn()) {
