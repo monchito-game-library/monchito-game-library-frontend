@@ -29,16 +29,6 @@
   max-width: 1000px;
 }
 
-// Issue C: prefijo decorativo $ en el search input (terminal style)
-.list-page-header__search-prefix {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--accent-green);
-  user-select: none;
-  margin-right: 0.25rem;
-}
-
 .list-page-header__view-btn {
   flex-shrink: 0;
   color: var(--text-mid);

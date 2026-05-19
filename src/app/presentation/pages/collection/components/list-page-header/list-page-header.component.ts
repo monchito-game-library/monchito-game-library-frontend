@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
@@ -15,13 +14,12 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormsModule,
     RetroButtonComponent,
     RetroIconComponent,
     RetroIconButtonComponent,
-    TranslocoPipe,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent
+    RetroInputComponent,
+    TranslocoPipe
   ]
 })
 export class ListPageHeaderComponent {
