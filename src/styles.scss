@@ -136,6 +136,13 @@ html {
   --bp-desktop-large: 1920px;
   --bp-ultra-wide: 2560px;
   --bp-ultra-wide-xl: 3840px;
+
+  /* ── retro-select / retro-search ────────────────────────
+     max-height del panel = N opciones visibles × altura de opción + padding + bordes.
+     Cambia --retro-select-visible-options para ajustar cuántas opciones se ven antes
+     de que aparezca scroll (por defecto 4). */
+  --retro-option-height: 2.25rem;
+  --retro-select-visible-options: 4;
 }
 
 // ────────────────────────── Scrollbar (Terminal Collector) ──────────────────────────
@@ -461,7 +468,7 @@ input[type='number'] {
   padding: 0.25rem 0;
   list-style: none;
   margin: 0;
-  max-height: 260px;
+  max-height: calc(var(--retro-option-height) * var(--retro-select-visible-options) + 0.5rem + 2px);
   overflow-y: auto;
   overscroll-behavior: contain;
   z-index: 1000;
@@ -478,7 +485,7 @@ input[type='number'] {
   padding: 0.25rem 0;
   list-style: none;
   margin: 0;
-  max-height: 260px;
+  max-height: calc(var(--retro-option-height) * var(--retro-select-visible-options) + 0.5rem + 2px);
   overflow-y: auto;
   overscroll-behavior: contain;
   z-index: 1000;

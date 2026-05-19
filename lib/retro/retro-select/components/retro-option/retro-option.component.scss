@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .retro-option {
   display: flex;
   align-items: center;
@@ -8,7 +12,7 @@
   color: var(--text-hi);
   cursor: pointer;
   list-style: none;
-  min-height: 36px;
+  min-height: var(--retro-option-height, 2.25rem);
   transition: background-color 80ms linear;
 
   &--active,
