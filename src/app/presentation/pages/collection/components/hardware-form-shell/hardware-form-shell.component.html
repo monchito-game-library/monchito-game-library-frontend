@@ -85,10 +85,11 @@
 
       <retro-datepicker [label]="i18nPrefix() + '.purchaseDate' | transloco" formControlName="purchaseDate" />
 
-      <retro-form-field class="hw-form__field--full">
-        <retro-label>{{ i18nPrefix() + '.notes' | transloco }}</retro-label>
-        <textarea retroInput formControlName="notes" rows="3"></textarea>
-      </retro-form-field>
+      <retro-textarea
+        class="hw-form__field--full"
+        [label]="i18nPrefix() + '.notes' | transloco"
+        formControlName="notes"
+        [rows]="3" />
 
       <div class="hw-form__footer">
         <retro-button variant="ghost" [label]="i18nPrefix() + '.cancel' | transloco" (clicked)="cancelClick.emit()" />

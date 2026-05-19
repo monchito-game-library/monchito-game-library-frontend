@@ -4,10 +4,8 @@ import { RetroButtonComponent } from '@retro/retro-button/retro-button.component
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -41,10 +39,8 @@ import {
     CatalogSearchPanelComponent,
     SlicePipe,
     RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
     RetroInputComponent,
+    RetroTextareaComponent,
     RetroSelectComponent,
     RetroOptionComponent
   ]

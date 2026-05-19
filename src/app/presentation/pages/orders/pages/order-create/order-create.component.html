@@ -19,14 +19,12 @@
         [placeholder]="'orders.header.titlePlaceholder' | transloco"
         [error]="form.controls.title.hasError('required') ? ('orders.header.titleRequired' | transloco) : null" />
 
-      <retro-form-field class="order-create-page__field">
-        <retro-label>{{ 'orders.header.notes' | transloco }}</retro-label>
-        <textarea
-          retroInput
-          formControlName="notes"
-          [placeholder]="'orders.header.notesPlaceholder' | transloco"
-          rows="4"></textarea>
-      </retro-form-field>
+      <retro-textarea
+        class="order-create-page__field"
+        [label]="'orders.header.notes' | transloco"
+        formControlName="notes"
+        [placeholder]="'orders.header.notesPlaceholder' | transloco"
+        [rows]="4" />
 
       <div class="order-create-page__actions">
         <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" routerLink="/orders" />

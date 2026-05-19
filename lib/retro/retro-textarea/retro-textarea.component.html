@@ -1,0 +1,39 @@
+<retro-form-field
+  [size]="size()"
+  [disabled]="isDisabled()"
+  [clearable]="clearable()"
+  [clearAriaLabel]="clearAriaLabel()"
+  [multiline]="true"
+  [controlRef]="this"
+  (cleared)="onClear()">
+  <retro-label>{{ label() }}</retro-label>
+
+  <span class="retro-form-field__slot" retroPrefix>
+    <ng-content select="[retroPrefix]" />
+  </span>
+
+  <textarea
+    #inputEl
+    retroInput
+    [attr.rows]="rows()"
+    [placeholder]="placeholder()"
+    [attr.maxlength]="maxlength() ?? null"
+    [disabled]="isDisabled()"
+    [readonly]="readonly()"
+    [value]="displayValue()"
+    [style.resize]="resize()"
+    (input)="onInput($event)"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"></textarea>
+
+  <span class="retro-form-field__slot" retroSuffix>
+    <ng-content select="[retroSuffix]" />
+  </span>
+
+  @if (error()) {
+    <retro-error>{{ error() }}</retro-error>
+  }
+  @if (hint()) {
+    <retro-hint>{{ hint() }}</retro-hint>
+  }
+</retro-form-field>

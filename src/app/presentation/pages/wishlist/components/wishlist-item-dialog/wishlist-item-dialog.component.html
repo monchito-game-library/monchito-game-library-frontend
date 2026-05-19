@@ -81,14 +81,11 @@
         " />
 
       <!-- Notes (optional) -->
-      <retro-form-field class="wishlist-item-dialog__field">
-        <retro-label>{{ 'wishlist.fields.notes' | transloco }}</retro-label>
-        <textarea
-          retroInput
-          formControlName="notes"
-          rows="3"
-          [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-      </retro-form-field>
+      <retro-textarea
+        class="wishlist-item-dialog__field"
+        [label]="'wishlist.fields.notes' | transloco"
+        formControlName="notes"
+        [placeholder]="'wishlist.fields.notesPlaceholder' | transloco" />
     </form>
   }
 </div>

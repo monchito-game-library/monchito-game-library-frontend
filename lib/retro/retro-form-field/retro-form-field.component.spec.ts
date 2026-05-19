@@ -190,6 +190,31 @@ describe('RetroFormFieldComponent', () => {
     });
   });
 
+  // ── Pruebas de modo multiline ─────────────────────────────────────────────
+
+  describe('multiline mode', () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [RetroFormFieldComponent]
+      });
+    });
+
+    it('no aplica la clase retro-form-field--multiline por defecto', () => {
+      const fixture: ComponentFixture<RetroFormFieldComponent> = TestBed.createComponent(RetroFormFieldComponent);
+      fixture.detectChanges();
+      const el: HTMLElement = fixture.nativeElement.querySelector('.retro-form-field');
+      expect(el.classList).not.toContain('retro-form-field--multiline');
+    });
+
+    it('aplica la clase retro-form-field--multiline cuando multiline=true', () => {
+      const fixture: ComponentFixture<RetroFormFieldComponent> = TestBed.createComponent(RetroFormFieldComponent);
+      fixture.componentRef.setInput('multiline', true);
+      fixture.detectChanges();
+      const el: HTMLElement = fixture.nativeElement.querySelector('.retro-form-field');
+      expect(el.classList).toContain('retro-form-field--multiline');
+    });
+  });
+
   // ── Pruebas de retrocompatibilidad con RetroInputDirective ───────────────
 
   describe('retrocompatibilidad con retroInput', () => {

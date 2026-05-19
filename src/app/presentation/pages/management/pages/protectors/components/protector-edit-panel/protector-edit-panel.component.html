@@ -22,14 +22,10 @@
         <retro-option value="other">{{ 'management.products.categoryOther' | transloco }}</retro-option>
       </retro-select>
 
-      <retro-form-field>
-        <retro-label>{{ 'management.products.notesLabel' | transloco }}</retro-label>
-        <textarea
-          retroInput
-          formControlName="notes"
-          rows="1"
-          [placeholder]="'management.products.notesPlaceholder' | transloco"></textarea>
-      </retro-form-field>
+      <retro-textarea
+        [label]="'management.products.notesLabel' | transloco"
+        formControlName="notes"
+        [placeholder]="'management.products.notesPlaceholder' | transloco" />
     </div>
 
     <div class="packs-section">

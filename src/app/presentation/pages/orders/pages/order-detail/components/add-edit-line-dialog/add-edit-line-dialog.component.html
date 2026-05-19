@@ -32,10 +32,11 @@
           : null
       " />
 
-    <retro-form-field class="add-edit-line-dialog__field">
-      <retro-label>{{ 'orders.lines.notesLabel' | transloco }}</retro-label>
-      <textarea retroInput formControlName="notes" rows="3"></textarea>
-    </retro-form-field>
+    <retro-textarea
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.notesLabel' | transloco"
+      formControlName="notes"
+      [rows]="3" />
   </form>
 </div>
 

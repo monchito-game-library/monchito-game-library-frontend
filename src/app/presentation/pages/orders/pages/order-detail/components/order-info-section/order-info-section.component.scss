@@ -301,8 +301,11 @@
   }
 
   &--full-height {
-    textarea {
-      resize: none;
+    display: flex;
+    flex-direction: column;
+
+    retro-textarea {
+      flex: 1;
     }
   }
 }

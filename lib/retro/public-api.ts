@@ -16,6 +16,7 @@ export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.componen
 export { RetroCheckboxComponent } from './retro-checkbox/retro-checkbox.component';
 export { RetroSnackbarHostComponent } from './retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
 export { RetroInputComponent } from './retro-input/retro-input.component';
+export { RetroTextareaComponent } from './retro-textarea/retro-textarea.component';
 export { RetroSelectComponent } from './retro-select/retro-select.component';
 export { RetroOptionComponent } from './retro-select/components/retro-option/retro-option.component';
 export { RetroSearchComponent } from './retro-search/retro-search.component';

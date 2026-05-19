@@ -21,6 +21,7 @@ Esta carpeta contiene 5 entidades acopladas:
 | Input | Tipo | Default | Descripción |
 |---|---|---|---|
 | `disabled` | `boolean` | `false` | Desactiva visualmente el campo (sin pointer-events, opacidad reducida). |
+| `multiline` | `boolean` | `false` | Activa modo multilínea: stretch vertical, sin min-height, botón clear top-right absoluto. |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo: sm = 32px, md = 40px, lg = 44px. |
 | `clearable` | `boolean` | `false` | Muestra un botón X de limpiar cuando el control tiene valor. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | Texto del `aria-label` del botón limpiar. |
@@ -65,7 +66,14 @@ providers: [
 
 ## RetroInputDirective
 
-Directiva que implementa `RetroFormFieldControl` y provee `RETRO_FORM_FIELD_CONTROL` para integrarse con `RetroFormFieldComponent`. Usada internamente por `RetroInputComponent` — no la uses directamente en plantillas de la aplicación.
+Directiva que implementa `RetroFormFieldControl` y provee `RETRO_FORM_FIELD_CONTROL` para integrarse con `RetroFormFieldComponent`. Usada internamente por `RetroInputComponent` y `RetroTextareaComponent` — no la uses directamente en plantillas de la aplicación.
+
+El uso de `<textarea retroInput>` en templates de la app está **deprecado**. Usar `<retro-textarea>` en su lugar:
+
+```html
+<!-- Usar retro-textarea en su lugar -->
+<retro-textarea label="Notas" formControlName="notes" [rows]="3" />
+```
 
 ## Ejemplo
 

@@ -248,32 +248,10 @@
       display: flex;
       flex-direction: column;
 
-      // Propagates stretch through the entire Material wrapper chain via flexbox
-      ::ng-deep .mat-mdc-text-field-wrapper {
+      retro-textarea {
         flex: 1;
         display: flex;
         flex-direction: column;
-      }
-
-      ::ng-deep .mat-mdc-form-field-flex {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      ::ng-deep .mat-mdc-form-field-infix {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        min-width: 0;
-      }
-
-      ::ng-deep textarea {
-        flex: 1;
-        resize: none;
-        overflow-y: auto;
       }
     }
   }
@@ -410,7 +388,7 @@
     }
 
     .game-form__field--description {
-      ::ng-deep textarea {
+      retro-textarea {
         min-height: 100px;
       }
     }

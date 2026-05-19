@@ -18,8 +18,11 @@ import { RETRO_FORM_FIELD_CONTROL, RetroFormFieldControl } from '../../tokens/re
  * Uso:
  * ```html
  * <input retroInput formControlName="email" type="email" />
- * <textarea retroInput formControlName="notes" rows="3"></textarea>
  * ```
+ *
+ * @deprecated El uso de `<textarea retroInput>` desde templates de la app está deprecado.
+ * Usar `<retro-textarea>` en su lugar.
+ * El selector `textarea[retroInput]` se mantiene para uso interno de `retro-textarea`.
  */
 @Directive({
   selector: 'input[retroInput], textarea[retroInput]',

@@ -6,10 +6,8 @@ import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-bu
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
@@ -28,10 +26,8 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
     RetroTooltipDirective,
     TranslocoPipe,
     RetroButtonComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
     RetroInputComponent,
+    RetroTextareaComponent,
     RetroSelectComponent,
     RetroOptionComponent
   ],

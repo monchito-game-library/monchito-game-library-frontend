@@ -183,10 +183,11 @@
           suffixIcon="star_rate"
           [error]="_getRatingError()" />
 
-        <retro-form-field class="game-form__field game-form__field--full game-form__field--description">
-          <retro-label>{{ 'gameForm.fields.description' | transloco }}</retro-label>
-          <textarea retroInput formControlName="description"></textarea>
-        </retro-form-field>
+        <retro-textarea
+          class="game-form__field game-form__field--full game-form__field--description"
+          [label]="'gameForm.fields.description' | transloco"
+          formControlName="description"
+          [resize]="'none'" />
 
         <div class="game-form__footer">
           <div class="game-form__toggles">

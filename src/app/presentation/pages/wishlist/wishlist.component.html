@@ -198,14 +198,11 @@
           " />
 
         <!-- Notes (optional) -->
-        <retro-form-field class="wishlist-view__field">
-          <retro-label>{{ 'wishlist.fields.notes' | transloco }}</retro-label>
-          <textarea
-            retroInput
-            formControlName="notes"
-            rows="3"
-            [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-        </retro-form-field>
+        <retro-textarea
+          class="wishlist-view__field"
+          [label]="'wishlist.fields.notes' | transloco"
+          formControlName="notes"
+          [placeholder]="'wishlist.fields.notesPlaceholder' | transloco" />
       </form>
 
       <div class="wishlist-view__actions">

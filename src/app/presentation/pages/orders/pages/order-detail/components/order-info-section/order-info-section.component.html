@@ -188,15 +188,13 @@
 
             <!-- Right column -->
             <div class="order-detail-page__form-col">
-              <retro-form-field class="order-detail-page__form-field order-detail-page__form-field--full-height">
-                <retro-label>{{ 'orders.header.notes' | transloco }}</retro-label>
-                <textarea
-                  retroInput
-                  formControlName="notes"
-                  [placeholder]="'orders.header.notesPlaceholder' | transloco"
-                  rows="5">
-                </textarea>
-              </retro-form-field>
+              <retro-textarea
+                class="order-detail-page__form-field order-detail-page__form-field--full-height"
+                [label]="'orders.header.notes' | transloco"
+                formControlName="notes"
+                [placeholder]="'orders.header.notesPlaceholder' | transloco"
+                [rows]="5"
+                [resize]="'none'" />
             </div>
           </div>
         </form>

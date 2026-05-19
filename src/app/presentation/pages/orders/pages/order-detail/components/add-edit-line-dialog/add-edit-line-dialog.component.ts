@@ -3,10 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
-import { RetroFormFieldComponent } from '@retro/retro-form-field/retro-form-field.component';
-import { RetroInputDirective } from '@retro/retro-form-field/components/retro-input/retro-input.directive';
-import { RetroLabelComponent } from '@retro/retro-form-field/components/retro-label/retro-label.component';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { RetroSearchComponent } from '@retro/retro-search/retro-search.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -36,10 +34,8 @@ import {
     TranslocoPipe,
     RetroButtonComponent,
     RetroIconComponent,
-    RetroFormFieldComponent,
-    RetroInputDirective,
-    RetroLabelComponent,
     RetroInputComponent,
+    RetroTextareaComponent,
     RetroSearchComponent,
     RetroOptionComponent
   ]

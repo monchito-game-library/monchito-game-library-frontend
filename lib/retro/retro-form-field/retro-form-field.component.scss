@@ -70,6 +70,24 @@
     display: contents;
   }
 
+  // ── Modo multilínea ───────────────────────────────────────────────────────
+
+  &--multiline {
+    .retro-form-field__control {
+      align-items: stretch;
+      min-height: unset;
+      position: relative;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .retro-form-field__clear {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.25rem;
+    }
+  }
+
   // ── Tamaños ────────────────────────────────────────────────────────────────
 
   &--size-sm {

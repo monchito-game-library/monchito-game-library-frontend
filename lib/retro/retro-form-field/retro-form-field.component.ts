@@ -85,6 +85,9 @@ export class RetroFormFieldComponent implements AfterContentInit {
   /** Desactiva visualmente el campo (sin pointer-events, opacidad reducida). */
   readonly disabled: InputSignal<boolean> = input<boolean>(false);
 
+  /** Activa el modo multilínea para hosts de tipo textarea. Cambia align-items a stretch y elimina min-height. */
+  readonly multiline: InputSignal<boolean> = input<boolean>(false);
+
   /** Tamaño del campo: sm (32px), md (40px), lg (44px — default). */
   readonly size: InputSignal<'sm' | 'md' | 'lg'> = input<'sm' | 'md' | 'lg'>('lg');
 
