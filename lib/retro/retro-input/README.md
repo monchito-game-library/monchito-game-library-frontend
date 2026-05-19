@@ -17,6 +17,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `error` | `string \| null` | `null` | Mensaje de error bajo el campo. |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo (32/40/44px). |
 | `prefixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en prefix. |
+| `prefixText` | `string \| null` | `null` | Texto corto de prompt terminal (p.ej. `"$ "`); mutuamente excluyente con `prefixIcon`. |
 | `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
 | `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay valor. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
@@ -58,4 +59,13 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 <retro-input label="URL" formControlName="url">
   <retro-icon-button retroSuffix icon="open_in_new" (clicked)="openUrl()" />
 </retro-input>
+```
+
+```html
+<!-- Con prefijo de prompt terminal -->
+<retro-input
+  label="Comando"
+  formControlName="command"
+  prefixText="$ "
+  placeholder="npm install" />
 ```

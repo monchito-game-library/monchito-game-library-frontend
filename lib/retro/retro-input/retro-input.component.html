@@ -7,7 +7,9 @@
   (cleared)="onClear()">
   <retro-label>{{ label() }}</retro-label>
 
-  @if (prefixIcon()) {
+  @if (prefixText()) {
+    <span class="retro-input__prefix-text" retroPrefix>{{ prefixText() }}</span>
+  } @else if (prefixIcon()) {
     <retro-icon [name]="prefixIcon()!" size="sm" retroPrefix />
   }
 

@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+.retro-input__prefix-text {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-green);
+  user-select: none;
+}

@@ -113,6 +113,9 @@ export class RetroInputComponent implements ControlValueAccessor, RetroFormField
   /** Icono decorativo en el prefix. */
   readonly prefixIcon: InputSignal<string | null> = input<string | null>(null);
 
+  /** Texto corto mostrado como prefijo de prompt de terminal (p.ej. "$ "). Mutuamente excluyente con prefixIcon. */
+  readonly prefixText: InputSignal<string | null> = input<string | null>(null);
+
   /** Icono decorativo en el suffix. */
   readonly suffixIcon: InputSignal<string | null> = input<string | null>(null);
 
