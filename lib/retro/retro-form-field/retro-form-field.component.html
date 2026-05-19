@@ -25,11 +25,13 @@
     <ng-content select="[retroSuffix]" />
   </div>
 
-  <div class="retro-form-field__subscript">
-    @if (invalid()) {
-      <ng-content select="retro-error, [retroError]" />
-    } @else {
-      <ng-content select="retro-hint, [retroHint]" />
-    }
-  </div>
+  @if (!hideSubscript()) {
+    <div class="retro-form-field__subscript">
+      @if (invalid()) {
+        <ng-content select="retro-error, [retroError]" />
+      } @else {
+        <ng-content select="retro-hint, [retroHint]" />
+      }
+    </div>
+  }
 </div>

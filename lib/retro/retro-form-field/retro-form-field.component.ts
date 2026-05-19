@@ -97,6 +97,12 @@ export class RetroFormFieldComponent implements AfterContentInit {
   /** Texto del aria-label del botón limpiar. */
   readonly clearAriaLabel: InputSignal<string> = input<string>('Limpiar');
 
+  /**
+   * Oculta el bloque subscript (hint/error) cuando es true.
+   * Default false para preservar el comportamiento existente de todos los consumidores.
+   */
+  readonly hideSubscript: InputSignal<boolean> = input<boolean>(false);
+
   // ── Outputs públicos ─────────────────────────────────────────────────────────
 
   /** Emite cuando el usuario pulsa el botón limpiar. */

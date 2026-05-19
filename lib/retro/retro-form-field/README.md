@@ -25,6 +25,7 @@ Esta carpeta contiene 5 entidades acopladas:
 | `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo: sm = 32px, md = 40px, lg = 44px. |
 | `clearable` | `boolean` | `false` | Muestra un botón X de limpiar cuando el control tiene valor. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | Texto del `aria-label` del botón limpiar. |
+| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error); usar solo en campos sin validación visible (p.ej. búsqueda). |
 
 ### Outputs
 
