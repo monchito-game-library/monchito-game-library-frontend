@@ -462,9 +462,15 @@
       "loadError": "Error loading wishlist",
       "notFound": "Wishlist item not found or was removed"
     },
+    "filters": {
+      "title": "Search by title..."
+    },
     "empty": {
       "title": "Your wishlist is empty",
-      "subtitle": "Add games you want to buy to track them here"
+      "subtitle": "Add games you want to buy to track them here",
+      "noResults": "No results",
+      "noResultsSubtitle": "No wishlist item matches your search",
+      "clearFilters": "Clear search"
     }
   },
   "nav": {

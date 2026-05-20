@@ -462,9 +462,15 @@
       "loadError": "Error al cargar los deseados",
       "notFound": "El juego deseado no existe o fue eliminado"
     },
+    "filters": {
+      "title": "Buscar por título..."
+    },
     "empty": {
       "title": "Tu lista de deseados está vacía",
-      "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí"
+      "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí",
+      "noResults": "Sin resultados",
+      "noResultsSubtitle": "Ningún juego deseado coincide con tu búsqueda",
+      "clearFilters": "Limpiar búsqueda"
     }
   },
   "nav": {
