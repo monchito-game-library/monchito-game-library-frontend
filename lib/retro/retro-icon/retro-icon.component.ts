@@ -4,14 +4,13 @@ import { LibIconSize } from './retro-icon.types';
 /**
  * Icono reutilizable de la lib Terminal Collector.
  * Renderiza un <span class="material-icons"> usando la webfont Material Icons
- * ya cargada en index.html. Paridad funcional con mat-icon sin dependencia de
- * @angular/material/icon.
+ * ya cargada en index.html.
  *
  * A11y:
  * - aria-hidden="true" por defecto (decorativo).
  * - Para iconos informativos, el call-site añade aria-label al contenedor padre.
  *
- * Deuda a11y: ninguna; es paridad funcional con mat-icon.
+ * Deuda a11y: ninguna.
  */
 @Component({
   selector: 'retro-icon',
