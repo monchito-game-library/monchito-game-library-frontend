@@ -1,7 +1,6 @@
 :host {
-  flex: 1;
+  display: block;
   min-height: 0;
-  overflow: hidden;
 }
 
 .retro-tabs {
@@ -9,6 +8,11 @@
   flex-direction: column;
   position: relative;
   width: 100%;
+}
+
+.retro-tabs--local {
+  height: 100%;
+  overflow: hidden;
 }
 
 .retro-tabs__list {
