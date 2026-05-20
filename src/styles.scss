@@ -434,14 +434,31 @@ input[type='number'] {
 // ─── retro-field-row — fila flex con form-fields y botones alineados ─────────
 // Usar cuando retro-select/retro-input (con label + subscript) y
 // retro-button/retro-icon-button conviven en la misma fila.
-// align-items: center funciona porque label y subscript del form-field son
-// simétricos en altura, por lo que el centro del form-field coincide con
-// el centro de su caja de control.
+//
+// Técnica: align-items:end ancla todos los hijos al borde inferior de la fila.
+// retro-button y retro-icon-button tienen display:contents en su :host, por lo que
+// el flex ve sus elementos internos (.retro-btn / .retro-icon-btn) directamente.
+// El margin-bottom compensa el bloque subscript del form-field
+// (gap 0.25rem + min-height 1rem = 1.25rem) para que la caja del control
+// quede alineada con la caja del botón.
+// Modificador --no-subscript: úsalo cuando los form-fields usan hideSubscript.
 
 .retro-field-row {
   display: flex;
-  align-items: center;
+  align-items: end;
   gap: 0.5rem;
+
+  > retro-icon-button .retro-icon-btn,
+  > retro-button .retro-btn {
+    margin-bottom: calc(0.25rem + 1rem);
+  }
+
+  &--no-subscript {
+    > retro-icon-button .retro-icon-btn,
+    > retro-button .retro-btn {
+      margin-bottom: 0;
+    }
+  }
 }
 
 // ─── retro-input — input nativo con estilos Terminal Collector ─────────────────
