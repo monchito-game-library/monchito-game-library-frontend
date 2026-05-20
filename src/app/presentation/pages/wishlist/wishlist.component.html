@@ -28,6 +28,16 @@
       }
     </header>
 
+    <div class="wishlist-page__toolbar">
+      <retro-input
+        prefixText="$ "
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchInput($event)"
+        [placeholder]="'wishlist.filters.title' | transloco"
+        [hideSubscript]="true" />
+      <retro-command-bar path="monchito ~/library/wishlist" [flags]="commandFlags()" />
+    </div>
+
     @if (loading()) {
       <div class="wishlist-page__list">
         @for (n of [0, 1, 2, 3]; track n) {
@@ -49,9 +59,16 @@
           <retro-icon slot="start" name="add" size="sm" />
         </retro-button>
       </retro-empty-state>
+    } @else if (filteredItems().length === 0 && searchTerm()) {
+      <retro-empty-state
+        [title]="'wishlist.empty.noResults' | transloco"
+        [subtitle]="'wishlist.empty.noResultsSubtitle' | transloco"
+        hint="$ try --search=reset">
+        <retro-button [label]="'wishlist.empty.clearFilters' | transloco" (clicked)="onClearSearch()" />
+      </retro-empty-state>
     } @else {
       <retro-list class="wishlist-page__list">
-        @for (item of items(); track item.id; let first = $first; let i = $index) {
+        @for (item of filteredItems(); track item.id; let first = $first; let i = $index) {
           <app-wishlist-card
             [item]="item"
             [mobileMode]="isMobile()"
