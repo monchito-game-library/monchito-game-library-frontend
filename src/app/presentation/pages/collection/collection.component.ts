@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { RetroRouterTabsComponent } from '@retro/retro-tabs/components/retro-router-tabs/retro-router-tabs.component';
-import { LibRouterTabItemInterface } from '@retro/retro-tabs/interfaces/retro-router-tab-item.interface';
+import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
+import { RetroTabItem } from '@retro/retro-tabs/interfaces/retro-tab-item.interface';
 
 @Component({
   selector: 'app-collection',
@@ -9,11 +9,11 @@ import { LibRouterTabItemInterface } from '@retro/retro-tabs/interfaces/retro-ro
   styleUrls: ['./collection.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RetroRouterTabsComponent, RouterOutlet]
+  imports: [RetroTabsComponent, RouterOutlet]
 })
 export class CollectionComponent {
-  /** Items de navegación de la colección para retro-router-tabs. */
-  readonly navItems: readonly LibRouterTabItemInterface[] = [
+  /** Items de navegación de la colección para retro-tabs en modo router. */
+  readonly navItems: readonly RetroTabItem[] = [
     { path: '/collection', label: 'collectionOverview.tabOverview', icon: 'home', exact: true },
     { path: '/collection/games', label: 'collectionOverview.tabGames', icon: 'sports_esports' },
     { path: '/collection/consoles', label: 'collectionOverview.tabConsoles', icon: 'tv' },

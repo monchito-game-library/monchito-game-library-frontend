@@ -25,7 +25,6 @@ export { RetroMenuItemComponent } from './retro-menu/components/retro-menu-item/
 export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-trigger.directive';
 export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
 export { RetroTabComponent } from './retro-tabs/components/retro-tab/retro-tab.component';
-export { RetroRouterTabsComponent } from './retro-tabs/components/retro-router-tabs/retro-router-tabs.component';
 export { RetroTooltipDirective } from './retro-tooltip/directive/retro-tooltip.directive';
 
 // ─── Servicios ────────────────────────────────────────────────────────────────
@@ -64,5 +63,5 @@ export type {
 } from './retro-list/components/retro-list-item/retro-list-item.types';
 
 // ─── Interfaces expuestas a consumidores externos ─────────────────────────────
-export type { LibRouterTabItemInterface } from './retro-tabs/interfaces/retro-router-tab-item.interface';
+export type { RetroTabItem } from './retro-tabs/interfaces/retro-tab-item.interface';
 export type { RetroDialogConfig } from './retro-dialog/interfaces/retro-dialog-config.interface';

@@ -1,61 +1,86 @@
 # retro-tabs
 
-Esta carpeta contiene **dos componentes funcionalmente distintos** con la misma estética Terminal Collector.
+Componente de tabs unificado con selector `<retro-tabs>` que soporta dos modos de operación.
 
-| Componente | Selector | Para qué |
-|---|---|---|
-| `RetroTabsComponent` + `RetroTabComponent` | `retro-tabs` + `retro-tab` | Tabs con contenido controlado (sin cambio de ruta). |
-| `RetroRouterTabsComponent` | `retro-router-tabs` | Tabs de navegación basados en `routerLink`. |
+| Modo | Activación | Elemento generado | Casos de uso |
+|---|---|---|---|
+| **Router** | Pasar `[items]` | `<a routerLink>` en `<nav>` | Navegación entre rutas hijas |
+| **Local** | Proyectar `<retro-tab>` | `<button role="tab">` en `<div role="tablist">` | Contenido en la misma página |
 
-## RetroTabsComponent (tabs controlados)
+Ambos modos comparten el mismo indicador neón deslizante full-width.
 
-- **A11y:** APG tablist/tab/tabpanel, activación automática con Arrow keys.
+## RetroTabsComponent
+
+- **A11y (modo local):** APG tablist/tab/tabpanel, activación automática con Arrow keys.
+- **A11y (modo router):** `<nav>` + `aria-current="page"` en el link activo.
+- **Indicador:** posicionado con `ResizeObserver` + `MutationObserver`, animado con CSS custom properties `--ind-left` / `--ind-width`.
 
 ### Inputs
 
 | Nombre | Tipo | Default | Descripción |
 |---|---|---|---|
-| `selectedIndex` | `number` | `0` | Tab seleccionado inicialmente. |
-| `ariaLabel` | `string \| undefined` | `undefined` | Label del tablist. |
+| `items` | `readonly RetroTabItem[] \| undefined` | `undefined` | Items de navegación. Presencia activa el modo router. |
+| `selectedIndex` | `number` | `0` | Tab activo inicial. Solo aplica en modo local. |
+| `ariaLabel` | `string \| undefined` | `undefined` | Label aria del contenedor de tabs. |
 
-### Outputs: `selectedIndexChange: number`.
+### Outputs
 
-### Slots: se proyectan `<retro-tab>`.
+| Nombre | Tipo | Descripción |
+|---|---|---|
+| `selectedIndexChange` | `number` | Índice del tab seleccionado. Solo emite en modo local. |
+
+### Slots
+
+En modo local se proyectan instancias de `<retro-tab>`.
 
 ## RetroTabComponent
 
+Componente hijo para modo local. No tiene template propio; el contenido debe pasarse dentro de un `<ng-template>` (lazy render).
+
 ### Inputs: `label: string` (required), `icon?: string`.
 
-### Contenido: envuelto en `<ng-template>` (lazy render).
-
-## RetroRouterTabsComponent
-
-- **Hace:** `<nav>` con `<a routerLink>` + indicador deslizante sincronizado con la ruta activa (ResizeObserver + MutationObserver).
-- **No incluye `<router-outlet>`** — el padre debe colocarlo tras este componente.
-
-### Inputs: `items: readonly LibRouterTabItemInterface[]` (required), `ariaLabel?: string`.
-
-### Interface — LibRouterTabItemInterface (interfaces/)
+## Interface — RetroTabItem
 
 ```typescript
-interface LibRouterTabItemInterface {
-  readonly path: string;
-  readonly label: string;    // clave transloco
-  readonly icon?: string;
-  readonly exact?: boolean;
+interface RetroTabItem {
+  readonly path: string;      // Ruta a la que navega el link
+  readonly label: string;     // Texto del label (clave de transloco)
+  readonly icon?: string;     // Nombre del icono Material Icons (opcional)
+  readonly exact?: boolean;   // Coincidencia exacta de ruta para marcar como activo
 }
 ```
 
-## Ejemplo (router tabs)
+## Ejemplo modo router
 
 ```typescript
-readonly navItems: readonly LibRouterTabItemInterface[] = [
-  { path: 'games', label: 'collection.games', icon: 'sports_esports' },
-  { path: 'hardware', label: 'collection.hardware', icon: 'memory' },
+readonly navItems: readonly RetroTabItem[] = [
+  { path: '/collection', label: 'collection.overview', icon: 'home', exact: true },
+  { path: '/collection/games', label: 'collection.games', icon: 'sports_esports' },
 ];
 ```
 
 ```html
-<retro-router-tabs [items]="navItems" />
+<retro-tabs [items]="navItems" ariaLabel="Navegación colección" />
 <router-outlet />
+```
+
+## Ejemplo modo local
+
+```typescript
+readonly activeTab = signal(0);
+```
+
+```html
+<retro-tabs [selectedIndex]="activeTab()" (selectedIndexChange)="activeTab.set($event)">
+  <retro-tab label="Ventas" icon="sell">
+    <ng-template>
+      <!-- contenido del tab Ventas -->
+    </ng-template>
+  </retro-tab>
+  <retro-tab label="Compras" icon="shopping_cart">
+    <ng-template>
+      <!-- contenido del tab Compras -->
+    </ng-template>
+  </retro-tab>
+</retro-tabs>
 ```

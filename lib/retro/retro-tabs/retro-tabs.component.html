@@ -1,35 +1,70 @@
-<div class="retro-tabs">
-  <div role="tablist" class="retro-tabs__list" [attr.aria-label]="ariaLabel() || null">
-    @for (tab of tabs; track tab.id; let i = $index) {
-      <button
-        type="button"
-        role="tab"
-        [id]="'retro-tab-' + tab.id"
-        [attr.aria-controls]="'retro-tabpanel-' + tab.id"
-        [attr.aria-selected]="activeIndex() === i"
-        [tabindex]="activeIndex() === i ? 0 : -1"
-        class="retro-tabs__tab"
-        [class.retro-tabs__tab--active]="activeIndex() === i"
-        (click)="select(i)"
-        (keydown)="onKeydown($event, i)">
-        @if (tab.icon()) {
-          <retro-icon [name]="tab.icon()!" size="sm" />
-        }
-        <span>{{ tab.label() }}</span>
-      </button>
-    }
+@if (isRouterMode()) {
+  <!-- ── Modo router ─────────────────────────────────────────────────────── -->
+  <nav
+    class="retro-tabs retro-tabs--router"
+    [attr.aria-label]="ariaLabel() || null"
+    [style.--ind-left.px]="indicatorLeft()"
+    [style.--ind-width.px]="indicatorWidth()">
+    <div class="retro-tabs__list">
+      @for (item of items(); track item.path) {
+        <a
+          #tabRef
+          class="retro-tabs__tab"
+          [routerLink]="item.path"
+          [routerLinkActiveOptions]="item.exact ? { exact: true } : {}"
+          routerLinkActive
+          #rla="routerLinkActive"
+          [class.retro-tabs__tab--active]="rla.isActive"
+          [attr.aria-current]="rla.isActive ? 'page' : null">
+          @if (item.icon) {
+            <retro-icon [name]="item.icon" size="sm" />
+          }
+          <span>{{ item.label | transloco }}</span>
+        </a>
+      }
+      <span class="retro-tabs__indicator" aria-hidden="true"></span>
+    </div>
+  </nav>
+} @else {
+  <!-- ── Modo local ──────────────────────────────────────────────────────── -->
+  <div
+    class="retro-tabs retro-tabs--local"
+    [style.--ind-left.px]="indicatorLeft()"
+    [style.--ind-width.px]="indicatorWidth()">
+    <div role="tablist" class="retro-tabs__list" [attr.aria-label]="ariaLabel() || null">
+      @for (tab of tabsArray(); track tab.id; let i = $index) {
+        <button
+          #tabRef
+          type="button"
+          role="tab"
+          [id]="'retro-tab-' + tab.id"
+          [attr.aria-controls]="'retro-tabpanel-' + tab.id"
+          [attr.aria-selected]="activeIndex() === i"
+          [tabindex]="activeIndex() === i ? 0 : -1"
+          class="retro-tabs__tab"
+          [class.retro-tabs__tab--active]="activeIndex() === i"
+          (click)="select(i)"
+          (keydown)="onKeydown($event, i)">
+          @if (tab.icon()) {
+            <retro-icon [name]="tab.icon()!" size="sm" />
+          }
+          <span>{{ tab.label() }}</span>
+        </button>
+      }
+      <span class="retro-tabs__indicator" aria-hidden="true"></span>
+    </div>
+    <div class="retro-tabs__panels">
+      @for (tab of tabsArray(); track tab.id; let i = $index) {
+        <div
+          role="tabpanel"
+          [id]="'retro-tabpanel-' + tab.id"
+          [attr.aria-labelledby]="'retro-tab-' + tab.id"
+          [hidden]="activeIndex() !== i">
+          @if (tab.template) {
+            <ng-container *ngTemplateOutlet="tab.template" />
+          }
+        </div>
+      }
+    </div>
   </div>
-  <div class="retro-tabs__panels">
-    @for (tab of tabs; track tab.id; let i = $index) {
-      <div
-        role="tabpanel"
-        [id]="'retro-tabpanel-' + tab.id"
-        [attr.aria-labelledby]="'retro-tab-' + tab.id"
-        [hidden]="activeIndex() !== i">
-        @if (tab.template) {
-          <ng-container *ngTemplateOutlet="tab.template" />
-        }
-      </div>
-    }
-  </div>
-</div>
+}
