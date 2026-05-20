@@ -9,7 +9,6 @@ export { RetroDataRowComponent } from './retro-data-row/retro-data-row.component
 export { RetroSectionHeaderComponent } from './retro-section-header/retro-section-header.component';
 export { RetroCommandBarComponent } from './retro-command-bar/retro-command-bar.component';
 export { RetroEmptyStateComponent } from './retro-empty-state/retro-empty-state.component';
-export { RetroBadgeComponent } from './retro-badge/retro-badge.component';
 export { RetroIconButtonComponent } from './retro-icon-button/retro-icon-button.component';
 export { RetroSpinnerComponent } from './retro-spinner/retro-spinner.component';
 export { RetroSkeletonComponent } from './retro-skeleton/retro-skeleton.component';
