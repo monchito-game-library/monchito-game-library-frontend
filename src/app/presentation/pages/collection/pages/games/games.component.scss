@@ -47,6 +47,7 @@
   z-index: calc(var(--z-overlay) + 1);
   transform: translateX(100%);
   transition: transform var(--transition-base);
+  overflow: hidden;
 
   &--open {
     transform: translateX(0);
