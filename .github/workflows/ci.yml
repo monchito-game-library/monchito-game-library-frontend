@@ -26,6 +26,9 @@ jobs:
       - name: Lint lib retro
         run: npm run lint:retro
 
+      - name: Exports sin usar lib retro
+        run: npm run check:unused:retro
+
       - name: Tests lib retro con cobertura
         run: npm run test:retro:coverage
 
@@ -76,6 +79,9 @@ jobs:
 
       - name: Lint app
         run: npm run lint:app
+
+      - name: Exports sin usar app
+        run: npm run check:unused:app
 
       - name: Tests app con cobertura
         run: npm run test:app:coverage
