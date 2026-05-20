@@ -7,6 +7,7 @@ describe('RetroMenuItemComponent', () => {
   let component: RetroMenuItemComponent;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [RetroMenuItemComponent]
     }).compileComponents();
@@ -16,28 +17,28 @@ describe('RetroMenuItemComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should render with role="none" on li and role="menuitem" on button', () => {
+  it('renderiza con role="none" en li y role="menuitem" en button', () => {
     const li = fixture.nativeElement.querySelector('li');
     const btn = fixture.nativeElement.querySelector('button');
     expect(li?.getAttribute('role')).toBe('none');
     expect(btn?.getAttribute('role')).toBe('menuitem');
   });
 
-  it('should be disabled when disabled input is true', () => {
+  it('deshabilita el botón cuando isDisabled es true', () => {
     fixture.componentRef.setInput('isDisabled', true);
     fixture.detectChanges();
     const btn = fixture.nativeElement.querySelector('button');
     expect(btn.disabled).toBeTruthy();
   });
 
-  it('should emit clicked when button is clicked and not disabled', () => {
+  it('emite clicked al hacer click cuando no está deshabilitado', () => {
     const spy = vi.fn();
     component.clicked.subscribe(spy);
     fixture.nativeElement.querySelector('button').click();
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should NOT emit clicked when onClick is called while disabled', () => {
+  it('no emite clicked cuando onClick se llama y está deshabilitado', () => {
     fixture.componentRef.setInput('isDisabled', true);
     fixture.detectChanges();
     const spy = vi.fn();
@@ -46,10 +47,40 @@ describe('RetroMenuItemComponent', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('should render icon when icon input is provided', () => {
+  it('renderiza el icono cuando se proporciona el input icon', () => {
     fixture.componentRef.setInput('icon', 'delete');
     fixture.detectChanges();
     const icon = fixture.nativeElement.querySelector('retro-icon');
     expect(icon).toBeTruthy();
+  });
+
+  it('disabled getter devuelve el valor de isDisabled', () => {
+    expect(component.disabled).toBe(false);
+    fixture.componentRef.setInput('isDisabled', true);
+    fixture.detectChanges();
+    expect(component.disabled).toBe(true);
+  });
+
+  it('setActiveStyles mueve el foco al botón interno', () => {
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const focusSpy = vi.spyOn(btn, 'focus');
+    component.setActiveStyles();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('setInactiveStyles no lanza error', () => {
+    expect(() => component.setInactiveStyles()).not.toThrow();
+  });
+
+  it('focus() enfoca el botón interno', () => {
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const focusSpy = vi.spyOn(btn, 'focus');
+    component.focus();
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('getLabel() devuelve el texto del nodo', () => {
+    const label = component.getLabel();
+    expect(typeof label).toBe('string');
   });
 });

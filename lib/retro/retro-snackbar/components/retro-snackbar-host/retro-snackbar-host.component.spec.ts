@@ -3,7 +3,7 @@ import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { RetroSnackbarHostComponent } from './retro-snackbar-host.component';
-import { RetroSnackbarService } from '../../services/retro-snackbar.service';
+import { RetroSnackbarService, RetroSnackbarMessage } from '../../services/retro-snackbar.service';
 import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 
 describe('RetroSnackbarHostComponent', () => {
@@ -29,7 +29,41 @@ describe('RetroSnackbarHostComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('se crea correctamente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('inyecta el servicio de snackbar', () => {
+    expect(component.service).toBeTruthy();
+  });
+
+  it('dismiss delega en el servicio con el id dado', () => {
+    component.dismiss(42);
+    expect(mockRetroSnackbar.dismiss).toHaveBeenCalledWith(42);
+  });
+
+  it('onAction ejecuta el handler del mensaje y lo descarta', () => {
+    const handler = vi.fn();
+    const msg: RetroSnackbarMessage = {
+      id: 1,
+      text: 'Mensaje de prueba',
+      variant: 'success',
+      duration: 4000,
+      action: { label: 'Acción', handler }
+    };
+    component.onAction(msg);
+    expect(handler).toHaveBeenCalled();
+    expect(mockRetroSnackbar.dismiss).toHaveBeenCalledWith(1);
+  });
+
+  it('onAction descarta el mensaje aunque no haya handler de acción', () => {
+    const msg: RetroSnackbarMessage = {
+      id: 2,
+      text: 'Sin acción',
+      variant: 'error',
+      duration: 4000
+    };
+    expect(() => component.onAction(msg)).not.toThrow();
+    expect(mockRetroSnackbar.dismiss).toHaveBeenCalledWith(2);
   });
 });

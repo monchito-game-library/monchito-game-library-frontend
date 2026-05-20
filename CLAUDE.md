@@ -373,10 +373,10 @@ La librería retro (`lib/retro/`) se valida **siempre antes** que la app (`src/`
 | `npm run lint:retro`          | ESLint solo sobre `lib/` (config propia en `lib/retro/eslint.config.js`) |
 | `npm run lint:app`            | ESLint solo sobre `src/` y ficheros de la raíz                           |
 | `npm run lint`                | `lint:retro && lint:app`                                                 |
-| `npm run test:retro`          | Tests solo de `lib/` (38 specs)                                          |
+| `npm run test:retro`          | Tests solo de `lib/` (38 specs / 465 tests)                              |
 | `npm run test:app`            | Tests solo de `src/` (144 specs)                                         |
 | `npm test`                    | `test:retro && test:app`                                                 |
-| `npm run test:retro:coverage` | Cobertura de `lib/` — threshold 60% (baseline; meta: 90%)                |
+| `npm run test:retro:coverage` | Cobertura de `lib/` — threshold 90% ✅                                   |
 | `npm run test:app:coverage`   | Cobertura de `src/` — threshold 80%                                      |
 | `npm run test:coverage`       | `test:retro:coverage && test:app:coverage`                               |
 | `npm run check:unused:retro`  | Knip solo sobre `lib/` (`knip.retro.config.ts`)                          |
@@ -391,7 +391,7 @@ Los mocks de componentes de la lib viven en `lib/retro/testing/` y se importan c
 
 ### Threshold de cobertura de la lib
 
-El threshold actual para `retro-coverage` es del **60%** (baseline establecido al separar el pipeline). La cobertura real de la lib es ~65%. La meta a largo plazo es el **90%**; se irá subiendo el threshold de forma escalonada conforme `/improve-coverage` aumente la cobertura real (ej. 60 → 70 → 80 → 90). Subir el threshold en `angular.json` (`configurations.retro-coverage.coverageThresholds`) es el único cambio necesario.
+El threshold para `retro-coverage` es del **90%** (statements y lines). La cobertura real actual: 92.15% statements, 94.44% lines. Subir o ajustar el threshold se hace en `angular.json` → `configurations.retro-coverage.coverageThresholds`.
 
 ### Arquitectura de la lib
 

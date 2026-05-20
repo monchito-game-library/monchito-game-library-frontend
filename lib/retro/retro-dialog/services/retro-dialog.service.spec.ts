@@ -1,9 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
-import { RetroDialogService, RetroDialogRef, RETRO_DIALOG_DATA } from './retro-dialog.service';
+import {
+  RetroDialogService,
+  RetroDialogRef,
+  RetroDialogTitleDirective,
+  RetroDialogContentDirective,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective,
+  RETRO_DIALOG_DATA
+} from './retro-dialog.service';
 import { RetroOverlayService, RetroOverlayRef } from '../../retro-overlay/services/retro-overlay.service';
 
 @Component({ selector: 'app-test-dialog', template: '', standalone: true })
@@ -15,6 +23,8 @@ describe('RetroDialogService', () => {
   let mockOverlayService: Partial<RetroOverlayService>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     mockOverlayRef = {
       componentInstance: null,
       close: vi.fn(),
@@ -52,6 +62,38 @@ describe('RetroDialogService', () => {
     const callArgs = (mockOverlayService.open as ReturnType<typeof vi.fn>).mock.calls[0][1];
     expect(callArgs.panelClass).toContain('retro-overlay-panel--dialog');
   });
+
+  it('open() añade panelClass extra cuando se pasa como string', () => {
+    service.open(TestDialogComponent, { panelClass: 'mi-clase-extra' });
+    const callArgs = (mockOverlayService.open as ReturnType<typeof vi.fn>).mock.calls[0][1];
+    expect(callArgs.panelClass).toContain('mi-clase-extra');
+  });
+
+  it('open() añade panelClass extra cuando se pasa como array', () => {
+    service.open(TestDialogComponent, { panelClass: ['clase-a', 'clase-b'] });
+    const callArgs = (mockOverlayService.open as ReturnType<typeof vi.fn>).mock.calls[0][1];
+    expect(callArgs.panelClass).toContain('clase-a');
+    expect(callArgs.panelClass).toContain('clase-b');
+  });
+
+  it('open() con disableClose pone autoFocus en false', () => {
+    service.open(TestDialogComponent, { disableClose: true });
+    const callArgs = (mockOverlayService.open as ReturnType<typeof vi.fn>).mock.calls[0][1];
+    expect(callArgs.autoFocus).toBe(false);
+  });
+
+  it('open() llama extraProviders y crea el RetroDialogRef', () => {
+    // El mock de overlayService.open llama a extraProviders si se lo pasamos
+    // Necesitamos que el overlay mock simule llamar a extraProviders
+    const realOpen = mockOverlayService.open as ReturnType<typeof vi.fn>;
+    realOpen.mockImplementationOnce((_component: unknown, cfg: { extraProviders?: (r: unknown) => unknown[] }) => {
+      // Llamar a extraProviders para crear el dialogRef interno
+      if (cfg.extraProviders) cfg.extraProviders(mockOverlayRef);
+      return mockOverlayRef;
+    });
+    const ref = service.open(TestDialogComponent);
+    expect(ref).toBeInstanceOf(RetroDialogRef);
+  });
 });
 
 describe('RetroDialogRef', () => {
@@ -59,6 +101,8 @@ describe('RetroDialogRef', () => {
   let dialogRef: RetroDialogRef<TestDialogComponent, boolean>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     overlayRef = {
       componentInstance: null,
       close: vi.fn(),
@@ -84,6 +128,31 @@ describe('RetroDialogRef', () => {
   it('close() sin argumento delega sin resultado', () => {
     dialogRef.close();
     expect(overlayRef.close).toHaveBeenCalledWith(undefined);
+  });
+
+  it('componentInstance delega en el overlayRef', () => {
+    (overlayRef as any).componentInstance = { foo: 'bar' };
+    expect(dialogRef.componentInstance).toEqual({ foo: 'bar' });
+  });
+
+  it('backdropClick$ delega en el overlayRef', () => {
+    expect(dialogRef.backdropClick$).toBeTruthy();
+  });
+
+  it('keydownEvents$ delega en el overlayRef', () => {
+    expect(dialogRef.keydownEvents$).toBeTruthy();
+  });
+});
+
+describe('RetroDialogActionsDirective', () => {
+  it('align inicia en "end"', () => {
+    TestBed.configureTestingModule({
+      imports: [RetroDialogActionsDirective],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+    // La directiva se puede instanciar directamente para verificar el default
+    const directive = new RetroDialogActionsDirective();
+    expect(directive.align).toBe('end');
   });
 });
 

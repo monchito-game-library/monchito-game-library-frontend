@@ -143,8 +143,8 @@
                 "src/**"
               ],
               "coverageThresholds": {
-                "statements": 60,
-                "lines": 60
+                "statements": 90,
+                "lines": 90
               }
             }
           }

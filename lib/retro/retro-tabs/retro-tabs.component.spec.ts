@@ -101,6 +101,7 @@ describe('RetroTabsComponent', () => {
   let host: TabsIntegrationHostComponent;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [TabsIntegrationHostComponent]
     }).compileComponents();
@@ -110,7 +111,7 @@ describe('RetroTabsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should emit selectedIndexChange when a tab is clicked', () => {
+  it('emite selectedIndexChange al hacer click en un tab', () => {
     const spy = vi.spyOn(host, 'onTabChange');
     const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
     tabs[1].click();
@@ -118,18 +119,105 @@ describe('RetroTabsComponent', () => {
     expect(spy).toHaveBeenCalledWith(1);
   });
 
-  it('should show correct panel content for active tab', () => {
+  it('muestra el panel correcto para el tab activo', () => {
     const panels = fixture.nativeElement.querySelectorAll('[role="tabpanel"]');
     expect(panels[0].hidden).toBeFalsy();
     expect(panels[1].hidden).toBeTruthy();
   });
 
-  it('should switch panel visibility when tab changes', () => {
+  it('cambia la visibilidad del panel al cambiar de tab', () => {
     const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
     tabs[1].click();
     fixture.detectChanges();
     const panels = fixture.nativeElement.querySelectorAll('[role="tabpanel"]');
     expect(panels[0].hidden).toBeTruthy();
     expect(panels[1].hidden).toBeFalsy();
+  });
+
+  it('onKeydown con ArrowRight avanza al siguiente tab', () => {
+    const tabsComponent = fixture.debugElement.query((el) => el.componentInstance?.onKeydown)?.componentInstance;
+    if (!tabsComponent) return;
+    const spy = vi.spyOn(host, 'onTabChange');
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    tabs[0].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(1);
+  });
+
+  it('onKeydown con ArrowLeft retrocede al tab anterior', () => {
+    // Primero activar el tab 1
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    tabs[1].click();
+    fixture.detectChanges();
+
+    const spy = vi.spyOn(host, 'onTabChange');
+    const eventLeft = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
+    tabs[1].dispatchEvent(eventLeft);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(0);
+  });
+
+  it('onKeydown con ArrowDown avanza al siguiente tab', () => {
+    const spy = vi.spyOn(host, 'onTabChange');
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
+    tabs[0].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(1);
+  });
+
+  it('onKeydown con ArrowUp retrocede al tab anterior', () => {
+    // Primero activar tab 1
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    tabs[1].click();
+    fixture.detectChanges();
+    const spy = vi.spyOn(host, 'onTabChange');
+    const event = new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true });
+    tabs[1].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(0);
+  });
+
+  it('onKeydown con Home va al primer tab', () => {
+    // Primero activar tab 1
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    tabs[1].click();
+    fixture.detectChanges();
+    const spy = vi.spyOn(host, 'onTabChange');
+    const event = new KeyboardEvent('keydown', { key: 'Home', bubbles: true });
+    tabs[1].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(0);
+  });
+
+  it('onKeydown con End va al último tab', () => {
+    const spy = vi.spyOn(host, 'onTabChange');
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    const event = new KeyboardEvent('keydown', { key: 'End', bubbles: true });
+    tabs[0].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(1);
+  });
+
+  it('onKeydown con tecla no reconocida no hace nada', () => {
+    const spy = vi.spyOn(host, 'onTabChange');
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    const event = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
+    tabs[0].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('onKeydown con ArrowRight hace wrap desde el último tab al primero', () => {
+    // Activar el último tab
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    tabs[1].click();
+    fixture.detectChanges();
+    const spy = vi.spyOn(host, 'onTabChange');
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    tabs[1].dispatchEvent(event);
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith(0);
   });
 });

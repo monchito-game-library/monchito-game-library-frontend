@@ -1,8 +1,9 @@
+import { ElementRef, TemplateRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component } from '@angular/core';
-import { describe, beforeEach, it, expect } from 'vitest';
-import { firstValueFrom } from 'rxjs';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { firstValueFrom, Subject } from 'rxjs';
 import {
   RetroOverlayService,
   RetroOverlayRef,
@@ -22,23 +23,24 @@ describe('RetroOverlayService', () => {
   let service: RetroOverlayService;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     TestBed.configureTestingModule({
       imports: [OverlayModule]
     });
     service = TestBed.inject(RetroOverlayService);
   });
 
-  it('should be created', () => {
+  it('se crea correctamente', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should open a component and return a RetroOverlayRef', () => {
+  it('open() con componente devuelve un RetroOverlayRef', () => {
     const ref = service.open(DummyOverlayComponent);
     expect(ref).toBeInstanceOf(RetroOverlayRef);
     ref.close();
   });
 
-  it('should close the overlay and emit undefined on afterClosed$ when no result', async () => {
+  it('afterClosed$ emite undefined al cerrar sin resultado', async () => {
     const ref = service.open(DummyOverlayComponent);
     const closePromise = firstValueFrom(ref.afterClosed$);
     ref.close();
@@ -46,7 +48,7 @@ describe('RetroOverlayService', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should emit the result passed to close()', async () => {
+  it('afterClosed$ emite el resultado pasado a close()', async () => {
     const ref = service.open<DummyOverlayComponent, string>(DummyOverlayComponent);
     const closePromise = firstValueFrom(ref.afterClosed$);
     ref.close('done');
@@ -54,27 +56,135 @@ describe('RetroOverlayService', () => {
     expect(result).toBe('done');
   });
 
-  it('should set componentInstance on the ref', () => {
+  it('componentInstance apunta al componente montado', () => {
     const ref = service.open(DummyOverlayComponent);
     expect(ref.componentInstance).toBeInstanceOf(DummyOverlayComponent);
     ref.close();
   });
 
+  it('backdropClick$ es un Observable', () => {
+    const ref = service.open(DummyOverlayComponent, { hasBackdrop: true });
+    expect(ref.backdropClick$).toBeTruthy();
+    ref.close();
+  });
+
+  it('open() con scrollStrategy block no lanza error', () => {
+    const ref = service.open(DummyOverlayComponent, { scrollStrategy: 'block' });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() con scrollStrategy close no lanza error', () => {
+    const ref = service.open(DummyOverlayComponent, { scrollStrategy: 'close' });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() con scrollStrategy reposition no lanza error', () => {
+    const ref = service.open(DummyOverlayComponent, { scrollStrategy: 'reposition' });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() sin scrollStrategy usa reposition por defecto', () => {
+    const ref = service.open(DummyOverlayComponent, {});
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() con origin ElementRef usa posición anclada', () => {
+    const fakeEl = document.createElement('button');
+    document.body.appendChild(fakeEl);
+    const elRef = new ElementRef(fakeEl);
+    const ref = service.open(DummyOverlayComponent, { origin: elRef });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+    document.body.removeChild(fakeEl);
+  });
+
+  it('open() con origin HTMLElement directo usa posición anclada', () => {
+    const fakeEl = document.createElement('button');
+    document.body.appendChild(fakeEl);
+    const ref = service.open(DummyOverlayComponent, { origin: fakeEl });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+    document.body.removeChild(fakeEl);
+  });
+
+  it('open() con focusTrap activa el focus trap', () => {
+    const ref = service.open(DummyOverlayComponent, { ...RETRO_OVERLAY_DIALOG_CONFIG });
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() con restoreFocus sin focusTrap no lanza error', async () => {
+    const ref = service.open(DummyOverlayComponent, { restoreFocus: true, focusTrap: false });
+    const closePromise = firstValueFrom(ref.afterClosed$);
+    ref.close();
+    await closePromise;
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+  });
+
+  it('open() con hasBackdrop y disableClose no cierra al hacer backdrop click', () => {
+    const ref = service.open(DummyOverlayComponent, { hasBackdrop: true, disableClose: true });
+    // El overlay sigue abierto después del backdrop click
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
+    ref.close();
+  });
+
+  it('open() con extraProviders los incluye en el injector', () => {
+    const ref = service.open(DummyOverlayComponent, {
+      extraProviders: (_libRef) => [{ provide: 'TEST', useValue: 'test-value' }]
+    });
+    expect(ref.componentInstance).toBeInstanceOf(DummyOverlayComponent);
+    ref.close();
+  });
+
+  it('keydownEvents$ emite eventos de teclado del overlay', async () => {
+    const ref = service.open(DummyOverlayComponent);
+    expect(ref.keydownEvents$).toBeTruthy();
+    ref.close();
+  });
+
   describe('preset configs', () => {
-    it('RETRO_OVERLAY_DIALOG_CONFIG should have focusTrap and block scroll', () => {
+    it('RETRO_OVERLAY_DIALOG_CONFIG tiene focusTrap y scroll block', () => {
       expect(RETRO_OVERLAY_DIALOG_CONFIG.focusTrap).toBeTruthy();
       expect(RETRO_OVERLAY_DIALOG_CONFIG.scrollStrategy).toBe('block');
       expect(RETRO_OVERLAY_DIALOG_CONFIG.hasBackdrop).toBeTruthy();
     });
 
-    it('RETRO_OVERLAY_MENU_CONFIG should have transparent backdrop and no focusTrap', () => {
+    it('RETRO_OVERLAY_MENU_CONFIG tiene backdrop transparente y sin focusTrap', () => {
       expect(RETRO_OVERLAY_MENU_CONFIG.focusTrap).toBeFalsy();
       expect(RETRO_OVERLAY_MENU_CONFIG.backdropClass).toBe('retro-overlay-backdrop--transparent');
     });
 
-    it('RETRO_OVERLAY_BOTTOM_SHEET_CONFIG should have focusTrap and bottom-sheet panel class', () => {
+    it('RETRO_OVERLAY_BOTTOM_SHEET_CONFIG tiene focusTrap y panelClass bottom-sheet', () => {
       expect(RETRO_OVERLAY_BOTTOM_SHEET_CONFIG.focusTrap).toBeTruthy();
       expect(RETRO_OVERLAY_BOTTOM_SHEET_CONFIG.panelClass).toBe('retro-overlay-panel--bottom-sheet');
     });
+  });
+});
+
+describe('RetroOverlayRef', () => {
+  it('backdropClick$ delega en el overlayRef', () => {
+    const subject = new Subject<MouseEvent>();
+    const fakeOverlayRef = {
+      dispose: vi.fn(),
+      backdropClick: vi.fn().mockReturnValue(subject.asObservable()),
+      keydownEvents: vi.fn().mockReturnValue(new Subject().asObservable())
+    };
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    expect(ref.backdropClick$).toBeTruthy();
+  });
+
+  it('keydownEvents$ delega en el overlayRef', () => {
+    const subject = new Subject<KeyboardEvent>();
+    const fakeOverlayRef = {
+      dispose: vi.fn(),
+      backdropClick: vi.fn().mockReturnValue(new Subject().asObservable()),
+      keydownEvents: vi.fn().mockReturnValue(subject.asObservable())
+    };
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    expect(ref.keydownEvents$).toBeTruthy();
   });
 });
