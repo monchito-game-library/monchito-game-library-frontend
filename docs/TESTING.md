@@ -396,39 +396,39 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ## Resumen
 
-| Capa                                                  | Ficheros | Tests |
-| ----------------------------------------------------- | -------- | ----- |
-| Configuración                                         | 1        | 3     |
-| Mappers                                               | 14       | 207   |
-| Use Cases                                             | 18       | 162   |
-| Repositorios                                          | 18       | 312   |
-| Guards                                                | 5        | 22    |
-| Servicios                                             | 7        | 90    |
-| Abstractas                                            | 5        | 175   |
-| App component                                         | 1        | 31    |
-| Componentes (incluye `lib/` × 12 ficheros / 63 tests) | 84       | 1577  |
-| Utilidades                                            | 8        | 106   |
+| Capa          | Ficheros | Tests |
+| ------------- | -------- | ----- |
+| Configuración | 1        | 3     |
+| Mappers       | 14       | 207   |
+| Use Cases     | 18       | 162   |
+| Repositorios  | 18       | 312   |
+| Guards        | 5        | 22    |
+| Servicios     | 7        | 90    |
+| Abstractas    | 5        | 175   |
+| App component | 1        | 31    |
+| Componentes   | 84       | 1577  |
+| Utilidades    | 8        | 106   |
 
-> Fuente autoritativa: `npm test`. Vitest reporta actualmente **158 ficheros / 2648 tests passed**. Ejecutar `/update-testing` para sincronizar la tabla por capa con los conteos exactos.
+> Fuente autoritativa: `npm run test:app`. Vitest reporta actualmente **144 ficheros / 2566 tests passed**. Ejecutar `/update-testing app` para sincronizar la tabla por capa con los conteos exactos.
 
 ---
 
 ## Cobertura actual
 
-| Métrica    | Valor                     |
-| ---------- | ------------------------- |
-| Statements | 99.04 % (5069 / 5118)     |
-| Branches   | **95.70 %** (3339 / 3489) |
-| Functions  | 99.14 % (1160 / 1170)     |
-| Lines      | 99.83 % (4183 / 4190)     |
+| Métrica    | Valor                    |
+| ---------- | ------------------------ |
+| Statements | 96.98% (5043 / 5200)     |
+| Branches   | **93.12%** (3279 / 3521) |
+| Functions  | 97.96% (1158 / 1182)     |
+| Lines      | 98.09% (4166 / 4247)     |
 
 ```bash
-npm run test:coverage
+npm run test:app:coverage
 ```
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 95.70 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 93.12 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 
