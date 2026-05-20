@@ -58,11 +58,12 @@ Para cada `step-N` del plan estructurado, en orden:
    - Los `riesgos / decisiones de diseño` que `senior` marcó como cerradas.
    - Recordatorio de convenciones críticas: path aliases, prefijo `_`, tipos explícitos, JSDoc, SCSS en `rem`, sincronía de READMEs en `lib/retro/` si toca esa librería.
    - Instrucción de **no hacer commit todavía** — el commit lo gestiona este orquestador tras la revisión.
-2. Cuando `tech` termine, ejecuta los **checks locales del paso** según los criterios de aceptación:
-   - Si el paso toca código TypeScript/Angular: `npm run lint` (debe quedar en 0 errores y 0 warnings).
-   - Si el paso toca lógica testable: `npm test` (todos los tests deben pasar).
+2. Cuando `tech` termine, ejecuta los **checks locales del paso** según el scope de los cambios:
+   - Si el paso toca **solo `lib/retro/`**: `npm run lint:retro` y `npm run test:retro` (0 errores, todos pasan).
+   - Si el paso toca **solo `src/`**: `npm run lint:app` y `npm run test:app` (0 errores, todos pasan).
+   - Si el paso toca **ambos ámbitos**: `npm run lint` y `npm test` (ejecutan lib-primero internamente).
    - Si el paso toca componentes de `lib/retro/`: `node scripts/check-retro-readme-sync.mjs` no debe quejarse.
-   - Si el paso toca dependencias: `npm run check:unused`.
+   - Si el paso toca dependencias: `npm run check:unused` (ejecuta retro-primero internamente).
 3. **Lanza `senior` en modo revisión** sobre el diff (`git diff` del trabajo no commiteado). Debe certificar:
    - Que se ha cubierto el `objetivo` del paso.
    - Que todos los `criterios de aceptación` se cumplen.
@@ -82,10 +83,10 @@ Para cada `step-N` del plan estructurado, en orden:
 
 Cuando todos los pasos del plan estén commiteados:
 
-1. Ejecuta el pipeline de QA completo en este orden:
-   - `npm run lint`
-   - `npm run check:unused`
-   - `npm test`
+1. Ejecuta el pipeline de QA completo en orden lib-primero (los scripts compuestos ya garantizan el orden):
+   - `npm run lint` — lint retro primero, luego app
+   - `npm run check:unused` — knip retro primero, luego app
+   - `npm test` — tests retro primero, luego app
 2. Lanza una **última invocación de `senior`** con:
    - El plan estructurado original.
    - El listado de commits creados (`git log master..HEAD --oneline`).
