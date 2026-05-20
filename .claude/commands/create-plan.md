@@ -20,6 +20,7 @@ Analiza la conversación actual y extrae:
   - Qué criterios verificables indican que el paso está completo (tests, lint, tipado, checks de README retro, etc.).
   - Decisiones de diseño ya cerradas en la conversación que `tech` debe respetar sin reabrir.
   - Riesgos o dependencias entre pasos.
+  - Si el paso modifica templates (`.html`), estilos (`.scss`), componentes visuales, layout, paleta de colores, tipografía o cualquier aspecto de la UX/UI: marcarlo con `**Afecta UI/UX:** sí`. En caso de duda, marcar como `sí`.
 
 Si la conversación no tiene suficiente detalle para definir algún paso de forma accionable, márcalo explícitamente en el plan como `⚠️ PENDIENTE DE CONCRECIÓN` para que `/execute-plan` lo detecte en su Paso 1 y lo reporte al usuario.
 
@@ -41,10 +42,12 @@ Escribe el contenido sintetizado en `PLAN.md` en la raíz del proyecto usando la
 **Objetivo:** <qué consigue este paso>
 **Ficheros estimados:** <lista>
 **Criterios de aceptación:**
+
 - <criterio verificable>
-**Decisiones cerradas:**
+  **Decisiones cerradas:**
 - <decisión tomada en conversación que no se reabre>
-**Riesgos / dependencias:**
+  **Afecta UI/UX:** sí | no
+  **Riesgos / dependencias:**
 - <si aplica>
 
 ### step-2: ...

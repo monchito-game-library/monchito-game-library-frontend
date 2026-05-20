@@ -2,16 +2,18 @@ Mejora la cobertura de tests hasta el máximo alcanzable, respetando las exclusi
 
 El proyecto tiene dos ámbitos independientes:
 
-| Ámbito                 | Specs                       | Script de cobertura           | Threshold              | Cobertura actual | Meta | Doc de referencia       |
-| ---------------------- | --------------------------- | ----------------------------- | ---------------------- | ---------------- | ---- | ----------------------- |
-| `retro` — `lib/retro/` | ~38 ficheros / ~291 tests   | `npm run test:retro:coverage` | 60% (statements/lines) | ~65%             | 90%  | `docs/TESTING-RETRO.md` |
-| `app` — `src/`         | ~144 ficheros / ~2566 tests | `npm run test:app:coverage`   | 80% (statements/lines) | ~97%             | —    | `docs/TESTING.md`       |
+| Ámbito                 | Specs                       | Script de cobertura           | Threshold              | Cobertura actual            | Estado          | Doc de referencia       |
+| ---------------------- | --------------------------- | ----------------------------- | ---------------------- | --------------------------- | --------------- | ----------------------- |
+| `retro` — `lib/retro/` | ~38 ficheros / ~523 tests   | `npm run test:retro:coverage` | 90% (statements/lines) | 95.35% stmts / 97.09% lines | Techo alcanzado | `docs/TESTING-RETRO.md` |
+| `app` — `src/`         | ~144 ficheros / ~2566 tests | `npm run test:app:coverage`   | 80% (statements/lines) | ~97%                        | —               | `docs/TESTING.md`       |
 
 > ⚠️ Ambas pasadas de cobertura escriben en `coverage/monchito-game-library/`. **Nunca uses `npm run test:coverage`** (encadena ambos y la segunda pisa el lcov de la primera) antes de leer los gaps. Ejecuta siempre solo el script del ámbito que vas a mejorar.
 
 ## Paso 0 — Elegir ámbito
 
-Si no viene especificado en `$ARGUMENTS`, prioriza **`retro`**: la cobertura está muy por debajo de la meta (65% vs 90%) y casi todos los gaps son lógica testeable real. En `app` el techo está en ~99% y casi todo lo que queda son artefactos de las categorías 1–3.
+Si no viene especificado en `$ARGUMENTS`, prioriza **`app`**: `retro` ya está en su techo máximo (95.35% statements, 97.09% lines — el resto son artefactos V8/signals documentados en `docs/TESTING-RETRO.md`). En `retro` no hay margen real de mejora; cualquier "gap" restante cae en las categorías de exclusión documentadas.
+
+Si `$ARGUMENTS` indica `retro`, antes de empezar revisa `docs/TESTING-RETRO.md` § "Ramas sin cobertura" para confirmar que el gap detectado no cae ya en las exclusiones documentadas. Si cae, detente y reporta al usuario en lugar de invertir esfuerzo.
 
 ## Paso 1 — Generar el informe de cobertura
 
@@ -72,12 +74,16 @@ Si un gap sigue sin cubrirse tras pasar el test, es un artefacto — documéntal
 
 ## Paso 5 — Actualizar el TESTING.md del ámbito
 
-Ejecuta la lógica de `/update-testing` con el mismo ámbito para sincronizar:
+Sincroniza el TESTING.md del ámbito trabajado con los conteos y valores reales:
 
-- Conteos por fichero en las tablas de cada sección.
-- Tabla resumen final.
-- Sección "Cobertura actual" con los nuevos valores (output de `npm run test:retro:coverage` o `npm run test:app:coverage`).
-- Si algún ítem de Categoría 4 ha quedado cubierto, actualiza su entrada en "Ramas sin cobertura — análisis exhaustivo".
-- Si aparecen nuevos gaps no testeables, añádelos a la categoría correcta con su análisis.
+1. Ejecuta el script de test del ámbito (`npm run test:retro` o `npm run test:app`) y anota el total de ficheros y tests del resumen final de Vitest.
+2. Para cada fichero `.spec.ts` del ámbito, cuenta los bloques `it(` y actualiza los conteos en las tablas por fichero.
+3. Actualiza la tabla resumen final y la sección "Cobertura actual" con los nuevos valores de coverage:
+   - `retro` → `npm run test:retro:coverage`, actualiza `docs/TESTING-RETRO.md`. Threshold: 90% (verificar que coincide con `angular.json` → `configurations.retro-coverage.coverageThresholds`).
+   - `app` → `npm run test:app:coverage`, actualiza `docs/TESTING.md`. Threshold: 80% (verificar que coincide con `angular.json`).
+   - Si el threshold de `angular.json` y el reportado en el TESTING.md no coinciden, alinéalos al valor de `angular.json` y avisa al usuario.
+   - ⚠️ Nunca uses `npm run test:coverage` aquí: encadena ambos y la segunda pasada pisa el lcov de la primera.
+4. Si algún ítem de Categoría 4 ha quedado cubierto, actualiza su entrada en "Ramas sin cobertura — análisis exhaustivo".
+5. Si aparecen nuevos gaps no testeables, añádelos a la categoría correcta con su análisis.
 
 No hagas commit ni push.

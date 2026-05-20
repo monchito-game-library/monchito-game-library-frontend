@@ -258,6 +258,22 @@ export interface GameForm {
 }
 ```
 
+**Ficheros de referencia para nuevos formularios:**
+
+- Interfaz: `src/app/entities/interfaces/forms/console-form.interface.ts`
+- Componente de formulario: `src/app/presentation/pages/collection/components/hardware-form-shell/`
+
+El componente sigue este esquema (respetar el orden de miembros de CLAUDE.md):
+
+1. `InputSignal<Partial<XxxModel> | null>` para valores iniciales
+2. `InputSignal<boolean>` para estado de guardado (`saving`)
+3. `OutputEmitterRef<XxxFormValue>` para emitir el resultado (`save`)
+4. `OutputEmitterRef<void>` para cancelar (`cancel`)
+5. `FormGroup<XxxForm>` inicializado en el constructor
+6. `ngOnInit` — parchear el form si hay `initialValues`
+7. `onSubmit()` — valida y emite `save`
+8. `onCancel()` — emite `cancel`
+
 ## Repositorios
 
 - Los repositorios implementan el contrato (interface) del fichero `.repository.contract.ts` de `domain/repositories/`.

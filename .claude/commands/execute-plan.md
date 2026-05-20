@@ -52,32 +52,34 @@ Persiste este plan estructurado en memoria de la conversación (no en disco). Mu
 
 Para cada `step-N` del plan estructurado, en orden:
 
-1. **Lanza el subagente `tech`** con un prompt que incluya:
+1. **Si el paso tiene `Afecta UI/UX: sí`**, invoca la skill `ui-ux-pro-max` con la herramienta `Skill` **antes** de lanzar `tech`. Incluye las directrices que devuelva en el prompt de `tech` como sección "Guía de UI/UX para este paso". Si la skill no devuelve nada accionable, continúa igualmente.
+
+2. **Lanza el subagente `tech`** con un prompt que incluya:
    - El `objetivo` del paso.
    - Los `criterios de aceptación`.
    - Los `riesgos / decisiones de diseño` que `senior` marcó como cerradas.
    - Recordatorio de convenciones críticas: path aliases, prefijo `_`, tipos explícitos, JSDoc, SCSS en `rem`, sincronía de READMEs en `lib/retro/` si toca esa librería.
    - Instrucción de **no hacer commit todavía** — el commit lo gestiona este orquestador tras la revisión.
-2. Cuando `tech` termine, ejecuta los **checks locales del paso** según el scope de los cambios:
+3. Cuando `tech` termine, ejecuta los **checks locales del paso** según el scope de los cambios:
    - Si el paso toca **solo `lib/retro/`**: `npm run lint:retro` y `npm run test:retro` (0 errores, todos pasan).
    - Si el paso toca **solo `src/`**: `npm run lint:app` y `npm run test:app` (0 errores, todos pasan).
    - Si el paso toca **ambos ámbitos**: `npm run lint` y `npm test` (ejecutan lib-primero internamente).
-   - Si el paso toca componentes de `lib/retro/`: `node scripts/check-retro-readme-sync.mjs` no debe quejarse.
+   - Si el paso toca componentes de `lib/retro/`: ejecuta `node scripts/check-retro-readme-sync.mjs` **antes del commit** como medida profiláctica. El pre-commit hook lo volverá a ejecutar, pero si falla en el hook ya habrás hecho `git add` y tendrás que limpiar. No debe quejarse.
    - Si el paso toca dependencias: `npm run check:unused` (ejecuta retro-primero internamente).
-3. **Lanza `senior` en modo revisión** sobre el diff (`git diff` del trabajo no commiteado). Debe certificar:
+4. **Lanza `senior` en modo revisión** sobre el diff (`git diff` del trabajo no commiteado). Debe certificar:
    - Que se ha cubierto el `objetivo` del paso.
    - Que todos los `criterios de aceptación` se cumplen.
    - Que no se han introducido violaciones de convenciones.
    - Que no se han tocado ficheros fuera del alcance del paso sin justificación.
-4. **Bucle de corrección**:
+5. **Bucle de corrección**:
    - Si `senior` detecta carencias o desviaciones, vuelve a invocar `tech` con la lista concreta de correcciones (sin reabrir decisiones de diseño cerradas).
    - Repite checks + revisión.
    - Máximo **3 iteraciones** por paso. Si tras la tercera `senior` sigue rechazando, **detente y reporta al usuario** el bloqueo con detalle: qué falta, qué intentó `tech`, qué exige `senior`. No avances al siguiente paso.
-5. Cuando `senior` certifique el paso:
+6. Cuando `senior` certifique el paso:
    - Haz `git add` **solo de los ficheros del paso** (nunca `git add -A`, nunca el fichero del plan).
    - Crea el commit con el mensaje sugerido por `senior` (ajustado si el usuario lo pidió). Usa `git commit` normal (sin `--no-verify` salvo que el usuario lo pida explícitamente).
    - Si el pre-commit hook falla, **no uses `--amend`**: corrige el problema con `tech`, vuelve a `git add` y crea un **commit nuevo** (que luego se squashea al mergear la PR).
-6. Reporta al usuario el avance del paso: id, mensaje de commit, hash corto, ficheros tocados.
+7. Reporta al usuario el avance del paso: id, mensaje de commit, hash corto, ficheros tocados.
 
 ### Paso 4 — Revisión final certificante
 
