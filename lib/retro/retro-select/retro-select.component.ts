@@ -180,6 +180,9 @@ export class RetroSelectComponent
   /** Texto del aria-label del botón limpiar. */
   readonly clearAriaLabel: InputSignal<string> = input<string>('Limpiar');
 
+  /** Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. */
+  readonly hideSubscript: InputSignal<boolean> = input<boolean>(false);
+
   /**
    * Valor de selección en modo standalone (sin formControlName).
    * Equivalente a [value] de mat-select.

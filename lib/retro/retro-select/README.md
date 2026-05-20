@@ -20,6 +20,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
 | `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay selección. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
+| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error); usar en campos sin validación visible (p.ej. búsqueda). |
 | `value` | `unknown` | `undefined` | Valor en modo standalone (sin formControlName). |
 
 ## Outputs
