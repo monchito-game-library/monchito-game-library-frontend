@@ -436,28 +436,21 @@ input[type='number'] {
 // retro-button/retro-icon-button conviven en la misma fila.
 //
 // Técnica: align-items:end ancla todos los hijos al borde inferior de la fila.
-// retro-button y retro-icon-button tienen display:contents en su :host, por lo que
-// el flex ve sus elementos internos (.retro-btn / .retro-icon-btn) directamente.
-// El margin-bottom compensa el bloque subscript del form-field
+// El token --retro-btn-bottom-offset compensa el bloque subscript del form-field
 // (gap 0.25rem + min-height 1rem = 1.25rem) para que la caja del control
-// quede alineada con la caja del botón.
+// quede alineada con la caja del botón. retro-button y retro-icon-button leen
+// este token internamente y aplican el offset sin necesidad de selectores hijos.
 // Modificador --no-subscript: úsalo cuando los form-fields usan hideSubscript.
 
 .retro-field-row {
+  --retro-btn-bottom-offset: 1.25rem;
+
   display: flex;
   align-items: end;
   gap: 0.5rem;
 
-  > retro-icon-button .retro-icon-btn,
-  > retro-button .retro-btn {
-    margin-bottom: calc(0.25rem + 1rem);
-  }
-
   &--no-subscript {
-    > retro-icon-button .retro-icon-btn,
-    > retro-button .retro-btn {
-      margin-bottom: 0;
-    }
+    --retro-btn-bottom-offset: 0;
   }
 }
 
