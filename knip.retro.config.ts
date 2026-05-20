@@ -5,8 +5,7 @@ const config: KnipConfig = {
   project: ['lib/**/*.ts'],
   ignoreExportsUsedInFile: true,
   // Packages used by the app (src/) but not by the lib — suppressed here because
-  // knip still reads package.json even when project is restricted to lib/.
-  // Step-5 will properly separate knip.config.ts (app-only) from this config.
+  // knip always reads package.json even when project is restricted to lib/.
   ignoreDependencies: [
     '@angular-devkit/build-angular',
     '@angular/platform-browser-dynamic',

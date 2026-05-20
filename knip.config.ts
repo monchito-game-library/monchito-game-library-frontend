@@ -6,10 +6,9 @@ const config: KnipConfig = {
     'src/app/app.routes.ts',
     'src/environments/**/*.ts',
     'eslint-rules/**/*.js',
-    'scripts/**/*.{js,mts}',
-    'lib/retro/public-api.ts'
+    'scripts/**/*.{js,mts}'
   ],
-  project: ['src/**/*.ts', 'lib/**/*.ts', 'eslint-rules/**/*.js'],
+  project: ['src/**/*.ts', 'eslint-rules/**/*.js'],
   ignoreExportsUsedInFile: true,
   ignoreDependencies: [
     // Used by Angular CLI / builder internally, not imported in source
