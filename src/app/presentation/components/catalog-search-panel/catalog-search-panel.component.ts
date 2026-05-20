@@ -18,6 +18,8 @@ import { FormsModule } from '@angular/forms';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
@@ -37,6 +39,8 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     RetroIconComponent,
     RetroSpinnerComponent,
     RetroInputComponent,
+    RetroListComponent,
+    RetroListItemComponent,
     TranslocoPipe
   ]
 })
