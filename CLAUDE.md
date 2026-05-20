@@ -25,6 +25,7 @@
 - [Estructura de pages y components](#estructura-de-pages-y-components)
 - [Tests — mocks compartidos](#tests--mocks-compartidos)
 - [Librería retro — sincronía de README](#librería-retro--sincronía-de-readme)
+- [Pipeline de calidad](#pipeline-de-calidad)
 
 ---
 
@@ -82,9 +83,9 @@ refactor/descripcion
 
 1. **Detectar candidatas**: `npm outdated` — revisar qué tiene actualizaciones disponibles.
 2. **Clasificar por riesgo**:
-   - *Patch/minor seguros*: actualizar sin problema.
-   - *Major*: evaluar breaking changes antes de actualizar.
-   - *Ecosistema Angular*: usar **siempre** `npx ng update` (nunca `npm install` directo), ya que resuelve peer deps de forma atómica.
+   - _Patch/minor seguros_: actualizar sin problema.
+   - _Major_: evaluar breaking changes antes de actualizar.
+   - _Ecosistema Angular_: usar **siempre** `npx ng update` (nunca `npm install` directo), ya que resuelve peer deps de forma atómica.
 3. **Instalar**:
    - Angular: `npx ng update @angular/core@X @angular/cli@X @angular/material@X ...`
    - Resto: `npm install paquete@version`
@@ -320,15 +321,15 @@ game-list/
 
 Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar un mock inline en un spec, comprobar si ya existe aquí.**
 
-| Fichero | Exporta | Uso |
-|---|---|---|
-| `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
-| `dialog.mock.ts` | `mockDialog` | `{ provide: RetroDialogService, useValue: mockDialog }` |
-| `lib/retro/testing/retro-snackbar.mock.ts` | `mockRetroSnackbar` | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` — importar con `@retro/testing/retro-snackbar.mock` |
-| `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
-| `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
-| `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
-| `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
+| Fichero                                    | Exporta              | Uso                                                                                                                  |
+| ------------------------------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `activated-route.mock.ts`                  | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }`                                                          |
+| `dialog.mock.ts`                           | `mockDialog`         | `{ provide: RetroDialogService, useValue: mockDialog }`                                                              |
+| `lib/retro/testing/retro-snackbar.mock.ts` | `mockRetroSnackbar`  | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` — importar con `@retro/testing/retro-snackbar.mock` |
+| `location.mock.ts`                         | `mockLocation`       | `{ provide: Location, useValue: mockLocation }`                                                                      |
+| `router.mock.ts`                           | `mockRouter`         | `{ provide: Router, useValue: mockRouter }`                                                                          |
+| `transloco.mock.ts`                        | `mockTransloco`      | `{ provide: TranslocoService, useValue: mockTransloco }`                                                             |
+| `user-context.mock.ts`                     | `mockUserContext`    | `{ provide: UserContextService, useValue: mockUserContext }`                                                         |
 
 Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
 
@@ -348,14 +349,59 @@ El pre-commit hook (`scripts/check-retro-readme-sync.mjs`) bloquea commits que t
 ## Estructura de carpetas en lib/retro/
 
 En cada carpeta `lib/retro/retro-xxx/`, la raíz contiene únicamente:
+
 - `retro-xxx.component.ts/.html/.scss/.spec.ts`
 - `retro-xxx.types.ts` (si existe)
 - `README.md`
 
 Todo lo demás va en subcarpetas:
+
 - Componentes/directivas hijos → `components/retro-xxx-yyy/` (carpeta propia por pieza)
 - Directivas auxiliares internas → `directive/`
 - Interfaces → `interfaces/`
 - Constantes → `constants/`
 - Tokens de inyección → `tokens/`
 
+## Pipeline de calidad
+
+La librería retro (`lib/retro/`) se valida **siempre antes** que la app (`src/`). Si la lib falla, los checks de la app no se ejecutan.
+
+### Scripts disponibles
+
+| Script                        | Qué hace                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `npm run lint:retro`          | ESLint solo sobre `lib/` (config propia en `lib/retro/eslint.config.js`) |
+| `npm run lint:app`            | ESLint solo sobre `src/` y ficheros de la raíz                           |
+| `npm run lint`                | `lint:retro && lint:app`                                                 |
+| `npm run test:retro`          | Tests solo de `lib/` (38 specs)                                          |
+| `npm run test:app`            | Tests solo de `src/` (144 specs)                                         |
+| `npm test`                    | `test:retro && test:app`                                                 |
+| `npm run test:retro:coverage` | Cobertura de `lib/` — threshold 60% (baseline; meta: 90%)                |
+| `npm run test:app:coverage`   | Cobertura de `src/` — threshold 80%                                      |
+| `npm run test:coverage`       | `test:retro:coverage && test:app:coverage`                               |
+| `npm run check:unused:retro`  | Knip solo sobre `lib/` (`knip.retro.config.ts`)                          |
+| `npm run check:unused:app`    | Knip solo sobre `src/` (`knip.config.ts`)                                |
+| `npm run check:unused`        | `check:unused:retro && check:unused:app`                                 |
+
+### Regla de imports
+
+`lib/retro/` **no puede importar nada de `src/`** ni usar los aliases `@/*` (que apuntan a `src/app`). Solo puede importar de `@retro/*`, `@retro/testing/*` o paquetes npm directamente. Esta regla está enforzada por ESLint (`no-restricted-imports` en `lib/retro/eslint.config.js`).
+
+Los mocks de componentes de la lib viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de la app siguen en `src/testing/`.
+
+### Threshold de cobertura de la lib
+
+El threshold actual para `retro-coverage` es del **60%** (baseline establecido al separar el pipeline). La cobertura real de la lib es ~65%. La meta a largo plazo es el **90%**; se irá subiendo el threshold de forma escalonada conforme `/improve-coverage` aumente la cobertura real (ej. 60 → 70 → 80 → 90). Subir el threshold en `angular.json` (`configurations.retro-coverage.coverageThresholds`) es el único cambio necesario.
+
+### Arquitectura de la lib
+
+`lib/retro/` se mantiene como **carpeta con configs propias**, no como proyecto Angular formal (`ng-packagr`). Esta decisión es intencional: la lib es interna y se consume vía alias `@retro/*` desde la app. Formalizarla como proyecto Angular (`ng generate library`) solo tendría sentido si se publicara a npm o se consumiera desde otros repositorios.
+
+### CI
+
+El workflow `.github/workflows/ci.yml` tiene dos jobs secuenciales:
+
+- **`retro`**: lint + cobertura de la lib (no necesita secrets ni `environment.ts`)
+- **`app`** (`needs: retro`): build + lint + cobertura de la app (con secrets de Supabase/RAWG/Sentry)
+
+Si el job `retro` falla, el job `app` no se ejecuta.
