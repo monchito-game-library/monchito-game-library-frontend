@@ -169,6 +169,9 @@ export class RetroSearchComponent
   /** Texto del aria-label del botón limpiar. */
   readonly clearAriaLabel: InputSignal<string> = input<string>('Limpiar');
 
+  /** Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. */
+  readonly hideSubscript: InputSignal<boolean> = input<boolean>(false);
+
   /**
    * Función para convertir el valor seleccionado en el texto visible del input.
    * Ej.: `(id) => platformsMap.get(id)?.label ?? ''`

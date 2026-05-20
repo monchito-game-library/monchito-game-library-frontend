@@ -21,6 +21,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
 | `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay valor o texto. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
+| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error) del form-field interno. |
 | `displayWith` | `((value: any) => string) \| null` | `null` | Convierte el valor seleccionado en el texto del input. |
 | `minChars` | `number` | `0` | Mínimo de caracteres para abrir el panel. |
 
