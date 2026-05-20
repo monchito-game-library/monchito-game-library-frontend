@@ -170,42 +170,7 @@
   flex: 1;
 }
 
-// ── List ──────────────────────────────────────────────────────────────────────
-
-.sale-page__list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.sale-page__item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--bg-surface);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: background var(--transition-fast);
-  animation: cardIn 280ms ease both;
-  animation-delay: calc(min(var(--i, 0), 12) * 40ms);
-
-  &:hover {
-    background: var(--bg-surface-hi);
-  }
-}
+// ── List item internals ────────────────────────────────────────────────────────
 
 .sale-page__item-icon {
   display: flex;
