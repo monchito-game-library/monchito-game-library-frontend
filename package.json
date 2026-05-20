@@ -16,8 +16,8 @@
     "test:eslint-rules": "node eslint-rules/no-inline-types-in-layer/index.spec.js && node eslint-rules/clean-architecture-boundaries/index.spec.js",
     "check:unused": "knip",
     "clean:install": "rm -rf node_modules && rm package-lock.json && npm i",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . && eslint --config lib/retro/eslint.config.js lib/",
+    "lint:fix": "eslint . --fix && eslint --config lib/retro/eslint.config.js lib/ --fix",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
     "vercel-build": "node scripts/set-env.js && ng build --configuration production",
@@ -76,8 +76,16 @@
     "vitest": "4.1.5"
   },
   "lint-staged": {
-    "*.{ts,html,scss}": [
+    "lib/**/*.{ts,html}": [
+      "eslint --config lib/retro/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{ts,html,scss}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "eslint.config.js": [],
+    "*.{json,md}": [
       "prettier --write"
     ]
   }
