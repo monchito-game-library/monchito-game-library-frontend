@@ -89,9 +89,6 @@
   }
 }
 
-.audit-log-list {
-  max-width: 800px;
-}
 
 .audit-log-entry__icon-wrap {
   width: 36px;
@@ -160,7 +157,4 @@
     padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
   }
 
-  .audit-log-list {
-    max-width: 100%;
-  }
 }

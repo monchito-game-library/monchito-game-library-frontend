@@ -23,7 +23,7 @@
         <p class="audit-log-empty__text">{{ 'management.auditLog.empty' | transloco }}</p>
       </div>
     } @else {
-      <retro-list class="audit-log-list">
+      <retro-list>
         @for (entry of entries(); track entry.id) {
           <retro-list-item padding="sm">
             <div class="audit-log-entry__icon-wrap" retroListItemLeading>
