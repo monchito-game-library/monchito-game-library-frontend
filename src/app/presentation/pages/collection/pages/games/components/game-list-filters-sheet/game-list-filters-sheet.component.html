@@ -73,6 +73,7 @@
         <retro-option value="personal_rating">{{ 'gameList.sort.rating' | transloco }}</retro-option>
       </retro-select>
       <retro-icon-button
+        size="lg"
         [icon]="d.sortDirection() === 'asc' ? 'arrow_downward' : 'arrow_upward'"
         [ariaLabel]="'Sort direction: ' + d.sortDirection()"
         (clicked)="d.sortDirection.set(d.sortDirection() === 'asc' ? 'desc' : 'asc')" />
