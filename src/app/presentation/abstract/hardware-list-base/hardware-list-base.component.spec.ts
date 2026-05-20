@@ -12,7 +12,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { mockRouter } from '@/testing/router.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 interface TestItem {

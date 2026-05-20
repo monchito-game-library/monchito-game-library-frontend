@@ -14,7 +14,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { ConsoleModel } from '@/models/console/console.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 function makeConsole(overrides: Partial<ConsoleModel> = {}): ConsoleModel {

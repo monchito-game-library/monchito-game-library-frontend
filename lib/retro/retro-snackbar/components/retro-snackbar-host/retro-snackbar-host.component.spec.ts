@@ -4,7 +4,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 
 import { RetroSnackbarHostComponent } from './retro-snackbar-host.component';
 import { RetroSnackbarService } from '../../services/retro-snackbar.service';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 
 describe('RetroSnackbarHostComponent', () => {
   let fixture: ComponentFixture<RetroSnackbarHostComponent>;

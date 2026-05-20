@@ -10,7 +10,7 @@ import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snack
 import { TranslocoService } from '@jsverse/transloco';
 import { AvailableItemModel, SoldItemModel } from '@/models/market/market-item.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 
 function makeAvailable(overrides: Partial<AvailableItemModel> = {}): AvailableItemModel {

@@ -14,7 +14,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { HardwareFormBaseComponent } from './hardware-form-base.component';
 import { mockRouter } from '@/testing/router.mock';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 

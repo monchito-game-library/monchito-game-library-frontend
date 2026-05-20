@@ -324,13 +324,15 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 |---|---|---|
 | `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
 | `dialog.mock.ts` | `mockDialog` | `{ provide: RetroDialogService, useValue: mockDialog }` |
-| `retro-snackbar.mock.ts` | `mockRetroSnackbar` | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` |
+| `lib/retro/testing/retro-snackbar.mock.ts` | `mockRetroSnackbar` | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` — importar con `@retro/testing/retro-snackbar.mock` |
 | `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
 | `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
 | `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
 | `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
 
 Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
+
+> Los mocks de componentes de `lib/retro/` viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de servicios y helpers de la app siguen en `src/testing/`.
 
 ## Librería retro — sincronía de README
 

@@ -13,7 +13,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 function makeController(overrides: Partial<ControllerModel> = {}): ControllerModel {

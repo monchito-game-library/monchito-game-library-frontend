@@ -18,7 +18,7 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { mockRouter } from '@/testing/router.mock';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { mockDialog } from '@/testing/dialog.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 

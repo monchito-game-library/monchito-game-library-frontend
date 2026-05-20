@@ -12,7 +12,7 @@ import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.con
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderModel } from '@/models/order/order.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockRetroSnackbar } from '@/testing/retro-snackbar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockDialog } from '@/testing/dialog.mock';
 
