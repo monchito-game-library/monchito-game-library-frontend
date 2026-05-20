@@ -34,6 +34,8 @@
 }
 
 .game-list__filters-drawer {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   right: 0;
@@ -45,7 +47,6 @@
   z-index: calc(var(--z-overlay) + 1);
   transform: translateX(100%);
   transition: transform var(--transition-base);
-  overflow-y: auto;
 
   &--open {
     transform: translateX(0);

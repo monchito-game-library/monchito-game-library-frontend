@@ -421,11 +421,11 @@ input[type='number'] {
 }
 
 .retro-overlay-panel--bottom-sheet {
-  position: fixed !important;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  max-height: 90dvh;
+  margin-top: auto;
   border: 1px solid var(--border-strong);
   border-bottom: none;
   background: var(--bg-surface);
