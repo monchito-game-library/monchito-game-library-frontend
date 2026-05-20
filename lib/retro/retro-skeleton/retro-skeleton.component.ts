@@ -6,10 +6,11 @@ import { LibSkeletonShape } from './retro-skeleton.types';
  * Skeleton de carga reutilizable de la lib Terminal Collector.
  * Geometría: rectángulo plano sin border-radius (la prop `shape="square"` o `shape="line"`
  * son meros alias semánticos; ambos producen un rectángulo terminal).
- * Animación: shimmer horizontal entre `--bg-surface` (25%) → `--bg-surface-hi` (50%)
- *   → `--bg-surface` (75%), 1.4s lineal infinita.
+ * Animación: shimmer horizontal de 4 stops — `--bg-surface` (0%) → tinte CRT violeta
+ *   `rgba(124, 58, 237, 0.14)` (40%) → `--bg-surface-hi` (60%) → `--bg-surface` (100%),
+ *   1.4s lineal infinita.
  * En `prefers-reduced-motion: reduce` la animación se detiene en un fondo plano
- * `--bg-surface-hi`.
+ * `--bg-surface-hi` sin tinte violeta.
  *
  * NOTA: el componente legacy `app-skeleton` aceptaba `borderRadius` como input;
  * `retro-skeleton` lo elimina por construcción (regla 1 Terminal Collector). La

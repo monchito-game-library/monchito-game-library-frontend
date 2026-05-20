@@ -1,7 +1,13 @@
 .retro-skeleton {
   display: block;
   border-radius: 0;
-  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-surface-hi) 50%, var(--bg-surface) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 0%,
+    rgba(124, 58, 237, 0.14) 40%,
+    var(--bg-surface-hi) 60%,
+    var(--bg-surface) 100%
+  );
   background-size: 200% 100%;
   animation: retro-skeleton-shimmer 1.4s linear infinite;
 
