@@ -6,6 +6,8 @@ import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snack
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 import {
   AUDIT_LOG_USE_CASES,
@@ -19,7 +21,7 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RetroIconComponent, TranslocoPipe, DatePipe, RetroSkeletonComponent]
+  imports: [RetroIconComponent, TranslocoPipe, DatePipe, RetroSkeletonComponent, RetroListComponent, RetroListItemComponent]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);

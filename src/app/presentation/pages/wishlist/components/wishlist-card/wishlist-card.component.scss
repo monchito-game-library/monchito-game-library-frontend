@@ -1,12 +1,3 @@
-retro-card.wishlist-card {
-}
-
-.wishlist-card__row {
-  display: flex;
-  gap: 1rem;
-  align-items: stretch;
-}
-
 .wishlist-card__cover-wrapper {
   flex-shrink: 0;
   position: relative;
@@ -138,10 +129,3 @@ retro-card.wishlist-card {
   color: var(--accent-rose);
 }
 
-.wishlist-card__mobile-hint {
-  display: flex;
-  align-items: center;
-  align-self: center;
-  color: var(--text-lo);
-  flex-shrink: 0;
-}

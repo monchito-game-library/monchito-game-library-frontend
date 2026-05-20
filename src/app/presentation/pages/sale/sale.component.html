@@ -71,14 +71,10 @@
                 <retro-icon name="payments" />
                 <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
               </div>
-              <div class="sale-page__list">
+              <retro-list>
                 @for (item of filteredAvailable(); track item.id; let i = $index) {
-                  <div
-                    class="sale-page__item"
-                    [style]="{ '--i': i }"
-                    role="button"
-                    (click)="onItemClick(item.itemType, item.id)">
-                    <div class="sale-page__item-icon">
+                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                    <div class="sale-page__item-icon" retroListItemLeading>
                       <retro-icon [name]="typeIcon(item.itemType)" />
                     </div>
                     <div class="sale-page__item-info">
@@ -94,16 +90,16 @@
                         </span>
                       }
                     </div>
-                    <div class="sale-page__item-price">
+                    <div class="sale-page__item-price" retroListItemTrailing>
                       @if (item.salePrice !== null) {
                         {{ item.salePrice | currency: 'EUR' : 'symbol' : '1.2-2' }}
                       } @else {
                         <span class="sale-page__item-no-price">{{ 'salePage.available.noPrice' | transloco }}</span>
                       }
                     </div>
-                  </div>
+                  </retro-list-item>
                 }
-              </div>
+              </retro-list>
             }
           </div>
         </div>
@@ -172,14 +168,10 @@
                 <retro-icon name="payments" />
                 <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
               </div>
-              <div class="sale-page__list">
+              <retro-list>
                 @for (item of filteredSold(); track item.id; let i = $index) {
-                  <div
-                    class="sale-page__item"
-                    [style]="{ '--i': i }"
-                    role="button"
-                    (click)="onItemClick(item.itemType, item.id)">
-                    <div class="sale-page__item-icon">
+                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                    <div class="sale-page__item-icon" retroListItemLeading>
                       <retro-icon [name]="typeIcon(item.itemType)" />
                     </div>
                     <div class="sale-page__item-info">
@@ -195,7 +187,7 @@
                         </span>
                       }
                     </div>
-                    <div class="sale-page__item-right">
+                    <div class="sale-page__item-right" retroListItemTrailing>
                       <span class="sale-page__item-sold-price">
                         @if (item.soldPriceFinal !== null) {
                           {{ item.soldPriceFinal | currency: 'EUR' : 'symbol' : '1.2-2' }}
@@ -205,9 +197,9 @@
                       </span>
                       <span class="sale-page__item-date">{{ item.soldAt | date: 'dd/MM/yyyy' }}</span>
                     </div>
-                  </div>
+                  </retro-list-item>
                 }
-              </div>
+              </retro-list>
             }
           </div>
         </div>

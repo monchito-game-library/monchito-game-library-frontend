@@ -14,6 +14,8 @@ import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.compon
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
 import { RetroTabComponent } from '@retro/retro-tabs/components/retro-tab/retro-tab.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
@@ -38,6 +40,8 @@ import { Router } from '@angular/router';
     RetroIconComponent,
     RetroTabsComponent,
     RetroTabComponent,
+    RetroListComponent,
+    RetroListItemComponent,
     TranslocoPipe,
     RetroSpinnerComponent
   ]

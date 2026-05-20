@@ -30,48 +30,50 @@
       </div>
     }
 
-    @for (game of searchResults(); track game.rawg_id) {
-      <div class="search-result-card" (click)="onSelectGame(game)">
-        <div class="search-result-card__cover">
-          @if (game.image_url) {
-            <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" fill />
-          } @else {
-            <div class="search-result-card__cover-placeholder">
-              <retro-icon name="videogame_asset" />
+    <retro-list>
+      @for (game of searchResults(); track game.rawg_id; let i = $index) {
+        <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onSelectGame(game)">
+          <div class="search-result-card__cover" retroListItemLeading>
+            @if (game.image_url) {
+              <img [ngSrc]="game.image_url!" [alt]="game.title" class="search-result-card__img" fill />
+            } @else {
+              <div class="search-result-card__cover-placeholder">
+                <retro-icon name="videogame_asset" />
+              </div>
+            }
+          </div>
+          <div class="search-result-card__info">
+            <h3 class="search-result-card__title">{{ game.title }}</h3>
+            <div class="search-result-card__meta">
+              @if (game.released_date) {
+                <span class="search-result-card__year">{{ game.released_date | date: 'yyyy' }}</span>
+              }
+              @if (game.metacritic_score) {
+                <span class="search-result-card__metacritic">MC {{ game.metacritic_score }}</span>
+              }
+              @if (game.rating > 0) {
+                <span class="search-result-card__rating">
+                  <retro-icon name="star" />
+                  {{ game.rating | number: '1.1-1' }}
+                </span>
+              }
             </div>
-          }
-        </div>
-        <div class="search-result-card__info">
-          <h3 class="search-result-card__title">{{ game.title }}</h3>
-          <div class="search-result-card__meta">
-            @if (game.released_date) {
-              <span class="search-result-card__year">{{ game.released_date | date: 'yyyy' }}</span>
-            }
-            @if (game.metacritic_score) {
-              <span class="search-result-card__metacritic">MC {{ game.metacritic_score }}</span>
-            }
-            @if (game.rating > 0) {
-              <span class="search-result-card__rating">
-                <retro-icon name="star" />
-                {{ game.rating | number: '1.1-1' }}
-              </span>
+            <div class="search-result-card__platforms">
+              @for (platform of game.platforms.slice(0, 4); track platform) {
+                <span class="search-result-card__badge">{{ platform }}</span>
+              }
+              @if (game.platforms.length > 4) {
+                <span class="search-result-card__badge search-result-card__badge--more">
+                  +{{ game.platforms.length - 4 }}
+                </span>
+              }
+            </div>
+            @if (game.genres.length > 0) {
+              <p class="search-result-card__genres">{{ game.genres.slice(0, 3).join(' · ') }}</p>
             }
           </div>
-          <div class="search-result-card__platforms">
-            @for (platform of game.platforms.slice(0, 4); track platform) {
-              <span class="search-result-card__badge">{{ platform }}</span>
-            }
-            @if (game.platforms.length > 4) {
-              <span class="search-result-card__badge search-result-card__badge--more">
-                +{{ game.platforms.length - 4 }}
-              </span>
-            }
-          </div>
-          @if (game.genres.length > 0) {
-            <p class="search-result-card__genres">{{ game.genres.slice(0, 3).join(' · ') }}</p>
-          }
-        </div>
-      </div>
-    }
+        </retro-list-item>
+      }
+    </retro-list>
   </div>
 </div>
