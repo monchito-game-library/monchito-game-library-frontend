@@ -18,7 +18,7 @@ import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
-import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 @Component({
   selector: 'app-wishlist-card',
@@ -35,7 +35,7 @@ import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
     TranslocoPipe,
     RetroChipComponent,
     RetroDataRowComponent,
-    RetroCardComponent
+    RetroListItemComponent
   ]
 })
 export class WishlistCardComponent {

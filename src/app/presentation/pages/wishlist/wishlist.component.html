@@ -50,7 +50,7 @@
         </retro-button>
       </retro-empty-state>
     } @else {
-      <div class="wishlist-page__list">
+      <retro-list class="wishlist-page__list">
         @for (item of items(); track item.id; let first = $first; let i = $index) {
           <app-wishlist-card
             [item]="item"
@@ -62,7 +62,7 @@
             (deleteClicked)="onDeleteItem($event)"
             (ownClicked)="onOwnItem($event)" />
         }
-      </div>
+      </retro-list>
     }
 
     <!-- FAB: solo visible en mobile cuando hay items -->

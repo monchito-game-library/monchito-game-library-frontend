@@ -38,6 +38,7 @@ import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/c
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -61,7 +62,8 @@ import { RetroButtonComponent } from '@retro/retro-button/retro-button.component
     RetroEmptyStateComponent,
     RetroButtonComponent,
     RetroInputComponent,
-    RetroTextareaComponent
+    RetroTextareaComponent,
+    RetroListComponent
   ]
 })
 export class WishlistComponent implements OnInit {
