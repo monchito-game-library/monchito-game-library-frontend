@@ -23,10 +23,10 @@
         <p class="audit-log-empty__text">{{ 'management.auditLog.empty' | transloco }}</p>
       </div>
     } @else {
-      <div class="audit-log-list">
+      <retro-list class="audit-log-list">
         @for (entry of entries(); track entry.id) {
-          <div class="audit-log-entry">
-            <div class="audit-log-entry__icon-wrap">
+          <retro-list-item padding="sm">
+            <div class="audit-log-entry__icon-wrap" retroListItemLeading>
               <retro-icon class="audit-log-entry__icon" [name]="getActionIcon(entry.action)" />
             </div>
 
@@ -40,12 +40,12 @@
               }
             </div>
 
-            <div class="audit-log-entry__date">
+            <div class="audit-log-entry__date" retroListItemTrailing>
               {{ entry.createdAt | date: 'dd/MM/yy HH:mm' }}
             </div>
-          </div>
+          </retro-list-item>
         }
-      </div>
+      </retro-list>
     }
   </div>
 </div>
