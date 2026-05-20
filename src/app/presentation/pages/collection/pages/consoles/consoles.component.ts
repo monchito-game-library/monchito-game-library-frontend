@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareListBaseComponent } from '@/abstract/hardware-list-base/hardware-list-base.component';
@@ -27,6 +27,16 @@ export class ConsolesComponent extends HardwareListBaseComponent<ConsoleModel> {
 
   /** List of consoles owned by the user. */
   readonly items: WritableSignal<ConsoleModel[]> = signal<ConsoleModel[]>([]);
+
+  /**
+   * Flags dinámicos para el retro-command-bar según el estado actual de la lista.
+   * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
+   */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const flags: string[] = [];
+    if (this.searchQuery()) flags.push(`search="${this.searchQuery()}"`);
+    return flags;
+  });
 
   /**
    * Returns the console category ('home', 'portable', 'hybrid') for a given model UUID.

@@ -12,6 +12,8 @@
   [resolveStoreName]="resolveStoreName.bind(this)"
   [cardHeaderTpl]="cardHeaderTpl"
   [cardChipsTpl]="cardChipsTpl"
+  commandPath="monchito ~/library/consoles"
+  [commandFlags]="commandFlags()"
   (searchChange)="searchQuery.set($event)"
   (addClick)="onAdd()"
   (detailClick)="onDetail($any($event))">

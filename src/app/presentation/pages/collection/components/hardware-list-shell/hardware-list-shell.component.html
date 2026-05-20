@@ -28,6 +28,11 @@
     </div>
   </app-list-page-header>
 
+  <!-- Command bar — only visible on desktop >= 1024px (hidden via CSS in the component) -->
+  @if (commandPath()) {
+    <retro-command-bar [path]="commandPath()" [flags]="commandFlags()" />
+  }
+
   <!-- Scrollable content area -->
   <div class="hw-list__content">
     @if (loading()) {

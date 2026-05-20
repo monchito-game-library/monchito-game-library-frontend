@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareListBaseComponent } from '@/abstract/hardware-list-base/hardware-list-base.component';
@@ -28,6 +28,16 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
 
   /** List of controllers owned by the user. */
   readonly items: WritableSignal<ControllerModel[]> = signal<ControllerModel[]>([]);
+
+  /**
+   * Flags dinámicos para el retro-command-bar según el estado actual de la lista.
+   * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
+   */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const flags: string[] = [];
+    if (this.searchQuery()) flags.push(`search="${this.searchQuery()}"`);
+    return flags;
+  });
 
   async ngOnInit(): Promise<void> {
     this._initScrollRestoration();

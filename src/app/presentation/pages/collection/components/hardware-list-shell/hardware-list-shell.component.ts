@@ -17,6 +17,7 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware
@@ -43,7 +44,8 @@ import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
     ListPageHeaderComponent,
     RetroEmptyStateComponent,
     RetroDataRowComponent,
-    RetroCardComponent
+    RetroCardComponent,
+    RetroCommandBarComponent
   ]
 })
 export class HardwareListShellComponent {
@@ -91,6 +93,12 @@ export class HardwareListShellComponent {
 
   /** Template for the chips row below the card header. */
   readonly cardChipsTpl: InputSignal<TemplateRef<unknown>> = input.required<TemplateRef<unknown>>();
+
+  /** Path shown in the command bar (e.g. 'monchito ~/library/consoles'). Empty string hides the bar. */
+  readonly commandPath: InputSignal<string> = input<string>('');
+
+  /** Dynamic flags shown in the command bar. */
+  readonly commandFlags: InputSignal<readonly string[]> = input<readonly string[]>([]);
 
   /** Emits the new search string when the search field changes. */
   readonly searchChange: OutputEmitterRef<string> = output<string>();
