@@ -39,6 +39,12 @@ Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop
 
 - `RetroIconComponent` (spinner + slots).
 
+## CSS custom properties
+
+| Token | Default | Description |
+|---|---|---|
+| `--retro-btn-bottom-offset` | `0` | Sets the `margin-bottom` of the button to align it vertically with the control box of a sibling `retro-form-field` in a flex row. Typical value when a subscript is visible: `1.25rem`. Set it on the parent container (e.g. `.retro-field-row`), not on the button itself. |
+
 ## Ejemplo
 
 ```html

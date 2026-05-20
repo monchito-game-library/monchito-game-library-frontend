@@ -19,6 +19,7 @@
   gap: var(--_gap);
   min-height: var(--_h);
   padding: var(--_py) var(--_px);
+  margin-bottom: var(--retro-btn-bottom-offset, 0);
   border: 1px solid var(--color);
   background: var(--bg);
   color: var(--color);
