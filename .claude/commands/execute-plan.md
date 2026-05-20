@@ -20,7 +20,7 @@ Argumento opcional: $ARGUMENTS — ruta relativa o absoluta al fichero del plan.
 2. Si el fichero **no existe**, detente y pídele al usuario que cree el plan o que pase la ruta correcta como argumento.
 3. Comprueba con `git ls-files --error-unmatch <ruta-del-plan>` si el fichero está trackeado:
    - Si lo está, **avisa al usuario** y pregunta si quiere que lo añadas a `.gitignore` antes de continuar. No procedas hasta tener respuesta.
-   - Si no lo está, sigue.
+   - Si **no** lo está, continúa en silencio — es el caso normal y esperado; no lo menciones al usuario.
 4. Lee el contenido completo del plan con la herramienta `Read` (no resumas todavía, eso lo hace `senior`).
 
 ### Paso 1 — `senior` estructura el plan
