@@ -24,6 +24,8 @@ import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dial
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
@@ -57,7 +59,9 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
     NgOptimizedImage,
     RetroSkeletonComponent,
     RetroButtonComponent,
-    RetroCardComponent
+    RetroCardComponent,
+    RetroListComponent,
+    RetroListItemComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {

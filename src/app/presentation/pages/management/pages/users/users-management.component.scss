@@ -239,30 +239,6 @@ retro-card.users-stats__card--members .retro-card {
   opacity: 0.7;
 }
 
-.users-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  transition: border-color var(--transition-fast);
-
-  &:hover {
-    border-color: var(--border-strong);
-  }
-  &--admin {
-    border-left: 3px solid var(--primary);
-  }
-}
-
 .user-card__avatar {
   width: 40px;
   height: 40px;
@@ -284,14 +260,6 @@ retro-card.users-stats__card--members .retro-card {
   height: 40px;
   border-radius: var(--radius-full);
   object-fit: cover;
-}
-
-.user-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  flex: 1;
-  min-width: 0;
 }
 
 .user-card__email {
@@ -432,24 +400,4 @@ retro-card.users-stats__card--members .retro-card {
     scroll-snap-align: start;
   }
 
-  .user-card {
-    flex-wrap: wrap;
-    row-gap: 0.75rem;
-  }
-
-  .user-card__info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .user-card__action {
-    flex-basis: 100%;
-    min-width: 0;
-    justify-content: stretch;
-  }
-
-  .user-card__action-btn {
-    width: 100%;
-    justify-content: center;
-  }
 }

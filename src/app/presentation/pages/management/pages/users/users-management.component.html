@@ -116,10 +116,10 @@
             <span class="users-section__count">{{ visibleAdmins().length }}</span>
           </header>
 
-          <div class="users-list">
+          <retro-list>
             @for (user of visibleAdmins(); track user.userId) {
-              <article class="user-card" [class.user-card--admin]="true">
-                <div class="user-card__avatar">
+              <retro-list-item padding="md" [variant]="'accent'">
+                <div class="user-card__avatar" retroListItemLeading>
                   @if (user.avatarUrl) {
                     <img
                       [ngSrc]="user.avatarUrl"
@@ -139,7 +139,7 @@
                   </span>
                 </div>
 
-                <div class="user-card__action">
+                <div class="user-card__action" retroListItemTrailing>
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <retro-spinner size="sm" />
                   } @else {
@@ -163,9 +163,9 @@
                     }
                   }
                 </div>
-              </article>
+              </retro-list-item>
             }
-          </div>
+          </retro-list>
         </section>
       }
 
@@ -177,10 +177,10 @@
             <span class="users-section__count">{{ visibleMembers().length }}</span>
           </header>
 
-          <div class="users-list">
+          <retro-list>
             @for (user of visibleMembers(); track user.userId) {
-              <article class="user-card">
-                <div class="user-card__avatar">
+              <retro-list-item padding="md" [variant]="'default'">
+                <div class="user-card__avatar" retroListItemLeading>
                   @if (user.avatarUrl) {
                     <img
                       [ngSrc]="user.avatarUrl"
@@ -200,7 +200,7 @@
                   </span>
                 </div>
 
-                <div class="user-card__action">
+                <div class="user-card__action" retroListItemTrailing>
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
                     <retro-spinner size="sm" />
                   } @else {
@@ -224,9 +224,9 @@
                     }
                   }
                 </div>
-              </article>
+              </retro-list-item>
             }
-          </div>
+          </retro-list>
         </section>
       }
     }
