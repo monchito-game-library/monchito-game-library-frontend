@@ -11,7 +11,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 
 | Nombre | Tipo | Default | Descripción |
 |---|---|---|---|
-| `label` | `string` | `''` | Texto del label. |
+| `label` | `string` | `''` | Texto del label. Si está vacío, el label no se renderiza (sin gap residual). |
 | `placeholder` | `string` | `''` | Placeholder del input nativo. |
 | `hint` | `string \| null` | `null` | Mensaje de ayuda bajo el campo. |
 | `error` | `string \| null` | `null` | Mensaje de error bajo el campo. |

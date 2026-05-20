@@ -6,7 +6,9 @@
   [hideSubscript]="hideSubscript()"
   [controlRef]="this"
   (cleared)="onClear()">
-  <retro-label>{{ label() }}</retro-label>
+  @if (label()) {
+    <retro-label>{{ label() }}</retro-label>
+  }
 
   @if (prefixText()) {
     <span class="retro-input__prefix-text" retroPrefix>{{ prefixText() }}</span>
