@@ -100,6 +100,94 @@ describe('WishlistComponent', () => {
     it('pendingCatalogEntry es null', () => expect(component.pendingCatalogEntry()).toBeNull());
     it('totalEstimatedSpend es 0', () => expect(component.totalEstimatedSpend()).toBe(0));
     it('itemsWithPrice es 0', () => expect(component.itemsWithPrice()).toBe(0));
+    it('searchTerm() es ""', () => {
+      expect(component.searchTerm()).toBe('');
+    });
+
+    it('filteredItems() es [] cuando items está vacío', () => {
+      expect(component.filteredItems()).toEqual([]);
+    });
+  });
+
+  describe('filteredItems', () => {
+    beforeEach(() => {
+      component.items.set([
+        makeItem({ title: 'The Legend of Zelda' }),
+        makeItem({ title: 'Super Mario Bros' }),
+        makeItem({ title: 'Metroid Dread' })
+      ]);
+    });
+
+    it('devuelve todos los items cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredItems()).toHaveLength(3);
+    });
+
+    it('filtra por título de forma case-insensitive', () => {
+      component.searchTerm.set('zelda');
+      expect(component.filteredItems()).toHaveLength(1);
+      expect(component.filteredItems()[0].title).toBe('The Legend of Zelda');
+    });
+
+    it('devuelve [] si ningún item coincide con el término', () => {
+      component.searchTerm.set('pokemon');
+      expect(component.filteredItems()).toEqual([]);
+    });
+  });
+
+  describe('onSearchInput', () => {
+    beforeEach(async () => {
+      vi.useFakeTimers();
+      await component.ngOnInit();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('no actualiza searchTerm antes de 300 ms', () => {
+      component.onSearchInput('zelda');
+      vi.advanceTimersByTime(299);
+      expect(component.searchTerm()).toBe('');
+    });
+
+    it('actualiza searchTerm tras 300 ms', () => {
+      component.onSearchInput('zelda');
+      vi.advanceTimersByTime(300);
+      expect(component.searchTerm()).toBe('zelda');
+    });
+
+    it('aplica trim al valor antes de setear searchTerm', () => {
+      component.onSearchInput('  mario  ');
+      vi.advanceTimersByTime(300);
+      expect(component.searchTerm()).toBe('mario');
+    });
+
+    it('toma el último valor si se llama varias veces antes de 300 ms', () => {
+      component.onSearchInput('z');
+      vi.advanceTimersByTime(100);
+      component.onSearchInput('ze');
+      vi.advanceTimersByTime(100);
+      component.onSearchInput('zelda');
+      vi.advanceTimersByTime(300);
+      expect(component.searchTerm()).toBe('zelda');
+    });
+  });
+
+  describe('onClearSearch', () => {
+    it('resetea searchTerm a "" y filteredItems vuelve a la lista completa', async () => {
+      vi.useFakeTimers();
+      await component.ngOnInit();
+      component.items.set([makeItem({ title: 'Zelda' }), makeItem({ title: 'Mario' })]);
+      component.onSearchInput('zelda');
+      vi.advanceTimersByTime(300);
+      expect(component.filteredItems()).toHaveLength(1);
+
+      component.onClearSearch();
+      expect(component.searchTerm()).toBe('');
+      expect(component.filteredItems()).toHaveLength(2);
+      vi.useRealTimers();
+    });
   });
 
   describe('totalEstimatedSpend', () => {
