@@ -1,4 +1,4 @@
-import { ElementRef, TemplateRef } from '@angular/core';
+import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { Component } from '@angular/core';
@@ -143,6 +143,12 @@ describe('RetroOverlayService', () => {
   it('keydownEvents$ emite eventos de teclado del overlay', async () => {
     const ref = service.open(DummyOverlayComponent);
     expect(ref.keydownEvents$).toBeTruthy();
+    ref.close();
+  });
+
+  it('open() sin config usa defaults sin lanzar error', () => {
+    const ref = service.open(DummyOverlayComponent, undefined);
+    expect(ref).toBeInstanceOf(RetroOverlayRef);
     ref.close();
   });
 

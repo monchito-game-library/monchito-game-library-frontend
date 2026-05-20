@@ -1,6 +1,7 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { describe, beforeEach, expect, it } from 'vitest';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { RetroTextareaComponent } from './retro-textarea.component';
 
@@ -160,5 +161,70 @@ describe('RetroTextareaComponent', () => {
     const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
     textarea.dispatchEvent(new FocusEvent('focus'));
     expect(focusEmitted).toBe(true);
+  });
+
+  it('registerOnTouched registra el callback y lo llama en onBlur', () => {
+    const fn = vi.fn();
+    component.registerOnTouched(fn);
+    const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+    textarea.dispatchEvent(new FocusEvent('blur'));
+    expect(fn).toHaveBeenCalled();
+  });
+});
+
+@Component({
+  selector: 'app-textarea-form-host',
+  standalone: true,
+  imports: [RetroTextareaComponent, ReactiveFormsModule],
+  template: `<retro-textarea label="Campo" [formControl]="control" />`,
+  schemas: [NO_ERRORS_SCHEMA]
+})
+class TextareaFormHostComponent {
+  control = new FormControl<string | null>('', [Validators.required]);
+}
+
+describe('RetroTextareaComponent (con FormControl)', () => {
+  let fixture: ComponentFixture<TextareaFormHostComponent>;
+  let host: TextareaFormHostComponent;
+  let textarea: RetroTextareaComponent;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [TextareaFormHostComponent],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TextareaFormHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+    textarea = fixture.debugElement.query(
+      (el) => el.componentInstance instanceof RetroTextareaComponent
+    )?.componentInstance;
+  });
+
+  it('ngControl se establece en ngOnInit', () => {
+    expect(textarea.ngControl).not.toBeNull();
+  });
+
+  it('errorState es true cuando el control es inválido y touched', () => {
+    host.control.markAsTouched();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(textarea.errorState).toBe(true);
+  });
+
+  it('errorState es true cuando el control es inválido y dirty', () => {
+    host.control.markAsDirty();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(textarea.errorState).toBe(true);
+  });
+
+  it('errorState es false cuando el control es válido', () => {
+    host.control.clearValidators();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(textarea.errorState).toBe(false);
   });
 });

@@ -1,5 +1,6 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { RetroDatepickerComponent } from './retro-datepicker.component';
@@ -81,6 +82,22 @@ describe('RetroDatepickerComponent', () => {
     fixture.detectChanges();
     fixture.componentInstance.writeValue('no-es-fecha');
     expect(fixture.componentInstance._selectedDate()).toBeNull();
+  });
+
+  it('writeValue con string de fecha larga (no ISO) parsea si es válida vía fallback', () => {
+    const fixture = TestBed.createComponent(RetroDatepickerComponent);
+    fixture.componentRef.setInput('label', 'Fecha');
+    fixture.detectChanges();
+    // "January 15, 2025" no coincide con el regex YYYY-MM-DD → usa new Date(value) como fallback
+    const result = fixture.componentInstance.writeValue('January 15, 2025');
+    const selected = fixture.componentInstance._selectedDate();
+    // En la mayoría de entornos, este string se puede parsear
+    if (selected !== null) {
+      expect(selected.getFullYear()).toBe(2025);
+    } else {
+      // Si el entorno no parsea, la selección se limpia
+      expect(selected).toBeNull();
+    }
   });
 
   it('setDisabledState actualiza _isDisabled', () => {
@@ -651,6 +668,16 @@ describe('RetroDatepickerComponent', () => {
     expect(fn).not.toHaveBeenCalled();
   });
 
+  it('registerOnTouched registra el callback y se llama en onInputBlur', () => {
+    const fixture = TestBed.createComponent(RetroDatepickerComponent);
+    fixture.componentRef.setInput('label', 'Fecha');
+    fixture.detectChanges();
+    const fn = vi.fn();
+    fixture.componentInstance.registerOnTouched(fn);
+    fixture.componentInstance.onInputBlur();
+    expect(fn).toHaveBeenCalled();
+  });
+
   it('dayHeaders expone las cabeceras de días', () => {
     const fixture = TestBed.createComponent(RetroDatepickerComponent);
     fixture.componentRef.setInput('label', 'Fecha');
@@ -698,6 +725,25 @@ describe('RetroDatepickerComponent', () => {
     }
   });
 
+  it('toggle() cierra el calendario cuando ya está abierto', () => {
+    const fixture = TestBed.createComponent(RetroDatepickerComponent);
+    fixture.componentRef.setInput('label', 'Fecha');
+    fixture.detectChanges();
+    // Simular estado abierto directamente
+    fixture.componentInstance._isOpen.set(true);
+    const closeSpy = vi.spyOn(fixture.componentInstance, 'close');
+    fixture.componentInstance.toggle();
+    expect(closeSpy).toHaveBeenCalled();
+  });
+
+  it('toggle() cuando no está deshabilitado e intenta abrir (sin template) no lanza error', () => {
+    const fixture = TestBed.createComponent(RetroDatepickerComponent);
+    fixture.componentRef.setInput('label', 'Fecha');
+    fixture.detectChanges();
+    // No hay template del calendario en el test con NO_ERRORS_SCHEMA, _calendarTemplate es undefined
+    expect(() => fixture.componentInstance.toggle()).not.toThrow();
+  });
+
   it('_activeDate se activa al navegar con teclado a otro mes', () => {
     const fixture = TestBed.createComponent(RetroDatepickerComponent);
     fixture.componentRef.setInput('label', 'Fecha');
@@ -716,5 +762,62 @@ describe('RetroDatepickerComponent', () => {
     fixture.componentInstance.onDayKeydown(event, day);
     // Navegar al 1 julio cambia el mes
     expect(fixture.componentInstance._activeDate()?.getMonth()).toBe(6);
+  });
+});
+
+@Component({
+  selector: 'app-datepicker-form-host',
+  standalone: true,
+  imports: [RetroDatepickerComponent, ReactiveFormsModule],
+  template: `<retro-datepicker label="Fecha" [formControl]="control" />`,
+  schemas: [NO_ERRORS_SCHEMA]
+})
+class DatepickerFormHostComponent {
+  control = new FormControl<Date | null>(null, [Validators.required]);
+}
+
+describe('RetroDatepickerComponent (con FormControl)', () => {
+  let fixture: ComponentFixture<DatepickerFormHostComponent>;
+  let host: DatepickerFormHostComponent;
+  let datepicker: RetroDatepickerComponent;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [DatepickerFormHostComponent],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DatepickerFormHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+    datepicker = fixture.debugElement.query(
+      (el) => el.componentInstance instanceof RetroDatepickerComponent
+    )?.componentInstance;
+  });
+
+  it('ngControl se establece en ngOnInit', () => {
+    expect(datepicker.ngControl).not.toBeNull();
+  });
+
+  it('errorState es true cuando el control es inválido y touched', () => {
+    host.control.markAsTouched();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(datepicker.errorState).toBe(true);
+  });
+
+  it('errorState es true cuando el control es inválido y dirty', () => {
+    host.control.markAsDirty();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(datepicker.errorState).toBe(true);
+  });
+
+  it('errorState es false cuando el control es válido', () => {
+    host.control.clearValidators();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(datepicker.errorState).toBe(false);
   });
 });

@@ -1,5 +1,5 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
@@ -160,5 +160,78 @@ describe('RETRO_DIALOG_DATA', () => {
   it('es el mismo token que RETRO_OVERLAY_DATA', () => {
     const { RETRO_OVERLAY_DATA } = require('../../retro-overlay/services/retro-overlay.service');
     expect(RETRO_DIALOG_DATA).toBe(RETRO_OVERLAY_DATA);
+  });
+});
+
+@Component({
+  standalone: true,
+  imports: [RetroDialogActionsDirective],
+  template: `<div retroDialogActions [align]="align">acciones</div>`
+})
+class ActionsHostComponent {
+  align: 'start' | 'center' | 'end' = 'end';
+}
+
+describe('RetroDialogActionsDirective — host bindings', () => {
+  let fixture: ComponentFixture<ActionsHostComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [ActionsHostComponent],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+    fixture = TestBed.createComponent(ActionsHostComponent);
+    fixture.detectChanges();
+  });
+
+  it('aplica --end class cuando align es "end"', () => {
+    fixture.componentInstance.align = 'end';
+    fixture.changeDetectorRef.detectChanges();
+    fixture.changeDetectorRef.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('div');
+    expect(el.classList.contains('retro-dialog__actions--end')).toBe(true);
+  });
+
+  it('aplica --center class cuando align es "center"', () => {
+    fixture.componentInstance.align = 'center';
+    fixture.changeDetectorRef.detectChanges();
+    fixture.changeDetectorRef.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('div');
+    expect(el.classList.contains('retro-dialog__actions--center')).toBe(true);
+    expect(el.classList.contains('retro-dialog__actions--end')).toBe(false);
+  });
+
+  it('aplica --start class cuando align es "start"', () => {
+    fixture.componentInstance.align = 'start';
+    fixture.changeDetectorRef.detectChanges();
+    fixture.changeDetectorRef.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('div');
+    expect(el.classList.contains('retro-dialog__actions--start')).toBe(true);
+    expect(el.classList.contains('retro-dialog__actions--end')).toBe(false);
+  });
+});
+
+describe('RetroDialogCloseDirective', () => {
+  it('_onClick() llama a dialogRef.close con el resultado configurado', () => {
+    const mockDialogRef = { close: vi.fn() } as unknown as RetroDialogRef<unknown>;
+
+    @Component({
+      standalone: true,
+      imports: [RetroDialogCloseDirective],
+      template: `<button [retroDialogClose]="'ok'">Cerrar</button>`
+    })
+    class CloseHostComponent {}
+
+    TestBed.configureTestingModule({
+      imports: [CloseHostComponent],
+      providers: [{ provide: RetroDialogRef, useValue: mockDialogRef }],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    const f = TestBed.createComponent(CloseHostComponent);
+    f.detectChanges();
+    f.nativeElement.querySelector('button').click();
+    expect(mockDialogRef.close).toHaveBeenCalledWith('ok');
   });
 });

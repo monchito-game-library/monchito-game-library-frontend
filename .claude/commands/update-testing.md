@@ -28,7 +28,7 @@ Si se invoca sin argumento en `$ARGUMENTS`, ejecuta ambos ámbitos en secuencia 
 4. Si se han añadido tests que cubren funcionalidad no descrita en la sección "Qué se cubre", añade una línea breve al texto.
 
 5. Si los números de cobertura han cambiado, actualiza la sección "Cobertura actual":
-   - **`retro`**: ejecuta `npm run test:retro:coverage`, lee el output y actualiza `docs/TESTING-RETRO.md`. Threshold: 60%, meta: 90%.
+   - **`retro`**: ejecuta `npm run test:retro:coverage`, lee el output y actualiza `docs/TESTING-RETRO.md`. Threshold: 90%.
    - **`app`**: ejecuta `npm run test:app:coverage`, lee el output y actualiza `docs/TESTING.md`. Threshold: 80%.
    - ⚠️ Nunca uses `npm run test:coverage` aquí: encadena ambos y la segunda pasada pisa el lcov de la primera.
 

@@ -457,4 +457,125 @@ describe('RetroSelectComponent (integración con opciones)', () => {
     (select as any)._overlayRef = null;
     expect(() => select.ngOnDestroy()).not.toThrow();
   });
+
+  it('errorState es true cuando el control es inválido y dirty', () => {
+    host.control.setValidators(() => ({ required: true }));
+    host.control.markAsDirty();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(select.errorState).toBe(true);
+  });
+
+  it('toggle() cierra el panel cuando ya está abierto', () => {
+    select.open.set(true);
+    const fn = vi.fn();
+    select.focused$.subscribe((v) => fn(v));
+    select.toggle();
+    expect(select.open()).toBe(false);
+  });
+
+  it('_setActiveIndex con índice fuera de rango limpia _activeOptionId', async () => {
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+    select.open.set(true);
+    // Forzar un índice inválido mediante _moveActive en el límite
+    (select as any)._activeIndex = -2;
+    // No lanza error
+    expect(() => select.onTriggerKeydown(new KeyboardEvent('keydown', { key: 'End' }))).not.toThrow();
+  });
+
+  it('onTriggerKeydown con Tab cuando la opción activa está disabled no la selecciona pero cierra', async () => {
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+    select.open.set(true);
+
+    const mockDisabledOption = {
+      value: () => 'disabled',
+      isDisabled: () => true,
+      getLabel: () => 'Deshabilitada',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-disabled'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [mockDisabledOption],
+      forEach: vi.fn(),
+      length: 1
+    };
+    (select as any)._options = mockQueryList;
+    (select as any)._activeIndex = 0;
+
+    const event = new KeyboardEvent('keydown', { key: 'Tab' });
+    select.onTriggerKeydown(event);
+    expect(select.open()).toBe(false);
+  });
+
+  it('onTriggerKeydown con Tab cuando no hay opción activa sólo cierra', async () => {
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+    select.open.set(true);
+
+    const mockQueryList = {
+      toArray: () => [],
+      forEach: vi.fn(),
+      length: 0
+    };
+    (select as any)._options = mockQueryList;
+    (select as any)._activeIndex = 5; // fuera de rango
+
+    const event = new KeyboardEvent('keydown', { key: 'Tab' });
+    select.onTriggerKeydown(event);
+    expect(select.open()).toBe(false);
+  });
+
+  it('onTriggerKeydown con Enter cuando la opción activa está disabled no la selecciona', async () => {
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+    select.open.set(true);
+
+    const mockDisabledOption = {
+      value: () => 'disabled',
+      isDisabled: () => true,
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-disabled'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [mockDisabledOption],
+      forEach: vi.fn(),
+      length: 1
+    };
+    (select as any)._options = mockQueryList;
+    (select as any)._activeIndex = 0;
+
+    const spy = vi.fn();
+    select.selectionChange.subscribe(spy);
+    const event = new KeyboardEvent('keydown', { key: 'Enter' });
+    select.onTriggerKeydown(event);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('_moveActive salta opciones disabled hasta salir del rango (no crash)', async () => {
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+    select.open.set(true);
+
+    // Todas las opciones disabled → _moveActive no puede avanzar
+    const disabledOpt = {
+      isDisabled: () => true,
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [disabledOpt],
+      forEach: vi.fn(),
+      length: 1
+    };
+    (select as any)._options = mockQueryList;
+    (select as any)._activeIndex = 0;
+
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+    expect(() => select.onTriggerKeydown(event)).not.toThrow();
+  });
 });

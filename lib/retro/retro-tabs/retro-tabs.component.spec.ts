@@ -36,6 +36,51 @@ class TabsIntegrationHostComponent {
   }
 }
 
+describe('RetroTabsComponent — casos límite', () => {
+  let fixture: ComponentFixture<RetroTabsComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [
+        RetroTabsComponent,
+        RouterLink,
+        RouterLinkActive,
+        TranslocoTestingModule.forRoot({
+          langs: { en: {} },
+          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
+        })
+      ],
+      providers: [provideRouter([])]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RetroTabsComponent);
+    fixture.detectChanges();
+  });
+
+  it('select() no hace nada en modo router (isRouterMode=true)', () => {
+    const ITEMS: RetroTabItem[] = [{ path: '/a', label: 'A' }];
+    fixture.componentRef.setInput('items', ITEMS);
+    fixture.detectChanges();
+
+    const spy = vi.fn();
+    fixture.componentInstance.selectedIndexChange.subscribe(spy);
+    fixture.componentInstance.select(0);
+
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('onKeydown con 0 tabs no lanza error y no emite selectedIndexChange', () => {
+    // Sin tabs proyectados, tabsArray().length === 0
+    const spy = vi.fn();
+    fixture.componentInstance.selectedIndexChange.subscribe(spy);
+
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    expect(() => fixture.componentInstance.onKeydown(event, 0)).not.toThrow();
+    expect(spy).not.toHaveBeenCalled();
+  });
+});
+
 describe('router mode', () => {
   const ITEMS: RetroTabItem[] = [
     { path: '/tab-a', label: 'Tab A' },

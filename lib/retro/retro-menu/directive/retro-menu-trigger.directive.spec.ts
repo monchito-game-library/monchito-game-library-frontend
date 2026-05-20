@@ -156,4 +156,84 @@ describe('RetroMenuTriggerDirective', () => {
       expect(() => directive.ngOnDestroy()).not.toThrow();
     }
   });
+
+  it('_handleMenuKeydown con Enter cuando no hay item activo no hace nada', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      // Forzar keyManager sin item activo
+      (directive as any)._keyManager = { activeItem: null, onKeydown: vi.fn() };
+      expect(() => (directive as any)._handleMenuKeydown(new KeyboardEvent('keydown', { key: 'Enter' }))).not.toThrow();
+    }
+  });
+
+  it('_handleMenuKeydown con ArrowDown sin item activo no llama focus', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      (directive as any)._keyManager = { activeItem: null, onKeydown: vi.fn() };
+      expect(() =>
+        (directive as any)._handleMenuKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }))
+      ).not.toThrow();
+    }
+  });
+
+  it('_handleMenuKeydown con Enter cuando hay item activo llama onClick y cierra', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      const mockItem = { onClick: vi.fn(), focus: vi.fn() };
+      (directive as any)._keyManager = { activeItem: mockItem, onKeydown: vi.fn() };
+      (directive as any)._handleMenuKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+      expect(mockItem.onClick).toHaveBeenCalled();
+    }
+  });
+
+  it('_handleMenuKeydown con ArrowDown cuando hay item activo llama focus', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      const mockItem = { onClick: vi.fn(), focus: vi.fn() };
+      (directive as any)._keyManager = { activeItem: mockItem, onKeydown: vi.fn() };
+      (directive as any)._handleMenuKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+      expect(mockItem.focus).toHaveBeenCalled();
+    }
+  });
+
+  it('ArrowUp cuando el menú ya está abierto no re-abre (isOpen=true branch)', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+
+    btn.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+    fixture.detectChanges();
+    // Sigue abierto
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('_openMenu no abre si el menuComponent no tiene templateRef', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      const mockMenu = { templateRef: null, menuItems: null };
+      (directive as any).retroMenuTriggerFor = () => mockMenu;
+      // No debe lanzar ni abrir
+      expect(() => (directive as any)._openMenu()).not.toThrow();
+      expect(directive._isOpen()).toBe(false);
+    }
+  });
 });

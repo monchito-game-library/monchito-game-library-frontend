@@ -450,4 +450,44 @@ describe('RetroSearchComponent (integración con opciones)', () => {
     await new Promise((r) => setTimeout(r, 200));
     expect(fn).toHaveBeenCalled();
   });
+
+  it('onKeydown Escape cuando el panel está cerrado no lanza error', () => {
+    (search as any)._overlayRef = null;
+    const event = new KeyboardEvent('keydown', { key: 'Escape' });
+    expect(() => search.onKeydown(event)).not.toThrow();
+  });
+
+  it('_selectActive con opción disabled no emite selección', () => {
+    const disabledOpt = {
+      value: () => 'disabled',
+      isDisabled: () => true,
+      getLabel: () => 'Disabled',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [disabledOpt],
+      forEach: vi.fn(),
+      length: 1
+    };
+    (search as any)._options = mockQueryList;
+    (search as any)._overlayRef = { detach: vi.fn(), dispose: vi.fn() };
+    (search as any)._activeIndex = 0;
+
+    const spy = vi.fn();
+    search.optionSelected.subscribe(spy);
+
+    const event = new KeyboardEvent('keydown', { key: 'Enter' });
+    search.onKeydown(event);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('errorState es true cuando el control es inválido y dirty (no touched)', () => {
+    host.control.setValidators(() => ({ required: true }));
+    host.control.markAsDirty();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(search.errorState).toBe(true);
+  });
 });

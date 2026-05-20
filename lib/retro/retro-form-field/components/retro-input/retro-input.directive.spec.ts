@@ -115,4 +115,12 @@ describe('RetroInputDirective (con FormControl)', () => {
     de.nativeElement.dispatchEvent(new FocusEvent('blur'));
     expect(ctrl.touched).toBe(true);
   });
+
+  it('errorState es true cuando el control es inválido y dirty (no touched)', () => {
+    const directive: RetroInputDirective = de.injector.get(RetroInputDirective);
+    const ctrl = directive.ngControl?.control!;
+    ctrl.markAsDirty();
+    ctrl.updateValueAndValidity();
+    expect(directive.errorState).toBe(true);
+  });
 });

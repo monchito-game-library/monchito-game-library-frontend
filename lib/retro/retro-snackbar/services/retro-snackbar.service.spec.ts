@@ -61,4 +61,16 @@ describe('RetroSnackbarService', () => {
     service.dismissAll();
     expect(service.messages().length).toBe(0);
   });
+
+  it('dismiss con id sin timer activo (duration=0) no lanza error y elimina el mensaje', () => {
+    const id = service.open({ text: 'Sin timer', duration: 0 });
+    expect(service.messages().length).toBe(1);
+    // No hay timer registrado para este id (duration=0)
+    service.dismiss(id);
+    expect(service.messages().length).toBe(0);
+  });
+
+  it('dismiss con id inexistente no lanza error', () => {
+    expect(() => service.dismiss(9999)).not.toThrow();
+  });
 });

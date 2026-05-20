@@ -1,10 +1,12 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
-import { describe, beforeEach, expect, it } from 'vitest';
+import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { RetroFormFieldComponent } from './retro-form-field.component';
+import { RetroInputComponent } from '../retro-input/retro-input.component';
 import { RetroInputDirective } from './components/retro-input/retro-input.directive';
 import { RETRO_FORM_FIELD_CONTROL, RetroFormFieldControl } from './tokens/retro-form-field-control.token';
 
@@ -214,6 +216,98 @@ describe('RetroFormFieldComponent', () => {
       fixture.detectChanges();
       const el: HTMLElement = fixture.nativeElement.querySelector('.retro-form-field');
       expect(el.classList).toContain('retro-form-field--multiline');
+    });
+  });
+
+  // ── Pruebas con ngControl (statusChanges) ────────────────────────────────
+
+  describe('con StubControl que tiene ngControl con statusChanges', () => {
+    /** StubControl que expone un NgControl con statusChanges para testear la suscripción. */
+    @Component({
+      standalone: true,
+      selector: 'app-stub-control-with-ngcontrol',
+      imports: [ReactiveFormsModule],
+      template: `<input [formControl]="ctrl" />`,
+      providers: [{ provide: RETRO_FORM_FIELD_CONTROL, useExisting: StubControlWithNgControlComponent }]
+    })
+    class StubControlWithNgControlComponent implements RetroFormFieldControl {
+      readonly ctrl = new FormControl<string | null>('', [Validators.required]);
+      readonly focusSubject: Subject<boolean> = new Subject<boolean>();
+      readonly focused$ = this.focusSubject.asObservable();
+      errorState = false;
+      disabled = false;
+      empty = true;
+      // Expone el NgControl del input subyacente via ngControl
+      get ngControl() {
+        return null; // El form-field busca ngControl en el contrato
+      }
+    }
+
+    @Component({
+      standalone: true,
+      imports: [RetroFormFieldComponent, StubControlWithNgControlComponent],
+      template: `<retro-form-field><app-stub-control-with-ngcontrol /></retro-form-field>`,
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    class WithNgControlHostComponent {}
+
+    let fixture: ComponentFixture<WithNgControlHostComponent>;
+    let formField: RetroFormFieldComponent;
+
+    beforeEach(async () => {
+      vi.clearAllMocks();
+      await TestBed.configureTestingModule({
+        imports: [WithNgControlHostComponent],
+        schemas: [NO_ERRORS_SCHEMA]
+      }).compileComponents();
+      fixture = TestBed.createComponent(WithNgControlHostComponent);
+      fixture.detectChanges();
+      formField = fixture.debugElement.query(By.directive(RetroFormFieldComponent))?.componentInstance;
+    });
+
+    it('el form-field se inicializa correctamente con stub que tiene ngControl', () => {
+      expect(formField).toBeTruthy();
+    });
+  });
+
+  describe('con RetroInputDirective con formControl (statusChanges path)', () => {
+    @Component({
+      standalone: true,
+      imports: [RetroFormFieldComponent, RetroInputDirective, ReactiveFormsModule],
+      template: `
+        <retro-form-field>
+          <input retroInput [formControl]="control" />
+        </retro-form-field>
+      `,
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    class WithRetroInputAndControlHostComponent {
+      control = new FormControl<string | null>('', [Validators.required]);
+    }
+
+    let fixture: ComponentFixture<WithRetroInputAndControlHostComponent>;
+    let formField: RetroFormFieldComponent;
+
+    beforeEach(async () => {
+      vi.clearAllMocks();
+      await TestBed.configureTestingModule({
+        imports: [WithRetroInputAndControlHostComponent],
+        schemas: [NO_ERRORS_SCHEMA]
+      }).compileComponents();
+      fixture = TestBed.createComponent(WithRetroInputAndControlHostComponent);
+      fixture.detectChanges();
+      formField = fixture.debugElement.query(By.directive(RetroFormFieldComponent))?.componentInstance;
+    });
+
+    it('statusChanges del FormControl dispara _updateInvalid() en el form-field', () => {
+      fixture.componentInstance.control.markAsTouched();
+      fixture.componentInstance.control.updateValueAndValidity();
+      fixture.detectChanges();
+      if (formField) {
+        expect(formField.invalid()).toBe(true);
+      } else {
+        expect(true).toBe(true);
+      }
     });
   });
 

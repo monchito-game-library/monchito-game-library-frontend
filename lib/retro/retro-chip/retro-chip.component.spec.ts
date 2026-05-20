@@ -65,4 +65,24 @@ describe('RetroChipComponent', () => {
       expect(fixture.nativeElement.querySelector('.retro-chip--lg')).toBeTruthy();
     });
   });
+
+  describe('iconSize computed', () => {
+    it('iconSize devuelve "sm" cuando size es "lg"', () => {
+      fixture.componentRef.setInput('size', 'lg');
+      fixture.detectChanges();
+      expect(fixture.componentInstance.iconSize()).toBe('sm');
+    });
+
+    it('iconSize devuelve "xs" cuando size es "md"', () => {
+      fixture.componentRef.setInput('size', 'md');
+      fixture.detectChanges();
+      expect(fixture.componentInstance.iconSize()).toBe('xs');
+    });
+
+    it('iconSize devuelve "xs" cuando size es "sm"', () => {
+      fixture.componentRef.setInput('size', 'sm');
+      fixture.detectChanges();
+      expect(fixture.componentInstance.iconSize()).toBe('xs');
+    });
+  });
 });

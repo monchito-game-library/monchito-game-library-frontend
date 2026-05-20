@@ -190,4 +190,12 @@ describe('RetroInputComponent (con FormControl)', () => {
     fixture.detectChanges();
     expect(input.errorState).toBe(false);
   });
+
+  it('errorState es true cuando el control es inválido y dirty (no touched)', () => {
+    host.control.setValidators(() => ({ required: true }));
+    host.control.markAsDirty();
+    host.control.updateValueAndValidity();
+    fixture.detectChanges();
+    expect(input.errorState).toBe(true);
+  });
 });

@@ -289,6 +289,25 @@ describe('RetroListItemComponent', () => {
   });
 });
 
+describe('RetroListItemComponent — sin padre retro-list', () => {
+  it('lanza error cuando se usa fuera de retro-list', async () => {
+    @Component({
+      standalone: true,
+      imports: [RetroListItemComponent],
+      template: `<retro-list-item>Sin padre</retro-list-item>`
+    })
+    class OrphanHostComponent {}
+
+    await TestBed.configureTestingModule({
+      imports: [OrphanHostComponent]
+    }).compileComponents();
+
+    expect(() => TestBed.createComponent(OrphanHostComponent).detectChanges()).toThrow(
+      RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR
+    );
+  });
+});
+
 @Component({
   standalone: true,
   imports: [RetroListComponent, RetroListItemComponent],
