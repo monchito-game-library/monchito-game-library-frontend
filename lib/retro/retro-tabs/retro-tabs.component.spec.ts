@@ -44,7 +44,6 @@ describe('router mode', () => {
   ];
 
   let fixture: ComponentFixture<RetroTabsComponent>;
-  let component: RetroTabsComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -61,7 +60,6 @@ describe('router mode', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(RetroTabsComponent);
-    component = fixture.componentInstance;
     fixture.componentRef.setInput('items', ITEMS);
     fixture.detectChanges();
   });
