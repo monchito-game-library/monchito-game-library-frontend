@@ -20,9 +20,7 @@
             "outputPath": "dist/monchito-game-library",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "@angular/localize/init"
-            ],
+            "polyfills": ["@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -31,9 +29,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -84,16 +80,8 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "include": [
-              "src/**/*.spec.ts",
-              "lib/**/*.spec.ts"
-            ],
-            "coverageReporters": [
-              "text",
-              "html",
-              "lcov",
-              "json-summary"
-            ],
+            "include": ["src/**/*.spec.ts", "lib/**/*.spec.ts"],
+            "coverageReporters": ["text", "html", "lcov", "json-summary"],
             "coverageExclude": [
               "**/*.html",
               "**/*.spec.ts",
@@ -110,18 +98,61 @@
           "configurations": {
             "coverage": {
               "coverage": true
+            },
+            "app": {
+              "include": ["src/**/*.spec.ts"],
+              "coverageExclude": [
+                "**/*.html",
+                "**/*.spec.ts",
+                "**/*-spec.helpers.ts",
+                "src/main.ts",
+                "src/environments/**",
+                "src/testing/**",
+                "lib/**"
+              ]
+            },
+            "retro": {
+              "include": ["../lib/**/*.spec.ts"],
+              "coverageExclude": ["**/*.html", "**/*.spec.ts", "**/*-spec.helpers.ts", "lib/retro/testing/**", "src/**"]
+            },
+            "app-coverage": {
+              "coverage": true,
+              "include": ["src/**/*.spec.ts"],
+              "coverageExclude": [
+                "**/*.html",
+                "**/*.spec.ts",
+                "**/*-spec.helpers.ts",
+                "src/main.ts",
+                "src/environments/**",
+                "src/testing/**",
+                "lib/**"
+              ],
+              "coverageThresholds": {
+                "statements": 80,
+                "lines": 80
+              }
+            },
+            "retro-coverage": {
+              "coverage": true,
+              "include": ["../lib/**/*.spec.ts"],
+              "coverageExclude": [
+                "**/*.html",
+                "**/*.spec.ts",
+                "**/*-spec.helpers.ts",
+                "lib/retro/testing/**",
+                "src/**"
+              ],
+              "coverageThresholds": {
+                "statements": 60,
+                "lines": 60
+              }
             }
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html",
-              "lib/**/*.ts",
-              "lib/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html", "lib/**/*.ts", "lib/**/*.html"]
           }
         },
         "deploy": {
@@ -132,9 +163,7 @@
   },
   "cli": {
     "analytics": "6441a98b-23cc-4036-88df-7622a0f8f7db",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "schematicCollections": ["angular-eslint"]
   },
   "schematics": {
     "@schematics/angular:component": {

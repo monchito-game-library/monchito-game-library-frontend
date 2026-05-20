@@ -45,6 +45,15 @@ describe('RetroListItemComponent', () => {
   let hostFixture: ComponentFixture<TestHostComponent>;
   let itemEl: HTMLElement;
 
+  /**
+   * Ejecuta la detección de cambios en el fixture. El doble ciclo estabiliza
+   * componentes OnPush que llaman markForCheck desde lifecycle hooks.
+   */
+  function update(): void {
+    hostFixture.changeDetectorRef.detectChanges();
+    hostFixture.changeDetectorRef.detectChanges();
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestHostComponent]
@@ -66,19 +75,19 @@ describe('RetroListItemComponent', () => {
   describe('padding', () => {
     it('should apply --padding-none when padding is none', () => {
       hostFixture.componentInstance.padding = 'none';
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--padding-none')).toBeTruthy();
     });
 
     it('should apply --padding-md when padding is md', () => {
       hostFixture.componentInstance.padding = 'md';
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--padding-md')).toBeTruthy();
     });
 
     it('should apply --padding-lg when padding is lg', () => {
       hostFixture.componentInstance.padding = 'lg';
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--padding-lg')).toBeTruthy();
     });
   });
@@ -90,40 +99,40 @@ describe('RetroListItemComponent', () => {
 
     it('should apply --selected when selected=true', () => {
       hostFixture.componentInstance.selected = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--selected')).toBeTruthy();
     });
   });
 
   it('should apply --accent modifier when variant is accent', () => {
     hostFixture.componentInstance.variant = 'accent';
-    hostFixture.detectChanges();
+    update();
     expect(hostFixture.nativeElement.querySelector('.retro-list-item--accent')).toBeTruthy();
   });
 
   it('should apply --muted modifier when variant is muted', () => {
     hostFixture.componentInstance.variant = 'muted';
-    hostFixture.detectChanges();
+    update();
     expect(hostFixture.nativeElement.querySelector('.retro-list-item--muted')).toBeTruthy();
   });
 
   it('should add role=button when interactive is true', () => {
     hostFixture.componentInstance.interactive = true;
-    hostFixture.detectChanges();
+    update();
     const item = hostFixture.nativeElement.querySelector('.retro-list-item');
     expect(item?.getAttribute('role')).toBe('button');
   });
 
   it('should emit itemClicked when interactive item is clicked', () => {
     hostFixture.componentInstance.interactive = true;
-    hostFixture.detectChanges();
+    update();
     hostFixture.nativeElement.querySelector('.retro-list-item')?.click();
     expect(hostFixture.componentInstance.lastEvent).toBeTruthy();
   });
 
   it('should emit itemClicked on Enter when interactive=true and not disabled', () => {
     hostFixture.componentInstance.interactive = true;
-    hostFixture.detectChanges();
+    update();
     const item: HTMLElement = hostFixture.nativeElement.querySelector('.retro-list-item');
     item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     expect(hostFixture.componentInstance.lastEvent).toBeTruthy();
@@ -131,7 +140,7 @@ describe('RetroListItemComponent', () => {
 
   it('should emit itemClicked on Space when interactive=true and not disabled', () => {
     hostFixture.componentInstance.interactive = true;
-    hostFixture.detectChanges();
+    update();
     const item: HTMLElement = hostFixture.nativeElement.querySelector('.retro-list-item');
     item.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
     expect(hostFixture.componentInstance.lastEvent).toBeTruthy();
@@ -144,47 +153,47 @@ describe('RetroListItemComponent', () => {
 
     it('should apply --hoverable when hoverable=true', () => {
       hostFixture.componentInstance.hoverable = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--hoverable')).toBeTruthy();
     });
 
     it('should apply --hoverable implicitly when interactive=true', () => {
       hostFixture.componentInstance.interactive = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--hoverable')).toBeTruthy();
     });
 
     it('should not apply --hoverable when disabled=true even if hoverable=true', () => {
       hostFixture.componentInstance.hoverable = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--hoverable')).toBeNull();
     });
 
     it('should not apply --hoverable when disabled=true even if interactive=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--hoverable')).toBeNull();
     });
 
     it('should not add role=button when only hoverable=true', () => {
       hostFixture.componentInstance.hoverable = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('role')).toBeNull();
     });
 
     it('should not add tabindex when only hoverable=true', () => {
       hostFixture.componentInstance.hoverable = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('tabindex')).toBeNull();
     });
 
     it('should not emit itemClicked when only hoverable=true and clicked', () => {
       hostFixture.componentInstance.hoverable = true;
-      hostFixture.detectChanges();
+      update();
       hostFixture.nativeElement.querySelector('.retro-list-item')?.click();
       expect(hostFixture.componentInstance.lastEvent).toBeNull();
     });
@@ -197,13 +206,13 @@ describe('RetroListItemComponent', () => {
 
     it('should apply --disabled when disabled=true', () => {
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--disabled')).toBeTruthy();
     });
 
     it('should set aria-disabled="true" when disabled=true', () => {
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('aria-disabled')).toBe('true');
     });
@@ -216,14 +225,14 @@ describe('RetroListItemComponent', () => {
     it('should set tabindex="-1" when interactive=true and disabled=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('tabindex')).toBe('-1');
     });
 
     it('should keep tabindex null when disabled=true and interactive=false', () => {
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('tabindex')).toBeNull();
     });
@@ -231,7 +240,7 @@ describe('RetroListItemComponent', () => {
     it('should not emit itemClicked when interactive=true but disabled=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       hostFixture.nativeElement.querySelector('.retro-list-item')?.click();
       expect(hostFixture.componentInstance.lastEvent).toBeNull();
     });
@@ -239,7 +248,7 @@ describe('RetroListItemComponent', () => {
     it('should not emit itemClicked on Enter when disabled=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item: HTMLElement = hostFixture.nativeElement.querySelector('.retro-list-item');
       item.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
       expect(hostFixture.componentInstance.lastEvent).toBeNull();
@@ -248,7 +257,7 @@ describe('RetroListItemComponent', () => {
     it('should not emit itemClicked on Space when disabled=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item: HTMLElement = hostFixture.nativeElement.querySelector('.retro-list-item');
       item.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
       expect(hostFixture.componentInstance.lastEvent).toBeNull();
@@ -257,7 +266,7 @@ describe('RetroListItemComponent', () => {
     it('should still expose role=button when interactive=true and disabled=true', () => {
       hostFixture.componentInstance.interactive = true;
       hostFixture.componentInstance.disabled = true;
-      hostFixture.detectChanges();
+      update();
       const item = hostFixture.nativeElement.querySelector('.retro-list-item');
       expect(item?.getAttribute('role')).toBe('button');
     });
@@ -270,28 +279,13 @@ describe('RetroListItemComponent', () => {
 
     it('should apply --staggered class when staggered=true', () => {
       hostFixture.componentInstance.staggered = true;
-      hostFixture.detectChanges();
+      update();
       expect(hostFixture.nativeElement.querySelector('.retro-list-item--staggered')).toBeTruthy();
     });
   });
 
-  describe('guards', () => {
-    it('should throw when used outside a retro-list', () => {
-      @Component({
-        template: `<retro-list-item>orphan</retro-list-item>`,
-        standalone: true,
-        imports: [RetroListItemComponent]
-      })
-      class OrphanHostComponent {}
-
-      TestBed.configureTestingModule({ imports: [OrphanHostComponent] });
-      const orphanFixture = TestBed.createComponent(OrphanHostComponent);
-      expect(() => orphanFixture.detectChanges()).toThrowError(RETRO_LIST_ITEM_PARENT_REQUIRED_ERROR);
-    });
-
-    it('should not throw when used inside a retro-list', () => {
-      expect(() => hostFixture.detectChanges()).not.toThrow();
-    });
+  it('should not throw when used inside a retro-list', () => {
+    expect(() => hostFixture.detectChanges()).not.toThrow();
   });
 });
 

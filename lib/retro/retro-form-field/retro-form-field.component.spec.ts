@@ -120,7 +120,8 @@ describe('RetroFormFieldComponent', () => {
 
     it('aplica la clase retro-form-field--size-sm cuando size="sm"', () => {
       host.size = 'sm';
-      fixture.detectChanges();
+      fixture.changeDetectorRef.detectChanges();
+      fixture.changeDetectorRef.detectChanges();
       const el: HTMLElement = fixture.nativeElement.querySelector('.retro-form-field');
       expect(el.classList).toContain('retro-form-field--size-sm');
       expect(el.classList).not.toContain('retro-form-field--size-md');
@@ -129,7 +130,8 @@ describe('RetroFormFieldComponent', () => {
 
     it('aplica la clase retro-form-field--size-md cuando size="md"', () => {
       host.size = 'md';
-      fixture.detectChanges();
+      fixture.changeDetectorRef.detectChanges();
+      fixture.changeDetectorRef.detectChanges();
       const el: HTMLElement = fixture.nativeElement.querySelector('.retro-form-field');
       expect(el.classList).toContain('retro-form-field--size-md');
       expect(el.classList).not.toContain('retro-form-field--size-sm');
