@@ -1,11 +1,13 @@
 # Testing — Monchito Game Library
 
+> Este documento cubre exclusivamente la app (`src/`). Para la librería de componentes retro ver [`docs/TESTING-RETRO.md`](./TESTING-RETRO.md).
+
 ## Configuración
 
 - **Framework**: Vitest 4.1.0 vía `@angular/build:unit-test`
 - **Entorno DOM**: happy-dom 20.8.4
 - **Ejecutar tests**: `npm test` (una vez) / `npm test -- --watch` (watch mode)
-- **Cobertura**: `npm run test:coverage` → informe HTML en `coverage/monchito-game-library/`
+- **Cobertura**: `npm run test:app:coverage` → informe HTML en `coverage/monchito-game-library/`
 
 ---
 
@@ -13,15 +15,15 @@
 
 Mocks centralizados reutilizables en `TestBed.providers`:
 
-| Fichero | Export | Uso típico |
-|---|---|---|
-| `router.mock.ts` | `mockRouter` | `{ provide: Router, useValue: mockRouter }` |
-| `dialog.mock.ts` | `mockDialog` | `{ provide: MatDialog, useValue: mockDialog }` |
-| `snack-bar.mock.ts` | `mockSnackBar` | `{ provide: MatSnackBar, useValue: mockSnackBar }` |
-| `transloco.mock.ts` | `mockTransloco` | `{ provide: TranslocoService, useValue: mockTransloco }` |
-| `user-context.mock.ts` | `mockUserContext` | `{ provide: UserContextService, useValue: mockUserContext }` |
-| `activated-route.mock.ts` | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }` |
-| `location.mock.ts` | `mockLocation` | `{ provide: Location, useValue: mockLocation }` |
+| Fichero                                                      | Export               | Uso típico                                                   |
+| ------------------------------------------------------------ | -------------------- | ------------------------------------------------------------ |
+| `router.mock.ts`                                             | `mockRouter`         | `{ provide: Router, useValue: mockRouter }`                  |
+| `dialog.mock.ts`                                             | `mockDialog`         | `{ provide: RetroDialogService, useValue: mockDialog }`      |
+| `retro-snackbar.mock.ts` → **movido a `lib/retro/testing/`** | —                    | ver `docs/TESTING-RETRO.md`                                  |
+| `transloco.mock.ts`                                          | `mockTransloco`      | `{ provide: TranslocoService, useValue: mockTransloco }`     |
+| `user-context.mock.ts`                                       | `mockUserContext`    | `{ provide: UserContextService, useValue: mockUserContext }` |
+| `activated-route.mock.ts`                                    | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }`  |
+| `location.mock.ts`                                           | `mockLocation`       | `{ provide: Location, useValue: mockLocation }`              |
 
 > Llama a `vi.clearAllMocks()` en `beforeEach` para reiniciar el estado entre tests. Si un mock devuelve un valor concreto por defecto (p.ej. `mockActivatedRoute.snapshot.paramMap.get` devuelve `null`), sobreescríbelo con `.mockReturnValue(...)` después del clear.
 
@@ -31,9 +33,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de datos — Configuración (`src/app/data/config`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `supabase.config.spec.ts` | 3 | ✅ Cubierto |
+| Fichero                   | Tests | Estado      |
+| ------------------------- | ----- | ----------- |
+| `supabase.config.spec.ts` | 3     | ✅ Cubierto |
 
 **Qué se cubre**: creación del cliente Supabase (singleton), devolución del mismo objeto en llamadas sucesivas, resolución del token DI `SUPABASE_CLIENT` via `TestBed`.
 
@@ -43,21 +45,21 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de datos — Mappers (`src/app/data/mappers`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `order/order.mapper.spec.ts` | 39 | ✅ Cubierto |
-| `rawg/rawg.mapper.spec.ts` | 19 | ✅ Cubierto |
-| `supabase/console.mapper.spec.ts` | 19 | ✅ Cubierto |
-| `supabase/controller.mapper.spec.ts` | 15 | ✅ Cubierto |
-| `supabase/game.mapper.spec.ts` | 44 | ✅ Cubierto |
-| `supabase/hardware-brand.mapper.spec.ts` | 3 | ✅ Cubierto |
-| `supabase/hardware-console-specs.mapper.spec.ts` | 10 | ✅ Cubierto |
-| `supabase/hardware-edition.mapper.spec.ts` | 3 | ✅ Cubierto |
-| `supabase/hardware-model.mapper.spec.ts` | 11 | ✅ Cubierto |
-| `supabase/protector.mapper.spec.ts` | 7 | ✅ Cubierto |
-| `supabase/store.mapper.spec.ts` | 7 | ✅ Cubierto |
-| `supabase/user-preferences.mapper.spec.ts` | 8 | ✅ Cubierto |
-| `supabase/wishlist.mapper.spec.ts` | 8 | ✅ Cubierto |
+| Fichero                                          | Tests | Estado      |
+| ------------------------------------------------ | ----- | ----------- |
+| `order/order.mapper.spec.ts`                     | 39    | ✅ Cubierto |
+| `rawg/rawg.mapper.spec.ts`                       | 19    | ✅ Cubierto |
+| `supabase/console.mapper.spec.ts`                | 19    | ✅ Cubierto |
+| `supabase/controller.mapper.spec.ts`             | 15    | ✅ Cubierto |
+| `supabase/game.mapper.spec.ts`                   | 44    | ✅ Cubierto |
+| `supabase/hardware-brand.mapper.spec.ts`         | 3     | ✅ Cubierto |
+| `supabase/hardware-console-specs.mapper.spec.ts` | 10    | ✅ Cubierto |
+| `supabase/hardware-edition.mapper.spec.ts`       | 3     | ✅ Cubierto |
+| `supabase/hardware-model.mapper.spec.ts`         | 11    | ✅ Cubierto |
+| `supabase/protector.mapper.spec.ts`              | 7     | ✅ Cubierto |
+| `supabase/store.mapper.spec.ts`                  | 7     | ✅ Cubierto |
+| `supabase/user-preferences.mapper.spec.ts`       | 8     | ✅ Cubierto |
+| `supabase/wishlist.mapper.spec.ts`               | 8     | ✅ Cubierto |
 
 **Qué se cubre**: transformaciones de DTO → modelo de dominio, valores por defecto, prioridad de campos opcionales, fallbacks para null/undefined. El mapper de orders cubre mapeo de líneas, miembros, alocaciones y fechas opcionales. Los mappers de hardware cubren specs de consolas, ediciones, modelos y marcas.
 
@@ -65,25 +67,25 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de dominio — Use Cases (`src/app/domain/use-cases`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `audit-log/audit-log.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `auth/auth.use-cases.spec.ts` | 23 | ✅ Cubierto |
-| `catalog/catalog.use-cases.spec.ts` | 10 | ✅ Cubierto |
-| `console/console.use-cases.spec.ts` | 10 | ✅ Cubierto |
-| `controller/controller.use-cases.spec.ts` | 10 | ✅ Cubierto |
-| `game/game.use-cases.spec.ts` | 14 | ✅ Cubierto |
-| `hardware-brand/hardware-brand.use-cases.spec.ts` | 5 | ✅ Cubierto |
-| `hardware-console-specs/hardware-console-specs.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `hardware-edition/hardware-edition.use-cases.spec.ts` | 5 | ✅ Cubierto |
-| `hardware-model/hardware-model.use-cases.spec.ts` | 6 | ✅ Cubierto |
-| `market/market.use-cases.spec.ts` | 4 | ✅ Cubierto |
-| `orders/orders.use-cases.spec.ts` | 28 | ✅ Cubierto |
-| `protector/protector.use-cases.spec.ts` | 6 | ✅ Cubierto |
-| `store/store.use-cases.spec.ts` | 5 | ✅ Cubierto |
-| `user-admin/user-admin.use-cases.spec.ts` | 6 | ✅ Cubierto |
-| `user-preferences/user-preferences.use-cases.spec.ts` | 13 | ✅ Cubierto |
-| `wishlist/wishlist.use-cases.spec.ts` | 5 | ✅ Cubierto |
+| Fichero                                                           | Tests | Estado      |
+| ----------------------------------------------------------------- | ----- | ----------- |
+| `audit-log/audit-log.use-cases.spec.ts`                           | 4     | ✅ Cubierto |
+| `auth/auth.use-cases.spec.ts`                                     | 23    | ✅ Cubierto |
+| `catalog/catalog.use-cases.spec.ts`                               | 10    | ✅ Cubierto |
+| `console/console.use-cases.spec.ts`                               | 10    | ✅ Cubierto |
+| `controller/controller.use-cases.spec.ts`                         | 10    | ✅ Cubierto |
+| `game/game.use-cases.spec.ts`                                     | 14    | ✅ Cubierto |
+| `hardware-brand/hardware-brand.use-cases.spec.ts`                 | 5     | ✅ Cubierto |
+| `hardware-console-specs/hardware-console-specs.use-cases.spec.ts` | 4     | ✅ Cubierto |
+| `hardware-edition/hardware-edition.use-cases.spec.ts`             | 5     | ✅ Cubierto |
+| `hardware-model/hardware-model.use-cases.spec.ts`                 | 6     | ✅ Cubierto |
+| `market/market.use-cases.spec.ts`                                 | 4     | ✅ Cubierto |
+| `orders/orders.use-cases.spec.ts`                                 | 28    | ✅ Cubierto |
+| `protector/protector.use-cases.spec.ts`                           | 6     | ✅ Cubierto |
+| `store/store.use-cases.spec.ts`                                   | 5     | ✅ Cubierto |
+| `user-admin/user-admin.use-cases.spec.ts`                         | 6     | ✅ Cubierto |
+| `user-preferences/user-preferences.use-cases.spec.ts`             | 13    | ✅ Cubierto |
+| `wishlist/wishlist.use-cases.spec.ts`                             | 5     | ✅ Cubierto |
 
 **Qué se cubre**: delegación a repositorios, parámetros correctos, valores por defecto, validación de archivos (tamaño/MIME), lógica de borrado condicional, paginación de screenshots. Orders cubre `getById`, `getAll`, `create`, `update`, `delete`, `addMember`, `setMemberReady`, `subscribeToOrderMembers`, `addLine`, `updateLine`, `deleteLine`, `setLinePackAndQty`, `getProducts`. Console y controller cubren además `updateSaleStatus`, `createLoan` y `returnLoan`. Hardware use cases cubren CRUD de marcas, modelos, ediciones y specs de consola.
 
@@ -93,25 +95,25 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de datos — Repositorios (`src/app/data/repositories`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `rawg.repository.spec.ts` | 20 | ✅ Cubierto |
-| `supabase.repository.spec.ts` | 44 | ✅ Cubierto |
-| `supabase-auth.repository.spec.ts` | 36 | ✅ Cubierto |
-| `supabase-audit-log.repository.spec.ts` | 8 | ✅ Cubierto |
-| `supabase-console.repository.spec.ts` | 17 | ✅ Cubierto |
-| `supabase-controller.repository.spec.ts` | 17 | ✅ Cubierto |
-| `supabase-hardware-brand.repository.spec.ts` | 10 | ✅ Cubierto |
-| `supabase-hardware-console-specs.repository.spec.ts` | 6 | ✅ Cubierto |
-| `supabase-hardware-edition.repository.spec.ts` | 10 | ✅ Cubierto |
-| `supabase-hardware-model.repository.spec.ts` | 12 | ✅ Cubierto |
-| `supabase-market.repository.spec.ts` | 8 | ✅ Cubierto |
-| `supabase-preferences.repository.spec.ts` | 13 | ✅ Cubierto |
-| `supabase-protector.repository.spec.ts` | 16 | ✅ Cubierto |
-| `supabase-store.repository.spec.ts` | 9 | ✅ Cubierto |
-| `supabase-order.repository.spec.ts` | 39 | ✅ Cubierto |
-| `supabase-user-admin.repository.spec.ts` | 7 | ✅ Cubierto |
-| `supabase-wishlist.repository.spec.ts` | 14 | ✅ Cubierto |
+| Fichero                                              | Tests | Estado      |
+| ---------------------------------------------------- | ----- | ----------- |
+| `rawg.repository.spec.ts`                            | 20    | ✅ Cubierto |
+| `supabase.repository.spec.ts`                        | 44    | ✅ Cubierto |
+| `supabase-auth.repository.spec.ts`                   | 36    | ✅ Cubierto |
+| `supabase-audit-log.repository.spec.ts`              | 8     | ✅ Cubierto |
+| `supabase-console.repository.spec.ts`                | 17    | ✅ Cubierto |
+| `supabase-controller.repository.spec.ts`             | 17    | ✅ Cubierto |
+| `supabase-hardware-brand.repository.spec.ts`         | 10    | ✅ Cubierto |
+| `supabase-hardware-console-specs.repository.spec.ts` | 6     | ✅ Cubierto |
+| `supabase-hardware-edition.repository.spec.ts`       | 10    | ✅ Cubierto |
+| `supabase-hardware-model.repository.spec.ts`         | 12    | ✅ Cubierto |
+| `supabase-market.repository.spec.ts`                 | 8     | ✅ Cubierto |
+| `supabase-preferences.repository.spec.ts`            | 13    | ✅ Cubierto |
+| `supabase-protector.repository.spec.ts`              | 16    | ✅ Cubierto |
+| `supabase-store.repository.spec.ts`                  | 9     | ✅ Cubierto |
+| `supabase-order.repository.spec.ts`                  | 39    | ✅ Cubierto |
+| `supabase-user-admin.repository.spec.ts`             | 7     | ✅ Cubierto |
+| `supabase-wishlist.repository.spec.ts`               | 14    | ✅ Cubierto |
 
 **Qué se cubre**: llamadas correctas a Supabase (`.from()`, `.select()`, `.eq()`, `.insert()`, `.update()`, `.delete()`, `.upsert()`, `.rpc()`), paginación, reuso de entradas de catálogo existentes, manejo de errores, subida de ficheros a Storage. En `rawg.repository.spec.ts` también se cubre la rama `if (this._apiKey)` cuando no hay API key configurada. Console y controller cubren además `updateSaleStatus` (payload y manejo de error), `createLoan` (insert a `hardware_loans` + update en tabla principal, rama de error) y `returnLoan` (Promise.all con `returned_at` y limpieza de campos `active_loan_*`). Los repositorios de hardware (brand, edition, model, console-specs) cubren el CRUD básico con builder fluido.
 
@@ -121,13 +123,13 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de presentación — Guards (`src/app/presentation/guards`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `admin/admin.guard.spec.ts` | 5 | ✅ Cubierto |
-| `desktop-only/desktop-only.guard.spec.ts` | 4 | ✅ Cubierto |
-| `owner/owner.guard.spec.ts` | 5 | ✅ Cubierto |
-| `user/user.guard.spec.ts` | 4 | ✅ Cubierto |
-| `public/public.guard.spec.ts` | 4 | ✅ Cubierto |
+| Fichero                                   | Tests | Estado      |
+| ----------------------------------------- | ----- | ----------- |
+| `admin/admin.guard.spec.ts`               | 5     | ✅ Cubierto |
+| `desktop-only/desktop-only.guard.spec.ts` | 4     | ✅ Cubierto |
+| `owner/owner.guard.spec.ts`               | 5     | ✅ Cubierto |
+| `user/user.guard.spec.ts`                 | 4     | ✅ Cubierto |
+| `public/public.guard.spec.ts`             | 4     | ✅ Cubierto |
 
 **Qué se cubre**: retorno de `true`/`UrlTree` según estado de autenticación y rol de administrador. `desktop-only.guard` cubre acceso permitido en width ≥ 768px y redirección a `/` en width < 768px. `canActivatePublic` cubre la redirección a `/collection` cuando el usuario ya está autenticado (loading=false y loading=true→false). `canActivateOwner` cubre los caminos sincrónico y asíncrono (preferences cargadas vs en proceso) para los tres roles posibles (`owner`, `admin`, `member`), redirigiendo a `/management` cuando el usuario no es owner.
 
@@ -135,17 +137,18 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de presentación — Servicios (`src/app/presentation/services`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `auth-state/auth-state.service.spec.ts` | 19 | ✅ Cubierto |
-| `pwa-update/pwa-update.service.spec.ts` | 13 | ✅ Cubierto |
-| `rawg-search-state/rawg-search-state.service.spec.ts` | 6 | ✅ Cubierto |
-| `theme/theme.service.spec.ts` | 8 | ✅ Cubierto |
-| `user-context/user-context.service.spec.ts` | 13 | ✅ Cubierto |
-| `user-preferences-init/user-preferences-init.service.spec.ts` | 16 | ✅ Cubierto |
-| `user-preferences/user-preferences.service.spec.ts` | 15 | ✅ Cubierto |
+| Fichero                                                       | Tests | Estado      |
+| ------------------------------------------------------------- | ----- | ----------- |
+| `auth-state/auth-state.service.spec.ts`                       | 19    | ✅ Cubierto |
+| `pwa-update/pwa-update.service.spec.ts`                       | 13    | ✅ Cubierto |
+| `rawg-search-state/rawg-search-state.service.spec.ts`         | 6     | ✅ Cubierto |
+| `theme/theme.service.spec.ts`                                 | 8     | ✅ Cubierto |
+| `user-context/user-context.service.spec.ts`                   | 13    | ✅ Cubierto |
+| `user-preferences-init/user-preferences-init.service.spec.ts` | 16    | ✅ Cubierto |
+| `user-preferences/user-preferences.service.spec.ts`           | 15    | ✅ Cubierto |
 
 **Qué se cubre**:
+
 - `ThemeService`: señal `isDarkMode`, métodos `setDarkTheme`/`setLightTheme`/`initTheme`.
 - `AuthStateService`: estado inicial, resolución asíncrona de sesión, `onAuthStateChange` y navegación al logout.
 - `UserContextService`: delegación a `AuthStateService`, URL de fallback de avatar (ui-avatars.com).
@@ -158,15 +161,16 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Capa de presentación — Clases abstractas (`src/app/presentation/abstract`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `auth-base/auth-base.component.spec.ts` | 23 | ✅ Cubierto |
-| `crop-interaction-base/crop-interaction.base.spec.ts` | 33 | ✅ Cubierto |
-| `hardware-detail-base/hardware-detail-base.component.spec.ts` | 46 | ✅ Cubierto |
-| `hardware-form-base/hardware-form-base.component.spec.ts` | 35 | ✅ Cubierto |
-| `hardware-list-base/hardware-list-base.component.spec.ts` | 38 | ✅ Cubierto |
+| Fichero                                                       | Tests | Estado      |
+| ------------------------------------------------------------- | ----- | ----------- |
+| `auth-base/auth-base.component.spec.ts`                       | 23    | ✅ Cubierto |
+| `crop-interaction-base/crop-interaction.base.spec.ts`         | 33    | ✅ Cubierto |
+| `hardware-detail-base/hardware-detail-base.component.spec.ts` | 46    | ✅ Cubierto |
+| `hardware-form-base/hardware-form-base.component.spec.ts`     | 35    | ✅ Cubierto |
+| `hardware-list-base/hardware-list-base.component.spec.ts`     | 38    | ✅ Cubierto |
 
 **Qué se cubre**:
+
 - `CropInteractionBase`: valores iniciales de signals, `onImageLoad` (cálculo de overflow según aspect ratio), drag con pointer events (inicio, movimiento, clamping, fin), zoom con rueda del ratón (min/max), touch de 1 dedo (pan) y 2 dedos (pinch-to-zoom), `onTouchEnd` con transición de 2 a 1 dedo.
 - `HardwareDetailBase`: carga de ítem, estados de loading/error, acciones de préstamo/devolución/venta, signals derivados.
 - `HardwareFormBase`: inicialización de formulario en modo create/edit, validaciones, submit, cancelación.
@@ -181,121 +185,122 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 #### Componentes compartidos
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `components/catalog-search-panel/catalog-search-panel.component.spec.ts` | 10 | ✅ Cubierto |
-| `components/confirm-dialog/confirm-dialog.component.spec.ts` | 3 | ✅ Cubierto |
+| Fichero                                                                  | Tests | Estado      |
+| ------------------------------------------------------------------------ | ----- | ----------- |
+| `components/catalog-search-panel/catalog-search-panel.component.spec.ts` | 10    | ✅ Cubierto |
+| `components/confirm-dialog/confirm-dialog.component.spec.ts`             | 3     | ✅ Cubierto |
 
 #### Librería `lib/` (Terminal Collector)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `components/lib/lib-badge/lib-badge.component.spec.ts` | 3 | ✅ Cubierto |
-| `components/lib/lib-button/lib-button.component.spec.ts` | 7 | ✅ Cubierto |
-| `components/lib/lib-card/lib-card.component.spec.ts` | 5 | ✅ Cubierto |
-| `components/lib/lib-checkbox/lib-checkbox.component.spec.ts` | 17 | ✅ Cubierto |
-| `components/lib/lib-chip/lib-chip.component.spec.ts` | 5 | ✅ Cubierto |
-| `components/lib/lib-command-bar/lib-command-bar.component.spec.ts` | 5 | ✅ Cubierto |
-| `components/lib/lib-data-row/lib-data-row.component.spec.ts` | 3 | ✅ Cubierto |
-| `components/lib/lib-empty-state/lib-empty-state.component.spec.ts` | 5 | ✅ Cubierto |
-| `components/lib/lib-icon-button/lib-icon-button.component.spec.ts` | 3 | ✅ Cubierto |
-| `components/lib/lib-section-header/lib-section-header.component.spec.ts` | 4 | ✅ Cubierto |
-| `components/lib/lib-skeleton/lib-skeleton.component.spec.ts` | 4 | ✅ Cubierto |
-| `components/lib/lib-spinner/lib-spinner.component.spec.ts` | 2 | ✅ Cubierto |
+| Fichero                                                                  | Tests | Estado      |
+| ------------------------------------------------------------------------ | ----- | ----------- |
+| `components/lib/lib-badge/lib-badge.component.spec.ts`                   | 3     | ✅ Cubierto |
+| `components/lib/lib-button/lib-button.component.spec.ts`                 | 7     | ✅ Cubierto |
+| `components/lib/lib-card/lib-card.component.spec.ts`                     | 5     | ✅ Cubierto |
+| `components/lib/lib-checkbox/lib-checkbox.component.spec.ts`             | 17    | ✅ Cubierto |
+| `components/lib/lib-chip/lib-chip.component.spec.ts`                     | 5     | ✅ Cubierto |
+| `components/lib/lib-command-bar/lib-command-bar.component.spec.ts`       | 5     | ✅ Cubierto |
+| `components/lib/lib-data-row/lib-data-row.component.spec.ts`             | 3     | ✅ Cubierto |
+| `components/lib/lib-empty-state/lib-empty-state.component.spec.ts`       | 5     | ✅ Cubierto |
+| `components/lib/lib-icon-button/lib-icon-button.component.spec.ts`       | 3     | ✅ Cubierto |
+| `components/lib/lib-section-header/lib-section-header.component.spec.ts` | 4     | ✅ Cubierto |
+| `components/lib/lib-skeleton/lib-skeleton.component.spec.ts`             | 4     | ✅ Cubierto |
+| `components/lib/lib-spinner/lib-spinner.component.spec.ts`               | 2     | ✅ Cubierto |
 
 #### Auth (`pages/auth`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `pages/auth/auth.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/auth/components/auth-panel/auth-panel.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/auth/pages/forgot-password/forgot-password.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/auth/pages/login/login.component.spec.ts` | 20 | ✅ Cubierto |
-| `pages/auth/pages/register/register.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/auth/pages/reset-password/reset-password.component.spec.ts` | 20 | ✅ Cubierto |
+| Fichero                                                              | Tests | Estado      |
+| -------------------------------------------------------------------- | ----- | ----------- |
+| `pages/auth/auth.component.spec.ts`                                  | 1     | ✅ Cubierto |
+| `pages/auth/components/auth-panel/auth-panel.component.spec.ts`      | 1     | ✅ Cubierto |
+| `pages/auth/pages/forgot-password/forgot-password.component.spec.ts` | 12    | ✅ Cubierto |
+| `pages/auth/pages/login/login.component.spec.ts`                     | 20    | ✅ Cubierto |
+| `pages/auth/pages/register/register.component.spec.ts`               | 22    | ✅ Cubierto |
+| `pages/auth/pages/reset-password/reset-password.component.spec.ts`   | 20    | ✅ Cubierto |
 
 #### Colección (`pages/collection`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `pages/collection/collection.component.spec.ts` | 1 | ✅ Cubierto |
-| `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts` | 57 | ✅ Cubierto |
-| `pages/collection/components/hardware-form-shell/hardware-form-shell.component.spec.ts` | 16 | ✅ Cubierto |
-| `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts` | 24 | ✅ Cubierto |
-| `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/collection/components/list-page-header/list-page-header.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/collection/components/sale-form/sale-form.component.spec.ts` | 29 | ✅ Cubierto |
-| `pages/collection/pages/collection-overview/collection-overview.component.spec.ts` | 28 | ✅ Cubierto |
-| `pages/collection/pages/consoles/consoles.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts` | 15 | ✅ Cubierto |
-| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts` | 24 | ✅ Cubierto |
-| `pages/collection/pages/controllers/controllers.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-card/game-card.component.spec.ts` | 34 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts` | 9 | ✅ Cubierto |
-| `pages/collection/pages/games/components/game-row/game-row.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/collection/pages/games/games.component.spec.ts` | 84 | ✅ Cubierto |
-| `pages/collection/pages/games/services/games-filter.service.spec.ts` | 11 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts` | 89 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts` | 62 | ✅ Cubierto |
+| Fichero                                                                                                                                    | Tests | Estado      |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ----------- |
+| `pages/collection/collection.component.spec.ts`                                                                                            | 1     | ✅ Cubierto |
+| `pages/collection/components/hardware-detail-shell/hardware-detail-shell.component.spec.ts`                                                | 57    | ✅ Cubierto |
+| `pages/collection/components/hardware-form-shell/hardware-form-shell.component.spec.ts`                                                    | 16    | ✅ Cubierto |
+| `pages/collection/components/hardware-list-shell/hardware-list-shell.component.spec.ts`                                                    | 24    | ✅ Cubierto |
+| `pages/collection/components/hardware-loan-form/hardware-loan-form.component.spec.ts`                                                      | 25    | ✅ Cubierto |
+| `pages/collection/components/list-page-header/list-page-header.component.spec.ts`                                                          | 9     | ✅ Cubierto |
+| `pages/collection/components/sale-form/sale-form.component.spec.ts`                                                                        | 29    | ✅ Cubierto |
+| `pages/collection/pages/collection-overview/collection-overview.component.spec.ts`                                                         | 28    | ✅ Cubierto |
+| `pages/collection/pages/consoles/consoles.component.spec.ts`                                                                               | 7     | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/console-detail/console-detail.component.spec.ts`                                                    | 15    | ✅ Cubierto |
+| `pages/collection/pages/consoles/pages/create-update-console/create-update-console.component.spec.ts`                                      | 24    | ✅ Cubierto |
+| `pages/collection/pages/controllers/controllers.component.spec.ts`                                                                         | 3     | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/controller-detail/controller-detail.component.spec.ts`                                           | 12    | ✅ Cubierto |
+| `pages/collection/pages/controllers/pages/create-update-controller/create-update-controller.component.spec.ts`                             | 26    | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-card/game-card.component.spec.ts`                                                            | 34    | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component.spec.ts`                                    | 17    | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component.spec.ts`                                | 9     | ✅ Cubierto |
+| `pages/collection/pages/games/components/game-row/game-row.component.spec.ts`                                                              | 17    | ✅ Cubierto |
+| `pages/collection/pages/games/games.component.spec.ts`                                                                                     | 84    | ✅ Cubierto |
+| `pages/collection/pages/games/services/games-filter.service.spec.ts`                                                                       | 11    | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/components/game-cover-position-dialog/game-cover-position-dialog.component.spec.ts` | 17    | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/components/game-form/game-form.component.spec.ts`                                   | 89    | ✅ Cubierto |
+| `pages/collection/pages/games/pages/create-update-game/create-and-update-game.component.spec.ts`                                           | 2     | ✅ Cubierto |
+| `pages/collection/pages/games/pages/game-detail/components/game-loan-form/game-loan-form.component.spec.ts`                                | 22    | ✅ Cubierto |
+| `pages/collection/pages/games/pages/game-detail/game-detail.component.spec.ts`                                                             | 62    | ✅ Cubierto |
 
 #### Management (`pages/management`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `pages/management/management.component.spec.ts` | 6 | ✅ Cubierto |
-| `pages/management/components/catalog-item-card/catalog-item-card.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/management/pages/audit-log/audit-log-management.component.spec.ts` | 14 | ✅ Cubierto |
-| `pages/management/pages/hardware/hardware-management.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/management/pages/hardware/components/hardware-brand-edit-panel/hardware-brand-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/management/pages/hardware/components/hardware-edition-edit-panel/hardware-edition-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/management/pages/hardware/components/hardware-model-edit-panel/hardware-model-edit-panel.component.spec.ts` | 11 | ✅ Cubierto |
-| `pages/management/pages/hardware/pages/brands/hardware-brands-management.component.spec.ts` | 16 | ✅ Cubierto |
-| `pages/management/pages/hardware/pages/editions/hardware-editions-management.component.spec.ts` | 32 | ✅ Cubierto |
-| `pages/management/pages/hardware/pages/models/hardware-models-management.component.spec.ts` | 34 | ✅ Cubierto |
-| `pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.spec.ts` | 19 | ✅ Cubierto |
-| `pages/management/pages/protectors/protectors-management.component.spec.ts` | 22 | ✅ Cubierto |
-| `pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/management/pages/stores/stores-management.component.spec.ts` | 19 | ✅ Cubierto |
-| `pages/management/pages/users/users-management.component.spec.ts` | 42 | ✅ Cubierto |
-| `pages/management/pages/users/components/delete-user-dialog/delete-user-dialog.component.spec.ts` | 8 | ✅ Cubierto |
+| Fichero                                                                                                                | Tests | Estado      |
+| ---------------------------------------------------------------------------------------------------------------------- | ----- | ----------- |
+| `pages/management/management.component.spec.ts`                                                                        | 6     | ✅ Cubierto |
+| `pages/management/components/catalog-item-card/catalog-item-card.component.spec.ts`                                    | 13    | ✅ Cubierto |
+| `pages/management/pages/audit-log/audit-log-management.component.spec.ts`                                              | 14    | ✅ Cubierto |
+| `pages/management/pages/hardware/hardware-management.component.spec.ts`                                                | 2     | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-brand-edit-panel/hardware-brand-edit-panel.component.spec.ts`     | 7     | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-edition-edit-panel/hardware-edition-edit-panel.component.spec.ts` | 7     | ✅ Cubierto |
+| `pages/management/pages/hardware/components/hardware-model-edit-panel/hardware-model-edit-panel.component.spec.ts`     | 11    | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/brands/hardware-brands-management.component.spec.ts`                            | 16    | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/editions/hardware-editions-management.component.spec.ts`                        | 32    | ✅ Cubierto |
+| `pages/management/pages/hardware/pages/models/hardware-models-management.component.spec.ts`                            | 34    | ✅ Cubierto |
+| `pages/management/pages/protectors/components/protector-edit-panel/protector-edit-panel.component.spec.ts`             | 19    | ✅ Cubierto |
+| `pages/management/pages/protectors/protectors-management.component.spec.ts`                                            | 22    | ✅ Cubierto |
+| `pages/management/pages/stores/components/store-edit-panel/store-edit-panel.component.spec.ts`                         | 7     | ✅ Cubierto |
+| `pages/management/pages/stores/stores-management.component.spec.ts`                                                    | 19    | ✅ Cubierto |
+| `pages/management/pages/users/users-management.component.spec.ts`                                                      | 42    | ✅ Cubierto |
+| `pages/management/pages/users/components/delete-user-dialog/delete-user-dialog.component.spec.ts`                      | 8     | ✅ Cubierto |
 
 #### Pedidos (`pages/orders`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `pages/orders/orders.component.spec.ts` | 2 | ✅ Cubierto |
-| `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts` | 3 | ✅ Cubierto |
-| `pages/orders/pages/order-create/order-create.component.spec.ts` | 13 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/order-detail.component.spec.ts` | 95 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 24 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts` | 32 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.spec.ts` | 25 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts` | 11 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts` | 14 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/orders/pages/order-invite/order-invite.component.spec.ts` | 26 | ✅ Cubierto |
-| `pages/orders/pages/orders-list/orders-list.component.spec.ts` | 11 | ✅ Cubierto |
+| Fichero                                                                                                  | Tests | Estado      |
+| -------------------------------------------------------------------------------------------------------- | ----- | ----------- |
+| `pages/orders/orders.component.spec.ts`                                                                  | 2     | ✅ Cubierto |
+| `pages/orders/components/order-summary-card/order-summary-card.component.spec.ts`                        | 3     | ✅ Cubierto |
+| `pages/orders/pages/order-create/order-create.component.spec.ts`                                         | 13    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/order-detail.component.spec.ts`                                         | 95    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/add-edit-line-dialog/add-edit-line-dialog.component.spec.ts` | 24    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-cost-summary/order-cost-summary.component.spec.ts`     | 32    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-info-section/order-info-section.component.spec.ts`     | 25    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-placing/order-placing.component.spec.ts`               | 11    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-product-list/order-product-list.component.spec.ts`     | 14    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/order-stepper/order-stepper.component.spec.ts`               | 26    | ✅ Cubierto |
+| `pages/orders/pages/order-detail/components/ready-dialog/ready-dialog.component.spec.ts`                 | 12    | ✅ Cubierto |
+| `pages/orders/pages/order-invite/order-invite.component.spec.ts`                                         | 26    | ✅ Cubierto |
+| `pages/orders/pages/orders-list/orders-list.component.spec.ts`                                           | 11    | ✅ Cubierto |
 
 #### Venta, ajustes y wishlist
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `pages/sale/sale.component.spec.ts` | 39 | ✅ Cubierto |
-| `pages/settings/settings.component.spec.ts` | 48 | ✅ Cubierto |
-| `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts` | 7 | ✅ Cubierto |
-| `pages/wishlist/wishlist.component.spec.ts` | 45 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts` | 12 | ✅ Cubierto |
-| `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17 | ✅ Cubierto |
-| `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts` | 23 | ✅ Cubierto |
+| Fichero                                                                                 | Tests | Estado      |
+| --------------------------------------------------------------------------------------- | ----- | ----------- |
+| `pages/sale/sale.component.spec.ts`                                                     | 39    | ✅ Cubierto |
+| `pages/settings/settings.component.spec.ts`                                             | 48    | ✅ Cubierto |
+| `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts`     | 7     | ✅ Cubierto |
+| `pages/wishlist/wishlist.component.spec.ts`                                             | 45    | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts`               | 12    | ✅ Cubierto |
+| `pages/wishlist/components/wishlist-item-dialog/wishlist-item-dialog.component.spec.ts` | 17    | ✅ Cubierto |
+| `pages/wishlist/pages/wishlist-detail/wishlist-detail.component.spec.ts`                | 23    | ✅ Cubierto |
 
 **Qué se cubre** (componentes):
+
 - `LibButtonComponent`: label requerido, modificadores `--primary`/`--ghost`/`--danger`/`--success`, `disabled`, `loading` (icono spin), proyección `<ng-content>` (SVG inline) y precedencia ng-content vs `icon` input (regla CSS `:not(:empty) ~ .lib-btn__icon { display: none }`).
 - `LibIconButtonComponent`: icono requerido, `ariaLabel`, variantes de tamaño `sm`/`md`/`lg`, `:host { display: contents }` para directivas Material (`matTooltip`, `matMenuTriggerFor`, `matSuffix`).
 - `LibCardComponent`: `interactive` (role + tabindex + key handlers), `padded`, variantes; emisión de `cardClicked` con Enter/Space/click.
@@ -357,18 +362,19 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### Utilidades compartidas (`src/app/presentation/shared`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `datepicker-field-click/datepicker-field-click.directive.spec.ts` | 2 | ✅ Cubierto |
-| `dominant-color/dominant-color.util.spec.ts` | 6 | ✅ Cubierto |
-| `image-url/image-url.utils.spec.ts` | 8 | ✅ Cubierto |
-| `order-member/order-member.util.spec.ts` | 19 | ✅ Cubierto |
-| `pack-optimizer/pack-optimizer.util.spec.ts` | 24 | ✅ Cubierto |
-| `rawg-platform/rawg-platform.utils.spec.ts` | 12 | ✅ Cubierto |
-| `relative-time/relative-time.util.spec.ts` | 8 | ✅ Cubierto |
-| `validators/validators.spec.ts` | 27 | ✅ Cubierto |
+| Fichero                                                           | Tests | Estado      |
+| ----------------------------------------------------------------- | ----- | ----------- |
+| `datepicker-field-click/datepicker-field-click.directive.spec.ts` | 2     | ✅ Cubierto |
+| `dominant-color/dominant-color.util.spec.ts`                      | 6     | ✅ Cubierto |
+| `image-url/image-url.utils.spec.ts`                               | 8     | ✅ Cubierto |
+| `order-member/order-member.util.spec.ts`                          | 19    | ✅ Cubierto |
+| `pack-optimizer/pack-optimizer.util.spec.ts`                      | 24    | ✅ Cubierto |
+| `rawg-platform/rawg-platform.utils.spec.ts`                       | 12    | ✅ Cubierto |
+| `relative-time/relative-time.util.spec.ts`                        | 8     | ✅ Cubierto |
+| `validators/validators.spec.ts`                                   | 27    | ✅ Cubierto |
 
 **Qué se cubre**:
+
 - `dominant-color.util`: `extractDominantColor` (promedio de píxeles válidos, filtrado near-black/near-white, fallback a promedio total cuando < 50 píxeles válidos, null cuando `getContext` falla o `drawImage` lanza error CORS).
 - `pack-optimizer.util`: `optimizePacks` (casos de borde, pack único, múltiples packs, deduplicación, límite de 3 sugerencias, orden del breakdown, redondeo de costes) y `formatBreakdown`.
 - `order-member.util`: `sortedMembers` (owner primero), `readyCount`, `allMembersReady`.
@@ -380,9 +386,9 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ### App component (`src/app`)
 
-| Fichero | Tests | Estado |
-|---|---|---|
-| `app.component.spec.ts` | 31 | ✅ Cubierto |
+| Fichero                 | Tests | Estado      |
+| ----------------------- | ----- | ----------- |
+| `app.component.spec.ts` | 31    | ✅ Cubierto |
 
 **Qué se cubre**: existencia, `isAuthenticated`, `isNavActive` (incluyendo rutas de edición), `getPageTitle`, `getDisplayName`, `getUserEmail`, `getAvatarUrl`, `logout`, `onAvatarClick` (navega a /settings), inicialización de tema y PWA, actualización de `currentRoute` en NavigationEnd; señales computadas `bottomNavItems` (con y sin admin, mobile vs desktop), `activeNavIndex`, `navItemCount`.
 
@@ -390,18 +396,18 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ## Resumen
 
-| Capa | Ficheros | Tests |
-|---|---|---|
-| Configuración | 1 | 3 |
-| Mappers | 14 | 207 |
-| Use Cases | 18 | 162 |
-| Repositorios | 18 | 312 |
-| Guards | 5 | 22 |
-| Servicios | 7 | 90 |
-| Abstractas | 5 | 175 |
-| App component | 1 | 31 |
-| Componentes (incluye `lib/` × 12 ficheros / 63 tests) | 84 | 1577 |
-| Utilidades | 8 | 106 |
+| Capa                                                  | Ficheros | Tests |
+| ----------------------------------------------------- | -------- | ----- |
+| Configuración                                         | 1        | 3     |
+| Mappers                                               | 14       | 207   |
+| Use Cases                                             | 18       | 162   |
+| Repositorios                                          | 18       | 312   |
+| Guards                                                | 5        | 22    |
+| Servicios                                             | 7        | 90    |
+| Abstractas                                            | 5        | 175   |
+| App component                                         | 1        | 31    |
+| Componentes (incluye `lib/` × 12 ficheros / 63 tests) | 84       | 1577  |
+| Utilidades                                            | 8        | 106   |
 
 > Fuente autoritativa: `npm test`. Vitest reporta actualmente **158 ficheros / 2648 tests passed**. Ejecutar `/update-testing` para sincronizar la tabla por capa con los conteos exactos.
 
@@ -409,12 +415,12 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 ## Cobertura actual
 
-| Métrica | Valor |
-|---|---|
-| Statements | 99.04 % (5069 / 5118) |
-| Branches | **95.70 %** (3339 / 3489) |
-| Functions | 99.14 % (1160 / 1170) |
-| Lines | 99.83 % (4183 / 4190) |
+| Métrica    | Valor                     |
+| ---------- | ------------------------- |
+| Statements | 99.04 % (5069 / 5118)     |
+| Branches   | **95.70 %** (3339 / 3489) |
+| Functions  | 99.14 % (1160 / 1170)     |
+| Lines      | 99.83 % (4183 / 4190)     |
 
 ```bash
 npm run test:coverage
@@ -435,6 +441,7 @@ Tras examinar el fichero `lcov.info` entrada a entrada (formato `BRDA:linea,bloq
 V8 genera entre 2 y 4 entradas `BRDA` fantasma en la línea de cada `export class X`. Estas ramas no existen en el código TypeScript original; las introduce el propio compilador de JavaScript durante la instrumentación de cobertura. No hay ningún test que pueda cubrir una rama que no tiene código ejecutable asociado.
 
 **Patrón en `lcov.info`:**
+
 ```
 SF:src/app/.../foo.component.ts
 BRDA:12,95,0,1   ← rama 0 cubierta
@@ -453,18 +460,18 @@ La línea 12 es `export class FooComponent implements OnInit { ... }`. Por mucho
 
 Son ramas de condiciones cuyo lado `false` (o `true`) nunca puede ocurrir dado el contrato del código que las rodea.
 
-| Fichero | Línea | Expresión | Rama inalcanzable | Motivo |
-|---|---|---|---|---|
-| `game-form.component.ts` | 235 | `parts[0] ?? '50%'` | lado `null` del `??` | `String.prototype.split()` siempre devuelve al menos 1 elemento; `parts[0]` nunca es `null`/`undefined` |
-| `game-form.component.ts` | 202 | `typeof platform.labelKey` | rama `false` | el objeto siempre tiene `labelKey` por construcción |
-| `game-form.component.ts` | 431, 434 | guards de validación de form | ramas imposibles | los controles se inicializan en el constructor; nunca son `null` |
-| `_passwordMatchValidator` (register / reset-password) | — | `if (!password \|\| !confirmPassword)` | rama `true` | las controls siempre existen; el validador solo se aplica al `FormGroup` que las crea |
-| `pack-optimizer.util.ts` | 25 | `_runDP(needed, sorted, 1)[0] ?? null` | rama `null` del `??` | `_runDP` siempre devuelve al menos un resultado para packs válidos; el array nunca está vacío |
-| `pack-optimizer.util.ts` | 35 | `if (!s) continue` | rama `true` | `exact` (al que `!s` protege) solo sería `null` si `_runDP` devolviera vacío (ver fila anterior) |
-| `pack-optimizer.util.ts` | 113 | `if (seen.has(key)) continue` | rama `true` | la misma combinación de packs no puede aparecer para dos valores distintos de `q` en el DP back-tracking determinista |
-| `hardware-loan-form.component.ts` | 127 | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | `loanedAt` es campo `required`; `onLoan()` tiene guard `if (this.form.invalid) return` que impide llegar a esta línea con valor null |
-| `game-loan-form.component.ts` | 112 | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | mismo motivo que `hardware-loan-form`: campo requerido con guard de formulario inválido |
-| `sale-form.component.ts` | 182 | `raw.soldAt ? raw.soldAt.toLocaleDateString('sv-SE') : null` | rama `false` (soldAt null) | `onMarkAsSold()` tiene guard `if (!this.canMarkAsSold) return` y `canMarkAsSold` exige `soldAt !== null` |
+| Fichero                                               | Línea    | Expresión                                                      | Rama inalcanzable            | Motivo                                                                                                                               |
+| ----------------------------------------------------- | -------- | -------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `game-form.component.ts`                              | 235      | `parts[0] ?? '50%'`                                            | lado `null` del `??`         | `String.prototype.split()` siempre devuelve al menos 1 elemento; `parts[0]` nunca es `null`/`undefined`                              |
+| `game-form.component.ts`                              | 202      | `typeof platform.labelKey`                                     | rama `false`                 | el objeto siempre tiene `labelKey` por construcción                                                                                  |
+| `game-form.component.ts`                              | 431, 434 | guards de validación de form                                   | ramas imposibles             | los controles se inicializan en el constructor; nunca son `null`                                                                     |
+| `_passwordMatchValidator` (register / reset-password) | —        | `if (!password \|\| !confirmPassword)`                         | rama `true`                  | las controls siempre existen; el validador solo se aplica al `FormGroup` que las crea                                                |
+| `pack-optimizer.util.ts`                              | 25       | `_runDP(needed, sorted, 1)[0] ?? null`                         | rama `null` del `??`         | `_runDP` siempre devuelve al menos un resultado para packs válidos; el array nunca está vacío                                        |
+| `pack-optimizer.util.ts`                              | 35       | `if (!s) continue`                                             | rama `true`                  | `exact` (al que `!s` protege) solo sería `null` si `_runDP` devolviera vacío (ver fila anterior)                                     |
+| `pack-optimizer.util.ts`                              | 113      | `if (seen.has(key)) continue`                                  | rama `true`                  | la misma combinación de packs no puede aparecer para dos valores distintos de `q` en el DP back-tracking determinista                |
+| `hardware-loan-form.component.ts`                     | 127      | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | `loanedAt` es campo `required`; `onLoan()` tiene guard `if (this.form.invalid) return` que impide llegar a esta línea con valor null |
+| `game-loan-form.component.ts`                         | 112      | `raw.loanedAt ? raw.loanedAt.toLocaleDateString('sv-SE') : ''` | rama `false` (loanedAt null) | mismo motivo que `hardware-loan-form`: campo requerido con guard de formulario inválido                                              |
+| `sale-form.component.ts`                              | 182      | `raw.soldAt ? raw.soldAt.toLocaleDateString('sv-SE') : null`   | rama `false` (soldAt null)   | `onMarkAsSold()` tiene guard `if (!this.canMarkAsSold) return` y `canMarkAsSold` exige `soldAt !== null`                             |
 
 > **Nota sobre `_passwordMatchValidator`**: aunque la rama `true` del guard es lógicamente inalcanzable en producción, sí se ha cubierto en los tests invocando el validador directamente con un `FormGroup` sintético al que le falta uno de los controles: `(component as any)._passwordMatchValidator(new FormGroup({ confirmPassword: new FormControl('') }))`. Esto cierra la rama en el spec pero no elimina las entradas V8 de los bloques adyacentes.
 
@@ -475,6 +482,7 @@ Son ramas de condiciones cuyo lado `false` (o `true`) nunca puede ocurrir dado e
 Dentro de `computed()` y `effect()`, Angular compila las funciones a través de su propio scheduler. El optional chaining (`?.`) y el nullish coalescing (`??`) dentro de esas funciones generan entradas `BRDA` que V8 nunca marca como cubiertas aunque el código se ejecute, porque la rama se resuelve en el contexto del scheduler de Angular y no en el frame de ejecución normal del test.
 
 **Ejemplo concreto** (`game-form.component.ts`, línea 289):
+
 ```typescript
 readonly hasChanges = computed(() => {
   // ...
@@ -483,9 +491,11 @@ readonly hasChanges = computed(() => {
   //                       ^ BRDA:289,34,1,0 — rama "no-null" nunca cubierta por V8
 });
 ```
+
 El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `rawg_id`, pero V8 no registra la rama "objeto existe → acceder a `rawg_id`" porque el compiled signal la ejecuta fuera del stack de instrumentación normal.
 
 **Otros ficheros afectados**:
+
 - `create-update-console.component.ts` líneas 69, 75, 81: `this._storeInput()?.toString().toLowerCase() ?? ''` y equivalentes para brand/model dentro de `filteredStores`, `filteredBrands`, `filteredModels` (todos `computed()`).
 - `create-update-controller.component.ts` líneas 76, 82, 88: mismo patrón.
 
@@ -503,15 +513,15 @@ El test llama a `hasChanges()` con `selectedGame()` devolviendo un objeto con `r
 
 ## Lógica sin cobertura (deliberadamente no testeada)
 
-| Componente / método | Motivo |
-|---|---|
-| `pwa-update.service.ts` — callback `() => document.location.reload()` (línea 72) y callback de `setTimeout(_applyUpdate, 400)` (línea 102) | El test stubbea `activateUpdate` con un `Promise` que nunca resuelve, así que el `.then()` no dispara `reload()`; y al no usar fake timers en el test de overlay, el `setTimeout` se cancela cuando el test termina. Reload real cerraría el entorno de happy-dom. |
-| Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…) | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta. |
-| `supabase.config.ts` — función `lock` (línea 17) | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`. |
-| `supabase-console.repository.ts` / `supabase-controller.repository.ts` — segundo `await` dentro de `createLoan` | Tras crear el préstamo en `hardware_loans`, se actualiza la tabla principal con `active_loan_*`. Esta segunda llamada no lanza aunque falle (sin `if (error)` guard), por lo que no hay rama de error testable. Los assertions de `controllerBuilder.update` y `consoleBuilder.update` en `returnLoan` y `createLoan` verifican que se invoca, pero V8 marca la rama de rechazo de `Promise.all` como no cubierta porque no hay throw. |
-| `sale.component.ts` — línea 33 (`providers: [marketRepositoryProvider, marketUseCasesProvider]`) | La expresión del array de providers está en el `@Component` decorator. Angular Ivy la evalúa de forma diferida en la factory del componente; como el test reemplaza los providers con `TestBed.overrideComponent`, la expresión original nunca se ejecuta. Los providers conectan a Supabase y no se pueden instanciar en tests unitarios. |
-| `app.component.ts` — callback de `addEventListener('change', …)` en `_mobileQuery` | El listener se registra en `ngOnInit` pero solo se dispara cuando el viewport cambia de tamaño. En happy-dom, `window.matchMedia` devuelve un mock que no admite dispatch de `MediaQueryListEvent`. La función es un simple `this._isMobile.set(e.matches)` sin lógica propia. |
-| `app.component.ts` — `@ViewChildren(MatMenuTrigger) menuTriggers` (línea 107) | Propiedad decorada con `@ViewChildren`. Angular genera un setter interno que se llama durante la inicialización de la vista; con `template: ''` en los tests no hay view children que satisfacer. V8 registra el setter como no ejecutado. Artefacto del compilador Angular. |
-| `catalog-item-card.component.ts` — `CatalogItemCardComponent_click_HostBindingHandler` | Función generada por el compilador Angular para el host binding `'(click)': 'cardClick.emit()'`. Los tests despachan un click nativo sobre `fixture.nativeElement` y el spy se activa, pero V8 no instrumenta correctamente las funciones de host binding generadas por Ivy. Artefacto del compilador. |
-| `settings.component.ts` — función anónima `anonymous_15` | Callback anónimo de una suscripción RxJS en el componente de ajustes. La función es uno de los callbacks de subscribe que se ejecuta solo bajo condiciones específicas no reproducidas en los tests actuales. |
-| `game-detail.component.ts` — callback `probe.onload` (líneas 178-179) y `if (color) ...` | El effect del constructor crea un `new Image()` para muestrear el color dominante de la portada. En tests no hay un canvas real ni una imagen que dispare `onload`; los assertions en happy-dom no permiten controlar el ciclo de carga. La rama del `if (color)` (color truthy / null) tampoco se cubre sin mockear el constructor `Image` global, lo cual añadiría más fragilidad al spec que valor real. |
+| Componente / método                                                                                                                        | Motivo                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pwa-update.service.ts` — callback `() => document.location.reload()` (línea 72) y callback de `setTimeout(_applyUpdate, 400)` (línea 102) | El test stubbea `activateUpdate` con un `Promise` que nunca resuelve, así que el `.then()` no dispara `reload()`; y al no usar fake timers en el test de overlay, el `setTimeout` se cancela cuando el test termina. Reload real cerraría el entorno de happy-dom.                                                                                                                                                                     |
+| Flujos async de management (`_loadStores`, `onSaved`, `onDeleteStore`…)                                                                    | Requieren control de microtasks y spies en use-cases async; cobertura de señales y lógica pura ya cubierta.                                                                                                                                                                                                                                                                                                                            |
+| `supabase.config.ts` — función `lock` (línea 17)                                                                                           | La función `(name, acquireTimeout, fn) => fn()` solo se invoca internamente por Supabase durante operaciones de auth. No se puede activar sin mocks que el bundler de Angular no permite re-aplicar tras `vi.resetModules()`.                                                                                                                                                                                                          |
+| `supabase-console.repository.ts` / `supabase-controller.repository.ts` — segundo `await` dentro de `createLoan`                            | Tras crear el préstamo en `hardware_loans`, se actualiza la tabla principal con `active_loan_*`. Esta segunda llamada no lanza aunque falle (sin `if (error)` guard), por lo que no hay rama de error testable. Los assertions de `controllerBuilder.update` y `consoleBuilder.update` en `returnLoan` y `createLoan` verifican que se invoca, pero V8 marca la rama de rechazo de `Promise.all` como no cubierta porque no hay throw. |
+| `sale.component.ts` — línea 33 (`providers: [marketRepositoryProvider, marketUseCasesProvider]`)                                           | La expresión del array de providers está en el `@Component` decorator. Angular Ivy la evalúa de forma diferida en la factory del componente; como el test reemplaza los providers con `TestBed.overrideComponent`, la expresión original nunca se ejecuta. Los providers conectan a Supabase y no se pueden instanciar en tests unitarios.                                                                                             |
+| `app.component.ts` — callback de `addEventListener('change', …)` en `_mobileQuery`                                                         | El listener se registra en `ngOnInit` pero solo se dispara cuando el viewport cambia de tamaño. En happy-dom, `window.matchMedia` devuelve un mock que no admite dispatch de `MediaQueryListEvent`. La función es un simple `this._isMobile.set(e.matches)` sin lógica propia.                                                                                                                                                         |
+| `app.component.ts` — `@ViewChildren(MatMenuTrigger) menuTriggers` (línea 107)                                                              | Propiedad decorada con `@ViewChildren`. Angular genera un setter interno que se llama durante la inicialización de la vista; con `template: ''` en los tests no hay view children que satisfacer. V8 registra el setter como no ejecutado. Artefacto del compilador Angular.                                                                                                                                                           |
+| `catalog-item-card.component.ts` — `CatalogItemCardComponent_click_HostBindingHandler`                                                     | Función generada por el compilador Angular para el host binding `'(click)': 'cardClick.emit()'`. Los tests despachan un click nativo sobre `fixture.nativeElement` y el spy se activa, pero V8 no instrumenta correctamente las funciones de host binding generadas por Ivy. Artefacto del compilador.                                                                                                                                 |
+| `settings.component.ts` — función anónima `anonymous_15`                                                                                   | Callback anónimo de una suscripción RxJS en el componente de ajustes. La función es uno de los callbacks de subscribe que se ejecuta solo bajo condiciones específicas no reproducidas en los tests actuales.                                                                                                                                                                                                                          |
+| `game-detail.component.ts` — callback `probe.onload` (líneas 178-179) y `if (color) ...`                                                   | El effect del constructor crea un `new Image()` para muestrear el color dominante de la portada. En tests no hay un canvas real ni una imagen que dispare `onload`; los assertions en happy-dom no permiten controlar el ciclo de carga. La rama del `if (color)` (color truthy / null) tampoco se cubre sin mockear el constructor `Image` global, lo cual añadiría más fragilidad al spec que valor real.                            |
