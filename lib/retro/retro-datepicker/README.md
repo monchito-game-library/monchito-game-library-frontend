@@ -19,6 +19,7 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `prefixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en prefix. |
 | `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay fecha. |
 | `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
+| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. |
 | `min` | `Date \| null` | `null` | Fecha mínima seleccionable. |
 | `max` | `Date \| null` | `null` | Fecha máxima seleccionable. |
 
