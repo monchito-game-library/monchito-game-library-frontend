@@ -10,6 +10,13 @@
     </retro-button>
   </header>
 
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.stores.search.placeholder' | transloco"
+    commandPath="monchito ~/management/stores"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
+
   @if (panelOpen()) {
     <div class="stores-edit-panel-wrapper">
       <app-store-edit-panel
@@ -30,11 +37,9 @@
           </div>
         }
       </div>
-    } @else if (stores().length === 0) {
-      <p class="stores-page__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
     } @else {
       <div class="stores-grid">
-        @for (store of stores(); track store.id) {
+        @for (store of filteredStores(); track store.id) {
           <retro-card
             class="store-card"
             padding="sm"
@@ -54,6 +59,15 @@
           </retro-card>
         }
       </div>
+      @if (searchTerm() && filteredStores().length === 0) {
+        <div class="stores-page__no-results">
+          <p>{{ 'management.stores.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
+      @if (stores().length === 0) {
+        <p class="stores-page__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
+      }
     }
   </div>
 </div>

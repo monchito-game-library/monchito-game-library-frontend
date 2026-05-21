@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal
+} from '@angular/core';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
@@ -20,6 +29,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { StoreFormResult } from '@/interfaces/management/store-form-result.interface';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 import { StoreEditPanelComponent } from './components/store-edit-panel/store-edit-panel.component';
 
 /** Page for managing the shared store catalog. */
@@ -31,6 +41,7 @@ import { StoreEditPanelComponent } from './components/store-edit-panel/store-edi
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StoreEditPanelComponent,
+    SearchToolbarComponent,
     TranslocoPipe,
     RetroCardComponent,
     RetroChipComponent,
@@ -57,6 +68,22 @@ export class StoresManagementComponent implements OnInit {
 
   /** Whether the edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal(false);
+
+  /** Término de búsqueda activo para filtrar por label. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista de tiendas filtrada según searchTerm. */
+  readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.stores();
+    return this.stores().filter((store) => store.label.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar — refleja el filtro activo. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
 
   async ngOnInit(): Promise<void> {
     await this._loadStores();
@@ -140,6 +167,14 @@ export class StoresManagementComponent implements OnInit {
       await this._loadStores();
       this.onClosePanel();
     });
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**

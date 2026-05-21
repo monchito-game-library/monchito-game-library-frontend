@@ -106,6 +106,63 @@ describe('StoresManagementComponent', () => {
     });
   });
 
+  describe('searchTerm / filteredStores / commandFlags (valores iniciales)', () => {
+    it('searchTerm empieza vacío', () => expect(component.searchTerm()).toBe(''));
+    it('filteredStores devuelve todos los stores cuando searchTerm es vacío', () => {
+      const stores = [makeStore({ id: 'a', label: 'Nintendo' }), makeStore({ id: 'b', label: 'Amazon' })];
+      component.stores.set(stores);
+      expect(component.filteredStores()).toEqual(stores);
+    });
+    it('commandFlags es [] cuando no hay término', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('nint');
+      expect(component.searchTerm()).toBe('nint');
+    });
+
+    it('resetea searchTerm a cadena vacía cuando se llama con vacío', () => {
+      component.searchTerm.set('algo');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredStores (filtrado)', () => {
+    it('dado "Nintendo" y "Amazon", buscar "nint" devuelve solo Nintendo', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' }), makeStore({ id: 'b', label: 'Amazon' })]);
+      component.searchTerm.set('nint');
+      expect(component.filteredStores()).toHaveLength(1);
+      expect(component.filteredStores()[0].label).toBe('Nintendo');
+    });
+
+    it('la búsqueda es case-insensitive', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' })]);
+      component.searchTerm.set('NINT');
+      expect(component.filteredStores()).toHaveLength(1);
+    });
+
+    it('devuelve lista vacía cuando ningún store coincide', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' })]);
+      component.searchTerm.set('xyz');
+      expect(component.filteredStores()).toHaveLength(0);
+    });
+  });
+
+  describe('commandFlags (computed)', () => {
+    it('incluye el término cuando searchTerm no está vacío', () => {
+      component.searchTerm.set('nint');
+      expect(component.commandFlags()).toEqual(['search="nint"']);
+    });
+
+    it('vuelve a [] al limpiar el término', () => {
+      component.searchTerm.set('nint');
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+  });
+
   describe('_loadStores (vía ngOnInit)', () => {
     it('rellena stores y pone loading a false', async () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
