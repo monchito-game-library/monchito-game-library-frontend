@@ -135,58 +135,33 @@ describe('WishlistComponent', () => {
     });
   });
 
-  describe('onSearchInput', () => {
-    beforeEach(async () => {
-      vi.useFakeTimers();
-      await component.ngOnInit();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it('no actualiza searchTerm antes de 300 ms', () => {
-      component.onSearchInput('zelda');
-      vi.advanceTimersByTime(299);
-      expect(component.searchTerm()).toBe('');
-    });
-
-    it('actualiza searchTerm tras 300 ms', () => {
-      component.onSearchInput('zelda');
-      vi.advanceTimersByTime(300);
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm de forma síncrona con el valor recibido', () => {
+      component.onSearchChange('zelda');
       expect(component.searchTerm()).toBe('zelda');
     });
 
     it('aplica trim al valor antes de setear searchTerm', () => {
-      component.onSearchInput('  mario  ');
-      vi.advanceTimersByTime(300);
+      component.onSearchChange('  mario  ');
       expect(component.searchTerm()).toBe('mario');
     });
 
-    it('toma el último valor si se llama varias veces antes de 300 ms', () => {
-      component.onSearchInput('z');
-      vi.advanceTimersByTime(100);
-      component.onSearchInput('ze');
-      vi.advanceTimersByTime(100);
-      component.onSearchInput('zelda');
-      vi.advanceTimersByTime(300);
-      expect(component.searchTerm()).toBe('zelda');
+    it('resetea searchTerm cuando recibe una cadena vacía', () => {
+      component.searchTerm.set('zelda');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
     });
   });
 
   describe('onClearSearch', () => {
-    it('resetea searchTerm a "" y filteredItems vuelve a la lista completa', async () => {
-      vi.useFakeTimers();
-      await component.ngOnInit();
+    it('resetea searchTerm a "" y filteredItems vuelve a la lista completa', () => {
       component.items.set([makeItem({ title: 'Zelda' }), makeItem({ title: 'Mario' })]);
-      component.onSearchInput('zelda');
-      vi.advanceTimersByTime(300);
+      component.onSearchChange('zelda');
       expect(component.filteredItems()).toHaveLength(1);
 
       component.onClearSearch();
       expect(component.searchTerm()).toBe('');
       expect(component.filteredItems()).toHaveLength(2);
-      vi.useRealTimers();
     });
   });
 

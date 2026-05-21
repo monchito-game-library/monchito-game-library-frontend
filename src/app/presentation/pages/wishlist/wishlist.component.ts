@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   inject,
-  OnDestroy,
   OnInit,
   Signal,
   signal,
@@ -14,7 +13,7 @@ import { DecimalPipe, Location, NgOptimizedImage, SlicePipe } from '@angular/com
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { debounceTime, firstValueFrom, map, Subject, Subscription } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
@@ -40,7 +39,7 @@ import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.com
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroListComponent } from '@retro/retro-list/retro-list.component';
-import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -66,11 +65,11 @@ import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command
     RetroInputComponent,
     RetroTextareaComponent,
     RetroListComponent,
-    RetroCommandBarComponent,
+    SearchToolbarComponent,
     FormsModule
   ]
 })
-export class WishlistComponent implements OnInit, OnDestroy {
+export class WishlistComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _dialog: RetroDialogService = inject(RetroDialogService);
@@ -84,7 +83,6 @@ export class WishlistComponent implements OnInit, OnDestroy {
 
   /** Reactive form status signal, used to drive mobileCanConfirm. */
   private readonly _mobileFormStatus: Signal<string>;
-  private readonly _searchInput$: Subject<string> = new Subject<string>();
 
   /** Item being edited in mobile form mode (null = add mode). */
   private _editingItem: WishlistItemModel | null = null;
@@ -94,8 +92,6 @@ export class WishlistComponent implements OnInit, OnDestroy {
 
   /** ID of the item whose detail page to return to after edit. */
   private _returnToDetailId: string | null = null;
-
-  private _searchDebounce?: Subscription;
 
   /** Whether items are being loaded from Supabase. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
@@ -178,7 +174,6 @@ export class WishlistComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
-    this._searchDebounce = this._searchInput$.pipe(debounceTime(300)).subscribe((value) => this.searchTerm.set(value));
     await this._loadItems();
     const state = window.history.state as { editItemId?: string } | null;
     if (state?.editItemId) {
@@ -187,10 +182,6 @@ export class WishlistComponent implements OnInit, OnDestroy {
       const item: WishlistItemModel | undefined = this.items().find((i) => i.id === state.editItemId);
       if (item) this.onEditItem(item);
     }
-  }
-
-  ngOnDestroy(): void {
-    this._searchDebounce?.unsubscribe();
   }
 
   /**
@@ -203,12 +194,13 @@ export class WishlistComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Actualiza el término de búsqueda con debounce de 300 ms.
+   * Actualiza el término de búsqueda con el valor emitido por SearchToolbarComponent
+   * (el debounce es gestionado internamente por el hijo).
    *
-   * @param {string} value - Valor introducido por el usuario.
+   * @param {string} value - Valor ya procesado por el debounce del toolbar.
    */
-  onSearchInput(value: string): void {
-    this._searchInput$.next(value.trim());
+  onSearchChange(value: string): void {
+    this.searchTerm.set(value.trim());
   }
 
   /**
@@ -216,7 +208,6 @@ export class WishlistComponent implements OnInit, OnDestroy {
    */
   onClearSearch(): void {
     this.searchTerm.set('');
-    this._searchInput$.next('');
   }
 
   /**

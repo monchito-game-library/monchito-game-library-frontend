@@ -28,15 +28,12 @@
       }
     </header>
 
-    <div class="wishlist-page__toolbar">
-      <retro-input
-        prefixText="$ "
-        [ngModel]="searchTerm()"
-        (ngModelChange)="onSearchInput($event)"
-        [placeholder]="'wishlist.filters.title' | transloco"
-        [hideSubscript]="true" />
-      <retro-command-bar path="monchito ~/library/wishlist" [flags]="commandFlags()" />
-    </div>
+    <app-search-toolbar
+      [value]="searchTerm()"
+      [placeholder]="'wishlist.filters.title' | transloco"
+      commandPath="monchito ~/library/wishlist"
+      [commandFlags]="commandFlags()"
+      (valueChange)="onSearchChange($event)" />
 
     @if (loading()) {
       <div class="wishlist-page__list">
