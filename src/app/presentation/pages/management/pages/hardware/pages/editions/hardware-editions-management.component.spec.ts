@@ -6,11 +6,13 @@ import { HardwareEditionsManagementComponent } from './hardware-editions-managem
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
+import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 
 function makeEdition(overrides: Partial<HardwareEditionModel> = {}): HardwareEditionModel {
   return { id: 'edition-uuid-1', modelId: 'model-uuid-1', name: 'Final Fantasy XVI Limited', ...overrides };
@@ -26,6 +28,10 @@ function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelMo
     category: null,
     ...overrides
   };
+}
+
+function makeBrand(overrides: Partial<HardwareBrandModel> = {}): HardwareBrandModel {
+  return { id: 'brand-uuid-1', name: 'Nintendo', ...overrides };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -66,6 +72,12 @@ describe('HardwareEditionsManagementComponent', () => {
           useValue: {
             getByModelId: vi.fn().mockResolvedValue(null),
             upsert: vi.fn()
+          }
+        },
+        {
+          provide: HARDWARE_BRAND_USE_CASES,
+          useValue: {
+            getById: vi.fn().mockResolvedValue(undefined)
           }
         },
         {
@@ -144,6 +156,36 @@ describe('HardwareEditionsManagementComponent', () => {
     it('devuelve el flag search cuando hay término', () => {
       component.searchTerm.set('white');
       expect(component.commandFlags()).toEqual(['search="white"']);
+    });
+  });
+
+  describe('commandPath', () => {
+    it('devuelve la base cuando no hay model ni brand', () => {
+      component.model.set(undefined);
+      component.brand.set(undefined);
+      expect(component.commandPath()).toBe('monchito ~/management/hardware');
+    });
+
+    it('incluye solo el model cuando no hay brand', () => {
+      component.model.set(makeModel({ name: 'Game Boy' }));
+      component.brand.set(undefined);
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/game-boy');
+    });
+
+    it('incluye brand y model cuando ambos están cargados', () => {
+      component.brand.set(makeBrand({ name: 'Nintendo' }));
+      component.model.set(makeModel({ name: 'Game Boy' }));
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/nintendo/game-boy');
+    });
+
+    it('invoca _brandUseCases.getById con el brandId del model tras ngOnInit', async () => {
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.getById.mockResolvedValue(makeModel({ brandId: 'brand-uuid-1' }));
+
+      await component.ngOnInit();
+
+      expect(brandUseCases.getById).toHaveBeenCalledWith('brand-uuid-1');
     });
   });
 

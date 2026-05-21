@@ -29,7 +29,12 @@ import {
   HARDWARE_CONSOLE_SPECS_USE_CASES,
   HardwareConsoleSpecsUseCasesContract
 } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
+import {
+  HARDWARE_BRAND_USE_CASES,
+  HardwareBrandUseCasesContract
+} from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareConsoleSpecsModel } from '@/models/hardware-console-specs/hardware-console-specs.model';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { HardwareEditionFormResult } from '@/interfaces/management/hardware-edition-form-result.interface';
@@ -41,6 +46,7 @@ import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
 import { HardwareEditionEditPanelComponent } from '../../components/hardware-edition-edit-panel/hardware-edition-edit-panel.component';
 import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
+import { toCommandSlug } from '@/shared/command-slug/command-slug.util';
 
 /** Management page for hardware editions belonging to a specific model. */
 @Component({
@@ -69,6 +75,7 @@ export class HardwareEditionsManagementComponent implements OnInit {
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   private readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   private readonly _specsUseCases: HardwareConsoleSpecsUseCasesContract = inject(HARDWARE_CONSOLE_SPECS_USE_CASES);
+  private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
 
   private _modelId: string = '';
 
@@ -96,6 +103,9 @@ export class HardwareEditionsManagementComponent implements OnInit {
   readonly selectedModelSpecs: WritableSignal<HardwareConsoleSpecsModel | null> =
     signal<HardwareConsoleSpecsModel | null>(null);
 
+  /** Brand del modelo activo, cargada para el commandPath del terminal. */
+  readonly brand: WritableSignal<HardwareBrandModel | undefined> = signal<HardwareBrandModel | undefined>(undefined);
+
   /** Término de búsqueda activo para filtrar por nombre. */
   readonly searchTerm: WritableSignal<string> = signal<string>('');
 
@@ -112,9 +122,20 @@ export class HardwareEditionsManagementComponent implements OnInit {
     return term ? [`search="${term}"`] : [];
   });
 
+  /** Terminal command bar path — reflects brand/model hierarchy when loaded. */
+  readonly commandPath: Signal<string> = computed((): string => {
+    const base = 'monchito ~/management/hardware';
+    const brand = this.brand();
+    const model = this.model();
+    if (brand && model) return `${base}/${toCommandSlug(brand.name)}/${toCommandSlug(model.name)}`;
+    if (model) return `${base}/${toCommandSlug(model.name)}`;
+    return base;
+  });
+
   async ngOnInit(): Promise<void> {
     this._modelId = this._route.snapshot.paramMap.get('modelId') ?? '';
     await Promise.all([this._loadModel(), this._loadEditions()]);
+    await this._loadBrand();
   }
 
   /**
@@ -268,6 +289,17 @@ export class HardwareEditionsManagementComponent implements OnInit {
       await this._loadEditions();
       this.onClosePanel();
     });
+  }
+
+  /**
+   * Carga la marca del modelo activo para enriquecer el commandPath del terminal.
+   * Se invoca tras _loadModel() porque depende de model().brandId.
+   */
+  private async _loadBrand(): Promise<void> {
+    const brandId = this.model()?.brandId;
+    if (!brandId) return;
+    const brand = await this._brandUseCases.getById(brandId);
+    this.brand.set(brand ?? undefined);
   }
 
   /**
