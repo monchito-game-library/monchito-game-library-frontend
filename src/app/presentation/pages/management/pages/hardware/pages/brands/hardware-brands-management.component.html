@@ -12,6 +12,13 @@
     </retro-button>
   </header>
 
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.hardware.brands.search.placeholder' | transloco"
+    commandPath="monchito ~/management/hardware"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
+
   @if (panelOpen()) {
     <div class="brands-edit-panel-wrapper">
       <app-hardware-brand-edit-panel
@@ -35,8 +42,14 @@
     } @else if (brands().length === 0) {
       <p class="brands-page__empty">{{ 'management.hardware.brands.empty' | transloco }}</p>
     } @else {
+      @if (searchTerm() && filteredBrands().length === 0) {
+        <div class="brands-page__no-results">
+          <p>{{ 'management.hardware.brands.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
       <div class="brands-grid">
-        @for (brand of brands(); track brand.id) {
+        @for (brand of filteredBrands(); track brand.id) {
           <retro-card
             class="brand-card"
             padding="sm"

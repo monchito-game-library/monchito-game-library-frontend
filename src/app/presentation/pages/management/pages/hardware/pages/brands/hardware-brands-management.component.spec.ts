@@ -54,6 +54,59 @@ describe('HardwareBrandsManagementComponent', () => {
     it('loading es false', () => expect(component.loading()).toBe(false));
     it('panelOpen es false', () => expect(component.panelOpen()).toBe(false));
     it('selectedBrand es undefined', () => expect(component.selectedBrand()).toBeUndefined());
+    it('searchTerm es ""', () => expect(component.searchTerm()).toBe(''));
+    it('filteredBrands devuelve [] cuando brands está vacío', () => expect(component.filteredBrands()).toEqual([]));
+    it('commandFlags es []', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('sony');
+      expect(component.searchTerm()).toBe('sony');
+    });
+
+    it('limpia searchTerm al recibir cadena vacía', () => {
+      component.searchTerm.set('sony');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredBrands', () => {
+    beforeEach(() => {
+      component.brands.set([
+        { id: '1', name: 'Sony' },
+        { id: '2', name: 'Nintendo' },
+        { id: '3', name: 'Microsoft' }
+      ]);
+    });
+
+    it('devuelve todas las marcas cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredBrands().length).toBe(3);
+    });
+
+    it('filtra por coincidencia parcial case-insensitive', () => {
+      component.searchTerm.set('son');
+      expect(component.filteredBrands()).toEqual([{ id: '1', name: 'Sony' }]);
+    });
+
+    it('devuelve [] cuando no hay coincidencias', () => {
+      component.searchTerm.set('zzz');
+      expect(component.filteredBrands()).toEqual([]);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag search cuando hay término', () => {
+      component.searchTerm.set('sony');
+      expect(component.commandFlags()).toEqual(['search="sony"']);
+    });
   });
 
   describe('onAddBrand', () => {
