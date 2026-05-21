@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
@@ -31,6 +40,7 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
 import { HardwareEditionEditPanelComponent } from '../../components/hardware-edition-edit-panel/hardware-edition-edit-panel.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 
 /** Management page for hardware editions belonging to a specific model. */
 @Component({
@@ -47,7 +57,8 @@ import { HardwareEditionEditPanelComponent } from '../../components/hardware-edi
     RetroIconButtonComponent,
     TranslocoPipe,
     RetroSkeletonComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    SearchToolbarComponent
   ]
 })
 export class HardwareEditionsManagementComponent implements OnInit {
@@ -85,9 +96,33 @@ export class HardwareEditionsManagementComponent implements OnInit {
   readonly selectedModelSpecs: WritableSignal<HardwareConsoleSpecsModel | null> =
     signal<HardwareConsoleSpecsModel | null>(null);
 
+  /** Término de búsqueda activo para filtrar por nombre. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista filtrada según searchTerm. */
+  readonly filteredEditions: Signal<HardwareEditionModel[]> = computed((): HardwareEditionModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.editions();
+    return this.editions().filter((item) => item.name.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
+
   async ngOnInit(): Promise<void> {
     this._modelId = this._route.snapshot.paramMap.get('modelId') ?? '';
     await Promise.all([this._loadModel(), this._loadEditions()]);
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**

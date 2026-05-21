@@ -22,6 +22,13 @@
     </retro-button>
   </header>
 
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.hardware.editions.search.placeholder' | transloco"
+    commandPath="monchito ~/management/hardware/editions"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
+
   @if (modelPanelOpen()) {
     <div class="model-edit-panel-wrapper">
       <app-hardware-model-edit-panel
@@ -56,8 +63,14 @@
     } @else if (editions().length === 0) {
       <p class="editions-page__empty">{{ 'management.hardware.editions.empty' | transloco }}</p>
     } @else {
+      @if (searchTerm() && filteredEditions().length === 0) {
+        <div class="editions-page__no-results">
+          <p>{{ 'management.hardware.editions.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
       <div class="editions-grid">
-        @for (edition of editions(); track edition.id) {
+        @for (edition of filteredEditions(); track edition.id) {
           <retro-card
             class="edition-card"
             padding="sm"

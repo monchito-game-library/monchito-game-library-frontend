@@ -91,6 +91,60 @@ describe('HardwareEditionsManagementComponent', () => {
     it('panelOpen es false', () => expect(component.panelOpen()).toBe(false));
     it('selectedEdition es undefined', () => expect(component.selectedEdition()).toBeUndefined());
     it('modelPanelOpen es false', () => expect(component.modelPanelOpen()).toBe(false));
+    it('searchTerm es ""', () => expect(component.searchTerm()).toBe(''));
+    it('filteredEditions devuelve [] cuando editions está vacío', () =>
+      expect(component.filteredEditions()).toEqual([]));
+    it('commandFlags es []', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('limited');
+      expect(component.searchTerm()).toBe('limited');
+    });
+
+    it('limpia searchTerm al recibir cadena vacía', () => {
+      component.searchTerm.set('limited');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredEditions', () => {
+    beforeEach(() => {
+      component.editions.set([
+        makeEdition({ id: '1', name: 'Limited Edition' }),
+        makeEdition({ id: '2', name: 'Standard Black' }),
+        makeEdition({ id: '3', name: 'Glacier White' })
+      ]);
+    });
+
+    it('devuelve todas las ediciones cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredEditions().length).toBe(3);
+    });
+
+    it('filtra por coincidencia parcial case-insensitive', () => {
+      component.searchTerm.set('limit');
+      expect(component.filteredEditions()).toEqual([makeEdition({ id: '1', name: 'Limited Edition' })]);
+    });
+
+    it('devuelve [] cuando no hay coincidencias', () => {
+      component.searchTerm.set('zzz');
+      expect(component.filteredEditions()).toEqual([]);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag search cuando hay término', () => {
+      component.searchTerm.set('white');
+      expect(component.commandFlags()).toEqual(['search="white"']);
+    });
   });
 
   describe('onAddEdition', () => {
