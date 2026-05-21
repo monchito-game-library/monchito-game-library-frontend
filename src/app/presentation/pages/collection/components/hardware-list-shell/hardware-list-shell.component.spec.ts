@@ -302,6 +302,26 @@ describe('HardwareListShellComponent', () => {
     });
   });
 
+  describe('command bar — delegado a list-page-header', () => {
+    it('pasa commandPath al app-list-page-header cuando se proporciona', () => {
+      setupComponent({ loading: false, items: [makeItem()], filteredItems: [makeItem()] });
+      fixture.componentRef.setInput('commandPath', 'monchito ~/library/consoles');
+      fixture.detectChanges();
+
+      const header = fixture.debugElement.query(By.css('app-list-page-header'));
+      expect(header.componentInstance.commandPath()).toBe('monchito ~/library/consoles');
+    });
+
+    it('pasa commandFlags al app-list-page-header cuando se proporciona', () => {
+      setupComponent({ loading: false, items: [makeItem()], filteredItems: [makeItem()] });
+      fixture.componentRef.setInput('commandFlags', ['--filter=active']);
+      fixture.detectChanges();
+
+      const header = fixture.debugElement.query(By.css('app-list-page-header'));
+      expect(header.componentInstance.commandFlags()).toEqual(['--filter=active']);
+    });
+  });
+
   describe('resolvers', () => {
     it('llama a resolveModelName con el modelId del item y muestra el resultado', () => {
       const spyModel = vi.fn().mockReturnValue('PlayStation 5');

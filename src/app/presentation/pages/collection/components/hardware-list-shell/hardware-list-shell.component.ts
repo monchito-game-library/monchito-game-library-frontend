@@ -17,7 +17,6 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
-import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware
@@ -44,8 +43,7 @@ import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command
     ListPageHeaderComponent,
     RetroEmptyStateComponent,
     RetroDataRowComponent,
-    RetroCardComponent,
-    RetroCommandBarComponent
+    RetroCardComponent
   ]
 })
 export class HardwareListShellComponent {
