@@ -10,6 +10,7 @@ import { TranslocoService } from '@jsverse/transloco';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 
 function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelModel {
   return {
@@ -136,6 +137,26 @@ describe('HardwareModelsManagementComponent', () => {
     it('devuelve el flag search cuando hay término', () => {
       component.searchTerm.set('xbox');
       expect(component.commandFlags()).toEqual(['search="xbox"']);
+    });
+  });
+
+  describe('commandPath', () => {
+    it('devuelve el path base cuando brand es undefined', () => {
+      component.brand.set(undefined);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware');
+    });
+
+    it('incluye el slug de la brand cuando está cargada', () => {
+      component.brand.set({ id: '1', name: 'Nintendo' } as HardwareBrandModel);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/nintendo');
+    });
+
+    it('normaliza nombres con espacios y acentos', () => {
+      component.brand.set({ id: '2', name: 'Súper Nintendo' } as HardwareBrandModel);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/super-nintendo');
     });
   });
 

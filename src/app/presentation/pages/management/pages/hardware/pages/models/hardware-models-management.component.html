@@ -25,7 +25,7 @@
   <app-search-toolbar
     [value]="searchTerm()"
     [placeholder]="'management.hardware.models.search.placeholder' | transloco"
-    commandPath="monchito ~/management/hardware/models"
+    [commandPath]="commandPath()"
     [commandFlags]="commandFlags()"
     (valueChange)="onSearchChange($event)" />
 

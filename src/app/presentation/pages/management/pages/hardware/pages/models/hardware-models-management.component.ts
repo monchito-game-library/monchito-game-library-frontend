@@ -43,6 +43,7 @@ import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
 import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
+import { toCommandSlug } from '@/shared/command-slug/command-slug.util';
 
 /** Management page for hardware models belonging to a specific brand. */
 @Component({
@@ -114,6 +115,12 @@ export class HardwareModelsManagementComponent implements OnInit {
   readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
     const term = this.searchTerm();
     return term ? [`search="${term}"`] : [];
+  });
+
+  /** Terminal command bar path — includes brand slug when loaded. */
+  readonly commandPath: Signal<string> = computed((): string => {
+    const brand = this.brand();
+    return brand ? `monchito ~/management/hardware/${toCommandSlug(brand.name)}` : 'monchito ~/management/hardware';
   });
 
   async ngOnInit(): Promise<void> {
