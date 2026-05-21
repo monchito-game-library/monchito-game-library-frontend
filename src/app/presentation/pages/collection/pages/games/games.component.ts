@@ -12,7 +12,6 @@ import {
   WritableSignal
 } from '@angular/core';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
-import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -65,7 +64,6 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     GameListFiltersSheetComponent,
     GameRowComponent,
     RetroButtonComponent,
-    RetroCommandBarComponent,
     RetroEmptyStateComponent
   ]
 })

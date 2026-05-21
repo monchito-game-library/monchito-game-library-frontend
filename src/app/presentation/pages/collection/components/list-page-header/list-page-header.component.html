@@ -50,3 +50,7 @@
     </retro-button>
   }
 </div>
+
+@if (commandPath()) {
+  <retro-command-bar [path]="commandPath()" [flags]="commandFlags()" />
+}

@@ -5,6 +5,7 @@ import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 
 @Component({
@@ -16,6 +17,7 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
   imports: [
     FormsModule,
     RetroButtonComponent,
+    RetroCommandBarComponent,
     RetroIconComponent,
     RetroIconButtonComponent,
     RetroInputComponent,
@@ -58,4 +60,10 @@ export class ListPageHeaderComponent {
 
   /** Emitted when the view-mode toggle is clicked. */
   readonly viewModeToggle = output<void>();
+
+  /** Path shown in the retro command bar (e.g. 'monchito ~/library/games'). Empty hides the bar. */
+  readonly commandPath = input<string>('');
+
+  /** Dynamic flags shown in the retro command bar. */
+  readonly commandFlags = input<readonly string[]>([]);
 }

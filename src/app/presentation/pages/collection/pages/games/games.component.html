@@ -20,6 +20,8 @@
       [viewMode]="viewMode()"
       [filterCount]="activeFilterCount()"
       [disabled]="loading()"
+      [commandPath]="'monchito ~/library/games'"
+      [commandFlags]="commandFlags()"
       (searchChange)="onSearchInput($event)"
       (filterClick)="openFilters()"
       (viewModeToggle)="onToggleViewMode()"
@@ -51,9 +53,6 @@
         }
       </div>
     </app-list-page-header>
-
-    <!-- Command bar — only visible on desktop >= 1024px (hidden via CSS in the component) -->
-    <retro-command-bar path="monchito ~/library/games" [flags]="commandFlags()" />
 
     <!-- Active filters bar (only renders when there is at least one active filter) -->
     <app-game-list-filters-bar [data]="filtersData" />

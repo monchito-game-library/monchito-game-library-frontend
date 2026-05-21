@@ -646,6 +646,28 @@ describe('GamesComponent', () => {
       expect(spy).toHaveBeenCalledWith(['/collection/games/add']);
     });
   });
+
+  describe('commandFlags', () => {
+    it('está vacío cuando no hay filtros ni búsqueda ni viewMode list', () => {
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('incluye "view=list" cuando viewMode es list', () => {
+      component.viewMode.set('list');
+      expect(component.commandFlags()).toContain('view=list');
+    });
+
+    it('incluye search con el término cuando hay búsqueda activa', () => {
+      component.searchTerm.set('zelda');
+      expect(component.commandFlags()).toContain('search="zelda"');
+    });
+
+    it('incluye filters con el count cuando hay filtros activos', () => {
+      component.selectedConsole.set('PS5');
+      component.selectedStatus.set('platinum');
+      expect(component.commandFlags()).toContain('filters=2');
+    });
+  });
 });
 
 describe('GamesComponent — _userId sin usuario autenticado', () => {
