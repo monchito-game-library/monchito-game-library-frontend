@@ -198,6 +198,57 @@ describe('ProtectorsManagementComponent', () => {
     });
   });
 
+  describe('searchTerm / filteredProtectors / commandFlags', () => {
+    it('searchTerm es "" por defecto', () => {
+      expect(component.searchTerm()).toBe('');
+    });
+
+    it('filteredProtectors devuelve todos cuando searchTerm está vacío', () => {
+      const protectors = [
+        makeProtector({ id: 'p1', name: 'BigBen PS5' }),
+        makeProtector({ id: 'p2', name: 'Hori Switch' })
+      ];
+      component.protectors.set(protectors);
+      expect(component.filteredProtectors()).toEqual(protectors);
+    });
+
+    it('filteredProtectors filtra por nombre (case-insensitive)', () => {
+      const p1 = makeProtector({ id: 'p1', name: 'BigBen PS5' });
+      const p2 = makeProtector({ id: 'p2', name: 'Hori Switch' });
+      component.protectors.set([p1, p2]);
+      component.searchTerm.set('bigben');
+      expect(component.filteredProtectors()).toEqual([p1]);
+    });
+
+    it('filteredProtectors devuelve [] cuando ningún nombre coincide', () => {
+      component.protectors.set([makeProtector({ name: 'BigBen PS5' })]);
+      component.searchTerm.set('inexistente');
+      expect(component.filteredProtectors()).toEqual([]);
+    });
+
+    it('commandFlags devuelve [] cuando searchTerm está vacío', () => {
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('commandFlags incluye el término cuando searchTerm no está vacío', () => {
+      component.searchTerm.set('bigben');
+      expect(component.commandFlags()).toEqual(['search="bigben"']);
+    });
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('hori');
+      expect(component.searchTerm()).toBe('hori');
+    });
+
+    it('limpia searchTerm al llamar con cadena vacía', () => {
+      component.searchTerm.set('hori');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
   describe('_loadProtectors (vía ngOnInit)', () => {
     it('rellena protectors y pone loading a false', async () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;

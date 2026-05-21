@@ -10,6 +10,13 @@
     </retro-button>
   </header>
 
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.products.search.placeholder' | transloco"
+    commandPath="monchito ~/management/protectors"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
+
   @if (panelOpen()) {
     <div class="protectors-edit-panel-wrapper">
       <app-protector-edit-panel
@@ -42,7 +49,7 @@
       <p class="protectors-page__empty">{{ 'management.products.empty' | transloco }}</p>
     } @else {
       <div class="protectors-grid">
-        @for (protector of protectors(); track protector.id) {
+        @for (protector of filteredProtectors(); track protector.id) {
           <retro-card
             class="protector-card"
             [class.protector-card--inactive]="!protector.isActive"
@@ -81,6 +88,12 @@
           </retro-card>
         }
       </div>
+      @if (searchTerm() && filteredProtectors().length === 0) {
+        <div class="protectors-page__no-results">
+          <p>{{ 'management.products.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
     }
   </div>
 </div>

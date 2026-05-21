@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
@@ -22,6 +31,7 @@ import { ProtectorCategory } from '@/types/protector-category.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { ProtectorFormResult } from '@/interfaces/management/protector-form-result.interface';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 import { ProtectorEditPanelComponent } from './components/protector-edit-panel/protector-edit-panel.component';
 
 @Component({
@@ -32,6 +42,7 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ProtectorEditPanelComponent,
+    SearchToolbarComponent,
     TranslocoPipe,
     DecimalPipe,
     RetroSkeletonComponent,
@@ -58,6 +69,22 @@ export class ProtectorsManagementComponent implements OnInit {
 
   /** Whether the edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal(false);
+
+  /** Término de búsqueda activo para filtrar por nombre. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista de protectores filtrada según searchTerm. */
+  readonly filteredProtectors: Signal<ProtectorModel[]> = computed((): ProtectorModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.protectors();
+    return this.protectors().filter((p) => p.name.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
 
   async ngOnInit(): Promise<void> {
     await this._loadProtectors();
@@ -87,6 +114,15 @@ export class ProtectorsManagementComponent implements OnInit {
   onClosePanel(): void {
     this.panelOpen.set(false);
     this.selectedProtector.set(undefined);
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   *
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**
