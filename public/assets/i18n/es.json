@@ -590,7 +590,11 @@
       "formatHintNone": "Ambos",
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Físico",
-      "loadError": "No se pudieron cargar las tiendas."
+      "loadError": "No se pudieron cargar las tiendas.",
+      "search": {
+        "placeholder": "Buscar tienda…",
+        "noResults": "No hay tiendas que coincidan con «{{ term }}»."
+      }
     },
     "title": "Gestión",
     "nav": {
@@ -610,7 +614,11 @@
         "empty": "No hay marcas todavía. Añade la primera.",
         "viewModels": "Ver modelos",
         "deleteConfirm": "¿Eliminar la marca «{{ name }}»?",
-        "deleteWarning": "Se eliminarán también todos sus modelos y ediciones."
+        "deleteWarning": "Se eliminarán también todos sus modelos y ediciones.",
+        "search": {
+          "placeholder": "Buscar marca…",
+          "noResults": "No hay marcas que coincidan con «{{ term }}»."
+        }
       },
       "models": {
         "addBtn": "Nuevo modelo",
@@ -640,7 +648,11 @@
         "mediaHybrid": "Híbrido",
         "mediaBuiltIn": "Integrado",
         "videoResolutionLabel": "Resolución de vídeo",
-        "unitsSoldLabel": "Unidades vendidas (M)"
+        "unitsSoldLabel": "Unidades vendidas (M)",
+        "search": {
+          "placeholder": "Buscar modelo…",
+          "noResults": "No hay modelos que coincidan con «{{ term }}»."
+        }
       },
       "editions": {
         "addBtn": "Nueva edición",
@@ -648,7 +660,11 @@
         "editTitle": "Editar edición",
         "nameLabel": "Nombre",
         "empty": "No hay ediciones todavía. Añade la primera.",
-        "deleteConfirm": "¿Eliminar la edición «{{ name }}»?"
+        "deleteConfirm": "¿Eliminar la edición «{{ name }}»?",
+        "search": {
+          "placeholder": "Buscar edición…",
+          "noResults": "No hay ediciones que coincidan con «{{ term }}»."
+        }
       }
     },
     "products": {
@@ -689,7 +705,11 @@
       "packPrice": "Precio total",
       "packUrl": "URL (opcional)",
       "fromPrice": "Desde",
-      "openPackUrl": "Ver en la web del proveedor"
+      "openPackUrl": "Ver en la web del proveedor",
+      "search": {
+        "placeholder": "Buscar funda/protector…",
+        "noResults": "No hay protectores que coincidan con «{{ term }}»."
+      }
     },
     "auditLog": {
       "title": "Registro de actividad",

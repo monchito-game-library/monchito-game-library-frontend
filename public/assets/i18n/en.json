@@ -590,7 +590,11 @@
       "formatHintNone": "Both",
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Physical",
-      "loadError": "Failed to load stores."
+      "loadError": "Failed to load stores.",
+      "search": {
+        "placeholder": "Search store…",
+        "noResults": "No stores match «{{ term }}»."
+      }
     },
     "title": "Management",
     "nav": {
@@ -610,7 +614,11 @@
         "empty": "No brands yet. Add the first one.",
         "viewModels": "View models",
         "deleteConfirm": "Delete brand «{{ name }}»?",
-        "deleteWarning": "All its models and editions will also be deleted."
+        "deleteWarning": "All its models and editions will also be deleted.",
+        "search": {
+          "placeholder": "Search brand…",
+          "noResults": "No brands match «{{ term }}»."
+        }
       },
       "models": {
         "addBtn": "New model",
@@ -640,7 +648,11 @@
         "mediaHybrid": "Hybrid",
         "mediaBuiltIn": "Built-in",
         "videoResolutionLabel": "Video resolution",
-        "unitsSoldLabel": "Units sold (M)"
+        "unitsSoldLabel": "Units sold (M)",
+        "search": {
+          "placeholder": "Search model…",
+          "noResults": "No models match «{{ term }}»."
+        }
       },
       "editions": {
         "addBtn": "New edition",
@@ -648,7 +660,11 @@
         "editTitle": "Edit edition",
         "nameLabel": "Name",
         "empty": "No editions yet. Add the first one.",
-        "deleteConfirm": "Delete edition «{{ name }}»?"
+        "deleteConfirm": "Delete edition «{{ name }}»?",
+        "search": {
+          "placeholder": "Search edition…",
+          "noResults": "No editions match «{{ term }}»."
+        }
       }
     },
     "products": {
@@ -689,7 +705,11 @@
       "packPrice": "Total price",
       "packUrl": "URL (optional)",
       "fromPrice": "From",
-      "openPackUrl": "View on supplier's website"
+      "openPackUrl": "View on supplier's website",
+      "search": {
+        "placeholder": "Search protector…",
+        "noResults": "No protectors match «{{ term }}»."
+      }
     },
     "auditLog": {
       "title": "Activity log",
