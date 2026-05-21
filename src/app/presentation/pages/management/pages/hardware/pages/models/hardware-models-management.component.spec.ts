@@ -84,6 +84,59 @@ describe('HardwareModelsManagementComponent', () => {
     it('loading es false', () => expect(component.loading()).toBe(false));
     it('panelOpen es false', () => expect(component.panelOpen()).toBe(false));
     it('selectedModel es undefined', () => expect(component.selectedModel()).toBeUndefined());
+    it('searchTerm es ""', () => expect(component.searchTerm()).toBe(''));
+    it('filteredModels devuelve [] cuando models está vacío', () => expect(component.filteredModels()).toEqual([]));
+    it('commandFlags es []', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('playstation');
+      expect(component.searchTerm()).toBe('playstation');
+    });
+
+    it('limpia searchTerm al recibir cadena vacía', () => {
+      component.searchTerm.set('playstation');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredModels', () => {
+    beforeEach(() => {
+      component.models.set([
+        makeModel({ id: '1', name: 'PlayStation 5' }),
+        makeModel({ id: '2', name: 'Xbox Series X' }),
+        makeModel({ id: '3', name: 'Nintendo Switch' })
+      ]);
+    });
+
+    it('devuelve todos los modelos cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredModels().length).toBe(3);
+    });
+
+    it('filtra por coincidencia parcial case-insensitive', () => {
+      component.searchTerm.set('play');
+      expect(component.filteredModels()).toEqual([makeModel({ id: '1', name: 'PlayStation 5' })]);
+    });
+
+    it('devuelve [] cuando no hay coincidencias', () => {
+      component.searchTerm.set('zzz');
+      expect(component.filteredModels()).toEqual([]);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag search cuando hay término', () => {
+      component.searchTerm.set('xbox');
+      expect(component.commandFlags()).toEqual(['search="xbox"']);
+    });
   });
 
   describe('onAddModel', () => {
