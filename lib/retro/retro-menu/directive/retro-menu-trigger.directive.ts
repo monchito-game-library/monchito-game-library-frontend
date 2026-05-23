@@ -97,7 +97,7 @@ export class RetroMenuTriggerDirective implements OnDestroy {
 
     const positionStrategy = this._overlay
       .position()
-      .flexibleConnectedTo(this._el.nativeElement)
+      .flexibleConnectedTo(this._resolveAnchor())
       .withPositions(RETRO_MENU_POSITIONS)
       .withPush(true);
 
@@ -135,7 +135,7 @@ export class RetroMenuTriggerDirective implements OnDestroy {
     this._overlayRef.detach();
     this._isOpen.set(false);
     this._keyManager = null;
-    this._el.nativeElement.focus();
+    this._resolveAnchor().focus();
   }
 
   /**
@@ -183,5 +183,16 @@ export class RetroMenuTriggerDirective implements OnDestroy {
     if (activeItem) {
       activeItem.focus();
     }
+  }
+
+  /**
+   * Devuelve el elemento HTML que CDK debe usar como punto de anclaje para el overlay.
+   * Si el host no es directamente focusable (ej. display:contents), busca el primer
+   * descendiente focusable para que getBoundingClientRect() devuelva un rect válido.
+   */
+  private _resolveAnchor(): HTMLElement {
+    const host = this._el.nativeElement;
+    if (host.matches('button, a, [tabindex]')) return host;
+    return host.querySelector<HTMLElement>('button, a, [tabindex]') ?? host;
   }
 }
