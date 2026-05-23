@@ -119,9 +119,6 @@ export class RetroTextareaComponent implements ControlValueAccessor, RetroFormFi
   /** Número de líneas visibles del textarea. */
   readonly rows: InputSignal<number> = input<number>(3);
 
-  /** Control del resize CSS del textarea. */
-  readonly resize: InputSignal<'none' | 'vertical' | 'both'> = input<'none' | 'vertical' | 'both'>('vertical');
-
   // ── Signals públicos ─────────────────────────────────────────────────────────
 
   /** Verdadero cuando el control está deshabilitado vía setDisabledState(). */

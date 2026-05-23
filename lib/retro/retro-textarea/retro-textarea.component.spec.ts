@@ -45,18 +45,6 @@ describe('RetroTextareaComponent', () => {
     expect(textarea.getAttribute('rows')).toBe('6');
   });
 
-  it('resize default "vertical" se aplica como style.resize al textarea', () => {
-    const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
-    expect(textarea.style.resize).toBe('vertical');
-  });
-
-  it('resize input "none" se aplica como style.resize al textarea', () => {
-    fixture.componentRef.setInput('resize', 'none');
-    fixture.detectChanges();
-    const textarea: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
-    expect(textarea.style.resize).toBe('none');
-  });
-
   it('writeValue actualiza displayValue', () => {
     component.writeValue('hola mundo');
     expect(component.displayValue()).toBe('hola mundo');
