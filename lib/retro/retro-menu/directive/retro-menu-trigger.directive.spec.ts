@@ -21,6 +21,21 @@ import { RetroMenuTriggerDirective } from './retro-menu-trigger.directive';
 })
 class TriggerHostComponent {}
 
+@Component({
+  selector: 'app-wrapper-trigger-host',
+  standalone: true,
+  imports: [RetroMenuComponent, RetroMenuItemComponent, RetroMenuTriggerDirective],
+  template: `
+    <span [retroMenuTriggerFor]="menu" style="display:contents">
+      <button class="inner-btn">Trigger</button>
+    </span>
+    <retro-menu #menu>
+      <retro-menu-item>Opción A</retro-menu-item>
+    </retro-menu>
+  `
+})
+class WrapperTriggerHostComponent {}
+
 describe('RetroMenuTriggerDirective', () => {
   let fixture: ComponentFixture<TriggerHostComponent>;
 
@@ -234,6 +249,55 @@ describe('RetroMenuTriggerDirective', () => {
       // No debe lanzar ni abrir
       expect(() => (directive as any)._openMenu()).not.toThrow();
       expect(directive._isOpen()).toBe(false);
+    }
+  });
+});
+
+describe('RetroMenuTriggerDirective — wrapper con display:contents', () => {
+  let wrapperFixture: ComponentFixture<WrapperTriggerHostComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [WrapperTriggerHostComponent, OverlayModule]
+    }).compileComponents();
+
+    wrapperFixture = TestBed.createComponent(WrapperTriggerHostComponent);
+    wrapperFixture.detectChanges();
+  });
+
+  it('abre el menú al hacer click en el host wrapper', () => {
+    const span = wrapperFixture.nativeElement.querySelector('span');
+    span.click();
+    wrapperFixture.detectChanges();
+    const panel = document.querySelector('.retro-menu');
+    expect(panel).toBeTruthy();
+  });
+
+  it('aria-expanded pasa a true tras abrir desde wrapper', () => {
+    const span = wrapperFixture.nativeElement.querySelector('span');
+    span.click();
+    wrapperFixture.detectChanges();
+    expect(span.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('cierra el menú al hacer un segundo click en el wrapper', () => {
+    const span = wrapperFixture.nativeElement.querySelector('span');
+    span.click();
+    wrapperFixture.detectChanges();
+    span.click();
+    wrapperFixture.detectChanges();
+    expect(span.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('_resolveAnchor devuelve el button interno, no el span', () => {
+    const span = wrapperFixture.nativeElement.querySelector('span');
+    const directiveDebug = wrapperFixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective);
+    if (directive) {
+      const anchor = (directive as any)._resolveAnchor();
+      expect(anchor).toBe(wrapperFixture.nativeElement.querySelector('.inner-btn'));
+      expect(anchor).not.toBe(span);
     }
   });
 });
