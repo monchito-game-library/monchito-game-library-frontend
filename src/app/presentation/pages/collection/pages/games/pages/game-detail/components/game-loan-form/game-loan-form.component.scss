@@ -63,7 +63,8 @@
 }
 
 .game-loan-form__action-btn {
-  align-self: flex-start;
+  display: flex;
+  justify-content: flex-end;
 }
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
