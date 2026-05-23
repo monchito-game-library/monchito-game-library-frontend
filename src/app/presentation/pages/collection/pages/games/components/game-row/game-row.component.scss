@@ -2,36 +2,6 @@
   display: block;
 }
 
-.game-row {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(12rem, 1fr) auto auto auto auto auto auto;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-bottom: 1px solid var(--border);
-  background-color: transparent;
-  color: var(--text-hi);
-  font: inherit;
-  font-family: var(--font-mono);
-  text-align: left;
-  cursor: pointer;
-  transition: none;
-
-  @media (hover: hover) {
-    &:hover {
-      background-color: var(--bg-surface-hi);
-      border-bottom-color: var(--border-strong);
-    }
-  }
-
-  &:focus-visible {
-    outline: 1px solid var(--border-active);
-    outline-offset: -1px;
-  }
-}
-
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
 .game-row__cover {
@@ -64,6 +34,17 @@
   retro-icon {
     --_size: var(--icon-xs);
   }
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.game-row__body {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto auto auto auto auto;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
 }
 
 // ─── Title block ──────────────────────────────────────────────────────────────
@@ -177,47 +158,16 @@
   text-align: right;
 }
 
-.game-row__delete {
-  flex-shrink: 0;
-  color: var(--text-lo);
-
-  @media (hover: hover) {
-    &:hover {
-      color: var(--accent-rose);
-    }
-  }
-}
-
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
-// Two-row layout for narrow viewports
 @media (max-width: 768px) {
-  .game-row {
-    grid-template-columns: 2.75rem 1fr auto;
-    grid-template-rows: auto auto;
-    column-gap: 0.75rem;
-    row-gap: 0.25rem;
-    padding: 0.625rem 0.75rem;
-  }
-
-  .game-row__cover {
-    grid-row: 1 / span 2;
-  }
-
-  .game-row__title-block {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-  }
-
-  .game-row__delete {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    align-self: center;
+  .game-row__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
   }
 
   .game-row__meta {
-    grid-column: 2;
-    grid-row: 2;
     display: flex;
     align-items: center;
     gap: 0.5rem;

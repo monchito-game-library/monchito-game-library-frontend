@@ -1,6 +1,5 @@
-<button type="button" class="game-row" (click)="onOpen()">
-  <!-- Cover thumbnail -->
-  <div class="game-row__cover">
+<retro-list-item [interactive]="true" padding="sm" (itemClicked)="onOpen()">
+  <div class="game-row__cover" retroListItemLeading>
     <img [ngSrc]="cover()" fill alt="Game cover" />
     @if (game().format === 'digital') {
       <span class="game-row__digital-badge" retroTooltip="Digital">
@@ -9,68 +8,65 @@
     }
   </div>
 
-  <!-- Title + edition -->
-  <div class="game-row__title-block">
-    <span class="game-row__title">{{ game().title }}</span>
-    @if (game().edition) {
-      <span class="game-row__edition">{{ game().edition }}</span>
-    }
-  </div>
-
-  <!-- Platform badge -->
-  <div class="game-row__platform">
-    @if (game().platform) {
-      <retro-chip [label]="game().platform!" color="neutral" size="sm" />
-    }
-  </div>
-
-  <!-- Meta wrapper — display: contents on desktop (children act as direct grid
-       items, layout unchanged); flex row on mobile so status, indicators and price
-       share the second row of the new two-row layout. -->
-  <div class="game-row__meta">
-    <div class="game-row__status">
-      @if (gameStatus(); as status) {
-        <span class="game-row__status-pill" [retroTooltip]="status.labelKey | transloco">
-          <retro-icon [name]="status.icon" [style.color]="status.color" />
-        </span>
+  <div class="game-row__body">
+    <div class="game-row__title-block">
+      <span class="game-row__title">{{ game().title }}</span>
+      @if (game().edition) {
+        <span class="game-row__edition">{{ game().edition }}</span>
       }
     </div>
-
-    <div class="game-row__rating">
-      @if (game().personalRating !== null) {
-        @for (i of [1, 2, 3, 4, 5]; track i) {
-          <retro-icon
-            [class.game-row__star--filled]="i <= ratingStars()"
-            [name]="i <= ratingStars() ? 'star' : 'star_border'" />
+    <div class="game-row__meta">
+      <div class="game-row__platform">
+        @if (game().platform) {
+          <retro-chip [label]="game().platform!" color="neutral" size="sm" />
         }
-      }
-    </div>
-
-    <div class="game-row__indicators">
-      @if (game().isFavorite) {
-        <retro-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
-      }
-      @if (game().activeLoanId !== null) {
-        <retro-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
-      }
-      @if (game().forSale) {
-        <retro-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
-      }
-    </div>
-
-    <div class="game-row__price">
-      @if (game().price !== null) {
-        {{ game().price | currency: 'EUR' }}
-      }
+      </div>
+      <div class="game-row__status">
+        @if (gameStatus(); as status) {
+          <span class="game-row__status-pill" [retroTooltip]="status.labelKey | transloco">
+            <retro-icon [name]="status.icon" [style.color]="status.color" />
+          </span>
+        }
+      </div>
+      <div class="game-row__rating">
+        @if (game().personalRating !== null) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <retro-icon
+              [class.game-row__star--filled]="i <= ratingStars()"
+              [name]="i <= ratingStars() ? 'star' : 'star_border'" />
+          }
+        }
+      </div>
+      <div class="game-row__indicators">
+        @if (game().isFavorite) {
+          <retro-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
+        }
+        @if (game().activeLoanId !== null) {
+          <retro-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
+        }
+        @if (game().forSale) {
+          <retro-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
+        }
+      </div>
+      <div class="game-row__price">
+        @if (game().price !== null) {
+          {{ game().price | currency: 'EUR' }}
+        }
+      </div>
     </div>
   </div>
 
-  <!-- Delete -->
-  <retro-icon-button
-    icon="delete"
-    variant="danger"
-    size="sm"
-    class="game-row__delete"
-    [ariaLabel]="'gameCard.aria.delete' | transloco"
-    (clicked)="onDelete($event)" />
-</button>
+  <div
+    retroListItemTrailing
+    class="game-row__delete-wrapper"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()">
+    <retro-icon-button
+      icon="delete"
+      variant="danger"
+      size="sm"
+      [ariaLabel]="'gameCard.aria.delete' | transloco"
+      (clicked)="onDelete($event)" />
+  </div>
+</retro-list-item>

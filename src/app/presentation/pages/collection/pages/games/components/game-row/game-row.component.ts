@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
@@ -39,6 +40,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
     CurrencyPipe,
     NgOptimizedImage,
     RetroIconComponent,
+    RetroListItemComponent,
     RetroTooltipDirective,
     TranslocoPipe,
     RetroChipComponent,

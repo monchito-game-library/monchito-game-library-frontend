@@ -1,7 +1,9 @@
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -34,6 +36,16 @@ const mockGame: GameListModel = {
   activeLoanAt: null
 };
 
+@Component({
+  standalone: true,
+  imports: [RetroListComponent, GameRowComponent],
+  template: `<retro-list><app-game-row [game]="game" (gameDeleted)="onDeleted($event)" /></retro-list>`
+})
+class TestHostComponent {
+  game: GameListModel = mockGame;
+  onDeleted = vi.fn();
+}
+
 describe('GameRowComponent', () => {
   let component: GameRowComponent;
   let routerNavigate: ReturnType<typeof vi.fn>;
@@ -41,10 +53,10 @@ describe('GameRowComponent', () => {
   let deleteGame: ReturnType<typeof vi.fn>;
 
   function build(game: GameListModel = mockGame): GameRowComponent {
-    const fixture = TestBed.createComponent(GameRowComponent);
-    fixture.componentRef.setInput('game', game);
+    const fixture = TestBed.createComponent(TestHostComponent);
+    fixture.componentInstance.game = game;
     fixture.detectChanges();
-    return fixture.componentInstance;
+    return fixture.debugElement.query(By.directive(GameRowComponent)).componentInstance;
   }
 
   beforeEach(() => {
@@ -55,7 +67,7 @@ describe('GameRowComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        GameRowComponent,
+        TestHostComponent,
         TranslocoTestingModule.forRoot({
           langs: { en: {} },
           translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
