@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
@@ -64,7 +65,8 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
     GameListFiltersSheetComponent,
     GameRowComponent,
     RetroButtonComponent,
-    RetroEmptyStateComponent
+    RetroEmptyStateComponent,
+    RetroListComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {

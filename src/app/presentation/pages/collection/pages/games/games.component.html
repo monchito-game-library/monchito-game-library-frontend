@@ -76,11 +76,11 @@
           }
         </div>
       } @else {
-        <div #scrollContainer class="game-list__list">
+        <retro-list #scrollContainer class="game-list__list">
           @for (game of filteredGames(); track game.id) {
             <app-game-row [game]="game" (gameDeleted)="onGameDeleted()" />
           }
-        </div>
+        </retro-list>
       }
 
       <!-- State: no filter results -->
