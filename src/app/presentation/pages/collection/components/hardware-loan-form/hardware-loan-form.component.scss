@@ -53,8 +53,8 @@
 }
 
 .hardware-loan-form__action-btn {
-  align-self: flex-start;
-  display: inline-flex;
+  display: flex;
+  justify-content: flex-end;
 }
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────
