@@ -1,0 +1,47 @@
+// Tokens del tema light (papel y tinta) — contrapunto cálido al dark neon-terminal.
+// Solo sobreescribe tokens de color; los de layout, tipografía, radius, transiciones y z-index
+// se heredan de :root (definido en _tokens-dark.scss) y no se repiten aquí.
+:root.theme-light {
+  color-scheme: light;
+  /* ── Superficies ───────────────────────────── */
+  --bg-void: #f7f3ec; /* canvas raíz: papel cremoso cálido */
+  --bg-surface: #fbf8f2; /* nav-rail, drawers, sheets, cards */
+  --bg-surface-hi: #f2ede4; /* hover de surface, contenedores apilados */
+  --bg-elev: #ffffff; /* dialogs, menus, popovers: el más limpio */
+
+  /* ── Bordes ────────────────────────────────── */
+  --border: #e0d8cb;
+  --border-strong: #c4b8a6; /* divisores destacados */
+  --border-active: #5b3a8c; /* hover sobre interactivos, focus ring */
+
+  /* ── Texto ─────────────────────────────────── */
+  --text-hi: #1a1714; /* títulos y valores: tinta casi-negra cálida */
+  --text-mid: #3d342c; /* body, datos secundarios */
+  --text-lo: #7a6f64; /* labels uppercase, dt, placeholders */
+
+  /* ── Acento funcional (señalético) ─────────── */
+  --primary: #5b3a8c; /* violet oscuro para contraste sobre papel */
+  --accent-green: #276738; /* verde oscuro sobre papel */
+  --accent-amber: #a05e0a; /* amber oscuro sobre papel */
+  --accent-rose: #be1238; /* rose oscuro sobre papel */
+  --accent-blue: #1d4ed8; /* blue oscuro sobre papel */
+
+  /* ── Tokens legacy reasignados ─────────────────────────*/
+  --color-rating: var(--accent-amber);
+  --color-metacritic: var(--accent-green);
+  --color-status-ordered-bg: transparent;
+  --color-status-ordered-text: var(--accent-blue);
+  --color-status-shipped-bg: transparent;
+  --color-status-shipped-text: var(--accent-amber);
+  --color-status-received-bg: transparent;
+  --color-status-received-text: var(--accent-green);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+// Nota para el siguiente paso (_base.scss):
+// Añadir en el selector :root.theme-light:
+//   color-scheme: light;
+// Para que el navegador adapte los controles nativos (scrollbar, inputs, selects)
+// al tema claro en lugar de heredar el `color-scheme: dark` del :root base.

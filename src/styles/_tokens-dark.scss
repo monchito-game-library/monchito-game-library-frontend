@@ -1,5 +1,6 @@
 // Tokens del tema dark (neon-terminal) — paleta actual del proyecto.
-:root {
+:root,
+:root.theme-dark {
   /* ── Superficies ───────────────────────────── */
   --bg-void: #000000; /* canvas raíz */
   --bg-surface: #0a0a0a; /* nav-rail, drawers, sheets, cards */
