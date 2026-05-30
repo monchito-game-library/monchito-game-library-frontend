@@ -1,7 +1,7 @@
-import { ElementRef } from '@angular/core';
+import { ElementRef, TemplateRef, ViewContainerRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { firstValueFrom, Subject } from 'rxjs';
 import {
@@ -18,6 +18,16 @@ import {
   standalone: true
 })
 class DummyOverlayComponent {}
+
+@Component({
+  selector: 'app-template-host',
+  template: '<ng-template #tmpl><p tabindex="0">Template content</p></ng-template>',
+  standalone: true
+})
+class TemplateHostComponent {
+  @ViewChild('tmpl', { read: TemplateRef }) tmpl!: TemplateRef<unknown>;
+  @ViewChild('tmpl', { read: ViewContainerRef }) vcr!: ViewContainerRef;
+}
 
 describe('RetroOverlayService', () => {
   let service: RetroOverlayService;
@@ -249,6 +259,88 @@ describe('RetroOverlayService', () => {
     });
   });
 
+  describe('Backdrop click — cierre y bloqueo', () => {
+    /**
+     * Emite un MouseEvent directamente en el Subject interno del CDK OverlayRef
+     * para simular un backdrop click desde el test sin necesidad de DOM real.
+     */
+    function emitBackdropClickVia(ref: RetroOverlayRef): void {
+      const event = new MouseEvent('click');
+      const cdkOverlayRef = (ref as any)._overlayRef;
+      const backdropSubject = cdkOverlayRef?._backdropClick as Subject<MouseEvent> | undefined;
+      if (backdropSubject) {
+        backdropSubject.next(event);
+      }
+    }
+
+    it('backdrop click cierra el overlay cuando disableClose es false', async () => {
+      const ref = service.open(DummyOverlayComponent, { hasBackdrop: true, disableClose: false });
+      const closePromise = firstValueFrom(ref.afterClosed$);
+
+      emitBackdropClickVia(ref);
+
+      const result = await closePromise;
+      expect(result).toBeUndefined();
+    });
+
+    it('backdrop click NO cierra el overlay cuando disableClose es true', async () => {
+      const ref = service.open(DummyOverlayComponent, { hasBackdrop: true, disableClose: true });
+      let closed = false;
+      ref.afterClosed$.subscribe(() => {
+        closed = true;
+      });
+
+      emitBackdropClickVia(ref);
+
+      await new Promise((r) => setTimeout(r, 0));
+      expect(closed).toBe(false);
+
+      ref.close();
+    });
+  });
+
+  describe('RestoreFocus — foco real', () => {
+    it('restaura el foco al botón previo tras cerrar el overlay', async () => {
+      const button = document.createElement('button');
+      document.body.appendChild(button);
+      button.focus();
+      expect(document.activeElement).toBe(button);
+
+      const ref = service.open(DummyOverlayComponent, { restoreFocus: true, focusTrap: false });
+      const closePromise = firstValueFrom(ref.afterClosed$);
+      ref.close();
+      await closePromise;
+
+      expect(document.activeElement).toBe(button);
+      document.body.removeChild(button);
+    });
+  });
+
+  describe('data getter en RetroOverlayRef', () => {
+    it('data devuelve el valor pasado en config.data', () => {
+      const ref = service.open(DummyOverlayComponent, { data: { foo: 'bar' } });
+      expect(ref.data).toEqual({ foo: 'bar' });
+      ref.close();
+    });
+
+    it('data devuelve null si no se pasa data en la config', () => {
+      const ref = service.open(DummyOverlayComponent, {});
+      expect(ref.data).toBeNull();
+      ref.close();
+    });
+  });
+
+  describe('TemplateRef — path de error sin ViewContainerRef', () => {
+    it('lanza error si se abre un TemplateRef sin ViewContainerRef disponible', () => {
+      // El servicio inyectado en TestBed no tiene ViewContainerRef opcional (null)
+      // Creamos un TemplateRef simulado que es instancia de TemplateRef
+      const fakeTemplate = Object.create(TemplateRef.prototype) as TemplateRef<unknown>;
+      expect(() => service.open(fakeTemplate)).toThrow(
+        '[RetroOverlayService] Se requiere ViewContainerRef para abrir TemplatePortal'
+      );
+    });
+  });
+
   describe('preset configs', () => {
     it('RETRO_OVERLAY_DIALOG_CONFIG tiene focusTrap y scroll block', () => {
       expect(RETRO_OVERLAY_DIALOG_CONFIG.focusTrap).toBeTruthy();
@@ -351,5 +443,18 @@ describe('RetroOverlayRef', () => {
 
     // destroy solo se llamó una vez (desde close())
     expect(fakeFocusTrap.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('data devuelve null si no se llamó _setConfig()', () => {
+    const { fakeOverlayRef } = makeFakeOverlayRef();
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    expect(ref.data).toBeNull();
+  });
+
+  it('data devuelve el valor registrado via _setConfig()', () => {
+    const { fakeOverlayRef } = makeFakeOverlayRef();
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    ref._setConfig({ data: { id: 42 } });
+    expect(ref.data).toEqual({ id: 42 });
   });
 });
