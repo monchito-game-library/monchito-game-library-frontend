@@ -20,7 +20,10 @@ export interface RetroOverlayConfig {
   readonly backdropClass?: string;
   /** Clase(s) CSS del panel del overlay. */
   readonly panelClass?: string | string[];
-  /** Si el overlay se cierra automáticamente al navegar. */
+  /**
+   * Si true (default), el overlay se cierra automáticamente al navegar (Router).
+   * Poner a false solo si necesitas que el overlay sobreviva a la navegación.
+   */
   readonly disposeOnNavigation?: boolean;
   /** Estrategia de scroll cuando el overlay está abierto. */
   readonly scrollStrategy?: 'reposition' | 'block' | 'close';

@@ -72,11 +72,21 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
   private _restoreFocusConfig: boolean | undefined;
   private _previouslyFocused: HTMLElement | null = null;
   private _cleaned = false;
+  private _config: RetroOverlayConfig = {};
 
   /** Instancia del componente abierto (null si se abrió con TemplateRef). */
   componentInstance: T | null = null;
 
   constructor(private readonly _overlayRef: OverlayRef) {}
+
+  /**
+   * Registra la configuración del overlay (interna).
+   *
+   * @param {RetroOverlayConfig} config - Configuración del overlay.
+   */
+  _setConfig(config: RetroOverlayConfig): void {
+    this._config = config;
+  }
 
   /**
    * Registra el FocusTrap y la configuración de restauración de foco para que
@@ -161,6 +171,14 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
   }
 
   /**
+   * Datos pasados en RetroOverlayConfig.data. Devuelve null si el caller no
+   * proporcionó data. No distingue null de undefined; usa this._config.data si necesitas.
+   */
+  get data(): unknown {
+    return this._config.data ?? null;
+  }
+
+  /**
    * Suscribe al evento detachments() del CDK OverlayRef para garantizar la limpieza
    * del FocusTrap y restauración de foco incluso cuando el overlay se descarta via
    * disposeOnNavigation (Router) sin pasar por close().
@@ -242,6 +260,7 @@ export class RetroOverlayService {
 
     const overlayRef = this._overlay.create(overlayConfig);
     const libRef = new RetroOverlayRef<T, R>(overlayRef);
+    libRef._setConfig(cfg);
 
     if (content instanceof TemplateRef) {
       const vcr: ViewContainerRef | null = cfg.viewContainerRef ?? this._viewContainerRef;
