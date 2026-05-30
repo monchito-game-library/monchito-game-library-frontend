@@ -6,6 +6,7 @@ import {
   computed,
   contentChild,
   DestroyRef,
+  effect,
   inject,
   input,
   InputSignal,
@@ -17,6 +18,7 @@ import {
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { RetroIconComponent } from '../retro-icon/retro-icon.component';
 import { RETRO_FORM_FIELD_CONTROL, RetroFormFieldControl } from './tokens/retro-form-field-control.token';
 
@@ -51,6 +53,11 @@ export class RetroFormFieldComponent implements AfterContentInit {
 
   private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+
+  // ── Variables privadas ───────────────────────────────────────────────────────
+
+  /** Suscripción activa al control de controlRef. Se limpia al cambiar el control. */
+  private _controlSub: Subscription | null = null;
 
   // ── Variables privadas readonly ──────────────────────────────────────────────
 
@@ -122,6 +129,25 @@ export class RetroFormFieldComponent implements AfterContentInit {
     return control ? !control.empty : false;
   });
 
+  // ── Constructor ──────────────────────────────────────────────────────────────
+
+  constructor() {
+    // Reacciona a cambios dinámicos de controlRef (InputSignal).
+    // Limpia la suscripción anterior y resetea el estado antes de crear la nueva.
+    effect(() => {
+      const ctrl: RetroFormFieldControl | null = this.controlRef();
+      this._controlSub?.unsubscribe();
+      this._controlSub = null;
+      // Resetea el estado del form field al cambiar de control para evitar
+      // que valores de sesiones anteriores persistan.
+      this.focused.set(false);
+      this.invalid.set(false);
+      if (ctrl) {
+        this._controlSub = this._subscribeToControl(ctrl);
+      }
+    });
+  }
+
   // ── Métodos públicos ─────────────────────────────────────────────────────────
 
   /**
@@ -135,39 +161,52 @@ export class RetroFormFieldComponent implements AfterContentInit {
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
   ngAfterContentInit(): void {
-    this._subscribeToControl();
+    // Suscribir al contentChild si no hay controlRef activo.
+    // controlRef se gestiona reactivamente vía effect() en el constructor.
+    const contentCtrl: RetroFormFieldControl | undefined = this._contentControl();
+    if (contentCtrl && !this.controlRef()) {
+      this._subscribeToControl(contentCtrl);
+    }
   }
 
   // ── Métodos privados ─────────────────────────────────────────────────────────
 
   /**
-   * Se suscribe al control activo (controlRef o contentChild).
-   * Gestiona los streams de focus$/blur y statusChanges.
+   * Se suscribe a los streams del control dado (focus$ y statusChanges).
+   * Devuelve una Subscription agrupada para permitir cancelación externa.
+   *
+   * @param {RetroFormFieldControl} control - Control al que suscribirse.
+   * @returns {Subscription} Suscripción agrupada; llamar a .unsubscribe() para cancelar.
    */
-  private _subscribeToControl(): void {
-    const control: RetroFormFieldControl | null | undefined = this._activeControl();
-    if (!control) return;
+  private _subscribeToControl(control: RetroFormFieldControl): Subscription {
+    const sub = new Subscription();
 
     // Suscribirse a focus/blur notificados por el control.
-    control.focused$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((isFocused) => {
-      this.focused.set(isFocused);
-      this._updateInvalid();
-      this._cdr.markForCheck();
-    });
+    sub.add(
+      control.focused$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((isFocused) => {
+        this.focused.set(isFocused);
+        this._updateInvalid();
+        this._cdr.markForCheck();
+      })
+    );
 
     // Leer el NgControl si existe y observar su statusChanges.
     // Los controles que implementan RetroFormFieldControl pueden exponer ngControl opcionalmente.
     const ngControl: NgControl | null = control.ngControl ?? null;
     if (ngControl?.statusChanges) {
-      ngControl.statusChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => {
-        this._updateInvalid();
-        this._cdr.markForCheck();
-      });
+      sub.add(
+        ngControl.statusChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => {
+          this._updateInvalid();
+          this._cdr.markForCheck();
+        })
+      );
     }
 
     // Calcular estado inicial.
     this._updateInvalid();
     this._cdr.markForCheck();
+
+    return sub;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -308,6 +308,111 @@ describe('RetroFormFieldComponent', () => {
       } else {
         expect(true).toBe(true);
       }
+    });
+  });
+
+  // ── Pruebas de controlRef dinámico ───────────────────────────────────────
+
+  describe('controlRef dinámico (cambio de control en tiempo de ejecución)', () => {
+    /** Control stub A con foco y errorState controlables. */
+    class DynamicStubControl implements RetroFormFieldControl {
+      readonly focusSubject: Subject<boolean> = new Subject<boolean>();
+      readonly focused$ = this.focusSubject.asObservable();
+      errorState = false;
+      disabled = false;
+      empty = true;
+    }
+
+    @Component({
+      standalone: true,
+      imports: [RetroFormFieldComponent],
+      template: `<retro-form-field [controlRef]="activeControl()"></retro-form-field>`,
+      schemas: [NO_ERRORS_SCHEMA]
+    })
+    class DynamicControlRefHostComponent {
+      readonly activeControl: WritableSignal<DynamicStubControl | null> = signal<DynamicStubControl | null>(null);
+    }
+
+    let fixture: ComponentFixture<DynamicControlRefHostComponent>;
+    let host: DynamicControlRefHostComponent;
+    let formField: RetroFormFieldComponent;
+    let controlA: DynamicStubControl;
+    let controlB: DynamicStubControl;
+
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        imports: [DynamicControlRefHostComponent]
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(DynamicControlRefHostComponent);
+      host = fixture.componentInstance;
+
+      controlA = new DynamicStubControl();
+      controlB = new DynamicStubControl();
+
+      host.activeControl.set(controlA);
+      fixture.detectChanges();
+
+      formField = fixture.debugElement.query(By.directive(RetroFormFieldComponent)).componentInstance;
+    });
+
+    it('refleja el estado de focused del control A inicial', () => {
+      controlA.focusSubject.next(true);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(true);
+    });
+
+    it('al cambiar a controlRef B, el estado focused refleja B y no A', () => {
+      // Control A recibe foco primero
+      controlA.focusSubject.next(true);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(true);
+
+      // Cambiamos a control B
+      host.activeControl.set(controlB);
+      fixture.detectChanges();
+
+      // Ahora A emite blur — NO debe afectar al form field (ya no está suscrito a A)
+      controlA.focusSubject.next(false);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(false); // estado reseteado al cambiar de control
+
+      // B emite foco — SÍ debe afectar al form field
+      controlB.focusSubject.next(true);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(true);
+    });
+
+    it('al cambiar a controlRef B, invalid() refleja errorState de B', () => {
+      // Control A activa errorState y dispara actualización
+      controlA.errorState = true;
+      controlA.focusSubject.next(true);
+      fixture.detectChanges();
+      expect(formField.invalid()).toBe(true);
+
+      // Cambiamos a control B (sin errorState)
+      controlB.errorState = false;
+      host.activeControl.set(controlB);
+      fixture.detectChanges();
+
+      // El form field debe reflejar el estado de B (no A)
+      expect(formField.invalid()).toBe(false);
+    });
+
+    it('al cambiar a controlRef null, focused() e invalid() se resetean', () => {
+      controlA.errorState = true;
+      controlA.focusSubject.next(true);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(true);
+      expect(formField.invalid()).toBe(true);
+
+      host.activeControl.set(null);
+      fixture.detectChanges();
+
+      // Las emisiones de A ya no deben afectar
+      controlA.focusSubject.next(false);
+      fixture.detectChanges();
+      expect(formField.focused()).toBe(false);
     });
   });
 
