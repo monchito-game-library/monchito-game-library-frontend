@@ -1,5 +1,5 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { ElementRef, StaticProvider } from '@angular/core';
+import { ElementRef, StaticProvider, ViewContainerRef } from '@angular/core';
 
 /**
  * Factory de providers extra a inyectar en el componente abierto, que recibe
@@ -43,4 +43,9 @@ export interface RetroOverlayConfig {
   readonly extraProviders?: LibOverlayExtraProvidersFactory;
   /** Si true, Escape y backdrop click NO cierran el overlay. */
   readonly disableClose?: boolean;
+  /**
+   * ViewContainerRef del componente caller. Obligatorio cuando se abre un TemplateRef
+   * (necesario para construir el TemplatePortal). Ignorado para ComponentType.
+   */
+  readonly viewContainerRef?: ViewContainerRef;
 }

@@ -193,4 +193,24 @@ describe('RetroOverlayRef', () => {
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     expect(ref.keydownEvents$).toBeTruthy();
   });
+
+  it('afterClosed$ recibe el valor ANTES de que dispose() sea llamado', () => {
+    const callOrder: string[] = [];
+    const fakeOverlayRef = {
+      dispose: vi.fn().mockImplementation(() => {
+        callOrder.push('dispose');
+      }),
+      backdropClick: vi.fn().mockReturnValue(new Subject().asObservable()),
+      keydownEvents: vi.fn().mockReturnValue(new Subject().asObservable())
+    };
+    const ref = new RetroOverlayRef<unknown, string>(fakeOverlayRef as any);
+    ref.afterClosed$.subscribe(() => {
+      callOrder.push('afterClosed');
+    });
+
+    ref.close('resultado');
+
+    expect(callOrder).toEqual(['afterClosed', 'dispose']);
+    expect(fakeOverlayRef.dispose).toHaveBeenCalledTimes(1);
+  });
 });

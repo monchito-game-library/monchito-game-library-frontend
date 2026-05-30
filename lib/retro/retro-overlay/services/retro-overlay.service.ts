@@ -1,4 +1,13 @@
-import { ElementRef, InjectionToken, Injectable, Injector, StaticProvider, TemplateRef, inject } from '@angular/core';
+import {
+  ElementRef,
+  InjectionToken,
+  Injectable,
+  Injector,
+  StaticProvider,
+  TemplateRef,
+  ViewContainerRef,
+  inject
+} from '@angular/core';
 import { ConnectedPosition, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType, TemplatePortal } from '@angular/cdk/portal';
 import { ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
@@ -65,14 +74,16 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
 
   /**
    * Cierra el overlay, opcionalmente con un resultado que se emitirá en afterClosed$.
+   * El orden garantiza que los suscriptores de afterClosed$ reciban el valor antes
+   * de que el OverlayRef sea destruido y el DOM eliminado.
    *
    * @param {R} result - Valor opcional de resultado del overlay.
    */
   close(result?: R): void {
     this._result = result;
-    this._overlayRef.dispose();
     this._afterClosed$.next(this._result);
     this._afterClosed$.complete();
+    this._overlayRef.dispose();
   }
 
   /**
@@ -110,6 +121,7 @@ export class RetroOverlayService {
   private readonly _overlay: Overlay = inject(Overlay);
   private readonly _injector: Injector = inject(Injector);
   private readonly _focusTrapFactory: ConfigurableFocusTrapFactory = inject(ConfigurableFocusTrapFactory);
+  private readonly _viewContainerRef: ViewContainerRef | null = inject(ViewContainerRef, { optional: true });
 
   /**
    * Abre un componente o TemplateRef dentro de un overlay CDK.
@@ -144,7 +156,13 @@ export class RetroOverlayService {
     const libRef = new RetroOverlayRef<T, R>(overlayRef);
 
     if (content instanceof TemplateRef) {
-      const portal = new TemplatePortal(content, null as any);
+      const vcr: ViewContainerRef | null = cfg.viewContainerRef ?? this._viewContainerRef;
+      if (!vcr) {
+        throw new Error(
+          '[RetroOverlayService] Se requiere ViewContainerRef para abrir TemplatePortal. Pásalo en RetroOverlayConfig.viewContainerRef.'
+        );
+      }
+      const portal = new TemplatePortal(content, vcr);
       overlayRef.attach(portal);
     } else {
       const extraProviders = cfg.extraProviders ? cfg.extraProviders(libRef) : [];
