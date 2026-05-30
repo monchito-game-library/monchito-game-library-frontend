@@ -197,9 +197,14 @@ export class RetroOverlayService {
 
     libRef._addSub(
       overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
-        if (event.key === 'Escape' && !cfg.disableClose) {
-          event.preventDefault();
-          libRef.close();
+        if (event.key === 'Escape') {
+          if (cfg.disableClose) {
+            event.preventDefault();
+            event.stopPropagation();
+          } else {
+            libRef.close();
+            event.stopPropagation();
+          }
         }
       })
     );

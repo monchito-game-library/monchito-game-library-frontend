@@ -195,6 +195,60 @@ describe('RetroOverlayService', () => {
     });
   });
 
+  describe('Escape key — aislamiento de propagación', () => {
+    /**
+     * Emite un evento Escape directamente en el Subject interno del CDK OverlayRef
+     * accediendo a la propiedad privada _overlayRef del RetroOverlayRef.
+     * Devuelve el evento y el spy sobre stopPropagation.
+     */
+    function emitEscapeVia(ref: RetroOverlayRef): {
+      event: KeyboardEvent;
+      stopSpy: () => void;
+      preventSpy: () => void;
+    } {
+      const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+      const stopSpy = vi.spyOn(event, 'stopPropagation');
+      const preventSpy = vi.spyOn(event, 'preventDefault');
+      // Acceso al OverlayRef CDK interno para obtener el Subject de keydown
+      const cdkOverlayRef = (ref as any)._overlayRef;
+      // El CDK OverlayRef expone _keydownEvents (Subject) internamente
+      const keydownSubject = cdkOverlayRef?._keydownEvents as Subject<KeyboardEvent> | undefined;
+      if (keydownSubject) {
+        keydownSubject.next(event);
+      }
+      return { event, stopSpy: stopSpy as unknown as () => void, preventSpy: preventSpy as unknown as () => void };
+    }
+
+    it('con disableClose: true — Escape no cierra el overlay y llama stopPropagation + preventDefault', async () => {
+      const ref = service.open(DummyOverlayComponent, { disableClose: true });
+      let closed = false;
+      ref.afterClosed$.subscribe(() => {
+        closed = true;
+      });
+
+      const { stopSpy, preventSpy } = emitEscapeVia(ref);
+
+      await new Promise((r) => setTimeout(r, 0));
+
+      expect(closed).toBe(false);
+      expect(stopSpy).toHaveBeenCalled();
+      expect(preventSpy).toHaveBeenCalled();
+
+      ref.close();
+    });
+
+    it('con disableClose: false — Escape cierra el overlay y llama stopPropagation', async () => {
+      const ref = service.open(DummyOverlayComponent, { disableClose: false });
+      const closePromise = firstValueFrom(ref.afterClosed$);
+
+      const { stopSpy } = emitEscapeVia(ref);
+
+      await closePromise;
+
+      expect(stopSpy).toHaveBeenCalled();
+    });
+  });
+
   describe('preset configs', () => {
     it('RETRO_OVERLAY_DIALOG_CONFIG tiene focusTrap y scroll block', () => {
       expect(RETRO_OVERLAY_DIALOG_CONFIG.focusTrap).toBeTruthy();
