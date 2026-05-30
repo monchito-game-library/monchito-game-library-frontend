@@ -28,7 +28,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
-import { Subject, Observable, merge, startWith } from 'rxjs';
+import { Subject, Observable, merge, startWith, Subscription } from 'rxjs';
 import { RetroFormFieldComponent } from '../retro-form-field/retro-form-field.component';
 import { RetroLabelComponent } from '../retro-form-field/components/retro-label/retro-label.component';
 import { RetroErrorComponent } from '../retro-form-field/components/retro-error/retro-error.component';
@@ -124,6 +124,7 @@ export class RetroSelectComponent
   // ── Variables privadas ───────────────────────────────────────────────────────
 
   private _overlayRef: OverlayRef | null = null;
+  private _overlayPanelSubs: Subscription[] = [];
   private _activeIndex: number = -1;
 
   // ── Variables públicas readonly (RetroFormFieldControl + inputs + outputs) ───
@@ -467,10 +468,18 @@ export class RetroSelectComponent
       width: this._elRef.nativeElement.offsetWidth
     });
 
-    this._overlayRef.backdropClick().subscribe(() => this._closePanel());
-    this._overlayRef.keydownEvents().subscribe((e: KeyboardEvent) => {
-      if (e.key === 'Escape') this._closePanel();
-    });
+    this._overlayPanelSubs = [
+      this._overlayRef
+        .backdropClick()
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe(() => this._closePanel()),
+      this._overlayRef
+        .keydownEvents()
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe((e: KeyboardEvent) => {
+          if (e.key === 'Escape') this._closePanel();
+        })
+    ];
 
     const portal: TemplatePortal = new TemplatePortal(this._panelTemplate, this._viewContainerRef);
     this._overlayRef.attach(portal);
@@ -486,6 +495,8 @@ export class RetroSelectComponent
    * Cierra el panel overlay y restaura el foco al trigger div.
    */
   private _closePanel(): void {
+    this._overlayPanelSubs.forEach((s) => s.unsubscribe());
+    this._overlayPanelSubs = [];
     this._overlayRef?.detach();
     this._overlayRef?.dispose();
     this._overlayRef = null;

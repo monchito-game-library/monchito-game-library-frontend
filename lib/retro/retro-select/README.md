@@ -9,34 +9,34 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 
 ## Inputs
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `label` | `string` | — (requerido) | Texto del label del campo. |
-| `placeholder` | `string` | `''` | Texto cuando no hay selección. |
-| `hint` | `string \| null` | `null` | Mensaje de ayuda bajo el campo. |
-| `error` | `string \| null` | `null` | Mensaje de error bajo el campo. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo (32/40/44px). |
-| `prefixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en prefix. |
-| `suffixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en suffix. |
-| `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay selección. |
-| `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
-| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error); usar en campos sin validación visible (p.ej. búsqueda). |
-| `value` | `unknown` | `undefined` | Valor en modo standalone (sin formControlName). |
+| Nombre           | Tipo                   | Default       | Descripción                                                                                      |
+| ---------------- | ---------------------- | ------------- | ------------------------------------------------------------------------------------------------ |
+| `label`          | `string`               | — (requerido) | Texto del label del campo.                                                                       |
+| `placeholder`    | `string`               | `''`          | Texto cuando no hay selección.                                                                   |
+| `hint`           | `string \| null`       | `null`        | Mensaje de ayuda bajo el campo.                                                                  |
+| `error`          | `string \| null`       | `null`        | Mensaje de error bajo el campo.                                                                  |
+| `size`           | `'sm' \| 'md' \| 'lg'` | `'lg'`        | Altura del campo (32/40/44px).                                                                   |
+| `prefixIcon`     | `string \| null`       | `null`        | Nombre de icono Material decorativo en prefix.                                                   |
+| `suffixIcon`     | `string \| null`       | `null`        | Nombre de icono Material decorativo en suffix.                                                   |
+| `clearable`      | `boolean`              | `false`       | Muestra botón X para limpiar cuando hay selección.                                               |
+| `clearAriaLabel` | `string`               | `'Limpiar'`   | `aria-label` del botón limpiar.                                                                  |
+| `hideSubscript`  | `boolean`              | `false`       | Oculta el bloque subscript (hint/error); usar en campos sin validación visible (p.ej. búsqueda). |
+| `value`          | `unknown`              | `undefined`   | Valor en modo standalone (sin formControlName).                                                  |
 
 ## Outputs
 
-| Nombre | Tipo | Descripción |
-|---|---|---|
+| Nombre            | Tipo      | Descripción                                     |
+| ----------------- | --------- | ----------------------------------------------- |
 | `selectionChange` | `unknown` | Emite el nuevo valor al seleccionar una opción. |
-| `cleared` | `void` | Emite al pulsar el botón limpiar. |
+| `cleared`         | `void`    | Emite al pulsar el botón limpiar.               |
 
 ## Slots (ng-content)
 
-| Selector | Descripción |
-|---|---|
-| Default | Se proyectan `<retro-option>` como opciones del listbox. |
+| Selector        | Descripción                                                               |
+| --------------- | ------------------------------------------------------------------------- |
+| Default         | Se proyectan `<retro-option>` como opciones del listbox.                  |
 | `[retroPrefix]` | Elementos con comportamiento propio en el prefix (botones, badges, etc.). |
-| `[retroSuffix]` | Elementos con comportamiento propio en el suffix. |
+| `[retroSuffix]` | Elementos con comportamiento propio en el suffix.                         |
 
 ## A11y
 
@@ -57,7 +57,11 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 ```html
 <retro-select label="Estado" formControlName="status" placeholder="Selecciona...">
   @for (s of statuses; track s.code) {
-    <retro-option [value]="s.code">{{ s.label }}</retro-option>
+  <retro-option [value]="s.code">{{ s.label }}</retro-option>
   }
 </retro-select>
 ```
+
+## Notas internas
+
+- Las suscripciones al CDK overlay (`backdropClick`, `keydownEvents`) se guardan internamente y se desuscriben explícitamente en cada cierre del panel, además de usar `takeUntilDestroyed` como segunda barrera. Esto evita la acumulación de suscripciones en ciclos repetidos de apertura/cierre.

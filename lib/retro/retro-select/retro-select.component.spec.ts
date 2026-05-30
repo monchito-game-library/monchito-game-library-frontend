@@ -578,4 +578,22 @@ describe('RetroSelectComponent (integración con opciones)', () => {
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
     expect(() => select.onTriggerKeydown(event)).not.toThrow();
   });
+
+  it('_overlayPanelSubs queda vacío tras cada cierre después de 10 aperturas/cierres', () => {
+    for (let i = 0; i < 10; i++) {
+      // Simular apertura: inyectar un overlayRef falso con las suscripciones
+      const mockSub = { unsubscribe: vi.fn() } as unknown as import('rxjs').Subscription;
+      (select as any)._overlayPanelSubs = [mockSub, mockSub];
+      (select as any)._overlayRef = { detach: vi.fn(), dispose: vi.fn() };
+      select.open.set(true);
+
+      // Cerrar el panel
+      (select as any)._closePanel();
+
+      // Verificar que el array está vacío tras el cierre
+      expect((select as any)._overlayPanelSubs).toHaveLength(0);
+      // Verificar que se llamó unsubscribe en las subs del ciclo
+      expect(mockSub.unsubscribe).toHaveBeenCalled();
+    }
+  });
 });
