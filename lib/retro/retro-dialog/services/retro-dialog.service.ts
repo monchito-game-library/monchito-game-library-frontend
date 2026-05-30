@@ -26,7 +26,7 @@ export type { RetroDialogConfig };
  * Referencia a un dialog abierto. Envuelve RetroOverlayRef y expone la API
  * compatible con MatDialogRef para minimizar el diff en los call-sites.
  */
-export class RetroDialogRef<T, R = any> {
+export class RetroDialogRef<T, R = unknown> {
   private readonly _overlayRef: RetroOverlayRef<T, R>;
 
   /** Instancia del componente proyectado en el dialog. */
@@ -88,7 +88,7 @@ export class RetroDialogService {
    * @param {ComponentType<T>} component - Componente a proyectar en el dialog.
    * @param {RetroDialogConfig<D>} config - Configuración opcional del dialog.
    */
-  open<T, D = unknown, R = any>(component: ComponentType<T>, config?: RetroDialogConfig<D>): RetroDialogRef<T, R> {
+  open<T, D = unknown, R = unknown>(component: ComponentType<T>, config?: RetroDialogConfig<D>): RetroDialogRef<T, R> {
     const panelClasses = ['retro-overlay-panel--dialog'];
     if (config?.panelClass) {
       const extra = Array.isArray(config.panelClass) ? config.panelClass : [config.panelClass];

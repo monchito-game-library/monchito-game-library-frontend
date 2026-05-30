@@ -178,7 +178,9 @@ export class RetroSearchComponent
    * Función para convertir el valor seleccionado en el texto visible del input.
    * Ej.: `(id) => platformsMap.get(id)?.label ?? ''`
    */
-  readonly displayWith: InputSignal<((value: any) => string) | null> = input<((value: any) => string) | null>(null);
+  readonly displayWith: InputSignal<((value: unknown) => string) | null> = input<((value: unknown) => string) | null>(
+    null
+  );
 
   /**
    * Número mínimo de caracteres para abrir el panel.
