@@ -290,6 +290,7 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
     this._overlayRef?.dispose();
     this._overlayRef = null;
     this._isOpen.set(false);
+    this._activeDate.set(null);
     this._focusSubject.next(false);
     this._onTouchedCallback();
     this._inputEl?.nativeElement?.focus();
@@ -388,6 +389,10 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
     }
 
     if (newDate) {
+      const min: Date | null = this.min();
+      const max: Date | null = this.max();
+      if (min && newDate < min) newDate = min;
+      if (max && newDate > max) newDate = max;
       this._navigateToDate(newDate);
     }
   }
@@ -505,10 +510,13 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
     this._cdr.markForCheck();
 
     // Enfocar la celda activa dentro del overlay del datepicker.
+    const wasOpen: boolean = this._isOpen();
     Promise.resolve().then(() => {
+      if (!wasOpen || !this._isOpen()) return;
       const root: HTMLElement | undefined = this._overlayRef?.overlayElement;
       const el: HTMLElement | null | undefined = root?.querySelector<HTMLElement>('[role="gridcell"][tabindex="0"]');
-      el?.focus();
+      if (!el?.isConnected) return;
+      el.focus();
     });
   }
 
