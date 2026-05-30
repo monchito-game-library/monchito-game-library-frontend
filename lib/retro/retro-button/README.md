@@ -1,54 +1,61 @@
 # retro-button
 
-Botón Terminal Collector con corchetes `[ LABEL ]` (pseudo-elementos en desktop, ocultos en mobile ≤ 768px). Disponible en tres tamaños: `sm` (32px), `md` (40px), `lg` (44px, default).
+Botón reutilizable Terminal Collector con corchetes `[ LABEL ]` en desktop (pseudo-elementos ocultos en mobile ≤ 768px). Acepta slots de icono/contenido a izquierda y derecha del texto.
 
-## Componente — RetroButtonComponent
+**Selector:** `retro-button` · **Standalone:** sí · **CVA:** no
 
-- **Selector:** `retro-button`
-- **Standalone:** sí
+## Cuándo usar / Cuándo NO usar
 
-### Inputs
+- Usar cuando: se necesita un botón de acción con texto visible (guardar, cancelar, abrir diálogo, enviar formulario).
+- NO usar cuando: el botón solo lleva icono sin texto — usar `retro-icon-button` en su lugar.
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `label` | `string` (required) | — | Texto del botón (uppercase en pantalla). |
-| `variant` | `'primary' \| 'ghost' \| 'danger' \| 'success'` | `'ghost'` | Variante visual. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura: 32 / 40 / 44 px. En mobile sm/md se promocionan a 44 px. |
-| `disabled` | `boolean` | `false` | Deshabilita el botón. |
-| `loading` | `boolean` | `false` | Muestra spinner interno y deshabilita. |
-| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Tipo HTML. |
-| `fullWidth` | `boolean` | `false` | Ocupa todo el ancho disponible. |
+## API — Inputs
 
-### Outputs
+| Nombre      | Tipo Angular                     | Default    | Descripción                                                                                   |
+| ----------- | -------------------------------- | ---------- | --------------------------------------------------------------------------------------------- |
+| `label`     | `InputSignal<string> (required)` | —          | Texto del botón; se muestra en uppercase.                                                     |
+| `variant`   | `InputSignal<LibButtonVariant>`  | `'ghost'`  | Variante visual: `'primary'`, `'ghost'`, `'danger'`, `'success'`.                             |
+| `size`      | `InputSignal<RetroButtonSize>`   | `'lg'`     | Altura del botón: `sm` (32px), `md` (40px), `lg` (44px). En mobile ≤ 768px, `sm`/`md` → 44px. |
+| `disabled`  | `InputSignal<boolean>`           | `false`    | Deshabilita el botón.                                                                         |
+| `loading`   | `InputSignal<boolean>`           | `false`    | Muestra spinner de carga y deshabilita el botón. Oculta los slots `start` y `end`.            |
+| `type`      | `InputSignal<LibButtonType>`     | `'button'` | Tipo del `<button>` HTML nativo: `'button'`, `'submit'`, `'reset'`.                           |
+| `fullWidth` | `InputSignal<boolean>`           | `false`    | Si `true`, el botón ocupa todo el ancho disponible (`width: 100%`).                           |
 
-| Nombre | Tipo | Descripción |
-|---|---|---|
-| `clicked` | `MouseEvent` | Emite el clic si no está deshabilitado/loading. |
+## API — Outputs
 
-### Slots / ng-content
+| Nombre    | Tipo Angular                   | Descripción                                                            |
+| --------- | ------------------------------ | ---------------------------------------------------------------------- |
+| `clicked` | `OutputEmitterRef<MouseEvent>` | Emite el `MouseEvent` al hacer clic; solo si no está disabled/loading. |
 
-- `[slot=start]`: contenido a la izquierda del label.
-- `[slot=end]`: contenido a la derecha del label.
-- Ambos slots se ocultan cuando `loading()` es `true`.
+## Slots
 
-### Types
+| Selector       | Tipo esperado          | Descripción                                                                      |
+| -------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| `[slot=start]` | icono o texto          | Contenido a la izquierda del label. Oculto cuando `loading` es `true`.           |
+| `[slot=end]`   | icono, badge o teclado | Contenido a la derecha del label (chevrons, `<kbd>`, badges). Oculto en loading. |
 
-- `LibButtonVariant`, `LibButtonType`, `RetroButtonSize` en `retro-button.types.ts`.
+## Tokens CSS expuestos
 
-### Dependencias
+| Variable                    | Default | Descripción                                                                                                                                                                                                                                         |
+| --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--retro-btn-bottom-offset` | `0`     | Ajusta el `margin-bottom` del botón para alinearlo verticalmente con el control box de un `retro-form-field` hermano en un flex row. Valor típico: `1.25rem`. Establecer en el contenedor padre (p. ej. `.retro-field-row`), no en el propio botón. |
 
-- `RetroIconComponent` (spinner + slots).
+## Tipos exportados
 
-## CSS custom properties
+- `LibButtonVariant` — `'primary' \| 'ghost' \| 'danger' \| 'success'`
+- `RetroButtonSize` — `'sm' \| 'md' \| 'lg'`
+- `LibButtonType` — `'button' \| 'submit' \| 'reset'`
 
-| Token | Default | Description |
-|---|---|---|
-| `--retro-btn-bottom-offset` | `0` | Sets the `margin-bottom` of the button to align it vertically with the control box of a sibling `retro-form-field` in a flex row. Typical value when a subscript is visible: `1.25rem`. Set it on the parent container (e.g. `.retro-field-row`), not on the button itself. |
-
-## Ejemplo
+## Ejemplo mínimo
 
 ```html
 <retro-button label="Guardar" variant="primary" (clicked)="onSave($event)">
   <retro-icon slot="start" name="save" size="sm" />
 </retro-button>
 ```
+
+## Gotchas
+
+- En mobile (≤ 768px) los corchetes `[ ]` de pseudo-elementos se ocultan; los tamaños `sm` y `md` se promocionan automáticamente a 44px para cumplir el touch target mínimo.
+- Cuando `loading` es `true`, los slots `[slot=start]` y `[slot=end]` quedan ocultos y se muestra un spinner interno; el botón también se deshabilita.
+- El host tiene `display: contents`, por lo que el componente no genera un box propio. Las dimensiones visibles las dicta el `<button>` interno.
