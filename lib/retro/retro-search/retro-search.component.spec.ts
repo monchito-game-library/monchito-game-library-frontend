@@ -451,6 +451,19 @@ describe('RetroSearchComponent (integración con opciones)', () => {
     expect(fn).toHaveBeenCalled();
   });
 
+  it('onBlur + destroy inmediato no ejecuta el callback del timeout', async () => {
+    (search as any)._overlayRef = null;
+    const fn = vi.fn();
+    search.registerOnTouched(fn);
+    // Espiar _onTouchedCallback para detectar ejecución tras destroy
+    const spy = vi.spyOn(search as any, '_onTouchedCallback');
+    search.onBlur();
+    // Destroy antes de que expire el timeout de 150ms
+    search.ngOnDestroy();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(spy).not.toHaveBeenCalled();
+  });
+
   it('onKeydown Escape cuando el panel está cerrado no lanza error', () => {
     (search as any)._overlayRef = null;
     const event = new KeyboardEvent('keydown', { key: 'Escape' });

@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal, PortalModule } from '@angular/cdk/portal';
-import { Subject, Observable, startWith } from 'rxjs';
+import { Subject, Observable, startWith, Subscription } from 'rxjs';
 import { RetroFormFieldComponent } from '../retro-form-field/retro-form-field.component';
 import { RetroInputDirective } from '../retro-form-field/components/retro-input/retro-input.directive';
 import { RetroLabelComponent } from '../retro-form-field/components/retro-label/retro-label.component';
@@ -116,7 +116,9 @@ export class RetroSearchComponent
   // ── Variables privadas ───────────────────────────────────────────────────────
 
   private _overlayRef: OverlayRef | null = null;
+  private _overlayPanelSubs: Subscription[] = [];
   private _activeIndex: number = -1;
+  private _blurTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   // ── Variables públicas readonly (RetroFormFieldControl + inputs + outputs) ───
 
@@ -237,6 +239,10 @@ export class RetroSearchComponent
   }
 
   ngOnDestroy(): void {
+    if (this._blurTimeoutId !== null) {
+      clearTimeout(this._blurTimeoutId);
+      this._blurTimeoutId = null;
+    }
     this._overlayRef?.dispose();
   }
 
@@ -292,7 +298,8 @@ export class RetroSearchComponent
    * se procese antes de cerrar, evitando perder la selección.
    */
   onBlur(): void {
-    setTimeout(() => {
+    this._blurTimeoutId = setTimeout(() => {
+      this._blurTimeoutId = null;
       if (this._overlayRef) return;
       this._focusSubject.next(false);
       this._onTouchedCallback();
@@ -406,10 +413,18 @@ export class RetroSearchComponent
       width: this._elRef.nativeElement.offsetWidth
     });
 
-    this._overlayRef.backdropClick().subscribe(() => this._closePanel());
-    this._overlayRef.keydownEvents().subscribe((e: KeyboardEvent) => {
-      if (e.key === 'Escape') this._closePanel();
-    });
+    this._overlayPanelSubs = [
+      this._overlayRef
+        .backdropClick()
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe(() => this._closePanel()),
+      this._overlayRef
+        .keydownEvents()
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe((e: KeyboardEvent) => {
+          if (e.key === 'Escape') this._closePanel();
+        })
+    ];
 
     const portal: TemplatePortal = new TemplatePortal(this._panelTemplate, this._viewContainerRef);
     this._overlayRef.attach(portal);
@@ -421,6 +436,8 @@ export class RetroSearchComponent
    * Cierra el panel overlay sin emitir selección.
    */
   private _closePanel(): void {
+    this._overlayPanelSubs.forEach((s) => s.unsubscribe());
+    this._overlayPanelSubs = [];
     this._overlayRef?.detach();
     this._overlayRef?.dispose();
     this._overlayRef = null;
