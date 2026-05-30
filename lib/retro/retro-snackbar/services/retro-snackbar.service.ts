@@ -18,6 +18,7 @@ export class RetroSnackbarService {
   private readonly _messages: WritableSignal<readonly RetroSnackbarMessage[]> = signal<readonly RetroSnackbarMessage[]>(
     []
   );
+  private static readonly _MAX_ID = Number.MAX_SAFE_INTEGER - 1;
   private _nextId = 0;
 
   /** Lista reactiva de mensajes activos (para el host). */
@@ -34,6 +35,9 @@ export class RetroSnackbarService {
     msg: Omit<RetroSnackbarMessage, 'id' | 'duration' | 'variant'> &
       Partial<Pick<RetroSnackbarMessage, 'duration' | 'variant'>>
   ): number {
+    if (this._nextId >= RetroSnackbarService._MAX_ID) {
+      this._nextId = 0;
+    }
     const id = this._nextId++;
     const duration = msg.duration ?? 4000;
     const variant: LibSnackbarVariant = msg.variant ?? 'info';

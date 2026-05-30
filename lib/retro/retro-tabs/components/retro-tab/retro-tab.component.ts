@@ -25,7 +25,8 @@ export class RetroTabComponent {
   readonly icon: InputSignal<string | undefined> = input<string | undefined>(undefined);
 
   /** ID único para esta instancia, usado en aria-controls y aria-labelledby. */
-  readonly id: string = Math.random().toString(36).slice(2, 9);
+  private static _nextId = 0;
+  readonly id: string = `retro-tab-${++RetroTabComponent._nextId}`;
 
   /** Template del contenido del tab, proyectado con <ng-template> por el consumidor. */
   @ContentChild(TemplateRef, { static: false })
