@@ -67,3 +67,4 @@ __pycache__/
 
 # Plan files (never committed)
 PLAN.md
+.plans/

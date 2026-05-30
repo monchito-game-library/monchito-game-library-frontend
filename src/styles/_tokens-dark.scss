@@ -1,0 +1,98 @@
+// Tokens del tema dark (neon-terminal) — paleta actual del proyecto.
+:root {
+  /* ── Superficies ───────────────────────────── */
+  --bg-void: #000000; /* canvas raíz */
+  --bg-surface: #0a0a0a; /* nav-rail, drawers, sheets, cards */
+  --bg-surface-hi: #141414; /* hover de surface, contenedores apilados */
+  --bg-elev: #1a1a1a; /* dialogs, menus, popovers */
+
+  /* ── Bordes ────────────────────────────────── */
+  --border: #262626;
+  --border-strong: #404040; /* divisores destacados */
+  --border-active: #7c3aed; /* hover sobre interactivos, focus ring */
+
+  /* ── Texto ─────────────────────────────────── */
+  --text-hi: #fafafa; /* títulos y valores */
+  --text-mid: #a3a3a3; /* body, datos secundarios */
+  --text-lo: #525252; /* labels uppercase, dt, placeholders */
+
+  /* ── Acento funcional (señalético) ─────────── */
+  --primary: #7c3aed; /* CTAs primarios, foco */
+  --accent-green: #4ade80; /* éxito: paid, sold, owned */
+  --accent-amber: #fbbf24; /* aviso: pending, in-loan, for-sale */
+  --accent-rose: #f43f5e; /* error/destructivo: delete */
+  --accent-blue: #60a5fa; /* info: digital, online, link */
+
+  /* ── Border radius ──────────────────────────────────── */
+  --radius-xs: 2px;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-full: 0;
+
+  /* ── Tokens legacy reasignados ─────────────────────────*/
+  --color-rating: var(--accent-amber);
+  --color-metacritic: var(--accent-green);
+  --color-status-ordered-bg: transparent;
+  --color-status-ordered-text: var(--accent-blue);
+  --color-status-shipped-bg: transparent;
+  --color-status-shipped-text: var(--accent-amber);
+  --color-status-received-bg: transparent;
+  --color-status-received-text: var(--accent-green);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  /* ── Escala de tamaños de icono ─────────────────────── */
+  --icon-xs: 0.75rem;
+  --icon-sm: 1rem;
+  --icon-md: 1.125rem;
+  --icon-lg: 1.25rem;
+  --icon-xl: 1.5rem;
+  --icon-2xl: 2rem;
+
+  /* ── Tipografía ─────────────────────────────────────── */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-display: 3rem;
+
+  /* ── Fuentes ────────────────────────────────────────── */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'JetBrains Mono', monospace;
+  --font-display: 'IBM Plex Sans', sans-serif;
+
+  /* ── Transiciones ───────────────────────────────────── */
+  --transition-fast: 120ms linear;
+  --transition-base: 120ms linear;
+  --transition-slow: 120ms linear;
+
+  /* ── Z-index ────────────────────────────────────────── */
+  --z-base: 0;
+  --z-card: 10;
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-nav: 70;
+
+  /* ── Layout chrome ───────────────────────────────────── */
+  --bottom-nav-height: 60px;
+
+  /* ── Breakpoints ─────────────────────────────────────── */
+  --bp-mobile: 768px;
+  --bp-tablet: 1024px;
+  --bp-desktop: 1280px;
+  --bp-desktop-large: 1920px;
+  --bp-ultra-wide: 2560px;
+  --bp-ultra-wide-xl: 3840px;
+
+  /* ── retro-select / retro-search ────────────────────────*/
+  --retro-option-height: 2.5rem;
+  --retro-select-visible-options: 4;
+}

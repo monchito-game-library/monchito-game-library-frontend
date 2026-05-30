@@ -1,0 +1,389 @@
+// Reset, base y utilidades globales.
+
+html {
+  color-scheme: dark;
+}
+
+// ── Global type scale on large viewports ──────────────────────────────
+// Bumping the root font-size makes every `rem`-based token (texts and
+// spacings) grow proportionally so the whole app feels more comfortable
+// to read on big screens, without rewriting per-component sizes.
+// Breakpoints aligned with common display tiers: laptop large, FHD, 2K, 4K.
+@media (min-width: 1440px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1920px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 3840px) {
+  html {
+    font-size: 24px;
+  }
+}
+
+// ────────────────────────── Scrollbar (Terminal Collector) ──────────────────────────
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--bg-void);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-void);
+  border-left: 1px solid var(--border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+  box-shadow:
+    inset 0 0 0 1px var(--primary),
+    0 0 6px var(--primary);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--border-active);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-void);
+}
+
+@media (pointer: coarse) {
+  * {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+// ────────────────────────── Focus visible ──────────────────────────
+:focus-visible {
+  outline: 1px solid var(--border-active);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+// Base styles
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-body);
+  user-select: none;
+  background: var(--bg-void);
+  color: var(--text-hi);
+}
+
+// Tipografía de headings: IBM Plex Sans (títulos de obra)
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+// Permitir selección de texto solo en elementos donde tiene sentido
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+
+// Oculta los spin buttons nativos de inputs numéricos para que matTextSuffix
+// (€, unidades, etc.) tenga espacio y no quede superpuesto al valor del input
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+// ────────────────────────── Shared: hardware list card projected content ──────────────────────────
+// Used by consoles.component and controllers.component inside ng-template inputs (cardHeaderTpl,
+// cardChipsTpl). Must be global because ngTemplateOutlet retains the defining component's encapsulation.
+
+.hw-list__card-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.hw-list__card-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
+  flex-shrink: 0;
+  border: 1px solid var(--border-strong);
+}
+
+// ────────────────────────── Shared: hardware detail section / dl ──────────────────────────
+// Used by hardware-detail-shell (user data section) and console-detail (specs section via hwExtra slot).
+// Must live in global styles because ng-content projection retains the host component's encapsulation.
+
+.hw-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--bg-surface);
+  border-radius: 0;
+  border: 1px solid var(--border);
+  padding: 1rem;
+}
+
+.hw-detail__section-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-mid);
+}
+
+.hw-detail__dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+// ────────────────────────── Utility: retro-divider ──────────────────────────────────
+.retro-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+// ────────────────────────── Route transitions ──────────────────────────────────────
+.app-content router-outlet + * {
+  animation: routeFadeIn 220ms ease-out backwards;
+}
+
+@keyframes routeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 600px) {
+  .snack-mobile {
+    width: 100vw;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--border-active);
+  }
+}
+
+// ────────────────────────── prefers-reduced-motion ──────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  // Route fade-in: sin transform en reduced-motion
+  .app-content router-outlet + * {
+    animation: none;
+  }
+}
+
+// ────────────────────────── retro-tooltip ──────────────────────────
+.retro-tooltip {
+  position: fixed;
+  background: var(--bg-void);
+  color: var(--text-hi);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1100;
+  pointer-events: none;
+  width: max-content;
+  max-width: 16rem;
+
+  @media (hover: none) {
+    display: none;
+  }
+}
+
+// ────────────────────────── retro-overlay (CDK Overlay panels) ────────────────
+
+.retro-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.retro-overlay-backdrop--transparent {
+  background: transparent;
+}
+
+.retro-overlay-panel--dialog {
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  border-radius: 0;
+  min-width: 280px;
+  max-width: min(90vw, 560px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.retro-dialog__title {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+}
+
+.retro-dialog__content {
+  padding: 1.25rem;
+  overflow-y: auto;
+  color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  flex: 1 1 auto;
+}
+
+.retro-dialog__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+
+  &--end {
+    justify-content: flex-end;
+  }
+  &--center {
+    justify-content: center;
+  }
+  &--start {
+    justify-content: flex-start;
+  }
+}
+
+.retro-overlay-panel--menu {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  min-width: 12rem;
+}
+
+.retro-overlay-panel--bottom-sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  max-height: 90dvh;
+  margin-top: auto;
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  background: var(--bg-surface);
+}
+
+// ─── retro-field-row — fila flex con form-fields y botones alineados ─────────
+.retro-field-row {
+  --retro-btn-bottom-offset: 1.25rem;
+
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+
+  &--no-subscript {
+    --retro-btn-bottom-offset: 0;
+  }
+}
+
+// ─── retro-input — input nativo con estilos Terminal Collector ─────────────────
+.retro-input__control {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-hi);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+  width: 100%;
+  resize: vertical;
+
+  &::placeholder {
+    color: var(--text-lo);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  &:disabled {
+    color: var(--text-lo);
+    cursor: not-allowed;
+  }
+}
+
+// ─── retro-select — panel de selección (fuera del shadow DOM) ──────────────────
+.retro-select__panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0;
+  list-style: none;
+  margin: 0;
+  max-height: calc(var(--retro-option-height) * var(--retro-select-visible-options) + 0.5rem + 2px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// ─── retro-search — panel de autocompletado (fuera del shadow DOM) ─────────────
+.retro-search__panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  padding: 0.25rem 0;
+  list-style: none;
+  margin: 0;
+  max-height: calc(var(--retro-option-height) * var(--retro-select-visible-options) + 0.5rem + 2px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@import '@angular/cdk/overlay-prebuilt.css';
