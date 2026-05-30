@@ -67,57 +67,39 @@ Solo si el componente expone variantes/tamaños/modos públicos. Cada tipo lleva
 
 ## README.md inicial
 
-Estructura obligatoria (mismo orden):
+Estructura obligatoria (mismo orden, coherente con el skill `retro-readme`):
 
 ```markdown
 # retro-<nombre>
 
-<Descripción de 1-2 líneas: qué es, comportamiento clave, breakpoints relevantes.>
+<una frase: qué es + para qué sirve>
 
-## Componente — RetroXxxComponent
+**Selector:** `retro-<nombre>` · **Standalone:** sí · **CVA:** no
 
-- **Selector:** `retro-<nombre>`
-- **Standalone:** sí
+## Cuándo usar / Cuándo NO usar
 
-### Inputs
+- Usar cuando: ...
+- NO usar cuando: ...
 
-| Nombre | Tipo | Default | Descripción |
-| ------ | ---- | ------- | ----------- |
-| ...    | ...  | ...     | ...         |
+## API — Inputs
 
-### Outputs
+| Nombre | Tipo Angular | Default | Descripción |
+| ------ | ------------ | ------- | ----------- |
 
-| Nombre | Tipo | Descripción |
-| ------ | ---- | ----------- |
-| ...    | ...  | ...         |
-
-### Slots / ng-content
-
-- `[slot=xxx]`: descripción.
-- Default (si aplica): descripción del contenido proyectado.
-
-### Types
-
-- `RetroXxxVariant`, `RetroXxxSize` en `retro-<nombre>.types.ts`.
-
-### CSS custom properties
-
-(Solo si hay tokens públicos.)
-
-| Variable               | Default | Descripción |
-| ---------------------- | ------- | ----------- |
-| `--retro-<nombre>-xxx` | `...`   | ...         |
-
-### Dependencias
-
-(Solo si depende de otros componentes retro.)
-
-## Ejemplo
+## Ejemplo mínimo
 
 \`\`\`html
-<retro-<nombre> ... />
+<retro-<nombre> />
 \`\`\`
 ```
+
+Notas para completar el README inicial:
+
+- Si el componente implementa `ControlValueAccessor`, añadir la sección `## Contrato CVA` y marcar `CVA: sí` en la línea de metadatos. Si no, omitirla.
+- Si hay gotchas conocidos al crear el componente, añadir la sección `## Gotchas`. Si no, omitirla.
+- Completar las secciones `## API — Outputs`, `## Slots`, `## Tokens CSS expuestos` y `## Tipos exportados` solo si aplican; omitirlas completamente si no (nunca dejar una sección vacía ni tabla sin filas).
+- Columna "Tipo Angular": usar `InputSignal<T>`, `InputSignal<T> (required)`, `OutputEmitterRef<T>`, `Signal<T>` según corresponda.
+- Columna "Default": usar `—` para required, valor literal entre backticks para opcionales.
 
 ## Pasos finales
 
