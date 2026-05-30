@@ -9,24 +9,25 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 
 ## Inputs
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `label` | `string` | — (requerido) | Texto del label del campo. |
-| `placeholder` | `string` | `''` | Placeholder del input nativo. |
-| `hint` | `string \| null` | `null` | Mensaje de ayuda bajo el campo. |
-| `error` | `string \| null` | `null` | Mensaje de error bajo el campo. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` | Altura del campo (32/40/44px). |
-| `prefixIcon` | `string \| null` | `null` | Nombre de icono Material decorativo en prefix. |
-| `clearable` | `boolean` | `false` | Muestra botón X para limpiar cuando hay fecha. |
-| `clearAriaLabel` | `string` | `'Limpiar'` | `aria-label` del botón limpiar. |
-| `hideSubscript` | `boolean` | `false` | Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. |
-| `min` | `Date \| null` | `null` | Fecha mínima seleccionable. |
-| `max` | `Date \| null` | `null` | Fecha máxima seleccionable. |
+| Nombre           | Tipo                   | Default       | Descripción                                                                                                        |
+| ---------------- | ---------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `label`          | `string`               | — (requerido) | Texto del label del campo.                                                                                         |
+| `placeholder`    | `string`               | `''`          | Placeholder del input nativo.                                                                                      |
+| `hint`           | `string \| null`       | `null`        | Mensaje de ayuda bajo el campo.                                                                                    |
+| `error`          | `string \| null`       | `null`        | Mensaje de error bajo el campo.                                                                                    |
+| `size`           | `'sm' \| 'md' \| 'lg'` | `'lg'`        | Altura del campo (32/40/44px).                                                                                     |
+| `prefixIcon`     | `string \| null`       | `null`        | Nombre de icono Material decorativo en prefix.                                                                     |
+| `clearable`      | `boolean`              | `false`       | Muestra botón X para limpiar cuando hay fecha.                                                                     |
+| `clearAriaLabel` | `string`               | `'Limpiar'`   | `aria-label` del botón limpiar.                                                                                    |
+| `hideSubscript`  | `boolean`              | `false`       | Oculta el bloque subscript (hint/error) del form-field interno. Útil en campos de búsqueda sin validación visible. |
+| `min`            | `Date \| null`         | `null`        | Fecha mínima seleccionable.                                                                                        |
+| `max`            | `Date \| null`         | `null`        | Fecha máxima seleccionable.                                                                                        |
+| `locale`         | `InputSignal<string>`  | `'es-ES'`     | Locale BCP 47 para formateo de fechas (nombres de mes, día de la semana).                                          |
 
 ## Outputs
 
-| Nombre | Tipo | Descripción |
-|---|---|---|
+| Nombre    | Tipo   | Descripción                       |
+| --------- | ------ | --------------------------------- |
 | `cleared` | `void` | Emite al pulsar el botón limpiar. |
 
 ## Contrato del FormControl
@@ -57,9 +58,5 @@ Los slots `[retroPrefix]` y `[retroSuffix]` **no están disponibles** en `retro-
 ## Ejemplo
 
 ```html
-<retro-datepicker
-  label="Fecha de compra"
-  formControlName="purchaseDate"
-  [min]="minDate"
-  [clearable]="true" />
+<retro-datepicker label="Fecha de compra" formControlName="purchaseDate" [min]="minDate" [clearable]="true" />
 ```

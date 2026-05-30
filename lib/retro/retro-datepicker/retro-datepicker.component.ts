@@ -163,6 +163,9 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
   /** Fecha máxima seleccionable. */
   readonly max: InputSignal<Date | null> = input<Date | null>(null);
 
+  /** Locale BCP 47 para formateo de fechas (nombres de mes, día de la semana). */
+  readonly locale: InputSignal<string> = input<string>('es-ES');
+
   // ── Signals públicos ─────────────────────────────────────────────────────────
 
   /** Verdadero cuando el control está deshabilitado. */
@@ -530,8 +533,8 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
     const year: number = viewDate.getFullYear();
     const month: number = viewDate.getMonth();
 
-    // Header label en es-ES: "mayo 2026"
-    this.headerLabel.set(new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(viewDate));
+    // Header label según el locale configurado: "mayo 2026" (es-ES), "May 2026" (en-US), etc.
+    this.headerLabel.set(new Intl.DateTimeFormat(this.locale(), { month: 'long', year: 'numeric' }).format(viewDate));
 
     // Primer día del mes (0=domingo..6=sábado) → ajustar a lunes primero
     const firstDay: Date = new Date(year, month, 1);
@@ -616,7 +619,7 @@ export class RetroDatepickerComponent implements ControlValueAccessor, RetroForm
    * @param {Date} date - Fecha a formatear.
    */
   private _formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat(this.locale(), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'

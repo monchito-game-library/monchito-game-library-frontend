@@ -423,6 +423,18 @@ describe('RetroDatepickerComponent', () => {
     expect(nextLabel).not.toBe(initialLabel);
   });
 
+  it('locale="en-US" produce headerLabel con nombre de mes en inglés', () => {
+    const fixture = TestBed.createComponent(RetroDatepickerComponent);
+    fixture.componentRef.setInput('label', 'Fecha');
+    fixture.componentRef.setInput('locale', 'en-US');
+    fixture.detectChanges();
+    // Enero 2025 → en-US debería producir "January 2025" (no "enero 2025")
+    fixture.componentInstance.writeValue(new Date(2025, 0, 1));
+    const label = fixture.componentInstance.headerLabel();
+    expect(label.toLowerCase()).toContain('january');
+    expect(label.toLowerCase()).not.toContain('enero');
+  });
+
   it('onDayKeydown con ArrowLeft navega al día anterior', () => {
     const fixture = TestBed.createComponent(RetroDatepickerComponent);
     fixture.componentRef.setInput('label', 'Fecha');
