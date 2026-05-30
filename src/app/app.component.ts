@@ -116,7 +116,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._themeService.initTheme();
     this._pwaUpdate.init();
     this._mobileQuery.addEventListener('change', (e) => this._isMobile.set((e as MediaQueryListEvent).matches), {
       signal: this._mobileAbort.signal

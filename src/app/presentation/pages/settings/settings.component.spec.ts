@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
 import { ThemeService } from '@/services/theme/theme.service';
+import { ThemeType } from '@/types/theme.type';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { RawgSearchStateService } from '@/services/rawg-search-state/rawg-search-state.service';
@@ -20,9 +21,8 @@ describe('SettingsComponent', () => {
   let fixture: ComponentFixture<SettingsComponent>;
 
   let mockThemeService: {
-    isDarkMode: ReturnType<typeof signal<boolean>>;
-    setLightTheme: ReturnType<typeof vi.fn>;
-    setDarkTheme: ReturnType<typeof vi.fn>;
+    theme: ReturnType<typeof signal<ThemeType>>;
+    toggleTheme: ReturnType<typeof vi.fn>;
   };
   let mockUserPreferencesState: {
     avatarUrl: ReturnType<typeof signal>;
@@ -48,9 +48,8 @@ describe('SettingsComponent', () => {
     vi.clearAllMocks();
 
     mockThemeService = {
-      isDarkMode: signal(false),
-      setLightTheme: vi.fn(),
-      setDarkTheme: vi.fn()
+      theme: signal<ThemeType>('light'),
+      toggleTheme: vi.fn()
     };
 
     mockUserPreferencesState = {
@@ -212,18 +211,16 @@ describe('SettingsComponent', () => {
   });
 
   describe('toggleTheme', () => {
-    it('llama a setDarkTheme cuando el tema actual es claro', () => {
-      mockThemeService.isDarkMode.set(false);
+    it('delega en themeService.toggleTheme cuando el tema actual es claro', () => {
+      mockThemeService.theme.set('light');
       component.toggleTheme();
-      expect(mockThemeService.setDarkTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.toggleTheme).toHaveBeenCalledOnce();
     });
 
-    it('llama a setLightTheme cuando el tema actual es oscuro', () => {
-      mockThemeService.isDarkMode.set(true);
+    it('delega en themeService.toggleTheme cuando el tema actual es oscuro', () => {
+      mockThemeService.theme.set('dark');
       component.toggleTheme();
-      expect(mockThemeService.setLightTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.toggleTheme).toHaveBeenCalledOnce();
     });
   });
 

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
@@ -39,6 +40,7 @@ import { AvailableLanguageInterface } from '@/interfaces/available-language.inte
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
 import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { ThemeType } from '@/types/theme.type';
 
 @Component({
   selector: 'app-settings',
@@ -90,8 +92,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
 
-  /** Current dark-mode state, synchronized with ThemeService. */
-  readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
+  /** Current dark-mode state, derived from ThemeService theme signal. */
+  readonly isDark: Signal<boolean> = computed(() => this._themeService.theme() === 'dark');
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */
   readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._rawgSearchState.rawgSearchResults;
@@ -173,7 +175,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * Toggles between dark and light theme and persists the preference in Supabase.
    */
   toggleTheme(): void {
-    this.isDark() ? this._themeService.setLightTheme() : this._themeService.setDarkTheme();
+    this._themeService.toggleTheme();
     this._savePreferences();
   }
 
@@ -400,7 +402,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private _savePreferences(): void {
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
-    const theme: 'light' | 'dark' = this.isDark() ? 'dark' : 'light';
+    const theme: ThemeType = this.isDark() ? 'dark' : 'light';
     const language: 'es' | 'en' = this._transloco.getActiveLang() as 'es' | 'en';
     void this._userPreferencesUseCases.savePreferences(userId, theme, language);
   }
