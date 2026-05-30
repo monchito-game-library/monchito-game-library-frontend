@@ -330,7 +330,7 @@ describe('RetroOverlayService', () => {
     });
   });
 
-  describe('TemplateRef — path de error sin ViewContainerRef', () => {
+  describe('TemplateRef — paths de apertura', () => {
     it('lanza error si se abre un TemplateRef sin ViewContainerRef disponible', () => {
       // El servicio inyectado en TestBed no tiene ViewContainerRef opcional (null)
       // Creamos un TemplateRef simulado que es instancia de TemplateRef
@@ -338,6 +338,20 @@ describe('RetroOverlayService', () => {
       expect(() => service.open(fakeTemplate)).toThrow(
         '[RetroOverlayService] Se requiere ViewContainerRef para abrir TemplatePortal'
       );
+    });
+
+    it('abre correctamente un TemplateRef cuando se pasa ViewContainerRef en la config', async () => {
+      // Montamos el componente host que declara el <ng-template #tmpl>
+      const fixture = TestBed.createComponent(TemplateHostComponent);
+      fixture.detectChanges();
+      const host = fixture.componentInstance;
+
+      const ref = service.open(host.tmpl, { viewContainerRef: host.vcr });
+      expect(ref).toBeInstanceOf(RetroOverlayRef);
+
+      const closePromise = firstValueFrom(ref.afterClosed$);
+      ref.close();
+      await closePromise;
     });
   });
 
@@ -456,5 +470,27 @@ describe('RetroOverlayRef', () => {
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     ref._setConfig({ data: { id: 42 } });
     expect(ref.data).toEqual({ id: 42 });
+  });
+
+  describe('disableClose getter', () => {
+    it('devuelve false cuando _config.disableClose es undefined (sin _setConfig)', () => {
+      const { fakeOverlayRef } = makeFakeOverlayRef();
+      const ref = new RetroOverlayRef(fakeOverlayRef as any);
+      expect(ref.disableClose).toBe(false);
+    });
+
+    it('devuelve false cuando _config.disableClose es false explícito', () => {
+      const { fakeOverlayRef } = makeFakeOverlayRef();
+      const ref = new RetroOverlayRef(fakeOverlayRef as any);
+      ref._setConfig({ disableClose: false });
+      expect(ref.disableClose).toBe(false);
+    });
+
+    it('devuelve true cuando _config.disableClose es true', () => {
+      const { fakeOverlayRef } = makeFakeOverlayRef();
+      const ref = new RetroOverlayRef(fakeOverlayRef as any);
+      ref._setConfig({ disableClose: true });
+      expect(ref.disableClose).toBe(true);
+    });
   });
 });
