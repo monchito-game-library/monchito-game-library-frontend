@@ -120,7 +120,9 @@ export class RetroTabsComponent implements AfterViewInit {
     effect(() => {
       const idx = this.selectedIndex();
       if (!this.isRouterMode() && idx >= 0) {
-        this.activeIndex.set(idx);
+        const count = this.tabs?.length ?? 0;
+        const clamped = count > 0 ? Math.max(0, Math.min(idx, count - 1)) : idx;
+        this.activeIndex.set(clamped);
       }
     });
 
@@ -142,11 +144,7 @@ export class RetroTabsComponent implements AfterViewInit {
       this._resizeObserver.observe(list);
 
       this._mutationObserver = new MutationObserver(() => this._updateIndicator());
-      this._mutationObserver.observe(list, {
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class'],
-      });
+      this._mutationObserver.observe(list, { childList: true });
 
       this._destroyRef.onDestroy((): void => {
         this._resizeObserver?.disconnect();
@@ -166,8 +164,11 @@ export class RetroTabsComponent implements AfterViewInit {
    */
   select(index: number): void {
     if (this.isRouterMode()) return;
-    this.activeIndex.set(index);
-    this.selectedIndexChange.emit(index);
+    const count = this.tabsArray().length;
+    if (count === 0) return;
+    const clamped = Math.max(0, Math.min(index, count - 1));
+    this.activeIndex.set(clamped);
+    this.selectedIndexChange.emit(clamped);
   }
 
   /**

@@ -13,7 +13,8 @@ Ambos modos comparten el mismo indicador neón deslizante full-width.
 
 - **A11y (modo local):** APG tablist/tab/tabpanel, activación automática con Arrow keys.
 - **A11y (modo router):** `<nav>` + `aria-current="page"` en el link activo.
-- **Indicador:** posicionado con `ResizeObserver` + `MutationObserver`, animado con CSS custom properties `--ind-left` / `--ind-width`.
+- **Indicador:** posicionado con `ResizeObserver` + `MutationObserver` (solo `childList`, sin escuchar cambios de clase de descendientes), animado con CSS custom properties `--ind-left` / `--ind-width`.
+- **Clamp de índice:** `selectedIndex` y el método programático `select(n)` clampean el valor al rango `[0, tabs.length - 1]`; un valor fuera de bounds activa el último tab disponible.
 
 ### Inputs
 

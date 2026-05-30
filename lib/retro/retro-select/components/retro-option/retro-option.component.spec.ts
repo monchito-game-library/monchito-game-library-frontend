@@ -87,4 +87,19 @@ describe('RetroOptionComponent', () => {
     (fixture.componentInstance as any)._parent = null;
     expect(() => fixture.componentInstance.onClick()).not.toThrow();
   });
+
+  it('getLabel() invoca cloneNode como máximo 1 vez al llamarse 100 veces', () => {
+    const fixture = TestBed.createComponent(RetroOptionComponent);
+    fixture.componentRef.setInput('value', 'x');
+    fixture.detectChanges();
+
+    const nativeEl = fixture.componentInstance['_elRef'].nativeElement;
+    const cloneNodeSpy = vi.spyOn(nativeEl, 'cloneNode');
+
+    for (let i = 0; i < 100; i++) {
+      fixture.componentInstance.getLabel();
+    }
+
+    expect(cloneNodeSpy).toHaveBeenCalledTimes(0);
+  });
 });

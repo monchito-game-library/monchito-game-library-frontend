@@ -79,6 +79,34 @@ describe('RetroTabsComponent — casos límite', () => {
     expect(() => fixture.componentInstance.onKeydown(event, 0)).not.toThrow();
     expect(spy).not.toHaveBeenCalled();
   });
+
+  it('M5 — MutationObserver acotado: cambiar clase en descendiente no llama _updateIndicator', async () => {
+    // El MutationObserver solo observa childList, por lo que cambios de clase
+    // en descendientes no deben disparar _updateIndicator.
+    const comp = fixture.componentInstance;
+    const spy = vi.spyOn(comp as unknown as { _updateIndicator: () => void }, '_updateIndicator');
+
+    // Simular cambio de clase en un elemento del DOM del componente
+    const hostEl = fixture.nativeElement as HTMLElement;
+    const child = document.createElement('span');
+    child.className = 'some-class';
+    hostEl.appendChild(child);
+
+    // Esperar un tick para que el MutationObserver (si estuviera observando atributos) haya disparado
+    await new Promise((r) => setTimeout(r, 50));
+
+    // Cambiar la clase del elemento hijo (no debería disparar si solo observa childList)
+    child.className = 'another-class';
+    await new Promise((r) => setTimeout(r, 50));
+
+    // _updateIndicator pudo llamarse por el childList (appendChild), pero no por el cambio de clase
+    const callsAfterAppend = spy.mock.calls.length;
+    child.className = 'yet-another-class';
+    await new Promise((r) => setTimeout(r, 50));
+
+    expect(spy.mock.calls.length).toBe(callsAfterAppend);
+    hostEl.removeChild(child);
+  });
 });
 
 describe('router mode', () => {
@@ -264,5 +292,13 @@ describe('RetroTabsComponent', () => {
     tabs[1].dispatchEvent(event);
     fixture.detectChanges();
     expect(spy).toHaveBeenCalledWith(0);
+  });
+
+  it('M6 — select clamp: índice fuera de bounds queda en el último tab disponible', () => {
+    const tabsComp = fixture.debugElement.children[0].componentInstance as RetroTabsComponent;
+    // Hay 2 tabs (índices 0 y 1). Pasar índice 10 debe quedar en 1.
+    tabsComp.select(10);
+    fixture.detectChanges();
+    expect(tabsComp.activeIndex()).toBe(1);
   });
 });

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
@@ -45,9 +46,13 @@ let _nextId: number = 0;
   styleUrl: './retro-option.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RetroOptionComponent {
+export class RetroOptionComponent implements AfterViewInit {
   private readonly _parent = inject(RETRO_OPTION_PARENT, { optional: true });
   private readonly _elRef: ElementRef<HTMLElement> = inject(ElementRef);
+
+  // ── Cache de label ───────────────────────────────────────────────────────────
+
+  private _labelCache: string | null = null;
 
   // ── ID único ─────────────────────────────────────────────────────────────────
 
@@ -70,6 +75,12 @@ export class RetroOptionComponent {
   /** Verdadero cuando esta opción tiene el highlight de teclado. */
   readonly active: WritableSignal<boolean> = signal(false);
 
+  // ── Lifecycle hooks ──────────────────────────────────────────────────────────
+
+  ngAfterViewInit(): void {
+    this._labelCache = this._computeLabel();
+  }
+
   // ── Métodos públicos ─────────────────────────────────────────────────────────
 
   /**
@@ -83,11 +94,10 @@ export class RetroOptionComponent {
   /**
    * Devuelve el texto visible para type-ahead, excluyendo el contenido de iconos
    * (retro-icon, .material-icons) para que el trigger no muestre el nombre del icono.
+   * El resultado se cachea tras ngAfterViewInit para evitar clones DOM repetidos.
    */
   getLabel(): string {
-    const clone: HTMLElement = this._elRef.nativeElement.cloneNode(true) as HTMLElement;
-    clone.querySelectorAll('retro-icon, .material-icons').forEach((el) => el.remove());
-    return clone.textContent?.trim() ?? '';
+    return this._labelCache ?? this._computeLabel();
   }
 
   /**
@@ -114,5 +124,17 @@ export class RetroOptionComponent {
    */
   setSelected(selected: boolean): void {
     this.selected.set(selected);
+  }
+
+  // ── Métodos privados ─────────────────────────────────────────────────────────
+
+  /**
+   * Extrae el texto visible de la opción clonando el DOM y eliminando iconos.
+   * Esta operación es costosa — llamar solo para poblar el cache.
+   */
+  private _computeLabel(): string {
+    const clone: HTMLElement = this._elRef.nativeElement.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll('retro-icon, .material-icons').forEach((el) => el.remove());
+    return clone.textContent?.trim() ?? '';
   }
 }
