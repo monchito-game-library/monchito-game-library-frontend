@@ -438,7 +438,7 @@ export class GameFormComponent implements OnInit {
       data: { title: confirmTitle, message: confirmMessage } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
 
       this.saving.set(true);
@@ -635,9 +635,10 @@ export class GameFormComponent implements OnInit {
    * Returns the store label for a given store UUID.
    * Falls back to the raw id if the store is not found in the loaded list.
    *
-   * @param {string | null} id - Store UUID to resolve
+   * @param {unknown} value - Store UUID to resolve (typed as unknown to satisfy displayWith contract)
    */
-  readonly displayStoreLabel = (id: string | null): string => {
+  readonly displayStoreLabel = (value: unknown): string => {
+    const id = value as string | null;
     if (!id) return '';
     const store: StoreModel | undefined = this.stores().find((s: StoreModel): boolean => s.id === id);
     return store?.label ?? '';
@@ -647,9 +648,10 @@ export class GameFormComponent implements OnInit {
    * Returns the translated platform label for a given platform code.
    * Falls back to the raw code if the platform is not found.
    *
-   * @param {PlatformType | null} code - Platform code to resolve
+   * @param {unknown} value - Platform code to resolve (typed as unknown to satisfy displayWith contract)
    */
-  readonly displayPlatformLabel = (code: PlatformType | null): string => {
+  readonly displayPlatformLabel = (value: unknown): string => {
+    const code = value as PlatformType | null;
     if (!code) return '';
     const platform: AvailablePlatformInterface | undefined = this.platforms.find(
       (p: AvailablePlatformInterface): boolean => p.code === code

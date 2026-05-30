@@ -108,9 +108,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the store label from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Store UUID
+   * @param {unknown} value - Store UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayStoreLabel = (id: string | null): string => {
+  displayStoreLabel = (value: unknown): string => {
+    const id = value as string | null;
     const store: StoreModel | undefined = this._storeModels().find((s: StoreModel): boolean => s.id === id);
     return store?.label ?? '';
   };
@@ -118,9 +119,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the brand name from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Brand UUID
+   * @param {unknown} value - Brand UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayBrandLabel = (id: string | null): string => {
+  displayBrandLabel = (value: unknown): string => {
+    const id = value as string | null;
     const brand: HardwareBrandModel | undefined = this.brands().find((b: HardwareBrandModel): boolean => b.id === id);
     return brand?.name ?? '';
   };
@@ -128,9 +130,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the model name from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Model UUID
+   * @param {unknown} value - Model UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayModelLabel = (id: string | null): string => {
+  displayModelLabel = (value: unknown): string => {
+    const id = value as string | null;
     const model: HardwareModelModel | undefined = this.models().find((m: HardwareModelModel): boolean => m.id === id);
     return model?.name ?? '';
   };

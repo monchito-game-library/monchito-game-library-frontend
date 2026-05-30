@@ -155,7 +155,7 @@ export class StoresManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._storeUseCases.deleteStore(store.id);
       void this._auditLogUseCases.log({

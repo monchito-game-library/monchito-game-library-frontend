@@ -167,7 +167,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._protectorUseCases.toggleProtectorActive(protector.id, nextActive);
       void this._auditLogUseCases.log({
@@ -213,7 +213,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       try {
         await this._protectorUseCases.deleteProtector(protector.id);

@@ -156,7 +156,7 @@ export class HardwareBrandsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(brand.id);
       await this._loadBrands();

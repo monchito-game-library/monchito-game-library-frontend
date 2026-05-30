@@ -337,7 +337,7 @@ export abstract class HardwareDetailBaseComponent {
       }
     });
 
-    dialogRef.afterClosed().subscribe((confirmed: boolean | undefined) => {
+    dialogRef.afterClosed().subscribe((confirmed: unknown) => {
       if (!confirmed) return;
       const id = this._getItemId();
       if (!id) return;

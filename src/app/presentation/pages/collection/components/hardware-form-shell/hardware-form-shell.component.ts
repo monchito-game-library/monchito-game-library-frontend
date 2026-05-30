@@ -93,16 +93,13 @@ export class HardwareFormShellComponent {
   readonly form: InputSignal<FormGroup> = input.required<FormGroup>();
 
   /** Function that resolves a brand UUID to its display name. */
-  readonly displayBrandLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayBrandLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** Function that resolves a model UUID to its display name. */
-  readonly displayModelLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayModelLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** Function that resolves a store UUID to its display label. */
-  readonly displayStoreLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayStoreLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** TemplateRef that projects entity-specific fields (e.g. region for consoles, color+compatibility for controllers). */
   readonly extraFieldsTpl: InputSignal<TemplateRef<unknown>> = input.required<TemplateRef<unknown>>();

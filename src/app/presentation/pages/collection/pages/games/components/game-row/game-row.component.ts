@@ -107,7 +107,7 @@ export class GameRowComponent {
       } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: unknown) => {
       if (confirmed && game.uuid && game.id !== undefined) {
         await this._gameUseCases.deleteGame(this._userId, game.uuid);
         this.gameDeleted.emit(game.id);

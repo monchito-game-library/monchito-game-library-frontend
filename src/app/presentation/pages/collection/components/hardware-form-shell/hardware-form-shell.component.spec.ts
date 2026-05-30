@@ -79,9 +79,9 @@ class TestHostComponent {
   lastModelQuery: string | undefined = undefined;
   lastStoreQuery: string | undefined = undefined;
 
-  displayBrandLabel = (_id: string | null): string => '';
-  displayModelLabel = (_id: string | null): string => '';
-  displayStoreLabel = (_id: string | null): string => '';
+  displayBrandLabel = (_value: unknown): string => '';
+  displayModelLabel = (_value: unknown): string => '';
+  displayStoreLabel = (_value: unknown): string => '';
 
   // eslint-disable-next-line jsdoc/require-jsdoc
   onCancel(): void {

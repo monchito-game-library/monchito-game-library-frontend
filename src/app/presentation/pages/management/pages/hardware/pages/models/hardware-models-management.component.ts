@@ -205,7 +205,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(b.id);
       this.onBack();
@@ -288,7 +288,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.models.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._modelUseCases.delete(model.id);
       await this._loadModels();

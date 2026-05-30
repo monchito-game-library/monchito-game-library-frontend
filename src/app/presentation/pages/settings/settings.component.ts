@@ -338,7 +338,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       maxWidth: '95vw'
     });
 
-    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    const blob = (await firstValueFrom(dialogRef.afterClosed())) as Blob | null | undefined;
     if (!blob) return;
 
     const userId: string | null = this._userContext.userId();

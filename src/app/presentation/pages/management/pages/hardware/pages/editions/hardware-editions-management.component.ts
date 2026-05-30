@@ -228,7 +228,7 @@ export class HardwareEditionsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.models.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._modelUseCases.delete(m.id);
       this.onBack();
@@ -283,7 +283,7 @@ export class HardwareEditionsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean | undefined) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._editionUseCases.delete(edition.id);
       await this._loadEditions();

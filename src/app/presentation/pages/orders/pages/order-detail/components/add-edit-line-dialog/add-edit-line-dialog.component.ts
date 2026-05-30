@@ -77,9 +77,10 @@ export class AddEditLineDialogComponent {
   /**
    * Función displayWith para retro-search: mapea el ID del producto a su nombre legible.
    *
-   * @param {string | null} id - ID del producto seleccionado
+   * @param {unknown} value - ID del producto seleccionado (typed as unknown to satisfy displayWith contract)
    */
-  readonly displayProductName = (id: string | null): string => {
+  readonly displayProductName = (value: unknown): string => {
+    const id = value as string | null;
     if (!id) return '';
     return this.data.products.find((p) => p.id === id)?.name ?? '';
   };

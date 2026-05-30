@@ -418,7 +418,7 @@ export class GameDetailComponent implements OnInit {
       } satisfies ConfirmDialogInterface
     });
 
-    const confirmed: boolean | undefined = await firstValueFrom(ref.afterClosed());
+    const confirmed = await firstValueFrom(ref.afterClosed());
     if (!confirmed || !game.uuid) return;
 
     this.deleting.set(true);
