@@ -92,7 +92,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
 
-  /** Current dark-mode state, derived from ThemeService theme signal. */
+  /** Current dark theme state, derived from ThemeService theme signal. */
   readonly isDark: Signal<boolean> = computed(() => this._themeService.theme() === 'dark');
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */

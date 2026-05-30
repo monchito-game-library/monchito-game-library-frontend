@@ -20,7 +20,7 @@ export class ThemeService {
   // ─── Variables privadas ──────────────────────────────────────────────────────
 
   /** Signal interno mutable del tema actual. */
-  private readonly _theme: WritableSignal<ThemeType> = signal<ThemeType>('light');
+  private readonly _theme: WritableSignal<ThemeType> = signal<ThemeType>('dark');
 
   /** MediaQueryList activo para escuchar cambios del SO, o null si no aplica. */
   private _mediaQuery: MediaQueryList | null = null;
