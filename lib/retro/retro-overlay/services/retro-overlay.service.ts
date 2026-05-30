@@ -11,7 +11,8 @@ import {
 import { ConnectedPosition, Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType, TemplatePortal } from '@angular/cdk/portal';
 import { ConfigurableFocusTrapFactory } from '@angular/cdk/a11y';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { RetroOverlayConfig } from '../interfaces/retro-overlay-config.interface';
 
 // ─── Tokens de inyección ─────────────────────────────────────────────────────
@@ -65,6 +66,7 @@ export const RETRO_OVERLAY_BOTTOM_SHEET_CONFIG: RetroOverlayConfig = {
  */
 export class RetroOverlayRef<T = unknown, R = unknown> {
   private readonly _afterClosed$: Subject<R | undefined> = new Subject<R | undefined>();
+  private readonly _subs: Subscription[] = [];
   private _result: R | undefined;
 
   /** Instancia del componente abierto (null si se abrió con TemplateRef). */
@@ -81,9 +83,20 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
    */
   close(result?: R): void {
     this._result = result;
+    this._subs.forEach((s) => s.unsubscribe());
+    this._subs.length = 0;
     this._afterClosed$.next(this._result);
     this._afterClosed$.complete();
     this._overlayRef.dispose();
+  }
+
+  /**
+   * Registra una subscripción interna que se limpiará automáticamente al cerrar el overlay.
+   *
+   * @param {Subscription} sub - Subscripción a gestionar.
+   */
+  _addSub(sub: Subscription): void {
+    this._subs.push(sub);
   }
 
   /**
@@ -173,19 +186,23 @@ export class RetroOverlayService {
     }
 
     if (cfg.hasBackdrop) {
-      overlayRef.backdropClick().subscribe(() => {
-        if (!cfg.disableClose) {
-          libRef.close();
-        }
-      });
+      libRef._addSub(
+        overlayRef.backdropClick().subscribe(() => {
+          if (!cfg.disableClose) {
+            libRef.close();
+          }
+        })
+      );
     }
 
-    overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !cfg.disableClose) {
-        event.preventDefault();
-        libRef.close();
-      }
-    });
+    libRef._addSub(
+      overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
+        if (event.key === 'Escape' && !cfg.disableClose) {
+          event.preventDefault();
+          libRef.close();
+        }
+      })
+    );
 
     if (cfg.focusTrap) {
       const panelEl = overlayRef.overlayElement;
@@ -195,14 +212,14 @@ export class RetroOverlayService {
         focusTrap.focusFirstTabbableElementWhenReady();
       }
 
-      libRef.afterClosed$.subscribe(() => {
+      libRef.afterClosed$.pipe(take(1)).subscribe(() => {
         focusTrap.destroy();
         if (cfg.restoreFocus && previouslyFocused) {
           previouslyFocused.focus();
         }
       });
     } else if (cfg.restoreFocus) {
-      libRef.afterClosed$.subscribe(() => {
+      libRef.afterClosed$.pipe(take(1)).subscribe(() => {
         if (previouslyFocused) {
           previouslyFocused.focus();
         }

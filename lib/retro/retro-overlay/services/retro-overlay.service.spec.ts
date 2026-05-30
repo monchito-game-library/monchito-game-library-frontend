@@ -152,6 +152,15 @@ describe('RetroOverlayService', () => {
     ref.close();
   });
 
+  it('abrir y cerrar N veces no acumula subscripciones en _subs', () => {
+    let lastRef!: RetroOverlayRef;
+    for (let i = 0; i < 3; i++) {
+      lastRef = service.open(DummyOverlayComponent, { hasBackdrop: true });
+      lastRef.close();
+      expect((lastRef as any)._subs.length).toBe(0);
+    }
+  });
+
   describe('preset configs', () => {
     it('RETRO_OVERLAY_DIALOG_CONFIG tiene focusTrap y scroll block', () => {
       expect(RETRO_OVERLAY_DIALOG_CONFIG.focusTrap).toBeTruthy();
@@ -192,6 +201,22 @@ describe('RetroOverlayRef', () => {
     };
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     expect(ref.keydownEvents$).toBeTruthy();
+  });
+
+  it('_subs queda vacío después de close()', () => {
+    const backdropSubject = new Subject<MouseEvent>();
+    const keydownSubject = new Subject<KeyboardEvent>();
+    const fakeOverlayRef = {
+      dispose: vi.fn(),
+      backdropClick: vi.fn().mockReturnValue(backdropSubject.asObservable()),
+      keydownEvents: vi.fn().mockReturnValue(keydownSubject.asObservable())
+    };
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    ref._addSub(backdropSubject.subscribe());
+    ref._addSub(keydownSubject.subscribe());
+    expect((ref as any)._subs.length).toBe(2);
+    ref.close();
+    expect((ref as any)._subs.length).toBe(0);
   });
 
   it('afterClosed$ recibe el valor ANTES de que dispose() sea llamado', () => {
