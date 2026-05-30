@@ -48,11 +48,18 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 
 Al blur sin selección, el texto permanece. Al volver a hacer focus, el panel reabre si se cumple `minChars`.
 
+## Sincronía de label con opciones dinámicas
+
+Cuando la lista de `<retro-option>` cambia después de que ya hay un valor seleccionado (p.ej. carga asíncrona), el componente actualiza automáticamente el texto visible del input:
+
+1. Si hay `displayWith`, la función se re-ejecuta con el valor actual.
+2. Si no, se busca la opción coincidente por valor y se usa su label de texto.
+
 ## A11y
 
 - Input: `role="combobox"` implícito, `aria-autocomplete="list"`, `aria-controls`, `aria-expanded`.
 - Listbox: `role="listbox"`.
-- Teclado: ArrowUp/Down (navega opciones), Enter (selecciona activa), Escape (cierra panel).
+- Teclado: `ArrowUp`/`ArrowDown` (navega opciones), `Enter` (selecciona activa), `Escape` (cierra panel), `Home` (primera opción), `End` (última opción).
 
 ## Ejemplo
 

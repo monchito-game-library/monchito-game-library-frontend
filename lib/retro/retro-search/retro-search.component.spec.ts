@@ -503,4 +503,136 @@ describe('RetroSearchComponent (integración con opciones)', () => {
     fixture.detectChanges();
     expect(search.errorState).toBe(true);
   });
+
+  it('onClear cierra el panel antes de emitir callbacks (M10)', () => {
+    const callOrder: string[] = [];
+    // Simular panel abierto con overlayRef mock
+    const mockOverlayRef = {
+      detach: vi.fn(() => callOrder.push('detach')),
+      dispose: vi.fn(() => callOrder.push('dispose'))
+    };
+    (search as any)._overlayRef = mockOverlayRef;
+    (search as any)._options = { toArray: () => [], forEach: vi.fn(), length: 0 };
+    const changeFn = vi.fn(() => callOrder.push('onChange'));
+    const touchedFn = vi.fn(() => callOrder.push('onTouched'));
+    search.registerOnChange(changeFn);
+    search.registerOnTouched(touchedFn);
+    search.writeValue('ps5');
+    search.onClear();
+    // dispose debe ocurrir antes de onChange y onTouched
+    const disposeIdx = callOrder.indexOf('dispose');
+    const onChangeIdx = callOrder.indexOf('onChange');
+    expect(disposeIdx).toBeGreaterThanOrEqual(0);
+    expect(onChangeIdx).toBeGreaterThanOrEqual(0);
+    expect(disposeIdx).toBeLessThan(onChangeIdx);
+  });
+
+  it('onKeydown con Home activa la primera opción (L5)', () => {
+    fixture.detectChanges();
+    const mockOpt1 = {
+      value: () => 'ps5',
+      isDisabled: () => false,
+      getLabel: () => 'PS5',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    const mockOpt2 = {
+      value: () => 'xbox',
+      isDisabled: () => false,
+      getLabel: () => 'Xbox',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-2'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [mockOpt1, mockOpt2],
+      forEach: (fn: (o: RetroOptionComponent) => void) => [mockOpt1, mockOpt2].forEach(fn),
+      length: 2
+    };
+    (search as any)._options = mockQueryList;
+    (search as any)._overlayRef = { detach: vi.fn(), dispose: vi.fn() };
+    (search as any)._activeIndex = 1;
+    const event = new KeyboardEvent('keydown', { key: 'Home' });
+    const preventDefault = vi.spyOn(event, 'preventDefault');
+    search.onKeydown(event);
+    expect(preventDefault).toHaveBeenCalled();
+    expect((search as any)._activeIndex).toBe(0);
+    expect(mockOpt1.setActive).toHaveBeenCalledWith(true);
+  });
+
+  it('onKeydown con End activa la última opción (L5)', () => {
+    fixture.detectChanges();
+    const mockOpt1 = {
+      value: () => 'ps5',
+      isDisabled: () => false,
+      getLabel: () => 'PS5',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    const mockOpt2 = {
+      value: () => 'xbox',
+      isDisabled: () => false,
+      getLabel: () => 'Xbox',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-2'
+    } as unknown as RetroOptionComponent;
+    const mockQueryList = {
+      toArray: () => [mockOpt1, mockOpt2],
+      forEach: (fn: (o: RetroOptionComponent) => void) => [mockOpt1, mockOpt2].forEach(fn),
+      length: 2
+    };
+    (search as any)._options = mockQueryList;
+    (search as any)._overlayRef = { detach: vi.fn(), dispose: vi.fn() };
+    (search as any)._activeIndex = 0;
+    const event = new KeyboardEvent('keydown', { key: 'End' });
+    const preventDefault = vi.spyOn(event, 'preventDefault');
+    search.onKeydown(event);
+    expect(preventDefault).toHaveBeenCalled();
+    expect((search as any)._activeIndex).toBe(1);
+    expect(mockOpt2.setActive).toHaveBeenCalledWith(true);
+  });
+
+  it('_syncSelectedLabel actualiza _displayValue al cambiar opciones con displayWith (M9)', () => {
+    fixture.detectChanges();
+    const displayFn = (v: unknown): string => `Label:${v}`;
+    // Patchear directamente la función displayWith a través del input signal
+    // usando el mismo mecanismo que writeValue usa para resolverla
+    const origDisplayWith = search.displayWith;
+    Object.defineProperty(search, 'displayWith', { value: () => displayFn, configurable: true });
+    search.writeValue('ps5');
+    (search as any)._syncSelectedLabel();
+    Object.defineProperty(search, 'displayWith', { value: origDisplayWith, configurable: true });
+    expect(search._displayValue()).toBe('Label:ps5');
+  });
+
+  it('_syncSelectedLabel actualiza _displayValue desde opción coincidente sin displayWith (M9)', () => {
+    fixture.detectChanges();
+    search.writeValue('ps5');
+    const matchOpt = {
+      value: () => 'ps5',
+      isDisabled: () => false,
+      getLabel: () => 'PlayStation 5',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    (search as any)._options = {
+      find: (fn: (o: RetroOptionComponent) => boolean) => [matchOpt].find(fn),
+      forEach: vi.fn(),
+      length: 1
+    };
+    (search as any)._syncSelectedLabel();
+    expect(search._displayValue()).toBe('PlayStation 5');
+  });
+
+  it('_syncSelectedLabel no modifica _displayValue si no hay valor seleccionado (M9)', () => {
+    fixture.detectChanges();
+    search.writeValue(null);
+    search._displayValue.set('texto previo');
+    (search as any)._syncSelectedLabel();
+    expect(search._displayValue()).toBe('texto previo');
+  });
 });

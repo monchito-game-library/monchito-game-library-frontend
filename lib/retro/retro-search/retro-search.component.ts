@@ -238,6 +238,11 @@ export class RetroSearchComponent
     this._options.changes.pipe(startWith(null), takeUntilDestroyed(this._destroyRef)).subscribe(() => {
       this._cdr.markForCheck();
     });
+
+    // Actualizar el label visible cuando la lista de opciones cambia dinámicamente.
+    this._options.changes.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => {
+      this._syncSelectedLabel();
+    });
   }
 
   ngOnDestroy(): void {
@@ -354,6 +359,12 @@ export class RetroSearchComponent
         event.preventDefault();
         this._closePanel();
       }
+    } else if (key === 'Home') {
+      event.preventDefault();
+      this._setActiveIndex(0);
+    } else if (key === 'End') {
+      event.preventDefault();
+      this._setActiveIndex(this._options.length - 1);
     }
   }
 
@@ -369,14 +380,15 @@ export class RetroSearchComponent
 
   /**
    * Limpia la selección y el texto del input, emite el output cleared.
+   * El panel se cierra primero para evitar parpadeo de estado visual.
    */
   onClear(): void {
+    this._closePanel();
     this._displayValue.set('');
     this._selectedValue.set(null);
     this._onChangeCallback(null);
     this._onTouchedCallback();
     this.cleared.emit();
-    this._closePanel();
     this._inputEl?.nativeElement?.focus();
     this._cdr.markForCheck();
   }
@@ -489,6 +501,27 @@ export class RetroSearchComponent
    */
   private _clearActive(): void {
     this._options?.forEach((opt) => opt.setActive(false));
+  }
+
+  /**
+   * Sincroniza el label visible del input con el valor seleccionado actual.
+   * Se usa cuando la lista de opciones cambia dinámicamente después de que
+   * ya hay un valor seleccionado (ej. carga asíncrona de opciones).
+   */
+  private _syncSelectedLabel(): void {
+    const value: unknown = this._selectedValue();
+    if (value === null || value === undefined) return;
+    const displayFn = this.displayWith();
+    if (displayFn) {
+      this._displayValue.set(displayFn(value));
+      this._cdr.markForCheck();
+      return;
+    }
+    const match: RetroOptionComponent | undefined = this._options?.find((opt) => opt.value() === value);
+    if (match) {
+      this._displayValue.set(match.getLabel());
+      this._cdr.markForCheck();
+    }
   }
 
   /**
