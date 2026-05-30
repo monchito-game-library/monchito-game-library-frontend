@@ -67,4 +67,4 @@ Si dice no:
 - Si al aplicar el patch falla por idempotencia incompleta (típico: olvidar dropear un nombre nuevo), **arregla el fichero** en lugar de aplicar un workaround manual. Es lo que tiene que hacer el patch.
 - Si el cambio toca el schema canónico, ambos ficheros deben quedar coherentes en el mismo PR.
 - Si la red bloquea Postgres (red corporativa con DPI, IPv6 only…), pegar el SQL en el SQL Editor de Supabase es alternativa válida. El script es preferente pero no obligatorio.
-- Si el patch añade columnas o cambia el contrato de tipos, los cambios de código (DTO, mapper, modelo) deben ir **en la misma PR** que el patch. Aplicar el patch sin el código (o viceversa) puede dejar la app en estado inconsistente. Considera lanzar `/add-field-to-entity` justo después si aplica.
+- Si el patch añade columnas o cambia el contrato de tipos, los cambios de código (DTO, mapper, modelo) deben ir **en la misma PR** que el patch. Aplicar el patch sin el código (o viceversa) puede dejar la app en estado inconsistente. Si el patch añade columnas o cambia el contrato, actualiza DTO, mapper y modelo manualmente en el mismo PR.

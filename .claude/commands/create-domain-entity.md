@@ -9,7 +9,6 @@ Usa como referencia el patrón de `protector` (src/app/entities/models/protector
 ### 1. Modelo — `src/app/entities/models/<entity>/<entity>.model.ts`
 
 - Interface `XxxModel` con JSDoc en cada campo
-- Exportar desde un barrel si existe
 
 ### 2. DTO — `src/app/data/dtos/supabase/<entity>.dto.ts`
 

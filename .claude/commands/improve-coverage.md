@@ -2,10 +2,10 @@ Mejora la cobertura de tests hasta el máximo alcanzable, respetando las exclusi
 
 El proyecto tiene dos ámbitos independientes:
 
-| Ámbito                 | Specs                       | Script de cobertura           | Threshold              | Cobertura actual            | Estado          | Doc de referencia       |
-| ---------------------- | --------------------------- | ----------------------------- | ---------------------- | --------------------------- | --------------- | ----------------------- |
-| `retro` — `lib/retro/` | ~38 ficheros / ~523 tests   | `npm run test:retro:coverage` | 90% (statements/lines) | 95.35% stmts / 97.09% lines | Techo alcanzado | `docs/TESTING-RETRO.md` |
-| `app` — `src/`         | ~144 ficheros / ~2566 tests | `npm run test:app:coverage`   | 80% (statements/lines) | ~97%                        | —               | `docs/TESTING.md`       |
+| Ámbito                 | Specs                       | Script de cobertura           | Threshold              | Cobertura actual                                                     | Estado          | Doc de referencia       |
+| ---------------------- | --------------------------- | ----------------------------- | ---------------------- | -------------------------------------------------------------------- | --------------- | ----------------------- |
+| `retro` — `lib/retro/` | ~38 ficheros / ~523 tests   | `npm run test:retro:coverage` | 90% (statements/lines) | 95.35% stmts / 97.09% lines                                          | Techo alcanzado | `docs/TESTING-RETRO.md` |
+| `app` — `src/`         | ~144 ficheros / ~2566 tests | `npm run test:app:coverage`   | 80% (statements/lines) | ≈ por encima del threshold (verificar con npm run test:app:coverage) | —               | `docs/TESTING.md`       |
 
 > ⚠️ Ambas pasadas de cobertura escriben en `coverage/monchito-game-library/`. **Nunca uses `npm run test:coverage`** (encadena ambos y la segunda pisa el lcov de la primera) antes de leer los gaps. Ejecuta siempre solo el script del ámbito que vas a mejorar.
 
