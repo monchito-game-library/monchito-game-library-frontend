@@ -1,34 +1,43 @@
 # retro-data-row
 
-Fila de datos estilo `ls -la`. LABEL a la izquierda, dots punteados, VALUE a la derecha.
+Fila de datos estilo `ls -la`. Muestra LABEL (mono uppercase) a la izquierda, separador de puntos punteados, y VALUE (mono) a la derecha.
 
-## Componente — RetroDataRowComponent
+**Selector:** `retro-data-row` · **Standalone:** sí · **CVA:** no
 
-- **Selector:** `retro-data-row`
-- **Standalone:** sí
+## Cuándo usar / Cuándo NO usar
 
-### Inputs
+- Usar cuando: se necesita mostrar pares label/valor estáticos (ficha de detalle, metadatos de un juego, propiedades de un objeto).
+- NO usar cuando: la fila necesita interactividad, acciones o zonas leading/trailing — en ese caso usar `retro-list-item`.
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `label` | `string` (required) | — | Etiqueta (uppercase). |
-| `value` | `string \| number \| null` | `null` | Valor. Si es `null`, se renderiza el `ng-content`. |
-| `icon` | `string \| undefined` | `undefined` | Material Icons junto al label. |
-| `emphasized` | `boolean` | `false` | Value con mayor tamaño/peso. |
+## API — Inputs
 
-### Slots / ng-content
+| Nombre       | Tipo Angular                            | Default     | Descripción                                                              |
+| ------------ | --------------------------------------- | ----------- | ------------------------------------------------------------------------ |
+| `label`      | `InputSignal<string> (required)`        | —           | Etiqueta del campo. Se muestra en uppercase en pantalla.                 |
+| `value`      | `InputSignal<string \| number \| null>` | `null`      | Valor del campo. Si es `null`, se renderiza el `ng-content` en su lugar. |
+| `icon`       | `InputSignal<string \| undefined>`      | `undefined` | Nombre del icono Material Icons mostrado junto al label. Opcional.       |
+| `emphasized` | `InputSignal<boolean>`                  | `false`     | Si `true`, el valor se renderiza en tamaño y peso mayor (énfasis).       |
 
-- Default: cuando `value()` es `null`, se proyecta contenido custom (chips, estrellas, etc).
+## Slots
 
-### Dependencias
+| Selector    | Tipo esperado                | Descripción                                                               |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------- |
+| _(default)_ | bloque libre (chips, stars…) | Visible solo cuando `value` es `null`. Sustituye al valor de texto plano. |
 
-- `RetroIconComponent`.
-
-## Ejemplo
+## Ejemplo mínimo
 
 ```html
+<retro-data-row label="PLATFORM" [value]="game.platform" />
 <retro-data-row label="ID" [value]="game.id" icon="badge" />
+<retro-data-row label="RATING" [emphasized]="true" [value]="game.score" />
+
+<!-- Valor complejo: ng-content cuando value es null -->
 <retro-data-row label="RATING">
   <span class="stars">★★★★☆</span>
 </retro-data-row>
 ```
+
+## Gotchas
+
+- En pantallas estrechas (< 480px) los puntos punteados se ocultan para evitar recortes; label y valor quedan alineados por grid sin separador visual.
+- El slot default solo se proyecta cuando `value()` es `null`. Si se pasa `value` junto con contenido proyectado, el contenido proyectado queda oculto.

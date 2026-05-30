@@ -2,90 +2,113 @@
 
 Familia de componentes para listas Terminal Collector. `retro-list` es el contenedor padre obligatorio; `retro-list-item` es la fila hija que solo funciona dentro de él.
 
----
+**Selector:** `retro-list` · **Standalone:** sí · **CVA:** no
 
-## RetroListComponent
+## Cuándo usar / Cuándo NO usar
 
-Contenedor de solo layout: apila sus hijos en columna con un `gap` configurable. No gestiona estados (loading, vacío, error) — eso es responsabilidad del consumidor mediante `@if`/`@for`.
+- Usar cuando: se necesita una lista de filas con layout homogéneo (título, metadatos, acciones) en estilo terminal.
+- NO usar cuando: los datos son tabulares con columnas fijas y cabeceras — en ese caso usar una tabla HTML semántica.
 
-- **Selector:** `retro-list`
-- **Standalone:** sí
+## Slots
 
-### Inputs
+| Selector    | Tipo esperado                         | Descripción                                       |
+| ----------- | ------------------------------------- | ------------------------------------------------- |
+| _(default)_ | `retro-list-item` u otro bloque libre | Ítems de la lista. Típicamente `retro-list-item`. |
 
-Ninguno.
+## Tokens CSS expuestos
 
-### Outputs
-
-Ninguno.
-
-### Slots
-
-| Slot    | Descripción                                          |
-| ------- | ---------------------------------------------------- |
-| Default | Ítems de la lista (típicamente `<retro-list-item>`). |
-
-### CSS custom properties
-
-| Propiedad          | Default  | Descripción                        |
+| Variable           | Default  | Descripción                        |
 | ------------------ | -------- | ---------------------------------- |
 | `--retro-list-gap` | `0.5rem` | Espaciado entre ítems de la lista. |
 
+## Ejemplo mínimo
+
+```html
+<retro-list>
+  @for (game of games(); track game.id; let i = $index) {
+  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onSelect(game)">
+    <strong>{{ game.title }}</strong>
+  </retro-list-item>
+  }
+</retro-list>
+```
+
+## Contrato padre-hijo
+
+`RetroListComponent` se auto-provee bajo el token interno `RETRO_LIST_PARENT`. `RetroListItemComponent` lo requiere en el constructor — si no lo encuentra, lanza:
+
+> RetroListItemComponent must be used inside a \<retro-list\> container.
+
+Este mecanismo permite en el futuro exponer configuración compartida (densidad, padding por defecto) sin cambiar la API externa.
+
+## Gotchas
+
+- `retro-list` no gestiona estados (loading, vacío, error). El consumidor los maneja externamente con `@if`/`@for` y componentes como `retro-empty-state`.
+- Cuando un `<retro-list-item [interactive]="true">` contiene un elemento clicable en el slot `[retroListItemTrailing]` (botón, icon-button, enlace…), los eventos de teclado burbujean hacia el item. Si el usuario hace foco en el botón del trailing y pulsa `Enter` o `Space`, se dispara tanto el click del botón como el `itemClicked` del item. Para evitarlo, envuelve el contenido del trailing en un `<div>` que corte la propagación:
+
+```html
+<div
+  retroListItemTrailing
+  (click)="$event.stopPropagation()"
+  (keydown.enter)="$event.stopPropagation()"
+  (keydown.space)="$event.stopPropagation()">
+  <retro-icon-button icon="delete" (clicked)="onDelete($event)" />
+</div>
+```
+
 ---
 
-## RetroListItemComponent
+# retro-list-item
 
 Fila de lista Terminal Collector. Layout horizontal leading | cuerpo | trailing. Borde 1px, fondo `--bg-surface`, sin border-radius.
 
+**Selector:** `retro-list-item` · **Standalone:** sí · **CVA:** no
+
 > **Requisito:** debe usarse siempre dentro de un `<retro-list>`. Usarlo sin padre lanza un error en runtime.
 
-- **Selector:** `retro-list-item`
-- **Standalone:** sí
+## Cuándo usar / Cuándo NO usar
 
-### Inputs
+- Usar cuando: se necesita una fila de lista con zonas leading/body/trailing diferenciadas, opcionalmente interactiva.
+- NO usar cuando: la fila es solo un par label/valor estático — en ese caso usar `retro-data-row`.
 
-| Nombre        | Tipo                               | Default     | Descripción                                                                                                                                       |
-| ------------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `interactive` | `boolean`                          | `false`     | Activa comportamiento de fila clicable (role=button, hover, focus). Emite `itemClicked` al hacer clic, Enter o Space.                             |
-| `hoverable`   | `boolean`                          | `false`     | Activa hover de `border-color` sin requerir `interactive`. Anulado por `disabled=true`. No añade `role` ni emite clicks.                          |
-| `disabled`    | `boolean`                          | `false`     | Marca la fila como deshabilitada: `opacity: 0.5`, `cursor: not-allowed`, `aria-disabled="true"`. Bloquea `itemClicked` aunque `interactive=true`. |
-| `padding`     | `'none' \| 'sm' \| 'md' \| 'lg'`   | `'sm'`      | Padding interno. none=0, sm=0.5/0.75rem, md=0.75/1rem, lg=1/1.25rem.                                                                              |
-| `selected`    | `boolean`                          | `false`     | Estado visual de selección (box-shadow inset 2px `--border-active` + fondo `--bg-surface-hi`).                                                    |
-| `variant`     | `'default' \| 'accent' \| 'muted'` | `'default'` | Variante visual. `accent` colorea el borde con `--primary`. `muted` hace el fondo transparente.                                                   |
-| `staggered`   | `boolean`                          | `false`     | Activa animación de entrada escalonada. El consumidor asigna `[style.--i]="index"` en el `@for`. Respeta `prefers-reduced-motion`.                |
+## API — Inputs
 
-### Outputs
+| Nombre        | Tipo Angular                                    | Default     | Descripción                                                                                                                                       |
+| ------------- | ----------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `interactive` | `InputSignal<boolean>`                          | `false`     | Activa comportamiento de fila clicable (role=button, hover, focus). Emite `itemClicked` al hacer clic, Enter o Space.                             |
+| `hoverable`   | `InputSignal<boolean>`                          | `false`     | Activa hover de `border-color` sin requerir `interactive`. Anulado por `disabled=true`. No añade `role` ni emite clicks.                          |
+| `disabled`    | `InputSignal<boolean>`                          | `false`     | Marca la fila como deshabilitada: `opacity: 0.5`, `cursor: not-allowed`, `aria-disabled="true"`. Bloquea `itemClicked` aunque `interactive=true`. |
+| `padding`     | `InputSignal<'none' \| 'sm' \| 'md' \| 'lg'>`   | `'sm'`      | Padding interno. `none`=0, `sm`=0.5rem 0.75rem, `md`=0.75rem 1rem, `lg`=1rem 1.25rem.                                                             |
+| `selected`    | `InputSignal<boolean>`                          | `false`     | Estado visual de selección (box-shadow inset 2px `--border-active` + fondo `--bg-surface-hi`).                                                    |
+| `variant`     | `InputSignal<'default' \| 'accent' \| 'muted'>` | `'default'` | Variante visual. `accent` colorea el borde con `--primary`. `muted` hace el fondo transparente.                                                   |
+| `staggered`   | `InputSignal<boolean>`                          | `false`     | Activa animación de entrada escalonada. Requiere `[style.--i]="index"` en el `@for`. Respeta `prefers-reduced-motion`.                            |
 
-| Nombre        | Tipo         | Descripción                                                  |
-| ------------- | ------------ | ------------------------------------------------------------ |
-| `itemClicked` | `MouseEvent` | Click/Enter/Space cuando `interactive=true` y no `disabled`. |
+## API — Outputs
 
-### Slots / ng-content
+| Nombre        | Tipo Angular                   | Descripción                                                  |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| `itemClicked` | `OutputEmitterRef<MouseEvent>` | Click/Enter/Space cuando `interactive=true` y no `disabled`. |
 
-| Selector                  | Descripción                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------ |
-| `[retroListItemLeading]`  | Columna izquierda: avatar, icono, checkbox. Se oculta automáticamente si está vacía. |
-| _(default)_               | Cuerpo principal: título, subtítulo, metadatos.                                      |
-| `[retroListItemTrailing]` | Columna derecha: acción, badge, chevron. Se oculta automáticamente si está vacía.    |
+## Slots
 
-### CSS custom properties
+| Selector                  | Tipo esperado                | Descripción                                                 |
+| ------------------------- | ---------------------------- | ----------------------------------------------------------- |
+| `[retroListItemLeading]`  | icono, avatar, checkbox      | Columna izquierda. Se oculta automáticamente si está vacía. |
+| _(default)_               | título, subtítulo, metadatos | Cuerpo principal de la fila.                                |
+| `[retroListItemTrailing]` | acción, badge, chevron       | Columna derecha. Se oculta automáticamente si está vacía.   |
+
+## Tokens CSS expuestos
 
 | Variable                         | Default                | Descripción                                                 |
 | -------------------------------- | ---------------------- | ----------------------------------------------------------- |
 | `--retro-list-item-hover-border` | `var(--border-active)` | Color de borde en hover cuando `hoverable` o `interactive`. |
 
-### Types
+## Tipos exportados
 
-Definidos en `retro-list-item.types.ts`:
+- `RetroListItemVariant` — `'default' \| 'accent' \| 'muted'`
+- `RetroListItemPadding` — `'none' \| 'sm' \| 'md' \| 'lg'`
 
-- `RetroListItemVariant` — `'default' | 'accent' | 'muted'`
-- `RetroListItemPadding` — `'none' | 'sm' | 'md' | 'lg'`
-
----
-
-## Ejemplos
-
-### Lista básica con animación escalonada
+## Ejemplo mínimo
 
 ```html
 <retro-list>
@@ -99,49 +122,3 @@ Definidos en `retro-list-item.types.ts`:
   }
 </retro-list>
 ```
-
-### Manejo de estados externo
-
-```html
-@if (loading()) {
-<retro-spinner />
-} @else if (items().length === 0) {
-<retro-empty-state title="Sin resultados" />
-} @else {
-<retro-list>
-  @for (it of items(); track it.id) {
-  <retro-list-item>{{ it.label }}</retro-list-item>
-  }
-</retro-list>
-}
-```
-
----
-
-## ⚠️ Trailing interactivo dentro de un item `interactive`
-
-Cuando un `<retro-list-item [interactive]="true">` contiene un elemento clicable en el slot `[retroListItemTrailing]` (botón, icon-button, enlace…), los eventos de teclado **burbujean** hacia el item. Si el usuario hace foco en el botón del trailing y pulsa `Enter` o `Space`, se dispara tanto el click del botón como el `itemClicked` del item.
-
-Para evitarlo, envuelve el contenido del trailing en un `<div>` que corte la propagación:
-
-```html
-<div
-  retroListItemTrailing
-  (click)="$event.stopPropagation()"
-  (keydown.enter)="$event.stopPropagation()"
-  (keydown.space)="$event.stopPropagation()">
-  <retro-icon-button icon="delete" (clicked)="onDelete($event)" />
-</div>
-```
-
-> El click del botón sigue llegando al handler de `onDelete` con normalidad. Solo se corta el burbujeo que activaría también `itemClicked`.
-
----
-
-## Contrato padre-hijo
-
-`RetroListComponent` se auto-provee bajo el token interno `RETRO_LIST_PARENT` (no expuesto en la API pública). `RetroListItemComponent` lo requiere en el constructor — si no lo encuentra, lanza:
-
-> RetroListItemComponent must be used inside a \<retro-list\> container.
-
-Este mecanismo permite en el futuro exponer configuración compartida (densidad, padding por defecto) sin cambiar la API externa.
