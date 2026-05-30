@@ -12,6 +12,7 @@ import {
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import { Subscription } from 'rxjs';
 import { RETRO_MENU_POSITIONS } from '../constants/retro-menu-positions.constant';
 import { RetroMenuComponent } from '../retro-menu.component';
 import { RetroMenuItemComponent } from '../components/retro-menu-item/retro-menu-item.component';
@@ -37,6 +38,8 @@ export class RetroMenuTriggerDirective implements OnDestroy {
 
   private _overlayRef: OverlayRef | null = null;
   private _keyManager: ActiveDescendantKeyManager<RetroMenuItemComponent> | null = null;
+  private _menuSubs: Subscription[] = [];
+  private _focusTimeoutIds: ReturnType<typeof setTimeout>[] = [];
 
   /** Referencia al RetroMenuComponent que este trigger va a abrir. */
   readonly retroMenuTriggerFor: InputSignal<RetroMenuComponent> = input.required<RetroMenuComponent>();
@@ -45,8 +48,9 @@ export class RetroMenuTriggerDirective implements OnDestroy {
   readonly _isOpen = signal<boolean>(false);
 
   ngOnDestroy(): void {
+    this._focusTimeoutIds.forEach((id) => clearTimeout(id));
+    this._focusTimeoutIds = [];
     this._closeMenu();
-    this._overlayRef?.dispose();
   }
 
   /**
@@ -75,13 +79,13 @@ export class RetroMenuTriggerDirective implements OnDestroy {
       event.preventDefault();
       if (!this._isOpen()) {
         this._openMenu();
-        setTimeout(() => this._keyManager?.setFirstItemActive(), 50);
+        this._focusTimeoutIds.push(setTimeout(() => this._keyManager?.setFirstItemActive(), 50));
       }
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (!this._isOpen()) {
         this._openMenu();
-        setTimeout(() => this._keyManager?.setLastItemActive(), 50);
+        this._focusTimeoutIds.push(setTimeout(() => this._keyManager?.setLastItemActive(), 50));
       }
     }
   }
@@ -116,11 +120,13 @@ export class RetroMenuTriggerDirective implements OnDestroy {
     this._overlayRef.attach(portal);
     this._isOpen.set(true);
 
-    this._overlayRef.backdropClick().subscribe(() => this._closeMenu());
+    this._menuSubs.push(this._overlayRef.backdropClick().subscribe(() => this._closeMenu()));
 
-    this._overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
-      this._handleMenuKeydown(event);
-    });
+    this._menuSubs.push(
+      this._overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
+        this._handleMenuKeydown(event);
+      })
+    );
 
     this._setupKeyManager();
   }
@@ -132,7 +138,10 @@ export class RetroMenuTriggerDirective implements OnDestroy {
     if (!this._overlayRef) {
       return;
     }
-    this._overlayRef.detach();
+    this._menuSubs.forEach((s) => s.unsubscribe());
+    this._menuSubs = [];
+    this._overlayRef.dispose();
+    this._overlayRef = null;
     this._isOpen.set(false);
     this._keyManager = null;
     this._resolveAnchor().focus();

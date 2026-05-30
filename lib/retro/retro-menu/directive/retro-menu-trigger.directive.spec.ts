@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { OverlayModule } from '@angular/cdk/overlay';
+import { Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { RetroMenuComponent } from '../retro-menu.component';
 import { RetroMenuItemComponent } from '../components/retro-menu-item/retro-menu-item.component';
@@ -250,6 +250,40 @@ describe('RetroMenuTriggerDirective', () => {
       expect(() => (directive as any)._openMenu()).not.toThrow();
       expect(directive._isOpen()).toBe(false);
     }
+  });
+
+  it('abrir, cerrar, abrir de nuevo: Overlay.create se llama 2 veces y dispose 1 vez tras el primer cierre', () => {
+    const overlay = TestBed.inject(Overlay);
+    const createSpy = vi.spyOn(overlay, 'create').mockImplementation((...args) => {
+      const realRef = (overlay as any).__proto__.create.call(overlay, ...args);
+      vi.spyOn(realRef, 'dispose');
+      return realRef;
+    });
+
+    const btn = fixture.nativeElement.querySelector('button');
+
+    // Primer apertura
+    btn.click();
+    fixture.detectChanges();
+    expect(createSpy).toHaveBeenCalledTimes(1);
+
+    // Capturamos el primer overlayRef
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective) as any;
+    const firstOverlayRef = directive._overlayRef;
+    const disposeSpy = vi.spyOn(firstOverlayRef, 'dispose');
+
+    // Cierre
+    btn.click();
+    fixture.detectChanges();
+    expect(disposeSpy).toHaveBeenCalledTimes(1);
+
+    // Segunda apertura
+    btn.click();
+    fixture.detectChanges();
+    expect(createSpy).toHaveBeenCalledTimes(2);
+
+    createSpy.mockRestore();
   });
 });
 
