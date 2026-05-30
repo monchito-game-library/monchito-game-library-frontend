@@ -42,6 +42,12 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 | `[retroPrefix]` | Elementos con comportamiento propio en el prefix (p.ej. botones). |
 | `[retroSuffix]` | Elementos con comportamiento propio en el suffix. |
 
+## Contrato CVA (ControlValueAccessor)
+
+- El componente **nunca emite `null` al formulario**. Al vaciar el input (borrado manual o botón clear), emite `''` (cadena vacía).
+- `writeValue(null)` normaliza a `''` internamente: el valor interno y el display siempre son `string`.
+- `emptyValue: ''` — los validadores `Validators.required` detectan el campo vacío correctamente porque reciben `''`, no `null`.
+
 ## Ejemplo
 
 ```html
