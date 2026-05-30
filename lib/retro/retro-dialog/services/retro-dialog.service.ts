@@ -34,6 +34,11 @@ export class RetroDialogRef<T, R = unknown> {
     return this._overlayRef.componentInstance;
   }
 
+  /** Indica si el cierre por Escape, backdrop o [retroDialogClose] está deshabilitado. */
+  get disableClose(): boolean {
+    return this._overlayRef.disableClose;
+  }
+
   constructor(overlayRef: RetroOverlayRef<T, R>) {
     this._overlayRef = overlayRef;
   }
@@ -191,8 +196,10 @@ export class RetroDialogCloseDirective {
 
   /**
    * Cierra el dialog con el valor de result al hacer click.
+   * Si el dialog tiene disableClose activo, el click no tiene efecto.
    */
   _onClick(): void {
+    if (this._dialogRef.disableClose) return;
     this._dialogRef.close(this.result);
   }
 }

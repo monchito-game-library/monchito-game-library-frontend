@@ -214,7 +214,7 @@ describe('RetroDialogActionsDirective — host bindings', () => {
 
 describe('RetroDialogCloseDirective', () => {
   it('_onClick() llama a dialogRef.close con el resultado configurado', () => {
-    const mockDialogRef = { close: vi.fn() } as unknown as RetroDialogRef<unknown>;
+    const mockDialogRef = { close: vi.fn(), disableClose: false } as unknown as RetroDialogRef<unknown>;
 
     @Component({
       standalone: true,
@@ -233,5 +233,27 @@ describe('RetroDialogCloseDirective', () => {
     f.detectChanges();
     f.nativeElement.querySelector('button').click();
     expect(mockDialogRef.close).toHaveBeenCalledWith('ok');
+  });
+
+  it('_onClick() no cierra el dialog cuando disableClose es true', () => {
+    const mockDialogRef = { close: vi.fn(), disableClose: true } as unknown as RetroDialogRef<unknown>;
+
+    @Component({
+      standalone: true,
+      imports: [RetroDialogCloseDirective],
+      template: `<button [retroDialogClose]="'ok'">Cerrar</button>`
+    })
+    class CloseDisabledHostComponent {}
+
+    TestBed.configureTestingModule({
+      imports: [CloseDisabledHostComponent],
+      providers: [{ provide: RetroDialogRef, useValue: mockDialogRef }],
+      schemas: [NO_ERRORS_SCHEMA]
+    });
+
+    const f = TestBed.createComponent(CloseDisabledHostComponent);
+    f.detectChanges();
+    f.nativeElement.querySelector('button').click();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 });

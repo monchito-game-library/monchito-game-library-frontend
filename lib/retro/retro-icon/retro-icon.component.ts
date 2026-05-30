@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, InputSignal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
 import { LibIconSize } from './retro-icon.types';
 
 /**
@@ -17,7 +17,16 @@ import { LibIconSize } from './retro-icon.types';
   standalone: true,
   templateUrl: './retro-icon.component.html',
   styleUrl: './retro-icon.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'class': 'retro-icon-host',
+    '[class.retro-icon-host--xs]': "size() === 'xs'",
+    '[class.retro-icon-host--sm]': "size() === 'sm'",
+    '[class.retro-icon-host--md]': "size() === 'md'",
+    '[class.retro-icon-host--lg]': "size() === 'lg'",
+    '[class.retro-icon-host--xl]': "size() === 'xl'",
+    '[class.retro-icon-host--2xl]': "size() === '2xl'",
+  }
 })
 export class RetroIconComponent {
   /** Nombre del icono Material Icons (liga de la webfont). */
@@ -28,9 +37,4 @@ export class RetroIconComponent {
 
   /** Oculta el icono a los lectores de pantalla cuando es decorativo. */
   readonly ariaHidden: InputSignal<boolean> = input<boolean>(true);
-
-  /** Aplica la clase de variante de tamaño al host para que :host.retro-icon-host--* funcione. */
-  @HostBinding('class') get sizeClass(): string {
-    return `retro-icon-host--${this.size()}`;
-  }
 }

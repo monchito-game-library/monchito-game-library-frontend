@@ -179,6 +179,13 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
   }
 
   /**
+   * Indica si el cierre por Escape o backdrop está deshabilitado para este overlay.
+   */
+  get disableClose(): boolean {
+    return this._config.disableClose === true;
+  }
+
+  /**
    * Suscribe al evento detachments() del CDK OverlayRef para garantizar la limpieza
    * del FocusTrap y restauración de foco incluso cuando el overlay se descarta via
    * disposeOnNavigation (Router) sin pasar por close().

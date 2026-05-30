@@ -26,7 +26,7 @@ readonly messages: Signal<readonly RetroSnackbarMessage[]>;
 
 - **Selector:** `retro-snackbar-host`
 - **Hace:** renderiza la cola del servicio. Se monta **una sola vez** en `app.component.html`.
-- **A11y:** `role="region"`, `aria-live="polite"`. Variants `error`/`warning` usan `role="alert"`.
+- **A11y:** `role="region"` en el contenedor. Cada item tiene `[attr.aria-live]` y `[attr.role]` dinámicos según variante: `error` → `aria-live="assertive"` + `role="alert"`; resto → `aria-live="polite"` + `role="status"`.
 
 ## Interfaces (`interfaces/`)
 

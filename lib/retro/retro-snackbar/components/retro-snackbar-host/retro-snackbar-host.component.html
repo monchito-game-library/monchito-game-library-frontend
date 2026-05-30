@@ -1,15 +1,15 @@
 <aside
   class="retro-snackbar-host"
   role="region"
-  aria-live="polite"
   [attr.aria-label]="'common.notifications' | transloco">
-  @for (msg of service.messages(); track msg.id) {
+  @for (msg of messages(); track msg.id) {
     <div
       class="retro-snackbar"
       [class.retro-snackbar--success]="msg.variant === 'success'"
       [class.retro-snackbar--error]="msg.variant === 'error'"
       [class.retro-snackbar--warning]="msg.variant === 'warning'"
-      [attr.role]="msg.variant === 'error' || msg.variant === 'warning' ? 'alert' : 'status'">
+      [attr.role]="msg.variant === 'error' ? 'alert' : 'status'"
+      [attr.aria-live]="msg.variant === 'error' ? 'assertive' : 'polite'">
       <span class="retro-snackbar__text">{{ msg.text }}</span>
       @if (msg.action) {
         <button class="retro-snackbar__action" type="button" (click)="onAction(msg)">

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, inject } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroIconButtonComponent } from '../../../retro-icon-button/retro-icon-button.component';
@@ -18,8 +18,11 @@ import { RetroSnackbarMessage, RetroSnackbarService } from '../../services/retro
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RetroSnackbarHostComponent {
-  /** Servicio de snackbar — expuesto al template. */
-  readonly service: RetroSnackbarService = inject(RetroSnackbarService);
+  /** @private Servicio de snackbar — uso interno. */
+  private readonly _service: RetroSnackbarService = inject(RetroSnackbarService);
+
+  /** Lista reactiva de mensajes activos expuesta al template. */
+  readonly messages: Signal<readonly RetroSnackbarMessage[]> = this._service.messages;
 
   /**
    * Ejecuta el handler de la acción del mensaje y lo descarta.
@@ -28,7 +31,7 @@ export class RetroSnackbarHostComponent {
    */
   onAction(msg: RetroSnackbarMessage): void {
     msg.action?.handler();
-    this.service.dismiss(msg.id);
+    this._service.dismiss(msg.id);
   }
 
   /**
@@ -37,6 +40,6 @@ export class RetroSnackbarHostComponent {
    * @param {number} id - Id del mensaje a descartar
    */
   dismiss(id: number): void {
-    this.service.dismiss(id);
+    this._service.dismiss(id);
   }
 }
