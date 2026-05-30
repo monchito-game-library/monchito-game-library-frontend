@@ -189,8 +189,7 @@ export class RetroTextareaComponent implements ControlValueAccessor, RetroFormFi
     const raw: string = (event.target as HTMLTextAreaElement).value;
     this._internalValue = raw;
     this.displayValue.set(raw);
-    const emitValue: string | null = raw === '' ? null : raw;
-    this._onChangeCallback(emitValue);
+    this._onChangeCallback(raw);
     this._cdr.markForCheck();
   }
 
@@ -218,11 +217,12 @@ export class RetroTextareaComponent implements ControlValueAccessor, RetroFormFi
   /**
    * Limpia el valor del textarea y emite los callbacks correspondientes.
    * Llamado por el botón clear del retro-form-field.
+   * emptyValue: '' — nunca emite null al formulario.
    */
   onClear(): void {
     this._internalValue = '';
     this.displayValue.set('');
-    this._onChangeCallback(null);
+    this._onChangeCallback('');
     this._onTouchedCallback();
     this.cleared.emit();
     this._cdr.markForCheck();

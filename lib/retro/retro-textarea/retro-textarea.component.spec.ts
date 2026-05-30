@@ -122,7 +122,7 @@ describe('RetroTextareaComponent', () => {
     expect(capturedValue).toBe('nuevo texto');
   });
 
-  it('onInput con valor vacío emite null al CVA callback', () => {
+  it('onInput con valor vacío emite "" al CVA callback', () => {
     let capturedValue: string | null = undefined!;
     component.registerOnChange((v: string | null) => {
       capturedValue = v;
@@ -132,7 +132,23 @@ describe('RetroTextareaComponent', () => {
     textarea.value = '';
     textarea.dispatchEvent(new Event('input'));
 
-    expect(capturedValue).toBeNull();
+    expect(capturedValue).toBe('');
+  });
+
+  it('onClear llama onChange con "" y onTouched', () => {
+    const changeFn = vi.fn();
+    const touchedFn = vi.fn();
+    component.registerOnChange(changeFn);
+    component.registerOnTouched(touchedFn);
+    component.onClear();
+    expect(changeFn).toHaveBeenCalledWith('');
+    expect(touchedFn).toHaveBeenCalled();
+  });
+
+  it('writeValue con null normaliza a "" internamente', () => {
+    component.writeValue(null);
+    expect(component.displayValue()).toBe('');
+    expect(component.empty).toBe(true);
   });
 
   it('blur emite el output blur', () => {

@@ -144,14 +144,20 @@ describe('RetroInputComponent', () => {
     expect(enterEvent).toBeUndefined();
   });
 
-  it('onClear llama onChange con null y onTouched', () => {
+  it('onClear llama onChange con "" y onTouched', () => {
     const changeFn = vi.fn();
     const touchedFn = vi.fn();
     component.registerOnChange(changeFn);
     component.registerOnTouched(touchedFn);
     component.onClear();
-    expect(changeFn).toHaveBeenCalledWith(null);
+    expect(changeFn).toHaveBeenCalledWith('');
     expect(touchedFn).toHaveBeenCalled();
+  });
+
+  it('writeValue con null normaliza a "" internamente', () => {
+    component.writeValue(null);
+    expect(component._displayValue()).toBe('');
+    expect(component.empty).toBe(true);
   });
 });
 

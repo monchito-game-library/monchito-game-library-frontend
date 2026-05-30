@@ -254,11 +254,12 @@ export class RetroInputComponent implements ControlValueAccessor, RetroFormField
   /**
    * Limpia el valor del input y emite los callbacks correspondientes.
    * Llamado por el botón clear del retro-form-field.
+   * emptyValue: '' — nunca emite null al formulario.
    */
   onClear(): void {
     this._internalValue = '';
     this._displayValue.set('');
-    this._onChangeCallback(null);
+    this._onChangeCallback('');
     this._onTouchedCallback();
     this.cleared.emit();
     this._cdr.markForCheck();
