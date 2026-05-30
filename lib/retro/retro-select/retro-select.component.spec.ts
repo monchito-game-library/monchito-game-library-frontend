@@ -214,14 +214,15 @@ describe('RetroSelectComponent (unitario)', () => {
     expect(fixture.componentInstance._value()).toBe(initialValue);
   });
 
-  it('ngOnChanges ignora cuando value es undefined', () => {
+  it('ngOnChanges limpia _value cuando value cambia a undefined', async () => {
     const fixture = TestBed.createComponent(RetroSelectComponent);
     fixture.componentRef.setInput('label', 'Test');
     fixture.componentInstance.writeValue('ps5');
     fixture.componentInstance.ngOnChanges({
       value: { currentValue: undefined, previousValue: 'ps5', firstChange: false, isFirstChange: () => false }
     });
-    expect(fixture.componentInstance._value()).toBe('ps5');
+    await new Promise((r) => setTimeout(r, 0));
+    expect(fixture.componentInstance._value()).toBeNull();
   });
 });
 

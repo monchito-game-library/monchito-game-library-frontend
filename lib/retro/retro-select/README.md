@@ -65,3 +65,5 @@ Implementa `ControlValueAccessor` — compatible con `formControlName` y `ngMode
 ## Notas internas
 
 - Las suscripciones al CDK overlay (`backdropClick`, `keydownEvents`) se guardan internamente y se desuscriben explícitamente en cada cierre del panel, además de usar `takeUntilDestroyed` como segunda barrera. Esto evita la acumulación de suscripciones en ciclos repetidos de apertura/cierre.
+- `displayValue` es un `computed<string>()` signal que recalcula el label mostrado solo cuando `_value()` cambia, evitando el `Array.find` lineal en cada ciclo de CD.
+- El input `[value]` en modo standalone limpia la selección tanto si recibe `null` como `undefined` (comportamiento simétrico con `writeValue`).

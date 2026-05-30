@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ContentChildren,
   DestroyRef,
   ElementRef,
@@ -18,6 +19,7 @@ import {
   OutputEmitterRef,
   QueryList,
   signal,
+  Signal,
   SimpleChanges,
   TemplateRef,
   ViewChild,
@@ -220,6 +222,17 @@ export class RetroSelectComponent
   /** ID de la opción activa (para aria-activedescendant). */
   readonly _activeOptionId: WritableSignal<string | null> = signal<string | null>(null);
 
+  /**
+   * Label de la opción actualmente seleccionada, o el placeholder si no hay selección.
+   * Computed: solo recalcula cuando _value() cambia.
+   */
+  readonly displayValue: Signal<string> = computed<string>(() => {
+    const v: unknown = this._value();
+    if (v === undefined || v === null) return this.placeholder();
+    const selected: RetroOptionComponent | undefined = this._options?.find((opt) => opt.value() === v);
+    return selected ? selected.getLabel() : String(v);
+  });
+
   // ── Variables públicas (no readonly) ─────────────────────────────────────────
 
   /**
@@ -239,7 +252,14 @@ export class RetroSelectComponent
   ngOnChanges(changes: SimpleChanges): void {
     if ('value' in changes) {
       const v: unknown = changes['value'].currentValue;
-      if (v !== undefined) {
+      if (v == null) {
+        // null OR undefined: limpiar la selección
+        this._value.set(null);
+        Promise.resolve().then(() => {
+          this._syncSelectedOption();
+          this._cdr.markForCheck();
+        });
+      } else {
         this._value.set(v);
         Promise.resolve().then(() => {
           this._syncSelectedOption();
@@ -292,16 +312,6 @@ export class RetroSelectComponent
   }
 
   // ── Métodos públicos (template handlers) ─────────────────────────────────────
-
-  /**
-   * Devuelve el label de la opción actualmente seleccionada,
-   * o el placeholder si no hay selección.
-   */
-  displayValue(): string {
-    if (this._value() === undefined || this._value() === null) return this.placeholder();
-    const selected: RetroOptionComponent | undefined = this._options?.find((opt) => opt.value() === this._value());
-    return selected ? selected.getLabel() : String(this._value());
-  }
 
   /**
    * Abre o cierra el panel de selección.
