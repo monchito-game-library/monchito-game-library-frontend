@@ -43,10 +43,12 @@ describe('RetroCheckboxComponent', () => {
   });
 
   describe('registerOnChange', () => {
-    it('activa el modo CVA (_cvaMode = true)', () => {
-      component.registerOnChange(() => {});
+    it('notifica al callback registrado con el nuevo valor al hacer toggle', () => {
+      const cb = vi.fn();
+      component.registerOnChange(cb);
+      component.onToggle();
 
-      expect((component as any)._cvaMode).toBe(true);
+      expect(cb).toHaveBeenCalledWith(expect.any(Boolean));
     });
   });
 

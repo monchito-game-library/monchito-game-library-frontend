@@ -54,11 +54,6 @@ export class RetroFormFieldComponent implements AfterContentInit {
   private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
 
-  // ── Variables privadas ───────────────────────────────────────────────────────
-
-  /** Suscripción activa al control de controlRef. Se limpia al cambiar el control. */
-  private _controlSub: Subscription | null = null;
-
   // ── Variables privadas readonly ──────────────────────────────────────────────
 
   /**
@@ -77,6 +72,11 @@ export class RetroFormFieldComponent implements AfterContentInit {
   private readonly _activeControl: Signal<RetroFormFieldControl | null | undefined> = computed(
     () => this.controlRef() ?? this._contentControl()
   );
+
+  // ── Variables privadas ───────────────────────────────────────────────────────
+
+  /** Suscripción activa al control de controlRef. Se limpia al cambiar el control. */
+  private _controlSub: Subscription | null = null;
 
   // ── Inputs públicos ──────────────────────────────────────────────────────────
 
