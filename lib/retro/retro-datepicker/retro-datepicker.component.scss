@@ -80,7 +80,7 @@
 
   td.retro-datepicker__day--selected & {
     background: var(--primary);
-    color: #fff;
+    color: var(--text-hi);
   }
 
   td.retro-datepicker__day--active:not(.retro-datepicker__day--selected) & {
