@@ -214,19 +214,30 @@ export class RetroOverlayService {
 
       libRef.afterClosed$.pipe(take(1)).subscribe(() => {
         focusTrap.destroy();
-        if (cfg.restoreFocus && previouslyFocused) {
-          previouslyFocused.focus();
-        }
+        this._restoreFocusIfNeeded(cfg.restoreFocus, previouslyFocused);
       });
     } else if (cfg.restoreFocus) {
       libRef.afterClosed$.pipe(take(1)).subscribe(() => {
-        if (previouslyFocused) {
-          previouslyFocused.focus();
-        }
+        this._restoreFocusIfNeeded(cfg.restoreFocus, previouslyFocused);
       });
     }
 
     return libRef;
+  }
+
+  /**
+   * Restaura el foco al elemento previo al abrir el overlay, siempre que sea válido.
+   * No restaura el foco a `document.body` (evita scroll-to-top) ni a elementos
+   * que ya no están conectados al DOM.
+   *
+   * @param {boolean | undefined} restoreFocus - Si la configuración indica restaurar foco.
+   * @param {HTMLElement | null} previouslyFocused - Elemento que tenía el foco antes de abrir.
+   */
+  private _restoreFocusIfNeeded(restoreFocus: boolean | undefined, previouslyFocused: HTMLElement | null): void {
+    if (!restoreFocus || !previouslyFocused || previouslyFocused === document.body || !previouslyFocused.isConnected) {
+      return;
+    }
+    previouslyFocused.focus();
   }
 
   /**

@@ -161,6 +161,40 @@ describe('RetroOverlayService', () => {
     }
   });
 
+  describe('_restoreFocusIfNeeded — guards de foco', () => {
+    it('no llama body.focus() si document.body era el elemento enfocado antes del open()', async () => {
+      // Asegurar que body tiene el foco antes de abrir
+      (document.activeElement as HTMLElement)?.blur?.();
+      const bodySpy = vi.spyOn(document.body, 'focus');
+
+      const ref = service.open(DummyOverlayComponent, { restoreFocus: true, focusTrap: false });
+      const closePromise = firstValueFrom(ref.afterClosed$);
+      ref.close();
+      await closePromise;
+
+      expect(bodySpy).not.toHaveBeenCalled();
+      bodySpy.mockRestore();
+    });
+
+    it('no llama focus() si el elemento previo ya no está conectado al DOM', async () => {
+      const detachedEl = document.createElement('button');
+      document.body.appendChild(detachedEl);
+      detachedEl.focus();
+
+      // Desconectar el elemento ANTES de cerrar el overlay para simular que fue eliminado
+      document.body.removeChild(detachedEl);
+      const focusSpy = vi.spyOn(detachedEl, 'focus');
+
+      const ref = service.open(DummyOverlayComponent, { restoreFocus: true, focusTrap: false });
+      const closePromise = firstValueFrom(ref.afterClosed$);
+      ref.close();
+      await closePromise;
+
+      expect(focusSpy).not.toHaveBeenCalled();
+      focusSpy.mockRestore();
+    });
+  });
+
   describe('preset configs', () => {
     it('RETRO_OVERLAY_DIALOG_CONFIG tiene focusTrap y scroll block', () => {
       expect(RETRO_OVERLAY_DIALOG_CONFIG.focusTrap).toBeTruthy();
