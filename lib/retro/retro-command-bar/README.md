@@ -1,23 +1,30 @@
 # retro-command-bar
 
-Barra decorativa estilo terminal: `PATH $ --flag1 --flag2 ▋`. Solo visible en desktop ≥ 1024px.
+Barra de prompt de terminal decorativa estilo `PATH $ --flag1 --flag2 ▋`. Puramente decorativa, solo visible en desktop (≥ 1024px); oculta en tablet y mobile vía CSS.
 
-## Componente — RetroCommandBarComponent
+**Selector:** `retro-command-bar` · **Standalone:** sí · **CVA:** no
 
-- **Selector:** `retro-command-bar`
-- **Standalone:** sí
-- **A11y:** `aria-hidden="true"` (puramente decorativa).
+## Cuándo usar / Cuándo NO usar
 
-### Inputs
+- Usar cuando: se quiere reforzar la estética terminal de una vista mostrando el contexto de navegación como un prompt de shell.
+- NO usar cuando: se necesita una barra de acciones funcional o un campo de entrada — este componente es `aria-hidden` y no es interactivo.
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `path` | `string` | `'monchito ~/library'` | Texto del prompt. |
-| `flags` | `readonly string[]` | `[]` | Flags mostrados como `--flag`. |
-| `cursor` | `boolean` | `true` | Cursor parpadeante al final. |
+## API — Inputs
 
-## Ejemplo
+| Nombre   | Tipo Angular                     | Default                | Descripción                                         |
+| -------- | -------------------------------- | ---------------------- | --------------------------------------------------- |
+| `path`   | `InputSignal<string>`            | `'monchito ~/library'` | Texto del segmento de ruta mostrado antes del `$`.  |
+| `flags`  | `InputSignal<readonly string[]>` | `[]`                   | Array de flags mostrados como `--flag` tras el `$`. |
+| `cursor` | `InputSignal<boolean>`           | `true`                 | Si `true`, muestra el cursor de bloque parpadeante. |
+
+## Ejemplo mínimo
 
 ```html
 <retro-command-bar path="monchito ~/games" [flags]="['list', 'verbose']" />
 ```
+
+## Gotchas
+
+- El componente tiene `aria-hidden="true"`: es invisible para lectores de pantalla y no debe contener información funcional.
+- Solo visible a partir de 1024px de ancho; por debajo de ese breakpoint el componente se oculta con `display: none` vía CSS.
+- Con `prefers-reduced-motion: reduce`, la animación de parpadeo del cursor se desactiva.

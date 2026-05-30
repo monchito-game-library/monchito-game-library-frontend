@@ -1,57 +1,66 @@
 # retro-tabs
 
-Componente de tabs unificado con selector `<retro-tabs>` que soporta dos modos de operación.
+Componente de tabs unificado con soporte para dos modos de operación: **modo router** (navegación entre rutas hijas con `<a routerLink>`) y **modo local** (contenido en la misma página con `<button role="tab">`). Ambos modos comparten el mismo indicador neón deslizante full-width.
 
-| Modo | Activación | Elemento generado | Casos de uso |
-|---|---|---|---|
-| **Router** | Pasar `[items]` | `<a routerLink>` en `<nav>` | Navegación entre rutas hijas |
-| **Local** | Proyectar `<retro-tab>` | `<button role="tab">` en `<div role="tablist">` | Contenido en la misma página |
+**Selector:** `retro-tabs` · **Standalone:** sí · **CVA:** no
 
-Ambos modos comparten el mismo indicador neón deslizante full-width.
+## Cuándo usar / Cuándo NO usar
 
-## RetroTabsComponent
+- Usar cuando: se necesita cambiar entre vistas dentro de la misma página (modo local) o navegar entre rutas hijas (modo router).
+- NO usar cuando: se necesita guiar al usuario a través de pasos secuenciales con validación por paso — considerar un stepper dedicado en su lugar.
 
-- **A11y (modo local):** APG tablist/tab/tabpanel, activación automática con Arrow keys.
-- **A11y (modo router):** `<nav>` + `aria-current="page"` en el link activo.
-- **Indicador:** posicionado con `ResizeObserver` + `MutationObserver` (solo `childList`, sin escuchar cambios de clase de descendientes), animado con CSS custom properties `--ind-left` / `--ind-width`.
-- **Clamp de índice:** `selectedIndex` y el método programático `select(n)` clampean el valor al rango `[0, tabs.length - 1]`; un valor fuera de bounds activa el último tab disponible.
+## API — Inputs
 
-### Inputs
+| Nombre          | Tipo Angular                                        | Default     | Descripción                                                                |
+| --------------- | --------------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
+| `items`         | `InputSignal<readonly RetroTabItem[] \| undefined>` | `undefined` | Items de navegación. Si se pasan, activa modo router con `<a routerLink>`. |
+| `selectedIndex` | `InputSignal<number>`                               | `0`         | Índice del tab activo inicial. Solo aplica en modo local.                  |
+| `ariaLabel`     | `InputSignal<string \| undefined>`                  | `undefined` | Label aria para el contenedor de tabs (`<nav>` o `[role=tablist]`).        |
 
-| Nombre | Tipo | Default | Descripción |
-|---|---|---|---|
-| `items` | `readonly RetroTabItem[] \| undefined` | `undefined` | Items de navegación. Presencia activa el modo router. |
-| `selectedIndex` | `number` | `0` | Tab activo inicial. Solo aplica en modo local. |
-| `ariaLabel` | `string \| undefined` | `undefined` | Label aria del contenedor de tabs. |
+## API — Outputs
 
-### Outputs
+| Nombre                | Tipo Angular               | Descripción                                                     |
+| --------------------- | -------------------------- | --------------------------------------------------------------- |
+| `selectedIndexChange` | `OutputEmitterRef<number>` | Emite el índice del tab seleccionado. Solo emite en modo local. |
 
-| Nombre | Tipo | Descripción |
-|---|---|---|
-| `selectedIndexChange` | `number` | Índice del tab seleccionado. Solo emite en modo local. |
+## Señales públicas
 
-### Slots
+| Nombre         | Tipo Angular      | Descripción                                       |
+| -------------- | ----------------- | ------------------------------------------------- |
+| `isRouterMode` | `Signal<boolean>` | `true` si hay items pasados (modo router activo). |
+| `activeIndex`  | `Signal<number>`  | Índice del tab activo en modo local.              |
 
-En modo local se proyectan instancias de `<retro-tab>`.
+## Subcomponente — `retro-tab`
 
-## RetroTabComponent
+Componente hijo para modo local. El contenido debe pasarse envuelto en un `<ng-template>` para garantizar lazy render.
 
-Componente hijo para modo local. No tiene template propio; el contenido debe pasarse dentro de un `<ng-template>` (lazy render).
+**Selector:** `retro-tab` · **Standalone:** sí · **CVA:** no
 
-### Inputs: `label: string` (required), `icon?: string`.
+### API — Inputs de `retro-tab`
 
-## Interface — RetroTabItem
+| Nombre  | Tipo Angular                       | Default     | Descripción                                                          |
+| ------- | ---------------------------------- | ----------- | -------------------------------------------------------------------- |
+| `label` | `InputSignal<string> (required)`   | —           | Texto del label del tab.                                             |
+| `icon`  | `InputSignal<string \| undefined>` | `undefined` | Nombre del icono Material Icons a mostrar junto al label (opcional). |
+
+La propiedad `id` es de solo lectura (generada automáticamente, no es un input).
+
+## Tipos exportados
+
+- `RetroTabItem` — interfaz para modo router:
 
 ```typescript
 interface RetroTabItem {
-  readonly path: string;      // Ruta a la que navega el link
-  readonly label: string;     // Texto del label (clave de transloco)
-  readonly icon?: string;     // Nombre del icono Material Icons (opcional)
-  readonly exact?: boolean;   // Coincidencia exacta de ruta para marcar como activo
+  readonly path: string; // Ruta a la que navega el link
+  readonly label: string; // Texto del label (clave de transloco)
+  readonly icon?: string; // Nombre del icono Material Icons (opcional)
+  readonly exact?: boolean; // Coincidencia exacta de ruta para marcar como activo
 }
 ```
 
-## Ejemplo modo router
+## Ejemplo mínimo
+
+**Modo router:**
 
 ```typescript
 readonly navItems: readonly RetroTabItem[] = [
@@ -61,11 +70,10 @@ readonly navItems: readonly RetroTabItem[] = [
 ```
 
 ```html
-<retro-tabs [items]="navItems" ariaLabel="Navegación colección" />
-<router-outlet />
+<retro-tabs [items]="navItems" ariaLabel="Navegación colección" /> <router-outlet />
 ```
 
-## Ejemplo modo local
+**Modo local:**
 
 ```typescript
 readonly activeTab = signal(0);
@@ -85,3 +93,11 @@ readonly activeTab = signal(0);
   </retro-tab>
 </retro-tabs>
 ```
+
+## Gotchas
+
+- **IDs únicos con contador estático**: `retro-tab` genera su `id` con un contador estático monotónico (`retro-tab-1`, `retro-tab-2`…). El contador no se resetea entre tests; en SSR o en múltiples instancias en la misma página los IDs son siempre únicos.
+- **Clamp de índice**: tanto `selectedIndex` como el método programático `select(n)` clampean el valor al rango `[0, tabs.length - 1]`. Un índice fuera de bounds activa el tab más cercano al límite.
+- **MutationObserver acotado a `childList`**: el observer que actualiza el indicador solo escucha adición/eliminación de nodos hijos directos de `.retro-tabs__list`; no observa cambios de atributos ni descendientes profundos.
+- **Modo router en mobile**: la lista de tabs es scrollable horizontalmente en dispositivos táctiles (`overflow-x: auto` con scrollbar oculta).
+- **`prefers-reduced-motion`**: la transición del indicador deslizante y el text-shadow neón del tab activo se desactivan.
