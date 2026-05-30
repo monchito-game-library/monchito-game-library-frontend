@@ -269,36 +269,35 @@ describe('RetroOverlayService', () => {
 });
 
 describe('RetroOverlayRef', () => {
-  it('backdropClick$ delega en el overlayRef', () => {
-    const subject = new Subject<MouseEvent>();
-    const fakeOverlayRef = {
-      dispose: vi.fn(),
-      backdropClick: vi.fn().mockReturnValue(subject.asObservable()),
-      keydownEvents: vi.fn().mockReturnValue(new Subject().asObservable())
+  function makeFakeOverlayRef() {
+    const detachmentsSubject = new Subject<void>();
+    return {
+      fakeOverlayRef: {
+        dispose: vi.fn(),
+        backdropClick: vi.fn().mockReturnValue(new Subject<MouseEvent>().asObservable()),
+        keydownEvents: vi.fn().mockReturnValue(new Subject<KeyboardEvent>().asObservable()),
+        detachments: vi.fn().mockReturnValue(detachmentsSubject.asObservable())
+      },
+      detachmentsSubject
     };
+  }
+
+  it('backdropClick$ delega en el overlayRef', () => {
+    const { fakeOverlayRef } = makeFakeOverlayRef();
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     expect(ref.backdropClick$).toBeTruthy();
   });
 
   it('keydownEvents$ delega en el overlayRef', () => {
-    const subject = new Subject<KeyboardEvent>();
-    const fakeOverlayRef = {
-      dispose: vi.fn(),
-      backdropClick: vi.fn().mockReturnValue(new Subject().asObservable()),
-      keydownEvents: vi.fn().mockReturnValue(subject.asObservable())
-    };
+    const { fakeOverlayRef } = makeFakeOverlayRef();
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     expect(ref.keydownEvents$).toBeTruthy();
   });
 
   it('_subs queda vacío después de close()', () => {
+    const { fakeOverlayRef } = makeFakeOverlayRef();
     const backdropSubject = new Subject<MouseEvent>();
     const keydownSubject = new Subject<KeyboardEvent>();
-    const fakeOverlayRef = {
-      dispose: vi.fn(),
-      backdropClick: vi.fn().mockReturnValue(backdropSubject.asObservable()),
-      keydownEvents: vi.fn().mockReturnValue(keydownSubject.asObservable())
-    };
     const ref = new RetroOverlayRef(fakeOverlayRef as any);
     ref._addSub(backdropSubject.subscribe());
     ref._addSub(keydownSubject.subscribe());
@@ -309,13 +308,10 @@ describe('RetroOverlayRef', () => {
 
   it('afterClosed$ recibe el valor ANTES de que dispose() sea llamado', () => {
     const callOrder: string[] = [];
-    const fakeOverlayRef = {
-      dispose: vi.fn().mockImplementation(() => {
-        callOrder.push('dispose');
-      }),
-      backdropClick: vi.fn().mockReturnValue(new Subject().asObservable()),
-      keydownEvents: vi.fn().mockReturnValue(new Subject().asObservable())
-    };
+    const { fakeOverlayRef } = makeFakeOverlayRef();
+    fakeOverlayRef.dispose.mockImplementation(() => {
+      callOrder.push('dispose');
+    });
     const ref = new RetroOverlayRef<unknown, string>(fakeOverlayRef as any);
     ref.afterClosed$.subscribe(() => {
       callOrder.push('afterClosed');
@@ -325,5 +321,35 @@ describe('RetroOverlayRef', () => {
 
     expect(callOrder).toEqual(['afterClosed', 'dispose']);
     expect(fakeOverlayRef.dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it('dispose directo (sin close()) destruye el focusTrap via detachments()', () => {
+    const { fakeOverlayRef, detachmentsSubject } = makeFakeOverlayRef();
+    const fakeFocusTrap = { destroy: vi.fn() };
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    ref._registerFocusTrap(fakeFocusTrap, false, null);
+    ref._subscribeDetachments();
+
+    // Simular que el CDK dispone el overlay por navegación (sin pasar por close())
+    detachmentsSubject.next();
+
+    expect(fakeFocusTrap.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('dispose directo no ejecuta doble limpieza si close() ya fue llamado', () => {
+    const { fakeOverlayRef, detachmentsSubject } = makeFakeOverlayRef();
+    const fakeFocusTrap = { destroy: vi.fn() };
+    const ref = new RetroOverlayRef(fakeOverlayRef as any);
+    ref._registerFocusTrap(fakeFocusTrap, false, null);
+    ref._subscribeDetachments();
+
+    // close() primero — marca _cleaned = true
+    ref.close();
+
+    // detachments() dispara después (dispose interno del CDK)
+    detachmentsSubject.next();
+
+    // destroy solo se llamó una vez (desde close())
+    expect(fakeFocusTrap.destroy).toHaveBeenCalledTimes(1);
   });
 });

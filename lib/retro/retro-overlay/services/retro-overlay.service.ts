@@ -68,11 +68,45 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
   private readonly _afterClosed$: Subject<R | undefined> = new Subject<R | undefined>();
   private readonly _subs: Subscription[] = [];
   private _result: R | undefined;
+  private _focusTrap: { destroy: () => void } | null = null;
+  private _restoreFocusConfig: boolean | undefined;
+  private _previouslyFocused: HTMLElement | null = null;
+  private _cleaned = false;
 
   /** Instancia del componente abierto (null si se abrió con TemplateRef). */
   componentInstance: T | null = null;
 
   constructor(private readonly _overlayRef: OverlayRef) {}
+
+  /**
+   * Registra el FocusTrap y la configuración de restauración de foco para que
+   * puedan limpiarse tanto desde close() como desde detachments() (ej. disposeOnNavigation).
+   *
+   * @param {object} focusTrap - Instancia del ConfigurableFocusTrap creado.
+   * @param {boolean | undefined} restoreFocus - Si debe restaurar el foco al cerrar.
+   * @param {HTMLElement | null} previouslyFocused - Elemento que tenía el foco antes de abrir.
+   */
+  _registerFocusTrap(
+    focusTrap: { destroy: () => void },
+    restoreFocus: boolean | undefined,
+    previouslyFocused: HTMLElement | null
+  ): void {
+    this._focusTrap = focusTrap;
+    this._restoreFocusConfig = restoreFocus;
+    this._previouslyFocused = previouslyFocused;
+  }
+
+  /**
+   * Registra solo la configuración de restauración de foco (sin FocusTrap).
+   * Se usa cuando restoreFocus está activo pero focusTrap no.
+   *
+   * @param {boolean | undefined} restoreFocus - Si debe restaurar el foco al cerrar.
+   * @param {HTMLElement | null} previouslyFocused - Elemento que tenía el foco antes de abrir.
+   */
+  _registerRestoreFocus(restoreFocus: boolean | undefined, previouslyFocused: HTMLElement | null): void {
+    this._restoreFocusConfig = restoreFocus;
+    this._previouslyFocused = previouslyFocused;
+  }
 
   /**
    * Cierra el overlay, opcionalmente con un resultado que se emitirá en afterClosed$.
@@ -83,6 +117,12 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
    */
   close(result?: R): void {
     this._result = result;
+    if (!this._cleaned) {
+      this._cleaned = true;
+      this._focusTrap?.destroy();
+      this._focusTrap = null;
+      this._doRestoreFocus();
+    }
     this._subs.forEach((s) => s.unsubscribe());
     this._subs.length = 0;
     this._afterClosed$.next(this._result);
@@ -118,6 +158,41 @@ export class RetroOverlayRef<T = unknown, R = unknown> {
    */
   get keydownEvents$(): Observable<KeyboardEvent> {
     return this._overlayRef.keydownEvents();
+  }
+
+  /**
+   * Suscribe al evento detachments() del CDK OverlayRef para garantizar la limpieza
+   * del FocusTrap y restauración de foco incluso cuando el overlay se descarta via
+   * disposeOnNavigation (Router) sin pasar por close().
+   * El flag _cleaned previene doble ejecución si close() fue llamado primero.
+   */
+  _subscribeDetachments(): void {
+    this._addSub(
+      this._overlayRef
+        .detachments()
+        .pipe(take(1))
+        .subscribe(() => {
+          if (!this._cleaned) {
+            this._cleaned = true;
+            this._focusTrap?.destroy();
+            this._focusTrap = null;
+            this._doRestoreFocus();
+          }
+        })
+    );
+  }
+
+  /**
+   * Restaura el foco al elemento previo al abrir el overlay, siempre que sea válido.
+   * No restaura el foco a `document.body` (evita scroll-to-top) ni a elementos
+   * que ya no están conectados al DOM.
+   */
+  private _doRestoreFocus(): void {
+    const el = this._previouslyFocused;
+    if (!this._restoreFocusConfig || !el || el === document.body || !el.isConnected) {
+      return;
+    }
+    el.focus();
   }
 }
 
@@ -217,32 +292,14 @@ export class RetroOverlayService {
         focusTrap.focusFirstTabbableElementWhenReady();
       }
 
-      libRef.afterClosed$.pipe(take(1)).subscribe(() => {
-        focusTrap.destroy();
-        this._restoreFocusIfNeeded(cfg.restoreFocus, previouslyFocused);
-      });
+      libRef._registerFocusTrap(focusTrap, cfg.restoreFocus, previouslyFocused);
     } else if (cfg.restoreFocus) {
-      libRef.afterClosed$.pipe(take(1)).subscribe(() => {
-        this._restoreFocusIfNeeded(cfg.restoreFocus, previouslyFocused);
-      });
+      libRef._registerRestoreFocus(cfg.restoreFocus, previouslyFocused);
     }
+
+    libRef._subscribeDetachments();
 
     return libRef;
-  }
-
-  /**
-   * Restaura el foco al elemento previo al abrir el overlay, siempre que sea válido.
-   * No restaura el foco a `document.body` (evita scroll-to-top) ni a elementos
-   * que ya no están conectados al DOM.
-   *
-   * @param {boolean | undefined} restoreFocus - Si la configuración indica restaurar foco.
-   * @param {HTMLElement | null} previouslyFocused - Elemento que tenía el foco antes de abrir.
-   */
-  private _restoreFocusIfNeeded(restoreFocus: boolean | undefined, previouslyFocused: HTMLElement | null): void {
-    if (!restoreFocus || !previouslyFocused || previouslyFocused === document.body || !previouslyFocused.isConnected) {
-      return;
-    }
-    previouslyFocused.focus();
   }
 
   /**
