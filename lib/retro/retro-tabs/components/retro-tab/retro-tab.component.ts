@@ -18,6 +18,9 @@ import { ChangeDetectionStrategy, Component, ContentChild, InputSignal, Template
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RetroTabComponent {
+  /** Static counter para generar IDs únicos monotónicos. */
+  private static _nextId = 0;
+
   /** Texto del label del tab. */
   readonly label: InputSignal<string> = input.required<string>();
 
@@ -25,7 +28,6 @@ export class RetroTabComponent {
   readonly icon: InputSignal<string | undefined> = input<string | undefined>(undefined);
 
   /** ID único para esta instancia, usado en aria-controls y aria-labelledby. */
-  private static _nextId = 0;
   readonly id: string = `retro-tab-${++RetroTabComponent._nextId}`;
 
   /** Template del contenido del tab, proyectado con <ng-template> por el consumidor. */
