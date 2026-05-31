@@ -6,11 +6,10 @@ import { Directive, ElementRef, HostListener, inject, input, InputSignal, OnDest
  * Crea un `<div class="retro-tooltip">` en el DOM usando posición `fixed`
  * calculada desde `getBoundingClientRect()` del elemento host.
  *
- * - Solo actúa en dispositivos con hover (`@media (hover: none)` → inactiva).
+ * - En dispositivos con hover (`@media (hover: hover)`) muestra en mouseenter.
+ * - En dispositivos sin hover (touch + teclado externo) muestra en focusin.
  * - Accesible: añade `role="tooltip"` al panel y `aria-describedby` al host.
- * - Deuda a11y declarada: no muestra tooltip al focus en elementos que no
- *   reciben focus de teclado (p.ej. `<div retroTooltip>`). Para icon-buttons
- *   el aria-label del botón padre es suficiente.
+ * - Reposiciona el tooltip en scroll y resize mientras está visible.
  */
 @Directive({
   selector: '[retroTooltip]',
@@ -31,6 +30,8 @@ export class RetroTooltipDirective implements OnDestroy {
 
   private _tooltipEl?: HTMLElement;
   private _timer?: ReturnType<typeof setTimeout>;
+  private _visible = false;
+  private _repositionHandler?: () => void;
 
   /** Texto del tooltip. */
   readonly retroTooltip: InputSignal<string> = input.required<string>();
@@ -66,10 +67,12 @@ export class RetroTooltipDirective implements OnDestroy {
 
   /**
    * Muestra el tooltip cuando el host recibe el foco de teclado.
+   * Siempre muestra si hay contenido, independientemente de si el dispositivo
+   * soporta hover (para cubrir el caso touch + teclado externo).
    */
   @HostListener('focusin')
   _onFocus(): void {
-    if (!this._hasHover) return;
+    if (this._visible) return;
     this._scheduleShow();
   }
 
@@ -91,6 +94,8 @@ export class RetroTooltipDirective implements OnDestroy {
 
   /**
    * Crea y posiciona el panel de tooltip en el DOM.
+   * Posiciona dos veces: inmediatamente y tras el primer layout para usar
+   * dimensiones reales del panel.
    */
   private _show(): void {
     if (this._tooltipEl) return;
@@ -104,11 +109,30 @@ export class RetroTooltipDirective implements OnDestroy {
     this._renderer.setProperty(panel, 'textContent', text);
     this._renderer.appendChild(document.body, panel);
     this._tooltipEl = panel;
+    this._visible = true;
 
     // Añadir aria-describedby al host
     this._renderer.setAttribute(this._el.nativeElement, 'aria-describedby', this._tooltipId);
 
-    this._positionPanel(panel);
+    const trigger = this._el.nativeElement;
+
+    // Posicionamiento inicial
+    this._positionPanel(panel, trigger);
+    // Reposicionado tras primer layout (dimensiones reales)
+    requestAnimationFrame(() => {
+      if (this._visible) {
+        this._positionPanel(panel, trigger);
+      }
+    });
+
+    // Reaccionar a scroll y resize mientras el tooltip está visible
+    this._repositionHandler = () => {
+      if (this._tooltipEl && this._visible) {
+        this._positionPanel(this._tooltipEl, this._el.nativeElement);
+      }
+    };
+    window.addEventListener('scroll', this._repositionHandler, { capture: true, passive: true });
+    window.addEventListener('resize', this._repositionHandler, { passive: true });
   }
 
   /**
@@ -116,9 +140,10 @@ export class RetroTooltipDirective implements OnDestroy {
    * Por defecto bottom-center; si no cabe en el viewport, top-center.
    *
    * @param {HTMLElement} panel - Elemento del tooltip a posicionar
+   * @param {HTMLElement} trigger - Elemento host de referencia para el posicionado
    */
-  private _positionPanel(panel: HTMLElement): void {
-    const rect = this._el.nativeElement.getBoundingClientRect();
+  private _positionPanel(panel: HTMLElement, trigger: HTMLElement): void {
+    const rect = trigger.getBoundingClientRect();
     const panelRect = panel.getBoundingClientRect();
 
     const OFFSET = 6;
@@ -142,10 +167,17 @@ export class RetroTooltipDirective implements OnDestroy {
   }
 
   /**
-   * Destruye el panel de tooltip y limpia el timer pendiente.
+   * Destruye el panel de tooltip, limpia el timer y remueve los listeners
+   * de scroll y resize.
    */
   private _hide(): void {
     clearTimeout(this._timer);
+    this._visible = false;
+    if (this._repositionHandler) {
+      window.removeEventListener('scroll', this._repositionHandler, { capture: true });
+      window.removeEventListener('resize', this._repositionHandler);
+      this._repositionHandler = undefined;
+    }
     if (this._tooltipEl) {
       this._renderer.removeChild(document.body, this._tooltipEl);
       this._tooltipEl = undefined;

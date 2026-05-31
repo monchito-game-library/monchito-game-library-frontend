@@ -117,6 +117,35 @@ describe('RetroTooltipDirective', () => {
     window.matchMedia = originalMatchMedia;
   });
 
+  it('_onFocus muestra el tooltip aunque el dispositivo no tenga hover (hover: none)', async () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as any;
+
+    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    btn.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 10));
+
+    const tooltip = document.querySelector('.retro-tooltip');
+    expect(tooltip).toBeTruthy();
+
+    window.matchMedia = originalMatchMedia;
+  });
+
+  it('evento scroll mientras el tooltip está visible invoca _positionPanel de nuevo', async () => {
+    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    btn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 10));
+
+    const directiveEl: DebugElement = fixture.debugElement.query(By.directive(RetroTooltipDirective));
+    const directive: RetroTooltipDirective = directiveEl.injector.get(RetroTooltipDirective);
+    const spy = vi.spyOn(directive as any, '_positionPanel');
+
+    window.dispatchEvent(new Event('scroll'));
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(spy).toHaveBeenCalled();
+  });
+
   it('posiciona el tooltip arriba cuando no cabe abajo (innerHeight pequeño)', async () => {
     const originalInnerHeight = window.innerHeight;
     // Forzar innerHeight muy pequeño para que el tooltip no quepa abajo
