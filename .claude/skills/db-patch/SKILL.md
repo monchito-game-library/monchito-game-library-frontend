@@ -1,3 +1,8 @@
+---
+description: "Creates a versioned incremental SQL patch for the Supabase database and optionally applies it via npm run db:apply. Use when the user needs to modify the database schema, policies, or stored procedures ('crea el patch de BD', 'aplica el cambio en la base de datos', 'nuevo patch SQL')."
+argument-hint: '[descripcion-corta]'
+---
+
 Crea un patch SQL incremental para la BD de Supabase y opcionalmente lo aplica con `npm run db:apply`.
 
 Argumento: $ARGUMENTS — descripción corta del cambio (ej: `tighten-rls-products` o `add-column-game-rating`). Si está vacío, pregunta al usuario.

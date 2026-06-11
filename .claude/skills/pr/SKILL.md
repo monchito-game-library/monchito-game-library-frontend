@@ -1,6 +1,12 @@
+---
+description: "Creates a pull request for the current branch following project conventions: checks repo state, ensures branch is pushed and up to date with master (rebasing if needed), opens the PR via gh, and activates auto-merge squash. Use when the user wants to open a PR ('crea la PR', 'abre el pull request', 'crear la pull request')."
+argument-hint: '[descripción]'
+---
+
 Crea una pull request para los cambios actuales siguiendo las convenciones del proyecto.
 
 Pasos:
+
 1. Comprueba el estado del repo: `git status` y `git diff`.
 2. Si hay cambios sin commitear, pregunta al usuario si quiere incluirlos o si ya están listos.
 3. Asegúrate de que la rama actual NO es `master`. Si es `master`, crea una rama nueva con el nombre adecuado según el tipo de cambio:

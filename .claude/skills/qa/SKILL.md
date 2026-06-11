@@ -1,3 +1,7 @@
+---
+description: "Runs the full project quality pipeline in order: lint (retro first, then app), unused exports check, and tests (retro then app). Aborts if the retro lib fails before running app checks. Use when the user wants to validate the project before committing or opening a PR ('pasa el QA', 'ejecuta la pipeline de calidad', 'valida el proyecto')."
+---
+
 Ejecuta el pipeline completo de calidad del proyecto en este orden. La librería retro se valida siempre primero: si falla, se aborta sin ejecutar los checks de la app.
 
 ## 1. Lint

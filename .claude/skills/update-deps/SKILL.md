@@ -1,3 +1,8 @@
+---
+description: "Updates project dependencies to their latest safe versions: auto-applies patches and minors, stops at majors or incompatible peer-deps for user decision, enforces exact versions (no ^ or ~), and verifies build/test/lint/knip before finishing. Use when the user wants to update dependencies ('actualiza las dependencias', 'sube las deps', 'update dependencies')."
+argument-hint: '[paquete1 paquete2...]'
+---
+
 Actualiza las dependencias del proyecto a sus últimas versiones seguras siguiendo la convención del proyecto. Aplica patches y minors de forma automatizada y se detiene en majors o peer-deps incompatibles para que decida el usuario.
 
 > Contexto del flujo: `CLAUDE.md` sección "Dependencias npm" / "Proceso de actualización de dependencias". Razón de existir: el proceso es repetitivo cada pocas semanas (detectar → clasificar → ng update vs npm install → fijar versiones exactas → build/test/lint/knip → commit) y tiene reglas específicas del proyecto que no se pueden delegar a `npm update`.
@@ -30,12 +35,12 @@ npx ng update
 
 Para cada paquete con actualización, clasifícalo usando esta tabla:
 
-| Categoría | Criterio | Acción |
-|---|---|---|
-| **A — Angular patch/minor** | Dentro de la misma major (21.x → 21.y), gestionable por `ng update` | Actualizar en bloque vía `ng update` |
-| **B — Resto patch/minor** | `npm outdated` muestra cambio dentro de la misma major | Instalar con `--save-exact` |
-| **C — Major** | Cambio de `X.y.z` → `(X+1).0.0` o superior | **STOP** — generar informe y pedir decisión al usuario |
-| **D — Bloqueado por peer-dep** | Conflicto con `@angular/build` o equivalente que Vercel no acepta | **STOP** — documentar y descartar |
+| Categoría                      | Criterio                                                            | Acción                                                 |
+| ------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| **A — Angular patch/minor**    | Dentro de la misma major (21.x → 21.y), gestionable por `ng update` | Actualizar en bloque vía `ng update`                   |
+| **B — Resto patch/minor**      | `npm outdated` muestra cambio dentro de la misma major              | Instalar con `--save-exact`                            |
+| **C — Major**                  | Cambio de `X.y.z` → `(X+1).0.0` o superior                          | **STOP** — generar informe y pedir decisión al usuario |
+| **D — Bloqueado por peer-dep** | Conflicto con `@angular/build` o equivalente que Vercel no acepta   | **STOP** — documentar y descartar                      |
 
 ### Conocimientos del proyecto a aplicar al clasificar
 

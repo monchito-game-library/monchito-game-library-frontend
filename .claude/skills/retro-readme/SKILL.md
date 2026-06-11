@@ -1,3 +1,8 @@
+---
+description: "Synchronizes the README.md of a retro component with its current public API by reading the source files and generating the standard AI-oriented format. Use when the user needs to update a component's documentation after API changes ('actualiza el README del componente', 'sincroniza el readme retro', 'regenera la documentación del componente')."
+argument-hint: '[componente]'
+---
+
 Sincroniza el `README.md` de un componente retro con su API pública actual leyendo el código fuente y generando el formato estándar orientado a IA.
 
 Argumento: $ARGUMENTS — nombre del componente con o sin prefijo `retro-` (ej: `button`, `retro-card`). Si va vacío, infiere el componente desde el contexto (último fichero leído/editado, rama actual, mensaje del usuario). Si no puedes inferir, pregunta al usuario.

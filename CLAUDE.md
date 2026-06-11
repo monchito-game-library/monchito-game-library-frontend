@@ -1,168 +1,57 @@
 # Monchito Game Library — Convenciones del proyecto
 
-## Índice
-
-- [Al iniciar cada conversación](#al-iniciar-cada-conversación)
-- [Idioma de comunicación](#idioma-de-comunicación)
-- [Git](#git)
-  - [Flujo de trabajo](#flujo-de-trabajo)
-  - [Nombrado de ramas](#nombrado-de-ramas)
-- [Dependencias npm](#dependencias-npm)
-  - [Proceso de actualización de dependencias](#proceso-de-actualización-de-dependencias)
-- [Imports](#imports)
-- [SCSS](#scss)
-  - [Espaciados](#espaciados)
-  - [Clases y modificadores](#clases-y-modificadores)
-  - [Breakpoints responsive](#breakpoints-responsive)
-- [Orden en componentes Angular](#orden-en-componentes-angular)
-- [Convenciones de nombrado](#convenciones-de-nombrado)
-  - [Prefijo `_` en privados](#prefijo-_-en-privados)
-  - [Tipos explícitos](#tipos-explícitos)
-- [JSDoc](#jsdoc)
-- [Formularios reactivos Angular](#formularios-reactivos-angular)
-- [Repositorios](#repositorios)
-- [Arquitectura de capas](#arquitectura-de-capas)
-- [Estructura de pages y components](#estructura-de-pages-y-components)
-- [Tests — mocks compartidos](#tests--mocks-compartidos)
-- [Librería retro — sincronía de README](#librería-retro--sincronía-de-readme)
-- [Pipeline de calidad](#pipeline-de-calidad)
-
----
-
-## Al iniciar cada conversación
-
-1. Leer `docs/BUGS.md`.
-2. Si hay bugs pendientes (no marcados como resueltos), mencionarlos brevemente al usuario.
-3. Si no hay ningún bug pendiente, leer `docs/ROADMAP.md` y sugerir la siguiente mejora pendiente según prioridad.
-
 ## Idioma de comunicación
 
-- Responder siempre en **español**.
+Responder siempre en **español**.
 
 ## Git
 
 - **Nunca hacer commit ni push** a menos que el usuario lo pida explícitamente.
-
-### Flujo de trabajo
-
-1. Crear una rama descriptiva desde `master`: `git checkout -b tipo/descripcion-corta`
-2. Hacer los cambios y commitear.
-3. Hacer push y abrir PR contra `master`.
-4. El CI debe pasar (tests + cobertura ≥ 80%) antes de mergear.
-5. Mergear con **squash merge** (un único commit limpio en master).
-6. La rama se elimina automáticamente tras el merge.
-
-> No existe rama `develop`. Todo va directamente a `master` vía PR.
-
-### Nombrado de ramas
-
-```
-feat/nombre-de-la-feature
-fix/descripcion-del-bug
-chore/tarea-de-mantenimiento
-test/mejora-de-cobertura
-docs/actualizacion-documentacion
-refactor/descripcion
-```
+- Rama descriptiva desde `master`: `git checkout -b tipo/descripcion-corta`.
+- Hacer push y abrir PR contra `master`; CI debe pasar (tests + cobertura ≥ 80%) antes de mergear.
+- Mergear con **squash merge**. No existe rama `develop`.
+- Prefijos de rama: `feat/ fix/ chore/ test/ docs/ refactor/`
 
 ## Dependencias npm
 
-- Usar **siempre versiones exactas** en `package.json`. Nunca usar rangos con `^` o `~`.
-- Al instalar con `npm install`, verificar que la versión quedó fija y corregirla manualmente si npm añadió un rango.
-- Razón: Vercel no acepta `--legacy-peer-deps` y los rangos abiertos causan fallos de build por desajustes de peer deps entre entornos.
-
-```json
-// ✅ Correcto
-"@angular/service-worker": "21.2.3"
-
-// ❌ Incorrecto
-"@angular/service-worker": "^21.2.3"
-```
-
-### Proceso de actualización de dependencias
-
-1. **Detectar candidatas**: `npm outdated` — revisar qué tiene actualizaciones disponibles.
-2. **Clasificar por riesgo**:
-   - _Patch/minor seguros_: actualizar sin problema.
-   - _Major_: evaluar breaking changes antes de actualizar.
-   - _Ecosistema Angular_: usar **siempre** `npx ng update` (nunca `npm install` directo), ya que resuelve peer deps de forma atómica.
-3. **Instalar**:
-   - Angular: `npx ng update @angular/core@X @angular/cli@X @angular/material@X ...`
-   - Resto: `npm install paquete@version`
-4. **Corregir rangos**: verificar que npm no añadió `^` o `~` y eliminarlos manualmente si es necesario.
-5. **Sincronizar lock file**: `npm install` sin argumentos para que `package-lock.json` quede consistente.
-6. **Verificar** en este orden:
-   - `npm run build` — el bundle debe compilar sin errores.
-   - `npm test` — todos los tests deben pasar.
-   - `npm run lint` — sin warnings ni errores.
-7. **Commit** solo si los tres pasos anteriores son exitosos.
+- Usar **siempre versiones exactas** en `package.json`. Nunca `^` ni `~` (Vercel no acepta `--legacy-peer-deps`; los rangos abiertos causan fallos de peer deps entre entornos).
+- Tras `npm install`, verificar que la versión quedó fija y corregirla si npm añadió un rango.
+- Para el proceso completo de actualización → ver skill `update-deps`.
 
 ## Imports
 
-- Usar **siempre** los path aliases definidos en `tsconfig.json`. **Nunca** usar rutas relativas con `../` o `../../`.
-- Los imports del mismo directorio (`./`) son aceptables únicamente cuando el fichero referenciado está en la misma carpeta.
-- Aliases principales:
-  ```
-  @/dtos/*         → src/app/data/dtos/*
-  @/data/*         → src/app/data/*
-  @/repositories/* → src/app/data/repositories/*
-  @/entities/*     → src/app/entities/*
-  @/interfaces/*   → src/app/entities/interfaces/*
-  @/types/*        → src/app/entities/types/*
-  @/constants/*    → src/app/entities/constants/*
-  @/domain/*       → src/app/domain/*
-  @/di/*           → src/app/di/*
-  @/components/*   → src/app/presentation/components/*
-  @/pages/*        → src/app/presentation/pages/*
-  @/services/*     → src/app/presentation/services/*
-  @/guards/*       → src/app/presentation/guards/*
-  @/shared/*       → src/app/presentation/shared/*
-  @/abstract/*     → src/app/presentation/abstract/*
-  @/models/*       → src/app/entities/models/*
-  @/mappers/*      → src/app/data/mappers/*
-  @/env            → src/environments/environment
-  ```
+- Usar **siempre** los path aliases de `tsconfig.json`. Nunca rutas relativas con `../` o `../../`.
+- `./` solo es aceptable cuando el fichero está en la misma carpeta.
+
+```
+@/dtos/*         → src/app/data/dtos/*
+@/data/*         → src/app/data/*
+@/repositories/* → src/app/data/repositories/*
+@/entities/*     → src/app/entities/*
+@/interfaces/*   → src/app/entities/interfaces/*
+@/types/*        → src/app/entities/types/*
+@/constants/*    → src/app/entities/constants/*
+@/domain/*       → src/app/domain/*
+@/di/*           → src/app/di/*
+@/components/*   → src/app/presentation/components/*
+@/pages/*        → src/app/presentation/pages/*
+@/services/*     → src/app/presentation/services/*
+@/guards/*       → src/app/presentation/guards/*
+@/shared/*       → src/app/presentation/shared/*
+@/abstract/*     → src/app/presentation/abstract/*
+@/models/*       → src/app/entities/models/*
+@/mappers/*      → src/app/data/mappers/*
+@/env            → src/environments/environment
+```
 
 ## SCSS
 
-### Espaciados
-
 - Usar siempre **`rem`** para `gap`, `margin` y `padding`. Nunca `px`.
-- Los valores deben ser **múltiplos de 0.25rem**: `0.25`, `0.5`, `0.75`, `1`, `1.25`, `1.5`, `1.75`, `2`…
-- Excepción tolerada: micro-espaciados decorativos internos de chips, badges y pills (ej. `padding: 2px 8px`) pueden mantenerse en `px`.
-
-### Clases y modificadores
-
+- Valores deben ser **múltiplos de 0.25rem**: `0.25`, `0.5`, `0.75`, `1`, `1.25`, `1.5`, `1.75`, `2`…
+- Excepción tolerada: micro-espaciados decorativos en chips, badges y pills (`padding: 2px 8px`) pueden ser `px`.
 - Usar **clases completas** dentro de los bloques, nunca `&__elemento`.
-- Los **modificadores** (`--modificador`) sí pueden usar `&--modificador` directamente sobre el elemento al que pertenecen.
-
-### Breakpoints responsive
-
-- Los bloques `@media` van al final del fichero, en una sección separada.
-- Cada bloque lleva un comentario separador con la resolución de referencia.
-
-```scss
-// ────────────────────────── Responsive: < 1920x1080 ──────────────────────────
-@media (max-width: 1919px) { ... }
-
-// ────────────────────────── Responsive: ≤ 1280x720 ──────────────────────────
-@media (max-width: 1280px) { ... }
-```
-
-```scss
-/* ✅ Correcto */
-.my-component {
-  .my-component__header { ... }
-  .my-component__content {
-    &--active { ... }   /* modificador: OK con & */
-  }
-}
-
-/* ❌ Incorrecto */
-.my-component {
-  &__header { ... }
-}
-```
+- Los **modificadores** (`--mod`) sí pueden usar `&--modificador` sobre el elemento al que pertenecen.
+- Los bloques `@media` van al **final del fichero**, con comentario separador: `// ── Responsive: < 1920x1080 ──`.
 
 ## Orden en componentes Angular
 
@@ -179,107 +68,27 @@ Dentro de la clase del componente respetar siempre este orden:
 
 ## Convenciones de nombrado
 
-### Prefijo `_` en privados
-
-- **Todos** los campos y métodos `private` llevan prefijo `_`, tanto en componentes como en repositorios.
-- Los campos `private readonly` de inyección también llevan `_`.
-
-```typescript
-// ✅ Correcto
-private readonly _router: Router = inject(Router);
-private readonly _userContext: UserContextService = inject(UserContextService);
-private _gameId?: number;
-private _loadGames(): void { ... }
-
-// ❌ Incorrecto
-private router = inject(Router);
-private gameId?: number;
-```
-
-### Tipos explícitos
-
-- Usar siempre tipos explícitos en inyecciones y señales.
-- `WritableSignal<T>` en lugar de inferencia.
-
-```typescript
-// ✅ Correcto
-readonly loading: WritableSignal<boolean> = signal<boolean>(false);
-private readonly _router: Router = inject(Router);
-
-// ❌ Incorrecto
-readonly loading = signal(false);
-private readonly router = inject(Router);
-```
+- **Todos** los campos y métodos `private` llevan prefijo `_`, incluidas las inyecciones `private readonly`.
+- Usar siempre **tipos explícitos** en inyecciones y señales: `WritableSignal<T>`, tipo explícito en `inject()`.
+- Ejemplo mínimo: `private readonly _router: Router = inject(Router);` / `readonly loading: WritableSignal<boolean> = signal<boolean>(false);`
 
 ## JSDoc
 
-- Todos los métodos públicos y privados llevan JSDoc (excepto lifecycle hooks: `ngOnInit`, `ngOnDestroy`, etc.).
-- Los `@param` deben incluir el tipo entre llaves: `@param {string} id`.
-- Las variables públicas (signals, configs) llevan JSDoc de una línea.
-- El JSDoc debe describir **qué hace el método**, no solo repetir su nombre.
-
-```typescript
-// ✅ Correcto — describe el flujo completo
-/**
- * Carga los juegos del usuario y actualiza la señal allGames.
- * Si ocurre un error, muestra un snackbar con el mensaje.
- */
-private async _loadGames(): Promise<void> { ... }
-
-// ✅ Con parámetros
-/**
- * Elimina un juego por ID si pertenece al usuario autenticado.
- *
- * @param {number} id - ID del juego a eliminar
- */
-async onGameDeleted(id: number): Promise<void> { ... }
-
-// ❌ Incorrecto — demasiado vago
-/**
- * Carga los juegos.
- */
-private async _loadGames(): Promise<void> { ... }
-```
+- Todos los métodos públicos y privados llevan JSDoc, **excepto** lifecycle hooks (`ngOnInit`, `ngOnDestroy`, etc.).
+- `@param` con tipo entre llaves: `@param {string} id - descripción`.
+- Variables públicas (signals, configs) llevan JSDoc de una línea.
+- El JSDoc debe describir **qué hace** el método, no repetir su nombre.
 
 ## Formularios reactivos Angular
 
-- Crear siempre una interfaz `XxxForm` (con `FormControl<T>`) en `src/app/entities/interfaces/forms/`.
-- Crear también `XxxFormValue` (con tipos planos) en el mismo fichero para tipar el resultado de `getRawValue()`.
+- Crear interfaz `XxxForm` (con `FormControl<T>`) y `XxxFormValue` (tipos planos) en `src/app/entities/interfaces/forms/`.
+- Referencia de interfaz: `console-form.interface.ts`; referencia de componente: `hardware-form-shell/`.
+- Esquema del componente: inputs `initialValues` (`Partial<XxxModel> | null`) y `saving` (`boolean`); outputs `save` (`XxxFormValue`) y `cancel` (`void`); `FormGroup<XxxForm>` en constructor; patch en `ngOnInit`; `onSubmit()` valida y emite; `onCancel()` emite cancel.
 
-```typescript
-// entities/interfaces/forms/game-form.interface.ts
-export interface GameFormValue {
-  title: string | null;
-  platform: PlatformType | null;
-}
-export interface GameForm {
-  title: FormControl<string | null>;
-  platform: FormControl<PlatformType | null>;
-}
-```
+## Repositorios y Arquitectura de capas
 
-**Ficheros de referencia para nuevos formularios:**
-
-- Interfaz: `src/app/entities/interfaces/forms/console-form.interface.ts`
-- Componente de formulario: `src/app/presentation/pages/collection/components/hardware-form-shell/`
-
-El componente sigue este esquema (respetar el orden de miembros de CLAUDE.md):
-
-1. `InputSignal<Partial<XxxModel> | null>` para valores iniciales
-2. `InputSignal<boolean>` para estado de guardado (`saving`)
-3. `OutputEmitterRef<XxxFormValue>` para emitir el resultado (`save`)
-4. `OutputEmitterRef<void>` para cancelar (`cancel`)
-5. `FormGroup<XxxForm>` inicializado en el constructor
-6. `ngOnInit` — parchear el form si hay `initialValues`
-7. `onSubmit()` — valida y emite `save`
-8. `onCancel()` — emite `cancel`
-
-## Repositorios
-
-- Los repositorios implementan el contrato (interface) del fichero `.repository.contract.ts` de `domain/repositories/`.
+- Los repositorios implementan el contrato del fichero `.repository.contract.ts` en `domain/repositories/`.
 - El provider DI vive en `src/app/di/repositories/`.
-
-## Arquitectura de capas
 
 ```
 presentation  →  domain (repositorios contratos)  →  data (repositorios implementaciones)
@@ -287,55 +96,16 @@ presentation  →  domain (repositorios contratos)  →  data (repositorios impl
                        entities                        data/dtos
 ```
 
-- La capa `presentation` nunca importa directamente de `data`.
-- Los contratos de repositorio viven en `domain/repositories/`.
+- La capa `presentation` **nunca** importa directamente de `data`.
 
 ## Estructura de pages y components
 
-Dentro de una page, las piezas se organizan en dos carpetas con semántica distinta:
-
-### `pages/` — vistas con ruta propia
-
-- Cada subcarpeta es una **página hija** con su propia URL.
-- **Siempre** lleva un fichero `*.routes.ts` que define `path: ''` y carga el componente.
-- El padre la monta con `loadChildren` apuntando a ese fichero de rutas.
-
-```
-game-list/
-├── pages/
-│   ├── game-detail/
-│   │   ├── game-detail.component.ts
-│   │   └── game-detail.routes.ts     ← path: ''
-│   └── create-update-game/
-│       ├── create-and-update-game.component.ts
-│       └── create-and-update-game.routes.ts  ← path: ''
-└── game-list.routes.ts               ← monta con loadChildren
-```
-
-```typescript
-// game-list.routes.ts
-{
-  path: ':id',
-  loadChildren: () => import('./pages/game-detail/game-detail.routes').then((m) => m.gameDetailRoutes)
-}
-```
-
-### `components/` — piezas reutilizables sin ruta
-
-- No tienen `*.routes.ts`.
-- Se importan directamente en el template del componente padre.
-- Pueden usarse desde cualquier otra page o component.
-
-```
-game-list/
-└── components/
-    ├── game-card/
-    └── game-list-filters-sheet/
-```
+- **`pages/`** — vistas con ruta propia: cada subcarpeta lleva `*.routes.ts` con `path: ''`; el padre la monta con `loadChildren`.
+- **`components/`** — piezas reutilizables sin ruta: se importan directamente en el template del padre; no tienen `*.routes.ts`.
 
 ## Tests — mocks compartidos
 
-Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar un mock inline en un spec, comprobar si ya existe aquí.**
+Los mocks reutilizables viven en `src/testing/`. **Antes de declarar un mock inline, comprobar si ya existe aquí.**
 
 | Fichero                                    | Exporta              | Uso                                                                                                                  |
 | ------------------------------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -349,75 +119,27 @@ Los mocks reutilizables entre specs viven en `src/testing/`. **Antes de declarar
 
 Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
 
-> Los mocks de componentes de `lib/retro/` viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de servicios y helpers de la app siguen en `src/testing/`.
+> Los mocks de `lib/retro/` viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de la app siguen en `src/testing/`.
 
 ## Librería retro — sincronía de README
 
-Cada componente de `lib/retro/retro-[x]/` tiene un `README.md` que documenta su API pública (inputs, outputs, slots, tipos y ejemplo de uso).
-
-**Regla:** al modificar cualquier fichero `.component.ts`, `.types.ts` o `.component.html` de un componente retro, actualizar su `README.md` en el mismo commit.
-
-- Cambios que **sí** requieren actualizar el README: nuevo input/output, slot nuevo, tipo añadido o modificado, cambio de default, ejemplo de uso obsoleto.
-- Cambios que **no** requieren actualizar el README: refactors internos sin impacto en API pública, `*.spec.ts`, `*.scss`.
-
-El pre-commit hook (`scripts/check-retro-readme-sync.mjs`) bloquea commits que tocan ficheros de API sin incluir el README en el staged area. Si el cambio es trivial y no afecta a la API, se puede saltarse con `git commit --no-verify`.
+- Al modificar `.component.ts`, `.types.ts` o `.component.html` de un componente retro, actualizar su `README.md` en el mismo commit (ver skill `retro-readme`).
+- Requieren README: nuevo input/output, slot, tipo, cambio de default o ejemplo obsoleto. No requieren: refactors internos, `*.spec.ts`, `*.scss`.
+- El pre-commit hook `scripts/check-retro-readme-sync.mjs` bloquea commits que tocan ficheros de API sin el README en staged. `--no-verify` solo si el cambio no afecta a la API.
 
 ## Estructura de carpetas en lib/retro/
 
-En cada carpeta `lib/retro/retro-xxx/`, la raíz contiene únicamente:
+En `lib/retro/retro-xxx/`, la raíz contiene únicamente el component (`.ts/.html/.scss/.spec.ts`), `retro-xxx.types.ts` (si existe) y `README.md`. Todo lo demás en subcarpetas:
 
-- `retro-xxx.component.ts/.html/.scss/.spec.ts`
-- `retro-xxx.types.ts` (si existe)
-- `README.md`
-
-Todo lo demás va en subcarpetas:
-
-- Componentes/directivas hijos → `components/retro-xxx-yyy/` (carpeta propia por pieza)
-- Directivas auxiliares internas → `directive/`
-- Interfaces → `interfaces/`
-- Constantes → `constants/`
-- Tokens de inyección → `tokens/`
+- Componentes/directivas hijos → `components/retro-xxx-yyy/`
+- Directivas auxiliares → `directive/`
+- Interfaces → `interfaces/` | Constantes → `constants/` | Tokens → `tokens/`
 
 ## Pipeline de calidad
 
-La librería retro (`lib/retro/`) se valida **siempre antes** que la app (`src/`). Si la lib falla, los checks de la app no se ejecutan.
-
-### Scripts disponibles
-
-| Script                        | Qué hace                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `npm run lint:retro`          | ESLint solo sobre `lib/` (config propia en `lib/retro/eslint.config.js`) |
-| `npm run lint:app`            | ESLint solo sobre `src/` y ficheros de la raíz                           |
-| `npm run lint`                | `lint:retro && lint:app`                                                 |
-| `npm run test:retro`          | Tests solo de `lib/` (38 specs / 523 tests)                              |
-| `npm run test:app`            | Tests solo de `src/` (144 specs)                                         |
-| `npm test`                    | `test:retro && test:app`                                                 |
-| `npm run test:retro:coverage` | Cobertura de `lib/` — threshold 90% ✅                                   |
-| `npm run test:app:coverage`   | Cobertura de `src/` — threshold 80%                                      |
-| `npm run test:coverage`       | `test:retro:coverage && test:app:coverage`                               |
-| `npm run check:unused:retro`  | Knip solo sobre `lib/` (`knip.retro.config.ts`)                          |
-| `npm run check:unused:app`    | Knip solo sobre `src/` (`knip.config.ts`)                                |
-| `npm run check:unused`        | `check:unused:retro && check:unused:app`                                 |
-
-### Regla de imports
-
-`lib/retro/` **no puede importar nada de `src/`** ni usar los aliases `@/*` (que apuntan a `src/app`). Solo puede importar de `@retro/*`, `@retro/testing/*` o paquetes npm directamente. Esta regla está enforzada por ESLint (`no-restricted-imports` en `lib/retro/eslint.config.js`).
-
-Los mocks de componentes de la lib viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de la app siguen en `src/testing/`.
-
-### Threshold de cobertura de la lib
-
-El threshold para `retro-coverage` es del **90%** (statements y lines). La cobertura real actual: **95.35% statements, 97.09% lines** (techo máximo alcanzado — el resto son artefactos V8/signals documentados en `docs/TESTING-RETRO.md`). Ajustar el threshold en `angular.json` → `configurations.retro-coverage.coverageThresholds`.
-
-### Arquitectura de la lib
-
-`lib/retro/` se mantiene como **carpeta con configs propias**, no como proyecto Angular formal (`ng-packagr`). Esta decisión es intencional: la lib es interna y se consume vía alias `@retro/*` desde la app. Formalizarla como proyecto Angular (`ng generate library`) solo tendría sentido si se publicara a npm o se consumiera desde otros repositorios.
-
-### CI
-
-El workflow `.github/workflows/ci.yml` tiene dos jobs secuenciales:
-
-- **`retro`**: lint + cobertura de la lib (no necesita secrets ni `environment.ts`)
-- **`app`** (`needs: retro`): build + lint + cobertura de la app (con secrets de Supabase/RAWG/Sentry)
-
-Si el job `retro` falla, el job `app` no se ejecuta.
+- `lib/retro/` se valida **siempre antes** que `src/`; si la lib falla los checks de la app no se ejecutan.
+- Scripts con sufijo `:retro`/`:app` para lint, test, coverage y check:unused — detalle completo en skill `qa`.
+- Thresholds de cobertura: lib **90%** (`angular.json` → `retro-coverage.coverageThresholds`), app **80%**.
+- `lib/retro/` **no puede importar nada de `src/`** ni usar aliases `@/*`; solo `@retro/*`, `@retro/testing/*` o paquetes npm — enforzado por ESLint (`no-restricted-imports` en `lib/retro/eslint.config.js`).
+- La lib es **carpeta con configs propias**, no proyecto `ng-packagr` (intencional; se formalizaría solo si se publicara a npm).
+- CI: job `retro` (lint + cobertura) → job `app` (`needs: retro`; build + lint + cobertura con secrets Supabase/RAWG/Sentry).

@@ -1,3 +1,8 @@
+---
+description: "Improves test coverage to the maximum achievable level for the selected scope (retro or app), respecting documented exclusions and updating the corresponding TESTING.md. Use when the user wants to increase test coverage or fix coverage gaps ('mejora la cobertura', 'sube la cobertura de tests', 'aumenta el coverage')."
+argument-hint: '[retro|app]'
+---
+
 Mejora la cobertura de tests hasta el máximo alcanzable, respetando las exclusiones documentadas en el TESTING.md del ámbito seleccionado.
 
 El proyecto tiene dos ámbitos independientes:

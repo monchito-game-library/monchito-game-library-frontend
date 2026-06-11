@@ -1,3 +1,8 @@
+---
+description: "Generates a new component in lib/retro/ following the library's structural and coding conventions: standalone OnPush component, BEM styles, typed inputs/outputs, spec with 90% coverage target, and initial README. Use when the user wants to add a new retro component ('crea el componente retro', 'genera el componente en la lib', 'nuevo componente retro')."
+argument-hint: '[nombre]'
+---
+
 Genera un componente nuevo en `lib/retro/` siguiendo el patrón de la librería.
 
 Argumento: $ARGUMENTS — nombre del componente sin prefijo `retro-` en kebab-case (ej: `badge`, `progress-bar`, `tooltip`). El componente final se llamará `retro-<nombre>`.

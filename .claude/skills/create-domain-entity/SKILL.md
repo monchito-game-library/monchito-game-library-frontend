@@ -1,3 +1,8 @@
+---
+description: "Generates all necessary artifacts for a new domain entity following the project architecture: model, DTO, mapper, repository contract, use-cases contract/implementation, DI providers, and basic specs. Use when the user wants to add a new entity to the domain layer ('crea la entidad', 'genera los artefactos para', 'añade la entidad de dominio')."
+argument-hint: '[nombre-entidad] [campos...]'
+---
+
 Genera todos los artefactos necesarios para una nueva entidad de dominio siguiendo la arquitectura del proyecto.
 
 Argumento: $ARGUMENTS — nombre de la entidad en kebab-case (ej: `game-review`) y opcionalmente sus campos (ej: `game-review rating:number comment:string?`).

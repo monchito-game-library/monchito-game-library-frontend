@@ -1,6 +1,11 @@
+---
+description: "Analyzes the current state of the project and proposes the next task to tackle, reading BUGS.md first (pending bugs take priority) and then ROADMAP.md. Use when the user wants to know what to work on next ('qué hago ahora', 'siguiente tarea', 'qué es lo próximo')."
+---
+
 Analiza el estado del proyecto y propón la siguiente tarea a abordar.
 
 Pasos:
+
 1. Lee `docs/BUGS.md`. Si hay bugs pendientes (no marcados como resueltos), listarlos por prioridad.
 2. Si no hay bugs pendientes, lee `docs/ROADMAP.md` e identifica la siguiente mejora pendiente según prioridad.
 3. Propón la tarea más prioritaria con:

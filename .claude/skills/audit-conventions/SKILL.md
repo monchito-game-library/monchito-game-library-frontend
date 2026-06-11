@@ -1,3 +1,8 @@
+---
+description: "Audits the project for convention violations that ESLint does not automatically detect, producing a natural-language report by category. Use when the user suspects non-lint-detectable issues or after running /qa ('audita las convenciones', 'busca violaciones de convenciones', 'revisa el estilo del proyecto')."
+argument-hint: '[ruta]'
+---
+
 Audita el proyecto en busca de convenciones que ESLint no detecta automáticamente, produciendo un informe en lenguaje natural. Complementa el pipeline de lint, no lo sustituye: ejecuta `/qa` primero y usa este command solo si sospechas violaciones que el lint no captura.
 
 Argumento opcional: $ARGUMENTS — ruta a analizar. Por defecto analiza `src/app` y `lib/retro/` con las reglas que apliquen a cada ámbito.
