@@ -163,38 +163,21 @@
 
     <p class="settings__section-subtitle">{{ 'settings.appearance.theme' | transloco }}</p>
 
-    <div class="settings__row">
-      <span class="settings__row-label">
-        <retro-icon [name]="isDark() ? 'light_mode' : 'dark_mode'" />
-        {{
-          isDark()
-            ? ('settings.appearance.switchToLight' | transloco)
-            : ('settings.appearance.switchToDark' | transloco)
-        }}
-      </span>
-      <retro-checkbox [checked]="isDark()" (changed)="toggleTheme()" />
-    </div>
+    <retro-segmented
+      [options]="themeOptions"
+      [value]="isDark() ? 'dark' : 'light'"
+      ariaLabel="Tema"
+      (changed)="onThemeChange($event)" />
   </retro-card>
 
   <!-- Section: Language -->
   <retro-card class="settings__card">
     <h2 class="settings__card-title">{{ 'settings.language.title' | transloco }}</h2>
-    <div class="settings__row">
-      <span class="settings__row-label">
-        <retro-icon name="language" />
-        {{ 'settings.language.interfaceLabel' | transloco }}
-      </span>
-      <div class="settings__lang-toggle">
-        @for (lang of availableLanguages; track lang.code) {
-          <button
-            class="settings__lang-btn"
-            [class.settings__lang-btn--active]="selectedLangControl.value === lang.code"
-            (click)="selectedLangControl.setValue(lang.code)">
-            {{ lang.code.toUpperCase() }}
-          </button>
-        }
-      </div>
-    </div>
+    <retro-segmented
+      [options]="languageOptions"
+      [value]="selectedLangControl.value"
+      ariaLabel="Idioma"
+      (changed)="onLanguageChange($event)" />
   </retro-card>
 
   <!-- Section: Session -->

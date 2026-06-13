@@ -40,7 +40,10 @@ import { AvailableLanguageInterface } from '@/interfaces/available-language.inte
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
 import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroSegmentedComponent } from '@retro/public-api';
+import { RetroSegmentedOption } from '@retro/public-api';
 import { ThemeType } from '@/types/theme.type';
+import { LanguageType } from '@/types/language.type';
 
 @Component({
   selector: 'app-settings',
@@ -56,6 +59,7 @@ import { ThemeType } from '@/types/theme.type';
     RetroCheckboxComponent,
     RetroIconComponent,
     RetroInputComponent,
+    RetroSegmentedComponent,
     RetroSkeletonComponent,
     RetroSpinnerComponent,
     RetroTooltipDirective,
@@ -109,6 +113,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   /** Array of 12 undefined elements used to render the cover grid skeletons. */
   readonly skeletonThumbs: undefined[] = Array(12);
+
+  /** Options for the theme segmented control (light / dark). */
+  readonly themeOptions: RetroSegmentedOption<'light' | 'dark'>[] = [
+    { value: 'light', label: 'Light', icon: 'light_mode' },
+    { value: 'dark', label: 'Dark', icon: 'dark_mode' }
+  ];
+
+  /** Options for the language segmented control, derived from availableLanguages. */
+  readonly languageOptions: RetroSegmentedOption<LanguageType>[] = this.availableLanguages.map(
+    (lang: { code: LanguageType; labelKey: string }): RetroSegmentedOption<LanguageType> => ({
+      value: lang.code,
+      label: lang.code.toUpperCase()
+    })
+  );
 
   /** Whether the display-name edit mode is active. */
   readonly editingName: WritableSignal<boolean> = signal(false);
@@ -172,10 +190,31 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Toggles between dark and light theme and persists the preference in Supabase.
+   * Sets the active theme by value and persists the preference in Supabase.
+   * Only applies the change if it differs from the current state.
+   *
+   * @param {'light' | 'dark'} value - The selected theme value
    */
-  toggleTheme(): void {
-    this._themeService.toggleTheme();
+  onThemeChange(value: 'light' | 'dark'): void {
+    const currentlyDark: boolean = this.isDark();
+    if (value === 'dark' && !currentlyDark) {
+      this._themeService.setDarkTheme();
+      this._savePreferences();
+    } else if (value === 'light' && currentlyDark) {
+      this._themeService.setLightTheme();
+      this._savePreferences();
+    }
+  }
+
+  /**
+   * Sets the active language by value and persists the preference in Supabase.
+   * Replicates the behaviour of the selectedLangControl valueChanges subscription.
+   *
+   * @param {LanguageType} value - The selected language code
+   */
+  onLanguageChange(value: LanguageType): void {
+    if (!value) return;
+    this._transloco.setActiveLang(value);
     this._savePreferences();
   }
 

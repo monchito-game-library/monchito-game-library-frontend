@@ -426,34 +426,12 @@
   }
 }
 
-.settings__lang-toggle {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.settings__lang-btn {
-  padding: 5px 1rem;
-  border-radius: 0;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-mid);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  cursor: pointer;
-  line-height: 1.4;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast);
-
-  &--active {
-    background: var(--primary);
-    color: #ffffff;
-    border-color: var(--primary);
+@keyframes banner-fade-in {
+  from {
+    opacity: 0;
   }
-
-  &:not(.settings__lang-btn--active):hover {
-    background: var(--bg-elev);
+  to {
+    opacity: 1;
   }
 }
 
