@@ -4,6 +4,7 @@ const config: KnipConfig = {
   entry: ['lib/retro/public-api.ts'],
   project: ['lib/**/*.ts'],
   ignoreExportsUsedInFile: true,
+  angular: false,
   // Packages used by the app (src/) but not by the lib — suppressed here because
   // knip always reads package.json even when project is restricted to lib/.
   ignoreDependencies: [
