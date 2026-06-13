@@ -75,7 +75,7 @@ Un gestor personal de colección de videojuegos construido con Angular 21. Gesti
 
 El proyecto incluye una librería de componentes propia en `lib/retro/` — 26 componentes Angular totalmente tipados, OnPush, con estilos SCSS BEM, diseñados para el estilo retro de la app:
 
-`retro-button` · `retro-card` · `retro-chip` · `retro-datepicker` · `retro-dialog` · `retro-icon-button` · `retro-input` · `retro-label` · `retro-list` · `retro-loader` · `retro-menu` · `retro-navbar` · `retro-overlay` · `retro-pagination` · `retro-placeholder` · `retro-radio` · `retro-range` · `retro-scrollbar` · `retro-search` · `retro-select` · `retro-side-panel` · `retro-snackbar` · `retro-tabs` · `retro-tooltip` · `retro-upload`
+`retro-button` · `retro-icon` · `retro-card` · `retro-list` · `retro-list-item` · `retro-chip` · `retro-data-row` · `retro-section-header` · `retro-command-bar` · `retro-empty-state` · `retro-icon-button` · `retro-spinner` · `retro-skeleton` · `retro-checkbox` · `retro-snackbar-host` · `retro-input` · `retro-textarea` · `retro-select` · `retro-option` · `retro-search` · `retro-datepicker` · `retro-menu` · `retro-menu-item` · `retro-tabs` · `retro-tab` · `retro-segmented`
 
 La librería tiene su propia configuración ESLint, `public-api.ts` y umbral de cobertura del 90%. No puede importar nada de `src/`.
 
@@ -129,10 +129,13 @@ export const environment = {
     anonKey: 'YOUR_SUPABASE_ANON_KEY'
   },
   rawg: {
+    apiUrl: 'https://api.rawg.io/api',
     apiKey: 'YOUR_RAWG_API_KEY'
   },
   sentry: {
-    dsn: 'YOUR_SENTRY_DSN'
+    dsn: '',
+    enabled: false,
+    release: ''
   }
 };
 ```

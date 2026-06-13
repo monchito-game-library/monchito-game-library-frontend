@@ -75,7 +75,7 @@ A personal video game collection manager built with Angular 21. Track your games
 
 The project ships an in-house component library at `lib/retro/` — 26 fully-typed, OnPush Angular components with SCSS BEM styles, designed to match the app's retro aesthetic:
 
-`retro-button` · `retro-card` · `retro-chip` · `retro-datepicker` · `retro-dialog` · `retro-icon-button` · `retro-input` · `retro-label` · `retro-list` · `retro-loader` · `retro-menu` · `retro-navbar` · `retro-overlay` · `retro-pagination` · `retro-placeholder` · `retro-radio` · `retro-range` · `retro-scrollbar` · `retro-search` · `retro-select` · `retro-side-panel` · `retro-snackbar` · `retro-tabs` · `retro-tooltip` · `retro-upload`
+`retro-button` · `retro-icon` · `retro-card` · `retro-list` · `retro-list-item` · `retro-chip` · `retro-data-row` · `retro-section-header` · `retro-command-bar` · `retro-empty-state` · `retro-icon-button` · `retro-spinner` · `retro-skeleton` · `retro-checkbox` · `retro-snackbar-host` · `retro-input` · `retro-textarea` · `retro-select` · `retro-option` · `retro-search` · `retro-datepicker` · `retro-menu` · `retro-menu-item` · `retro-tabs` · `retro-tab` · `retro-segmented`
 
 The library has its own ESLint config, `public-api.ts`, and 90% test-coverage threshold. It cannot import anything from `src/`.
 
@@ -129,10 +129,13 @@ export const environment = {
     anonKey: 'YOUR_SUPABASE_ANON_KEY'
   },
   rawg: {
+    apiUrl: 'https://api.rawg.io/api',
     apiKey: 'YOUR_RAWG_API_KEY'
   },
   sentry: {
-    dsn: 'YOUR_SENTRY_DSN'
+    dsn: '',
+    enabled: false,
+    release: ''
   }
 };
 ```
