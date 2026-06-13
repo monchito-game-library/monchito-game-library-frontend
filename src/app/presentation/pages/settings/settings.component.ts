@@ -38,7 +38,6 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
-import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroSegmentedComponent, RetroSegmentedOption } from '@retro/public-api';
 import { ThemeType } from '@/types/theme.type';
@@ -55,7 +54,6 @@ import { LanguageType } from '@/types/language.type';
     FormsModule,
     RetroButtonComponent,
     RetroCardComponent,
-    RetroCheckboxComponent,
     RetroIconComponent,
     RetroInputComponent,
     RetroSegmentedComponent,
@@ -192,9 +190,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * Sets the active theme by value and persists the preference in Supabase.
    * Only applies the change if it differs from the current state.
    *
-   * @param {'light' | 'dark'} value - The selected theme value
+   * @param {ThemeType} value - The selected theme value
    */
-  onThemeChange(value: 'light' | 'dark'): void {
+  onThemeChange(value: ThemeType): void {
     const currentlyDark: boolean = this.isDark();
     if (value === 'dark' && !currentlyDark) {
       this._themeService.setTheme('dark');

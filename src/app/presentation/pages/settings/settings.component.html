@@ -167,7 +167,7 @@
       [options]="themeOptions"
       [value]="isDark() ? 'dark' : 'light'"
       ariaLabel="Tema"
-      (changed)="onThemeChange($event)" />
+      (changed)="onThemeChange($any($event))" />
   </retro-card>
 
   <!-- Section: Language -->
