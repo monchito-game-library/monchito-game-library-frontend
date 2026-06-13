@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { Subject } from 'rxjs';
+import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 import { RetroTabsComponent } from './retro-tabs.component';
 import { RetroTabComponent } from './components/retro-tab/retro-tab.component';
 import { RetroTabItem } from './interfaces/retro-tab-item.interface';
@@ -300,5 +301,95 @@ describe('RetroTabsComponent', () => {
     tabsComp.select(10);
     fixture.detectChanges();
     expect(tabsComp.activeIndex()).toBe(1);
+  });
+});
+
+describe('router mode — NavigationEnd subscription', () => {
+  const ITEMS: RetroTabItem[] = [
+    { path: '/tab-a', label: 'Tab A' },
+    { path: '/tab-b', label: 'Tab B' }
+  ];
+
+  let fixture: ComponentFixture<RetroTabsComponent>;
+  let routerEvents$: Subject<unknown>;
+
+  beforeEach(async () => {
+    vi.useFakeTimers();
+    routerEvents$ = new Subject<unknown>();
+
+    await TestBed.configureTestingModule({
+      imports: [
+        RetroTabsComponent,
+        RouterLink,
+        RouterLinkActive,
+        TranslocoTestingModule.forRoot({
+          langs: { en: {} },
+          translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
+        })
+      ],
+      providers: [provideRouter([])]
+    }).compileComponents();
+
+    // Parchear events en el Router real antes de crear el componente
+    const router = TestBed.inject(Router);
+    Object.defineProperty(router, 'events', { get: () => routerEvents$.asObservable(), configurable: true });
+
+    fixture = TestBed.createComponent(RetroTabsComponent);
+    fixture.componentRef.setInput('items', ITEMS);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('llama a _updateIndicator tras un NavigationEnd en modo router', () => {
+    const comp = fixture.componentInstance;
+    const spy = vi.spyOn(comp as unknown as { _updateIndicator: () => void }, '_updateIndicator');
+
+    routerEvents$.next(new NavigationEnd(1, '/tab-a', '/tab-a'));
+
+    // Antes del setTimeout(0) el spy aún no debe haberse llamado
+    expect(spy).not.toHaveBeenCalled();
+
+    vi.runAllTimers();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('no llama a _updateIndicator ante eventos que no son NavigationEnd', () => {
+    const comp = fixture.componentInstance;
+    const spy = vi.spyOn(comp as unknown as { _updateIndicator: () => void }, '_updateIndicator');
+
+    // Emitir un evento genérico que no sea NavigationEnd
+    routerEvents$.next({ type: 'RoutesRecognized' });
+    vi.runAllTimers();
+
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('no llama a _updateIndicator cuando isRouterMode es false (sin items)', () => {
+    // Quitar los items para desactivar modo router
+    fixture.componentRef.setInput('items', []);
+    fixture.detectChanges();
+
+    const comp = fixture.componentInstance;
+    const spy = vi.spyOn(comp as unknown as { _updateIndicator: () => void }, '_updateIndicator');
+
+    routerEvents$.next(new NavigationEnd(2, '/tab-b', '/tab-b'));
+    vi.runAllTimers();
+
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('llama a _updateIndicator múltiples veces ante múltiples NavigationEnd', () => {
+    const comp = fixture.componentInstance;
+    const spy = vi.spyOn(comp as unknown as { _updateIndicator: () => void }, '_updateIndicator');
+
+    routerEvents$.next(new NavigationEnd(1, '/tab-a', '/tab-a'));
+    routerEvents$.next(new NavigationEnd(2, '/tab-b', '/tab-b'));
+    vi.runAllTimers();
+
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
