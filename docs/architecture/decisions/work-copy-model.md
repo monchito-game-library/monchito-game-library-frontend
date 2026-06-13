@@ -8,19 +8,20 @@
 
 El refactor está completo. Resumen de lo entregado:
 
-| Fase | Patches SQL | Resultado |
-|---|---|---|
-| 1 — Schema base | `003-work-copy-schema.sql` | Tabla `user_works`, `work_id` en `user_games`, backfill, trigger puente. |
-| 2 — Repo + mappers + vista | `004-vista-obra-copia.sql` | `user_games_full` hace JOIN con `user_works`. Mappers leen status/rating/favorite/platform desde la obra. Repo escribe campos de obra en `user_works`. |
-| · Fix imagen | `005-fix-coalesce-image.sql` | `COALESCE(custom_image_url, gc.image_url)` restaurado en la vista. |
-| 3 — Domain layer | (sólo TS) | `WorkRepositoryContract`, `SupabaseWorkRepository`, `WorkUseCases`. |
-| 4 — Cleanup | `006-cleanup-obsolete-columns.sql` | Drop trigger puente, drop columnas obsoletas y huérfanas, nuevo unique index `(work_id, format, edition)`, reescritura de la vista. Trigger AFTER DELETE para limpiar `user_works` huérfanos. |
-| · Refinamiento | `007-split-same-format-copies.sql` | Identidad de obra refinada: agrupa copias del mismo `(user, catalog, platform)` **solo si tienen formatos distintos** (físico + digital). Dos físicas o dos digitales son obras distintas. Drop del unique `user_works_unique_per_user_catalog_platform`. |
-| · Cleanup retroactivo | `008-cleanup-orphan-works.sql` | Limpia `user_works` huérfanos creados antes de existir el trigger AFTER DELETE. |
+| Fase                       | Patches SQL                        | Resultado                                                                                                                                                                                                                                                 |
+| -------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 — Schema base            | `003-work-copy-schema.sql`         | Tabla `user_works`, `work_id` en `user_games`, backfill, trigger puente.                                                                                                                                                                                  |
+| 2 — Repo + mappers + vista | `004-vista-obra-copia.sql`         | `user_games_full` hace JOIN con `user_works`. Mappers leen status/rating/favorite/platform desde la obra. Repo escribe campos de obra en `user_works`.                                                                                                    |
+| · Fix imagen               | `005-fix-coalesce-image.sql`       | `COALESCE(custom_image_url, gc.image_url)` restaurado en la vista.                                                                                                                                                                                        |
+| 3 — Domain layer           | (sólo TS)                          | `WorkRepositoryContract`, `SupabaseWorkRepository`, `WorkUseCases`.                                                                                                                                                                                       |
+| 4 — Cleanup                | `006-cleanup-obsolete-columns.sql` | Drop trigger puente, drop columnas obsoletas y huérfanas, nuevo unique index `(work_id, format, edition)`, reescritura de la vista. Trigger AFTER DELETE para limpiar `user_works` huérfanos.                                                             |
+| · Refinamiento             | `007-split-same-format-copies.sql` | Identidad de obra refinada: agrupa copias del mismo `(user, catalog, platform)` **solo si tienen formatos distintos** (físico + digital). Dos físicas o dos digitales son obras distintas. Drop del unique `user_works_unique_per_user_catalog_platform`. |
+| · Cleanup retroactivo      | `008-cleanup-orphan-works.sql`     | Limpia `user_works` huérfanos creados antes de existir el trigger AFTER DELETE.                                                                                                                                                                           |
 
 **Fase de UX entregada en la misma rama** (post-B1 según ROADMAP): A4 (action menu + sale banner), C2 (tabs físico/digital + "Mi opinión" arriba), C3 (CTA "Añadir otra copia"), C1 simplificado (listado agrupado por obra con regla físico > digital, sin badge ni toggle).
 
 **Cambios respecto al plan original** que conviene tener en cuenta:
+
 - §2 / §3.1 — la **identidad de obra** ya NO es estrictamente única por `(user_id, game_catalog_id, platform)`. Se permite que coexistan varios `user_works` con la misma terna si tienen copias de formatos incompatibles entre sí (caso real: dos físicas con distintas ediciones de Castlevania PS3 → dos obras separadas, no una compartida). El matching se hace en el repositorio (`_getOrCreateUserWork`).
 - §3.4 — sí se dropearon los huérfanos (`personal_review`, `tags_personal`, `started_date`, `completed_date`, `purchased_date`) en patch 006.
 - §6 — se acordó "una sola PR al final" pero la rama acumula cada fase como commits separados (más fácil de revisar). PR único al cerrar.
@@ -42,21 +43,21 @@ Consecuencias visibles:
 
 Introducimos el concepto de **obra (work)**. Una obra agrupa 1..N **copias** que el usuario posee del mismo juego canónico **en la misma plataforma**. Tener PS4 físico + PS4 digital = dos copias de la misma obra. Tener PS4 + Xbox = **dos obras distintas** (los logros y el platino están ligados a la plataforma).
 
-| Campo | Vive en | Razón |
-|---|---|---|
-| Status (backlog / playing / completed / platinum / abandoned) | **work** | Solo puede haber un platino por obra (juego + plataforma) |
-| Personal rating | **work** | Tu opinión es de la obra, no del soporte |
-| Favorito | **work** | Es una característica de la obra, no de la copia |
-| Started / completed date | **work** | Marcas de progreso ligadas al estado |
-| **Plataforma** | **work** | Identifica la obra: PS4 ≠ Xbox; los logros y el platino dependen de ella |
-| Formato (digital / physical) | copy | Es lo que distingue copias dentro de una obra: PS4 disco vs PS4 digital |
-| Edición | copy | "GOTY", "Deluxe"… puede variar entre copias |
-| Precio, tienda, condición, fecha de compra | copy | Cada copia tiene su propia compra |
-| Préstamo activo | copy *(solo física)* | |
-| `for_sale` / `sale_price` / `sold_at` / `sold_price_final` | copy | Vendes una copia, no la obra |
-| `cover_position` | copy *(ya está así)* | Cada copia mantiene su punto focal |
-| `custom_image_url` | copy *(ya está así)* | Bug RAWG ya resuelto previamente |
-| `description` (notas) | copy | Decisión: una sola descripción por copia. Las dos copias del mismo work pueden tener notas distintas si hace falta ("esta copia tiene la caja dañada"). |
+| Campo                                                         | Vive en              | Razón                                                                                                                                                   |
+| ------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status (backlog / playing / completed / platinum / abandoned) | **work**             | Solo puede haber un platino por obra (juego + plataforma)                                                                                               |
+| Personal rating                                               | **work**             | Tu opinión es de la obra, no del soporte                                                                                                                |
+| Favorito                                                      | **work**             | Es una característica de la obra, no de la copia                                                                                                        |
+| Started / completed date                                      | **work**             | Marcas de progreso ligadas al estado                                                                                                                    |
+| **Plataforma**                                                | **work**             | Identifica la obra: PS4 ≠ Xbox; los logros y el platino dependen de ella                                                                                |
+| Formato (digital / physical)                                  | copy                 | Es lo que distingue copias dentro de una obra: PS4 disco vs PS4 digital                                                                                 |
+| Edición                                                       | copy                 | "GOTY", "Deluxe"… puede variar entre copias                                                                                                             |
+| Precio, tienda, condición, fecha de compra                    | copy                 | Cada copia tiene su propia compra                                                                                                                       |
+| Préstamo activo                                               | copy _(solo física)_ |                                                                                                                                                         |
+| `for_sale` / `sale_price` / `sold_at` / `sold_price_final`    | copy                 | Vendes una copia, no la obra                                                                                                                            |
+| `cover_position`                                              | copy _(ya está así)_ | Cada copia mantiene su punto focal                                                                                                                      |
+| `custom_image_url`                                            | copy _(ya está así)_ | Bug RAWG ya resuelto previamente                                                                                                                        |
+| `description` (notas)                                         | copy                 | Decisión: una sola descripción por copia. Las dos copias del mismo work pueden tener notas distintas si hace falta ("esta copia tiene la caja dañada"). |
 
 **Identidad del work** (refinada, ver §10): se agrupan en una misma obra las copias que comparten `(user_id, game_catalog_id, platform)` **siempre que sean de formatos distintos** (una física + una digital). Dos copias del mismo formato (p.ej. dos físicas con distintas ediciones) viven en obras separadas y no comparten status/rating/favorito. La regla se aplica en el repositorio (`_getOrCreateUserWork`), no como constraint SQL: el unique index original sobre la terna `(user, catalog, platform)` se dropeó en el patch 007.
 
@@ -239,7 +240,7 @@ Vistas dependientes (`available_items`, `sold_items`) seguirán funcionando porq
 
 ```typescript
 export interface WorkModel {
-  id: string;                       // UUID de user_works
+  id: string; // UUID de user_works
   userId: string;
   gameCatalogId: string;
   platform: PlatformType;
@@ -283,6 +284,7 @@ Nuevo `UserWorkRowDTO` con los campos de la tabla. `UserGameRowDTO` pierde los c
 - En el **detalle** de la obra se ve el desglose completo: cada copia (físico y/o digital) con sus propios precios, tiendas, ediciones y datos de compra. Los campos de obra (status, rating, favorito, review, tags) son únicos y se muestran una sola vez.
 
 **Implicación técnica:**
+
 - El repositorio devuelve para el listado una proyección donde por cada `work_id` selecciona **una sola copia representativa**: prioridad `physical` > `digital`; en empate, la de menor `created_at`.
 - En SQL puede formalizarse con `DISTINCT ON (work_id) ... ORDER BY work_id, (format = 'physical') DESC, created_at ASC`. La cláusula `(format = 'physical') DESC` evalúa primero los `true` (físicos), después los `false` (digitales).
 - Esta proyección es **solo** para el listado/cards. El detalle, los formularios de edición y el flujo de venta operan sobre la copia individual; el detalle pide explícitamente todas las copias del work (§5, método nuevo `getCopiesByWork`).
@@ -314,10 +316,12 @@ Nuevo `UserWorkRowDTO` con los campos de la tabla. `UserGameRowDTO` pierde los c
 **Una sola PR con downtime corto** (decidido). Justificación: la base de usuarios es mínima (yo + Mónica) y mantener fases de coexistencia con vista paralela `user_games_full_v2` añade complejidad y deuda. Si tras el deploy algo no convence, el rollback es revertir el merge en master + restaurar el snapshot de Supabase.
 
 Orden de ejecución dentro del mismo PR:
+
 1. Patch SQL aplicado primero (`npm run db:apply`) — crea `user_works`, backfill, `work_id` NOT NULL, vista nueva, drop de columnas obsoletas.
 2. Backend ya devuelve la vista nueva → el frontend se actualiza en el mismo deploy con los nuevos modelos/mappers.
 
 Pre-condiciones del despliegue:
+
 - Snapshot manual de Supabase antes de aplicar el patch (Dashboard → Database → Backups → Create snapshot).
 - Confirmar 0 filas con `platform IS NULL` en `user_games` antes del backfill (ver §3.3 paso 1).
 
@@ -334,14 +338,14 @@ Cobertura objetivo: ≥ 95.5 % branches (estado actual). El nuevo mapper aporta 
 
 ## 8. Riesgos y mitigaciones
 
-| Riesgo | Mitigación |
-|---|---|
-| Backfill mal interpretado: copias de la misma obra con status distintos en el dato actual | El `DISTINCT ON` toma el de la copia más antigua. Aceptable: ya hoy el usuario solo edita una copia y olvida la otra. Tras el merge, queda una sola fuente de verdad y el "platino duplicado" es imposible. |
-| RLS de `user_works` mal configurada | Replicar literalmente las policies de `user_games`, cambiar nombre tabla. Smoke test en staging con dos usuarios. |
-| Tests de mappers/repos amplios que rompen en cascada | Refactorizar en pasos pequeños: tras cada layer, ejecutar `npm test` y arreglar fallos antes de continuar. |
-| Frontend deja de funcionar durante la migración | Fase 0 mantiene la vista vieja viva. El frontend sigue funcionando hasta que se hace cutover en Fase 1. |
-| Vista nueva con `JOIN INNER` falla si un user_games quedó sin work_id | El backfill `UPDATE user_games SET work_id=…` cubre todo lo existente. La fase final `ALTER COLUMN SET NOT NULL` impide nuevas filas sin work_id. |
-| Cover position: hoy se guarda en `game_catalog` (compartida entre copias del mismo juego, BUGS.md). | Aprovechar este PR para mover `cover_position` (y `custom_image_url` propuesto) a `user_games`. Cierra el bug latente. |
+| Riesgo                                                                                              | Mitigación                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Backfill mal interpretado: copias de la misma obra con status distintos en el dato actual           | El `DISTINCT ON` toma el de la copia más antigua. Aceptable: ya hoy el usuario solo edita una copia y olvida la otra. Tras el merge, queda una sola fuente de verdad y el "platino duplicado" es imposible. |
+| RLS de `user_works` mal configurada                                                                 | Replicar literalmente las policies de `user_games`, cambiar nombre tabla. Smoke test en staging con dos usuarios.                                                                                           |
+| Tests de mappers/repos amplios que rompen en cascada                                                | Refactorizar en pasos pequeños: tras cada layer, ejecutar `npm test` y arreglar fallos antes de continuar.                                                                                                  |
+| Frontend deja de funcionar durante la migración                                                     | Fase 0 mantiene la vista vieja viva. El frontend sigue funcionando hasta que se hace cutover en Fase 1.                                                                                                     |
+| Vista nueva con `JOIN INNER` falla si un user_games quedó sin work_id                               | El backfill `UPDATE user_games SET work_id=…` cubre todo lo existente. La fase final `ALTER COLUMN SET NOT NULL` impide nuevas filas sin work_id.                                                           |
+| Cover position: hoy se guarda en `game_catalog` (compartida entre copias del mismo juego, BUGS.md). | Aprovechar este PR para mover `cover_position` (y `custom_image_url` propuesto) a `user_games`. Cierra el bug latente.                                                                                      |
 
 ## 9. Estimación
 
@@ -356,11 +360,11 @@ Después: C1, C2, C3 (UI) en ramas separadas.
 
 ## 10. Decisiones tomadas
 
-| Decisión | Resultado |
-|---|---|
-| Migración de un solo PR vs fases con vista paralela | **Una sola PR**. Pocos usuarios, snapshot Supabase + revert si algo falla. |
-| `cover_position` y `custom_image_url` movidos a `user_games` (bug RAWG) | **Ya estaban**: el bug se cerró antes. No hay nada que tocar. |
-| `tags_personal` (obra o copia o drop) | **Drop**. Auditoría 2026-05-02: 0 filas con datos. Si se necesita en el futuro, se añade cuando haya UI para ello. |
-| `personal_review` (obra o drop) | **Drop**. Mismo motivo: 0 filas, sin UI. Solo `description` (en copia) sobrevive como notas. |
-| `started_date` / `completed_date` (obra o drop) | **Drop**. 0 filas. Si en el futuro se quiere "completed in 2024", se reañaden a `user_works`. |
-| `purchased_date` (copia o drop) | **Drop**. 0 filas. |
+| Decisión                                                                | Resultado                                                                                                          |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Migración de un solo PR vs fases con vista paralela                     | **Una sola PR**. Pocos usuarios, snapshot Supabase + revert si algo falla.                                         |
+| `cover_position` y `custom_image_url` movidos a `user_games` (bug RAWG) | **Ya estaban**: el bug se cerró antes. No hay nada que tocar.                                                      |
+| `tags_personal` (obra o copia o drop)                                   | **Drop**. Auditoría 2026-05-02: 0 filas con datos. Si se necesita en el futuro, se añade cuando haya UI para ello. |
+| `personal_review` (obra o drop)                                         | **Drop**. Mismo motivo: 0 filas, sin UI. Solo `description` (en copia) sobrevive como notas.                       |
+| `started_date` / `completed_date` (obra o drop)                         | **Drop**. 0 filas. Si en el futuro se quiere "completed in 2024", se reañaden a `user_works`.                      |
+| `purchased_date` (copia o drop)                                         | **Drop**. 0 filas.                                                                                                 |

@@ -15,12 +15,12 @@ Monitorización de errores en producción y uptime de la app.
 
 ### Configuración técnica
 
-| Fichero | Qué hace |
-|---|---|
-| `src/main.ts` | Llama a `Sentry.init()` con DSN, release y tracing si `environment.sentry.enabled` es `true` |
-| `src/app/app.config.ts` | Registra `ErrorHandler`, `TraceService` y `APP_INITIALIZER` condicionados al mismo flag |
-| `angular.json` | Source maps hidden en producción (`sourceMap: { scripts: true, hidden: true }`) |
-| `scripts/set-env.js` | Inyecta `SENTRY_DSN` y `VERCEL_GIT_COMMIT_SHA` (como `release`) durante el build de Vercel |
+| Fichero                 | Qué hace                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------- |
+| `src/main.ts`           | Llama a `Sentry.init()` con DSN, release y tracing si `environment.sentry.enabled` es `true` |
+| `src/app/app.config.ts` | Registra `ErrorHandler`, `TraceService` y `APP_INITIALIZER` condicionados al mismo flag      |
+| `angular.json`          | Source maps hidden en producción (`sourceMap: { scripts: true, hidden: true }`)              |
+| `scripts/set-env.js`    | Inyecta `SENTRY_DSN` y `VERCEL_GIT_COMMIT_SHA` (como `release`) durante el build de Vercel   |
 
 ### Dashboard
 
@@ -35,7 +35,7 @@ Monitorización de errores en producción y uptime de la app.
 Tras un deploy, abrir la app en producción y ejecutar en la consola del browser:
 
 ```js
-throw new Error("Sentry test");
+throw new Error('Sentry test');
 ```
 
 El error debe aparecer en Sentry → Issues en unos segundos.

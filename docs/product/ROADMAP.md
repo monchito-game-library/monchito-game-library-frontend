@@ -6,24 +6,24 @@
 
 ## Índice
 
-| Mejora | Prioridad | Estado |
-|---|---|---|
-| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño) | Muy alta | ✅ Completado |
-| [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage) | Alta | ⏳ Pendiente |
-| [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego) | Media | ⏳ Pendiente |
-| [Recomendaciones de juegos](#recomendaciones-de-juegos) | Media | ⏳ Pendiente |
-| [Sign-in con OAuth (Google, Discord, Twitch)](#sign-in-con-oauth-google-discord-twitch) | Media | ✅ Completado |
-| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats) | Baja | ⏳ Pendiente |
-| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg) | Baja | ⏳ Pendiente |
-| [Mejoras visuales de polish](#mejoras-visuales-de-polish) | Baja | 🔄 Parcial (8/10) |
-| [Plan de UI/UX 2026](#plan-de-uiux-2026) | Alta | 🔄 Parcial (5/10 + A5 descartada) |
-| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción) | Muy baja | ⏳ Pendiente |
-| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack) | Alta | ✅ Completado |
-| [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill) | Alta | ✅ Completado |
-| [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta | ✅ Completado |
-| [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos) | Alta | ✅ Completado |
-| [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos) | Alta | ✅ Completado |
-| [Eliminación de usuarios desde gestión owner](#eliminación-de-usuarios-desde-gestión-owner) | Alta | ✅ Completado |
+| Mejora                                                                                                 | Prioridad | Estado                            |
+| ------------------------------------------------------------------------------------------------------ | --------- | --------------------------------- |
+| [Identidad visual y sistema de diseño](#identidad-visual-y-sistema-de-diseño)                          | Muy alta  | ✅ Completado                     |
+| [Imágenes de consolas y mandos (Supabase Storage)](#imágenes-de-consolas-y-mandos-supabase-storage)    | Alta      | ⏳ Pendiente                      |
+| [Integración RAWG en detalle de juego](#integración-rawg-en-detalle-de-juego)                          | Media     | ⏳ Pendiente                      |
+| [Recomendaciones de juegos](#recomendaciones-de-juegos)                                                | Media     | ⏳ Pendiente                      |
+| [Sign-in con OAuth (Google, Discord, Twitch)](#sign-in-con-oauth-google-discord-twitch)                | Media     | ✅ Completado                     |
+| [Dashboard de estadísticas (`/stats`)](#dashboard-de-estadísticas-stats)                               | Baja      | ⏳ Pendiente                      |
+| [Sincronización automática de metadatos RAWG](#sincronización-automática-de-metadatos-rawg)            | Baja      | ⏳ Pendiente                      |
+| [Mejoras visuales de polish](#mejoras-visuales-de-polish)                                              | Baja      | 🔄 Parcial (8/10)                 |
+| [Plan de UI/UX 2026](#plan-de-uiux-2026)                                                               | Alta      | 🔄 Parcial (5/10 + A5 descartada) |
+| [Perfiles públicos, amigos e interacción](#perfiles-públicos-amigos-e-interacción)                     | Muy baja  | ⏳ Pendiente                      |
+| [Observabilidad — Sentry + Better Stack](#observabilidad--sentry--better-stack)                        | Alta      | ✅ Completado                     |
+| [Mejora de diseño con ui-ux-pro-max-skill](#mejora-de-diseño-con-ui-ux-pro-max-skill)                  | Alta      | ✅ Completado                     |
+| [Catálogo de hardware (marcas, modelos y ediciones)](#catálogo-de-hardware-marcas-modelos-y-ediciones) | Alta      | ✅ Completado                     |
+| [Hub de colección con categorías](#hub-de-colección-con-categorías-consolas-y-mandos)                  | Alta      | ✅ Completado                     |
+| [Formularios y gestión de consolas y mandos](#formularios-y-gestión-de-consolas-y-mandos)              | Alta      | ✅ Completado                     |
+| [Eliminación de usuarios desde gestión owner](#eliminación-de-usuarios-desde-gestión-owner)            | Alta      | ✅ Completado                     |
 
 ---
 
@@ -48,11 +48,11 @@ Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión
 
 **Opciones (de menor a mayor cambio):**
 
-| Opción | Material token | Descripción |
-|---|---|---|
-| A (recomendada) | `mat.$violet-palette` | Una línea en `styles.scss`, cambio global instantáneo |
-| B | `mat.$deep-purple-palette` | Más oscuro y saturado, también válido |
-| C | Paleta custom gaming | `#7C3AED` primary, `#F43F5E` CTA, `#0F0F23` bg — fuera de Material tokens |
+| Opción          | Material token             | Descripción                                                               |
+| --------------- | -------------------------- | ------------------------------------------------------------------------- |
+| A (recomendada) | `mat.$violet-palette`      | Una línea en `styles.scss`, cambio global instantáneo                     |
+| B               | `mat.$deep-purple-palette` | Más oscuro y saturado, también válido                                     |
+| C               | Paleta custom gaming       | `#7C3AED` primary, `#F43F5E` CTA, `#0F0F23` bg — fuera de Material tokens |
 
 **Fichero afectado:** `src/styles.scss` (una línea)
 
@@ -70,12 +70,12 @@ Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión
 
 ```scss
 :root {
-  --text-xs:   0.75rem;   // Labels, badges, chips
-  --text-sm:   0.875rem;  // Texto secundario, metadata
-  --text-base: 1rem;      // Texto principal
-  --text-lg:   1.125rem;  // Subtítulos de sección
-  --text-xl:   1.375rem;  // Títulos de página
-  --text-2xl:  1.75rem;   // Solo casos destacados
+  --text-xs: 0.75rem; // Labels, badges, chips
+  --text-sm: 0.875rem; // Texto secundario, metadata
+  --text-base: 1rem; // Texto principal
+  --text-lg: 1.125rem; // Subtítulos de sección
+  --text-xl: 1.375rem; // Títulos de página
+  --text-2xl: 1.75rem; // Solo casos destacados
 }
 ```
 
@@ -91,10 +91,10 @@ Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión
 
 ```scss
 :root {
-  --radius-sm:   6px;     // Chips, badges pequeños
-  --radius-md:   12px;    // Cards, dialogs, inputs
-  --radius-lg:   20px;    // Bottom sheets, modales grandes
-  --radius-full: 9999px;  // Avatares, FABs, toggles
+  --radius-sm: 6px; // Chips, badges pequeños
+  --radius-md: 12px; // Cards, dialogs, inputs
+  --radius-lg: 20px; // Bottom sheets, modales grandes
+  --radius-full: 9999px; // Avatares, FABs, toggles
 }
 ```
 
@@ -110,14 +110,14 @@ Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión
 
 ```scss
 :root {
-  --z-base:    0;
-  --z-card:    10;
+  --z-base: 0;
+  --z-card: 10;
   --z-dropdown: 20;
-  --z-sticky:  30;
+  --z-sticky: 30;
   --z-overlay: 40;
-  --z-modal:   50;
-  --z-toast:   60;
-  --z-nav:     70;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-nav: 70;
 }
 ```
 
@@ -131,17 +131,17 @@ Audit completo de UI/UX realizado con el skill `ui-ux-pro-max` sobre la versión
 
 **Lista completa identificada:**
 
-| Color | Hex | Ubicación | Sustitución sugerida |
-|---|---|---|---|
-| Platino | `#ffd700` | `game-card` | `--color-platinum: #ffd700` (custom property) |
-| Rating stars | `#ffc107` | `game-card`, `wishlist-card` | `--color-rating: #ffc107` |
-| Favoritos | `#ff6b6b`, `#ee5a6f` | `game-card` | `--color-favorite-start/end` |
-| Digital copy | `#002d6e`, `#0050c8` | `game-card` | `--color-digital-start/end` |
-| Préstamo | `#1565c0`, `#0d47a1` | `game-card` | `--color-loan-start/end` |
-| Pedido recibido | `#e8f5e9`, `#2e7d32` | `orders` | `--color-status-received-bg/text` |
-| Pedido enviado | `#fff8e1`, `#f57f17` | `orders` | `--color-status-shipped-bg/text` |
-| Pedido ordenado | `#e3f2fd`, `#1565c0` | `orders` | `--color-status-ordered-bg/text` |
-| Metacritic | `#6ab04c` | game detail | `--color-metacritic` |
+| Color           | Hex                  | Ubicación                    | Sustitución sugerida                          |
+| --------------- | -------------------- | ---------------------------- | --------------------------------------------- |
+| Platino         | `#ffd700`            | `game-card`                  | `--color-platinum: #ffd700` (custom property) |
+| Rating stars    | `#ffc107`            | `game-card`, `wishlist-card` | `--color-rating: #ffc107`                     |
+| Favoritos       | `#ff6b6b`, `#ee5a6f` | `game-card`                  | `--color-favorite-start/end`                  |
+| Digital copy    | `#002d6e`, `#0050c8` | `game-card`                  | `--color-digital-start/end`                   |
+| Préstamo        | `#1565c0`, `#0d47a1` | `game-card`                  | `--color-loan-start/end`                      |
+| Pedido recibido | `#e8f5e9`, `#2e7d32` | `orders`                     | `--color-status-received-bg/text`             |
+| Pedido enviado  | `#fff8e1`, `#f57f17` | `orders`                     | `--color-status-shipped-bg/text`              |
+| Pedido ordenado | `#e3f2fd`, `#1565c0` | `orders`                     | `--color-status-ordered-bg/text`              |
+| Metacritic      | `#6ab04c`            | game detail                  | `--color-metacritic`                          |
 
 **Fichero destino:** definir todas en `styles.scss` bajo un bloque `:root { /* Colores semánticos */ }`.
 
@@ -160,13 +160,13 @@ Evaluar sustituir `Outfit` solo en headings (`h1`–`h3`, títulos de página) p
 
 #### Plan de implementación
 
-| Fase | Ítems | Complejidad |
-|---|---|---|
-| 1 | Paleta de color (ítem 1) | Pequeña — 1 línea |
-| 2 | Tokens z-index + border-radius (ítems 3 y 4) | Pequeña — definir en styles.scss + búsqueda global |
-| 3 | Escala tipográfica (ítem 2) | Media — sustitución en todos los SCSS |
-| 4 | Colores hardcodeados (ítem 5) | Media — búsqueda global + definir custom properties |
-| 5 | Tipografía headings (ítem 6) | Pequeña — solo si fases anteriores quedan bien |
+| Fase | Ítems                                        | Complejidad                                         |
+| ---- | -------------------------------------------- | --------------------------------------------------- |
+| 1    | Paleta de color (ítem 1)                     | Pequeña — 1 línea                                   |
+| 2    | Tokens z-index + border-radius (ítems 3 y 4) | Pequeña — definir en styles.scss + búsqueda global  |
+| 3    | Escala tipográfica (ítem 2)                  | Media — sustitución en todos los SCSS               |
+| 4    | Colores hardcodeados (ítem 5)                | Media — búsqueda global + definir custom properties |
+| 5    | Tipografía headings (ítem 6)                 | Pequeña — solo si fases anteriores quedan bien      |
 
 ---
 
@@ -196,110 +196,110 @@ hardware_editions        → id, model_id, name                    (Final Fantas
 
 ##### Campos de `hardware_console_specs`
 
-| Campo | Tipo | Descripción |
-|---|---|---|
-| `launch_year` | `INTEGER` | Año de lanzamiento |
-| `discontinued_year` | `INTEGER` nullable | Año de descontinuación. `null` = aún en venta |
-| `category` | `TEXT` | `'home'` \| `'portable'` \| `'hybrid'` |
-| `media` | `TEXT` | `'optical_disc'` \| `'digital'` \| `'cartridge'` \| `'hybrid'` \| `'built_in'` |
-| `video_resolution` | `TEXT` nullable | Resolución máxima de vídeo (texto libre: `'4K'`, `'1080p'`, `'480×272'`). `null` si no aplica |
+| Campo                | Tipo               | Descripción                                                                                                                                               |
+| -------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `launch_year`        | `INTEGER`          | Año de lanzamiento                                                                                                                                        |
+| `discontinued_year`  | `INTEGER` nullable | Año de descontinuación. `null` = aún en venta                                                                                                             |
+| `category`           | `TEXT`             | `'home'` \| `'portable'` \| `'hybrid'`                                                                                                                    |
+| `media`              | `TEXT`             | `'optical_disc'` \| `'digital'` \| `'cartridge'` \| `'hybrid'` \| `'built_in'`                                                                            |
+| `video_resolution`   | `TEXT` nullable    | Resolución máxima de vídeo (texto libre: `'4K'`, `'1080p'`, `'480×272'`). `null` si no aplica                                                             |
 | `units_sold_million` | `NUMERIC` nullable | Unidades vendidas en millones. Dato agregado por familia de modelo (ej: PS4 + PS4 Slim + PS4 Pro comparten el mismo total, igual que hace la propia Sony) |
 
 ##### Fuentes de datos por marca
 
-| Marca | Fuente |
-|---|---|
-| Sony | [Wikipedia — Anexo:Videoconsolas de Sony](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Sony) |
+| Marca     | Fuente                                                                                                         |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| Sony      | [Wikipedia — Anexo:Videoconsolas de Sony](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Sony)           |
 | Microsoft | [Wikipedia — Anexo:Videoconsolas de Microsoft](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Microsoft) |
-| Nintendo | [Wikipedia — Anexo:Videoconsolas de Nintendo](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Nintendo) |
+| Nintendo  | [Wikipedia — Anexo:Videoconsolas de Nintendo](https://es.wikipedia.org/wiki/Anexo:Videoconsolas_de_Nintendo)   |
 
 ##### Seed — Sony (24 modelos)
 
-| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
-|---|---|---|---|---|---|---|---|
-| PlayStation | 5 | 1994 | 2000 | home | optical_disc | 640×480 | 104 |
-| PocketStation | 5 | 1999 | 2008 | portable | optical_disc | null | 5 |
-| PSOne | 5 | 2000 | 2005 | home | optical_disc | 640×480 | 104 |
-| PlayStation 2 | 6 | 2000 | 2004 | home | optical_disc | 480p | 150 |
-| PSX | 6 | 2003 | 2016 | hybrid | optical_disc | 480p | null |
-| PlayStation 2 Slim | 6 | 2004 | 2013 | home | optical_disc | 480p | 150 |
-| PlayStation Portable | 7 | 2005 | 2007 | portable | optical_disc | 480×272 | 80 |
-| PlayStation 3 | 7 | 2006 | 2010 | home | optical_disc | 1080p | 86 |
-| PSP Slim & Lite | 7 | 2007 | 2010 | portable | optical_disc | 480×272 | 80 |
-| PSP-3000 | 7 | 2008 | 2014 | portable | optical_disc | 480×272 | 80 |
-| PlayStation 3 Slim | 7 | 2009 | 2016 | home | optical_disc | 1080p | 86 |
-| PSP Go | 7 | 2009 | 2011 | portable | digital | 480×272 | 80 |
-| PSP Street | 7 | 2011 | 2015 | portable | optical_disc | 480×272 | 80 |
-| PlayStation 3 Super Slim | 7 | 2012 | 2017 | home | optical_disc | 1080p | 86 |
-| PlayStation Vita | 8 | 2011 | 2016 | portable | cartridge | 960×544 | 16 |
-| PlayStation 4 | 8 | 2013 | 2017 | home | optical_disc | 1080p | 117 |
-| PS Vita Slim | 8 | 2014 | 2017 | portable | cartridge | 960×544 | 16 |
-| PlayStation 4 Slim | 8 | 2016 | 2022 | home | optical_disc | 1080p | 117 |
-| PlayStation 4 Pro | 8 | 2017 | 2022 | home | optical_disc | 4K | 117 |
-| PlayStation Classic | 8 | 2018 | null | home | built_in | 480p | null |
-| PlayStation 5 | 9 | 2020 | null | home | optical_disc | 4K | 67 |
-| PlayStation 5 Digital | 9 | 2020 | null | home | digital | 4K | 67 |
-| PlayStation 5 Slim | 9 | 2023 | null | home | hybrid | 4K | 67 |
-| PlayStation 5 Pro | 9 | 2024 | null | home | digital | 4K | 67 |
+| Modelo                   | Gen | Año  | Desc. | Categoría | Formato      | Resolución | Vendidas (M) |
+| ------------------------ | --- | ---- | ----- | --------- | ------------ | ---------- | ------------ |
+| PlayStation              | 5   | 1994 | 2000  | home      | optical_disc | 640×480    | 104          |
+| PocketStation            | 5   | 1999 | 2008  | portable  | optical_disc | null       | 5            |
+| PSOne                    | 5   | 2000 | 2005  | home      | optical_disc | 640×480    | 104          |
+| PlayStation 2            | 6   | 2000 | 2004  | home      | optical_disc | 480p       | 150          |
+| PSX                      | 6   | 2003 | 2016  | hybrid    | optical_disc | 480p       | null         |
+| PlayStation 2 Slim       | 6   | 2004 | 2013  | home      | optical_disc | 480p       | 150          |
+| PlayStation Portable     | 7   | 2005 | 2007  | portable  | optical_disc | 480×272    | 80           |
+| PlayStation 3            | 7   | 2006 | 2010  | home      | optical_disc | 1080p      | 86           |
+| PSP Slim & Lite          | 7   | 2007 | 2010  | portable  | optical_disc | 480×272    | 80           |
+| PSP-3000                 | 7   | 2008 | 2014  | portable  | optical_disc | 480×272    | 80           |
+| PlayStation 3 Slim       | 7   | 2009 | 2016  | home      | optical_disc | 1080p      | 86           |
+| PSP Go                   | 7   | 2009 | 2011  | portable  | digital      | 480×272    | 80           |
+| PSP Street               | 7   | 2011 | 2015  | portable  | optical_disc | 480×272    | 80           |
+| PlayStation 3 Super Slim | 7   | 2012 | 2017  | home      | optical_disc | 1080p      | 86           |
+| PlayStation Vita         | 8   | 2011 | 2016  | portable  | cartridge    | 960×544    | 16           |
+| PlayStation 4            | 8   | 2013 | 2017  | home      | optical_disc | 1080p      | 117          |
+| PS Vita Slim             | 8   | 2014 | 2017  | portable  | cartridge    | 960×544    | 16           |
+| PlayStation 4 Slim       | 8   | 2016 | 2022  | home      | optical_disc | 1080p      | 117          |
+| PlayStation 4 Pro        | 8   | 2017 | 2022  | home      | optical_disc | 4K         | 117          |
+| PlayStation Classic      | 8   | 2018 | null  | home      | built_in     | 480p       | null         |
+| PlayStation 5            | 9   | 2020 | null  | home      | optical_disc | 4K         | 67           |
+| PlayStation 5 Digital    | 9   | 2020 | null  | home      | digital      | 4K         | 67           |
+| PlayStation 5 Slim       | 9   | 2023 | null  | home      | hybrid       | 4K         | 67           |
+| PlayStation 5 Pro        | 9   | 2024 | null  | home      | digital      | 4K         | 67           |
 
 ##### Seed — Microsoft (15 modelos)
 
-| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
-|---|---|---|---|---|---|---|---|
-| Xbox | 6 | 2001 | 2006 | home | optical_disc | 480p | 24 |
-| Xbox 360 | 7 | 2005 | 2009 | home | optical_disc | 720p | 85 |
-| Xbox 360 Premium | 7 | 2005 | 2009 | home | optical_disc | 720p | 85 |
-| Xbox 360 Elite | 7 | 2007 | 2010 | home | optical_disc | 1080p | 85 |
-| Xbox 360 S | 7 | 2010 | 2013 | home | optical_disc | 1080p | 85 |
-| Xbox 360 E | 7 | 2013 | 2016 | home | optical_disc | 1080p | 85 |
-| Xbox One | 8 | 2013 | 2017 | home | optical_disc | 1080p | 51 |
-| Xbox One S | 8 | 2016 | 2022 | home | optical_disc | 1080p | 51 |
-| Xbox One X | 8 | 2017 | 2022 | home | optical_disc | 4K | 51 |
-| Xbox One S All-Digital | 8 | 2019 | 2022 | home | digital | 1080p | 51 |
-| Xbox Series X | 9 | 2020 | null | home | hybrid | 4K | 31 |
-| Xbox Series S | 9 | 2020 | null | home | digital | 1440p | 31 |
-| Xbox Series S Robot White | 9 | 2024 | null | home | digital | 1440p | 31 |
-| Xbox Series X Digital Edition | 9 | 2024 | null | home | digital | 4K | 31 |
-| Xbox Series X Galaxy Edition | 9 | 2024 | null | home | hybrid | 4K | 31 |
+| Modelo                        | Gen | Año  | Desc. | Categoría | Formato      | Resolución | Vendidas (M) |
+| ----------------------------- | --- | ---- | ----- | --------- | ------------ | ---------- | ------------ |
+| Xbox                          | 6   | 2001 | 2006  | home      | optical_disc | 480p       | 24           |
+| Xbox 360                      | 7   | 2005 | 2009  | home      | optical_disc | 720p       | 85           |
+| Xbox 360 Premium              | 7   | 2005 | 2009  | home      | optical_disc | 720p       | 85           |
+| Xbox 360 Elite                | 7   | 2007 | 2010  | home      | optical_disc | 1080p      | 85           |
+| Xbox 360 S                    | 7   | 2010 | 2013  | home      | optical_disc | 1080p      | 85           |
+| Xbox 360 E                    | 7   | 2013 | 2016  | home      | optical_disc | 1080p      | 85           |
+| Xbox One                      | 8   | 2013 | 2017  | home      | optical_disc | 1080p      | 51           |
+| Xbox One S                    | 8   | 2016 | 2022  | home      | optical_disc | 1080p      | 51           |
+| Xbox One X                    | 8   | 2017 | 2022  | home      | optical_disc | 4K         | 51           |
+| Xbox One S All-Digital        | 8   | 2019 | 2022  | home      | digital      | 1080p      | 51           |
+| Xbox Series X                 | 9   | 2020 | null  | home      | hybrid       | 4K         | 31           |
+| Xbox Series S                 | 9   | 2020 | null  | home      | digital      | 1440p      | 31           |
+| Xbox Series S Robot White     | 9   | 2024 | null  | home      | digital      | 1440p      | 31           |
+| Xbox Series X Digital Edition | 9   | 2024 | null  | home      | digital      | 4K         | 31           |
+| Xbox Series X Galaxy Edition  | 9   | 2024 | null  | home      | hybrid       | 4K         | 31           |
 
 ##### Seed — Nintendo (34 modelos)
 
-| Modelo | Gen | Año | Desc. | Categoría | Formato | Resolución | Vendidas (M) |
-|---|---|---|---|---|---|---|---|
-| Color TV-Game | 1 | 1977 | 1983 | home | built_in | null | 3 |
-| Game & Watch | 2 | 1980 | 1991 | portable | built_in | null | 40 |
-| Famicom | 3 | 1983 | 1993 | home | cartridge | 256×240 | 61 |
-| NES | 3 | 1985 | 1995 | home | cartridge | 256×240 | 61 |
-| NES-101 | 3 | 1993 | 2003 | home | cartridge | 256×240 | 61 |
-| Game Boy | 4 | 1989 | 1998 | portable | cartridge | 160×144 | 118 |
-| Super Nintendo | 4 | 1990 | 1999 | home | cartridge | 256×240 | 49 |
-| Game Boy Pocket | 4 | 1995 | 2000 | portable | cartridge | 160×144 | 118 |
-| Game Boy Light | 4 | 1997 | 2003 | portable | cartridge | 160×144 | 56 |
-| Virtual Boy | 5 | 1995 | 1996 | portable | cartridge | 384×224 | 0.77 |
-| Nintendo 64 | 5 | 1996 | 2003 | home | cartridge | 640×480 | 32 |
-| Game Boy Color | 5 | 1998 | 2004 | portable | cartridge | 160×144 | 118 |
-| GameCube | 6 | 2001 | 2007 | home | optical_disc | 480p | 21 |
-| Game Boy Advance | 6 | 2001 | 2008 | portable | cartridge | 240×160 | 81 |
-| Game Boy Advance SP | 6 | 2003 | 2008 | portable | cartridge | 240×160 | 43 |
-| Game Boy Micro | 6 | 2004 | 2008 | portable | cartridge | 240×160 | 2.4 |
-| Nintendo DS | 7 | 2004 | 2007 | portable | cartridge | 256×192 | 154 |
-| Wii | 7 | 2006 | 2016 | home | optical_disc | 480p | 101 |
-| DS Lite | 7 | 2006 | 2012 | portable | cartridge | 256×192 | 154 |
-| DSi | 7 | 2008 | 2013 | portable | cartridge | 256×192 | 154 |
-| DSi XL | 7 | 2010 | 2013 | portable | cartridge | 256×192 | 154 |
-| Nintendo 3DS | 8 | 2011 | 2017 | portable | cartridge | 400×240 | 75 |
-| Nintendo 3DS XL | 8 | 2012 | 2017 | portable | cartridge | 400×240 | 75 |
-| Wii U | 8 | 2012 | 2017 | home | optical_disc | 1080p | 14 |
-| Nintendo 2DS | 8 | 2013 | 2018 | portable | cartridge | 400×240 | 75 |
-| New Nintendo 3DS | 8 | 2014 | 2019 | portable | cartridge | 400×240 | 75 |
-| New Nintendo 3DS XL | 8 | 2014 | 2019 | portable | cartridge | 400×240 | 75 |
-| NES Classic Edition | 8 | 2016 | null | home | built_in | 480p | 2.3 |
-| New Nintendo 2DS XL | 8 | 2017 | 2020 | portable | cartridge | 400×240 | 75 |
-| SNES Classic Edition | 8 | 2017 | null | home | built_in | 480p | 5.3 |
-| Nintendo Switch | 8 | 2017 | null | hybrid | cartridge | 1080p | 153 |
-| Switch Lite | 8 | 2019 | null | portable | cartridge | 720p | 153 |
-| Switch OLED | 8 | 2021 | null | hybrid | cartridge | 1080p | 153 |
-| Nintendo Switch 2 | 9 | 2025 | null | hybrid | cartridge | 4K | 8.67 |
+| Modelo               | Gen | Año  | Desc. | Categoría | Formato      | Resolución | Vendidas (M) |
+| -------------------- | --- | ---- | ----- | --------- | ------------ | ---------- | ------------ |
+| Color TV-Game        | 1   | 1977 | 1983  | home      | built_in     | null       | 3            |
+| Game & Watch         | 2   | 1980 | 1991  | portable  | built_in     | null       | 40           |
+| Famicom              | 3   | 1983 | 1993  | home      | cartridge    | 256×240    | 61           |
+| NES                  | 3   | 1985 | 1995  | home      | cartridge    | 256×240    | 61           |
+| NES-101              | 3   | 1993 | 2003  | home      | cartridge    | 256×240    | 61           |
+| Game Boy             | 4   | 1989 | 1998  | portable  | cartridge    | 160×144    | 118          |
+| Super Nintendo       | 4   | 1990 | 1999  | home      | cartridge    | 256×240    | 49           |
+| Game Boy Pocket      | 4   | 1995 | 2000  | portable  | cartridge    | 160×144    | 118          |
+| Game Boy Light       | 4   | 1997 | 2003  | portable  | cartridge    | 160×144    | 56           |
+| Virtual Boy          | 5   | 1995 | 1996  | portable  | cartridge    | 384×224    | 0.77         |
+| Nintendo 64          | 5   | 1996 | 2003  | home      | cartridge    | 640×480    | 32           |
+| Game Boy Color       | 5   | 1998 | 2004  | portable  | cartridge    | 160×144    | 118          |
+| GameCube             | 6   | 2001 | 2007  | home      | optical_disc | 480p       | 21           |
+| Game Boy Advance     | 6   | 2001 | 2008  | portable  | cartridge    | 240×160    | 81           |
+| Game Boy Advance SP  | 6   | 2003 | 2008  | portable  | cartridge    | 240×160    | 43           |
+| Game Boy Micro       | 6   | 2004 | 2008  | portable  | cartridge    | 240×160    | 2.4          |
+| Nintendo DS          | 7   | 2004 | 2007  | portable  | cartridge    | 256×192    | 154          |
+| Wii                  | 7   | 2006 | 2016  | home      | optical_disc | 480p       | 101          |
+| DS Lite              | 7   | 2006 | 2012  | portable  | cartridge    | 256×192    | 154          |
+| DSi                  | 7   | 2008 | 2013  | portable  | cartridge    | 256×192    | 154          |
+| DSi XL               | 7   | 2010 | 2013  | portable  | cartridge    | 256×192    | 154          |
+| Nintendo 3DS         | 8   | 2011 | 2017  | portable  | cartridge    | 400×240    | 75           |
+| Nintendo 3DS XL      | 8   | 2012 | 2017  | portable  | cartridge    | 400×240    | 75           |
+| Wii U                | 8   | 2012 | 2017  | home      | optical_disc | 1080p      | 14           |
+| Nintendo 2DS         | 8   | 2013 | 2018  | portable  | cartridge    | 400×240    | 75           |
+| New Nintendo 3DS     | 8   | 2014 | 2019  | portable  | cartridge    | 400×240    | 75           |
+| New Nintendo 3DS XL  | 8   | 2014 | 2019  | portable  | cartridge    | 400×240    | 75           |
+| NES Classic Edition  | 8   | 2016 | null  | home      | built_in     | 480p       | 2.3          |
+| New Nintendo 2DS XL  | 8   | 2017 | 2020  | portable  | cartridge    | 400×240    | 75           |
+| SNES Classic Edition | 8   | 2017 | null  | home      | built_in     | 480p       | 5.3          |
+| Nintendo Switch      | 8   | 2017 | null  | hybrid    | cartridge    | 1080p      | 153          |
+| Switch Lite          | 8   | 2019 | null  | portable  | cartridge    | 720p       | 153          |
+| Switch OLED          | 8   | 2021 | null  | hybrid    | cartridge    | 1080p      | 153          |
+| Nintendo Switch 2    | 9   | 2025 | null  | hybrid    | cartridge    | 4K         | 8.67         |
 
 #### Migraciones Supabase
 
@@ -385,6 +385,7 @@ Nueva sección `/management/hardware` con navegación contextual (drill-down):
 **Fase 3 — Formularios de consola y mando** ✅ completada
 
 Selectores jerárquicos implementados:
+
 1. ✅ **Marca** → autocomplete con todas las marcas
 2. ✅ **Modelo** → autocomplete filtrado por marca + tipo, se limpia al cambiar marca
 3. ✅ **Edición** → select filtrado por modelo seleccionado, opcional, se limpia al cambiar modelo
@@ -497,6 +498,7 @@ Integración de monitorización de errores y uptime para detectar problemas en p
 Monitor que comprueba cada minuto que la app en Vercel responde correctamente. Alerta por email si cae. No requiere cambios en el código — se configura íntegramente desde el panel de Better Stack.
 
 **Pasos:**
+
 1. Crear cuenta en Better Stack.
 2. Añadir monitor HTTP apuntando a `https://project-hohsa.vercel.app`.
 3. Configurar alerta al email del propietario.
@@ -506,16 +508,19 @@ Monitor que comprueba cada minuto que la app en Vercel responde correctamente. A
 Captura automática de errores JavaScript no manejados en producción, con stack traces reales gracias a los source maps.
 
 **Paquete:**
+
 ```
 @sentry/angular@10.48.0
 ```
 
 **Ficheros a modificar:**
+
 - `main.ts` — inicialización de Sentry con DSN desde variable de entorno
 - `src/app/app.config.ts` — registrar `ErrorHandler` de Sentry y tracing de rutas
 - `angular.json` — activar `sourceMap: { scripts: true }` en el build de producción
 
 **Variables de entorno a añadir en Vercel:**
+
 - `NG_APP_SENTRY_DSN` — DSN del proyecto Sentry
 - `SENTRY_AUTH_TOKEN` — token para subir source maps
 - `SENTRY_ORG` — slug de la organización en Sentry
@@ -525,6 +530,7 @@ Captura automática de errores JavaScript no manejados en producción, con stack
 Instalar la integración oficial desde el marketplace de Vercel (Settings → Integrations → Sentry). Genera automáticamente las variables de entorno y sube los source maps en cada deploy.
 
 **Plan de implementación:**
+
 1. Crear cuenta en Sentry y proyecto Angular.
 2. Instalar integración Sentry en Vercel.
 3. Instalar `@sentry/angular` con versión exacta.
@@ -582,6 +588,7 @@ Las imágenes se guardan en la ruta `{user_id}/{console_or_controller_id}.{ext}`
 #### Servicio de upload
 
 Crear `HardwareImageService` en `presentation/services/` que encapsule:
+
 - `uploadImage(userId, itemId, file: File): Promise<string>` — sube al bucket y devuelve la URL pública.
 - `deleteImage(userId, itemId): Promise<void>` — borra el archivo del bucket.
 
@@ -590,6 +597,7 @@ Usar el cliente de Supabase ya configurado en el repositorio (`SupabaseService`)
 #### UI en el formulario
 
 El campo de imagen en el formulario de consola/mando funciona igual que el crop de portadas de juegos:
+
 1. Input tipo `file` (acepta `image/*`) con botón de "Subir imagen".
 2. Preview de la imagen seleccionada antes de guardar.
 3. Al guardar el formulario: primero se sube la imagen → se obtiene la URL → se guarda la URL en el campo `image_url` del registro.
@@ -774,6 +782,7 @@ Los juegos guardados en `game_catalog` tienen los datos de RAWG del momento en q
 Una **Supabase Edge Function** (código TypeScript ejecutado en los servidores de Supabase, no en el navegador) se programaría para ejecutarse periódicamente (por ejemplo cada semana) mediante un **Supabase Cron Job**.
 
 La función haría lo siguiente:
+
 1. Consultar `game_catalog` filtrando por `source = 'rawg'` y `rawg_id IS NOT NULL`.
 2. Para cada juego, llamar al endpoint de RAWG `/games/{rawg_id}`.
 3. Actualizar en `game_catalog` los campos que pueden cambiar con el tiempo:
@@ -866,7 +875,9 @@ El cambio de tema actualmente es brusco. Con una transición CSS en `:root` qued
 
 ```scss
 :root {
-  transition: background-color 300ms ease, color 300ms ease;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
 }
 ```
 
@@ -976,24 +987,24 @@ Constantes `BREAKPOINTS` y `GAME_GRID_BREAKPOINTS` en `entities/constants/breakp
 
 ### Fase B — Modelo obra/copia
 
-#### B1. Tabla `user_works` y agrupación de copias ✅ completado — [plan detallado](./plans/work-copy-model.md)
+#### B1. Tabla `user_works` y agrupación de copias ✅ completado — [plan detallado](../architecture/decisions/work-copy-model.md)
 
 Refactor entregado en 4 fases (`feat/work-copy-schema`): schema base + backfill + trigger puente, repositorio/mappers/vista escribiendo en `user_works`, capa de dominio (`WorkRepositoryContract` + use cases), cleanup final con drop de columnas obsoletas y nuevo unique index. Refinamiento posterior: dos copias del mismo formato son obras distintas (caso Castlevania: 2 físicas con distintas ediciones).
 
 **Modelo entregado**: una obra tiene 1..N copias del mismo juego/plataforma con formatos distintos. Status, rating y favorito viven en la obra (compartidos); precio, tienda, condición, formato, edición, notas y venta viven en cada copia.
 
-| Campo | Vive en | Razón |
-|---|---|---|
-| Status (backlog/playing/platinum…) | Obra | Solo puede haber un platino por obra |
-| Personal rating | Obra | Tu opinión es de la obra, no del soporte |
-| Favorito | Obra | Mismo motivo |
-| Notas largas / review | Obra | |
-| Formato (digital/físico) | Copia | Por instancia |
-| Plataforma | Copia | PS5 disco vs Steam, p.ej. |
-| Precio, tienda, condición | Copia | |
-| Préstamo activo | Copia (solo física) | |
-| `forSale` / `soldAt` | Copia | Vendes una copia, no la obra |
-| Cover / cover position | Copia (con fallback a obra) | |
+| Campo                              | Vive en                     | Razón                                    |
+| ---------------------------------- | --------------------------- | ---------------------------------------- |
+| Status (backlog/playing/platinum…) | Obra                        | Solo puede haber un platino por obra     |
+| Personal rating                    | Obra                        | Tu opinión es de la obra, no del soporte |
+| Favorito                           | Obra                        | Mismo motivo                             |
+| Notas largas / review              | Obra                        |                                          |
+| Formato (digital/físico)           | Copia                       | Por instancia                            |
+| Plataforma                         | Copia                       | PS5 disco vs Steam, p.ej.                |
+| Precio, tienda, condición          | Copia                       |                                          |
+| Préstamo activo                    | Copia (solo física)         |                                          |
+| `forSale` / `soldAt`               | Copia                       | Vendes una copia, no la obra             |
+| Cover / cover position             | Copia (con fallback a obra) |                                          |
 
 **Migración pragmática:** introducir tabla `user_works` con campos compartidos (status, rating, favorite, notes) y columna `work_id` en `user_games`. Para entradas con `rawg_id`, el `work_id` se infiere por `(user_id, rawg_id)`. Para entradas sin `rawg_id` (juegos manuales), se rellena al duplicar.
 
@@ -1026,12 +1037,11 @@ Botón discreto al final del detalle si la obra solo tiene una copia. Navega al 
 #### Z1. Acciones, ratings 0–10, stripe digital, skeletons ⏳ pendiente
 
 Bolsa de pulidos sueltos pendientes:
+
 - **Ratings**: el modelo guarda 0–10 y el form usa slider 0–10, pero el detalle muestra estrellas 0–5. Decidir uno y unificar (preferencia: 0–10 con un decimal).
-- **Stripe "DIGITAL"**: el banner cyan-magenta de las cards digitales rompe ligeramente la jerarquía cuando hay muchas seguidas. Reducir a *corner ribbon* o solo mostrarlo cuando coexiste con física en la misma obra (post-B1).
+- **Stripe "DIGITAL"**: el banner cyan-magenta de las cards digitales rompe ligeramente la jerarquía cuando hay muchas seguidas. Reducir a _corner ribbon_ o solo mostrarlo cuando coexiste con física en la misma obra (post-B1).
 - **Skeleton dinámico** en game-list: hoy son 12 placeholders fijos. Calcular `Math.ceil(viewportRows) * cols` o cap a 6 en mobile para no scroll innecesario al cargar.
 - **Géneros en catalog info**: hoy se truncan a 3 líneas sin "Ver más". Mostrar 3 chips visibles + `+N` si hay más.
-
-
 
 ### Perfiles públicos, amigos e interacción
 
@@ -1042,11 +1052,13 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
 #### Fase 1 — Perfiles públicos y privacidad
 
 **Comportamiento:**
+
 - Cada usuario tiene un perfil accesible en `/u/:username` (requiere añadir campo `username` único en `user_preferences`).
 - El usuario elige en su configuración si su perfil es **público** (visible para cualquiera) o **privado** (visible solo para amigos aprobados).
 - Por defecto se muestra todo: colección, wishlist y valoraciones personales. En el futuro se puede añadir control granular por sección.
 
 **Base de datos:**
+
 - Añadir a `user_preferences`:
   ```sql
   ALTER TABLE user_preferences
@@ -1061,11 +1073,13 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
 #### Fase 2 — Sistema de amigos
 
 **Comportamiento:**
+
 - Un usuario puede enviar solicitud de amistad a otro por username.
 - El receptor puede aceptar o rechazar.
 - Los amigos pueden ver el perfil aunque sea privado.
 
 **Base de datos:**
+
 - Nueva tabla `friendships`:
   ```sql
   CREATE TABLE friendships (
@@ -1081,6 +1095,7 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
 - RLS: cada usuario solo ve sus propias solicitudes enviadas/recibidas y las amistades aceptadas.
 
 **Presentación:**
+
 - Sección `/friends` con pestañas: amigos, solicitudes recibidas, solicitudes enviadas.
 - Buscador de usuarios por username.
 
@@ -1089,6 +1104,7 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
 #### Fase 3 — Interacción
 
 **Recomendaciones:**
+
 - Desde el detalle de un juego, botón "Recomendar a un amigo" que abre un selector de amigos con campo de mensaje opcional.
 - Nueva tabla `game_recommendations`:
   ```sql
@@ -1104,6 +1120,7 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
   ```
 
 **Comentarios:**
+
 - Los usuarios pueden dejar un comentario público en un juego del catálogo (no en el `user_games` de alguien, sino sobre el juego en sí).
 - Nueva tabla `game_comments`:
   ```sql
@@ -1122,6 +1139,7 @@ Convertir Monchito en una plataforma social donde los usuarios pueden compartir 
 #### Fase 4 — Realtime (Supabase Realtime)
 
 Una vez implementadas las fases anteriores, activar suscripciones en tiempo real para:
+
 - Notificaciones al recibir una solicitud de amistad.
 - Notificaciones al recibir una recomendación.
 - Actualización en vivo del perfil de un amigo si estás viendo su colección.
@@ -1131,6 +1149,7 @@ Supabase Realtime usa WebSockets internamente. En Angular se integra suscribién
 ---
 
 #### Consideraciones generales
+
 - La fase 1 es prerequisito de todo lo demás.
 - La fase 2 es prerequisito de las fases 3 y 4.
 - Cada fase es independiente y desplegable por separado.
