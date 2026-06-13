@@ -10,9 +10,11 @@ const config: KnipConfig = {
   ignoreDependencies: [
     '@angular-devkit/build-angular',
     '@angular/platform-browser-dynamic',
-    '@angular-eslint/builder',
+    '@angular/build',
+    '@angular/compiler-cli',
+    '@angular/localize',
     '@typescript-eslint/eslint-plugin',
-    'angular-cli-ghpages',
+    '@sentry/angular',
     'angular-eslint',
     'husky',
     'playwright',
