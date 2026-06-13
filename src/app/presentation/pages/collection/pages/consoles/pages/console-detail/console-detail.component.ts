@@ -12,7 +12,9 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { HardwareDetailBaseComponent } from '@/abstract/hardware-detail-base/hardware-detail-base.component';
 import { HardwareItemModel } from '@/types/hardware-item.type';
 import { HardwareDetailShellComponent } from '@/pages/collection/components/hardware-detail-shell/hardware-detail-shell.component';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 
 @Component({
   selector: 'app-console-detail',
@@ -20,7 +22,13 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
   styleUrl: './console-detail.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HardwareDetailShellComponent, BadgeChipComponent]
+  imports: [
+    TranslocoPipe,
+    HardwareDetailShellComponent,
+    RetroChipComponent,
+    RetroSectionHeaderComponent,
+    RetroDataRowComponent
+  ]
 })
 export class ConsoleDetailComponent extends HardwareDetailBaseComponent {
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);

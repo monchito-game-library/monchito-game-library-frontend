@@ -37,7 +37,9 @@
       "@/models/*": ["src/app/entities/models/*"],
       "@/mappers/*": ["src/app/data/mappers/*"],
       "@/env": ["src/environments/environment"],
-      "@/testing/*": ["src/testing/*"]
+      "@/testing/*": ["src/testing/*"],
+      "@retro/*": ["lib/retro/*"],
+      "@retro/testing/*": ["lib/retro/testing/*"]
     }
   },
   "angularCompilerOptions": {

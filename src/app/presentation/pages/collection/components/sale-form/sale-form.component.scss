@@ -39,9 +39,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--mat-sys-outline);
+  color: var(--text-lo);
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--border);
 }
 
 .sale-form__toggle-row {
@@ -54,7 +54,7 @@
 
 .sale-form__toggle-label {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 }
 
 .sale-form__field {
@@ -63,7 +63,7 @@
 
 .sale-form__save-btn,
 .sale-form__sold-btn {
-  align-self: flex-start;
+  align-self: flex-end;
 }
 
 .sale-form__warning {
@@ -73,17 +73,16 @@
   margin: 0;
   font-size: var(--text-xs);
   line-height: 1.5;
-  color: var(--mat-sys-on-surface-variant);
-  background: var(--mat-sys-surface-container-high);
-  border-radius: var(--radius-sm);
+  color: var(--text-mid);
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 0.75rem 1rem;
 
-  mat-icon {
-    font-size: var(--text-lg);
-    width: var(--text-lg);
-    height: var(--text-lg);
+  retro-icon {
+    --_size: var(--icon-md);
     flex-shrink: 0;
-    color: var(--mat-sys-tertiary);
+    color: var(--accent-amber);
     margin-top: 1px;
   }
 }

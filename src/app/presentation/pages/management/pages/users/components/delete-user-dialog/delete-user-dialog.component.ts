@@ -1,21 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatLabel, MatHint } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 /**
  * Confirmation dialog for permanently deleting a user.
@@ -31,26 +30,23 @@ import { DeleteUserDialogForm, DeleteUserDialogInterface } from '@/interfaces/ma
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatButton,
-    MatFormField,
-    MatLabel,
-    MatHint,
-    MatInput,
-    MatIcon,
-    TranslocoPipe
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroDialogCloseDirective,
+    RetroIconComponent,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroInputComponent
   ]
 })
 export class DeleteUserDialogComponent {
   /** Data injected into the dialog, containing the target user's email. */
-  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(MAT_DIALOG_DATA);
+  readonly data: DeleteUserDialogInterface = inject<DeleteUserDialogInterface>(RETRO_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically. */
-  readonly dialogRef: MatDialogRef<DeleteUserDialogComponent, boolean> = inject(
-    MatDialogRef<DeleteUserDialogComponent, boolean>
+  readonly dialogRef: RetroDialogRef<DeleteUserDialogComponent, boolean> = inject(
+    RetroDialogRef<DeleteUserDialogComponent, boolean>
   );
 
   /** Reactive form requiring the operator to type the user's email to confirm. */

@@ -1,19 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { NgOptimizedImage, SlicePipe } from '@angular/common';
 
@@ -22,6 +14,13 @@ import { WishlistItemForm } from '@/interfaces/forms/wishlist-item-form.interfac
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/wishlist-item-dialog.interface';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-wishlist-item-dialog',
@@ -31,32 +30,29 @@ import { WishlistItemDialogData, WishlistItemDialogResult } from '@/interfaces/w
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
-    MatIconButton,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatIcon,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroIconButtonComponent,
     NgOptimizedImage,
     TranslocoPipe,
     CatalogSearchPanelComponent,
-    SlicePipe
+    SlicePipe,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroTextareaComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ]
 })
 export class WishlistItemDialogComponent {
-  private readonly _dialogRef: MatDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
-    MatDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
+  private readonly _dialogRef: RetroDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null> = inject(
+    RetroDialogRef<WishlistItemDialogComponent, WishlistItemDialogResult | null>
   );
   private readonly _fb: FormBuilder = inject(FormBuilder);
 
   /** Dialog configuration: mode and optional existing item. */
-  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(MAT_DIALOG_DATA);
+  readonly config: WishlistItemDialogData = inject<WishlistItemDialogData>(RETRO_DIALOG_DATA);
 
   /** Available priority levels (1–5). */
   readonly priorityOptions: number[] = WISHLIST_PRIORITY_OPTIONS;

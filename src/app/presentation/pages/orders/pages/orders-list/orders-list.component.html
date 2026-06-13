@@ -8,11 +8,11 @@
       @for (n of [0, 1, 2]; track n) {
         <div class="orders-page__card-skeleton">
           <div class="orders-page__card-skeleton-row">
-            <app-skeleton width="180px" height="18px" />
-            <app-skeleton width="60px" height="18px" borderRadius="var(--radius-full)" />
+            <retro-skeleton width="180px" height="18px" />
+            <retro-skeleton width="60px" height="18px" />
           </div>
-          <app-skeleton width="120px" height="14px" />
-          <app-skeleton width="80px" height="14px" />
+          <retro-skeleton width="120px" height="14px" />
+          <retro-skeleton width="80px" height="14px" />
         </div>
       }
     </div>
@@ -40,7 +40,11 @@
     </div>
   }
 
-  <button mat-fab class="orders-page__fab" (click)="onCreateOrder()" [attr.aria-label]="'orders.create' | transloco">
-    <mat-icon>add</mat-icon>
+  <button
+    type="button"
+    class="orders-page__fab"
+    (click)="onCreateOrder()"
+    [attr.aria-label]="'orders.create' | transloco">
+    <retro-icon name="add" />
   </button>
 </div>

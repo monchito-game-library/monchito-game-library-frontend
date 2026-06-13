@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { DecimalPipe, Location, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
@@ -25,7 +25,10 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 @Component({
   selector: 'app-wishlist-detail',
@@ -36,12 +39,14 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   imports: [
     DecimalPipe,
     NgOptimizedImage,
-    MatIcon,
-    MatIconButton,
-    MatButton,
-    MatTooltip,
+    RetroIconComponent,
+    RetroTooltipDirective,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroChipComponent,
+    RetroDataRowComponent,
+    RetroButtonComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {
@@ -50,8 +55,8 @@ export class WishlistDetailComponent implements OnInit {
   private readonly _location: Location = inject(Location);
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Priority star range used to render the star icons. */
@@ -123,18 +128,18 @@ export class WishlistDetailComponent implements OnInit {
 
     try {
       await this._wishlistUseCases.deleteItem(this._userId, i.id);
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleted'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleted'),
+        duration: 2000,
+        variant: 'success'
+      });
       this._location.back();
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleteError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -184,19 +189,19 @@ export class WishlistDetailComponent implements OnInit {
       if (found) {
         this.item.set(found);
       } else {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.notFound'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.notFound'),
+          duration: 3000,
+          variant: 'warning'
+        });
         this._location.back();
       }
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
       this._location.back();
     } finally {
       this.loading.set(false);

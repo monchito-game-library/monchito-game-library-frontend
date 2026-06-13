@@ -1,84 +1,67 @@
 <div class="hardware-loan-form">
   <!-- Header -->
   <div class="hardware-loan-form__header">
-    <button
-      mat-icon-button
+    <retro-icon-button
+      icon="arrow_back"
+      [ariaLabel]="'common.back' | transloco"
       class="hardware-loan-form__back-btn"
-      (click)="onCancel()"
-      [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+      (clicked)="onCancel()" />
     <h2 class="hardware-loan-form__title">{{ 'hardwareLoan.title' | transloco }}</h2>
   </div>
 
   @if (isLoaned()) {
     <!-- Return mode: active loan info -->
     <section class="hardware-loan-form__section">
-      <h3 class="hardware-loan-form__section-title">{{ 'hardwareLoan.activeSection' | transloco }}</h3>
+      <retro-section-header [label]="'hardwareLoan.activeSection' | transloco" />
 
       <div class="hardware-loan-form__info-row">
-        <mat-icon>person</mat-icon>
+        <retro-icon name="person" />
         <span>{{ item().activeLoanTo }}</span>
       </div>
       <div class="hardware-loan-form__info-row">
-        <mat-icon>calendar_today</mat-icon>
+        <retro-icon name="calendar_today" />
         <span>{{ item().activeLoanAt }}</span>
       </div>
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
-        class="hardware-loan-form__action-btn"
-        (click)="onReturn()"
-        [disabled]="returning()">
-        @if (returning()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>undo</mat-icon>
-        }
-        {{ 'hardwareLoan.returnBtn' | transloco }}
-      </button>
+      <div class="hardware-loan-form__action-btn">
+        <retro-button
+          variant="primary"
+          [label]="'hardwareLoan.returnBtn' | transloco"
+          [disabled]="returning()"
+          [loading]="returning()"
+          (clicked)="onReturn()">
+          <retro-icon slot="start" [name]="returning() ? 'hourglass_empty' : 'undo'" size="sm" />
+        </retro-button>
+      </div>
     </section>
   } @else {
     <!-- Loan mode: create loan form -->
     <form [formGroup]="form" class="hardware-loan-form__content">
       <section class="hardware-loan-form__section">
-        <h3 class="hardware-loan-form__section-title">{{ 'hardwareLoan.newSection' | transloco }}</h3>
+        <retro-section-header [label]="'hardwareLoan.newSection' | transloco" />
 
-        <mat-form-field appearance="outline" class="hardware-loan-form__field">
-          <mat-label>{{ 'hardwareLoan.loanedTo' | transloco }}</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="loanedTo"
-            [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
-        </mat-form-field>
-
-        <mat-form-field
-          appearance="outline"
+        <retro-input
           class="hardware-loan-form__field"
-          [appDatepickerFieldClick]="loanedAtPicker">
-          <mat-label>{{ 'hardwareLoan.loanedAt' | transloco }}</mat-label>
-          <input matInput [matDatepicker]="loanedAtPicker" formControlName="loanedAt" [readonly]="true" />
-          <mat-datepicker-toggle matIconSuffix [for]="loanedAtPicker"></mat-datepicker-toggle>
-          <mat-datepicker #loanedAtPicker></mat-datepicker>
-        </mat-form-field>
+          [label]="'hardwareLoan.loanedTo' | transloco"
+          type="text"
+          formControlName="loanedTo"
+          [placeholder]="'hardwareLoan.loanedToPlaceholder' | transloco" />
 
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          class="hardware-loan-form__action-btn"
-          (click)="onLoan()"
-          [disabled]="saving()">
-          @if (saving()) {
-            <mat-icon>hourglass_empty</mat-icon>
-          } @else {
-            <mat-icon>handshake</mat-icon>
-          }
-          {{ 'hardwareLoan.loanBtn' | transloco }}
-        </button>
+        <retro-datepicker
+          class="hardware-loan-form__field"
+          [label]="'hardwareLoan.loanedAt' | transloco"
+          formControlName="loanedAt" />
+
+        <div class="hardware-loan-form__action-btn">
+          <retro-button
+            variant="primary"
+            [label]="'hardwareLoan.loanBtn' | transloco"
+            [disabled]="saving()"
+            [loading]="saving()"
+            (clicked)="onLoan()">
+            <retro-icon slot="start" [name]="saving() ? 'hourglass_empty' : 'handshake'" size="sm" />
+          </retro-button>
+        </div>
       </section>
     </form>
   }

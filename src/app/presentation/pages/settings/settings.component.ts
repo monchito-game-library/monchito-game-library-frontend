@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
@@ -11,19 +12,17 @@ import {
   WritableSignal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, firstValueFrom, Subject } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
@@ -39,8 +38,10 @@ import { BannerSuggestionModel } from '@/models/banner/banner-suggestion.model';
 import { availableLangConstant } from '@/constants/available-lang.constant';
 import { AvailableLanguageInterface } from '@/interfaces/available-language.interface';
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
-import { ToggleSwitchComponent } from '@/components/ad-hoc/toggle-switch/toggle-switch.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroSegmentedComponent, RetroSegmentedOption } from '@retro/public-api';
+import { ThemeType } from '@/types/theme.type';
+import { LanguageType } from '@/types/language.type';
 
 @Component({
   selector: 'app-settings',
@@ -50,21 +51,15 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgOptimizedImage,
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
-    MatDivider,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatPrefix,
-    MatIcon,
-    MatProgressSpinner,
-    MatTooltip,
-    ToggleSwitchComponent,
-    SkeletonComponent,
+    FormsModule,
+    RetroButtonComponent,
+    RetroCardComponent,
+    RetroIconComponent,
+    RetroInputComponent,
+    RetroSegmentedComponent,
+    RetroSkeletonComponent,
+    RetroSpinnerComponent,
+    RetroTooltipDirective,
     TranslocoPipe
   ]
 })
@@ -75,9 +70,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private readonly _rawgSearchState: RawgSearchStateService = inject(RawgSearchStateService);
   private readonly _userPreferencesUseCases: UserPreferencesUseCasesContract = inject(USER_PREFERENCES_USE_CASES);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
 
   private readonly _searchSubject: Subject<string> = new Subject<string>();
@@ -98,8 +93,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** URL of the cover currently used as the profile panel background. */
   readonly bannerImageUrl: WritableSignal<string | null> = this._userPreferencesState.bannerImageUrl;
 
-  /** Current dark-mode state, synchronized with ThemeService. */
-  readonly isDark: Signal<boolean> = this._themeService.isDarkMode;
+  /** Current dark theme state, derived from ThemeService theme signal. */
+  readonly isDark: Signal<boolean> = computed(() => this._themeService.theme() === 'dark');
 
   /** RAWG banner suggestions, or popular games when no search has been performed. */
   readonly rawgResults: WritableSignal<BannerSuggestionModel[]> = this._rawgSearchState.rawgSearchResults;
@@ -116,6 +111,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
   /** Array of 12 undefined elements used to render the cover grid skeletons. */
   readonly skeletonThumbs: undefined[] = Array(12);
 
+  /** Options for the theme segmented control (light / dark). */
+  readonly themeOptions: RetroSegmentedOption<'light' | 'dark'>[] = [
+    { value: 'light', label: 'Light', icon: 'light_mode' },
+    { value: 'dark', label: 'Dark', icon: 'dark_mode' }
+  ];
+
+  /** Options for the language segmented control, derived from availableLanguages. */
+  readonly languageOptions: RetroSegmentedOption<LanguageType>[] = this.availableLanguages.map(
+    (lang: { code: LanguageType; labelKey: string }): RetroSegmentedOption<LanguageType> => ({
+      value: lang.code,
+      label: lang.code.toUpperCase()
+    })
+  );
+
   /** Whether the display-name edit mode is active. */
   readonly editingName: WritableSignal<boolean> = signal(false);
 
@@ -126,9 +135,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   readonly savingName: WritableSignal<boolean> = signal(false);
 
   /** Reactive form control for the selected language. */
-  readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
-    nonNullable: true
-  });
+  readonly selectedLangControl: FormControl<LanguageType> = new FormControl(
+    this._transloco.getActiveLang() as LanguageType,
+    { nonNullable: true }
+  );
 
   /** Reference to the name input element, used to focus it when edit mode is activated. */
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
@@ -140,8 +150,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.selectedLangControl.valueChanges.subscribe((lang: string) => {
-      if (!lang) return;
+    this.selectedLangControl.valueChanges.subscribe((lang: LanguageType) => {
       this._transloco.setActiveLang(lang);
       this._savePreferences();
     });
@@ -168,22 +177,40 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Pushes the search term to the subject to apply to debounce.
+   * Empuja el término de búsqueda al sujeto debounce y actualiza el estado.
    *
-   * @param {Event} event - Input event from the search field
+   * @param {string} query - Valor actual del campo de búsqueda RAWG.
    */
-  onRawgSearch(event: Event): void {
-    const query: string = (event.target as HTMLInputElement).value;
+  onRawgSearch(query: string): void {
     this._rawgSearchState.rawgSearchQuery.set(query);
     this._searchSubject.next(query);
   }
 
   /**
-   * Toggles between dark and light theme and persists the preference in Supabase.
+   * Sets the active theme by value and persists the preference in Supabase.
+   * Only applies the change if it differs from the current state.
+   *
+   * @param {ThemeType} value - The selected theme value
    */
-  toggleTheme(): void {
-    this.isDark() ? this._themeService.setLightTheme() : this._themeService.setDarkTheme();
-    this._savePreferences();
+  onThemeChange(value: ThemeType): void {
+    const currentlyDark: boolean = this.isDark();
+    if (value === 'dark' && !currentlyDark) {
+      this._themeService.setTheme('dark');
+      this._savePreferences();
+    } else if (value === 'light' && currentlyDark) {
+      this._themeService.setTheme('light');
+      this._savePreferences();
+    }
+  }
+
+  /**
+   * Sets the selected language control value, letting the valueChanges subscription
+   * propagate the change to TranslocoService and persist the preference.
+   *
+   * @param {LanguageType} value - The selected language code
+   */
+  onLanguageChange(value: LanguageType): void {
+    this.selectedLangControl.setValue(value);
   }
 
   /**
@@ -267,7 +294,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.editingName.set(false);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : this._transloco.translate('settings.errors.updateName');
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
+      this._snack.open({ text: message, duration: 4000, variant: 'error' });
     } finally {
       this.savingName.set(false);
     }
@@ -345,7 +372,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       maxWidth: '95vw'
     });
 
-    const blob: Blob | null | undefined = await firstValueFrom(dialogRef.afterClosed());
+    const blob = (await firstValueFrom(dialogRef.afterClosed())) as Blob | null | undefined;
     if (!blob) return;
 
     const userId: string | null = this._userContext.userId();
@@ -359,7 +386,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       setUrl(url);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : this._transloco.translate(errorKey);
-      this._snackBar.open(message, this._transloco.translate('common.close'), { duration: 4000 });
+      this._snack.open({ text: message, duration: 4000, variant: 'error' });
     } finally {
       loadingSignal.set(false);
     }
@@ -409,7 +436,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private _savePreferences(): void {
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
-    const theme: 'light' | 'dark' = this.isDark() ? 'dark' : 'light';
+    const theme: ThemeType = this.isDark() ? 'dark' : 'light';
     const language: 'es' | 'en' = this._transloco.getActiveLang() as 'es' | 'en';
     void this._userPreferencesUseCases.savePreferences(userId, theme, language);
   }

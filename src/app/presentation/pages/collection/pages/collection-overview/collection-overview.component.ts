@@ -10,10 +10,13 @@ import {
 } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
@@ -29,7 +32,15 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrls: ['./collection-overview.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, MatIcon, SkeletonComponent, TranslocoPipe]
+  imports: [
+    CurrencyPipe,
+    RetroIconComponent,
+    RetroSkeletonComponent,
+    TranslocoPipe,
+    RetroSectionHeaderComponent,
+    RetroDataRowComponent,
+    RetroCardComponent
+  ]
 })
 export class CollectionOverviewComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);

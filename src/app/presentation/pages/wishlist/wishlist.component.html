@@ -7,12 +7,12 @@
         @if (!loading()) {
           <div class="wishlist-page__stats">
             <span class="wishlist-page__stat">
-              <mat-icon class="wishlist-page__stat-icon">bookmark</mat-icon>
+              <retro-icon class="wishlist-page__stat-icon" name="bookmark" />
               {{ items().length }}
             </span>
             @if (itemsWithPrice() > 0) {
               <span class="wishlist-page__stat">
-                <mat-icon class="wishlist-page__stat-icon">sell</mat-icon>
+                <retro-icon class="wishlist-page__stat-icon" name="sell" />
                 ~{{ totalEstimatedSpend() | number: '1.2-2' }} €
               </span>
             }
@@ -20,51 +20,52 @@
         }
       </div>
       @if (!loading() && items().length > 0) {
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          class="wishlist-page__header-add-btn"
-          (click)="onAddItem()">
-          <mat-icon>add</mat-icon>
-          {{ 'wishlist.addBtn' | transloco }}
-        </button>
+        <div class="wishlist-page__header-add-btn">
+          <retro-button variant="primary" [label]="'wishlist.addBtn' | transloco" (clicked)="onAddItem()">
+            <retro-icon slot="start" name="add" size="sm" />
+          </retro-button>
+        </div>
       }
     </header>
+
+    <app-search-toolbar
+      [value]="searchTerm()"
+      [placeholder]="'wishlist.filters.title' | transloco"
+      commandPath="monchito ~/library/wishlist"
+      [commandFlags]="commandFlags()"
+      (valueChange)="onSearchChange($event)" />
 
     @if (loading()) {
       <div class="wishlist-page__list">
         @for (n of [0, 1, 2, 3]; track n) {
           <div class="wishlist-page__card-skeleton">
-            <app-skeleton width="72px" height="96px" borderRadius="var(--radius-sm)" />
+            <retro-skeleton width="72px" height="96px" />
             <div class="wishlist-page__card-skeleton-body">
-              <app-skeleton width="180px" height="18px" />
-              <app-skeleton width="80px" height="14px" borderRadius="var(--radius-full)" />
-              <app-skeleton width="60px" height="14px" />
+              <retro-skeleton width="180px" height="18px" />
+              <retro-skeleton width="80px" height="14px" />
+              <retro-skeleton width="60px" height="14px" />
             </div>
           </div>
         }
       </div>
     } @else if (items().length === 0) {
-      <div class="wishlist-page__empty">
-        <svg class="wishlist-page__empty-svg" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            class="es-shape"
-            d="M24 14 H96 C102 14 106 18 106 24 V126 L60 100 L14 126 V24 C14 18 18 14 24 14 Z"
-            stroke-width="3"
-            stroke-linejoin="round" />
-          <path class="es-accent" d="M60 52 L64 62 H76 L66 70 L70 80 L60 72 L50 80 L54 70 L44 62 H56 Z" opacity="0.8" />
-        </svg>
-        <p class="wishlist-page__empty-title">{{ 'wishlist.empty.title' | transloco }}</p>
-        <p class="wishlist-page__empty-subtitle">{{ 'wishlist.empty.subtitle' | transloco }}</p>
-        <button mat-flat-button type="button" (click)="onAddItem()">
-          <mat-icon>add</mat-icon>
-          {{ 'wishlist.addBtn' | transloco }}
-        </button>
-      </div>
+      <retro-empty-state
+        [title]="'wishlist.empty.title' | transloco"
+        [subtitle]="'wishlist.empty.subtitle' | transloco">
+        <retro-button variant="primary" [label]="'wishlist.addBtn' | transloco" (clicked)="onAddItem()">
+          <retro-icon slot="start" name="add" size="sm" />
+        </retro-button>
+      </retro-empty-state>
+    } @else if (filteredItems().length === 0 && searchTerm()) {
+      <retro-empty-state
+        [title]="'wishlist.empty.noResults' | transloco"
+        [subtitle]="'wishlist.empty.noResultsSubtitle' | transloco"
+        hint="$ try --search=reset">
+        <retro-button [label]="'wishlist.empty.clearFilters' | transloco" (clicked)="onClearSearch()" />
+      </retro-empty-state>
     } @else {
-      <div class="wishlist-page__list">
-        @for (item of items(); track item.id; let first = $first; let i = $index) {
+      <retro-list class="wishlist-page__list">
+        @for (item of filteredItems(); track item.id; let first = $first; let i = $index) {
           <app-wishlist-card
             [item]="item"
             [mobileMode]="isMobile()"
@@ -75,17 +76,16 @@
             (deleteClicked)="onDeleteItem($event)"
             (ownClicked)="onOwnItem($event)" />
         }
-      </div>
+      </retro-list>
     }
 
     <!-- FAB: solo visible en mobile cuando hay items -->
     <button
-      mat-fab
       type="button"
       class="wishlist-page__fab"
       (click)="onAddItem()"
       [attr.aria-label]="'wishlist.addBtn' | transloco">
-      <mat-icon>add</mat-icon>
+      <retro-icon name="add" />
     </button>
   </div>
 }
@@ -94,9 +94,7 @@
 @if (viewMode() === 'search') {
   <div class="wishlist-view">
     <header class="wishlist-view__header">
-      <button mat-icon-button type="button" (click)="onMobileCancel()" [attr.aria-label]="'common.cancel' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <retro-icon-button icon="arrow_back" [ariaLabel]="'common.cancel' | transloco" (clicked)="onMobileCancel()" />
       <h1 class="wishlist-view__title">{{ 'wishlist.dialog.addTitle' | transloco }}</h1>
     </header>
     <p class="wishlist-view__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
@@ -108,13 +106,10 @@
 @if (viewMode() === 'form') {
   <div class="wishlist-view">
     <header class="wishlist-view__header">
-      <button
-        mat-icon-button
-        type="button"
-        (click)="pendingCatalogEntry() ? onMobileBackToSearch() : onMobileCancel()"
-        [attr.aria-label]="'common.cancel' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <retro-icon-button
+        icon="arrow_back"
+        [ariaLabel]="'common.cancel' | transloco"
+        (clicked)="pendingCatalogEntry() ? onMobileBackToSearch() : onMobileCancel()" />
       <h1 class="wishlist-view__title">
         {{ (pendingCatalogEntry() ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
       </h1>
@@ -122,14 +117,14 @@
 
     @if (editPlatformsLoading()) {
       <div class="wishlist-view__form">
-        <app-skeleton height="44px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="80px" borderRadius="var(--radius-sm)" />
+        <retro-skeleton height="44px" />
+        <retro-skeleton height="56px" />
+        <retro-skeleton height="56px" />
+        <retro-skeleton height="80px" />
       </div>
       <div class="wishlist-view__actions">
-        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
-        <app-skeleton height="36px" borderRadius="var(--radius-sm)" />
+        <retro-skeleton height="36px" />
+        <retro-skeleton height="36px" />
       </div>
     } @else {
       <!-- Selected game preview (add mode only) -->
@@ -159,39 +154,39 @@
           <span class="wishlist-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
           <div class="wishlist-view__stars">
             @for (level of priorityOptions; track level) {
-              <button
-                mat-icon-button
-                type="button"
-                (click)="mobileForm.controls.priority.setValue(level)"
-                [attr.aria-label]="level">
-                <mat-icon>{{ level <= mobileForm.controls.priority.value ? 'star' : 'star_border' }}</mat-icon>
-              </button>
+              <retro-icon-button
+                [icon]="level <= mobileForm.controls.priority.value ? 'star' : 'star_border'"
+                [ariaLabel]="'' + level"
+                variant="primary"
+                (clicked)="mobileForm.controls.priority.setValue(level)" />
             }
           </div>
         </div>
 
         <!-- Platform (required in add, static chip in edit) -->
         @if (pendingCatalogEntry()) {
-          <mat-form-field appearance="outline" class="wishlist-view__field">
-            <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
-            <mat-select formControlName="platform">
-              @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
-                <mat-option [value]="platform">{{ platform }}</mat-option>
-              }
-            </mat-select>
-            @if (mobileForm.controls.platform.hasError('required')) {
-              <mat-error>{{ 'wishlist.fields.platformRequired' | transloco }}</mat-error>
+          <retro-select
+            class="wishlist-view__field"
+            [label]="'wishlist.fields.platform' | transloco"
+            formControlName="platform"
+            [error]="
+              mobileForm.controls.platform.hasError('required')
+                ? ('wishlist.fields.platformRequired' | transloco)
+                : null
+            ">
+            @for (platform of pendingCatalogEntry()?.platforms ?? []; track platform) {
+              <retro-option [value]="platform">{{ platform }}</retro-option>
             }
-          </mat-form-field>
+          </retro-select>
         } @else if (editPlatforms().length > 0) {
-          <mat-form-field appearance="outline" class="wishlist-view__field">
-            <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
-            <mat-select formControlName="platform">
-              @for (platform of editPlatforms(); track platform) {
-                <mat-option [value]="platform">{{ platform }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <retro-select
+            class="wishlist-view__field"
+            [label]="'wishlist.fields.platform' | transloco"
+            formControlName="platform">
+            @for (platform of editPlatforms(); track platform) {
+              <retro-option [value]="platform">{{ platform }}</retro-option>
+            }
+          </retro-select>
         } @else if (mobileForm.controls.platform.value) {
           <div class="wishlist-view__platform-display">
             <span class="wishlist-view__label">{{ 'wishlist.fields.platform' | transloco }}</span>
@@ -202,41 +197,40 @@
         }
 
         <!-- Desired price (required) -->
-        <mat-form-field appearance="outline" class="wishlist-view__field">
-          <mat-label>{{ 'wishlist.fields.desiredPrice' | transloco }}</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            step="0.01"
-            formControlName="desiredPrice"
-            [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
-          @if (mobileForm.controls.desiredPrice.hasError('required')) {
-            <mat-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</mat-error>
-          }
-        </mat-form-field>
+        <retro-input
+          class="wishlist-view__field"
+          [label]="'wishlist.fields.desiredPrice' | transloco"
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="desiredPrice"
+          [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco"
+          [error]="
+            mobileForm.controls.desiredPrice.hasError('required')
+              ? ('wishlist.fields.desiredPriceRequired' | transloco)
+              : null
+          " />
 
         <!-- Notes (optional) -->
-        <mat-form-field appearance="outline" class="wishlist-view__field">
-          <mat-label>{{ 'wishlist.fields.notes' | transloco }}</mat-label>
-          <textarea
-            matInput
-            formControlName="notes"
-            rows="3"
-            [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-        </mat-form-field>
+        <retro-textarea
+          class="wishlist-view__field"
+          [label]="'wishlist.fields.notes' | transloco"
+          formControlName="notes"
+          [placeholder]="'wishlist.fields.notesPlaceholder' | transloco" />
       </form>
 
       <div class="wishlist-view__actions">
-        <button mat-stroked-button type="button" (click)="onMobileCancel()">{{ 'common.cancel' | transloco }}</button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
+        <retro-button
+          variant="ghost"
+          [label]="'common.cancel' | transloco"
+          [fullWidth]="true"
+          (clicked)="onMobileCancel()" />
+        <retro-button
+          variant="primary"
+          [label]="'common.confirm' | transloco"
           [disabled]="!mobileCanConfirm()"
-          (click)="onMobileConfirm()">
-          {{ 'common.confirm' | transloco }}
-        </button>
+          [fullWidth]="true"
+          (clicked)="onMobileConfirm()" />
       </div>
     }
     <!-- end @else !editPlatformsLoading -->

@@ -1,6 +1,6 @@
 import { inject, signal, WritableSignal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroupDirective, NgForm, ValidationErrors } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { ErrorStateMatcher } from '@/interfaces/error-state-matcher.interface';
 import { NavigationExtras, Router } from '@angular/router';
 import { TranslocoService } from '@jsverse/transloco';
 
@@ -29,7 +29,7 @@ export class PasswordMismatchErrorStateMatcher implements ErrorStateMatcher {
  */
 export abstract class AuthBaseComponent {
   protected readonly _router: Router = inject(Router);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
+  protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether an auth request is in progress. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);

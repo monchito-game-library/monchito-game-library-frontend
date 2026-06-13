@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogCloseDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 /**
  * Reusable confirmation dialog component.
@@ -23,12 +23,19 @@ import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
   styleUrl: './confirm-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, TranslocoPipe]
+  imports: [
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    RetroDialogCloseDirective,
+    TranslocoPipe,
+    RetroButtonComponent
+  ]
 })
 export class ConfirmDialogComponent {
   /** Data injected into the dialog, containing title and message. */
-  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(MAT_DIALOG_DATA);
+  data: ConfirmDialogInterface = inject<ConfirmDialogInterface>(RETRO_DIALOG_DATA);
 
   /** Reference to this dialog instance, used to close it programmatically if needed. */
-  dialogRef: MatDialogRef<ConfirmDialogComponent> = inject(MatDialogRef<ConfirmDialogComponent>);
+  dialogRef: RetroDialogRef<ConfirmDialogComponent> = inject(RetroDialogRef<ConfirmDialogComponent>);
 }

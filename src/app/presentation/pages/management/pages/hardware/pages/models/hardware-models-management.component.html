@@ -1,25 +1,33 @@
 <div class="models-page" [class.models-page--panel-open]="panelOpen() || brandPanelOpen()">
   <header class="models-page__header">
     <div class="models-page__header-left">
-      <mat-icon class="models-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
+      <retro-icon class="models-page__back-icon" name="arrow_back" (click)="onBack()" />
       <div class="models-page__titles">
         <span class="models-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="models-page__title">{{ brand()?.name ?? '…' }}</h1>
       </div>
-      <button
-        mat-icon-button
-        type="button"
+      <retro-icon-button
+        icon="edit"
+        size="sm"
         class="models-page__edit-btn"
-        [attr.aria-label]="'common.edit' | transloco"
-        (click)="onEditBrand()">
-        <mat-icon>edit</mat-icon>
-      </button>
+        [ariaLabel]="'common.edit' | transloco"
+        (clicked)="onEditBrand()" />
     </div>
-    <button mat-flat-button color="primary" (click)="onAddModel()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.models.addBtn' | transloco }}
-    </button>
+    <retro-button
+      [label]="'management.hardware.models.addBtn' | transloco"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddModel()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
+
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.hardware.models.search.placeholder' | transloco"
+    [commandPath]="commandPath()"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
 
   @if (brandPanelOpen()) {
     <div class="brand-edit-panel-wrapper">
@@ -47,10 +55,10 @@
       <div class="models-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="models-skeleton__card">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-sm)" />
+            <retro-skeleton width="36px" height="36px" />
             <div class="models-skeleton__body">
-              <app-skeleton width="60%" height="14px" />
-              <app-skeleton width="40%" height="12px" />
+              <retro-skeleton width="60%" height="14px" />
+              <retro-skeleton width="40%" height="12px" />
             </div>
           </div>
         }
@@ -58,22 +66,45 @@
     } @else if (models().length === 0) {
       <p class="models-page__empty">{{ 'management.hardware.models.empty' | transloco }}</p>
     } @else {
+      @if (searchTerm() && filteredModels().length === 0) {
+        <div class="models-page__no-results">
+          <p>{{ 'management.hardware.models.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
       <div class="models-grid">
-        @for (model of models(); track model.id) {
-          <app-catalog-item-card
-            [icon]="model.type === 'console' ? '' : 'gamepad'"
-            [svgIcon]="
-              model.type === 'console'
-                ? model.category === 'portable'
-                  ? 'assets/images/console-portable.svg'
-                  : 'assets/images/console-home.svg'
-                : null
-            "
-            [name]="model.name"
-            [chips]="getModelChips(model)"
+        @for (model of filteredModels(); track model.id) {
+          <retro-card
+            class="model-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedModel()?.id === model.id"
-            [showChevron]="true"
-            (cardClick)="onOpenEditions(model)" />
+            (cardClicked)="onOpenEditions(model)">
+            <div class="model-card__top">
+              @if (model.type === 'console') {
+                <span
+                  class="model-card__icon-svg"
+                  [style.mask-image]="
+                    'url(' +
+                    (model.category === 'portable'
+                      ? 'assets/images/console-portable.svg'
+                      : 'assets/images/console-home.svg') +
+                    ')'
+                  "
+                  aria-hidden="true"></span>
+              } @else {
+                <retro-icon name="gamepad" size="lg" />
+              }
+              <span class="model-card__name">{{ model.name }}</span>
+              <retro-icon name="chevron_right" size="sm" />
+            </div>
+            <hr class="model-card__divider" />
+            <div class="model-card__chips">
+              @for (chip of getModelChips(model); track chip) {
+                <retro-chip [label]="chip" size="sm" />
+              }
+            </div>
+          </retro-card>
         }
       </div>
     }

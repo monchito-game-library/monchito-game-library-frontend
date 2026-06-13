@@ -2,7 +2,7 @@ import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -14,7 +14,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { HardwareFormBaseComponent } from './hardware-form-base.component';
 import { mockRouter } from '@/testing/router.mock';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
-import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
@@ -72,7 +72,7 @@ describe('HardwareFormBaseComponent', () => {
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco },
         { provide: STORE_USE_CASES, useValue: mockStoreUseCases },
         { provide: HARDWARE_BRAND_USE_CASES, useValue: mockBrandUseCases },
@@ -381,7 +381,7 @@ describe('HardwareFormBaseComponent', () => {
       const result = await (component as any)._loadHardwareForEdit('item-1');
 
       expect(result).toBeNull();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test/list']);
     });
 

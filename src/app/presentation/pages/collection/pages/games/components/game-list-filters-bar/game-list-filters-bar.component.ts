@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, Signal } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { availableGameStatuses } from '@/constants/game-status.constant';
@@ -15,7 +15,7 @@ import { GameStatusOption } from '@/interfaces/game-status-option.interface';
   styleUrl: './game-list-filters-bar.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslocoPipe]
+  imports: [RetroIconComponent, TranslocoPipe]
 })
 export class GameListFiltersBarComponent {
   /** Filter state shared with the games page — mutations are reflected live in the list. */

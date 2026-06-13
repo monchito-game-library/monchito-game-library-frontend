@@ -39,14 +39,14 @@
       <div class="controller-detail__color-swatch" [style.background-color]="controller()?.color"></div>
       <span class="controller-detail__color-label">{{ controller()?.color }}</span>
     </div>
-    <app-badge-chip [label]="controller()?.compatibility ?? ''" variant="neutral" />
-    <app-badge-chip
+    <retro-chip [label]="controller()?.compatibility ?? ''" color="neutral" />
+    <retro-chip
       [label]="
         (controller()?.condition === GAME_CONDITION.NEW
           ? 'controllersPage.condition.new'
           : 'controllersPage.condition.used'
         ) | transloco
       "
-      [variant]="controller()?.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+      [color]="controller()?.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
   </ng-container>
 </app-hardware-detail-shell>

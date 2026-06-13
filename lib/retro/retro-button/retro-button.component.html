@@ -1,0 +1,24 @@
+<button
+  class="retro-btn"
+  [class.retro-btn--primary]="variant() === 'primary'"
+  [class.retro-btn--ghost]="variant() === 'ghost'"
+  [class.retro-btn--danger]="variant() === 'danger'"
+  [class.retro-btn--success]="variant() === 'success'"
+  [class.retro-btn--sm]="size() === 'sm'"
+  [class.retro-btn--md]="size() === 'md'"
+  [class.retro-btn--lg]="size() === 'lg'"
+  [class.retro-btn--full]="fullWidth()"
+  [class.retro-btn--loading]="loading()"
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="clicked.emit($event)">
+  @if (loading()) {
+    <span class="retro-btn__spinner" aria-hidden="true">
+      <retro-icon class="retro-btn__icon retro-btn__icon--spin" name="progress_activity" size="sm" />
+    </span>
+  } @else {
+    <span class="retro-btn__slot retro-btn__slot--start"><ng-content select="[slot=start]" /></span>
+    <span class="retro-btn__slot retro-btn__slot--end"><ng-content select="[slot=end]" /></span>
+  }
+  <span class="retro-btn__label">{{ label() }}</span>
+</button>

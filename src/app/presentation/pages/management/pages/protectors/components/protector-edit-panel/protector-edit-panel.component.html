@@ -10,44 +10,33 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.nameLabel' | transloco }}</mat-label>
-        <input matInput formControlName="name" [placeholder]="'management.products.namePlaceholder' | transloco" />
-        @if (form.controls.name.hasError('required')) {
-          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-        }
-      </mat-form-field>
+      <retro-input
+        [label]="'management.products.nameLabel' | transloco"
+        formControlName="name"
+        [placeholder]="'management.products.namePlaceholder' | transloco"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.categoryLabel' | transloco }}</mat-label>
-        <mat-select formControlName="category">
-          <mat-option value="box">{{ 'management.products.categoryBox' | transloco }}</mat-option>
-          <mat-option value="console">{{ 'management.products.categoryConsole' | transloco }}</mat-option>
-          <mat-option value="other">{{ 'management.products.categoryOther' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <retro-select [label]="'management.products.categoryLabel' | transloco" formControlName="category">
+        <retro-option value="box">{{ 'management.products.categoryBox' | transloco }}</retro-option>
+        <retro-option value="console">{{ 'management.products.categoryConsole' | transloco }}</retro-option>
+        <retro-option value="other">{{ 'management.products.categoryOther' | transloco }}</retro-option>
+      </retro-select>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.products.notesLabel' | transloco }}</mat-label>
-        <textarea
-          matInput
-          formControlName="notes"
-          rows="1"
-          [placeholder]="'management.products.notesPlaceholder' | transloco"></textarea>
-      </mat-form-field>
+      <retro-textarea
+        [label]="'management.products.notesLabel' | transloco"
+        formControlName="notes"
+        [placeholder]="'management.products.notesPlaceholder' | transloco" />
     </div>
 
     <div class="packs-section">
       <div class="packs-section__header">
         <span class="packs-section__title">{{ 'management.products.packsTitle' | transloco }}</span>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="addPack()"
-          [matTooltip]="'management.products.addPack' | transloco"
-          [attr.aria-label]="'management.products.addPack' | transloco">
-          <mat-icon>add</mat-icon>
-        </button>
+        <retro-icon-button
+          icon="add"
+          size="sm"
+          [ariaLabel]="'management.products.addPack' | transloco"
+          [retroTooltip]="'management.products.addPack' | transloco"
+          (clicked)="addPack()" />
       </div>
 
       @if (packsArray.length === 0) {
@@ -57,36 +46,47 @@
       <div class="packs-list">
         @for (packGroup of packsArray.controls; track $index) {
           <div class="pack-row" [formGroup]="asFormGroup(packGroup)">
-            <mat-form-field appearance="outline" class="pack-row__qty">
-              <mat-label>{{ 'management.products.packQty' | transloco }}</mat-label>
-              <input matInput formControlName="quantity" type="number" min="1" step="1" />
-              @if (asFormGroup(packGroup).controls['quantity'].hasError('required')) {
-                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-              }
-            </mat-form-field>
+            <retro-input
+              class="pack-row__qty"
+              [label]="'management.products.packQty' | transloco"
+              formControlName="quantity"
+              type="number"
+              min="1"
+              step="1"
+              [error]="
+                asFormGroup(packGroup).controls['quantity'].hasError('required')
+                  ? ('gameForm.errors.required' | transloco)
+                  : null
+              " />
 
-            <mat-form-field appearance="outline" class="pack-row__price">
-              <mat-label>{{ 'management.products.packPrice' | transloco }}</mat-label>
-              <input matInput formControlName="price" type="number" min="0.01" step="0.01" />
-              <mat-icon matSuffix>euro</mat-icon>
-              @if (asFormGroup(packGroup).controls['price'].hasError('required')) {
-                <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-              }
-            </mat-form-field>
+            <retro-input
+              class="pack-row__price"
+              [label]="'management.products.packPrice' | transloco"
+              formControlName="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              suffixIcon="euro"
+              [error]="
+                asFormGroup(packGroup).controls['price'].hasError('required')
+                  ? ('gameForm.errors.required' | transloco)
+                  : null
+              " />
 
-            <mat-form-field appearance="outline" class="pack-row__url">
-              <mat-label>{{ 'management.products.packUrl' | transloco }}</mat-label>
-              <input matInput formControlName="url" type="url" placeholder="https://..." />
-            </mat-form-field>
+            <retro-input
+              class="pack-row__url"
+              [label]="'management.products.packUrl' | transloco"
+              formControlName="url"
+              type="url"
+              placeholder="https://..." />
 
-            <button
-              mat-icon-button
-              type="button"
-              (click)="removePack($index)"
+            <retro-icon-button
+              icon="delete"
+              variant="danger"
+              size="sm"
               class="pack-row__remove"
-              [attr.aria-label]="'management.products.removePack' | transloco">
-              <mat-icon>delete</mat-icon>
-            </button>
+              [ariaLabel]="'management.products.removePack' | transloco"
+              (clicked)="removePack($index)" />
           </div>
         }
       </div>
@@ -94,33 +94,37 @@
 
     <div class="edit-panel__actions">
       @if (protector()) {
-        <button
-          mat-stroked-button
-          type="button"
-          (click)="toggled.emit()"
-          [class.edit-panel__deactivate-btn]="protector()!.isActive"
-          [class.edit-panel__activate-btn]="!protector()!.isActive">
-          <mat-icon>{{ protector()!.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-          {{
+        <retro-button
+          [label]="
             (protector()!.isActive ? 'management.products.deactivateBtn' : 'management.products.activateBtn')
               | transloco
-          }}
-        </button>
-        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
-          <mat-icon>delete</mat-icon>
-          {{ 'management.products.deleteBtn' | transloco }}
-        </button>
+          "
+          variant="ghost"
+          size="md"
+          [class.edit-panel__deactivate-btn]="protector()!.isActive"
+          [class.edit-panel__activate-btn]="!protector()!.isActive"
+          (clicked)="toggled.emit()">
+          <retro-icon slot="start" [name]="protector()!.isActive ? 'toggle_on' : 'toggle_off'" size="sm" />
+        </retro-button>
+        <retro-button
+          [label]="'management.products.deleteBtn' | transloco"
+          variant="danger"
+          size="md"
+          class="edit-panel__delete-btn"
+          (clicked)="deleted.emit()">
+          <retro-icon slot="start" name="delete" size="sm" />
+        </retro-button>
       }
       <div class="edit-panel__actions-right">
-        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          (click)="onSave()"
-          [disabled]="form.invalid || packsArray.length === 0">
-          {{ 'common.save' | transloco }}
-        </button>
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="cancelled.emit()" />
+        <retro-button
+          [label]="'common.save' | transloco"
+          variant="primary"
+          size="md"
+          [disabled]="form.invalid || packsArray.length === 0"
+          (clicked)="onSave()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     </div>
   </form>

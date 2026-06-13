@@ -6,11 +6,13 @@ import { HardwareEditionsManagementComponent } from './hardware-editions-managem
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_EDITION_USE_CASES } from '@/domain/use-cases/hardware-edition/hardware-edition.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
+import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hardware-brand.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 
 function makeEdition(overrides: Partial<HardwareEditionModel> = {}): HardwareEditionModel {
   return { id: 'edition-uuid-1', modelId: 'model-uuid-1', name: 'Final Fantasy XVI Limited', ...overrides };
@@ -26,6 +28,10 @@ function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelMo
     category: null,
     ...overrides
   };
+}
+
+function makeBrand(overrides: Partial<HardwareBrandModel> = {}): HardwareBrandModel {
+  return { id: 'brand-uuid-1', name: 'Nintendo', ...overrides };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -69,13 +75,19 @@ describe('HardwareEditionsManagementComponent', () => {
           }
         },
         {
+          provide: HARDWARE_BRAND_USE_CASES,
+          useValue: {
+            getById: vi.fn().mockResolvedValue(undefined)
+          }
+        },
+        {
           provide: ActivatedRoute,
           useValue: {
             snapshot: { paramMap: { get: vi.fn().mockReturnValue('model-uuid-1') } }
           }
         },
         { provide: Router, useValue: mockRouter },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -91,6 +103,90 @@ describe('HardwareEditionsManagementComponent', () => {
     it('panelOpen es false', () => expect(component.panelOpen()).toBe(false));
     it('selectedEdition es undefined', () => expect(component.selectedEdition()).toBeUndefined());
     it('modelPanelOpen es false', () => expect(component.modelPanelOpen()).toBe(false));
+    it('searchTerm es ""', () => expect(component.searchTerm()).toBe(''));
+    it('filteredEditions devuelve [] cuando editions está vacío', () =>
+      expect(component.filteredEditions()).toEqual([]));
+    it('commandFlags es []', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('limited');
+      expect(component.searchTerm()).toBe('limited');
+    });
+
+    it('limpia searchTerm al recibir cadena vacía', () => {
+      component.searchTerm.set('limited');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredEditions', () => {
+    beforeEach(() => {
+      component.editions.set([
+        makeEdition({ id: '1', name: 'Limited Edition' }),
+        makeEdition({ id: '2', name: 'Standard Black' }),
+        makeEdition({ id: '3', name: 'Glacier White' })
+      ]);
+    });
+
+    it('devuelve todas las ediciones cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredEditions().length).toBe(3);
+    });
+
+    it('filtra por coincidencia parcial case-insensitive', () => {
+      component.searchTerm.set('limit');
+      expect(component.filteredEditions()).toEqual([makeEdition({ id: '1', name: 'Limited Edition' })]);
+    });
+
+    it('devuelve [] cuando no hay coincidencias', () => {
+      component.searchTerm.set('zzz');
+      expect(component.filteredEditions()).toEqual([]);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag search cuando hay término', () => {
+      component.searchTerm.set('white');
+      expect(component.commandFlags()).toEqual(['search="white"']);
+    });
+  });
+
+  describe('commandPath', () => {
+    it('devuelve la base cuando no hay model ni brand', () => {
+      component.model.set(undefined);
+      component.brand.set(undefined);
+      expect(component.commandPath()).toBe('monchito ~/management/hardware');
+    });
+
+    it('incluye solo el model cuando no hay brand', () => {
+      component.model.set(makeModel({ name: 'Game Boy' }));
+      component.brand.set(undefined);
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/game-boy');
+    });
+
+    it('incluye brand y model cuando ambos están cargados', () => {
+      component.brand.set(makeBrand({ name: 'Nintendo' }));
+      component.model.set(makeModel({ name: 'Game Boy' }));
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/nintendo/game-boy');
+    });
+
+    it('invoca _brandUseCases.getById con el brandId del model tras ngOnInit', async () => {
+      const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
+      const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
+      modelUseCases.getById.mockResolvedValue(makeModel({ brandId: 'brand-uuid-1' }));
+
+      await component.ngOnInit();
+
+      expect(brandUseCases.getById).toHaveBeenCalledWith('brand-uuid-1');
+    });
   });
 
   describe('onAddEdition', () => {
@@ -218,7 +314,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
   describe('onDeleteEdition', () => {
     it('no hace nada si no hay edition seleccionada', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedEdition.set(undefined);
       component.onDeleteEdition();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -226,7 +322,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
     it('no elimina la edition si el dialog se cancela', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedEdition.set(makeEdition());
@@ -239,7 +335,7 @@ describe('HardwareEditionsManagementComponent', () => {
       const editionUseCases = TestBed.inject(HARDWARE_EDITION_USE_CASES as any) as any;
       editionUseCases.delete.mockResolvedValue(undefined);
       editionUseCases.getAllByModel.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -356,7 +452,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
   describe('onModelDeleted', () => {
     it('no hace nada si no hay modelo cargado', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.model.set(undefined);
       component.onModelDeleted();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -364,7 +460,7 @@ describe('HardwareEditionsManagementComponent', () => {
 
     it('no elimina el modelo si el dialog se cancela', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       component.model.set(makeModel());
 
@@ -376,7 +472,7 @@ describe('HardwareEditionsManagementComponent', () => {
     it('elimina el modelo y navega atrás si el dialog se confirma', async () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       modelUseCases.delete.mockResolvedValue(undefined);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.model.set(makeModel({ id: 'model-uuid-1', brandId: 'brand-uuid-1' }));
 

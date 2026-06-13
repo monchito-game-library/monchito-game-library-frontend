@@ -3,9 +3,7 @@
   <div class="order-detail-page__cost-row" (click)="onToggleMyPart()">
     <div class="order-detail-page__cost-total-label">
       <span>{{ 'orders.cost.mySubtotal' | transloco }}</span>
-      <mat-icon class="order-detail-page__cost-chevron">
-        {{ myPartExpanded() ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
+      <retro-icon class="order-detail-page__cost-chevron" [name]="myPartExpanded() ? 'expand_less' : 'expand_more'" />
     </div>
     <div>{{ myTotal() | number: '1.2-2' }} €</div>
   </div>
@@ -40,9 +38,9 @@
   <div class="order-detail-page__cost-row" (click)="onToggleCostDetail()">
     <div class="order-detail-page__cost-total-label">
       <span>{{ 'orders.cost.orderTotal' | transloco }}</span>
-      <mat-icon class="order-detail-page__cost-chevron">
-        {{ costDetailExpanded() ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
+      <retro-icon
+        class="order-detail-page__cost-chevron"
+        [name]="costDetailExpanded() ? 'expand_less' : 'expand_more'" />
     </div>
     <div class="order-detail-page__cost-order-total">{{ totalSubtotal() + extras() | number: '1.2-2' }} €</div>
   </div>
@@ -63,7 +61,7 @@
                 referrerpolicy="no-referrer" />
             } @else {
               <div class="order-detail-page__cost-member-avatar order-detail-page__cost-member-avatar--placeholder">
-                <mat-icon>person</mat-icon>
+                <retro-icon name="person" />
               </div>
             }
             <span>{{ m.displayName ?? m.email ?? m.userId }}</span>

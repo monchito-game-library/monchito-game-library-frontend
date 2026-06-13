@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -21,25 +20,18 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatButton,
-    MatIconButton,
-    MatProgressSpinner,
-    MatIcon,
-    MatError,
-    MatPrefix,
-    MatSuffix,
+    RetroIconButtonComponent,
+    RetroIconComponent,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    RetroButtonComponent,
+    RetroInputComponent
   ]
 })
 /** Reset-password page component. Validates the recovery session and updates the user's password. */
 export class ResetPasswordComponent extends AuthBaseComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
-
   /** Whether the recovery session from the email link has been established. */
   readonly recoveryReady: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -63,6 +55,30 @@ export class ResetPasswordComponent extends AuthBaseComponent implements OnInit 
     this._authUseCases.onPasswordRecovery(() => {
       this.recoveryReady.set(true);
     });
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo password, o null si no hay error visible.
+   */
+  _getPasswordError(): string | null {
+    const ctrl = this.resetPasswordForm.get('password');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.resetPassword.passwordRequired');
+    if (ctrl.hasError('minlength')) return this._transloco.translate('auth.resetPassword.passwordMinLength');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo confirmPassword.
+   * Combina el error de nivel control (required) y el de nivel formulario (passwordMismatch).
+   */
+  _getConfirmPasswordError(): string | null {
+    const ctrl = this.resetPasswordForm.get('confirmPassword');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.resetPassword.confirmPasswordRequired');
+    if (this.resetPasswordForm.hasError('passwordMismatch'))
+      return this._transloco.translate('auth.resetPassword.passwordMismatch');
+    return null;
   }
 
   /**

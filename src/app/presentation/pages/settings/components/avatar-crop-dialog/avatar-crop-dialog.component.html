@@ -1,10 +1,10 @@
-<h2 mat-dialog-title>{{ config.title }}</h2>
+<h2 retroDialogTitle>{{ config.title }}</h2>
 
-<mat-dialog-content>
+<div retroDialogContent>
   <div class="crop-dialog__wrap">
     @if (!imageLoaded()) {
       <div class="crop-dialog__loading">
-        <mat-spinner diameter="40" />
+        <retro-spinner size="md" />
       </div>
     }
     <div
@@ -33,11 +33,13 @@
     </div>
   </div>
   <p class="crop-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
-</mat-dialog-content>
+</div>
 
 @if (imageLoaded()) {
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
-    <button mat-flat-button type="button" (click)="onConfirm()">{{ 'common.save' | transloco }}</button>
-  </mat-dialog-actions>
+  <footer retroDialogActions align="end">
+    <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="onCancel()" />
+    <retro-button [label]="'common.save' | transloco" variant="primary" size="md" (clicked)="onConfirm()">
+      <retro-icon slot="start" name="save" size="sm" />
+    </retro-button>
+  </footer>
 }

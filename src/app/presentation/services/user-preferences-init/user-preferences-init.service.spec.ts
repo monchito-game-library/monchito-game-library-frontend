@@ -9,8 +9,7 @@ import { UserPreferencesService } from '@/services/user-preferences/user-prefere
 import { UserPreferencesInitService } from './user-preferences-init.service';
 
 const mockThemeService: Partial<ThemeService> = {
-  setDarkTheme: vi.fn(),
-  setLightTheme: vi.fn()
+  setTheme: vi.fn()
 };
 
 const mockTransloco: Partial<TranslocoService> = {
@@ -77,8 +76,7 @@ describe('UserPreferencesInitService', () => {
 
       await service.loadPreferences('user-1');
 
-      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
-      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
       expect(mockTransloco.setActiveLang).not.toHaveBeenCalled();
     });
 
@@ -97,8 +95,7 @@ describe('UserPreferencesInitService', () => {
 
       await service.loadPreferences('user-1');
 
-      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
-      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
       expect(mockTransloco.setActiveLang).not.toHaveBeenCalled();
     });
 
@@ -122,8 +119,8 @@ describe('UserPreferencesInitService', () => {
 
       await service.loadPreferences('user-1');
 
-      expect(mockThemeService.setDarkTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.setTheme).toHaveBeenCalledOnce();
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('dark');
     });
 
     it('aplica tema claro cuando theme es "light"', async () => {
@@ -137,8 +134,8 @@ describe('UserPreferencesInitService', () => {
 
       await service.loadPreferences('user-1');
 
-      expect(mockThemeService.setLightTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
+      expect(mockThemeService.setTheme).toHaveBeenCalledOnce();
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('light');
     });
 
     it('establece el idioma cuando language está definido', async () => {
@@ -250,7 +247,8 @@ describe('UserPreferencesInitService', () => {
 
       await service.loadPreferences('user-1');
 
-      expect(mockThemeService.setDarkTheme).toHaveBeenCalledOnce();
+      expect(mockThemeService.setTheme).toHaveBeenCalledOnce();
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('dark');
       expect(mockTransloco.setActiveLang).toHaveBeenCalledWith('en');
       expect(mockUserPrefsState.avatarUrl()).toBe('https://cdn.example.com/a.jpg');
       expect(mockUserPrefsState.bannerImageUrl()).toBe('https://cdn.example.com/b.jpg');

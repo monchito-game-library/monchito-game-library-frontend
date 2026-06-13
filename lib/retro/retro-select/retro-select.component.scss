@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.retro-select__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text-hi);
+  text-align: left;
+  gap: 0.25rem;
+  user-select: none;
+  flex: 1;
+  min-width: 0;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    color: var(--text-lo);
+  }
+}
+
+.retro-select__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &--placeholder {
+    color: var(--text-lo);
+  }
+}
+
+.retro-select__caret {
+  color: var(--text-mid);
+  transition: transform 120ms linear;
+  flex-shrink: 0;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+// ─── Panel global (fuera del shadow — estilos globales en styles.scss) ────────
+// Los estilos del panel van en styles.scss bajo .retro-select__panel

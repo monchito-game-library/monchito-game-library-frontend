@@ -7,18 +7,18 @@
     @if (loading()) {
       <!-- Hero skeleton -->
       <div class="users-page__skeleton-hero">
-        <app-skeleton width="72px" height="72px" borderRadius="var(--radius-full)" />
+        <retro-skeleton width="72px" height="72px" />
         <div class="users-page__skeleton-hero-info">
-          <app-skeleton width="80px" height="12px" />
-          <app-skeleton width="240px" height="20px" />
-          <app-skeleton width="180px" height="14px" />
+          <retro-skeleton width="80px" height="12px" />
+          <retro-skeleton width="240px" height="20px" />
+          <retro-skeleton width="180px" height="14px" />
         </div>
       </div>
 
       <!-- Stats skeleton -->
       <div class="users-page__skeleton-stats">
         @for (n of [0, 1, 2]; track n) {
-          <app-skeleton height="72px" borderRadius="var(--radius-md)" />
+          <retro-skeleton height="72px" />
         }
       </div>
 
@@ -26,12 +26,12 @@
       <div class="users-page__skeleton-list">
         @for (n of [0, 1, 2]; track n) {
           <div class="users-page__skeleton-row">
-            <app-skeleton width="40px" height="40px" borderRadius="var(--radius-full)" />
+            <retro-skeleton width="40px" height="40px" />
             <div class="users-page__skeleton-info">
-              <app-skeleton width="200px" height="14px" />
-              <app-skeleton width="120px" height="12px" />
+              <retro-skeleton width="200px" height="14px" />
+              <retro-skeleton width="120px" height="12px" />
             </div>
-            <app-skeleton width="120px" height="36px" borderRadius="var(--radius-sm)" />
+            <retro-skeleton width="120px" height="36px" />
           </div>
         }
       </div>
@@ -44,7 +44,7 @@
               <img class="owner-hero__avatar" [ngSrc]="owner.avatarUrl" width="72" height="72" [alt]="owner.email" />
             } @else {
               <div class="owner-hero__avatar owner-hero__avatar--fallback">
-                <mat-icon>person</mat-icon>
+                <retro-icon name="person" />
               </div>
             }
           </div>
@@ -68,37 +68,42 @@
 
       <!-- Stats -->
       <section class="users-stats" [attr.aria-label]="'management.users.stats.aria' | transloco">
-        <div class="users-stats__card">
+        <retro-card
+          class="users-stats__card"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'all'"
+          [attr.aria-pressed]="activeFilter() === 'all'"
+          (cardClicked)="onFilterChange('all')">
           <span class="users-stats__label">{{ 'management.users.stats.total' | transloco }}</span>
           <span class="users-stats__value">{{ stats().total }}</span>
-        </div>
-        <div class="users-stats__card users-stats__card--admins">
+        </retro-card>
+        <retro-card
+          class="users-stats__card users-stats__card--admins"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'admin'"
+          [attr.aria-pressed]="activeFilter() === 'admin'"
+          (cardClicked)="onFilterChange('admin')">
           <span class="users-stats__label">{{ 'management.users.stats.admins' | transloco }}</span>
           <span class="users-stats__value">{{ stats().admins }}</span>
-        </div>
-        <div class="users-stats__card users-stats__card--members">
+        </retro-card>
+        <retro-card
+          class="users-stats__card users-stats__card--members"
+          [interactive]="true"
+          padding="md"
+          [selected]="activeFilter() === 'member'"
+          [attr.aria-pressed]="activeFilter() === 'member'"
+          (cardClicked)="onFilterChange('member')">
           <span class="users-stats__label">{{ 'management.users.stats.members' | transloco }}</span>
           <span class="users-stats__value">{{ stats().members }}</span>
-        </div>
+        </retro-card>
       </section>
-
-      <!-- Toolbar de filtros -->
-      <nav class="users-toolbar" [attr.aria-label]="'management.users.filter.aria' | transloco">
-        @for (filter of filters; track filter.id) {
-          <button
-            type="button"
-            class="users-toolbar__chip"
-            [class.users-toolbar__chip--active]="activeFilter() === filter.id"
-            (click)="onFilterChange(filter.id)">
-            {{ filter.labelKey | transloco }}
-          </button>
-        }
-      </nav>
 
       <!-- Empty state cuando el filtro no devuelve resultados -->
       @if (hasNoVisibleUsers()) {
         <div class="users-empty">
-          <mat-icon class="users-empty__icon">group_off</mat-icon>
+          <retro-icon class="users-empty__icon" name="group_off" />
           <p class="users-empty__text">{{ 'management.users.empty' | transloco }}</p>
         </div>
       }
@@ -111,10 +116,10 @@
             <span class="users-section__count">{{ visibleAdmins().length }}</span>
           </header>
 
-          <div class="users-list">
+          <retro-list>
             @for (user of visibleAdmins(); track user.userId) {
-              <article class="user-card" [class.user-card--admin]="true">
-                <div class="user-card__avatar">
+              <retro-list-item padding="md" [variant]="'accent'">
+                <div class="user-card__avatar" retroListItemLeading>
                   @if (user.avatarUrl) {
                     <img
                       [ngSrc]="user.avatarUrl"
@@ -123,7 +128,7 @@
                       [alt]="user.email"
                       class="user-card__avatar-img" />
                   } @else {
-                    <mat-icon>person</mat-icon>
+                    <retro-icon name="person" />
                   }
                 </div>
 
@@ -134,35 +139,33 @@
                   </span>
                 </div>
 
-                <div class="user-card__action">
+                <div class="user-card__action" retroListItemTrailing>
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <mat-spinner diameter="20" />
+                    <retro-spinner size="sm" />
                   } @else {
-                    <button
-                      mat-stroked-button
-                      type="button"
+                    <retro-button
+                      [label]="'management.users.action.demote' | transloco"
+                      variant="ghost"
+                      size="sm"
                       class="user-card__action-btn user-card__action-btn--demote"
-                      (click)="onTogglePromotion(user)">
-                      <mat-icon>person_remove</mat-icon>
-                      <span>{{ 'management.users.action.demote' | transloco }}</span>
-                    </button>
+                      (clicked)="onTogglePromotion(user)">
+                      <retro-icon slot="start" name="person_remove" size="sm" />
+                    </retro-button>
                     @if (!isSelf(user)) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        color="warn"
+                      <retro-icon-button
+                        icon="delete"
+                        variant="danger"
+                        size="sm"
                         class="user-card__action-delete"
-                        [attr.aria-label]="'management.users.action.delete' | transloco"
-                        [matTooltip]="'management.users.action.delete' | transloco"
-                        (click)="onDeleteUser(user)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
+                        [ariaLabel]="'management.users.action.delete' | transloco"
+                        [retroTooltip]="'management.users.action.delete' | transloco"
+                        (clicked)="onDeleteUser(user)" />
                     }
                   }
                 </div>
-              </article>
+              </retro-list-item>
             }
-          </div>
+          </retro-list>
         </section>
       }
 
@@ -174,10 +177,10 @@
             <span class="users-section__count">{{ visibleMembers().length }}</span>
           </header>
 
-          <div class="users-list">
+          <retro-list>
             @for (user of visibleMembers(); track user.userId) {
-              <article class="user-card">
-                <div class="user-card__avatar">
+              <retro-list-item padding="md" [variant]="'default'">
+                <div class="user-card__avatar" retroListItemLeading>
                   @if (user.avatarUrl) {
                     <img
                       [ngSrc]="user.avatarUrl"
@@ -186,7 +189,7 @@
                       [alt]="user.email"
                       class="user-card__avatar-img" />
                   } @else {
-                    <mat-icon>person</mat-icon>
+                    <retro-icon name="person" />
                   }
                 </div>
 
@@ -197,35 +200,33 @@
                   </span>
                 </div>
 
-                <div class="user-card__action">
+                <div class="user-card__action" retroListItemTrailing>
                   @if (updatingUserId() === user.userId || deletingUserId() === user.userId) {
-                    <mat-spinner diameter="20" />
+                    <retro-spinner size="sm" />
                   } @else {
-                    <button
-                      mat-flat-button
-                      type="button"
+                    <retro-button
+                      [label]="'management.users.action.promote' | transloco"
+                      variant="primary"
+                      size="sm"
                       class="user-card__action-btn user-card__action-btn--promote"
-                      (click)="onTogglePromotion(user)">
-                      <mat-icon>person_add</mat-icon>
-                      <span>{{ 'management.users.action.promote' | transloco }}</span>
-                    </button>
+                      (clicked)="onTogglePromotion(user)">
+                      <retro-icon slot="start" name="person_add" size="sm" />
+                    </retro-button>
                     @if (!isSelf(user)) {
-                      <button
-                        mat-icon-button
-                        type="button"
-                        color="warn"
+                      <retro-icon-button
+                        icon="delete"
+                        variant="danger"
+                        size="sm"
                         class="user-card__action-delete"
-                        [attr.aria-label]="'management.users.action.delete' | transloco"
-                        [matTooltip]="'management.users.action.delete' | transloco"
-                        (click)="onDeleteUser(user)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
+                        [ariaLabel]="'management.users.action.delete' | transloco"
+                        [retroTooltip]="'management.users.action.delete' | transloco"
+                        (clicked)="onDeleteUser(user)" />
                     }
                   }
                 </div>
-              </article>
+              </retro-list-item>
             }
-          </div>
+          </retro-list>
         </section>
       }
     }

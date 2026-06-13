@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -21,27 +19,32 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatButton,
-    MatProgressSpinner,
-    MatIcon,
-    MatError,
-    MatPrefix,
+    RetroIconComponent,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    RetroButtonComponent,
+    RetroInputComponent
   ]
 })
 /** Forgot-password page component. Sends a password-reset email and redirects to login on success. */
 export class ForgotPasswordComponent extends AuthBaseComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
-
   /** Reactive form with a single email field. */
   readonly forgotPasswordForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
+
+  /**
+   * Devuelve el mensaje de error del campo email, o null si no hay error visible.
+   */
+  _getEmailError(): string | null {
+    const ctrl = this.forgotPasswordForm.get('email');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.forgotPassword.emailRequired');
+    if (ctrl.hasError('email')) return this._transloco.translate('auth.forgotPassword.emailInvalid');
+    return null;
+  }
 
   /**
    * Validates the form, sends the password-reset email and redirects to login on success.

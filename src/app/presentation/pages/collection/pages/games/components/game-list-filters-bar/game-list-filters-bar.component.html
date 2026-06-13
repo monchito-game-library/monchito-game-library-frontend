@@ -7,20 +7,18 @@
         (click)="chip.onRemove()"
         [attr.aria-label]="'gameList.aria.clearFilters' | transloco">
         @if (chip.icon) {
-          <mat-icon class="filters-bar__chip-icon" [style.color]="chip.iconColor || null">
-            {{ chip.icon }}
-          </mat-icon>
+          <retro-icon class="filters-bar__chip-icon" [name]="chip.icon" [style.color]="chip.iconColor || null" />
         }
         @if (chip.labelKey) {
           <span class="filters-bar__chip-label">{{ chip.labelKey | transloco }}</span>
         } @else {
           <span class="filters-bar__chip-label">{{ chip.label }}</span>
         }
-        <mat-icon class="filters-bar__chip-close">close</mat-icon>
+        <retro-icon class="filters-bar__chip-close" name="close" />
       </button>
     }
     <button type="button" class="filters-bar__clear" (click)="data().clearAllFilters()">
-      <mat-icon>filter_alt_off</mat-icon>
+      <retro-icon name="filter_alt_off" />
       <span>{{ 'gameList.empty.clearFilters' | transloco }}</span>
     </button>
   </div>

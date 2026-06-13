@@ -10,27 +10,33 @@
 
   <form [formGroup]="form" class="edit-panel__form">
     <div class="edit-panel__fields">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ 'management.hardware.editions.nameLabel' | transloco }}</mat-label>
-        <input matInput formControlName="name" />
-        @if (form.controls.name.hasError('required')) {
-          <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-        }
-      </mat-form-field>
+      <retro-input
+        [label]="'management.hardware.editions.nameLabel' | transloco"
+        formControlName="name"
+        [error]="form.controls.name.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
     </div>
 
     <div class="edit-panel__actions">
       @if (edition()) {
-        <button mat-stroked-button type="button" class="edit-panel__delete-btn" (click)="deleted.emit()">
-          <mat-icon>delete_outline</mat-icon>
-          {{ 'common.delete' | transloco }}
-        </button>
+        <retro-button
+          [label]="'common.delete' | transloco"
+          variant="danger"
+          size="md"
+          class="edit-panel__delete-btn"
+          (clicked)="deleted.emit()">
+          <retro-icon slot="start" name="delete_outline" size="sm" />
+        </retro-button>
       }
       <div class="edit-panel__actions-right">
-        <button mat-button type="button" (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
-        <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="form.invalid">
-          {{ 'common.save' | transloco }}
-        </button>
+        <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="cancelled.emit()" />
+        <retro-button
+          [label]="'common.save' | transloco"
+          variant="primary"
+          size="md"
+          [disabled]="form.invalid"
+          (clicked)="onSave()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     </div>
   </form>

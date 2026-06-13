@@ -1,0 +1,55 @@
+<retro-form-field
+  [size]="size()"
+  [disabled]="_isDisabled()"
+  [clearable]="clearable()"
+  [clearAriaLabel]="clearAriaLabel()"
+  [hideSubscript]="hideSubscript()"
+  [controlRef]="this"
+  (cleared)="onClear()">
+  <retro-label>{{ label() }}</retro-label>
+
+  @if (prefixIcon()) {
+    <retro-icon [name]="prefixIcon()!" size="sm" retroPrefix />
+  }
+
+  <span class="retro-form-field__slot" retroPrefix>
+    <ng-content select="[retroPrefix]" />
+  </span>
+
+  <input
+    #inputEl
+    retroInput
+    type="text"
+    [placeholder]="placeholder()"
+    [disabled]="_isDisabled()"
+    [value]="_displayValue()"
+    [attr.aria-autocomplete]="'list'"
+    [attr.aria-controls]="listboxId"
+    [attr.aria-expanded]="_panelOpen()"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)" />
+
+  @if (suffixIcon()) {
+    <retro-icon [name]="suffixIcon()!" size="sm" retroSuffix />
+  }
+
+  <span class="retro-form-field__slot" retroSuffix>
+    <ng-content select="[retroSuffix]" />
+  </span>
+
+  @if (error()) {
+    <retro-error>{{ error() }}</retro-error>
+  }
+  @if (hint()) {
+    <retro-hint>{{ hint() }}</retro-hint>
+  }
+</retro-form-field>
+
+<!-- Panel (teleportado via CDK Portal) -->
+<ng-template #panel>
+  <ul class="retro-search__panel" [id]="listboxId" role="listbox" [attr.aria-label]="label()">
+    <ng-content />
+  </ul>
+</ng-template>

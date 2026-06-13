@@ -12,6 +12,8 @@
   [resolveStoreName]="resolveStoreName.bind(this)"
   [cardHeaderTpl]="cardHeaderTpl"
   [cardChipsTpl]="cardChipsTpl"
+  commandPath="monchito ~/library/controllers"
+  [commandFlags]="commandFlags()"
   (searchChange)="searchQuery.set($event)"
   (addClick)="onAdd()"
   (detailClick)="onDetail($any($event))">
@@ -22,11 +24,12 @@
 </ng-template>
 
 <ng-template #cardChipsTpl let-controller>
-  <app-badge-chip [label]="controller.compatibility" variant="neutral" />
-  <app-badge-chip
+  <retro-chip [label]="controller.compatibility" color="neutral" size="sm" />
+  <retro-chip
+    size="sm"
     [label]="
       (controller.condition === GAME_CONDITION.NEW ? 'controllersPage.condition.new' : 'controllersPage.condition.used')
         | transloco
     "
-    [variant]="controller.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+    [color]="controller.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
 </ng-template>

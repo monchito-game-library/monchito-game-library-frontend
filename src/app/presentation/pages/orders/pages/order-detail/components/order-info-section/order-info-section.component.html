@@ -24,15 +24,15 @@
             referrerpolicy="no-referrer" />
         } @else {
           <div class="order-detail-page__info-section-avatar order-detail-page__info-section-avatar--placeholder">
-            <mat-icon>person</mat-icon>
+            <retro-icon name="person" />
           </div>
         }
       }
     </div>
   }
-  <mat-icon class="order-detail-page__info-section-chevron">
-    {{ sectionExpanded() ? 'expand_less' : 'expand_more' }}
-  </mat-icon>
+  <retro-icon
+    class="order-detail-page__info-section-chevron"
+    [name]="sectionExpanded() ? 'expand_less' : 'expand_more'" />
 </div>
 
 <!-- Collapsible body -->
@@ -106,7 +106,7 @@
                   referrerpolicy="no-referrer" />
               } @else {
                 <div class="order-detail-page__member-avatar order-detail-page__member-avatar--placeholder">
-                  <mat-icon>person</mat-icon>
+                  <retro-icon name="person" />
                 </div>
               }
               <span class="order-detail-page__member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
@@ -138,59 +138,62 @@
           <div class="order-detail-page__form-columns">
             <!-- Left column -->
             <div class="order-detail-page__form-col">
-              <mat-form-field appearance="outline" class="order-detail-page__form-field">
-                <mat-label>{{ 'orders.header.title' | transloco }}</mat-label>
-                <input matInput formControlName="title" [placeholder]="'orders.header.titlePlaceholder' | transloco" />
-              </mat-form-field>
+              <retro-input
+                class="order-detail-page__form-field"
+                [label]="'orders.header.title' | transloco"
+                formControlName="title"
+                [placeholder]="'orders.header.titlePlaceholder' | transloco" />
 
               <div class="order-detail-page__form-costs-row">
-                <mat-form-field
-                  appearance="outline"
-                  subscriptSizing="dynamic"
-                  class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <mat-label>{{ 'orders.header.shippingCost' | transloco }}</mat-label>
-                  <input matInput type="number" formControlName="shippingCost" min="0" step="0.01" />
-                </mat-form-field>
+                <retro-input
+                  class="order-detail-page__form-field order-detail-page__form-field--grow"
+                  [label]="'orders.header.shippingCost' | transloco"
+                  formControlName="shippingCost"
+                  type="number"
+                  min="0"
+                  step="0.01" />
 
-                <mat-form-field
-                  appearance="outline"
-                  subscriptSizing="dynamic"
-                  class="order-detail-page__form-field order-detail-page__form-field--grow">
-                  <mat-label>{{ 'orders.header.paypalFee' | transloco }}</mat-label>
-                  <input matInput type="number" formControlName="paypalFee" min="0" step="0.01" />
-                </mat-form-field>
+                <retro-input
+                  class="order-detail-page__form-field order-detail-page__form-field--grow"
+                  [label]="'orders.header.paypalFee' | transloco"
+                  formControlName="paypalFee"
+                  type="number"
+                  min="0"
+                  step="0.01" />
 
                 <div class="order-detail-page__discount-row">
-                  <mat-form-field
-                    appearance="outline"
-                    subscriptSizing="dynamic"
-                    class="order-detail-page__form-field order-detail-page__form-field--grow">
-                    <mat-label>{{ 'orders.header.discountAmount' | transloco }}</mat-label>
-                    <input matInput type="number" formControlName="discountAmount" min="0" step="0.01" />
-                  </mat-form-field>
-                  <mat-button-toggle-group
-                    formControlName="discountType"
-                    class="order-detail-page__discount-type-toggle"
-                    hideSingleSelectionIndicator>
-                    <mat-button-toggle value="amount">€</mat-button-toggle>
-                    <mat-button-toggle value="percentage">%</mat-button-toggle>
-                  </mat-button-toggle-group>
+                  <retro-input
+                    class="order-detail-page__form-field order-detail-page__form-field--grow"
+                    [label]="'orders.header.discountAmount' | transloco"
+                    formControlName="discountAmount"
+                    type="number"
+                    min="0"
+                    step="0.01" />
+                  <fieldset
+                    class="retro-radio-group"
+                    role="radiogroup"
+                    [attr.aria-label]="'orders.header.discountType' | transloco">
+                    <label class="retro-radio-group__option">
+                      <input type="radio" name="discountType" value="amount" formControlName="discountType" />
+                      <span>€</span>
+                    </label>
+                    <label class="retro-radio-group__option">
+                      <input type="radio" name="discountType" value="percentage" formControlName="discountType" />
+                      <span>%</span>
+                    </label>
+                  </fieldset>
                 </div>
               </div>
             </div>
 
             <!-- Right column -->
             <div class="order-detail-page__form-col">
-              <mat-form-field
-                appearance="outline"
-                class="order-detail-page__form-field order-detail-page__form-field--full-height">
-                <mat-label>{{ 'orders.header.notes' | transloco }}</mat-label>
-                <textarea
-                  matInput
-                  formControlName="notes"
-                  [placeholder]="'orders.header.notesPlaceholder' | transloco"
-                  rows="5"></textarea>
-              </mat-form-field>
+              <retro-textarea
+                class="order-detail-page__form-field order-detail-page__form-field--full-height"
+                [label]="'orders.header.notes' | transloco"
+                formControlName="notes"
+                [placeholder]="'orders.header.notesPlaceholder' | transloco"
+                [rows]="5" />
             </div>
           </div>
         </form>
@@ -199,12 +202,19 @@
 
     @if (editingHeader() || hidingActions()) {
       <div class="order-detail-page__form-actions" [class.order-detail-page__form-actions--hiding]="hidingActions()">
-        <button mat-button type="button" (click)="onCancelEdit()">
-          {{ 'orders.header.cancel' | transloco }}
-        </button>
-        <button mat-flat-button type="button" (click)="onSaveHeader()" [disabled]="saving()">
-          {{ 'orders.header.save' | transloco }}
-        </button>
+        <retro-button
+          [label]="'orders.header.cancel' | transloco"
+          variant="ghost"
+          size="md"
+          (clicked)="onCancelEdit()" />
+        <retro-button
+          [label]="'orders.header.save' | transloco"
+          variant="primary"
+          size="md"
+          [disabled]="saving()"
+          (clicked)="onSaveHeader()">
+          <retro-icon slot="start" name="save" size="sm" />
+        </retro-button>
       </div>
     }
   </div>

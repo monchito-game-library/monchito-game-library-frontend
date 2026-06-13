@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -53,7 +53,7 @@ describe('GameCardComponent — computed signals', () => {
       providers: [
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: GAME_USE_CASES, useValue: { deleteGame: vi.fn() } as Partial<GameUseCasesContract> },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         {
           provide: UserContextService,
           useValue: { userId: signal('user-1'), isUserSelected: vi.fn(), clearUser: vi.fn() }
@@ -225,7 +225,7 @@ describe('GameCardComponent — computed signals', () => {
 
   describe('deleteGame', () => {
     it('no abre el dialog si el juego no tiene uuid', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const fixture2 = TestBed.createComponent(GameCardComponent);
       fixture2.componentRef.setInput('game', { ...mockGame, uuid: undefined });
       fixture2.detectChanges();
@@ -234,7 +234,7 @@ describe('GameCardComponent — computed signals', () => {
     });
 
     it('no elimina si el dialog se cancela', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
@@ -245,7 +245,7 @@ describe('GameCardComponent — computed signals', () => {
     });
 
     it('elimina el juego y emite gameDeleted si el dialog se confirma', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.deleteGame.mockResolvedValue(undefined);
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });

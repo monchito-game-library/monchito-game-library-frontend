@@ -58,7 +58,9 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "back": "Volver",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "clear": "Limpiar",
+    "notifications": "Notificaciones"
   },
   "cropDialog": {
     "hint": "Arrastra para reposicionar · Pellizca o usa la rueda para hacer zoom"
@@ -297,6 +299,7 @@
       "shippingCost": "Envío (€)",
       "paypalFee": "Comisión PayPal (€)",
       "discountAmount": "Descuento",
+      "discountType": "Tipo de descuento",
       "orderDate": "Fecha pedido",
       "receivedDate": "Fecha recibido",
       "edit": "Editar cabecera",
@@ -315,7 +318,8 @@
       "pending": "Pendiente",
       "markReady": "Marcar como listo",
       "cancelReady": "Cancelar listo",
-      "ready": "Listo"
+      "ready": "Listo",
+      "regressStatus": "Retroceder estado"
     },
     "lines": {
       "title": "Productos del pedido",
@@ -458,9 +462,15 @@
       "loadError": "Error al cargar los deseados",
       "notFound": "El juego deseado no existe o fue eliminado"
     },
+    "filters": {
+      "title": "Buscar por título..."
+    },
     "empty": {
       "title": "Tu lista de deseados está vacía",
-      "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí"
+      "subtitle": "Añade juegos que quieras comprar para seguirlos desde aquí",
+      "noResults": "Sin resultados",
+      "noResultsSubtitle": "Ningún juego deseado coincide con tu búsqueda",
+      "clearFilters": "Limpiar búsqueda"
     }
   },
   "nav": {
@@ -580,7 +590,11 @@
       "formatHintNone": "Ambos",
       "formatHintDigital": "Digital",
       "formatHintPhysical": "Físico",
-      "loadError": "No se pudieron cargar las tiendas."
+      "loadError": "No se pudieron cargar las tiendas.",
+      "search": {
+        "placeholder": "Buscar tienda…",
+        "noResults": "No hay tiendas que coincidan con «{{ term }}»."
+      }
     },
     "title": "Gestión",
     "nav": {
@@ -600,7 +614,11 @@
         "empty": "No hay marcas todavía. Añade la primera.",
         "viewModels": "Ver modelos",
         "deleteConfirm": "¿Eliminar la marca «{{ name }}»?",
-        "deleteWarning": "Se eliminarán también todos sus modelos y ediciones."
+        "deleteWarning": "Se eliminarán también todos sus modelos y ediciones.",
+        "search": {
+          "placeholder": "Buscar marca…",
+          "noResults": "No hay marcas que coincidan con «{{ term }}»."
+        }
       },
       "models": {
         "addBtn": "Nuevo modelo",
@@ -630,7 +648,11 @@
         "mediaHybrid": "Híbrido",
         "mediaBuiltIn": "Integrado",
         "videoResolutionLabel": "Resolución de vídeo",
-        "unitsSoldLabel": "Unidades vendidas (M)"
+        "unitsSoldLabel": "Unidades vendidas (M)",
+        "search": {
+          "placeholder": "Buscar modelo…",
+          "noResults": "No hay modelos que coincidan con «{{ term }}»."
+        }
       },
       "editions": {
         "addBtn": "Nueva edición",
@@ -638,7 +660,11 @@
         "editTitle": "Editar edición",
         "nameLabel": "Nombre",
         "empty": "No hay ediciones todavía. Añade la primera.",
-        "deleteConfirm": "¿Eliminar la edición «{{ name }}»?"
+        "deleteConfirm": "¿Eliminar la edición «{{ name }}»?",
+        "search": {
+          "placeholder": "Buscar edición…",
+          "noResults": "No hay ediciones que coincidan con «{{ term }}»."
+        }
       }
     },
     "products": {
@@ -679,7 +705,11 @@
       "packPrice": "Precio total",
       "packUrl": "URL (opcional)",
       "fromPrice": "Desde",
-      "openPackUrl": "Ver en la web del proveedor"
+      "openPackUrl": "Ver en la web del proveedor",
+      "search": {
+        "placeholder": "Buscar funda/protector…",
+        "noResults": "No hay protectores que coincidan con «{{ term }}»."
+      }
     },
     "auditLog": {
       "title": "Registro de actividad",
@@ -716,12 +746,6 @@
       "stats": {
         "aria": "Resumen de usuarios",
         "total": "Total",
-        "admins": "Administradores",
-        "members": "Miembros"
-      },
-      "filter": {
-        "aria": "Filtrar por rol",
-        "all": "Todos",
         "admins": "Administradores",
         "members": "Miembros"
       },

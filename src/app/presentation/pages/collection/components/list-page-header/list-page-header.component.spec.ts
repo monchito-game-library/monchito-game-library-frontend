@@ -1,5 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it } from 'vitest';
 
@@ -67,6 +68,44 @@ describe('ListPageHeaderComponent', () => {
 
     it('disabled es false por defecto', () => {
       expect(component.disabled()).toBe(false);
+    });
+
+    it('commandPath es "" por defecto', () => {
+      expect(component.commandPath()).toBe('');
+    });
+
+    it('commandFlags es [] por defecto', () => {
+      expect(component.commandFlags()).toEqual([]);
+    });
+  });
+
+  describe('command bar', () => {
+    it('no renderiza retro-command-bar cuando commandPath está vacío', () => {
+      fixture.detectChanges();
+      const bar = fixture.debugElement.query(By.css('retro-command-bar'));
+      expect(bar).toBeNull();
+    });
+
+    it('renderiza retro-command-bar cuando commandPath tiene valor', () => {
+      fixture.componentRef.setInput('commandPath', 'monchito ~/library/games');
+      fixture.detectChanges();
+      const bar = fixture.debugElement.query(By.css('retro-command-bar'));
+      expect(bar).not.toBeNull();
+    });
+
+    it('pasa el path correcto a retro-command-bar', () => {
+      fixture.componentRef.setInput('commandPath', 'monchito ~/library/games');
+      fixture.detectChanges();
+      const bar = fixture.debugElement.query(By.css('retro-command-bar'));
+      expect(bar.componentInstance.path()).toBe('monchito ~/library/games');
+    });
+
+    it('pasa los flags correctos a retro-command-bar', () => {
+      fixture.componentRef.setInput('commandPath', 'monchito ~/library/games');
+      fixture.componentRef.setInput('commandFlags', ['view=list', 'filters=2']);
+      fixture.detectChanges();
+      const bar = fixture.debugElement.query(By.css('retro-command-bar'));
+      expect(bar.componentInstance.flags()).toEqual(['view=list', 'filters=2']);
     });
   });
 });

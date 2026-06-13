@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CoverPositionDialogDataInterface } from '@/interfaces/cover-position-dialog-data.interface';
 import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
 import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-game-cover-position-dialog',
@@ -20,15 +20,22 @@ import { MAX_SCALE, MIN_SCALE } from '@/constants/cover-position.constant';
   styleUrl: './game-cover-position-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgOptimizedImage, MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
+  imports: [
+    NgOptimizedImage,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    TranslocoPipe,
+    RetroButtonComponent
+  ]
 })
 export class GameCoverPositionDialogComponent extends CropInteractionBase {
-  private readonly _dialogRef: MatDialogRef<GameCoverPositionDialogComponent, string | null> = inject(
-    MatDialogRef<GameCoverPositionDialogComponent, string | null>
+  private readonly _dialogRef: RetroDialogRef<GameCoverPositionDialogComponent, string | null> = inject(
+    RetroDialogRef<GameCoverPositionDialogComponent, string | null>
   );
 
   /** Dialog configuration including the image URL and initial position. */
-  readonly config: CoverPositionDialogDataInterface = inject<CoverPositionDialogDataInterface>(MAT_DIALOG_DATA);
+  readonly config: CoverPositionDialogDataInterface = inject<CoverPositionDialogDataInterface>(RETRO_DIALOG_DATA);
 
   constructor() {
     super();

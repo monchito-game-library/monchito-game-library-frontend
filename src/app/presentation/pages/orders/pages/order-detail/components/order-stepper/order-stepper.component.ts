@@ -13,8 +13,8 @@ import {
   WritableSignal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -32,7 +32,7 @@ import { MemberQty, PackStepData } from '@/interfaces/orders/order-stepper.inter
     class: 'order-detail-page__section order-detail-page__section--lines order-detail-page__stepper',
     '[class.order-detail-page__section--lines-editing]': 'editingHeader()'
   },
-  imports: [DecimalPipe, NgOptimizedImage, MatButton, MatIcon, TranslocoPipe]
+  imports: [DecimalPipe, NgOptimizedImage, RetroIconComponent, TranslocoPipe, RetroButtonComponent]
 })
 export class OrderStepperComponent {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);

@@ -14,14 +14,15 @@
 }
 
 .controller-detail__color-swatch {
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-full);
-  border: 2px solid var(--mat-sys-outline-variant);
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
+  border: 1px solid var(--border-strong);
   flex-shrink: 0;
 }
 
 .controller-detail__color-label {
-  font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-mid);
 }

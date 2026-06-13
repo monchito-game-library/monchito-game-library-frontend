@@ -10,18 +10,18 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe, Location, NgOptimizedImage, SlicePipe } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
-import { MatButton, MatFabButton, MatIconButton } from '@angular/material/button';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
@@ -35,7 +35,11 @@ import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 
 @Component({
   selector: 'app-wishlist',
@@ -48,28 +52,29 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
     NgOptimizedImage,
     SlicePipe,
     ReactiveFormsModule,
-    MatButton,
-    MatFabButton,
-    MatIconButton,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatIcon,
+    RetroIconButtonComponent,
+    RetroIconComponent,
+    RetroSelectComponent,
+    RetroOptionComponent,
     TranslocoPipe,
     WishlistCardComponent,
     CatalogSearchPanelComponent,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroEmptyStateComponent,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroTextareaComponent,
+    RetroListComponent,
+    SearchToolbarComponent,
+    FormsModule
   ]
 })
 export class WishlistComponent implements OnInit {
   private readonly _wishlistUseCases: WishlistUseCasesContract = inject(WISHLIST_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _router: Router = inject(Router);
   private readonly _location: Location = inject(Location);
@@ -103,6 +108,22 @@ export class WishlistComponent implements OnInit {
   readonly itemsWithPrice: Signal<number> = computed(
     (): number => this.items().filter((item) => item.desiredPrice !== null).length
   );
+
+  /** Término de búsqueda activo para filtrar por título. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista filtrada por título según searchTerm. */
+  readonly filteredItems: Signal<WishlistItemModel[]> = computed(() => {
+    const search = this.searchTerm().toLowerCase();
+    if (!search) return this.items();
+    return this.items().filter((item) => item.title.toLowerCase().includes(search));
+  });
+
+  /** Flags para retro-command-bar — refleja el filtro activo. */
+  readonly commandFlags: Signal<readonly string[]> = computed(() => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
 
   /** Whether the viewport is mobile (≤ 768px). */
   readonly isMobile: Signal<boolean> = toSignal(
@@ -173,6 +194,23 @@ export class WishlistComponent implements OnInit {
   }
 
   /**
+   * Actualiza el término de búsqueda con el valor emitido por SearchToolbarComponent
+   * (el debounce es gestionado internamente por el hijo).
+   *
+   * @param {string} value - Valor ya procesado por el debounce del toolbar.
+   */
+  onSearchChange(value: string): void {
+    this.searchTerm.set(value.trim());
+  }
+
+  /**
+   * Limpia el filtro de búsqueda activo.
+   */
+  onClearSearch(): void {
+    this.searchTerm.set('');
+  }
+
+  /**
    * Switches to inline search mode to start the add flow.
    */
   onAddItem(): void {
@@ -219,17 +257,17 @@ export class WishlistComponent implements OnInit {
     try {
       await this._wishlistUseCases.deleteItem(this._userId, item.id);
       await this._loadItems();
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleted'),
-        this._transloco.translate('common.close'),
-        { duration: 2000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleted'),
+        duration: 2000,
+        variant: 'success'
+      });
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.deleteError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -291,11 +329,11 @@ export class WishlistComponent implements OnInit {
       try {
         await this._wishlistUseCases.updateItem(this._userId, this._editingItem.id, formValue);
         await this._loadItems();
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.updated'),
-          this._transloco.translate('common.close'),
-          { duration: 2000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.updated'),
+          duration: 2000,
+          variant: 'success'
+        });
         if (this._returnToDetail && this._returnToDetailId) {
           const updated: WishlistItemModel | undefined = this.items().find((i) => i.id === this._returnToDetailId);
           this._returnToDetail = false;
@@ -307,11 +345,11 @@ export class WishlistComponent implements OnInit {
         }
         this.viewMode.set('list');
       } catch {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.updateError'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.updateError'),
+          duration: 3000,
+          variant: 'error'
+        });
       }
     } else {
       const catalogEntry: GameCatalogDto = this.pendingCatalogEntry()!;
@@ -319,17 +357,17 @@ export class WishlistComponent implements OnInit {
         await this._wishlistUseCases.addItem(this._userId, catalogEntry, formValue);
         await this._loadItems();
         this.viewMode.set('list');
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.added'),
-          this._transloco.translate('common.close'),
-          { duration: 2000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.added'),
+          duration: 2000,
+          variant: 'success'
+        });
       } catch {
-        this._snackBar.open(
-          this._transloco.translate('wishlist.snack.addError'),
-          this._transloco.translate('common.close'),
-          { duration: 3000 }
-        );
+        this._snack.open({
+          text: this._transloco.translate('wishlist.snack.addError'),
+          duration: 3000,
+          variant: 'error'
+        });
       }
     }
   }
@@ -384,11 +422,11 @@ export class WishlistComponent implements OnInit {
       const data: WishlistItemModel[] = await this._wishlistUseCases.getAllForUser(this._userId);
       this.items.set(data);
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('wishlist.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('wishlist.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }

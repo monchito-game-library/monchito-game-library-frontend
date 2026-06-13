@@ -1,13 +1,18 @@
-<mat-card class="game-card" [style.--dominant-glow]="dominantColor()">
+<retro-card
+  class="game-card"
+  [interactive]="true"
+  [padded]="false"
+  [style.--dominant-glow]="dominantColor()"
+  (cardClicked)="editGame()">
   <div class="game-card__inner" [class.game-card__inner--flipped]="isFlipped()">
     <!-- FRONT FACE -->
     <div
       class="game-card__front"
       [class.game-card__front--digital]="isDigital()"
       [class.game-card__front--flipped]="isFlipped()">
-      <div class="game-card__image-wrapper" (click)="editGame()">
+      <div class="game-card__image-wrapper">
         @if (!imageLoaded()) {
-          <app-skeleton width="100%" height="100%" borderRadius="0" class="game-card__image-skeleton" />
+          <retro-skeleton width="100%" height="100%" class="game-card__image-skeleton" />
         }
         <img
           class="game-card__image"
@@ -22,19 +27,26 @@
 
         <!-- Status badge — top left -->
         @if (gameStatus()) {
-          <div
+          <retro-chip
             class="game-card__status-badge"
-            [style.background-color]="gameStatus()!.color"
-            [matTooltip]="gameStatus()!.labelKey | transloco">
-            <mat-icon>{{ gameStatus()!.icon }}</mat-icon>
-          </div>
+            [label]="gameStatus()!.code"
+            [icon]="gameStatus()!.icon"
+            [color]="statusColor()"
+            size="sm"
+            [filled]="true"
+            [retroTooltip]="gameStatus()!.labelKey | transloco" />
         }
 
         <!-- Favourite — top right -->
         @if (isFavorite()) {
-          <div class="game-card__favorite" matTooltip="Favorito">
-            <mat-icon>favorite</mat-icon>
-          </div>
+          <retro-chip
+            class="game-card__favorite"
+            label="FAV"
+            icon="favorite"
+            color="rose"
+            size="sm"
+            [filled]="true"
+            retroTooltip="Favorito" />
         }
 
         <!-- Gradient overlay with title, platform, price and flip -->
@@ -42,21 +54,30 @@
           <div class="game-card__chips-area">
             <div class="game-card__platform-row">
               @if (game().platform) {
-                <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
+                <retro-chip [label]="game().platform!" color="primary" size="sm" />
               }
             </div>
             @if (isLoaned() || game().forSale) {
               <div class="game-card__status-chips">
                 @if (isLoaned()) {
-                  <span class="game-card__loan-chip" [matTooltip]="game().activeLoanTo ?? ''">
-                    <mat-icon>handshake</mat-icon>
-                    <span class="game-card__loan-name">{{ loanChipLabel() }}</span>
-                  </span>
+                  <retro-chip
+                    class="game-card__loan-chip"
+                    [label]="loanChipLabel()"
+                    icon="handshake"
+                    color="amber"
+                    size="sm"
+                    [filled]="true"
+                    [retroTooltip]="game().activeLoanTo ?? ''" />
                 }
                 @if (game().forSale) {
-                  <span class="game-card__sale-chip" matTooltip="En venta">
-                    <mat-icon>sell</mat-icon>
-                  </span>
+                  <retro-chip
+                    class="game-card__sale-chip"
+                    label="VENTA"
+                    icon="sell"
+                    color="green"
+                    size="sm"
+                    [filled]="true"
+                    retroTooltip="En venta" />
                 }
               </div>
             }
@@ -69,13 +90,11 @@
             <span class="game-card__price">{{ game().price | currency: 'EUR' }}</span>
           </div>
           @if (game().description) {
-            <button
-              mat-icon-button
+            <retro-icon-button
+              icon="flip_to_back"
               class="game-card__flip-btn"
-              (click)="onFlip(); $event.stopPropagation()"
-              [attr.aria-label]="'gameCard.aria.viewDescription' | transloco">
-              <mat-icon>flip_to_back</mat-icon>
-            </button>
+              [ariaLabel]="'gameCard.aria.viewDescription' | transloco"
+              (clicked)="onFlip(); $event.stopPropagation()" />
           }
         </div>
       </div>
@@ -91,14 +110,12 @@
           }
           <p class="game-card__back-description">{{ game().description }}</p>
         </div>
-        <button
-          mat-icon-button
+        <retro-icon-button
+          icon="flip_to_front"
           class="game-card__flip-btn game-card__flip-btn--back"
-          (click)="onFlip(); $event.stopPropagation()"
-          [attr.aria-label]="'gameCard.aria.back' | transloco">
-          <mat-icon>flip_to_front</mat-icon>
-        </button>
+          [ariaLabel]="'gameCard.aria.back' | transloco"
+          (clicked)="onFlip(); $event.stopPropagation()" />
       </div>
     </div>
   </div>
-</mat-card>
+</retro-card>

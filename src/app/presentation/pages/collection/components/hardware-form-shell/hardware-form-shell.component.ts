@@ -9,25 +9,23 @@ import {
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
+import { RetroSearchComponent } from '@retro/retro-search/retro-search.component';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 
 import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
 import { HardwareEditionModel } from '@/models/hardware-edition/hardware-edition.model';
 import { StoreModel } from '@/models/store/store.model';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 /**
  * Presentational shell component that renders the shared form layout for hardware
@@ -45,24 +43,16 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   imports: [
     NgTemplateOutlet,
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatAutocomplete,
-    MatAutocompleteTrigger,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
-    MatProgressSpinner,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroTextareaComponent,
+    RetroSelectComponent,
+    RetroOptionComponent,
+    RetroSearchComponent,
+    RetroDatepickerComponent
   ]
 })
 export class HardwareFormShellComponent {
@@ -90,29 +80,26 @@ export class HardwareFormShellComponent {
   /** Hardware editions filtered by the selected model. */
   readonly editions: InputSignal<HardwareEditionModel[]> = input.required<HardwareEditionModel[]>();
 
-  /** Brands filtered by the current autocomplete input value. */
+  /** Brands filtered by the current search query. */
   readonly filteredBrands: InputSignal<HardwareBrandModel[]> = input.required<HardwareBrandModel[]>();
 
-  /** Models filtered by the current autocomplete input value. */
+  /** Models filtered by the current search query. */
   readonly filteredModels: InputSignal<HardwareModelModel[]> = input.required<HardwareModelModel[]>();
 
-  /** Stores filtered by the current autocomplete input value. */
+  /** Stores filtered by the current search query. */
   readonly filteredStores: InputSignal<StoreModel[]> = input.required<StoreModel[]>();
 
   /** The reactive form group managed by the parent component. */
   readonly form: InputSignal<FormGroup> = input.required<FormGroup>();
 
   /** Function that resolves a brand UUID to its display name. */
-  readonly displayBrandLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayBrandLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** Function that resolves a model UUID to its display name. */
-  readonly displayModelLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayModelLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** Function that resolves a store UUID to its display label. */
-  readonly displayStoreLabel: InputSignal<(id: string | null) => string> =
-    input.required<(id: string | null) => string>();
+  readonly displayStoreLabel: InputSignal<(value: unknown) => string> = input.required<(value: unknown) => string>();
 
   /** TemplateRef that projects entity-specific fields (e.g. region for consoles, color+compatibility for controllers). */
   readonly extraFieldsTpl: InputSignal<TemplateRef<unknown>> = input.required<TemplateRef<unknown>>();
@@ -123,11 +110,14 @@ export class HardwareFormShellComponent {
   /** Emitted when the user submits the form. */
   readonly submitClick: OutputEmitterRef<void> = output<void>();
 
-  /** Emitted when the user selects a brand from the autocomplete. */
-  readonly brandChange: OutputEmitterRef<string | null> = output<string | null>();
+  /** Emitted when the brand search query changes, so the parent can filter the brands list. */
+  readonly brandQuery: OutputEmitterRef<string> = output<string>();
 
-  /** Emitted when the user selects a model from the autocomplete. */
-  readonly modelChange: OutputEmitterRef<string | null> = output<string | null>();
+  /** Emitted when the model search query changes, so the parent can filter the models list. */
+  readonly modelQuery: OutputEmitterRef<string> = output<string>();
+
+  /** Emitted when the store search query changes, so the parent can filter the stores list. */
+  readonly storeQuery: OutputEmitterRef<string> = output<string>();
 
   /** GAME_CONDITION constant exposed to the template. */
   readonly GAME_CONDITION = GAME_CONDITION;

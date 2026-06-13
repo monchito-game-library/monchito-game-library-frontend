@@ -1,79 +1,72 @@
-<button type="button" class="game-row" (click)="onOpen()">
-  <!-- Cover thumbnail -->
-  <div class="game-row__cover">
+<retro-list-item [interactive]="true" padding="sm" (itemClicked)="onOpen()">
+  <div class="game-row__cover" retroListItemLeading>
     <img [ngSrc]="cover()" fill alt="Game cover" />
     @if (game().format === 'digital') {
-      <span class="game-row__digital-badge" matTooltip="Digital">
-        <mat-icon>cloud</mat-icon>
+      <span class="game-row__digital-badge" retroTooltip="Digital">
+        <retro-icon name="cloud" />
       </span>
     }
   </div>
 
-  <!-- Title + edition -->
-  <div class="game-row__title-block">
-    <span class="game-row__title">{{ game().title }}</span>
-    @if (game().edition) {
-      <span class="game-row__edition">{{ game().edition }}</span>
-    }
-  </div>
-
-  <!-- Platform badge -->
-  <div class="game-row__platform">
-    @if (game().platform) {
-      <app-badge-chip [label]="game().platform!" variant="neutral" [bgColor]="platformColor()" />
-    }
-  </div>
-
-  <!-- Meta wrapper — display: contents on desktop (children act as direct grid
-       items, layout unchanged); flex row on mobile so status, indicators and price
-       share the second row of the new two-row layout. -->
-  <div class="game-row__meta">
-    <div class="game-row__status">
-      @if (gameStatus(); as status) {
-        <span class="game-row__status-pill" [matTooltip]="status.labelKey | transloco">
-          <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
-        </span>
+  <div class="game-row__body">
+    <div class="game-row__title-block">
+      <span class="game-row__title">{{ game().title }}</span>
+      @if (game().edition) {
+        <span class="game-row__edition">{{ game().edition }}</span>
       }
     </div>
-
-    <div class="game-row__rating">
-      @if (game().personalRating !== null) {
-        @for (i of [1, 2, 3, 4, 5]; track i) {
-          <mat-icon [class.game-row__star--filled]="i <= ratingStars()">
-            {{ i <= ratingStars() ? 'star' : 'star_border' }}
-          </mat-icon>
+    <div class="game-row__meta">
+      <div class="game-row__platform">
+        @if (game().platform) {
+          <retro-chip [label]="game().platform!" color="neutral" size="sm" />
         }
-      }
-    </div>
-
-    <div class="game-row__indicators">
-      @if (game().isFavorite) {
-        <mat-icon class="game-row__indicator game-row__indicator--favorite" matTooltip="Favorito">favorite</mat-icon>
-      }
-      @if (game().activeLoanId !== null) {
-        <mat-icon class="game-row__indicator game-row__indicator--loan" [matTooltip]="game().activeLoanTo ?? ''">
-          handshake
-        </mat-icon>
-      }
-      @if (game().forSale) {
-        <mat-icon class="game-row__indicator game-row__indicator--sale" matTooltip="En venta">sell</mat-icon>
-      }
-    </div>
-
-    <div class="game-row__price">
-      @if (game().price !== null) {
-        {{ game().price | currency: 'EUR' }}
-      }
+      </div>
+      <div class="game-row__status">
+        @if (gameStatus(); as status) {
+          <span class="game-row__status-pill" [retroTooltip]="status.labelKey | transloco">
+            <retro-icon [name]="status.icon" [style.color]="status.color" />
+          </span>
+        }
+      </div>
+      <div class="game-row__rating">
+        @if (game().personalRating !== null) {
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <retro-icon
+              [class.game-row__star--filled]="i <= ratingStars()"
+              [name]="i <= ratingStars() ? 'star' : 'star_border'" />
+          }
+        }
+      </div>
+      <div class="game-row__indicators">
+        @if (game().isFavorite) {
+          <retro-icon class="game-row__indicator game-row__indicator--favorite" name="favorite" />
+        }
+        @if (game().activeLoanId !== null) {
+          <retro-icon class="game-row__indicator game-row__indicator--loan" name="handshake" />
+        }
+        @if (game().forSale) {
+          <retro-icon class="game-row__indicator game-row__indicator--sale" name="sell" />
+        }
+      </div>
+      <div class="game-row__price">
+        @if (game().price !== null) {
+          {{ game().price | currency: 'EUR' }}
+        }
+      </div>
     </div>
   </div>
 
-  <!-- Delete -->
-  <button
-    mat-icon-button
-    type="button"
-    class="game-row__delete"
-    (click)="onDelete($event)"
-    [attr.aria-label]="'gameCard.aria.delete' | transloco">
-    <mat-icon>delete</mat-icon>
-  </button>
-</button>
+  <div
+    retroListItemTrailing
+    class="game-row__delete-wrapper"
+    (click)="$event.stopPropagation()"
+    (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()">
+    <retro-icon-button
+      icon="delete"
+      variant="danger"
+      size="sm"
+      [ariaLabel]="'gameCard.aria.delete' | transloco"
+      (clicked)="onDelete($event)" />
+  </div>
+</retro-list-item>

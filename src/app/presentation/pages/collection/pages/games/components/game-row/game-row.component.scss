@@ -2,41 +2,16 @@
   display: block;
 }
 
-.game-row {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(12rem, 1fr) auto auto auto auto auto auto;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-  background-color: transparent;
-  color: var(--mat-sys-on-surface);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-
-  &:hover {
-    background-color: var(--mat-sys-surface-container);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--mat-sys-primary);
-    outline-offset: -2px;
-  }
-}
-
 // ─── Cover ────────────────────────────────────────────────────────────────────
 
 .game-row__cover {
   position: relative;
   width: 2.75rem;
   height: 3.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   overflow: hidden;
-  background-color: var(--mat-sys-surface-container-high);
+  background-color: var(--bg-surface-hi);
+  border: 1px solid var(--border);
   flex-shrink: 0;
 
   img {
@@ -46,22 +21,30 @@
 
 .game-row__digital-badge {
   position: absolute;
-  bottom: 0.125rem;
-  right: 0.125rem;
+  bottom: 0;
+  right: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1rem;
   height: 1rem;
-  border-radius: var(--radius-full);
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background-color: var(--accent-blue);
+  color: var(--bg-void);
 
-  mat-icon {
-    font-size: 0.75rem;
-    width: 0.75rem;
-    height: 0.75rem;
+  retro-icon {
+    --_size: var(--icon-xs);
   }
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.game-row__body {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto auto auto auto auto;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
 }
 
 // ─── Title block ──────────────────────────────────────────────────────────────
@@ -74,26 +57,29 @@
 }
 
 .game-row__title {
-  font-size: var(--text-base);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: var(--text-sm);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-hi);
 }
 
 .game-row__edition {
-  font-size: var(--text-xs);
-  color: var(--mat-sys-on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--text-lo);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 // ─── Meta wrapper ─────────────────────────────────────────────────────────────
-// Desktop: display: contents → its children become direct grid items, so the
-// horizontal layout is identical to having them as siblings on the row.
-// Mobile (see @media block below): becomes a flex row so status, indicators
-// and price share the second row of the two-row layout.
+// Desktop: display: contents → its children become direct grid items.
+// Mobile: becomes a flex row (see @media block below).
 .game-row__meta {
   display: contents;
 }
@@ -116,10 +102,8 @@
   align-items: center;
   justify-content: center;
 
-  mat-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+  retro-icon {
+    --_size: var(--icon-lg);
   }
 }
 
@@ -128,17 +112,11 @@
   align-items: center;
   gap: 0.125rem;
   flex-shrink: 0;
-  color: var(--mat-sys-outline);
-
-  mat-icon {
-    font-size: var(--text-base);
-    width: var(--text-base);
-    height: var(--text-base);
-  }
+  color: var(--border-strong);
 }
 
 .game-row__star--filled {
-  color: var(--color-rating);
+  color: var(--accent-amber);
 }
 
 .game-row__indicators {
@@ -156,61 +134,40 @@
   height: var(--text-lg);
 
   &--favorite {
-    color: var(--mat-sys-error);
+    color: var(--accent-rose);
+  }
+
+  &--loan {
+    color: var(--accent-amber);
   }
 
   &--sale {
-    color: var(--mat-sys-tertiary);
+    color: var(--accent-green);
   }
 }
 
 .game-row__price {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-sm);
+  color: var(--text-hi);
   white-space: nowrap;
   flex-shrink: 0;
   min-width: 4rem;
   text-align: right;
 }
 
-.game-row__delete {
-  flex-shrink: 0;
-}
-
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
-// Two-row layout for narrow viewports: cover and delete pinned to the sides
-// spanning both rows; title sits at the top of the central column and the meta
-// (status + indicators + price) flows underneath in a flex row, so a card always
-// fits in viewports as narrow as 320px without squashing or wrapping awkwardly.
 @media (max-width: 768px) {
-  .game-row {
-    grid-template-columns: 2.75rem 1fr auto;
-    grid-template-rows: auto auto;
-    column-gap: 0.75rem;
-    row-gap: 0.25rem;
-    padding: 0.625rem 0.75rem;
-  }
-
-  .game-row__cover {
-    grid-row: 1 / span 2;
-  }
-
-  .game-row__title-block {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: end;
-  }
-
-  .game-row__delete {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    align-self: center;
+  .game-row__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
   }
 
   .game-row__meta {
-    grid-column: 2;
-    grid-row: 2;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -223,8 +180,6 @@
     display: none;
   }
 
-  // Inside the flex meta row: indicators take the remaining space pushing price
-  // to the right end.
   .game-row__indicators {
     flex: 1;
     justify-content: flex-start;
@@ -234,12 +189,5 @@
 
   .game-row__price {
     margin-left: auto;
-  }
-
-  // Smaller status icon to keep the meta row compact.
-  .game-row__status-pill mat-icon {
-    font-size: var(--text-base);
-    width: var(--text-base);
-    height: var(--text-base);
   }
 }

@@ -14,15 +14,13 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
@@ -37,23 +35,17 @@ import { GameLoanForm, GameLoanFormValue } from '@/interfaces/forms/game-loan-fo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
-    TranslocoPipe
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroDatepickerComponent
   ]
 })
 export class GameLoanFormComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   /** The game whose loan status is being managed. */
   readonly game: InputSignal<GameEditModel> = input.required<GameEditModel>();
@@ -116,8 +108,10 @@ export class GameLoanFormComponent implements OnInit {
     this.form.disable();
     try {
       const loanId: string = await this._gameUseCases.createLoan(loan);
-      this._snackBar.open(this._transloco.translate('gameDetail.loan.snack.loanSuccess'), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.loan.snack.loanSuccess'),
+        duration: 3000,
+        variant: 'success'
       });
       this.saved.emit({
         ...g,
@@ -126,7 +120,11 @@ export class GameLoanFormComponent implements OnInit {
         activeLoanAt: loan.loanedAt
       });
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.loan.snack.loanError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.loan.snack.loanError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
       this.form.enable();
@@ -144,13 +142,17 @@ export class GameLoanFormComponent implements OnInit {
     this.returning.set(true);
     try {
       await this._gameUseCases.returnLoan(g.activeLoanId);
-      this._snackBar.open(this._transloco.translate('gameDetail.loan.snack.returnSuccess'), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.loan.snack.returnSuccess'),
+        duration: 3000,
+        variant: 'success'
       });
       this.saved.emit({ ...g, activeLoanId: null, activeLoanTo: null, activeLoanAt: null });
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.loan.snack.returnError'), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.loan.snack.returnError'),
+        duration: 3000,
+        variant: 'error'
       });
     } finally {
       this.returning.set(false);

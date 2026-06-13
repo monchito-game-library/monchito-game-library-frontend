@@ -7,9 +7,10 @@ import { HARDWARE_BRAND_USE_CASES } from '@/domain/use-cases/hardware-brand/hard
 import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hardware-model.use-cases.contract';
 import { HARDWARE_CONSOLE_SPECS_USE_CASES } from '@/domain/use-cases/hardware-console-specs/hardware-console-specs.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
+import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model';
 
 function makeModel(overrides: Partial<HardwareModelModel> = {}): HardwareModelModel {
   return {
@@ -69,7 +70,7 @@ describe('HardwareModelsManagementComponent', () => {
           }
         },
         { provide: Router, useValue: mockRouter },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -84,6 +85,79 @@ describe('HardwareModelsManagementComponent', () => {
     it('loading es false', () => expect(component.loading()).toBe(false));
     it('panelOpen es false', () => expect(component.panelOpen()).toBe(false));
     it('selectedModel es undefined', () => expect(component.selectedModel()).toBeUndefined());
+    it('searchTerm es ""', () => expect(component.searchTerm()).toBe(''));
+    it('filteredModels devuelve [] cuando models está vacío', () => expect(component.filteredModels()).toEqual([]));
+    it('commandFlags es []', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('playstation');
+      expect(component.searchTerm()).toBe('playstation');
+    });
+
+    it('limpia searchTerm al recibir cadena vacía', () => {
+      component.searchTerm.set('playstation');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredModels', () => {
+    beforeEach(() => {
+      component.models.set([
+        makeModel({ id: '1', name: 'PlayStation 5' }),
+        makeModel({ id: '2', name: 'Xbox Series X' }),
+        makeModel({ id: '3', name: 'Nintendo Switch' })
+      ]);
+    });
+
+    it('devuelve todos los modelos cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.filteredModels().length).toBe(3);
+    });
+
+    it('filtra por coincidencia parcial case-insensitive', () => {
+      component.searchTerm.set('play');
+      expect(component.filteredModels()).toEqual([makeModel({ id: '1', name: 'PlayStation 5' })]);
+    });
+
+    it('devuelve [] cuando no hay coincidencias', () => {
+      component.searchTerm.set('zzz');
+      expect(component.filteredModels()).toEqual([]);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag search cuando hay término', () => {
+      component.searchTerm.set('xbox');
+      expect(component.commandFlags()).toEqual(['search="xbox"']);
+    });
+  });
+
+  describe('commandPath', () => {
+    it('devuelve el path base cuando brand es undefined', () => {
+      component.brand.set(undefined);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware');
+    });
+
+    it('incluye el slug de la brand cuando está cargada', () => {
+      component.brand.set({ id: '1', name: 'Nintendo' } as HardwareBrandModel);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/nintendo');
+    });
+
+    it('normaliza nombres con espacios y acentos', () => {
+      component.brand.set({ id: '2', name: 'Súper Nintendo' } as HardwareBrandModel);
+      fixture.detectChanges();
+      expect(component.commandPath()).toBe('monchito ~/management/hardware/super-nintendo');
+    });
   });
 
   describe('onAddModel', () => {
@@ -205,7 +279,7 @@ describe('HardwareModelsManagementComponent', () => {
 
   describe('onDeleteModel', () => {
     it('no hace nada si no hay modelo seleccionado', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedModel.set(undefined);
       component.onDeleteModel();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -213,7 +287,7 @@ describe('HardwareModelsManagementComponent', () => {
 
     it('no elimina el modelo si el dialog se cancela', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedModel.set(makeModel());
@@ -226,7 +300,7 @@ describe('HardwareModelsManagementComponent', () => {
       const modelUseCases = TestBed.inject(HARDWARE_MODEL_USE_CASES as any) as any;
       modelUseCases.delete.mockResolvedValue(undefined);
       modelUseCases.getAllByBrand.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -296,7 +370,7 @@ describe('HardwareModelsManagementComponent', () => {
 
   describe('onBrandDeleted', () => {
     it('no hace nada si no hay marca cargada', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.brand.set(undefined);
       component.onBrandDeleted();
       expect(dialog.open).not.toHaveBeenCalled();
@@ -305,7 +379,7 @@ describe('HardwareModelsManagementComponent', () => {
     it('no elimina la marca si el dialog se cancela', () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       brandUseCases.delete = vi.fn();
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
 
@@ -317,7 +391,7 @@ describe('HardwareModelsManagementComponent', () => {
     it('elimina la marca y navega al listado si el dialog se confirma', async () => {
       const brandUseCases = TestBed.inject(HARDWARE_BRAND_USE_CASES as any) as any;
       brandUseCases.delete = vi.fn().mockResolvedValue(undefined);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.brand.set({ id: 'brand-uuid-1', name: 'Sony' });
 

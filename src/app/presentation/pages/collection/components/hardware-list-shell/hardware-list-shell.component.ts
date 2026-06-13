@@ -8,13 +8,15 @@ import {
   TemplateRef
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
-import { MatFabButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 
 /**
  * Presentational shell component that renders the shared list layout for hardware
@@ -35,11 +37,13 @@ import { HardwareListItem } from '@/interfaces/hardware-list-item.interface';
     CurrencyPipe,
     DatePipe,
     NgTemplateOutlet,
-    MatFabButton,
-    MatIcon,
+    RetroIconComponent,
     TranslocoPipe,
-    SkeletonComponent,
-    ListPageHeaderComponent
+    RetroSkeletonComponent,
+    ListPageHeaderComponent,
+    RetroEmptyStateComponent,
+    RetroDataRowComponent,
+    RetroCardComponent
   ]
 })
 export class HardwareListShellComponent {
@@ -87,6 +91,12 @@ export class HardwareListShellComponent {
 
   /** Template for the chips row below the card header. */
   readonly cardChipsTpl: InputSignal<TemplateRef<unknown>> = input.required<TemplateRef<unknown>>();
+
+  /** Path shown in the command bar (e.g. 'monchito ~/library/consoles'). Empty string hides the bar. */
+  readonly commandPath: InputSignal<string> = input<string>('');
+
+  /** Dynamic flags shown in the command bar. */
+  readonly commandFlags: InputSignal<readonly string[]> = input<readonly string[]>([]);
 
   /** Emits the new search string when the search field changes. */
   readonly searchChange: OutputEmitterRef<string> = output<string>();

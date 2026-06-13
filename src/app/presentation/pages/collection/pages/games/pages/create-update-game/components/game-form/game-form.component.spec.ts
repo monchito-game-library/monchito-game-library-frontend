@@ -15,8 +15,8 @@ import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 
 const mockCatalogDto: GameCatalogDto = {
   rawg_id: null,
@@ -66,8 +66,11 @@ function buildCommonProviders(opts: { catalogScreenshots?: string[] } = {}) {
       provide: TranslocoService,
       useValue: { translate: vi.fn((k: string) => k), getActiveLang: vi.fn().mockReturnValue('es') }
     },
-    { provide: MatSnackBar, useValue: { open: vi.fn() } },
-    { provide: MatDialog, useValue: { open: vi.fn() } }
+    {
+      provide: RetroSnackbarService,
+      useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+    },
+    { provide: RetroDialogService, useValue: { open: vi.fn() } }
   ];
 }
 
@@ -105,6 +108,15 @@ describe('GameFormComponent', () => {
       expect(component.coverObjectPosition()).toBe('50% 50%'));
     it('coverTransform es "scale(1)" cuando no hay posición', () =>
       expect(component.coverTransform()).toBe('scale(1)'));
+  });
+
+  describe('formatOptions', () => {
+    it('expone exactamente dos opciones con los valores "physical" y "digital"', () => {
+      const options = component.formatOptions();
+      expect(options).toHaveLength(2);
+      expect(options[0].value).toBe('physical');
+      expect(options[1].value).toBe('digital');
+    });
   });
 
   describe('coverObjectPosition', () => {
@@ -310,11 +322,12 @@ describe('GameFormComponent', () => {
   });
 
   describe('filteredStores', () => {
-    it('devuelve todas las tiendas cuando el input está vacío', () => {
+    it('devuelve todas las tiendas cuando el query está vacío', () => {
       (component as any)._storeModels.set([
         { id: '1', label: 'Amazon', format: null },
         { id: '2', label: 'GAME', format: null }
       ]);
+      component.onStoreQuery('');
       expect(component.filteredStores()).toHaveLength(2);
     });
 
@@ -323,7 +336,7 @@ describe('GameFormComponent', () => {
         { id: '1', label: 'Amazon', format: null },
         { id: '2', label: 'GAME', format: null }
       ]);
-      component.form.controls.store.setValue('ama');
+      component.onStoreQuery('ama');
       expect(component.filteredStores()).toHaveLength(1);
       expect(component.filteredStores()[0].label).toBe('Amazon');
     });
@@ -433,14 +446,14 @@ describe('GameFormComponent', () => {
 
   describe('onSubmit', () => {
     it('no abre el diálogo cuando el formulario es inválido', () => {
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.onSubmit();
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('no procede cuando el diálogo no se confirma', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(false) });
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
 
@@ -452,7 +465,7 @@ describe('GameFormComponent', () => {
 
     it('llama a addGame y navega cuando se confirma en modo creación', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -465,7 +478,7 @@ describe('GameFormComponent', () => {
 
     it('incluye catalogEntry cuando selectedGame tiene rawg_id', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -490,7 +503,7 @@ describe('GameFormComponent', () => {
     it('llama a deleteItem después de addGame cuando hay pendingWishlistItemId', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
       (wishlistUseCases.deleteItem as any).mockResolvedValue(undefined);
@@ -505,7 +518,7 @@ describe('GameFormComponent', () => {
 
     it('llama a updateGame en modo edición cuando se confirma', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.updateGame as any).mockResolvedValue(undefined);
       component.isEditMode = true;
@@ -520,8 +533,8 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje de duplicado cuando el error contiene 23505', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(MatSnackBar);
-      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(RetroSnackbarService);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('unique constraint 23505'));
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -534,7 +547,7 @@ describe('GameFormComponent', () => {
 
     it('usa los fallbacks de ?? cuando los campos opcionales son null', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockResolvedValue(undefined);
 
@@ -558,8 +571,8 @@ describe('GameFormComponent', () => {
 
     it('muestra snackbar con mensaje genérico cuando el error no es duplicado', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES);
-      const snackBar = TestBed.inject(MatSnackBar);
-      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(RetroSnackbarService);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(true) });
       (gameUseCases.addGame as any).mockRejectedValue(new Error('Network error'));
       component.form.patchValue({ title: 'God of War', platform: 'PS5' });
@@ -584,7 +597,7 @@ describe('GameFormComponent', () => {
 
   describe('openCoverPositionDialog', () => {
     it('no abre el diálogo cuando no hay imageUrl', async () => {
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedImageUrl.set(null);
 
       await component.openCoverPositionDialog();
@@ -593,7 +606,7 @@ describe('GameFormComponent', () => {
     });
 
     it('actualiza _coverPosition cuando el diálogo devuelve un valor', async () => {
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of('50% 30% 1.2') });
       component.selectedImageUrl.set('https://cdn.example.com/cover.jpg');
 
@@ -603,7 +616,7 @@ describe('GameFormComponent', () => {
     });
 
     it('no actualiza _coverPosition cuando el diálogo devuelve null', async () => {
-      const dialog = TestBed.inject(MatDialog);
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       (dialog.open as any).mockReturnValue({ afterClosed: () => of(null) });
       component.selectedImageUrl.set('https://cdn.example.com/cover.jpg');
       (component as any)._coverPosition.set('50% 50%');
@@ -616,13 +629,13 @@ describe('GameFormComponent', () => {
 
   describe('filteredPlatforms', () => {
     it('devuelve plataformas estáticas filtradas cuando gamePlatforms está vacío', () => {
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result.length).toBeGreaterThan(0);
     });
 
-    it('filtra plataformas estáticas por el input cuando gamePlatforms está vacío', () => {
-      component.form.controls.platform.setValue('PS5');
+    it('filtra plataformas estáticas por el query cuando gamePlatforms está vacío', () => {
+      component.onPlatformQuery('PS5');
       const result = component.filteredPlatforms();
       expect(
         result.every((p) => p.code.toLowerCase().includes('ps5') || p.labelKey.toLowerCase().includes('ps5'))
@@ -634,24 +647,24 @@ describe('GameFormComponent', () => {
         { name: 'PlayStation 5', code: 'PS5' },
         { name: 'Xbox Series X', code: 'XBOX-SERIES' }
       ]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result.length).toBe(2);
     });
 
-    it('filtra plataformas dinámicas por input cuando gamePlatforms tiene elementos', () => {
+    it('filtra plataformas dinámicas por query cuando gamePlatforms tiene elementos', () => {
       component.gamePlatforms.set([
         { name: 'PlayStation 5', code: 'PS5' },
         { name: 'Xbox Series X', code: 'XBOX-SERIES' }
       ]);
-      component.form.controls.platform.setValue('XBOX' as any);
+      component.onPlatformQuery('xbox');
       const result = component.filteredPlatforms();
       expect(result.every((p) => p.code !== 'PS5')).toBe(true);
     });
 
     it('usa plataforma existente de platforms cuando el código coincide', () => {
       component.gamePlatforms.set([{ name: 'PS5 Custom', code: 'PS5' }]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       const ps5 = result.find((p) => p.code === 'PS5');
       expect(ps5).toBeDefined();
@@ -659,11 +672,65 @@ describe('GameFormComponent', () => {
 
     it('usa el fallback cuando el código de gamePlatform no existe en la lista estática', () => {
       component.gamePlatforms.set([{ name: 'Consola Desconocida', code: 'UNKNOWN-CODE' as any }]);
-      component.form.controls.platform.setValue(null);
+      component.onPlatformQuery('');
       const result = component.filteredPlatforms();
       expect(result).toHaveLength(1);
       expect(result[0].code).toBe('UNKNOWN-CODE');
       expect(result[0].labelKey).toBe('Consola Desconocida');
+    });
+  });
+
+  describe('_getPlatformError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getPlatformError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.form.controls.platform.setValue('PS5' as any);
+      component.form.controls.platform.markAsTouched();
+      expect(component._getPlatformError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.form.controls.platform.markAsTouched();
+      component.form.controls.platform.setValue(null);
+      expect(component._getPlatformError()).toBe('gameForm.errors.required');
+    });
+  });
+
+  describe('_getStoreError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getStoreError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.form.controls.store.setValue(null);
+      component.form.controls.store.markAsTouched();
+      expect(component._getStoreError()).toBeNull();
+    });
+  });
+
+  describe('_getRatingError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getRatingError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo tiene un valor válido y está tocado', () => {
+      component.form.controls.personal_rating.setValue(3);
+      component.form.controls.personal_rating.markAsTouched();
+      expect(component._getRatingError()).toBeNull();
+    });
+
+    it('devuelve la clave de min cuando el valor es menor que el mínimo', () => {
+      component.form.controls.personal_rating.markAsTouched();
+      component.form.controls.personal_rating.setValue(-1);
+      expect(component._getRatingError()).toBe('gameForm.errors.ratingMin');
+    });
+
+    it('devuelve la clave de max cuando el valor supera el máximo', () => {
+      component.form.controls.personal_rating.markAsTouched();
+      component.form.controls.personal_rating.setValue(11);
+      expect(component._getRatingError()).toBe('gameForm.errors.ratingMax');
     });
   });
 });
