@@ -287,6 +287,112 @@ describe('RetroMenuTriggerDirective', () => {
   });
 });
 
+@Component({
+  selector: 'app-disabled-item-host',
+  standalone: true,
+  imports: [RetroMenuComponent, RetroMenuItemComponent, RetroMenuTriggerDirective],
+  template: `
+    <button [retroMenuTriggerFor]="menu" aria-label="Abrir menú">Trigger</button>
+    <retro-menu #menu>
+      <retro-menu-item [isDisabled]="true">Opción deshabilitada</retro-menu-item>
+      <retro-menu-item>Opción habilitada</retro-menu-item>
+    </retro-menu>
+  `
+})
+class DisabledItemHostComponent {}
+
+describe('RetroMenuTriggerDirective — cierre al hacer click en item', () => {
+  let fixture: ComponentFixture<TriggerHostComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [TriggerHostComponent, OverlayModule]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TriggerHostComponent);
+    fixture.detectChanges();
+  });
+
+  it('click en un item habilitado cierra el overlay (aria-expanded false)', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    btn.click();
+    fixture.detectChanges();
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+
+    // Obtener el primer item del menú y simular click en su botón interno
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective) as any;
+    const menuComponent = directive.retroMenuTriggerFor();
+    const firstItem = menuComponent.menuItems.toArray()[0] as RetroMenuItemComponent;
+
+    firstItem.onClick(new MouseEvent('click'));
+    fixture.detectChanges();
+
+    expect(btn.getAttribute('aria-expanded')).toBe('false');
+    expect(document.querySelector('.retro-menu')).toBeFalsy();
+  });
+
+  it('al abrir/cerrar/abrir el array _menuSubs no acumula suscripciones huérfanas', () => {
+    const btn = fixture.nativeElement.querySelector('button');
+    const directiveDebug = fixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective) as any;
+
+    // Primera apertura
+    btn.click();
+    fixture.detectChanges();
+    const subsAfterFirstOpen = directive._menuSubs.length;
+    expect(subsAfterFirstOpen).toBeGreaterThan(0);
+
+    // Cierre
+    btn.click();
+    fixture.detectChanges();
+    expect(directive._menuSubs.length).toBe(0);
+
+    // Segunda apertura: debe tener el mismo número de suscripciones que la primera
+    btn.click();
+    fixture.detectChanges();
+    expect(directive._menuSubs.length).toBe(subsAfterFirstOpen);
+  });
+});
+
+describe('RetroMenuTriggerDirective — item deshabilitado no cierra el overlay', () => {
+  let disabledFixture: ComponentFixture<DisabledItemHostComponent>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await TestBed.configureTestingModule({
+      imports: [DisabledItemHostComponent, OverlayModule]
+    }).compileComponents();
+
+    disabledFixture = TestBed.createComponent(DisabledItemHostComponent);
+    disabledFixture.detectChanges();
+  });
+
+  it('click en un item deshabilitado NO cierra el overlay (aria-expanded sigue true)', () => {
+    const btn = disabledFixture.nativeElement.querySelector('button');
+    btn.click();
+    disabledFixture.detectChanges();
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+
+    // Obtener el item deshabilitado y simular click
+    const directiveDebug = disabledFixture.debugElement.query(By.directive(RetroMenuTriggerDirective));
+    const directive = directiveDebug?.injector.get(RetroMenuTriggerDirective) as any;
+    const menuComponent = directive.retroMenuTriggerFor();
+    const disabledItem = menuComponent.menuItems.toArray()[0] as RetroMenuItemComponent;
+
+    // Confirmar que efectivamente está deshabilitado
+    expect(disabledItem.isDisabled()).toBe(true);
+
+    // onClick con isDisabled=true no debe emitir clicked → overlay no se cierra
+    disabledItem.onClick(new MouseEvent('click'));
+    disabledFixture.detectChanges();
+
+    expect(btn.getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('.retro-menu')).toBeTruthy();
+  });
+});
+
 describe('RetroMenuTriggerDirective — wrapper con display:contents', () => {
   let wrapperFixture: ComponentFixture<WrapperTriggerHostComponent>;
 
