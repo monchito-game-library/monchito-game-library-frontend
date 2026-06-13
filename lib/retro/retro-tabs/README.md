@@ -1,66 +1,66 @@
 # retro-tabs
 
-Componente de tabs unificado con soporte para dos modos de operación: **modo router** (navegación entre rutas hijas con `<a routerLink>`) y **modo local** (contenido en la misma página con `<button role="tab">`). Ambos modos comparten el mismo indicador neón deslizante full-width.
+Unified tabs component supporting two operation modes: **router mode** (navigation between child routes with `<a routerLink>`) and **local mode** (content on the same page with `<button role="tab">`). Both modes share the same full-width sliding neon indicator.
 
-**Selector:** `retro-tabs` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-tabs` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita cambiar entre vistas dentro de la misma página (modo local) o navegar entre rutas hijas (modo router).
-- NO usar cuando: se necesita guiar al usuario a través de pasos secuenciales con validación por paso — considerar un stepper dedicado en su lugar.
+- Use when: switching between views within the same page (local mode) or navigating between child routes (router mode).
+- Do NOT use when: guiding the user through sequential steps with per-step validation — consider a dedicated stepper instead.
 
 ## API — Inputs
 
-| Nombre          | Tipo Angular                                        | Default     | Descripción                                                                |
-| --------------- | --------------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
-| `items`         | `InputSignal<readonly RetroTabItem[] \| undefined>` | `undefined` | Items de navegación. Si se pasan, activa modo router con `<a routerLink>`. |
-| `selectedIndex` | `InputSignal<number>`                               | `0`         | Índice del tab activo inicial. Solo aplica en modo local.                  |
-| `ariaLabel`     | `InputSignal<string \| undefined>`                  | `undefined` | Label aria para el contenedor de tabs (`<nav>` o `[role=tablist]`).        |
+| Name            | Angular type                                        | Default     | Description                                                                   |
+| --------------- | --------------------------------------------------- | ----------- | ----------------------------------------------------------------------------- |
+| `items`         | `InputSignal<readonly RetroTabItem[] \| undefined>` | `undefined` | Navigation items. When provided, activates router mode with `<a routerLink>`. |
+| `selectedIndex` | `InputSignal<number>`                               | `0`         | Initial active tab index. Applies only in local mode.                         |
+| `ariaLabel`     | `InputSignal<string \| undefined>`                  | `undefined` | Aria label for the tab container (`<nav>` or `[role=tablist]`).               |
 
 ## API — Outputs
 
-| Nombre                | Tipo Angular               | Descripción                                                     |
-| --------------------- | -------------------------- | --------------------------------------------------------------- |
-| `selectedIndexChange` | `OutputEmitterRef<number>` | Emite el índice del tab seleccionado. Solo emite en modo local. |
+| Name                  | Angular type               | Description                                             |
+| --------------------- | -------------------------- | ------------------------------------------------------- |
+| `selectedIndexChange` | `OutputEmitterRef<number>` | Emits the selected tab index. Only emits in local mode. |
 
-## Señales públicas
+## Public Signals
 
-| Nombre         | Tipo Angular      | Descripción                                       |
-| -------------- | ----------------- | ------------------------------------------------- |
-| `isRouterMode` | `Signal<boolean>` | `true` si hay items pasados (modo router activo). |
-| `activeIndex`  | `Signal<number>`  | Índice del tab activo en modo local.              |
+| Name           | Angular type      | Description                                          |
+| -------------- | ----------------- | ---------------------------------------------------- |
+| `isRouterMode` | `Signal<boolean>` | `true` when items are provided (router mode active). |
+| `activeIndex`  | `Signal<number>`  | Active tab index in local mode.                      |
 
-## Subcomponente — `retro-tab`
+## Subcomponent — `retro-tab`
 
-Componente hijo para modo local. El contenido debe pasarse envuelto en un `<ng-template>` para garantizar lazy render.
+Child component for local mode. Content must be wrapped in an `<ng-template>` to guarantee lazy rendering.
 
-**Selector:** `retro-tab` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-tab` · **Standalone:** yes · **CVA:** no
 
-### API — Inputs de `retro-tab`
+### API — Inputs (`retro-tab`)
 
-| Nombre  | Tipo Angular                       | Default     | Descripción                                                          |
-| ------- | ---------------------------------- | ----------- | -------------------------------------------------------------------- |
-| `label` | `InputSignal<string> (required)`   | —           | Texto del label del tab.                                             |
-| `icon`  | `InputSignal<string \| undefined>` | `undefined` | Nombre del icono Material Icons a mostrar junto al label (opcional). |
+| Name    | Angular type                       | Default     | Description                                                       |
+| ------- | ---------------------------------- | ----------- | ----------------------------------------------------------------- |
+| `label` | `InputSignal<string> (required)`   | —           | Tab label text.                                                   |
+| `icon`  | `InputSignal<string \| undefined>` | `undefined` | Material Icons icon name to display next to the label (optional). |
 
-La propiedad `id` es de solo lectura (generada automáticamente, no es un input).
+The `id` property is read-only (auto-generated, not an input).
 
-## Tipos exportados
+## Exported Types
 
-- `RetroTabItem` — interfaz para modo router:
+- `RetroTabItem` — interface for router mode:
 
 ```typescript
 interface RetroTabItem {
-  readonly path: string; // Ruta a la que navega el link
-  readonly label: string; // Texto del label (clave de transloco)
-  readonly icon?: string; // Nombre del icono Material Icons (opcional)
-  readonly exact?: boolean; // Coincidencia exacta de ruta para marcar como activo
+  readonly path: string; // Route the link navigates to
+  readonly label: string; // Label text (transloco key)
+  readonly icon?: string; // Material Icons icon name (optional)
+  readonly exact?: boolean; // Exact route match to mark as active
 }
 ```
 
-## Ejemplo mínimo
+## Minimal example
 
-**Modo router:**
+**Router mode:**
 
 ```typescript
 readonly navItems: readonly RetroTabItem[] = [
@@ -70,10 +70,10 @@ readonly navItems: readonly RetroTabItem[] = [
 ```
 
 ```html
-<retro-tabs [items]="navItems" ariaLabel="Navegación colección" /> <router-outlet />
+<retro-tabs [items]="navItems" ariaLabel="Collection navigation" /> <router-outlet />
 ```
 
-**Modo local:**
+**Local mode:**
 
 ```typescript
 readonly activeTab = signal(0);
@@ -81,14 +81,14 @@ readonly activeTab = signal(0);
 
 ```html
 <retro-tabs [selectedIndex]="activeTab()" (selectedIndexChange)="activeTab.set($event)">
-  <retro-tab label="Ventas" icon="sell">
+  <retro-tab label="Sales" icon="sell">
     <ng-template>
-      <!-- contenido del tab Ventas -->
+      <!-- Sales tab content -->
     </ng-template>
   </retro-tab>
-  <retro-tab label="Compras" icon="shopping_cart">
+  <retro-tab label="Purchases" icon="shopping_cart">
     <ng-template>
-      <!-- contenido del tab Compras -->
+      <!-- Purchases tab content -->
     </ng-template>
   </retro-tab>
 </retro-tabs>
@@ -96,8 +96,8 @@ readonly activeTab = signal(0);
 
 ## Gotchas
 
-- **IDs únicos con contador estático**: `retro-tab` genera su `id` con un contador estático monotónico (`retro-tab-1`, `retro-tab-2`…). El contador no se resetea entre tests; en SSR o en múltiples instancias en la misma página los IDs son siempre únicos.
-- **Clamp de índice**: tanto `selectedIndex` como el método programático `select(n)` clampean el valor al rango `[0, tabs.length - 1]`. Un índice fuera de bounds activa el tab más cercano al límite.
-- **MutationObserver acotado a `childList`**: el observer que actualiza el indicador solo escucha adición/eliminación de nodos hijos directos de `.retro-tabs__list`; no observa cambios de atributos ni descendientes profundos.
-- **Modo router en mobile**: la lista de tabs es scrollable horizontalmente en dispositivos táctiles (`overflow-x: auto` con scrollbar oculta).
-- **`prefers-reduced-motion`**: la transición del indicador deslizante y el text-shadow neón del tab activo se desactivan.
+- **Unique IDs with static counter**: `retro-tab` generates its `id` using a monotonic static counter (`retro-tab-1`, `retro-tab-2`…). The counter does not reset between tests; in SSR or with multiple instances on the same page, IDs are always unique.
+- **Index clamping**: both `selectedIndex` and the programmatic `select(n)` method clamp the value to `[0, tabs.length - 1]`. An out-of-bounds index activates the tab closest to the limit.
+- **MutationObserver scoped to `childList`**: the observer that updates the indicator only listens for addition/removal of direct children of `.retro-tabs__list`; it does not observe attribute changes or deep descendants.
+- **Router mode on mobile**: the tab list is horizontally scrollable on touch devices (`overflow-x: auto` with a hidden scrollbar).
+- **`prefers-reduced-motion`**: the sliding indicator transition and the neon text-shadow on the active tab are disabled.

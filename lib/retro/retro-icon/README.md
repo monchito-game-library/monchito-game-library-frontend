@@ -1,27 +1,27 @@
 # retro-icon
 
-Wrapper de Material Icons (webfont) para la lib Terminal Collector. Renderiza un `<span class="material-icons">` usando la webfont ya cargada en `index.html`. Paridad funcional con `mat-icon` sin dependencia de `@angular/material/icon`.
+Material Icons (webfont) wrapper for the Terminal Collector lib. Renders a `<span class="material-icons">` using the webfont already loaded in `index.html`. Functional parity with `mat-icon` without a dependency on `@angular/material/icon`.
 
-**Selector:** `retro-icon` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-icon` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita un icono de Material Icons en cualquier punto de la UI (botones, chips, listas, vacíos de estado).
-- NO usar cuando: se necesita un SVG personalizado o un icono de otra fuente — en ese caso gestionar el elemento `<img>`/`<svg>` directamente.
+- Use when: a Material Icons icon is needed anywhere in the UI (buttons, chips, lists, empty states).
+- Do NOT use when: a custom SVG or an icon from another source is needed — in that case manage the `<img>`/`<svg>` element directly.
 
 ## API — Inputs
 
-| Nombre       | Tipo Angular                     | Default | Descripción                                                                                                                     |
-| ------------ | -------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `name`       | `InputSignal<string> (required)` | —       | Liga del icono Material Icons (nombre en snake_case, p. ej. `'save'`, `'check_circle'`).                                        |
-| `size`       | `InputSignal<LibIconSize>`       | `'md'`  | Tamaño: `'xs'` (chip/data-row), `'sm'` (botón/tabs), `'md'` (menús), `'lg'` (headers), `'xl'` (topbar), `'2xl'` (empty states). |
-| `ariaHidden` | `InputSignal<boolean>`           | `true`  | `aria-hidden="true"` por defecto (decorativo). Pasar `false` para iconos informativos.                                          |
+| Name         | Angular type                     | Default | Description                                                                                                                    |
+| ------------ | -------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `name`       | `InputSignal<string> (required)` | —       | Material Icons ligature (icon name in snake_case, e.g. `'save'`, `'check_circle'`).                                            |
+| `size`       | `InputSignal<LibIconSize>`       | `'md'`  | Size: `'xs'` (chip/data-row), `'sm'` (button/tabs), `'md'` (menus), `'lg'` (headers), `'xl'` (topbar), `'2xl'` (empty states). |
+| `ariaHidden` | `InputSignal<boolean>`           | `true`  | `aria-hidden="true"` by default (decorative). Pass `false` for informative icons.                                              |
 
-## Tipos exportados
+## Exported Types
 
 - `LibIconSize` — `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-icon name="save" size="sm" />
@@ -31,12 +31,12 @@ Wrapper de Material Icons (webfont) para la lib Terminal Collector. Renderiza un
 
 ## Gotchas
 
-- El host aplica clases individuales mediante bindings separados (`[class.retro-icon-host--xs]`, etc.), **no** con un único getter `@HostBinding('class')`. Esto garantiza que las clases externas añadidas por el call-site (`<retro-icon class="my-class" ...>`) se preservan en todos los ciclos de detección de cambios.
-- Las clases host y sus condiciones son:
+- The host applies individual classes via separate bindings (`[class.retro-icon-host--xs]`, etc.), **not** with a single `@HostBinding('class')` getter. This ensures external classes added by the call-site (`<retro-icon class="my-class" ...>`) are preserved across all change detection cycles.
+- Host classes and their conditions:
 
-  | Clase                  | Condición        |
+  | Class                  | Condition        |
   | ---------------------- | ---------------- |
-  | `retro-icon-host`      | siempre          |
+  | `retro-icon-host`      | always           |
   | `retro-icon-host--xs`  | `size === 'xs'`  |
   | `retro-icon-host--sm`  | `size === 'sm'`  |
   | `retro-icon-host--md`  | `size === 'md'`  |
@@ -44,4 +44,4 @@ Wrapper de Material Icons (webfont) para la lib Terminal Collector. Renderiza un
   | `retro-icon-host--xl`  | `size === 'xl'`  |
   | `retro-icon-host--2xl` | `size === '2xl'` |
 
-- `aria-hidden="true"` es el default porque la mayoría de usos son decorativos. Para iconos que transmiten información semántica (sin texto alternativo en el call-site), pasar `[ariaHidden]="false"` y asegurarse de que el contenedor padre tenga `aria-label`.
+- `aria-hidden="true"` is the default because most uses are decorative. For icons that convey semantic information (without alternative text at the call-site), pass `[ariaHidden]="false"` and ensure the parent container has an `aria-label`.

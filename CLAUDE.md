@@ -103,24 +103,6 @@ presentation  →  domain (repositorios contratos)  →  data (repositorios impl
 - **`pages/`** — vistas con ruta propia: cada subcarpeta lleva `*.routes.ts` con `path: ''`; el padre la monta con `loadChildren`.
 - **`components/`** — piezas reutilizables sin ruta: se importan directamente en el template del padre; no tienen `*.routes.ts`.
 
-## Tests — mocks compartidos
-
-Los mocks reutilizables viven en `src/testing/`. **Antes de declarar un mock inline, comprobar si ya existe aquí.**
-
-| Fichero                                    | Exporta              | Uso                                                                                                                  |
-| ------------------------------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `activated-route.mock.ts`                  | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }`                                                          |
-| `dialog.mock.ts`                           | `mockDialog`         | `{ provide: RetroDialogService, useValue: mockDialog }`                                                              |
-| `lib/retro/testing/retro-snackbar.mock.ts` | `mockRetroSnackbar`  | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` — importar con `@retro/testing/retro-snackbar.mock` |
-| `location.mock.ts`                         | `mockLocation`       | `{ provide: Location, useValue: mockLocation }`                                                                      |
-| `router.mock.ts`                           | `mockRouter`         | `{ provide: Router, useValue: mockRouter }`                                                                          |
-| `transloco.mock.ts`                        | `mockTransloco`      | `{ provide: TranslocoService, useValue: mockTransloco }`                                                             |
-| `user-context.mock.ts`                     | `mockUserContext`    | `{ provide: UserContextService, useValue: mockUserContext }`                                                         |
-
-Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
-
-> Los mocks de `lib/retro/` viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de la app siguen en `src/testing/`.
-
 ## Librería retro — sincronía de README
 
 - Al modificar `.component.ts`, `.types.ts` o `.component.html` de un componente retro, actualizar su `README.md` en el mismo commit (ver skill `retro-readme`).

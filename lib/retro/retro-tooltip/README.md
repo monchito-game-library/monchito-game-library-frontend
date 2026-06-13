@@ -1,36 +1,36 @@
 # retro-tooltip
 
-Directiva de tooltip nativa sin CDK Overlay. Crea un `<div class="retro-tooltip">` en el `document.body` con `position: fixed` calculada desde `getBoundingClientRect()`.
+Native tooltip directive without CDK Overlay. Creates a `<div class="retro-tooltip">` in `document.body` with `position: fixed` calculated from `getBoundingClientRect()`.
 
-**Selector:** `[retroTooltip]` · **Standalone:** sí · **CVA:** no
+**Selector:** `[retroTooltip]` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita mostrar texto de ayuda contextual al hacer hover o focus sobre un elemento interactivo.
-- NO usar cuando: el contenido es rico (iconos, botones, HTML) — la directiva solo admite texto plano.
+- Use when: contextual help text needs to be displayed on hover or focus over an interactive element.
+- Do NOT use when: the content is rich (icons, buttons, HTML) — the directive only accepts plain text.
 
 ## API — Inputs
 
-| Nombre              | Tipo Angular                     | Default | Descripción                                                         |
-| ------------------- | -------------------------------- | ------- | ------------------------------------------------------------------- |
-| `retroTooltip`      | `InputSignal<string> (required)` | —       | Texto del tooltip. Si está vacío, no se muestra nada.               |
-| `retroTooltipDelay` | `InputSignal<number>`            | `500`   | Retardo en ms antes de mostrar el tooltip tras el mouseenter/focus. |
+| Name                | Angular type                     | Default | Description                                                    |
+| ------------------- | -------------------------------- | ------- | -------------------------------------------------------------- |
+| `retroTooltip`      | `InputSignal<string> (required)` | —       | Tooltip text. If empty, nothing is displayed.                  |
+| `retroTooltipDelay` | `InputSignal<number>`            | `500`   | Delay in ms before showing the tooltip after mouseenter/focus. |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-icon-button
   icon="info"
-  ariaLabel="Más información"
-  [retroTooltip]="'Pulsa para ver detalles'"
+  ariaLabel="More information"
+  [retroTooltip]="'Click to see details'"
   [retroTooltipDelay]="300" />
 ```
 
 ## Gotchas
 
-- **Posicionado con `requestAnimationFrame`**: el panel se posiciona dos veces — inmediatamente al crearse y tras el primer frame de layout para usar las dimensiones reales. Esto evita el parpadeo de posición que ocurriría al posicionar antes de que el panel tenga tamaño.
-- **Listeners scroll/resize activos mientras visible**: mientras el tooltip está visible, la directiva suscribe listeners `scroll` (capture) y `resize` en `window` para reposicionarlo. Se limpian automáticamente al ocultar el tooltip.
-- **Focus en touch + teclado externo**: el tooltip aparece en `focusin` independientemente de si el dispositivo soporta hover. Esto cubre el caso de dispositivos táctiles con teclado externo conectado. En dispositivos táctiles sin teclado, el hover (`mouseenter`) se ignora porque `@media (hover: hover)` no coincide.
-- **Posición por defecto bottom-center**: si el tooltip no cabe por debajo del host (desborda viewport), se mueve automáticamente a top-center.
-- **Accesibilidad**: añade `role="tooltip"` al panel y `aria-describedby` al elemento host mientras está visible. Ambos atributos se eliminan al ocultar.
-- El tooltip se destruye en `ngOnDestroy` — no quedan elementos huérfanos si el host se desmonta mientras el tooltip está visible.
+- **Positioned with `requestAnimationFrame`**: the panel is positioned twice — immediately on creation and after the first layout frame to use real dimensions. This prevents position flickering that would occur when positioning before the panel has a size.
+- **Active scroll/resize listeners while visible**: while the tooltip is visible, the directive subscribes to `scroll` (capture) and `resize` listeners on `window` to reposition it. They are automatically cleaned up when the tooltip is hidden.
+- **Focus on touch + external keyboard**: the tooltip appears on `focusin` regardless of whether the device supports hover. This covers the case of touch devices with an external keyboard connected. On touch devices without a keyboard, hover (`mouseenter`) is ignored because `@media (hover: hover)` does not match.
+- **Default position bottom-center**: if the tooltip does not fit below the host (overflows viewport), it automatically moves to top-center.
+- **Accessibility**: adds `role="tooltip"` to the panel and `aria-describedby` to the host element while visible. Both attributes are removed when hidden.
+- The tooltip is destroyed in `ngOnDestroy` — no orphan elements are left if the host is unmounted while the tooltip is visible.

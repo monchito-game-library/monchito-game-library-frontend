@@ -1,84 +1,84 @@
 # retro-overlay
 
-Servicio de infraestructura de overlay reutilizable. Envuelve el CDK Overlay y centraliza la lógica de focus trap, scroll lock y restauración de foco. Sirve de base para `retro-menu`, `retro-bottom-sheet` y `retro-dialog`.
+Reusable overlay infrastructure service. Wraps the CDK Overlay and centralises focus trap, scroll lock and focus restoration logic. Serves as the foundation for `retro-menu`, `retro-bottom-sheet` and `retro-dialog`.
 
-**Servicio:** inyectable en `root`
+**Service:** injectable in `root`
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: necesitas abrir un panel flotante genérico (componente o TemplateRef) con control total sobre posición, backdrop, focus trap y estrategia de scroll.
-- NO usar cuando: el caso de uso es un diálogo modal → usa `RetroDialogService`; si es una confirmación o menú inferior → usa `RetroBottomSheetService`; si es un menú contextual anclado → usa `RetroMenuService`. `RetroOverlayService` es la capa de infraestructura compartida por todos ellos.
+- Use when: you need to open a generic floating panel (component or TemplateRef) with full control over position, backdrop, focus trap and scroll strategy.
+- Do NOT use when: the use case is a modal dialog — use `RetroDialogService`; if it is a confirmation or bottom menu — use `RetroBottomSheetService`; if it is a contextual anchored menu — use `RetroMenuService`. `RetroOverlayService` is the shared infrastructure layer used by all of them.
 
 ## API — RetroOverlayService
 
 ### `open<T, R>(content, config?): RetroOverlayRef<T, R>`
 
-Abre un componente o TemplateRef dentro de un overlay CDK.
+Opens a component or TemplateRef inside a CDK overlay.
 
-| Parámetro | Tipo                                       | Descripción                                       |
-| --------- | ------------------------------------------ | ------------------------------------------------- |
-| `content` | `ComponentType<T> \| TemplateRef<unknown>` | Componente o template a proyectar en el overlay.  |
-| `config`  | `RetroOverlayConfig` (opcional)            | Configuración del overlay. Ver sección siguiente. |
+| Parameter | Type                                       | Description                                        |
+| --------- | ------------------------------------------ | -------------------------------------------------- |
+| `content` | `ComponentType<T> \| TemplateRef<unknown>` | Component or template to project into the overlay. |
+| `config`  | `RetroOverlayConfig` (optional)            | Overlay configuration. See next section.           |
 
-Devuelve `RetroOverlayRef<T, R>`.
+Returns `RetroOverlayRef<T, R>`.
 
 ## RetroOverlayConfig
 
-Todos los campos son opcionales.
+All fields are optional.
 
-| Campo                 | Tipo                                           | Default                    | Descripción                                                                                                 |
-| --------------------- | ---------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `origin`              | `ElementRef \| HTMLElement`                    | —                          | Elemento de origen para overlays anclados (menú, select). Si se omite, el overlay se centra en la pantalla. |
-| `positions`           | `ConnectedPosition[]`                          | posiciones CDK por defecto | Posiciones CDK para overlays anclados cuando se pasa `origin`.                                              |
-| `hasBackdrop`         | `boolean`                                      | `false`                    | Si se muestra un backdrop que bloquea la interacción con el resto de la UI.                                 |
-| `backdropClass`       | `string`                                       | —                          | Clase CSS del backdrop.                                                                                     |
-| `panelClass`          | `string \| string[]`                           | —                          | Clase(s) CSS del panel del overlay.                                                                         |
-| `disposeOnNavigation` | `boolean`                                      | `true`                     | Si el overlay se cierra automáticamente al navegar con el Router.                                           |
-| `scrollStrategy`      | `'reposition' \| 'block' \| 'close'`           | `'reposition'`             | Estrategia de scroll cuando el overlay está abierto.                                                        |
-| `focusTrap`           | `boolean`                                      | —                          | Si se activa el focus trap dentro del panel.                                                                |
-| `autoFocus`           | `'first-tabbable' \| 'first-heading' \| false` | —                          | Elemento al que mover el foco al abrir el overlay. Solo tiene efecto si `focusTrap: true`.                  |
-| `restoreFocus`        | `boolean`                                      | —                          | Si se restaura el foco al elemento disparador al cerrar el overlay.                                         |
-| `width`               | `string`                                       | —                          | Ancho del panel (ej. `'400px'`, `'80vw'`).                                                                  |
-| `height`              | `string`                                       | —                          | Alto del panel.                                                                                             |
-| `data`                | `unknown`                                      | —                          | Datos arbitrarios inyectables en el componente abierto vía token `RETRO_OVERLAY_DATA`.                      |
-| `disableClose`        | `boolean`                                      | —                          | Si `true`, Escape y backdrop click NO cierran el overlay.                                                   |
-| `viewContainerRef`    | `ViewContainerRef`                             | —                          | Obligatorio cuando se abre un `TemplateRef`. Ignorado para `ComponentType`.                                 |
-| `extraProviders`      | `LibOverlayExtraProvidersFactory`              | —                          | Factory de providers extra inyectados en el componente abierto (ej. `RetroDialogRef`).                      |
+| Field                 | Type                                           | Default               | Description                                                                                        |
+| --------------------- | ---------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------- |
+| `origin`              | `ElementRef \| HTMLElement`                    | —                     | Origin element for anchored overlays (menu, select). If omitted, the overlay is centred on screen. |
+| `positions`           | `ConnectedPosition[]`                          | CDK default positions | CDK positions for anchored overlays when `origin` is provided.                                     |
+| `hasBackdrop`         | `boolean`                                      | `false`               | Whether a backdrop that blocks interaction with the rest of the UI is shown.                       |
+| `backdropClass`       | `string`                                       | —                     | CSS class for the backdrop.                                                                        |
+| `panelClass`          | `string \| string[]`                           | —                     | CSS class(es) for the overlay panel.                                                               |
+| `disposeOnNavigation` | `boolean`                                      | `true`                | Whether the overlay closes automatically when navigating with the Router.                          |
+| `scrollStrategy`      | `'reposition' \| 'block' \| 'close'`           | `'reposition'`        | Scroll strategy while the overlay is open.                                                         |
+| `focusTrap`           | `boolean`                                      | —                     | Whether to activate the focus trap inside the panel.                                               |
+| `autoFocus`           | `'first-tabbable' \| 'first-heading' \| false` | —                     | Element to move focus to when the overlay opens. Only takes effect if `focusTrap: true`.           |
+| `restoreFocus`        | `boolean`                                      | —                     | Whether to restore focus to the trigger element when the overlay closes.                           |
+| `width`               | `string`                                       | —                     | Panel width (e.g. `'400px'`, `'80vw'`).                                                            |
+| `height`              | `string`                                       | —                     | Panel height.                                                                                      |
+| `data`                | `unknown`                                      | —                     | Arbitrary data injectable into the opened component via the `RETRO_OVERLAY_DATA` token.            |
+| `disableClose`        | `boolean`                                      | —                     | If `true`, Escape and backdrop click do NOT close the overlay.                                     |
+| `viewContainerRef`    | `ViewContainerRef`                             | —                     | Required when opening a `TemplateRef`. Ignored for `ComponentType`.                                |
+| `extraProviders`      | `LibOverlayExtraProvidersFactory`              | —                     | Factory of extra providers injected into the opened component (e.g. `RetroDialogRef`).             |
 
 ## RetroOverlayRef
 
-Referencia al overlay abierto. Devuelta por `open()`.
+Reference to the opened overlay. Returned by `open()`.
 
-| Miembro             | Tipo                         | Descripción                                                                          |
-| ------------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
-| `close(result?)`    | `(result?: R) => void`       | Cierra el overlay y emite `result` en `afterClosed$`.                                |
-| `afterClosed$`      | `Observable<R \| undefined>` | Emite una vez cuando el overlay se cierra, con el resultado opcional.                |
-| `backdropClick$`    | `Observable<MouseEvent>`     | Emite al hacer click en el backdrop.                                                 |
-| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emite eventos de teclado dentro del overlay.                                         |
-| `data`              | `unknown`                    | Datos pasados en `RetroOverlayConfig.data`. Devuelve `null` si no se proporcionaron. |
-| `disableClose`      | `boolean`                    | Indica si el cierre por Escape o backdrop está deshabilitado.                        |
-| `componentInstance` | `T \| null`                  | Instancia del componente abierto. `null` si se abrió con `TemplateRef`.              |
+| Member              | Type                         | Description                                                                    |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| `close(result?)`    | `(result?: R) => void`       | Closes the overlay and emits `result` on `afterClosed$`.                       |
+| `afterClosed$`      | `Observable<R \| undefined>` | Emits once when the overlay closes, with the optional result.                  |
+| `backdropClick$`    | `Observable<MouseEvent>`     | Emits when the backdrop is clicked.                                            |
+| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emits keyboard events inside the overlay.                                      |
+| `data`              | `unknown`                    | Data passed in `RetroOverlayConfig.data`. Returns `null` if none was provided. |
+| `disableClose`      | `boolean`                    | Indicates whether closing via Escape or backdrop is disabled.                  |
+| `componentInstance` | `T \| null`                  | Instance of the opened component. `null` if opened with a `TemplateRef`.       |
 
-## Tokens de inyección
+## Injection Tokens
 
-| Token                | Tipo              | Descripción                                                      |
-| -------------------- | ----------------- | ---------------------------------------------------------------- |
-| `RETRO_OVERLAY_REF`  | `RetroOverlayRef` | Inyecta la referencia del overlay dentro del componente abierto. |
-| `RETRO_OVERLAY_DATA` | `unknown`         | Inyecta los datos pasados en `RetroOverlayConfig.data`.          |
+| Token                | Type              | Description                                                |
+| -------------------- | ----------------- | ---------------------------------------------------------- |
+| `RETRO_OVERLAY_REF`  | `RetroOverlayRef` | Injects the overlay reference inside the opened component. |
+| `RETRO_OVERLAY_DATA` | `unknown`         | Injects the data passed in `RetroOverlayConfig.data`.      |
 
-## Presets exportados
+## Exported Presets
 
-Configs predefinidas listas para pasar directamente a `open()`:
+Predefined configs ready to pass directly to `open()`:
 
-| Constante                           | Uso                                                                           |
-| ----------------------------------- | ----------------------------------------------------------------------------- |
-| `RETRO_OVERLAY_DIALOG_CONFIG`       | Dialogs modales: backdrop, focus trap, scroll bloqueado.                      |
-| `RETRO_OVERLAY_MENU_CONFIG`         | Menús contextuales: backdrop transparente, scroll reposition, sin focus trap. |
-| `RETRO_OVERLAY_BOTTOM_SHEET_CONFIG` | Bottom sheets: backdrop, focus trap, panel pegado al fondo.                   |
+| Constant                            | Use                                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| `RETRO_OVERLAY_DIALOG_CONFIG`       | Modal dialogs: backdrop, focus trap, blocked scroll.                      |
+| `RETRO_OVERLAY_MENU_CONFIG`         | Contextual menus: transparent backdrop, scroll reposition, no focus trap. |
+| `RETRO_OVERLAY_BOTTOM_SHEET_CONFIG` | Bottom sheets: backdrop, focus trap, panel pinned to the bottom.          |
 
-## Ejemplo mínimo
+## Minimal example
 
-Abrir un componente propio con datos:
+Open a custom component with data:
 
 ```typescript
 import { RetroOverlayService, RETRO_OVERLAY_DATA, RETRO_OVERLAY_DIALOG_CONFIG } from '@retro/retro-overlay';
@@ -90,16 +90,16 @@ export class MyCallerComponent {
   openPanel(): void {
     const ref = this._overlay.open(MyPanelComponent, {
       ...RETRO_OVERLAY_DIALOG_CONFIG,
-      data: { title: 'Hola' }
+      data: { title: 'Hello' }
     });
 
     ref.afterClosed$.subscribe((result) => {
-      console.log('Resultado:', result);
+      console.log('Result:', result);
     });
   }
 }
 
-// En MyPanelComponent, inyectar datos y referencia:
+// In MyPanelComponent, inject data and reference:
 @Component({ ... })
 export class MyPanelComponent {
   readonly data = inject(RETRO_OVERLAY_DATA);
@@ -111,7 +111,7 @@ export class MyPanelComponent {
 }
 ```
 
-Abrir un `TemplateRef` (requiere `viewContainerRef`):
+Open a `TemplateRef` (requires `viewContainerRef`):
 
 ```typescript
 @Component({ ... })
@@ -132,9 +132,9 @@ export class MyCallerComponent {
 
 ## Gotchas
 
-- `TemplateRef` requiere pasar `viewContainerRef` en la config obligatoriamente; si se omite, el servicio lanza un error en tiempo de ejecución.
-- El orden de `afterClosed$` es siempre antes de `dispose()`: los suscriptores reciben el resultado antes de que el DOM sea eliminado.
-- `disposeOnNavigation` es `true` por defecto: si abres un overlay en una ruta y navegas, se cierra automáticamente. Ponlo a `false` solo si necesitas que sobreviva a la navegación.
-- Cuando `disposeOnNavigation` cierra el overlay sin llamar a `close()`, el focus trap y la restauración de foco igualmente se limpian via el evento `detachments()` del CDK.
-- No restaura el foco a `document.body` aunque `restoreFocus` sea `true` (evita scroll-to-top involuntario).
-- Para overlays anclados a un elemento con `display: contents` (como `retro-icon-button`), pasa el `HTMLElement` interno con `querySelector('button')` en vez del `ElementRef` raíz, ya que `display: contents` produce un bounding rect de 0×0.
+- `TemplateRef` requires passing `viewContainerRef` in the config; if omitted, the service throws a runtime error.
+- The order of `afterClosed$` is always before `dispose()`: subscribers receive the result before the DOM is removed.
+- `disposeOnNavigation` is `true` by default: if you open an overlay on a route and navigate away, it closes automatically. Set it to `false` only if you need it to survive navigation.
+- When `disposeOnNavigation` closes the overlay without calling `close()`, the focus trap and focus restoration are still cleaned up via the CDK `detachments()` event.
+- Focus is not restored to `document.body` even if `restoreFocus` is `true` (avoids unintentional scroll-to-top).
+- For overlays anchored to an element with `display: contents` (such as `retro-icon-button`), pass the inner `HTMLElement` with `querySelector('button')` instead of the root `ElementRef`, since `display: contents` produces a bounding rect of 0x0.

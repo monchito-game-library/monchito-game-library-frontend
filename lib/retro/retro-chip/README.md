@@ -1,47 +1,47 @@
 # retro-chip
 
-Chip/badge reutilizable Terminal Collector. Borde 1px del color semántico, mono uppercase, sin border-radius. Soporta icono opcional, variante rellena y botón de cierre.
+Reusable Terminal Collector chip/badge. 1px border in the semantic colour, mono uppercase, no border-radius. Supports an optional icon, filled variant, and close button.
 
-**Selector:** `retro-chip` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-chip` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita una etiqueta visual para tags de filtro activos, estados semánticos (plataforma, estado de juego), categorías o badges en tablas y listas.
-- NO usar cuando: se necesita una acción primaria con texto — usar `retro-button`. Para iconos de acción sin texto, usar `retro-icon-button`.
+- Use when: a visual label is needed for active filter tags, semantic states (platform, game status), categories, or badges in tables and lists.
+- Do NOT use when: a primary action with text is needed — use `retro-button`. For action icons without text, use `retro-icon-button`.
 
 ## API — Inputs
 
-| Nombre     | Tipo Angular                       | Default     | Descripción                                                                                            |
-| ---------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------ |
-| `label`    | `InputSignal<string> (required)`   | —           | Texto visible del chip; se muestra en uppercase.                                                       |
-| `icon`     | `InputSignal<string \| undefined>` | `undefined` | Nombre del icono Material Icons (opcional). Si no se pasa, el icono no se renderiza.                   |
-| `color`    | `InputSignal<RetroChipColor>`      | `'neutral'` | Color semántico del borde y texto: `'primary'`, `'green'`, `'amber'`, `'rose'`, `'blue'`, `'neutral'`. |
-| `size`     | `InputSignal<RetroChipSize>`       | `'md'`      | Tamaño: `'sm'` (h=1rem, 10px), `'md'` (h=1.25rem, 11px), `'lg'` (h=1.5rem, 12px).                      |
-| `filled`   | `InputSignal<boolean>`             | `false`     | Si `true`, aplica fondo sólido del color y texto `--bg-void`. Útil para overlays hero.                 |
-| `closable` | `InputSignal<boolean>`             | `false`     | Si `true`, muestra un botón `×` y emite el evento `closed` al pulsarlo.                                |
+| Name       | Angular type                       | Default     | Description                                                                                                  |
+| ---------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
+| `label`    | `InputSignal<string> (required)`   | —           | Visible chip text; displayed in uppercase.                                                                   |
+| `icon`     | `InputSignal<string \| undefined>` | `undefined` | Material Icons icon name (optional). If not provided, the icon is not rendered.                              |
+| `color`    | `InputSignal<RetroChipColor>`      | `'neutral'` | Semantic colour for the border and text: `'primary'`, `'green'`, `'amber'`, `'rose'`, `'blue'`, `'neutral'`. |
+| `size`     | `InputSignal<RetroChipSize>`       | `'md'`      | Size: `'sm'` (h=1rem, 10px), `'md'` (h=1.25rem, 11px), `'lg'` (h=1.5rem, 12px).                              |
+| `filled`   | `InputSignal<boolean>`             | `false`     | If `true`, applies a solid background in the chip colour and `--bg-void` text. Useful for hero overlays.     |
+| `closable` | `InputSignal<boolean>`             | `false`     | If `true`, shows a `×` button and emits the `closed` event when clicked.                                     |
 
 ## API — Outputs
 
-| Nombre   | Tipo Angular             | Descripción                                                                         |
-| -------- | ------------------------ | ----------------------------------------------------------------------------------- |
-| `closed` | `OutputEmitterRef<void>` | Emite cuando el usuario hace clic en el botón de cierre. Solo activo si `closable`. |
+| Name     | Angular type             | Description                                                               |
+| -------- | ------------------------ | ------------------------------------------------------------------------- |
+| `closed` | `OutputEmitterRef<void>` | Emits when the user clicks the close button. Only active when `closable`. |
 
-## Tipos exportados
+## Exported Types
 
 - `RetroChipColor` — `'primary' \| 'green' \| 'amber' \| 'rose' \| 'blue' \| 'neutral'`
 - `RetroChipSize` — `'sm' \| 'md' \| 'lg'`
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-chip label="ACTIVE" color="green" />
 <retro-chip label="PS5" color="primary" size="sm" icon="sports_esports" />
 <retro-chip label="HERO" color="amber" size="lg" [filled]="true" />
-<retro-chip label="Filtro aplicado" [closable]="true" (closed)="onRemove()" />
+<retro-chip label="Applied filter" [closable]="true" (closed)="onRemove()" />
 ```
 
 ## Gotchas
 
-- `iconSize` es un `Signal<LibIconSize>` calculado internamente (`computed`): `'xs'` si `size !== 'lg'`, `'sm'` si `size === 'lg'`. No es configurable desde el call-site.
-- El botón de cierre solo aparece en el DOM cuando `closable` es `true`. El evento `closed` también detiene la propagación del clic (`$event.stopPropagation()`), por lo que no burbujea al contenedor padre.
-- En mobile (≤ 768px) el touch target del botón de cierre se amplía a `1.5rem × 1.5rem` para cumplir el mínimo táctil.
+- `iconSize` is an internally computed `Signal<LibIconSize>` (`computed`): `'xs'` if `size !== 'lg'`, `'sm'` if `size === 'lg'`. It is not configurable from the call site.
+- The close button only appears in the DOM when `closable` is `true`. The `closed` event also stops click propagation (`$event.stopPropagation()`), so it does not bubble to the parent container.
+- On mobile (≤ 768px) the touch target of the close button is expanded to `1.5rem × 1.5rem` to meet the minimum touch requirement.

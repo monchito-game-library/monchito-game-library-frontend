@@ -1,23 +1,23 @@
 # retro-command-bar
 
-Barra de prompt de terminal decorativa estilo `PATH $ --flag1 --flag2 ▋`. Puramente decorativa, solo visible en desktop (≥ 1024px); oculta en tablet y mobile vía CSS.
+Decorative terminal prompt bar styled as `PATH $ --flag1 --flag2 ▋`. Purely decorative, only visible on desktop (≥ 1024px); hidden on tablet and mobile via CSS.
 
-**Selector:** `retro-command-bar` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-command-bar` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se quiere reforzar la estética terminal de una vista mostrando el contexto de navegación como un prompt de shell.
-- NO usar cuando: se necesita una barra de acciones funcional o un campo de entrada — este componente es `aria-hidden` y no es interactivo.
+- Use when: you want to reinforce the terminal aesthetic of a view by displaying the navigation context as a shell prompt.
+- Do NOT use when: you need a functional action bar or an input field — this component is `aria-hidden` and is not interactive.
 
 ## API — Inputs
 
-| Nombre   | Tipo Angular                     | Default                | Descripción                                         |
+| Name     | Angular type                     | Default                | Description                                         |
 | -------- | -------------------------------- | ---------------------- | --------------------------------------------------- |
-| `path`   | `InputSignal<string>`            | `'monchito ~/library'` | Texto del segmento de ruta mostrado antes del `$`.  |
-| `flags`  | `InputSignal<readonly string[]>` | `[]`                   | Array de flags mostrados como `--flag` tras el `$`. |
-| `cursor` | `InputSignal<boolean>`           | `true`                 | Si `true`, muestra el cursor de bloque parpadeante. |
+| `path`   | `InputSignal<string>`            | `'monchito ~/library'` | Text of the path segment displayed before the `$`.  |
+| `flags`  | `InputSignal<readonly string[]>` | `[]`                   | Array of flags displayed as `--flag` after the `$`. |
+| `cursor` | `InputSignal<boolean>`           | `true`                 | If `true`, shows the blinking block cursor.         |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-command-bar path="monchito ~/games" [flags]="['list', 'verbose']" />
@@ -25,6 +25,6 @@ Barra de prompt de terminal decorativa estilo `PATH $ --flag1 --flag2 ▋`. Pura
 
 ## Gotchas
 
-- El componente tiene `aria-hidden="true"`: es invisible para lectores de pantalla y no debe contener información funcional.
-- Solo visible a partir de 1024px de ancho; por debajo de ese breakpoint el componente se oculta con `display: none` vía CSS.
-- Con `prefers-reduced-motion: reduce`, la animación de parpadeo del cursor se desactiva.
+- The component has `aria-hidden="true"`: it is invisible to screen readers and must not contain functional information.
+- Only visible from 1024px width upward; below that breakpoint the component is hidden with `display: none` via CSS.
+- With `prefers-reduced-motion: reduce`, the cursor blink animation is disabled.

@@ -1,78 +1,78 @@
 # retro-menu
 
-Panel de menú contextual Terminal Collector que sigue el patrón APG menu pattern con CDK ListKeyManager. Se compone de tres piezas: `RetroMenuComponent` (el panel), `RetroMenuItemComponent` (cada opción) y `RetroMenuTriggerDirective` (el disparador).
+Contextual menu panel for Terminal Collector following the APG menu pattern with CDK ListKeyManager. It consists of three pieces: `RetroMenuComponent` (the panel), `RetroMenuItemComponent` (each option) and `RetroMenuTriggerDirective` (the trigger).
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita un menú de acciones contextuales (ej. "Editar / Eliminar") anclado a un botón disparador.
-- NO usar cuando: se necesita seleccionar un valor de formulario — usar `retro-select` en su lugar.
+- Use when: you need a contextual action menu (e.g. "Edit / Delete") anchored to a trigger button.
+- Do NOT use when: you need to select a form value — use `retro-select` instead.
 
 ---
 
 ## RetroMenuComponent
 
-**Selector:** `retro-menu` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-menu` · **Standalone:** yes · **CVA:** no
 
 ### API — Inputs
 
-| Nombre           | Tipo Angular                       | Default     | Descripción                                                                    |
+| Name             | Angular type                       | Default     | Description                                                                    |
 | ---------------- | ---------------------------------- | ----------- | ------------------------------------------------------------------------------ |
-| `ariaLabelledBy` | `InputSignal<string \| undefined>` | `undefined` | ID del elemento que etiqueta este menú para accesibilidad (`aria-labelledby`). |
+| `ariaLabelledBy` | `InputSignal<string \| undefined>` | `undefined` | ID of the element that labels this menu for accessibility (`aria-labelledby`). |
 
 ### Slots
 
-| Selector    | Tipo esperado      | Descripción                                                  |
-| ----------- | ------------------ | ------------------------------------------------------------ |
-| _(default)_ | `retro-menu-item`s | Items del menú proyectados como hijos de `<ul role="menu">`. |
+| Selector    | Expected content   | Description                                             |
+| ----------- | ------------------ | ------------------------------------------------------- |
+| _(default)_ | `retro-menu-item`s | Menu items projected as children of `<ul role="menu">`. |
 
 ---
 
 ## RetroMenuItemComponent
 
-**Selector:** `retro-menu-item` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-menu-item` · **Standalone:** yes · **CVA:** no
 
 ### API — Inputs
 
-| Nombre       | Tipo Angular                       | Default     | Descripción                                               |
-| ------------ | ---------------------------------- | ----------- | --------------------------------------------------------- |
-| `icon`       | `InputSignal<string \| undefined>` | `undefined` | Nombre del icono Material Icons a mostrar junto al label. |
-| `isDisabled` | `InputSignal<boolean>`             | `false`     | Deshabilita el item cuando es `true`.                     |
+| Name         | Angular type                       | Default     | Description                                            |
+| ------------ | ---------------------------------- | ----------- | ------------------------------------------------------ |
+| `icon`       | `InputSignal<string \| undefined>` | `undefined` | Material Icons icon name to display next to the label. |
+| `isDisabled` | `InputSignal<boolean>`             | `false`     | Disables the item when `true`.                         |
 
 ### API — Outputs
 
-| Nombre    | Tipo Angular                   | Descripción                                                           |
-| --------- | ------------------------------ | --------------------------------------------------------------------- |
-| `clicked` | `OutputEmitterRef<MouseEvent>` | Emite el `MouseEvent` al hacer clic si el item no está deshabilitado. |
+| Name      | Angular type                   | Description                                                  |
+| --------- | ------------------------------ | ------------------------------------------------------------ |
+| `clicked` | `OutputEmitterRef<MouseEvent>` | Emits the `MouseEvent` on click if the item is not disabled. |
 
 ### Slots
 
-| Selector    | Tipo esperado | Descripción             |
-| ----------- | ------------- | ----------------------- |
-| _(default)_ | texto         | Label visible del item. |
+| Selector    | Expected content | Description                |
+| ----------- | ---------------- | -------------------------- |
+| _(default)_ | text             | Visible label of the item. |
 
 ---
 
 ## RetroMenuTriggerDirective
 
-**Selector:** `[retroMenuTriggerFor]` · **Standalone:** sí
+**Selector:** `[retroMenuTriggerFor]` · **Standalone:** yes
 
-Convierte cualquier elemento en el disparador de un `RetroMenuComponent`. Gestiona apertura/cierre del overlay CDK, navegación con teclado y atributos a11y (`aria-haspopup="menu"`, `aria-expanded` reactivo).
+Turns any element into the trigger for a `RetroMenuComponent`. Manages CDK overlay open/close, keyboard navigation and a11y attributes (`aria-haspopup="menu"`, reactive `aria-expanded`).
 
 ### API — Inputs
 
-| Nombre                | Tipo Angular                                 | Default | Descripción                                                       |
-| --------------------- | -------------------------------------------- | ------- | ----------------------------------------------------------------- |
-| `retroMenuTriggerFor` | `InputSignal<RetroMenuComponent> (required)` | —       | Referencia al `RetroMenuComponent` que esta directiva va a abrir. |
+| Name                  | Angular type                                 | Default | Description                                                          |
+| --------------------- | -------------------------------------------- | ------- | -------------------------------------------------------------------- |
+| `retroMenuTriggerFor` | `InputSignal<RetroMenuComponent> (required)` | —       | Reference to the `RetroMenuComponent` that this directive will open. |
 
 ---
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<retro-icon-button icon="more_vert" ariaLabel="Acciones" [retroMenuTriggerFor]="menu" />
+<retro-icon-button icon="more_vert" ariaLabel="Actions" [retroMenuTriggerFor]="menu" />
 <retro-menu #menu ariaLabelledBy="my-trigger-id">
-  <retro-menu-item icon="edit" (clicked)="onEdit()">Editar</retro-menu-item>
-  <retro-menu-item icon="delete" (clicked)="onDelete()">Eliminar</retro-menu-item>
+  <retro-menu-item icon="edit" (clicked)="onEdit()">Edit</retro-menu-item>
+  <retro-menu-item icon="delete" (clicked)="onDelete()">Delete</retro-menu-item>
 </retro-menu>
 ```
 
@@ -80,7 +80,7 @@ Convierte cualquier elemento en el disparador de un `RetroMenuComponent`. Gestio
 
 ## Gotchas
 
-- **Anclaje CDK con `display:contents`**: la directiva puede aplicarse sobre componentes envoltorio (ej. `<retro-icon-button>`) cuyo `:host` tenga `display:contents`, lo que haría que `getBoundingClientRect()` devuelva un rect `0x0`. La directiva lo resuelve buscando automáticamente el primer descendiente `button | a | [tabindex]` como punto de anclaje real — no se necesita acción adicional.
-- **Type-ahead**: el `ActiveDescendantKeyManager` tiene `withTypeAhead()` activo. Al escribir caracteres con el menú abierto, el foco salta al primer item cuyo texto empiece por esas letras.
-- **Retorno de foco**: al cerrar el menú (Escape, Tab, clic en backdrop o selección de item), el foco vuelve automáticamente al elemento trigger original.
-- **Items deshabilitados**: el `KeyManager` los salta en la navegación con flechas gracias a la interfaz `Highlightable`. El output `clicked` no emite si `isDisabled` es `true`.
+- **CDK anchoring with `display:contents`**: the directive can be applied to wrapper components (e.g. `<retro-icon-button>`) whose `:host` has `display:contents`, which would cause `getBoundingClientRect()` to return a `0x0` rect. The directive resolves this automatically by finding the first descendant `button | a | [tabindex]` as the real anchor point — no extra action needed.
+- **Type-ahead**: the `ActiveDescendantKeyManager` has `withTypeAhead()` active. Typing characters while the menu is open moves focus to the first item whose text starts with those letters.
+- **Focus restoration**: when the menu closes (Escape, Tab, backdrop click or item selection), focus automatically returns to the original trigger element.
+- **Disabled items**: the `KeyManager` skips them during arrow-key navigation thanks to the `Highlightable` interface. The `clicked` output does not emit if `isDisabled` is `true`.

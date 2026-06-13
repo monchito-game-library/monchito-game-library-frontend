@@ -1,51 +1,51 @@
 # retro-icon-button
 
-Botón de icono reutilizable Terminal Collector. `<button>` nativo con `<retro-icon>` interno. Borde 1px en hover, sin ripple ni Material Buttons.
+Reusable Terminal Collector icon button. Native `<button>` with an internal `<retro-icon>`. 1px border on hover, no ripple and no Material Buttons.
 
-**Selector:** `retro-icon-button` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-icon-button` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: la acción solo necesita un icono sin texto visible (eliminar fila, cerrar panel, copiar, editar inline).
-- NO usar cuando: el botón debe mostrar texto visible junto al icono — usar `retro-button` con slot `[slot=start]`.
+- Use when: the action only needs an icon with no visible text (delete row, close panel, copy, inline edit).
+- Do NOT use when: the button must show visible text alongside the icon — use `retro-button` with a `[slot=start]` slot.
 
 ## API — Inputs
 
-| Nombre      | Tipo Angular                        | Default    | Descripción                                                         |
-| ----------- | ----------------------------------- | ---------- | ------------------------------------------------------------------- |
-| `icon`      | `InputSignal<string> (required)`    | —          | Nombre del icono Material Icons (webfont liga).                     |
-| `ariaLabel` | `InputSignal<string> (required)`    | —          | Etiqueta accesible obligatoria — no hay texto visible en pantalla.  |
-| `variant`   | `InputSignal<LibIconButtonVariant>` | `'ghost'`  | Variante visual: `'primary'`, `'ghost'`, `'danger'`.                |
-| `size`      | `InputSignal<LibIconButtonSize>`    | `'md'`     | Tamaño del botón: `sm` (32px), `md` (40px), `lg` (44px).            |
-| `disabled`  | `InputSignal<boolean>`              | `false`    | Deshabilita el botón.                                               |
-| `type`      | `InputSignal<LibButtonType>`        | `'button'` | Tipo del `<button>` HTML nativo: `'button'`, `'submit'`, `'reset'`. |
+| Name        | Angular type                        | Default    | Description                                                     |
+| ----------- | ----------------------------------- | ---------- | --------------------------------------------------------------- |
+| `icon`      | `InputSignal<string> (required)`    | —          | Material Icons icon name (webfont ligature).                    |
+| `ariaLabel` | `InputSignal<string> (required)`    | —          | Required accessible label — there is no visible text on screen. |
+| `variant`   | `InputSignal<LibIconButtonVariant>` | `'ghost'`  | Visual variant: `'primary'`, `'ghost'`, `'danger'`.             |
+| `size`      | `InputSignal<LibIconButtonSize>`    | `'md'`     | Button size: `sm` (32px), `md` (40px), `lg` (44px).             |
+| `disabled`  | `InputSignal<boolean>`              | `false`    | Disables the button.                                            |
+| `type`      | `InputSignal<LibButtonType>`        | `'button'` | Native `<button>` HTML type: `'button'`, `'submit'`, `'reset'`. |
 
 ## API — Outputs
 
-| Nombre    | Tipo Angular                   | Descripción                                                         |
-| --------- | ------------------------------ | ------------------------------------------------------------------- |
-| `clicked` | `OutputEmitterRef<MouseEvent>` | Emite el `MouseEvent` al hacer clic; solo si no está deshabilitado. |
+| Name      | Angular type                   | Description                                              |
+| --------- | ------------------------------ | -------------------------------------------------------- |
+| `clicked` | `OutputEmitterRef<MouseEvent>` | Emits the `MouseEvent` on click; only when not disabled. |
 
-## Tokens CSS expuestos
+## Exposed CSS Tokens
 
-| Variable                    | Default | Descripción                                                                                                                                                                                       |
-| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--retro-btn-bottom-offset` | `0`     | Ajusta el `margin-bottom` para alinear verticalmente con el control box de un `retro-form-field` hermano en flex row. Valor típico: `1.25rem`. Establecer en el contenedor padre, no en el botón. |
+| Variable                    | Default | Description                                                                                                                                                                            |
+| --------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--retro-btn-bottom-offset` | `0`     | Adjusts `margin-bottom` to vertically align with the control box of a sibling `retro-form-field` in a flex row. Typical value: `1.25rem`. Set on the parent container, not the button. |
 
-## Tipos exportados
+## Exported Types
 
 - `LibIconButtonVariant` — `'primary' \| 'ghost' \| 'danger'`
 - `LibIconButtonSize` — `'sm' \| 'md' \| 'lg'`
-- `LibButtonType` — `'button' \| 'submit' \| 'reset'` (importado de `retro-button`)
+- `LibButtonType` — `'button' \| 'submit' \| 'reset'` (imported from `retro-button`)
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<retro-icon-button icon="delete" ariaLabel="Eliminar" variant="danger" size="sm" (clicked)="onDelete()" />
+<retro-icon-button icon="delete" ariaLabel="Delete" variant="danger" size="sm" (clicked)="onDelete()" />
 ```
 
 ## Gotchas
 
-- `ariaLabel` es required porque no hay texto visible: sin él el botón sería inaccesible para lectores de pantalla.
-- El host usa `display: contents`, lo que significa que no genera un box propio. Los overlays anclados al componente (p. ej. `matTooltip`, `matMenuTriggerFor`) se resuelven sobre el `<button>` interno. Si necesitas el anchor del `<button>` desde un overlay externo, usa `querySelector('button')` en el elemento host.
-- En mobile (≤ 768px) los tamaños `sm` y `md` se promocionan automáticamente a 44px para cumplir el touch target mínimo.
+- `ariaLabel` is required because there is no visible text: without it the button would be inaccessible to screen readers.
+- The host uses `display: contents`, meaning it generates no box of its own. Overlays anchored to the component (e.g. `matTooltip`, `matMenuTriggerFor`) are resolved against the inner `<button>`. If you need the `<button>` anchor from an external overlay, use `querySelector('button')` on the host element.
+- On mobile (≤ 768px) the `sm` and `md` sizes are automatically promoted to 44px to meet the minimum touch target requirement.

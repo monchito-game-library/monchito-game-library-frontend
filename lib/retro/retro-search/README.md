@@ -1,54 +1,54 @@
 # retro-search
 
-Campo de búsqueda con autocomplete self-contained Terminal Collector. Internaliza `retro-form-field` + input nativo + panel overlay. El consumidor proyecta `<retro-option>` y el componente gestiona la apertura del panel.
+Self-contained Terminal Collector autocomplete search field. Internalises `retro-form-field` + native input + overlay panel. The consumer projects `<retro-option>` elements and the component manages panel opening.
 
-**Selector:** `retro-search` · **Standalone:** sí · **CVA:** sí
+**Selector:** `retro-search` · **Standalone:** yes · **CVA:** yes
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: necesitas un campo de texto con autocomplete donde el padre controla la lista filtrada de opciones y el componente gestiona el panel overlay.
-- NO usar cuando: necesitas un selector cerrado (sin escritura libre) — usar `retro-select`.
+- Use when: a text field with autocomplete is needed where the parent controls the filtered option list and the component manages the overlay panel.
+- Do NOT use when: a closed selector (no free text) is needed — use `retro-select` instead.
 
 ## API — Inputs
 
-| Nombre           | Tipo Angular                                        | Default     | Descripción                                                                             |
-| ---------------- | --------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------- |
-| `label`          | `InputSignal<string>`                               | `''`        | Texto del label del campo.                                                              |
-| `placeholder`    | `InputSignal<string>`                               | `''`        | Placeholder del input nativo.                                                           |
-| `hint`           | `InputSignal<string \| null>`                       | `null`      | Mensaje de ayuda bajo el campo.                                                         |
-| `error`          | `InputSignal<string \| null>`                       | `null`      | Mensaje de error bajo el campo.                                                         |
-| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>`                 | `'lg'`      | Altura del campo: sm (32px), md (40px), lg (44px).                                      |
-| `prefixIcon`     | `InputSignal<string \| null>`                       | `'search'`  | Nombre de icono Material en el prefix. Por defecto muestra la lupa.                     |
-| `suffixIcon`     | `InputSignal<string \| null>`                       | `null`      | Nombre de icono Material decorativo en el suffix.                                       |
-| `clearable`      | `InputSignal<boolean>`                              | `false`     | Muestra el botón X para limpiar cuando hay valor o texto.                               |
-| `clearAriaLabel` | `InputSignal<string>`                               | `'Limpiar'` | `aria-label` del botón limpiar.                                                         |
-| `hideSubscript`  | `InputSignal<boolean>`                              | `false`     | Oculta el bloque subscript (hint/error) del form-field interno.                         |
-| `displayWith`    | `InputSignal<((value: unknown) => string) \| null>` | `null`      | Función para convertir el valor seleccionado en el texto visible del input.             |
-| `minChars`       | `InputSignal<number>`                               | `0`         | Número mínimo de caracteres para abrir el panel. Con `0`, el panel abre al hacer focus. |
+| Name             | Angular type                                        | Default     | Description                                                                                  |
+| ---------------- | --------------------------------------------------- | ----------- | -------------------------------------------------------------------------------------------- |
+| `label`          | `InputSignal<string>`                               | `''`        | Field label text.                                                                            |
+| `placeholder`    | `InputSignal<string>`                               | `''`        | Native input placeholder.                                                                    |
+| `hint`           | `InputSignal<string \| null>`                       | `null`      | Help message below the field.                                                                |
+| `error`          | `InputSignal<string \| null>`                       | `null`      | Error message below the field.                                                               |
+| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>`                 | `'lg'`      | Field height: sm (32px), md (40px), lg (44px).                                               |
+| `prefixIcon`     | `InputSignal<string \| null>`                       | `'search'`  | Material icon name in the prefix. Shows the search icon by default.                          |
+| `suffixIcon`     | `InputSignal<string \| null>`                       | `null`      | Decorative Material icon name in the suffix.                                                 |
+| `clearable`      | `InputSignal<boolean>`                              | `false`     | Shows the X button to clear when there is a value or text.                                   |
+| `clearAriaLabel` | `InputSignal<string>`                               | `'Limpiar'` | `aria-label` of the clear button.                                                            |
+| `hideSubscript`  | `InputSignal<boolean>`                              | `false`     | Hides the subscript block (hint/error) of the internal form-field.                           |
+| `displayWith`    | `InputSignal<((value: unknown) => string) \| null>` | `null`      | Function to convert the selected value into the visible text shown in the input.             |
+| `minChars`       | `InputSignal<number>`                               | `0`         | Minimum number of characters required to open the panel. With `0`, the panel opens on focus. |
 
 ## API — Outputs
 
-| Nombre           | Tipo Angular                | Descripción                                                                          |
-| ---------------- | --------------------------- | ------------------------------------------------------------------------------------ |
-| `queryChange`    | `OutputEmitterRef<string>`  | Emite el texto actual cada vez que el usuario escribe. El padre filtra las opciones. |
-| `optionSelected` | `OutputEmitterRef<unknown>` | Emite el valor de la opción seleccionada.                                            |
-| `cleared`        | `OutputEmitterRef<void>`    | Emite al pulsar el botón limpiar.                                                    |
+| Name             | Angular type                | Description                                                                      |
+| ---------------- | --------------------------- | -------------------------------------------------------------------------------- |
+| `queryChange`    | `OutputEmitterRef<string>`  | Emits the current text each time the user types. The parent filters the options. |
+| `optionSelected` | `OutputEmitterRef<unknown>` | Emits the value of the selected option.                                          |
+| `cleared`        | `OutputEmitterRef<void>`    | Emits when the clear button is pressed.                                          |
 
 ## Slots
 
-| Selector        | Tipo esperado                | Descripción                                                                  |
-| --------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| _(default)_     | `<retro-option>`             | Opciones del autocomplete. Vienen de `retro-select/components/retro-option`. |
-| `[retroPrefix]` | icono, botón u otro elemento | Contenido adicional en el área de prefix (después del `prefixIcon`).         |
-| `[retroSuffix]` | icono, botón u otro elemento | Contenido adicional en el área de suffix (después del `suffixIcon`).         |
+| Selector        | Expected content               | Description                                                             |
+| --------------- | ------------------------------ | ----------------------------------------------------------------------- |
+| _(default)_     | `<retro-option>`               | Autocomplete options. Come from `retro-select/components/retro-option`. |
+| `[retroPrefix]` | icon, button, or other element | Additional content in the prefix area (after `prefixIcon`).             |
+| `[retroSuffix]` | icon, button, or other element | Additional content in the suffix area (after `suffixIcon`).             |
 
-## Contrato CVA
+## CVA Contract
 
-- `writeValue(value)`: acepta `unknown`; `null`/`undefined` limpia el texto visible y el valor seleccionado. Si hay `displayWith`, lo aplica al valor recibido para actualizar el texto visible.
-- `registerOnChange`: emite `unknown` (el valor de la opción seleccionada).
-- `setDisabledState`: refleja `disabled`.
+- `writeValue(value)`: accepts `unknown`; `null`/`undefined` clears the visible text and the selected value. If `displayWith` is set, it is applied to the received value to update the visible text.
+- `registerOnChange`: emits `unknown` (the value of the selected option).
+- `setDisabledState`: reflects `disabled`.
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-search
@@ -66,9 +66,9 @@ Campo de búsqueda con autocomplete self-contained Terminal Collector. Internali
 
 ## Gotchas
 
-- `displayWith` debe ser `(value: unknown) => string` — el tipo de `value` es `unknown` por diseño. Castear dentro de la función: `(v) => (v as PlatformCode) ? platformsMap.get(v as PlatformCode)?.label ?? '' : ''`.
-- Las opciones proyectadas son `<retro-option>` del módulo `retro-select` (reutilización confirmada). No confundir con un elemento HTML estándar.
-- El panel tiene dos estados independientes: `_displayValue` (lo que escribe el usuario) y `_selectedValue` (el valor real del FormControl). Escribir texto no cambia el valor del formulario hasta que se selecciona una opción.
-- Al limpiar (`onClear`), el formulario recibe `null` (a diferencia de `retro-input` que emite `''`).
-- La navegación por teclado está activa: `ArrowDown` / `ArrowUp` navega opciones, `Enter` selecciona, `Escape` cierra, `Home` / `End` van a primera / última opción.
-- Si las opciones se cargan de forma asíncrona después de que ya hay un valor seleccionado, el componente actualiza automáticamente el texto visible cuando la lista cambia (vía `displayWith` o búsqueda por valor).
+- `displayWith` must be `(value: unknown) => string` — the `value` type is `unknown` by design. Cast inside the function: `(v) => (v as PlatformCode) ? platformsMap.get(v as PlatformCode)?.label ?? '' : ''`.
+- Projected options are `<retro-option>` from the `retro-select` module (confirmed reuse). Do not confuse with a standard HTML element.
+- The panel has two independent states: `_displayValue` (what the user types) and `_selectedValue` (the actual `FormControl` value). Typing text does not change the form value until an option is selected.
+- When clearing (`onClear`), the form receives `null` (unlike `retro-input`, which emits `''`).
+- Keyboard navigation is active: `ArrowDown` / `ArrowUp` navigates options, `Enter` selects, `Escape` closes, `Home` / `End` go to first / last option.
+- If options are loaded asynchronously after a value is already selected, the component automatically updates the visible text when the list changes (via `displayWith` or value lookup).

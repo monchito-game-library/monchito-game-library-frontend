@@ -1,75 +1,71 @@
 ---
 description: "Creates a versioned incremental SQL patch for the Supabase database and optionally applies it via npm run db:apply. Use when the user needs to modify the database schema, policies, or stored procedures ('crea el patch de BD', 'aplica el cambio en la base de datos', 'nuevo patch SQL')."
-argument-hint: '[descripcion-corta]'
+argument-hint: '[short-description]'
 ---
 
-Crea un patch SQL incremental para la BD de Supabase y opcionalmente lo aplica con `npm run db:apply`.
+Argument: $ARGUMENTS — short description of the change (e.g. `tighten-rls-products` or `add-column-game-rating`). If empty, ask the user.
 
-Argumento: $ARGUMENTS — descripción corta del cambio (ej: `tighten-rls-products` o `add-column-game-rating`). Si está vacío, pregunta al usuario.
+> Flow context: `docs/backend/patches/README.md`. The canonical schema `docs/backend/schema/supabase-schema-current.sql` is documentation only — incremental changes to an already-deployed database require a versioned patch.
 
-> Contexto del flujo: `docs/backend/patches/README.md`. Razón de existir: el schema canónico `docs/backend/schema/supabase-schema-current.sql` es solo documentación — para aplicar cambios incrementales a la BD ya desplegada hace falta este patch versionado.
+## Steps
 
-## Pasos
+### 1. Determine the patch number
 
-### 1. Determinar el número del patch
+- List `docs/backend/patches/` (ignoring the `diagnostics/` subdirectory) and detect the last number used.
+- The new patch uses the next integer, zero-padded to 3 digits: `003`, `004`, …
 
-- Lista `docs/backend/patches/` (ignorando el subdirectorio `diagnostics/`) y detecta el último número usado.
-- El nuevo patch usa el siguiente entero, formateado a 3 dígitos: `003`, `004`, …
+### 2. Ask the user for the SQL
 
-### 2. Pedir el SQL al usuario
+- If the argument does not make the change clear, ask what they want to change (RLS, column, RPC, index, etc.).
+- If the change affects existing tables, ask the user to paste the output of the relevant diagnostic from `docs/backend/patches/diagnostics/` in the SQL Editor before writing anything.
 
-- Si no está claro por el argumento, pregunta qué cambio quiere hacer (RLS, columna, RPC, índice, etc.).
-- Si afecta a tablas existentes, antes de escribir nada pídele al usuario que pegue el resultado de un diagnóstico en el SQL Editor (ver `docs/backend/patches/diagnostics/`) para que no escribas a ciegas.
+### 3. Create the patch file
 
-### 3. Crear el fichero del patch
-
-Crear `docs/backend/patches/NNN-<descripcion>.sql` con esta estructura:
+Create `docs/backend/patches/NNN-<description>.sql` with this structure:
 
 ```sql
 -- ============================================================
--- NNN — <descripción humana del cambio>
+-- NNN — <human-readable description of the change>
 -- ============================================================
--- <Contexto en 1-3 líneas: qué se cambia y por qué.>
+-- <Context in 1-3 lines: what is changed and why.>
 -- ============================================================
 
--- SQL idempotente del cambio aquí.
+-- Idempotent SQL for the change here.
 
 NOTIFY pgrst, 'reload schema';
 ```
 
-**El SQL debe ser siempre idempotente** (re-ejecutable sin romper):
+**The SQL must always be idempotent** (re-runnable without breaking):
 
-- Policies: `DROP POLICY IF EXISTS … ON …;` **antes** de cada `CREATE POLICY …`. Si renombras una policy, drop tanto el nombre antiguo como el nuevo.
-- Tablas / columnas: `CREATE TABLE IF NOT EXISTS …`, `ALTER TABLE … ADD COLUMN IF NOT EXISTS …`.
-- Datos puntuales: `INSERT … ON CONFLICT DO NOTHING` (o `DO UPDATE` si toca).
-- Funciones / vistas: `CREATE OR REPLACE …`.
+- Policies: `DROP POLICY IF EXISTS … ON …;` **before** each `CREATE POLICY …`. If renaming a policy, drop both the old name and the new name.
+- Tables / columns: `CREATE TABLE IF NOT EXISTS …`, `ALTER TABLE … ADD COLUMN IF NOT EXISTS …`.
+- One-off data: `INSERT … ON CONFLICT DO NOTHING` (or `DO UPDATE` if needed).
+- Functions / views: `CREATE OR REPLACE …`.
 
-### 4. Sincronizar el schema canónico
+### 4. Sync the canonical schema
 
-Si el cambio modifica el contrato de la BD (no es solo un fix puntual), actualizar también `docs/backend/schema/supabase-schema-current.sql` para reflejar el nuevo estado. Ambos ficheros van en el mismo PR.
+If the change modifies the database contract (not just a minor fix), also update `docs/backend/schema/supabase-schema-current.sql` to reflect the new state. Both files go in the same PR.
 
-### 5. Aplicar (opcional, preguntar al usuario)
+### 5. Apply (optional — ask the user)
 
-Pregunta si quiere aplicarlo ahora.
+Ask whether they want to apply it now.
 
-Si dice sí:
+- **Yes:**
+  1. Verify that `.env` exists and contains `SUPABASE_DB_URL=postgresql://…`. If not, instruct the user: copy from `.env.example` and paste the Session Pooler connection string from the Supabase Dashboard.
+  2. Run: `npm run db:apply -- docs/backend/patches/NNN-<description>.sql`
+  3. Report the result to the user.
+- **No:** Provide the command to apply it later.
 
-- Verifica que `.env` existe y contiene `SUPABASE_DB_URL=postgresql://…`. Si no, indica los pasos: copiar de `.env.example`, pegar la connection string del Session pooler de Supabase Dashboard.
-- Ejecuta: `npm run db:apply -- docs/backend/patches/NNN-<descripcion>.sql`
-- Reporta el resultado al usuario.
+### 6. Post-apply verification
 
-Si dice no:
+If the patch touched RLS or anything auditable, suggest running the relevant diagnostic from `docs/backend/patches/diagnostics/` in the SQL Editor.
 
-- Indica el comando para aplicarlo cuando quiera.
+## Rules
 
-### 6. Verificación post-aplicación
-
-- Si tocaba RLS o algo auditable, sugiere correr el diagnóstico relevante de `docs/backend/patches/diagnostics/` en el SQL Editor.
-
-## Reglas
-
-- **No hacer commit ni push**. El patch queda listo y el usuario decide cuándo abrir PR (`/pr`).
-- Si al aplicar el patch falla por idempotencia incompleta (típico: olvidar dropear un nombre nuevo), **arregla el fichero** en lugar de aplicar un workaround manual. Es lo que tiene que hacer el patch.
-- Si el cambio toca el schema canónico, ambos ficheros deben quedar coherentes en el mismo PR.
-- Si la red bloquea Postgres (red corporativa con DPI, IPv6 only…), pegar el SQL en el SQL Editor de Supabase es alternativa válida. El script es preferente pero no obligatorio.
-- Si el patch añade columnas o cambia el contrato de tipos, los cambios de código (DTO, mapper, modelo) deben ir **en la misma PR** que el patch. Aplicar el patch sin el código (o viceversa) puede dejar la app en estado inconsistente. Si el patch añade columnas o cambia el contrato, actualiza DTO, mapper y modelo manualmente en el mismo PR.
+| Rule                                   | Detail                                                                                                                                                                                                                             |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No commit / push                       | The patch is left ready; the user decides when to open a PR (`/pr`).                                                                                                                                                               |
+| Fix incomplete idempotency in the file | If applying the patch fails due to incomplete idempotency (e.g. forgetting to drop a renamed policy), fix the file — do not apply a manual workaround.                                                                             |
+| Keep both files coherent               | If the change touches the canonical schema, both files must be coherent in the same PR.                                                                                                                                            |
+| Network fallback                       | If the network blocks Postgres (corporate DPI, IPv6-only…), pasting the SQL in the Supabase SQL Editor is a valid alternative. The script is preferred but not mandatory.                                                          |
+| Code changes in the same PR            | If the patch adds columns or changes the type contract, the code changes (DTO, mapper, model) must go in the same PR as the patch. Applying the patch without the code (or vice versa) can leave the app in an inconsistent state. |

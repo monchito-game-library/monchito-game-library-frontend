@@ -1,47 +1,44 @@
 # retro-empty-state
 
-Estado vacío estilo terminal ASCII de la lib Terminal Collector. Muestra un bloque ASCII art fijo + título + subtítulo opcional + hint de prompt. Acepta botones de acción proyectados tras el hint.
+Terminal ASCII-style empty state from the Terminal Collector lib. Displays a fixed ASCII art block + title + optional subtitle + prompt hint. Accepts projected action buttons after the hint.
 
-**Selector:** `retro-empty-state` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-empty-state` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: una lista o sección no tiene resultados que mostrar y se quiere comunicar el estado vacío al usuario con estilo terminal.
-- NO usar cuando: el estado vacío forma parte de un proceso de carga — en ese caso mostrar `retro-spinner` mientras `loading()` sea `true` y reservar `retro-empty-state` para cuando la carga haya terminado con cero resultados.
+- Use when: a list or section has no results to display and the empty state should be communicated to the user with a terminal style.
+- Do NOT use when: the empty state is part of a loading process — show `retro-spinner` while `loading()` is `true` and reserve `retro-empty-state` for when loading has finished with zero results.
 
 ## API — Inputs
 
-| Nombre     | Tipo Angular                     | Default                     | Descripción                                                          |
-| ---------- | -------------------------------- | --------------------------- | -------------------------------------------------------------------- |
-| `title`    | `InputSignal<string> (required)` | —                           | Título principal del estado vacío. Se muestra en uppercase.          |
-| `subtitle` | `InputSignal<string>`            | `''`                        | Subtítulo o descripción adicional. Oculto si es cadena vacía.        |
-| `hint`     | `InputSignal<string>`            | `'$ try a different query'` | Hint en estilo prompt de terminal (fuente mono, color accent-green). |
+| Name       | Angular type                     | Default                     | Description                                                     |
+| ---------- | -------------------------------- | --------------------------- | --------------------------------------------------------------- |
+| `title`    | `InputSignal<string> (required)` | —                           | Main empty-state title. Displayed in uppercase.                 |
+| `subtitle` | `InputSignal<string>`            | `''`                        | Subtitle or additional description. Hidden when empty string.   |
+| `hint`     | `InputSignal<string>`            | `'$ try a different query'` | Hint in terminal prompt style (mono font, accent-green colour). |
 
 ## Slots
 
-| Selector    | Tipo esperado         | Descripción                                             |
-| ----------- | --------------------- | ------------------------------------------------------- |
-| _(default)_ | botones u otro bloque | Acciones proyectadas tras el hint (ej. botón "AÑADIR"). |
+| Selector    | Expected content       | Description                                              |
+| ----------- | ---------------------- | -------------------------------------------------------- |
+| _(default)_ | buttons or other block | Actions projected after the hint (e.g. an "ADD" button). |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<!-- Mínimo: solo título -->
+<!-- Minimal: title only -->
 <retro-empty-state title="NO HAY RESULTADOS" />
 
-<!-- Con subtítulo y hint personalizado -->
-<retro-empty-state
-  title="BIBLIOTECA VACÍA"
-  subtitle="Aún no has añadido ningún juego."
-  hint="$ get-started --add-game" />
+<!-- With subtitle and custom hint -->
+<retro-empty-state title="EMPTY LIBRARY" subtitle="You have not added any game yet." hint="$ get-started --add-game" />
 
-<!-- Con acción proyectada -->
-<retro-empty-state title="NO HAY JUEGOS" subtitle="Tu biblioteca está vacía.">
-  <retro-button label="AÑADIR JUEGO" variant="primary" (clicked)="onAdd()" />
+<!-- With projected action -->
+<retro-empty-state title="NO GAMES" subtitle="Your library is empty.">
+  <retro-button label="ADD GAME" variant="primary" (clicked)="onAdd()" />
 </retro-empty-state>
 ```
 
 ## Gotchas
 
-- El bloque ASCII (`NO RESULTS / 0 RECORDS FOUND`) es fijo en el template y no es configurable vía input ni slot. Si se necesita un arte distinto, crear un componente derivado.
-- `subtitle` solo se renderiza si no es cadena vacía (guard `@if (subtitle())`). Pasar `''` equivale a no pasarlo.
+- The ASCII block (`NO RESULTS / 0 RECORDS FOUND`) is fixed in the template and is not configurable via input or slot. If a different art is needed, create a derived component.
+- `subtitle` is only rendered when it is not an empty string (guard `@if (subtitle())`). Passing `''` is equivalent to not passing it.

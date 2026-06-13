@@ -1,65 +1,65 @@
 # retro-textarea
 
-Área de texto multilínea self-contained Terminal Collector. Internaliza `retro-form-field` + label + textarea nativo y los gestiona como una unidad.
+Self-contained Terminal Collector multiline text area. Internalizes `retro-form-field` + label + native textarea and manages them as a single unit.
 
-**Selector:** `retro-textarea` · **Standalone:** sí · **CVA:** sí
+**Selector:** `retro-textarea` · **Standalone:** yes · **CVA:** yes
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: necesitas un campo de texto multilínea con label integrado y soporte para `formControlName` / `ngModel`.
-- NO usar cuando: el texto es de una sola línea — usar `retro-input`.
+- Use when: a multiline text field with an integrated label and support for `formControlName` / `ngModel` is needed.
+- Do NOT use when: the text is single-line — use `retro-input`.
 
 ## API — Inputs
 
-| Nombre           | Tipo Angular                        | Default     | Descripción                                                                                           |
-| ---------------- | ----------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `label`          | `InputSignal<string>`               | `''`        | Texto del label del campo.                                                                            |
-| `placeholder`    | `InputSignal<string>`               | `''`        | Placeholder del textarea nativo.                                                                      |
-| `hint`           | `InputSignal<string \| null>`       | `null`      | Mensaje de ayuda bajo el campo.                                                                       |
-| `error`          | `InputSignal<string \| null>`       | `null`      | Mensaje de error bajo el campo.                                                                       |
-| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>` | `'lg'`      | Altura base de referencia: sm (32px), md (40px), lg (44px). En multilínea actúa como token de diseño. |
-| `rows`           | `InputSignal<number>`               | `3`         | Número de líneas visibles del textarea.                                                               |
-| `clearable`      | `InputSignal<boolean>`              | `false`     | Muestra el botón X para limpiar cuando el campo tiene valor.                                          |
-| `clearAriaLabel` | `InputSignal<string>`               | `'Limpiar'` | `aria-label` del botón limpiar.                                                                       |
-| `maxlength`      | `InputSignal<number \| null>`       | `null`      | Longitud máxima de caracteres. `null` = sin límite.                                                   |
-| `readonly`       | `InputSignal<boolean>`              | `false`     | El textarea es de solo lectura (no editable, pero el valor va al formulario).                         |
+| Name             | Angular type                        | Default     | Description                                                                                          |
+| ---------------- | ----------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------- |
+| `label`          | `InputSignal<string>`               | `''`        | Field label text.                                                                                    |
+| `placeholder`    | `InputSignal<string>`               | `''`        | Native textarea placeholder.                                                                         |
+| `hint`           | `InputSignal<string \| null>`       | `null`      | Help message below the field.                                                                        |
+| `error`          | `InputSignal<string \| null>`       | `null`      | Error message below the field.                                                                       |
+| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>` | `'lg'`      | Base reference height: sm (32px), md (40px), lg (44px). In multiline mode it acts as a design token. |
+| `rows`           | `InputSignal<number>`               | `3`         | Number of visible lines in the textarea.                                                             |
+| `clearable`      | `InputSignal<boolean>`              | `false`     | Shows the X button to clear the field when it has a value.                                           |
+| `clearAriaLabel` | `InputSignal<string>`               | `'Limpiar'` | `aria-label` for the clear button.                                                                   |
+| `maxlength`      | `InputSignal<number \| null>`       | `null`      | Maximum character length. `null` = no limit.                                                         |
+| `readonly`       | `InputSignal<boolean>`              | `false`     | The textarea is read-only (not editable, but the value is included in the form).                     |
 
 ## API — Outputs
 
-| Nombre    | Tipo Angular                   | Descripción                          |
-| --------- | ------------------------------ | ------------------------------------ |
-| `cleared` | `OutputEmitterRef<void>`       | Se emite al pulsar el botón limpiar. |
-| `blur`    | `OutputEmitterRef<FocusEvent>` | Blur del textarea nativo.            |
-| `focus`   | `OutputEmitterRef<FocusEvent>` | Focus del textarea nativo.           |
+| Name      | Angular type                   | Description                               |
+| --------- | ------------------------------ | ----------------------------------------- |
+| `cleared` | `OutputEmitterRef<void>`       | Emitted when the clear button is pressed. |
+| `blur`    | `OutputEmitterRef<FocusEvent>` | Blur event from the native textarea.      |
+| `focus`   | `OutputEmitterRef<FocusEvent>` | Focus event from the native textarea.     |
 
 ## Slots
 
-| Selector        | Tipo esperado         | Descripción                                            |
+| Selector        | Expected content      | Description                                            |
 | --------------- | --------------------- | ------------------------------------------------------ |
-| `[retroPrefix]` | icono u otro elemento | Contenido en el área de prefix del form-field interno. |
-| `[retroSuffix]` | icono u otro elemento | Contenido en el área de suffix del form-field interno. |
+| `[retroPrefix]` | icon or other element | Content in the prefix area of the internal form-field. |
+| `[retroSuffix]` | icon or other element | Content in the suffix area of the internal form-field. |
 
-## Contrato CVA
+## CVA Contract
 
-- `writeValue(value)`: acepta `string | null`; `null` normaliza a `''` internamente.
-- `registerOnChange`: emite `string` (`emptyValue: ''` — nunca emite `null` al formulario, idéntico a `retro-input`).
-- `setDisabledState`: refleja `disabled`.
+- `writeValue(value)`: accepts `string | null`; `null` normalizes to `''` internally.
+- `registerOnChange`: emits `string` (`emptyValue: ''` — never emits `null` to the form, identical to `retro-input`).
+- `setDisabledState`: reflects `disabled`.
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-textarea
-  label="Notas"
+  label="Notes"
   formControlName="notes"
   [rows]="4"
-  placeholder="Escribe aquí..."
+  placeholder="Type here..."
   [clearable]="true"
   [error]="notesError()" />
 ```
 
 ## Gotchas
 
-- El comportamiento al vaciar es idéntico al de `retro-input`: el formulario recibe `''`, nunca `null`. Los validadores `Validators.required` detectan el campo vacío correctamente.
-- El resize del textarea nativo está desactivado por diseño (`resize: none`).
-- En modo multilínea el botón clear se posiciona en absoluto en la esquina superior derecha del textarea.
-- No tiene input `hideSubscript` — el bloque subscript siempre se renderiza (a diferencia de `retro-input`).
+- Clear behavior is identical to `retro-input`: the form receives `''`, never `null`. `Validators.required` correctly detects the empty field.
+- Native textarea resize is disabled by design (`resize: none`).
+- In multiline mode the clear button is absolutely positioned in the top-right corner of the textarea.
+- There is no `hideSubscript` input — the subscript block is always rendered (unlike `retro-input`).

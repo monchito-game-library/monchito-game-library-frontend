@@ -1,153 +1,66 @@
 ---
-description: "Synchronizes the README.md of a retro component with its current public API by reading the source files and generating the standard AI-oriented format. Use when the user needs to update a component's documentation after API changes ('actualiza el README del componente', 'sincroniza el readme retro', 'regenera la documentación del componente')."
-argument-hint: '[componente]'
+description: "Synchronizes the README.md of a retro component with its current public API by reading the source files and generating the standard AI-oriented format. Use when the user needs to update a component's documentation after API changes ('actualiza el README del componente', 'sincroniza el readme retro', 'regenera la documentacion del componente')."
+argument-hint: '[component]'
 ---
 
-Sincroniza el `README.md` de un componente retro con su API pública actual leyendo el código fuente y generando el formato estándar orientado a IA.
+Argument: $ARGUMENTS — component name with or without the `retro-` prefix (e.g. `button`, `retro-card`). If empty, infer the component from context (last file read/edited, current branch, user message). If inference is not possible, ask the user.
 
-Argumento: $ARGUMENTS — nombre del componente con o sin prefijo `retro-` (ej: `button`, `retro-card`). Si va vacío, infiere el componente desde el contexto (último fichero leído/editado, rama actual, mensaje del usuario). Si no puedes inferir, pregunta al usuario.
+## Goal
 
-## Objetivo
+The pre-commit hook (`scripts/check-retro-readme-sync.mjs`) blocks commits that touch API files (`.component.ts`, `.types.ts`, `.component.html`) without updating `README.md`. This skill ensures the README reflects the real API in the standard AI-oriented format.
 
-El pre-commit hook (`scripts/check-retro-readme-sync.mjs`) bloquea commits que tocan ficheros de API (`.component.ts`, `.types.ts`, `.component.html`) sin actualizar el `README.md`. Esta skill garantiza que el README refleje la API real en el formato estándar orientado a IA.
+## Steps
 
-## Pasos
+### 1. Locate the component folder
 
-### 1. Localizar la carpeta del componente
+- Expected path: `lib/retro/retro-<name>/`.
+- If the component has sub-components with their own README, ask the user which one(s) to sync, or sync all affected ones.
 
-- Ruta esperada: `lib/retro/retro-<nombre>/`.
-- Si el componente tiene subcomponentes con README propio, preguntar al usuario cuál sincronizar o sincronizar todos los afectados.
+### 2. Read the sources of truth
 
-### 2. Leer las fuentes de verdad
+Read in this order and extract the API:
 
-Leer en este orden y extraer la API:
+- `retro-<name>.component.ts`:
+  - Exact selector from the decorator.
+  - `standalone` (confirm in the decorator; always `yes` in this lib but verify).
+  - CVA: look for `ControlValueAccessor` in `implements` or `NG_VALUE_ACCESSOR` in `providers`.
+  - Each `input<T>()` / `input.required<T>()`: name, correct Angular type (see type rules in the reference template), default (if applicable), JSDoc description.
+  - Each `output<T>()`: name, payload type, JSDoc description.
+  - Publicly exposed computed signals (no `_` prefix, no `@internal`): type `Signal<T>`.
+  - If CVA: how `writeValue` works, what `registerOnChange` emits, whether `setDisabledState` is reflected.
+- `retro-<name>.types.ts` (if it exists): list exported types with their possible values.
+- `retro-<name>.component.html`:
+  - `<ng-content select="[slot=xxx]" />`: each named slot.
+  - `<ng-content />` (no select): default slot.
+  - Conditional slot behavior (e.g. hidden during `loading`).
+- `retro-<name>.component.scss`:
+  - Custom properties consumed via `var(--retro-<name>-xxx, default)`: document as public tokens.
+  - Ignore internal variables that are not external customization points.
 
-- `retro-<nombre>.component.ts`:
-  - Selector exacto del decorador.
-  - `standalone` (confirmar en el decorador; siempre `sí` en esta lib pero verificar).
-  - CVA: buscar `ControlValueAccessor` en `implements` o `NG_VALUE_ACCESSOR` en `providers`.
-  - Cada `input<T>()` / `input.required<T>()`: nombre, tipo Angular correcto (ver reglas de tipos), default (si aplica), descripción del JSDoc.
-  - Cada `output<T>()`: nombre, tipo del payload, descripción del JSDoc.
-  - Signals computed expuestos públicamente (sin `_` ni `@internal`): tipo `Signal<T>`.
-  - Si es CVA: cómo funciona `writeValue`, qué emite `registerOnChange`, si refleja `setDisabledState`.
-- `retro-<nombre>.types.ts` (si existe): listar tipos exportados con sus valores posibles.
-- `retro-<nombre>.component.html`:
-  - `<ng-content select="[slot=xxx]" />`: cada slot nombrado.
-  - `<ng-content />` (sin select): slot por defecto.
-  - Comportamiento condicional de slots (p. ej. ocultos en `loading`).
-- `retro-<nombre>.component.scss`:
-  - Custom properties consumidas con `var(--retro-<nombre>-xxx, default)`: documentar como tokens públicos.
-  - Ignorar variables internas que no son puntos de personalización externos.
+Ignore everything marked `@internal` or prefixed with `_` (internal).
 
-Ignorar todo lo marcado `@internal` o con prefijo `_` (es interno).
+### 3. Build the README
 
-### 3. Construir el README
+Use the canonical skeleton and rules defined in:
 
-Estructura fija (mismo orden siempre):
+> `.claude/skills/retro-readme/references/readme-template.md`
 
-```markdown
-# <nombre-componente>
+That file contains: the full section skeleton, section rules (which sections to omit), Angular type rules, and formatting rules. Do not duplicate any of those rules here.
 
-<una frase: qué es + para qué sirve>
+### 4. Verify before writing
 
-**Selector:** `<selector>` · **Standalone:** sí/no · **CVA:** sí/no
+- Compare input by input, output by output, slot by slot: remove anything in the README that no longer exists in the code; add anything in the code that is missing from the README.
+- Do not include members marked `@internal` or with a `_` prefix.
+- Confirm the `**Selector:**` line uses the exact selector from the `@Component` decorator.
 
-## Cuándo usar / Cuándo NO usar
+## Final steps
 
-- Usar cuando: <casos típicos>.
-- NO usar cuando: <componente alternativo de la misma lib si existe>.
+1. Overwrite `lib/retro/retro-<name>/README.md` with the synchronized content.
+2. Show the user a brief summary of what changed (fields added/removed/updated, sections added or removed).
+3. Do **not** commit or push. Do **not** run lint/test unless explicitly requested.
 
-## API — Inputs
+## References in the repo
 
-| Nombre | Tipo Angular                | Default | Descripción |
-| ------ | --------------------------- | ------- | ----------- |
-| `xxx`  | `InputSignal<T>`            | `valor` | ...         |
-| `yyy`  | `InputSignal<T> (required)` | —       | ...         |
-
-## API — Outputs
-
-| Nombre | Tipo Angular                | Descripción |
-| ------ | --------------------------- | ----------- |
-| `xxx`  | `OutputEmitterRef<Payload>` | ...         |
-
-## Slots
-
-| Selector       | Tipo esperado | Descripción |
-| -------------- | ------------- | ----------- |
-| `[slot=start]` | icono o texto | ...         |
-| _(default)_    | bloque libre  | ...         |
-
-## Contrato CVA _(solo si implementa ControlValueAccessor)_
-
-- `writeValue(value)`: acepta `<tipo>`; `null`/`undefined` normalizan a `<valor>`.
-- `registerOnChange`: emite `<tipo>`.
-- `setDisabledState`: refleja `disabled`.
-
-## Tokens CSS expuestos _(solo si hay)_
-
-| Variable | Default | Descripción |
-| -------- | ------- | ----------- |
-
-## Tipos exportados _(solo si hay tipos públicos)_
-
-- `RetroXxxVariant` — `'a' \| 'b'`
-
-## Ejemplo mínimo
-
-\`\`\`html
-<retro-x ... />
-\`\`\`
-
-## Gotchas
-
-- <comportamiento no obvio>.
-```
-
-### 4. Reglas de tipos Angular
-
-Usar los tipos Angular correctos en la columna "Tipo Angular":
-
-- `input()` → `InputSignal<T>`
-- `input.required()` → `InputSignal<T> (required)` (y Default = `—`)
-- `output()` → `OutputEmitterRef<T>`
-- `computed()` expuesto públicamente → `Signal<T>`
-- Tipos union en tablas: escapar el pipe → `'a' \| 'b' \| 'c'`
-
-### 5. Reglas de secciones opcionales
-
-Omitir **completamente** las secciones que no apliquen. Nunca dejar una sección vacía, "N/A", ni una tabla sin filas:
-
-- **API — Inputs**: omitir si el componente no tiene inputs públicos.
-- **API — Outputs**: omitir si el componente no tiene outputs públicos.
-- **Slots**: omitir si no hay `<ng-content>` en el template.
-- **Contrato CVA**: incluir **SOLO** si el componente implementa `ControlValueAccessor` o tiene `NG_VALUE_ACCESSOR` en providers.
-- **Tokens CSS expuestos**: incluir solo si hay custom properties consumidas con `var(--retro-xxx, default)` en el `.scss`.
-- **Tipos exportados**: incluir solo si existe un `.types.ts` con tipos públicos.
-- **Gotchas**: incluir solo si hay comportamientos no obvios detectables en el `.ts`/`.html`/`.scss` (p. ej. slots ocultos en ciertos estados, promoción de tamaños en mobile, restricciones de contexto).
-
-### 6. Reglas de formato
-
-- Línea compacta: `**Selector:** \`xx\` · **Standalone:** sí · **CVA:** sí`(o`CVA: no`).
-- La columna "Default" usa `—` para required y el valor literal para opcionales: `` `false` ``, `` `'lg'` ``.
-- Pipes en tablas markdown con escape: `` `'a' \| 'b'` ``.
-- Sección "Cuándo NO usar" debe apuntar al componente alternativo dentro de la misma lib cuando exista.
-- Si un input está `@deprecated`, marcarlo en la columna Descripción: **Deprecated** — usar `xxx`.
-- El ejemplo mínimo debe ser funcional con la API real. Si ya existe un ejemplo válido, conservarlo salvo que la API lo invalide.
-
-### 7. Verificación antes de escribir
-
-- Comparar input por input, output por output, slot por slot: si el README tiene algo que ya no está en el código, eliminarlo; si el código tiene algo que falta, añadirlo.
-- No incluir miembros con `@internal` ni con prefijo `_`.
-- Confirmar que la línea `**Selector:**` usa el selector exacto del decorador `@Component`.
-
-## Pasos finales
-
-1. Sobrescribir `lib/retro/retro-<nombre>/README.md` con el contenido sincronizado.
-2. Mostrar al usuario un resumen breve de qué se ha modificado (campos añadidos/eliminados/actualizados, secciones nuevas o eliminadas).
-3. **No** hacer commit ni push. **No** lanzar lint/test salvo petición explícita.
-
-## Referencias en el repo
-
-- Patrón canónico: `lib/retro/retro-button/README.md`.
-- Con custom properties: `lib/retro/retro-card/README.md`.
-- CLAUDE.md → sección "Librería retro — sincronía de README".
+- Canonical example (no CVA, no tokens): `lib/retro/retro-button/README.md`.
+- Example with custom properties: `lib/retro/retro-card/README.md`.
+- See CLAUDE.md section "Libreria retro — sincronia de README" for project-level sync rules and commit requirements.

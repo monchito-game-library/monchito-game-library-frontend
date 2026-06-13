@@ -1,99 +1,95 @@
 # retro-select
 
-Select accesible Terminal Collector (combobox + listbox pattern, APG). Componente self-contained que internaliza label, hint y error — el consumidor solo necesita aportar las opciones y conectar el control.
+Accessible Terminal Collector select (combobox + listbox pattern, APG). A self-contained component that internalises the label, hint, and error — the consumer only needs to provide the options and wire up the control.
 
-**Selector:** `retro-select` · **Standalone:** sí · **CVA:** sí
+**Selector:** `retro-select` · **Standalone:** yes · **CVA:** yes
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: el usuario debe escoger un valor de una lista cerrada de opciones (plataforma, estado, categoría, etc.).
-- NO usar cuando: necesitas búsqueda por texto sobre las opciones — usa `retro-search` en su lugar.
+- Use when: the user must choose a value from a closed list of options (platform, status, category, etc.).
+- Do NOT use when: you need text-based search over the options — use `retro-search` instead.
 
 ## API — Inputs
 
-| Nombre           | Tipo Angular                        | Default     | Descripción                                                                                 |
-| ---------------- | ----------------------------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| `label`          | `InputSignal<string>`               | `''`        | Texto del label del campo.                                                                  |
-| `placeholder`    | `InputSignal<string>`               | `''`        | Texto de placeholder cuando no hay selección.                                               |
-| `hint`           | `InputSignal<string \| null>`       | `null`      | Mensaje de ayuda bajo el campo.                                                             |
-| `error`          | `InputSignal<string \| null>`       | `null`      | Mensaje de error bajo el campo.                                                             |
-| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>` | `'lg'`      | Altura del campo: `sm` (32px), `md` (40px), `lg` (44px).                                    |
-| `prefixIcon`     | `InputSignal<string \| null>`       | `null`      | Nombre de icono Material decorativo en el prefix.                                           |
-| `suffixIcon`     | `InputSignal<string \| null>`       | `null`      | Nombre de icono Material decorativo en el suffix.                                           |
-| `clearable`      | `InputSignal<boolean>`              | `false`     | Muestra botón X para limpiar cuando hay selección.                                          |
-| `clearAriaLabel` | `InputSignal<string>`               | `'Limpiar'` | `aria-label` del botón limpiar.                                                             |
-| `hideSubscript`  | `InputSignal<boolean>`              | `false`     | Oculta el bloque subscript (hint/error). Útil en campos de búsqueda sin validación visible. |
-| `value`          | `InputSignal<unknown>`              | `undefined` | Valor en modo standalone (sin `formControlName`). Equivalente a `[value]` de `mat-select`.  |
+| Name             | Angular type                        | Default     | Description                                                                                    |
+| ---------------- | ----------------------------------- | ----------- | ---------------------------------------------------------------------------------------------- |
+| `label`          | `InputSignal<string>`               | `''`        | Label text for the field.                                                                      |
+| `placeholder`    | `InputSignal<string>`               | `''`        | Placeholder text when no option is selected.                                                   |
+| `hint`           | `InputSignal<string \| null>`       | `null`      | Helper message below the field.                                                                |
+| `error`          | `InputSignal<string \| null>`       | `null`      | Error message below the field.                                                                 |
+| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>` | `'lg'`      | Field height: `sm` (32px), `md` (40px), `lg` (44px).                                           |
+| `prefixIcon`     | `InputSignal<string \| null>`       | `null`      | Decorative Material icon name in the prefix.                                                   |
+| `suffixIcon`     | `InputSignal<string \| null>`       | `null`      | Decorative Material icon name in the suffix.                                                   |
+| `clearable`      | `InputSignal<boolean>`              | `false`     | Shows an X button to clear the selection when a value is selected.                             |
+| `clearAriaLabel` | `InputSignal<string>`               | `'Limpiar'` | `aria-label` for the clear button.                                                             |
+| `hideSubscript`  | `InputSignal<boolean>`              | `false`     | Hides the subscript block (hint/error). Useful for search fields without visible validation.   |
+| `value`          | `InputSignal<unknown>`              | `undefined` | Value in standalone mode (without `formControlName`). Equivalent to `[value]` on `mat-select`. |
 
 ## API — Outputs
 
-| Nombre            | Tipo Angular                | Descripción                                                   |
-| ----------------- | --------------------------- | ------------------------------------------------------------- |
-| `selectionChange` | `OutputEmitterRef<unknown>` | Emite el nuevo valor cuando el usuario selecciona una opción. |
-| `cleared`         | `OutputEmitterRef<void>`    | Emite cuando el usuario pulsa el botón limpiar.               |
+| Name              | Angular type                | Description                                          |
+| ----------------- | --------------------------- | ---------------------------------------------------- |
+| `selectionChange` | `OutputEmitterRef<unknown>` | Emits the new value when the user selects an option. |
+| `cleared`         | `OutputEmitterRef<void>`    | Emits when the user presses the clear button.        |
 
 ## Slots
 
-| Selector        | Tipo esperado          | Descripción                                                               |
-| --------------- | ---------------------- | ------------------------------------------------------------------------- |
-| _(default)_     | `<retro-option>` nodes | Opciones proyectadas en el listbox. Obligatorio.                          |
-| `[retroPrefix]` | elemento con directiva | Elementos con comportamiento propio en el prefix (botones, badges, etc.). |
-| `[retroSuffix]` | elemento con directiva | Elementos con comportamiento propio en el suffix.                         |
+| Selector        | Expected content       | Description                                                              |
+| --------------- | ---------------------- | ------------------------------------------------------------------------ |
+| _(default)_     | `<retro-option>` nodes | Options projected into the listbox. Required.                            |
+| `[retroPrefix]` | element with directive | Elements with their own behaviour in the prefix (buttons, badges, etc.). |
+| `[retroSuffix]` | element with directive | Elements with their own behaviour in the suffix.                         |
 
-## Subcomponente — `<retro-option>`
+## Subcomponent — `<retro-option>`
 
-**Selector:** `retro-option` · **Standalone:** sí · **Requerido dentro de `retro-select`.**
+**Selector:** `retro-option` · **Standalone:** yes · **Required inside `retro-select`.**
 
-| Nombre     | Tipo Angular                                            | Default | Descripción                                           |
-| ---------- | ------------------------------------------------------- | ------- | ----------------------------------------------------- |
-| `value`    | `InputSignalWithTransform<unknown, unknown> (required)` | —       | Valor opaco que se emite al seleccionar esta opción.  |
-| `disabled` | `InputSignalWithTransform<boolean, unknown>`            | `false` | Desactiva la opción. Acepta `boolean` o string vacío. |
+| Name       | Angular type                                            | Default | Description                                             |
+| ---------- | ------------------------------------------------------- | ------- | ------------------------------------------------------- |
+| `value`    | `InputSignalWithTransform<unknown, unknown> (required)` | —       | Opaque value emitted when this option is selected.      |
+| `disabled` | `InputSignalWithTransform<boolean, unknown>`            | `false` | Disables the option. Accepts `boolean` or empty string. |
 
-El contenido proyectado en el slot por defecto de `<retro-option>` se usa como label visible. Los iconos `<retro-icon>` y `.material-icons` se excluyen automáticamente del texto del label para que el trigger no muestre el nombre del icono.
+Content projected into the default slot of `<retro-option>` is used as the visible label. `<retro-icon>` and `.material-icons` elements are automatically excluded from the label text so the trigger does not display the icon name.
 
-## Contrato CVA
+## CVA Contract
 
-- `writeValue(value: unknown)`: acepta cualquier valor; `null` y `undefined` limpian la selección.
-- `registerOnChange`: emite `unknown` (el valor de la opción seleccionada, o `null` al limpiar).
-- `setDisabledState`: refleja `disabled` mediante el signal interno `_isDisabled`.
+- `writeValue(value: unknown)`: accepts any value; `null` and `undefined` clear the selection.
+- `registerOnChange`: emits `unknown` (the value of the selected option, or `null` when cleared).
+- `setDisabledState`: reflects `disabled` via the internal `_isDisabled` signal.
 
-## Tipos exportados
+## Minimal example
 
-_(No hay fichero `.types.ts` — los tipos son `'sm' | 'md' | 'lg'` inline en el input `size`.)_
-
-## Ejemplo mínimo
-
-Modo reactivo (formulario):
+Reactive mode (form):
 
 ```html
-<retro-select label="Estado" formControlName="status" placeholder="Selecciona...">
+<retro-select label="Status" formControlName="status" placeholder="Select...">
   @for (s of statuses; track s.code) {
   <retro-option [value]="s.code">{{ s.label }}</retro-option>
   }
 </retro-select>
 ```
 
-Modo standalone (sin formulario):
+Standalone mode (without form):
 
 ```html
-<retro-select label="Plataforma" [value]="selectedPlatform" (selectionChange)="onPlatformChange($event)">
+<retro-select label="Platform" [value]="selectedPlatform" (selectionChange)="onPlatformChange($event)">
   @for (p of platforms; track p.id) {
   <retro-option [value]="p">{{ p.name }}</retro-option>
   }
 </retro-select>
 ```
 
-Con objeto complejo y `displayWith` — si el `value` de la opción es un objeto y quieres mostrar una propiedad concreta en el trigger, usa la función `displayWith` del `displayValue` computed o pasa el texto visible directamente como contenido del `<retro-option>`:
+With a complex object — if the option `value` is an object and you want to display a specific property in the trigger, pass the visible text directly as the content of `<retro-option>`:
 
 ```html
-<!-- El trigger muestra el textContent del retro-option seleccionado -->
+<!-- The trigger displays the textContent of the selected retro-option -->
 <retro-option [value]="game">{{ game.title }}</retro-option>
 ```
 
 ## Gotchas
 
-- **Panel renderizado fuera del DOM del select**: el listbox se inserta vía CDK Overlay en un `<div>` raíz del documento (no dentro del `retro-select`). Los estilos del panel van en `styles.scss` global bajo `.retro-select__panel`, no en el `.scss` del componente.
-- **`[value]=undefined` limpia la selección**: en modo standalone, pasar `undefined` o `null` al input `value` es equivalente — ambos limpian la selección actual. Esto es simétrico con el comportamiento de `writeValue`.
-- **Objetos como valor**: `displayValue` busca la opción cuyo `value()` coincida estrictamente (`===`) con el valor actual. Si pasas objetos, la referencia debe ser la misma instancia; de lo contrario el trigger mostrará `String(value)` como fallback. Para evitarlo, usa primitivos (id, código) como `value` de la opción y muestra el label solo como contenido proyectado.
-- **`disabled` en `retro-option` como atributo**: el input acepta `booleanAttribute` transform, por lo que `<retro-option disabled>` (sin valor) activa el flag correctamente además de `[disabled]="true"`.
-- **Navegación por teclado**: ArrowDown/Up mueve el highlight, Enter/Space confirma la opción activa, Escape cierra sin cambiar el valor, Tab confirma la opción activa y cierra, Home/End salta al primer/último elemento.
+- **Panel rendered outside the select DOM**: the listbox is inserted via CDK Overlay into a root `<div>` of the document (not inside `retro-select`). Panel styles go in the global `styles.scss` under `.retro-select__panel`, not in the component's `.scss`.
+- **`[value]=undefined` clears the selection**: in standalone mode, passing `undefined` or `null` to the `value` input are equivalent — both clear the current selection. This is symmetric with the `writeValue` behaviour.
+- **Objects as value**: `displayValue` looks for the option whose `value()` strictly matches (`===`) the current value. If you pass objects, the reference must be the same instance; otherwise the trigger will show `String(value)` as a fallback. To avoid this, use primitives (id, code) as the option `value` and display the label only as projected content.
+- **`disabled` on `retro-option` as an attribute**: the input accepts `booleanAttribute` transform, so `<retro-option disabled>` (without a value) activates the flag correctly in addition to `[disabled]="true"`.
+- **Keyboard navigation**: ArrowDown/Up moves the highlight, Enter/Space confirms the active option, Escape closes without changing the value, Tab confirms the active option and closes, Home/End jumps to the first/last item.

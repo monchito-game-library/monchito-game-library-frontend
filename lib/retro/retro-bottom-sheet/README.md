@@ -1,68 +1,68 @@
 # retro-bottom-sheet
 
-Servicio para abrir componentes como paneles bottom-sheet Terminal Collector. No tiene componente propio — el consumer pasa el componente que se renderiza en el panel.
+Service for opening components as Terminal Collector bottom-sheet panels. It has no component of its own — the consumer passes the component rendered inside the panel.
 
-**Tipo:** Servicio · **Provided in:** `'root'`
+**Type:** Service · **Provided in:** `'root'`
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita un panel contextual que emerge desde el borde inferior, especialmente en mobile o para acciones secundarias no críticas.
-- NO usar cuando: la acción requiere confirmación explícita del usuario (destrucción, pérdida de datos) — usar `retro-dialog` en su lugar.
+- Use when: a contextual panel that slides up from the bottom edge is needed, especially on mobile or for non-critical secondary actions.
+- Do NOT use when: the action requires explicit user confirmation (destructive action, data loss) — use `retro-dialog` instead.
 
 ## API — RetroBottomSheetService
 
-### Método `open`
+### Method `open`
 
 ```typescript
 open<T, R = unknown>(component: ComponentType<T>, data?: unknown): RetroBottomSheetRef<T, R>
 ```
 
-| Parámetro   | Tipo                 | Descripción                                                                   |
-| ----------- | -------------------- | ----------------------------------------------------------------------------- |
-| `component` | `ComponentType<T>`   | Componente Angular a proyectar dentro del panel bottom-sheet.                 |
-| `data`      | `unknown` (opcional) | Datos que el componente puede inyectar via `inject(RETRO_BOTTOM_SHEET_DATA)`. |
+| Parameter   | Type                 | Description                                                               |
+| ----------- | -------------------- | ------------------------------------------------------------------------- |
+| `component` | `ComponentType<T>`   | Angular component to project inside the bottom-sheet panel.               |
+| `data`      | `unknown` (optional) | Data that the component can inject via `inject(RETRO_BOTTOM_SHEET_DATA)`. |
 
-Incluye automáticamente: backdrop, focus trap, scroll block y animación desde el borde inferior.
+Automatically includes: backdrop, focus trap, scroll block, and slide-up animation from the bottom edge.
 
 ## RetroBottomSheetRef
 
-Alias tipado de `RetroOverlayRef`. Expone:
+Typed alias of `RetroOverlayRef`. Exposes:
 
-| Miembro             | Tipo                         | Descripción                                                |
-| ------------------- | ---------------------------- | ---------------------------------------------------------- |
-| `close(result?)`    | `(result?: R) => void`       | Cierra el panel, emitiendo opcionalmente un resultado.     |
-| `afterClosed$`      | `Observable<R \| undefined>` | Emite una vez cuando el panel se cierra, con el resultado. |
-| `backdropClick$`    | `Observable<MouseEvent>`     | Emite al hacer click en el backdrop.                       |
-| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emite eventos de teclado dentro del overlay.               |
-| `componentInstance` | `T \| null`                  | Instancia del componente proyectado.                       |
-| `data`              | `unknown`                    | Datos pasados al abrir. `null` si no se proporcionaron.    |
+| Member              | Type                         | Description                                            |
+| ------------------- | ---------------------------- | ------------------------------------------------------ |
+| `close(result?)`    | `(result?: R) => void`       | Closes the panel, optionally emitting a result.        |
+| `afterClosed$`      | `Observable<R \| undefined>` | Emits once when the panel closes, with the result.     |
+| `backdropClick$`    | `Observable<MouseEvent>`     | Emits when the backdrop is clicked.                    |
+| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emits keyboard events inside the overlay.              |
+| `componentInstance` | `T \| null`                  | Instance of the projected component.                   |
+| `data`              | `unknown`                    | Data passed when opening. `null` if none was provided. |
 
 ## Token — RETRO_BOTTOM_SHEET_DATA
 
-Token para inyectar los datos pasados al componente abierto. Es un alias semántico de `RETRO_OVERLAY_DATA`.
+Token to inject the data passed to the opened component. It is a semantic alias of `RETRO_OVERLAY_DATA`.
 
 ```typescript
-// En el componente abierto dentro del bottom-sheet:
+// Inside the component opened in the bottom-sheet:
 private readonly _data = inject(RETRO_BOTTOM_SHEET_DATA);
 ```
 
-## Ejemplo mínimo
+## Minimal example
 
 ```typescript
-// Abrir el bottom-sheet
+// Open the bottom-sheet
 const ref = this._bottomSheet.open(FiltersSheetComponent, { selected: this.filters() });
 ref.afterClosed$.subscribe((result) => {
   if (result) this.applyFilters(result);
 });
 
-// Dentro de FiltersSheetComponent
+// Inside FiltersSheetComponent
 private readonly _data = inject(RETRO_BOTTOM_SHEET_DATA);
-private readonly _ref = inject(RETRO_BOTTOM_SHEET_REF); // si se necesita cerrar desde dentro
+private readonly _ref = inject(RETRO_BOTTOM_SHEET_REF); // if closing from within is needed
 ```
 
 ## Gotchas
 
-- El panel usa `scrollStrategy: 'block'` — el scroll de la página queda bloqueado mientras el bottom-sheet está abierto.
-- Pulsar `Escape` o hacer click en el backdrop cierra el panel automáticamente (comportamiento del preset). Para deshabilitarlo, se necesita usar `RetroOverlayService` directamente con `disableClose: true`.
-- `RETRO_BOTTOM_SHEET_DATA` es un alias de `RETRO_OVERLAY_DATA`; ambos tokens son intercambiables, pero se recomienda usar el alias semántico en consumers de bottom-sheet.
-- El foco se restaura automáticamente al elemento que lo tenía antes de abrir el panel al cerrarlo.
+- The panel uses `scrollStrategy: 'block'` — page scroll is blocked while the bottom-sheet is open.
+- Pressing `Escape` or clicking the backdrop closes the panel automatically (preset behaviour). To disable this, use `RetroOverlayService` directly with `disableClose: true`.
+- `RETRO_BOTTOM_SHEET_DATA` is an alias of `RETRO_OVERLAY_DATA`; both tokens are interchangeable, but the semantic alias is recommended in bottom-sheet consumers.
+- Focus is automatically restored to the element that held it before the panel was opened, once it closes.

@@ -1,54 +1,54 @@
 # retro-checkbox
 
-Checkbox terminal `[X]` / `[ ]` reutilizable con patrón visual monocromo. Soporta modo standalone (binding directo) y modo CVA (formularios reactivos).
+Reusable terminal `[X]` / `[ ]` checkbox with a monochrome visual pattern. Supports standalone mode (direct binding) and CVA mode (reactive forms).
 
-**Selector:** `retro-checkbox` · **Standalone:** sí · **CVA:** sí
+**Selector:** `retro-checkbox` · **Standalone:** yes · **CVA:** yes
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: necesitas un control de selección booleana con semántica de casilla de verificación (`role="checkbox"`).
-- NO usar cuando: quieres un toggle visual on/off para activar/desactivar un ajuste — considerar `retro-toggle` si existe en la lib.
+- Use when: a boolean selection control is needed with checkbox semantics (`role="checkbox"`).
+- Do NOT use when: a visual on/off toggle is needed to enable/disable a setting — consider `retro-toggle` if it exists in the lib.
 
 ## API — Inputs
 
-| Nombre     | Tipo Angular                       | Default     | Descripción                                                                   |
-| ---------- | ---------------------------------- | ----------- | ----------------------------------------------------------------------------- |
-| `checked`  | `InputSignal<boolean>`             | `false`     | Estado checked en modo standalone. Se ignora si hay `formControlName` activo. |
-| `label`    | `InputSignal<string \| undefined>` | `undefined` | Etiqueta opcional a la derecha del control (mono uppercase).                  |
-| `size`     | `InputSignal<LibCheckboxSize>`     | `'md'`      | Tamaño del glyph: `'sm'` (0.875rem) o `'md'` (1rem).                          |
-| `disabled` | `InputSignal<boolean>`             | `false`     | Deshabilita el control en modo standalone. CVA usa `setDisabledState`.        |
+| Name       | Angular type                       | Default     | Description                                                                 |
+| ---------- | ---------------------------------- | ----------- | --------------------------------------------------------------------------- |
+| `checked`  | `InputSignal<boolean>`             | `false`     | Checked state in standalone mode. Ignored when `formControlName` is active. |
+| `label`    | `InputSignal<string \| undefined>` | `undefined` | Optional label to the right of the control (mono uppercase).                |
+| `size`     | `InputSignal<LibCheckboxSize>`     | `'md'`      | Glyph size: `'sm'` (0.875rem) or `'md'` (1rem).                             |
+| `disabled` | `InputSignal<boolean>`             | `false`     | Disables the control in standalone mode. CVA uses `setDisabledState`.       |
 
 ## API — Outputs
 
-| Nombre    | Tipo Angular                | Descripción                                                                                         |
-| --------- | --------------------------- | --------------------------------------------------------------------------------------------------- |
-| `changed` | `OutputEmitterRef<boolean>` | Emite el nuevo valor booleano tras cada toggle. Se emite tanto en modo standalone como en modo CVA. |
+| Name      | Angular type                | Description                                                                              |
+| --------- | --------------------------- | ---------------------------------------------------------------------------------------- |
+| `changed` | `OutputEmitterRef<boolean>` | Emits the new boolean value after each toggle. Emitted in both standalone and CVA modes. |
 
-## Contrato CVA
+## CVA Contract
 
-- `writeValue(value)`: acepta `boolean`; cualquier valor falsy normaliza a `false` (`!!v`).
-- `registerOnChange`: emite `boolean`.
-- `setDisabledState`: refleja `disabled`.
+- `writeValue(value)`: accepts `boolean`; any falsy value normalises to `false` (`!!v`).
+- `registerOnChange`: emits `boolean`.
+- `setDisabledState`: reflects `disabled`.
 
-## Tipos exportados
+## Exported Types
 
 - `LibCheckboxSize` — `'sm' \| 'md'`
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<!-- Modo CVA con formulario reactivo -->
-<retro-checkbox formControlName="includeArchived" label="MOSTRAR ARCHIVADOS" />
+<!-- CVA mode with reactive form -->
+<retro-checkbox formControlName="includeArchived" label="SHOW ARCHIVED" />
 ```
 
 ```html
-<!-- Modo standalone -->
-<retro-checkbox [checked]="isSelected()" (changed)="onToggle($event)" label="FAVORITO" />
+<!-- Standalone mode -->
+<retro-checkbox [checked]="isSelected()" (changed)="onToggle($event)" label="FAVOURITE" />
 ```
 
 ## Gotchas
 
-- El glyph visual es `[X]` (checked) y `[ ]` (unchecked) — cambio discreto sin animación de transición (regla Terminal Collector).
-- ARIA: el elemento raíz tiene `role="checkbox"` y `aria-checked` vinculado al valor interno. No usar como switch on/off semántico.
-- En modo CVA, el binding `[checked]` y el input `disabled` se ignoran — el control obtiene estado únicamente de `writeValue` / `setDisabledState`.
-- En mobile el touch target mínimo es 44×44px aunque el glyph sea más pequeño visualmente.
+- The visual glyph is `[X]` (checked) and `[ ]` (unchecked) — a discrete change with no transition animation (Terminal Collector rule).
+- ARIA: the root element has `role="checkbox"` and `aria-checked` bound to the internal value. Do not use as a semantic on/off switch.
+- In CVA mode, the `[checked]` binding and the `disabled` input are ignored — the control gets its state exclusively from `writeValue` / `setDisabledState`.
+- On mobile the minimum touch target is 44×44px even if the glyph is visually smaller.

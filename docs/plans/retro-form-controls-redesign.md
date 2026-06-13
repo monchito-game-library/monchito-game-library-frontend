@@ -12,13 +12,13 @@ Plan consolidado tras una serie de análisis sobre el rediseño de los component
 
 ### Componentes afectados
 
-| Componente | Acción |
-|---|---|
-| `retro-input` | **Nuevo** componente self-contained |
-| `retro-select` | **Rediseño** (self-contained, trigger `<div role="combobox">`, overlay anclado al host) |
-| `retro-search` | **Rename** desde `retro-autocomplete` + rediseño self-contained |
-| `retro-datepicker` | **Rediseño** self-contained |
-| `retro-form-field` | Pasa a ser pieza `@internal` de la lib, **no exportada** al consumidor |
+| Componente         | Acción                                                                                  |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| `retro-input`      | **Nuevo** componente self-contained                                                     |
+| `retro-select`     | **Rediseño** (self-contained, trigger `<div role="combobox">`, overlay anclado al host) |
+| `retro-search`     | **Rename** desde `retro-autocomplete` + rediseño self-contained                         |
+| `retro-datepicker` | **Rediseño** self-contained                                                             |
+| `retro-form-field` | Pasa a ser pieza `@internal` de la lib, **no exportada** al consumidor                  |
 
 ### Fuera de scope
 
@@ -73,9 +73,7 @@ interface RetroFormFieldControl {
 Cada inner control (`RetroInputDirective`, `RetroSelectComponent`, `RetroSearchComponent`, `RetroDatepickerDirective`) provee el token vía:
 
 ```typescript
-providers: [
-  { provide: RETRO_FORM_FIELD_CONTROL, useExisting: forwardRef(() => MyComponent) }
-]
+providers: [{ provide: RETRO_FORM_FIELD_CONTROL, useExisting: forwardRef(() => MyComponent) }];
 ```
 
 `RetroFormFieldComponent` inyecta vía `@ContentChild(RETRO_FORM_FIELD_CONTROL)` en lugar de la directiva concreta.
@@ -88,18 +86,18 @@ Todos los componentes self-contained comparten esta API.
 
 ### Inputs
 
-| Input | Tipo | Default |
-|---|---|---|
-| `label` | `string` | — |
-| `placeholder` | `string` | `''` |
-| `hint` | `string \| null` | `null` |
-| `error` | `string \| null` | `null` |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'lg'` |
-| `disabled` | `boolean` | `false` |
-| `prefixIcon` | `string \| null` | `null` |
-| `suffixIcon` | `string \| null` | `null` |
-| `clearable` | `boolean` | `false` |
-| `clearAriaLabel` | `string` | `'Limpiar'` |
+| Input            | Tipo                   | Default     |
+| ---------------- | ---------------------- | ----------- |
+| `label`          | `string`               | —           |
+| `placeholder`    | `string`               | `''`        |
+| `hint`           | `string \| null`       | `null`      |
+| `error`          | `string \| null`       | `null`      |
+| `size`           | `'sm' \| 'md' \| 'lg'` | `'lg'`      |
+| `disabled`       | `boolean`              | `false`     |
+| `prefixIcon`     | `string \| null`       | `null`      |
+| `suffixIcon`     | `string \| null`       | `null`      |
+| `clearable`      | `boolean`              | `false`     |
+| `clearAriaLabel` | `string`               | `'Limpiar'` |
 
 ### Output
 
@@ -122,10 +120,10 @@ Todos los componentes self-contained comparten esta API.
 
 ## 6. Tamaños alineados con retro-button
 
-| Size | Altura |
-|---|---|
-| `sm` | 32px |
-| `md` | 40px |
+| Size | Altura                                 |
+| ---- | -------------------------------------- |
+| `sm` | 32px                                   |
+| `md` | 40px                                   |
 | `lg` | 44px (default — no rompe lo existente) |
 
 - Implementación: **CSS custom properties** en `retro-form-field` + modifier classes.
@@ -168,12 +166,12 @@ Se bloquea en JS (`if (disabled()) return`) porque un `<div>` no tiene propiedad
 
 ## 9. retro-select vs retro-search: distinción definitiva
 
-| | `retro-select` | `retro-search` |
-|---|---|---|
-| Texto editable en el trigger | No (div no editable) | Sí (`<input>`) |
-| Tipo de opciones | Conjunto cerrado (enum/lookup pequeño) | Catálogo filtrable (lookup grande) |
-| Patrón ARIA | `combobox` no editable | `combobox` editable |
-| Cuándo usar | Estado del pedido, condición del juego, plataforma de set pequeño | Tienda, modelo de hardware, plataforma de catálogo grande |
+|                              | `retro-select`                                                    | `retro-search`                                            |
+| ---------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
+| Texto editable en el trigger | No (div no editable)                                              | Sí (`<input>`)                                            |
+| Tipo de opciones             | Conjunto cerrado (enum/lookup pequeño)                            | Catálogo filtrable (lookup grande)                        |
+| Patrón ARIA                  | `combobox` no editable                                            | `combobox` editable                                       |
+| Cuándo usar                  | Estado del pedido, condición del juego, plataforma de set pequeño | Tienda, modelo de hardware, plataforma de catálogo grande |
 
 **Sin `searchable: boolean` en `retro-select`. Son dos componentes distintos.**
 
@@ -214,6 +212,7 @@ Al cargar el formulario en modo edición (`writeValue` / `patchValue`), `display
 ### No reutiliza `retro-icon-button`
 
 Razones:
+
 1. El hover de `retro-icon-button` (borde + background) compite con el borde del campo.
 2. El tamaño cuadrado (44×44) consume demasiado ancho horizontal.
 3. Es un sub-elemento del campo, no una acción independiente.
@@ -236,7 +235,9 @@ En `retro-form-field.component.scss` (centralizados para todos los campos):
   cursor: pointer;
 
   @media (hover: hover) {
-    &:hover { color: var(--text-hi); }
+    &:hover {
+      color: var(--text-hi);
+    }
   }
 
   &:focus-visible {
@@ -319,7 +320,7 @@ PR único contra `master`, **squash merge** al final.
 ### Fase 5 — Limpieza y QA
 
 - **Commit 13**: Eliminar usos directos de `<retro-form-field>` fuera de lib (verificar con grep).
-- **Commit 14**: `npm run build` + `npm test` + `npm run lint`. Actualizar `docs/TESTING.md`.
+- **Commit 14**: `npm run build` + `npm test` + `npm run lint`. Validar cobertura ≥ 80%.
 
 ---
 

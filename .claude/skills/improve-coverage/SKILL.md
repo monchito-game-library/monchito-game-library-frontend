@@ -1,94 +1,105 @@
 ---
-description: "Improves test coverage to the maximum achievable level for the selected scope (retro or app), respecting documented exclusions and updating the corresponding TESTING.md. Use when the user wants to increase test coverage or fix coverage gaps ('mejora la cobertura', 'sube la cobertura de tests', 'aumenta el coverage')."
+description: "Improves test coverage to the maximum achievable level for the selected scope (retro or app), respecting documented exclusions registered in the in-skill catalog (reference/exclusions.md). Use when the user wants to increase test coverage or fix coverage gaps ('mejora la cobertura', 'sube la cobertura de tests', 'aumenta el coverage')."
 argument-hint: '[retro|app]'
 ---
 
-Mejora la cobertura de tests hasta el máximo alcanzable, respetando las exclusiones documentadas en el TESTING.md del ámbito seleccionado.
+The project has two independent scopes:
 
-El proyecto tiene dos ámbitos independientes:
+| Scope                  | Coverage script               | Threshold              | Reference doc                                             |
+| ---------------------- | ----------------------------- | ---------------------- | --------------------------------------------------------- |
+| `retro` — `lib/retro/` | `npm run test:retro:coverage` | 90% (statements/lines) | `.claude/skills/improve-coverage/reference/exclusions.md` |
+| `app` — `src/`         | `npm run test:app:coverage`   | 80% (statements/lines) | `.claude/skills/improve-coverage/reference/exclusions.md` |
 
-| Ámbito                 | Specs                       | Script de cobertura           | Threshold              | Cobertura actual                                                     | Estado          | Doc de referencia       |
-| ---------------------- | --------------------------- | ----------------------------- | ---------------------- | -------------------------------------------------------------------- | --------------- | ----------------------- |
-| `retro` — `lib/retro/` | ~38 ficheros / ~523 tests   | `npm run test:retro:coverage` | 90% (statements/lines) | 95.35% stmts / 97.09% lines                                          | Techo alcanzado | `docs/TESTING-RETRO.md` |
-| `app` — `src/`         | ~144 ficheros / ~2566 tests | `npm run test:app:coverage`   | 80% (statements/lines) | ≈ por encima del threshold (verificar con npm run test:app:coverage) | —               | `docs/TESTING.md`       |
+> Both coverage passes write to `coverage/monchito-game-library/`. **Never use `npm run test:coverage`** (it chains both passes and the second overwrites the first's lcov). Always run only the script for the scope you are improving.
 
-> ⚠️ Ambas pasadas de cobertura escriben en `coverage/monchito-game-library/`. **Nunca uses `npm run test:coverage`** (encadena ambos y la segunda pisa el lcov de la primera) antes de leer los gaps. Ejecuta siempre solo el script del ámbito que vas a mejorar.
+## Step 0 — Choose scope
 
-## Paso 0 — Elegir ámbito
+If `$ARGUMENTS` is not specified, default to **`app`**: `retro` is already at its practical ceiling (documented in `reference/exclusions.md`). Any remaining gap in `retro` falls into the documented exclusion categories below. If `$ARGUMENTS` is `retro`, read `reference/exclusions.md` § retro exclusions first to confirm the detected gap is not already classified as an exclusion — if it is, stop and report to the user instead of investing effort.
 
-Si no viene especificado en `$ARGUMENTS`, prioriza **`app`**: `retro` ya está en su techo máximo (95.35% statements, 97.09% lines — el resto son artefactos V8/signals documentados en `docs/TESTING-RETRO.md`). En `retro` no hay margen real de mejora; cualquier "gap" restante cae en las categorías de exclusión documentadas.
+## Step 1 — Generate the coverage report
 
-Si `$ARGUMENTS` indica `retro`, antes de empezar revisa `docs/TESTING-RETRO.md` § "Ramas sin cobertura" para confirmar que el gap detectado no cae ya en las exclusiones documentadas. Si cae, detente y reporta al usuario en lugar de invertir esfuerzo.
-
-## Paso 1 — Generar el informe de cobertura
-
-Según el ámbito elegido:
+Run the appropriate script for the chosen scope:
 
 - `retro` → `npm run test:retro:coverage`
 - `app` → `npm run test:app:coverage`
 
-El informe lcov se genera en `coverage/monchito-game-library/lcov.info` (solo refleja el ámbito ejecutado).
+The lcov report is written to `coverage/monchito-game-library/lcov.info` and reflects only the executed scope.
 
-## Paso 2 — Identificar gaps reales
+## Step 2 — Identify real gaps
 
-Lee `coverage/monchito-game-library/lcov.info`. Extrae las entradas con contador `0`:
+Read `coverage/monchito-game-library/lcov.info` and extract entries with a `0` counter:
 
-- `BRDA:linea,bloque,rama,0` → rama no cubierta
-- `DA:linea,0` → línea no ejecutada
-- `FNDA:0,nombre` → función no llamada
+- `BRDA:line,block,branch,0` — uncovered branch
+- `DA:line,0` — unexecuted line
+- `FNDA:0,name` — uncalled function
 
-Antes de actuar sobre cada gap, clasifícalo usando las exclusiones documentadas en el TESTING.md del ámbito:
+Before acting on each gap, classify it using the exclusion table below (canonical reference for both scopes; per-scope details live in `reference/exclusions.md`):
 
-| Categoría                                        | Descripción                                                                         | Acción     |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------- | ---------- |
-| **Cat. 1** — Artefactos V8 en `export class`     | Ramas fantasma en la línea de declaración de clase                                  | Ignorar    |
-| **Cat. 2** — Código muerto / ramas inalcanzables | Condiciones cuyo lado nunca puede ocurrir por contrato del código                   | Ignorar    |
-| **Cat. 3** — Artefactos de Angular signals       | `?.` / `??` dentro de `computed()` o `effect()` que V8 no instrumenta correctamente | Ignorar    |
-| **Lógica deliberadamente no testeada**           | Ítems listados en ese TESTING.md                                                    | Ignorar    |
-| **Todo lo demás**                                | Lógica real sin cobertura                                                           | **Cubrir** |
+| Category                                      | Description                                                                         | Action    |
+| --------------------------------------------- | ----------------------------------------------------------------------------------- | --------- |
+| **Cat. 1** — V8 artifacts on `export class`   | Phantom branches on the class-declaration line                                      | Ignore    |
+| **Cat. 2** — Dead code / unreachable branches | Conditions whose alternate side can never occur by code contract                    | Ignore    |
+| **Cat. 3** — Angular signals artifacts        | `?.` / `??` inside `computed()` or `effect()` that V8 does not instrument correctly | Ignore    |
+| **Deliberately untested logic**               | Items listed in `reference/exclusions.md`                                           | Ignore    |
+| **Everything else**                           | Real logic without coverage                                                         | **Cover** |
 
-Las categorías 1–3 aplican igual en `lib/retro/`. Si encuentras un nuevo artefacto en retro no documentado aún, regístralo en `docs/TESTING-RETRO.md` al cerrar.
+Categories 1–3 apply equally in `lib/retro/`. If you encounter a new artifact not yet documented, register it in `reference/exclusions.md` when closing. When in doubt, compare the line number against `export class` or a `computed()`/`effect()` block. If still uncertain, write the test: if it passes but the branch remains uncovered, it is an artifact.
 
-Cuando tengas dudas, compara el número de línea con `export class` o un bloque `computed()`/`effect()`. En caso de duda razonable, prioriza escribir el test: si pasa y la rama sigue sin cubrirse, es un artefacto.
+## Shared mocks
 
-## Paso 3 — Escribir los tests
+Los mocks reutilizables viven en `src/testing/`. **Antes de declarar un mock inline, comprobar si ya existe aquí.**
 
-Para cada gap real:
+| Fichero                                    | Exporta              | Uso                                                                                                                  |
+| ------------------------------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `activated-route.mock.ts`                  | `mockActivatedRoute` | `{ provide: ActivatedRoute, useValue: mockActivatedRoute }`                                                          |
+| `dialog.mock.ts`                           | `mockDialog`         | `{ provide: RetroDialogService, useValue: mockDialog }`                                                              |
+| `lib/retro/testing/retro-snackbar.mock.ts` | `mockRetroSnackbar`  | `{ provide: RetroSnackbarService, useValue: mockRetroSnackbar }` — importar con `@retro/testing/retro-snackbar.mock` |
+| `location.mock.ts`                         | `mockLocation`       | `{ provide: Location, useValue: mockLocation }`                                                                      |
+| `router.mock.ts`                           | `mockRouter`         | `{ provide: Router, useValue: mockRouter }`                                                                          |
+| `transloco.mock.ts`                        | `mockTransloco`      | `{ provide: TranslocoService, useValue: mockTransloco }`                                                             |
+| `user-context.mock.ts`                     | `mockUserContext`    | `{ provide: UserContextService, useValue: mockUserContext }`                                                         |
 
-1. Localiza el fichero `.spec.ts` correspondiente (misma ruta, extensión `.spec.ts`).
-2. Lee el spec existente para entender el patrón: mocks, helpers, `TestBed`, subjects de breakpoint, etc.
-3. Lee el fichero fuente en la línea del gap.
-4. Añade los `it(...)` mínimos necesarios para cubrir esa rama o línea.
+Si se necesita un nuevo mock reutilizable, añadirlo a esta carpeta y actualizar la tabla.
 
-Convenciones obligatorias:
+> Los mocks de `lib/retro/` viven en `lib/retro/testing/` y se importan con `@retro/testing/*`. Los mocks de la app siguen en `src/testing/`.
 
-- Mocks compartidos según ámbito:
-  - Specs de `src/` → consulta `src/testing/` antes de declarar un mock inline.
-  - Specs de `lib/retro/` → consulta `lib/retro/testing/` antes de declarar un mock inline.
-- `vi.clearAllMocks()` en `beforeEach`.
-- Nombres de tests en español, descriptivos del caso cubierto.
-- No añadas JSDoc en `it(...)` ni en `describe(...)` internos.
-- No cambies tests existentes que ya pasan.
+## Step 3 — Write the tests
 
-## Paso 4 — Verificar
+For each real gap:
 
-1. Ejecuta el script de test del ámbito tocado para ciclos rápidos: `npm run test:retro` o `npm run test:app`.
-2. Antes de cerrar, ejecuta `npm test` para confirmar que el otro ámbito sigue verde.
+1. Locate the corresponding `.spec.ts` file (same path, `.spec.ts` extension).
+2. Read the existing spec to understand the pattern: mocks, helpers, `TestBed`, breakpoint subjects, etc.
+3. Read the source file at the gap's line.
+4. Add the minimal `it(...)` blocks needed to cover that branch or line.
 
-Si un gap sigue sin cubrirse tras pasar el test, es un artefacto — documéntalo en la categoría correcta del TESTING.md del ámbito y continúa.
+Mandatory conventions:
 
-## Paso 5 — Actualizar el TESTING.md del ámbito
+- Shared mocks by scope:
+  - `src/` specs → check `src/testing/` before declaring an inline mock.
+  - `lib/retro/` specs → check `lib/retro/testing/` before declaring an inline mock.
+- `vi.clearAllMocks()` in `beforeEach`.
+- Test names in Spanish, descriptive of the covered case.
+- Do not add JSDoc inside `it(...)` or inner `describe(...)`.
+- Do not modify existing passing tests.
 
-Sincroniza el TESTING.md del ámbito trabajado con los conteos y valores reales:
+## Step 4 — Verify
 
-1. Ejecuta el script de test del ámbito (`npm run test:retro` o `npm run test:app`) y anota el total de ficheros y tests del resumen final de Vitest.
-2. Para cada fichero `.spec.ts` del ámbito, cuenta los bloques `it(` y actualiza los conteos en las tablas por fichero.
-3. Actualiza la tabla resumen final y la sección "Cobertura actual" con los nuevos valores de coverage:
-   - `retro` → `npm run test:retro:coverage`, actualiza `docs/TESTING-RETRO.md`. Threshold: 90% (verificar que coincide con `angular.json` → `configurations.retro-coverage.coverageThresholds`).
-   - `app` → `npm run test:app:coverage`, actualiza `docs/TESTING.md`. Threshold: 80% (verificar que coincide con `angular.json`).
-   - Si el threshold de `angular.json` y el reportado en el TESTING.md no coinciden, alinéalos al valor de `angular.json` y avisa al usuario.
-   - ⚠️ Nunca uses `npm run test:coverage` aquí: encadena ambos y la segunda pasada pisa el lcov de la primera.
-4. Si algún ítem de Categoría 4 ha quedado cubierto, actualiza su entrada en "Ramas sin cobertura — análisis exhaustivo".
-5. Si aparecen nuevos gaps no testeables, añádelos a la categoría correcta con su análisis.
+1. Run the scope's test script for fast feedback: `npm run test:retro` or `npm run test:app`.
+2. Before closing, run `npm test` to confirm the other scope is still green.
 
-No hagas commit ni push.
+If a gap remains uncovered after the test passes, it is an artifact — document it under the correct category in `reference/exclusions.md` and continue.
+
+## Step 5 — Update the exclusions catalog
+
+Sync `reference/exclusions.md` with any new findings from this run:
+
+1. Run the scope's coverage script and note the final coverage values from the Vitest summary.
+   - `retro` → `npm run test:retro:coverage`. Verify the threshold matches `angular.json` → `configurations.retro-coverage.coverageThresholds`.
+   - `app` → `npm run test:app:coverage`. Verify the threshold matches `angular.json`.
+   - If the threshold in `angular.json` and the measured value differ, notify the user.
+2. If any previously excluded item has become covered, remove or mark it as resolved in `reference/exclusions.md`.
+3. If new non-testable gaps were confirmed as artifacts during this run, add them to the correct category in `reference/exclusions.md` with a brief analysis.
+
+> Never use `npm run test:coverage` here: it chains both passes and the second overwrites the first's lcov.
+
+Do not commit or push.

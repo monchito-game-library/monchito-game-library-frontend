@@ -1,83 +1,83 @@
 # retro-input
 
-Campo de texto self-contained Terminal Collector. Internaliza `retro-form-field` + label + input nativo y los gestiona como una unidad.
+Self-contained Terminal Collector text field. Internalises `retro-form-field` + label + native input and manages them as a single unit.
 
-**Selector:** `retro-input` · **Standalone:** sí · **CVA:** sí
+**Selector:** `retro-input` · **Standalone:** yes · **CVA:** yes
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: necesitas un campo de texto de una sola línea con label integrado, validación reactiva y soporte para `formControlName` / `ngModel`.
-- NO usar cuando: el texto es multilínea — usar `retro-textarea`. Para búsqueda con autocomplete, usar `retro-search`.
+- Use when: you need a single-line text field with an integrated label, reactive validation, and support for `formControlName` / `ngModel`.
+- Do NOT use when: the text is multi-line — use `retro-textarea`. For search with autocomplete, use `retro-search`.
 
 ## API — Inputs
 
-| Nombre           | Tipo Angular                                                                 | Default     | Descripción                                                                               |
-| ---------------- | ---------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- |
-| `label`          | `InputSignal<string>`                                                        | `''`        | Texto del label. Si está vacío, el label no se renderiza.                                 |
-| `placeholder`    | `InputSignal<string>`                                                        | `''`        | Placeholder del input nativo.                                                             |
-| `hint`           | `InputSignal<string \| null>`                                                | `null`      | Mensaje de ayuda bajo el campo.                                                           |
-| `error`          | `InputSignal<string \| null>`                                                | `null`      | Mensaje de error bajo el campo.                                                           |
-| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>`                                          | `'lg'`      | Altura del campo: sm (32px), md (40px), lg (44px).                                        |
-| `prefixIcon`     | `InputSignal<string \| null>`                                                | `null`      | Nombre de icono Material decorativo en el prefix. Mutuamente excluyente con `prefixText`. |
-| `prefixText`     | `InputSignal<string \| null>`                                                | `null`      | Texto corto de prompt terminal (p.ej. `"$ "`). Mutuamente excluyente con `prefixIcon`.    |
-| `suffixIcon`     | `InputSignal<string \| null>`                                                | `null`      | Nombre de icono Material decorativo en el suffix.                                         |
-| `clearable`      | `InputSignal<boolean>`                                                       | `false`     | Muestra el botón X para limpiar cuando el campo tiene valor.                              |
-| `clearAriaLabel` | `InputSignal<string>`                                                        | `'Limpiar'` | `aria-label` del botón limpiar.                                                           |
-| `hideSubscript`  | `InputSignal<boolean>`                                                       | `false`     | Oculta el bloque subscript (hint/error). Útil en campos sin validación visible.           |
-| `type`           | `InputSignal<'text' \| 'email' \| 'password' \| 'number' \| 'tel' \| 'url'>` | `'text'`    | Tipo del input nativo.                                                                    |
-| `autocomplete`   | `InputSignal<string>`                                                        | `'off'`     | Atributo `autocomplete` del input nativo.                                                 |
-| `maxlength`      | `InputSignal<number \| null>`                                                | `null`      | Longitud máxima de caracteres. `null` = sin límite.                                       |
-| `readonly`       | `InputSignal<boolean>`                                                       | `false`     | El input es de solo lectura (no editable, pero el valor va al formulario).                |
+| Name             | Angular type                                                                 | Default     | Description                                                                             |
+| ---------------- | ---------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------- |
+| `label`          | `InputSignal<string>`                                                        | `''`        | Label text. If empty, the label is not rendered.                                        |
+| `placeholder`    | `InputSignal<string>`                                                        | `''`        | Native input placeholder.                                                               |
+| `hint`           | `InputSignal<string \| null>`                                                | `null`      | Helper message below the field.                                                         |
+| `error`          | `InputSignal<string \| null>`                                                | `null`      | Error message below the field.                                                          |
+| `size`           | `InputSignal<'sm' \| 'md' \| 'lg'>`                                          | `'lg'`      | Field height: sm (32px), md (40px), lg (44px).                                          |
+| `prefixIcon`     | `InputSignal<string \| null>`                                                | `null`      | Decorative Material icon name in the prefix area. Mutually exclusive with `prefixText`. |
+| `prefixText`     | `InputSignal<string \| null>`                                                | `null`      | Short terminal prompt text (e.g. `"$ "`). Mutually exclusive with `prefixIcon`.         |
+| `suffixIcon`     | `InputSignal<string \| null>`                                                | `null`      | Decorative Material icon name in the suffix area.                                       |
+| `clearable`      | `InputSignal<boolean>`                                                       | `false`     | Shows the X clear button when the field has a value.                                    |
+| `clearAriaLabel` | `InputSignal<string>`                                                        | `'Limpiar'` | `aria-label` for the clear button.                                                      |
+| `hideSubscript`  | `InputSignal<boolean>`                                                       | `false`     | Hides the subscript block (hint/error). Useful for fields without visible validation.   |
+| `type`           | `InputSignal<'text' \| 'email' \| 'password' \| 'number' \| 'tel' \| 'url'>` | `'text'`    | Native input type.                                                                      |
+| `autocomplete`   | `InputSignal<string>`                                                        | `'off'`     | `autocomplete` attribute of the native input.                                           |
+| `maxlength`      | `InputSignal<number \| null>`                                                | `null`      | Maximum character length. `null` = no limit.                                            |
+| `readonly`       | `InputSignal<boolean>`                                                       | `false`     | The input is read-only (not editable, but its value is included in the form).           |
 
 ## API — Outputs
 
-| Nombre    | Tipo Angular                      | Descripción                          |
-| --------- | --------------------------------- | ------------------------------------ |
-| `cleared` | `OutputEmitterRef<void>`          | Se emite al pulsar el botón limpiar. |
-| `blur`    | `OutputEmitterRef<FocusEvent>`    | Blur del input nativo.               |
-| `focus`   | `OutputEmitterRef<FocusEvent>`    | Focus del input nativo.              |
-| `enter`   | `OutputEmitterRef<KeyboardEvent>` | Pulsación de Enter en el input.      |
+| Name      | Angular type                      | Description                               |
+| --------- | --------------------------------- | ----------------------------------------- |
+| `cleared` | `OutputEmitterRef<void>`          | Emitted when the clear button is pressed. |
+| `blur`    | `OutputEmitterRef<FocusEvent>`    | Blur event from the native input.         |
+| `focus`   | `OutputEmitterRef<FocusEvent>`    | Focus event from the native input.        |
+| `enter`   | `OutputEmitterRef<KeyboardEvent>` | Enter key press on the input.             |
 
 ## Slots
 
-| Selector        | Tipo esperado                | Descripción                                                                                                                                 |
-| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[retroPrefix]` | icono, botón u otro elemento | Contenido con comportamiento propio en el área de prefix (p.ej. `retro-icon-button`). Se renderiza después del `prefixIcon` / `prefixText`. |
-| `[retroSuffix]` | icono, botón u otro elemento | Contenido con comportamiento propio en el área de suffix. Se renderiza después del `suffixIcon`.                                            |
+| Selector        | Expected content              | Description                                                                                                               |
+| --------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `[retroPrefix]` | icon, button or other element | Content with its own behaviour in the prefix area (e.g. `retro-icon-button`). Rendered after `prefixIcon` / `prefixText`. |
+| `[retroSuffix]` | icon, button or other element | Content with its own behaviour in the suffix area. Rendered after `suffixIcon`.                                           |
 
-## Contrato CVA
+## CVA Contract
 
-- `writeValue(value)`: acepta `string | null`; `null` normaliza a `''` internamente.
-- `registerOnChange`: emite `string` (`emptyValue: ''` — nunca emite `null` al formulario).
-- `setDisabledState`: refleja `disabled`.
+- `writeValue(value)`: accepts `string | null`; `null` normalises to `''` internally.
+- `registerOnChange`: emits `string` (`emptyValue: ''` — never emits `null` to the form).
+- `setDisabledState`: reflects `disabled`.
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-input
-  label="Correo electrónico"
+  label="Email"
   formControlName="email"
   type="email"
-  placeholder="usuario@ejemplo.com"
+  placeholder="user@example.com"
   [clearable]="true"
   prefixIcon="mail"
   [error]="emailError()" />
 ```
 
 ```html
-<!-- Con slot retroSuffix personalizado -->
+<!-- With custom retroSuffix slot -->
 <retro-input label="URL" formControlName="url">
   <retro-icon-button retroSuffix icon="open_in_new" (clicked)="openUrl()" />
 </retro-input>
 ```
 
 ```html
-<!-- Con prefijo de prompt terminal -->
-<retro-input label="Comando" formControlName="command" prefixText="$ " placeholder="npm install" />
+<!-- With terminal prompt prefix -->
+<retro-input label="Command" formControlName="command" prefixText="$ " placeholder="npm install" />
 ```
 
 ## Gotchas
 
-- Al vaciar el campo (borrado manual o botón clear), el formulario recibe `''`, no `null`. Los validadores `Validators.required` detectan el campo vacío correctamente.
-- `prefixIcon` y `prefixText` son mutuamente excluyentes en el template: si ambos tienen valor, `prefixText` tiene prioridad.
-- El slot `[retroPrefix]` se renderiza siempre, incluso si también hay `prefixIcon` o `prefixText`. Usa uno u otro para evitar duplicados visuales.
+- When the field is cleared (manual deletion or clear button), the form receives `''`, not `null`. `Validators.required` correctly detects the empty field.
+- `prefixIcon` and `prefixText` are mutually exclusive in the template: if both have a value, `prefixText` takes priority.
+- The `[retroPrefix]` slot is always rendered, even when `prefixIcon` or `prefixText` is also present. Use one or the other to avoid visual duplicates.

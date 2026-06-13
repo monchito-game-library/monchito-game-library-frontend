@@ -1,13 +1,13 @@
 # retro-dialog
 
-Servicio + directivas para abrir componentes como dialogs modales. Reemplaza `MatDialog` de Angular Material.
+Service + directives to open components as modal dialogs. Replaces Angular Material's `MatDialog`.
 
-**Servicio:** `RetroDialogService` · inyectable en `root`
+**Service:** `RetroDialogService` · injectable in `root`
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita un modal bloqueante con título, contenido y acciones (confirmaciones, formularios, detalles expandidos).
-- NO usar cuando: el contenido es un panel no modal o un overlay sin estructura de dialog — usar `RetroOverlayService` directamente.
+- Use when: you need a blocking modal with a title, content, and actions (confirmations, forms, expanded details).
+- Do NOT use when: the content is a non-modal panel or an overlay without dialog structure — use `RetroOverlayService` directly.
 
 ## API — RetroDialogService
 
@@ -18,79 +18,79 @@ open<T, D = unknown, R = unknown>(
 ): RetroDialogRef<T, R>
 ```
 
-Abre `component` como dialog modal y devuelve un `RetroDialogRef` para controlarlo.
+Opens `component` as a modal dialog and returns a `RetroDialogRef` to control it.
 
 ## RetroDialogConfig\<D\>
 
-| Propiedad        | Tipo                                           | Default            | Descripción                                                              |
-| ---------------- | ---------------------------------------------- | ------------------ | ------------------------------------------------------------------------ |
-| `data`           | `D`                                            | —                  | Datos inyectables en el componente via `RETRO_DIALOG_DATA`.              |
-| `disableClose`   | `boolean`                                      | `false`            | Si `true`, Escape, backdrop y `[retroDialogClose]` no cierran el dialog. |
-| `width`          | `string`                                       | —                  | Anchura del panel (ej: `'400px'`).                                       |
-| `maxWidth`       | `string`                                       | —                  | Anchura máxima del panel.                                                |
-| `panelClass`     | `string \| string[]`                           | —                  | Clase(s) CSS adicionales para el panel.                                  |
-| `ariaLabel`      | `string`                                       | —                  | Etiqueta ARIA del dialog (alternativa a `ariaLabelledBy`).               |
-| `ariaLabelledBy` | `string`                                       | —                  | ID del elemento que actúa como título (`aria-labelledby`).               |
-| `autoFocus`      | `'first-tabbable' \| 'first-heading' \| false` | `'first-tabbable'` | Estrategia de foco inicial. Se ignora si `disableClose` es `true`.       |
-| `restoreFocus`   | `boolean`                                      | `true`             | Si `true`, restaura el foco al elemento previo al cerrar.                |
+| Property         | Type                                           | Default            | Description                                                                      |
+| ---------------- | ---------------------------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `data`           | `D`                                            | —                  | Data injectable into the component via `RETRO_DIALOG_DATA`.                      |
+| `disableClose`   | `boolean`                                      | `false`            | If `true`, Escape, backdrop, and `[retroDialogClose]` will not close the dialog. |
+| `width`          | `string`                                       | —                  | Panel width (e.g. `'400px'`).                                                    |
+| `maxWidth`       | `string`                                       | —                  | Maximum panel width.                                                             |
+| `panelClass`     | `string \| string[]`                           | —                  | Additional CSS class(es) for the panel.                                          |
+| `ariaLabel`      | `string`                                       | —                  | ARIA label for the dialog (alternative to `ariaLabelledBy`).                     |
+| `ariaLabelledBy` | `string`                                       | —                  | ID of the element acting as the title (`aria-labelledby`).                       |
+| `autoFocus`      | `'first-tabbable' \| 'first-heading' \| false` | `'first-tabbable'` | Initial focus strategy. Ignored when `disableClose` is `true`.                   |
+| `restoreFocus`   | `boolean`                                      | `true`             | If `true`, restores focus to the previously focused element on close.            |
 
 ## RetroDialogRef\<T, R\>
 
-| Miembro             | Tipo                         | Descripción                                                                                         |
-| ------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| `close(result?)`    | `(result?: R) => void`       | Cierra el dialog. El valor opcional se emite en `afterClosed()`.                                    |
-| `afterClosed()`     | `Observable<R \| undefined>` | Emite una vez al cerrarse, con el resultado pasado a `close()` o `undefined` si no se pasó ninguno. |
-| `componentInstance` | `T \| null`                  | Instancia del componente proyectado en el dialog.                                                   |
-| `disableClose`      | `boolean`                    | Refleja si el cierre está deshabilitado.                                                            |
-| `backdropClick$`    | `Observable<MouseEvent>`     | Emite al hacer click en el backdrop.                                                                |
-| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emite eventos de teclado dentro del dialog.                                                         |
+| Member              | Type                         | Description                                                                                   |
+| ------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `close(result?)`    | `(result?: R) => void`       | Closes the dialog. The optional value is emitted in `afterClosed()`.                          |
+| `afterClosed()`     | `Observable<R \| undefined>` | Emits once on close, with the result passed to `close()` or `undefined` if none was provided. |
+| `componentInstance` | `T \| null`                  | Instance of the component projected into the dialog.                                          |
+| `disableClose`      | `boolean`                    | Reflects whether closing is disabled.                                                         |
+| `backdropClick$`    | `Observable<MouseEvent>`     | Emits when the backdrop is clicked.                                                           |
+| `keydownEvents$`    | `Observable<KeyboardEvent>`  | Emits keyboard events inside the dialog.                                                      |
 
 ## Token — RETRO_DIALOG_DATA
 
-Inyectar en el componente dialog para acceder a los datos pasados en `config.data`.
+Inject into the dialog component to access the data passed in `config.data`.
 
 ```typescript
 private readonly _data = inject(RETRO_DIALOG_DATA);
 ```
 
-Equivale a `MAT_DIALOG_DATA` de Angular Material.
+Equivalent to Angular Material's `MAT_DIALOG_DATA`.
 
-## Directivas de template
+## Template directives
 
-| Directiva                     | Selector               | Descripción                                                                            |
-| ----------------------------- | ---------------------- | -------------------------------------------------------------------------------------- |
-| `RetroDialogTitleDirective`   | `[retroDialogTitle]`   | Aplica `role="heading"` + `aria-level="2"` para semántica accesible.                   |
-| `RetroDialogContentDirective` | `[retroDialogContent]` | Aplica clase CSS `retro-dialog__content` (scroll y padding).                           |
-| `RetroDialogActionsDirective` | `[retroDialogActions]` | Flex-row de acciones. Input `align`: `'start' \| 'center' \| 'end'` (default `'end'`). |
-| `RetroDialogCloseDirective`   | `[retroDialogClose]`   | Cierra el dialog al hacer click, pasando el valor del binding como resultado.          |
+| Directive                     | Selector               | Description                                                                           |
+| ----------------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| `RetroDialogTitleDirective`   | `[retroDialogTitle]`   | Applies `role="heading"` + `aria-level="2"` for accessible semantics.                 |
+| `RetroDialogContentDirective` | `[retroDialogContent]` | Applies the CSS class `retro-dialog__content` (scroll and padding).                   |
+| `RetroDialogActionsDirective` | `[retroDialogActions]` | Flex-row of actions. Input `align`: `'start' \| 'center' \| 'end'` (default `'end'`). |
+| `RetroDialogCloseDirective`   | `[retroDialogClose]`   | Closes the dialog on click, passing the binding value as the result.                  |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<!-- template del componente dialog -->
-<h2 retroDialogTitle>Título del dialog</h2>
+<!-- dialog component template -->
+<h2 retroDialogTitle>Dialog title</h2>
 
-<div retroDialogContent>Contenido del dialog.</div>
+<div retroDialogContent>Dialog content.</div>
 
 <div retroDialogActions>
-  <retro-button label="CANCELAR" [retroDialogClose]="undefined" />
-  <retro-button label="CONFIRMAR" variant="primary" [retroDialogClose]="true" />
+  <retro-button label="CANCEL" [retroDialogClose]="undefined" />
+  <retro-button label="CONFIRM" variant="primary" [retroDialogClose]="true" />
 </div>
 ```
 
 ```typescript
-// abrir el dialog
-const ref = this._dialog.open(MiDialogComponent, { data: { id: 42 } });
+// open the dialog
+const ref = this._dialog.open(MyDialogComponent, { data: { id: 42 } });
 ref.afterClosed().subscribe((result: boolean | undefined) => {
   if (result) {
-    /* confirmado */
+    /* confirmed */
   }
 });
 ```
 
 ## Gotchas
 
-- `afterClosed()` devuelve `Observable<R | undefined>`, no `Observable<R>`. Cuando el dialog se cierra sin pasar resultado (Escape, backdrop, `close()` sin argumento), emite `undefined`.
-- `disableClose: true` desactiva **a la vez** el cierre por Escape, click en backdrop **y** la directiva `[retroDialogClose]`. Si se necesita un botón de cancelar que sí funcione con `disableClose` activo, llamar a `dialogRef.close()` directamente desde el componente.
-- `autoFocus` se fuerza a `false` internamente cuando `disableClose` es `true`; no es necesario especificarlo en la config.
-- `RETRO_DIALOG_DATA` es un re-export de `RETRO_OVERLAY_DATA`. Importar siempre desde `retro-dialog.service.ts`, no desde `retro-overlay`.
+- `afterClosed()` returns `Observable<R | undefined>`, not `Observable<R>`. When the dialog is closed without passing a result (Escape, backdrop, `close()` with no argument), it emits `undefined`.
+- `disableClose: true` simultaneously disables closing via Escape, backdrop click, **and** the `[retroDialogClose]` directive. If you need a cancel button that still works while `disableClose` is active, call `dialogRef.close()` directly from the component.
+- `autoFocus` is internally forced to `false` when `disableClose` is `true`; there is no need to specify it in the config.
+- `RETRO_DIALOG_DATA` is a re-export of `RETRO_OVERLAY_DATA`. Always import it from `retro-dialog.service.ts`, not from `retro-overlay`.

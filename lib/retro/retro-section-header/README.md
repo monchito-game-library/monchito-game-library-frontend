@@ -1,38 +1,38 @@
 # retro-section-header
 
-Cabecera de sección estilo terminal de la lib Terminal Collector. Muestra `> SECTION_NAME [count]` con borde inferior 1px. Acepta acciones proyectadas a la derecha.
+Terminal Collector terminal-style section header. Displays `> SECTION_NAME [count]` with a 1px bottom border. Accepts actions projected to the right.
 
-**Selector:** `retro-section-header` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-section-header` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita delimitar visualmente una sección de contenido con título y contador opcional, en estilo terminal.
-- NO usar cuando: se necesita una cabecera de página completa con navegación — en ese caso usar el componente de cabecera de page correspondiente.
+- Use when: a content section needs to be visually delimited with a title and optional counter, in terminal style.
+- Do NOT use when: a full page header with navigation is needed — use the appropriate page header component instead.
 
 ## API — Inputs
 
-| Nombre  | Tipo Angular                            | Default | Descripción                                               |
-| ------- | --------------------------------------- | ------- | --------------------------------------------------------- |
-| `label` | `InputSignal<string> (required)`        | —       | Texto de la sección. Se muestra en uppercase en pantalla. |
-| `count` | `InputSignal<number \| string \| null>` | `null`  | Contador opcional mostrado entre corchetes `[N]`.         |
+| Name    | Angular type                            | Default | Description                                          |
+| ------- | --------------------------------------- | ------- | ---------------------------------------------------- |
+| `label` | `InputSignal<string> (required)`        | —       | Section text. Displayed in uppercase on screen.      |
+| `count` | `InputSignal<number \| string \| null>` | `null`  | Optional counter displayed in square brackets `[N]`. |
 
 ## Slots
 
-| Selector         | Tipo esperado             | Descripción                                                                |
-| ---------------- | ------------------------- | -------------------------------------------------------------------------- |
-| `[slot=actions]` | botones, iconos de acción | Proyectado al extremo derecho de la cabecera mediante `margin-left: auto`. |
+| Selector         | Expected content      | Description                                                       |
+| ---------------- | --------------------- | ----------------------------------------------------------------- |
+| `[slot=actions]` | buttons, action icons | Projected to the far right of the header via `margin-left: auto`. |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<!-- Sin contador ni acciones -->
-<retro-section-header label="JUEGOS" />
+<!-- Without counter or actions -->
+<retro-section-header label="GAMES" />
 
-<!-- Con contador -->
-<retro-section-header label="JUEGOS" [count]="games().length" />
+<!-- With counter -->
+<retro-section-header label="GAMES" [count]="games().length" />
 
-<!-- Con acciones a la derecha -->
+<!-- With actions on the right -->
 <retro-section-header label="HARDWARE" [count]="consoles().length">
-  <retro-button slot="actions" label="AÑADIR" variant="primary" (clicked)="onAdd()" />
+  <retro-button slot="actions" label="ADD" variant="primary" (clicked)="onAdd()" />
 </retro-section-header>
 ```

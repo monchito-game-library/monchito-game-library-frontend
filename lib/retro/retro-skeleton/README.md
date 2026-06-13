@@ -1,27 +1,27 @@
 # retro-skeleton
 
-Placeholder de carga reutilizable Terminal Collector. Rectángulo plano sin border-radius con shimmer horizontal CRT. Sirve como sustituto visual del contenido mientras se carga datos asíncronos.
+Reusable Terminal Collector loading placeholder. A flat rectangle with no border-radius and a horizontal CRT shimmer. Used as a visual substitute for content while asynchronous data is loading.
 
-**Selector:** `retro-skeleton` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-skeleton` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se está cargando contenido asíncrono (lista de juegos, detalle de tarjeta, imagen) y se quiere evitar el layout shift mostrando un placeholder de tamaño equivalente.
-- NO usar cuando: la carga es instantánea o el spinner de `retro-button` con `loading` ya cubre el caso.
+- Use when: async content is loading (game list, card detail, image) and you want to avoid layout shift by showing a same-size placeholder.
+- Do NOT use when: loading is instantaneous or the `retro-button` spinner with `loading` already covers the case.
 
 ## API — Inputs
 
-| Nombre   | Tipo Angular                    | Default  | Descripción                                                             |
-| -------- | ------------------------------- | -------- | ----------------------------------------------------------------------- |
-| `width`  | `InputSignal<string>`           | `'100%'` | Anchura CSS del bloque (p. ej. `'120px'`, `'100%'`).                    |
-| `height` | `InputSignal<string>`           | `'1rem'` | Altura CSS del bloque (p. ej. `'1rem'`, `'120px'`).                     |
-| `shape`  | `InputSignal<LibSkeletonShape>` | `'line'` | Alias semántico opcional. No altera la geometría (siempre rectangular). |
+| Name     | Angular type                    | Default  | Description                                                            |
+| -------- | ------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `width`  | `InputSignal<string>`           | `'100%'` | CSS width of the block (e.g. `'120px'`, `'100%'`).                     |
+| `height` | `InputSignal<string>`           | `'1rem'` | CSS height of the block (e.g. `'1rem'`, `'120px'`).                    |
+| `shape`  | `InputSignal<LibSkeletonShape>` | `'line'` | Optional semantic alias. Does not alter geometry (always rectangular). |
 
-## Tipos exportados
+## Exported Types
 
 - `LibSkeletonShape` — `'line' \| 'square' \| 'block'`
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-skeleton width="200px" height="1.25rem" /> <retro-skeleton width="100%" height="120px" shape="block" />
@@ -29,7 +29,7 @@ Placeholder de carga reutilizable Terminal Collector. Rectángulo plano sin bord
 
 ## Gotchas
 
-- La geometría es siempre rectangular (border-radius 0); el input `shape` es un alias semántico sin efecto visual en esta versión — reservado para tweaks futuros.
-- El shimmer usa un gradiente de 4 stops con un tinte violeta CRT `rgba(124, 58, 237, 0.14)` en el pico (40%) alineado con el color primario de Terminal Collector. El tinte solo es perceptible durante la animación (1.4s lineal infinita).
-- Con `prefers-reduced-motion: reduce`, la animación se detiene completamente y el tinte desaparece; el fondo queda como un plano `--bg-surface-hi`.
-- El componente emite `role="status"` con `aria-busy="true"` y `aria-live="polite"`, por lo que los lectores de pantalla anunciarán el cambio cuando el skeleton desaparezca y el contenido real aparezca.
+- Geometry is always rectangular (border-radius 0); the `shape` input is a semantic alias with no visual effect in this version — reserved for future tweaks.
+- The shimmer uses a 4-stop gradient with a CRT violet tint `rgba(124, 58, 237, 0.14)` at the peak (40%), aligned with the Terminal Collector primary color. The tint is only perceptible during the animation (1.4s linear infinite).
+- With `prefers-reduced-motion: reduce`, the animation stops completely and the tint disappears; the background becomes a flat `--bg-surface-hi`.
+- The component emits `role="status"` with `aria-busy="true"` and `aria-live="polite"`, so screen readers will announce the change when the skeleton disappears and real content appears.

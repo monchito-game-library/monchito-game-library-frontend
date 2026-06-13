@@ -1,37 +1,37 @@
 # retro-data-row
 
-Fila de datos estilo `ls -la`. Muestra LABEL (mono uppercase) a la izquierda, separador de puntos punteados, y VALUE (mono) a la derecha.
+`ls -la`-style data row. Displays a LABEL (mono uppercase) on the left, a dotted separator, and a VALUE (mono) on the right.
 
-**Selector:** `retro-data-row` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-data-row` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita mostrar pares label/valor estáticos (ficha de detalle, metadatos de un juego, propiedades de un objeto).
-- NO usar cuando: la fila necesita interactividad, acciones o zonas leading/trailing — en ese caso usar `retro-list-item`.
+- Use when: static label/value pairs need to be displayed (detail sheet, game metadata, object properties).
+- Do NOT use when: the row needs interactivity, actions, or leading/trailing zones — use `retro-list-item` instead.
 
 ## API — Inputs
 
-| Nombre       | Tipo Angular                            | Default     | Descripción                                                              |
+| Name         | Angular type                            | Default     | Description                                                              |
 | ------------ | --------------------------------------- | ----------- | ------------------------------------------------------------------------ |
-| `label`      | `InputSignal<string> (required)`        | —           | Etiqueta del campo. Se muestra en uppercase en pantalla.                 |
-| `value`      | `InputSignal<string \| number \| null>` | `null`      | Valor del campo. Si es `null`, se renderiza el `ng-content` en su lugar. |
-| `icon`       | `InputSignal<string \| undefined>`      | `undefined` | Nombre del icono Material Icons mostrado junto al label. Opcional.       |
-| `emphasized` | `InputSignal<boolean>`                  | `false`     | Si `true`, el valor se renderiza en tamaño y peso mayor (énfasis).       |
+| `label`      | `InputSignal<string> (required)`        | —           | Field label. Displayed in uppercase on screen.                           |
+| `value`      | `InputSignal<string \| number \| null>` | `null`      | Field value. If `null`, the `ng-content` is rendered instead.            |
+| `icon`       | `InputSignal<string \| undefined>`      | `undefined` | Material Icons icon name displayed next to the label. Optional.          |
+| `emphasized` | `InputSignal<boolean>`                  | `false`     | If `true`, the value is rendered at a larger size and weight (emphasis). |
 
 ## Slots
 
-| Selector    | Tipo esperado                | Descripción                                                               |
-| ----------- | ---------------------------- | ------------------------------------------------------------------------- |
-| _(default)_ | bloque libre (chips, stars…) | Visible solo cuando `value` es `null`. Sustituye al valor de texto plano. |
+| Selector    | Expected content             | Description                                                         |
+| ----------- | ---------------------------- | ------------------------------------------------------------------- |
+| _(default)_ | free block (chips, stars...) | Visible only when `value` is `null`. Replaces the plain-text value. |
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
 <retro-data-row label="PLATFORM" [value]="game.platform" />
 <retro-data-row label="ID" [value]="game.id" icon="badge" />
 <retro-data-row label="RATING" [emphasized]="true" [value]="game.score" />
 
-<!-- Valor complejo: ng-content cuando value es null -->
+<!-- Complex value: ng-content when value is null -->
 <retro-data-row label="RATING">
   <span class="stars">★★★★☆</span>
 </retro-data-row>
@@ -39,5 +39,5 @@ Fila de datos estilo `ls -la`. Muestra LABEL (mono uppercase) a la izquierda, se
 
 ## Gotchas
 
-- En pantallas estrechas (< 480px) los puntos punteados se ocultan para evitar recortes; label y valor quedan alineados por grid sin separador visual.
-- El slot default solo se proyecta cuando `value()` es `null`. Si se pasa `value` junto con contenido proyectado, el contenido proyectado queda oculto.
+- On narrow screens (< 480px) the dotted separator is hidden to prevent clipping; label and value remain aligned via grid without a visual separator.
+- The default slot is only projected when `value()` is `null`. If `value` is passed alongside projected content, the projected content is hidden.

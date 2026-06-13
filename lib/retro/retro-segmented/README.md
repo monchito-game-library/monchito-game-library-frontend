@@ -1,93 +1,65 @@
 # retro-segmented
 
-Control de selección segmentada exclusiva (equivalente a un `radiogroup`) con estética terminal/neón. Permite al usuario elegir una opción de un conjunto de segmentos; solo puede haber un segmento activo a la vez.
+Exclusive segmented selection control (equivalent to a `radiogroup`) with terminal/neon aesthetics. Allows the user to choose one option from a set of segments; only one segment can be active at a time.
 
-**Selector:** `retro-segmented` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-segmented` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita seleccionar una opción de un conjunto pequeño y fijo de alternativas mutuamente exclusivas, visible de un vistazo.
-- NO usar cuando: el conjunto de opciones es grande o dinámico — considerar `retro-select` en su lugar.
+- Use when: you need to select one option from a small, fixed set of mutually exclusive alternatives, visible at a glance.
+- Do NOT use when: the set of options is large or dynamic — consider `retro-select` instead.
 
 ## API — Inputs
 
-| Nombre      | Tipo Angular                                              | Default     | Descripción                                                                 |
-| ----------- | --------------------------------------------------------- | ----------- | --------------------------------------------------------------------------- |
-| `options`   | `InputSignal<readonly RetroSegmentedOption<T>[]>` (required) | —        | Lista de opciones a mostrar como segmentos.                                 |
-| `value`     | `InputSignal<T \| undefined>`                             | `undefined` | Valor del segmento actualmente seleccionado.                                |
-| `ariaLabel` | `InputSignal<string \| undefined>`                        | `undefined` | Etiqueta `aria-label` para el contenedor `[role=radiogroup]`.               |
-| `disabled`  | `InputSignal<boolean>`                                    | `false`     | Cuando es `true`, el control no responde a interacciones del usuario.       |
+| Name        | Angular type                                                 | Default     | Description                                                     |
+| ----------- | ------------------------------------------------------------ | ----------- | --------------------------------------------------------------- |
+| `options`   | `InputSignal<readonly RetroSegmentedOption<T>[]>` (required) | —           | List of options to display as segments.                         |
+| `value`     | `InputSignal<T \| undefined>`                                | `undefined` | Value of the currently selected segment.                        |
+| `ariaLabel` | `InputSignal<string \| undefined>`                           | `undefined` | `aria-label` for the `[role=radiogroup]` container.             |
+| `disabled`  | `InputSignal<boolean>`                                       | `false`     | When `true`, the control does not respond to user interactions. |
 
 ## API — Outputs
 
-| Nombre    | Tipo Angular          | Descripción                                                              |
+| Name      | Angular type          | Description                                                              |
 | --------- | --------------------- | ------------------------------------------------------------------------ |
-| `changed` | `OutputEmitterRef<T>` | Emite el valor del segmento seleccionado al hacer clic o navegar por teclado. |
+| `changed` | `OutputEmitterRef<T>` | Emits the value of the selected segment on click or keyboard navigation. |
 
-## Tipos exportados
+## Exported Types
 
-- `RetroSegmentedOption<T>` — interfaz para cada opción del control:
+- `RetroSegmentedOption<T>` — interface for each control option:
 
 ```typescript
 interface RetroSegmentedOption<T = string> {
-  readonly value: T;     // Valor asociado a la opción
-  readonly label: string; // Texto visible en el segmento
-  readonly icon?: string; // Nombre del icono Material Icons (opcional)
+  readonly value: T; // Value associated with the option
+  readonly label: string; // Text visible in the segment
+  readonly icon?: string; // Material Icons icon name (optional)
 }
 ```
 
-## Ejemplo básico (tipo `string`)
+## Minimal example
 
 ```typescript
 readonly viewOptions: readonly RetroSegmentedOption[] = [
-  { value: 'grid', label: 'Cuadrícula', icon: 'grid_view' },
-  { value: 'list', label: 'Lista', icon: 'list' },
+  { value: 'grid', label: 'Grid', icon: 'grid_view' },
+  { value: 'list', label: 'List', icon: 'list' },
 ];
 
 selected = signal<string>('grid');
 ```
 
 ```html
-<retro-segmented
-  [options]="viewOptions"
-  [value]="selected()"
-  ariaLabel="Modo de vista"
-  (changed)="selected.set($event)"
-/>
+<retro-segmented [options]="viewOptions" [value]="selected()" ariaLabel="View mode" (changed)="selected.set($event)" />
 ```
 
-## Ejemplo con tipo genérico distinto de `string`
+## Gotchas
 
-```typescript
-type SortOrder = 'asc' | 'desc' | 'relevance';
+- **ARIA semantics and keyboard navigation**: the container receives `role="radiogroup"` and each segment `role="radio"` with `aria-checked` reflecting the selection state. **Roving tabindex** is applied: only the active segment (or the first if no value is set) has `tabindex="0"`; the rest have `tabindex="-1"`.
 
-readonly sortOptions: readonly RetroSegmentedOption<SortOrder>[] = [
-  { value: 'relevance', label: 'Relevancia' },
-  { value: 'asc',       label: 'A → Z' },
-  { value: 'desc',      label: 'Z → A' },
-];
+| Key                        | Action                                                       |
+| -------------------------- | ------------------------------------------------------------ |
+| `ArrowRight` / `ArrowDown` | Next segment (with wrap-around) and automatic selection.     |
+| `ArrowLeft` / `ArrowUp`    | Previous segment (with wrap-around) and automatic selection. |
+| `Home`                     | First segment and automatic selection.                       |
+| `End`                      | Last segment and automatic selection.                        |
 
-sortOrder = signal<SortOrder>('relevance');
-```
-
-```html
-<retro-segmented
-  [options]="sortOptions"
-  [value]="sortOrder()"
-  ariaLabel="Orden de resultados"
-  (changed)="sortOrder.set($event)"
-/>
-```
-
-## Semántica ARIA y navegación por teclado
-
-El contenedor recibe `role="radiogroup"` y cada segmento `role="radio"` con `aria-checked` reflejo del estado de selección. Se aplica **roving tabindex**: solo el segmento activo (o el primero si no hay valor) tiene `tabindex="0"`; el resto tienen `tabindex="-1"`.
-
-| Tecla                        | Acción                                          |
-| ---------------------------- | ----------------------------------------------- |
-| `ArrowRight` / `ArrowDown`   | Siguiente segmento (con wrap-around) y selección automática. |
-| `ArrowLeft` / `ArrowUp`      | Segmento anterior (con wrap-around) y selección automática. |
-| `Home`                       | Primer segmento y selección automática.         |
-| `End`                        | Último segmento y selección automática.         |
-
-La navegación sigue el patrón APG de **activación automática**: mover el foco equivale a seleccionar. Cuando el control está deshabilitado, las interacciones de teclado y ratón no producen efecto.
+- Navigation follows the APG **auto-activation** pattern: moving focus is equivalent to selecting. When the control is disabled, keyboard and mouse interactions have no effect.

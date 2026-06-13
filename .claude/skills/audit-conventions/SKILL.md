@@ -1,57 +1,61 @@
 ---
 description: "Audits the project for convention violations that ESLint does not automatically detect, producing a natural-language report by category. Use when the user suspects non-lint-detectable issues or after running /qa ('audita las convenciones', 'busca violaciones de convenciones', 'revisa el estilo del proyecto')."
-argument-hint: '[ruta]'
+argument-hint: '[path]'
 ---
 
-Audita el proyecto en busca de convenciones que ESLint no detecta automáticamente, produciendo un informe en lenguaje natural. Complementa el pipeline de lint, no lo sustituye: ejecuta `/qa` primero y usa este command solo si sospechas violaciones que el lint no captura.
+Optional argument: $ARGUMENTS — path to analyse. Defaults to `src/app` and `lib/retro/` with the rules applicable to each scope.
 
-Argumento opcional: $ARGUMENTS — ruta a analizar. Por defecto analiza `src/app` y `lib/retro/` con las reglas que apliquen a cada ámbito.
+Run `/qa` first; use this skill only when you suspect violations the linter cannot catch.
 
-## Qué detectar
+## What to detect
 
-Las categorías 1–3 del `detect-architecture-violations` original (imports entre capas, rutas relativas, privados sin `_`) ya las cubre ESLint. Este command se centra en lo que el lint **no** detecta:
+ESLint already covers categories 1–3 from the original `detect-architecture-violations` (cross-layer imports, relative paths, private members without `_`). This skill focuses on what lint **does not** catch.
 
-### 1. Signals sin tipo explícito — `src/app`
+| #   | Category                                    | Scope                   | Pattern to search                                                   |
+| --- | ------------------------------------------- | ----------------------- | ------------------------------------------------------------------- |
+| 1   | Signals without explicit type               | `src/app`               | `= signal\(` without `WritableSignal<` on the same or previous line |
+| 2   | JSDoc `@param` missing `{type}` braces      | `src/app`, `lib/retro/` | `@param (?!\{)` in `.ts` files                                      |
+| 3   | SCSS spacing in `px` (should be `rem`)      | `src/app`, `lib/retro/` | `(gap\|margin\|padding):\s*\d+px` in `.scss` files                  |
+| 4   | SCSS forbidden `&__element` nesting         | `src/app`, `lib/retro/` | `&__` in `.scss` files                                              |
+| 5   | Interfaces/types declared inside components | `src/app`               | `^export (interface\|type) ` in `.component.ts` files               |
+| 6   | `lib/retro/` isolation violation            | `lib/retro/`            | `from '@/` or `from '.*src/` inside `lib/retro/**/*.ts`             |
 
-- `signal(` sin `WritableSignal<T>` declarado explícitamente
-- `computed(` sin tipo de retorno explícito donde no sea obvio
-- Busca: `= signal\(` sin `WritableSignal<` en la misma línea o anterior
+### Rule details
 
-### 2. JSDoc — `@param` sin tipo entre llaves — `src/app` y `lib/retro/`
+**1 — Signals without explicit type**
 
-- Métodos con `@param nombre` sin `{tipo}` (el lint jsdoc estándar no exige el `{tipo}`)
-- Busca: `@param (?!\{)` en ficheros `.ts`
+- `signal(` without an explicit `WritableSignal<T>` declaration.
+- `computed(` without an explicit return type where it is not obvious.
 
-### 3. SCSS — espaciados en `px` prohibidos — `src/app` y `lib/retro/`
+**2 — JSDoc `@param` missing `{type}` braces**
 
-- `gap`, `margin`, `padding` con valor en `px` donde debería ser `rem`
-- Excepción aceptada: valores decorativos en chips/badges (`padding: 2px 8px`)
-- Busca: `(gap|margin|padding):\s*\d+px` en ficheros `.scss`
+- Methods with `@param name` but no `{type}` (standard JSDoc lint does not enforce the braces).
 
-### 4. SCSS — `&__elemento` anidado prohibido — `src/app` y `lib/retro/`
+**3 — SCSS `px` spacing**
 
-- Patrón `&__elemento` que no sea `&--modificador`
-- La convención del proyecto exige clases completas (`.my-component__header`), no `&__header`
-- Busca: `&__` en ficheros `.scss`
+- `gap`, `margin`, `padding` values in `px` where `rem` is required.
+- Accepted exception: decorative values on chips/badges (`padding: 2px 8px`).
 
-### 5. Interfaces o tipos declarados dentro de componentes — `src/app`
+**4 — SCSS `&__element` nesting**
 
-- `export interface` o `export type` en ficheros `.component.ts` — deben estar en `@/interfaces/` o `@/types/`
-- Busca: `^export (interface|type) ` en ficheros `.component.ts`
+- Pattern `&__element` that is not a `&--modifier`.
+- Convention requires full class names (`.my-component__header`), not `&__header`.
 
-### 6. Aislamiento `lib/retro/` ↔ `src/` — `lib/retro/`
+**5 — Types inside components**
 
-- Ficheros bajo `lib/retro/` que importen de `src/` o usen aliases `@/*` (solo pueden usar `@retro/*`, `@retro/testing/*` o paquetes npm)
-- Busca: `from '@/` o `from '.*src/` dentro de `lib/retro/**/*.ts`
+- `export interface` or `export type` in `.component.ts` files — they must live in `@/interfaces/` or `@/types/`.
 
-## Formato del informe
+**6 — `lib/retro/` isolation**
 
-Para cada violación encontrada:
+- Files under `lib/retro/` importing from `src/` or using `@/*` aliases (only `@retro/*`, `@retro/testing/*`, or npm packages are allowed).
 
-- Fichero y línea
-- Tipo de violación (número de categoría arriba)
-- Fragmento de código afectado
-- Sugerencia de corrección
+## Report format
 
-Agrupa por categoría. Al final, da un resumen con el total por tipo.
-Si no hay violaciones en una categoría, indícalo explícitamente.
+Group findings by category. For each violation include:
+
+- File and line number
+- Violation category (number from the table above)
+- Affected code snippet
+- Suggested fix
+
+At the end, provide a summary with the total count per category. If a category has no violations, state it explicitly.

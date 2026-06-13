@@ -1,70 +1,70 @@
 # retro-card
 
-Contenedor neutro de la lib Terminal Collector. Rectángulo borde 1px, fondo `--bg-surface`, sin sombras ni border-radius. Soporta variantes visuales, padding configurable, estado de selección, hover y modo interactivo.
+Neutral container from the Terminal Collector lib. 1px border rectangle, `--bg-surface` background, no shadows or border-radius. Supports visual variants, configurable padding, selection state, hover, and interactive mode.
 
-**Selector:** `retro-card` · **Standalone:** sí · **CVA:** no
+**Selector:** `retro-card` · **Standalone:** yes · **CVA:** no
 
-## Cuándo usar / Cuándo NO usar
+## When to use / When NOT to use
 
-- Usar cuando: se necesita agrupar contenido en un bloque visual delimitado (ficha de juego, panel de detalles, tarjeta de colección).
-- NO usar cuando: la unidad de contenido es una fila dentro de una lista — en ese caso usar `retro-list-item`.
+- Use when: content needs to be grouped in a delimited visual block (game card, detail panel, collection card).
+- Do NOT use when: the content unit is a row inside a list — use `retro-list-item` instead.
 
 ## API — Inputs
 
-| Nombre        | Tipo Angular                                    | Default     | Descripción                                                                                                                                                                                               |
-| ------------- | ----------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `interactive` | `InputSignal<boolean>`                          | `false`     | Activa comportamiento de tarjeta clicable: `role=button`, hover, focus-visible y emisión de `cardClicked`.                                                                                                |
-| `hoverable`   | `InputSignal<boolean>`                          | `false`     | Activa hover de `border-color` sin requerir `interactive`. Cuando `interactive=true` se considera implícitamente activo. Anulado por `disabled=true`.                                                     |
-| `disabled`    | `InputSignal<boolean>`                          | `false`     | Deshabilita la tarjeta: `opacity: 0.5`, `cursor: not-allowed`, `aria-disabled="true"`, sin hover ni focus-visible. `tabindex="-1"` si además es interactiva. Prioridad sobre `interactive` y `hoverable`. |
-| `padding`     | `InputSignal<'none' \| 'sm' \| 'md' \| 'lg'>`   | `'md'`      | Padding interno. `none`=0, `sm`=0.75rem, `md`=1rem (mobile 0.875rem), `lg`=1.5rem/1rem (mobile 1rem).                                                                                                     |
-| `padded`      | `InputSignal<boolean \| undefined>`             | `undefined` | **Deprecated** — usar `padding`. `true` → `'md'`, `false` → `'none'`.                                                                                                                                     |
-| `selected`    | `InputSignal<boolean>`                          | `false`     | Estado visual de selección: box-shadow inset 2px `--border-active` + fondo `--bg-surface-hi`.                                                                                                             |
-| `variant`     | `InputSignal<'default' \| 'accent' \| 'muted'>` | `'default'` | Variante visual. `accent` colorea el borde con `--primary`. `muted` hace el fondo transparente.                                                                                                           |
+| Name          | Angular type                                    | Default     | Description                                                                                                                                                                                          |
+| ------------- | ----------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `interactive` | `InputSignal<boolean>`                          | `false`     | Enables clickable card behaviour: `role=button`, hover, focus-visible, and `cardClicked` emission.                                                                                                   |
+| `hoverable`   | `InputSignal<boolean>`                          | `false`     | Activates `border-color` hover without requiring `interactive`. Implicitly active when `interactive=true`. Overridden by `disabled=true`.                                                            |
+| `disabled`    | `InputSignal<boolean>`                          | `false`     | Disables the card: `opacity: 0.5`, `cursor: not-allowed`, `aria-disabled="true"`, no hover or focus-visible. `tabindex="-1"` if also interactive. Takes priority over `interactive` and `hoverable`. |
+| `padding`     | `InputSignal<'none' \| 'sm' \| 'md' \| 'lg'>`   | `'md'`      | Inner padding. `none`=0, `sm`=0.75rem, `md`=1rem (mobile 0.875rem), `lg`=1.5rem/1rem (mobile 1rem).                                                                                                  |
+| `padded`      | `InputSignal<boolean \| undefined>`             | `undefined` | **Deprecated** — use `padding`. `true` → `'md'`, `false` → `'none'`.                                                                                                                                 |
+| `selected`    | `InputSignal<boolean>`                          | `false`     | Visual selection state: 2px inset box-shadow with `--border-active` + `--bg-surface-hi` background.                                                                                                  |
+| `variant`     | `InputSignal<'default' \| 'accent' \| 'muted'>` | `'default'` | Visual variant. `accent` colours the border with `--primary`. `muted` makes the background transparent.                                                                                              |
 
 ## API — Outputs
 
-| Nombre        | Tipo Angular                   | Descripción                                                                                               |
-| ------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `cardClicked` | `OutputEmitterRef<MouseEvent>` | Emite el `MouseEvent` cuando `interactive=true` y no `disabled`. Click, Enter o Space activan la emisión. |
+| Name          | Angular type                   | Description                                                                                                 |
+| ------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `cardClicked` | `OutputEmitterRef<MouseEvent>` | Emits the `MouseEvent` when `interactive=true` and not `disabled`. Click, Enter, or Space trigger emission. |
 
 ## Slots
 
-| Selector    | Tipo esperado | Descripción                         |
-| ----------- | ------------- | ----------------------------------- |
-| _(default)_ | bloque libre  | Contenido proyectado de la tarjeta. |
+| Selector    | Expected content | Description                    |
+| ----------- | ---------------- | ------------------------------ |
+| _(default)_ | free block       | Projected content of the card. |
 
-## Tokens CSS expuestos
+## Exposed CSS Tokens
 
-| Variable                    | Default                | Descripción                                                                                                              |
-| --------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `--retro-card-hover-border` | `var(--border-active)` | Color de borde en hover cuando `hoverable` o `interactive`. El consumidor puede sobreescribirla (ej. `--dominant-glow`). |
+| Variable                    | Default                | Description                                                                                                      |
+| --------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--retro-card-hover-border` | `var(--border-active)` | Border colour on hover when `hoverable` or `interactive`. The consumer can override it (e.g. `--dominant-glow`). |
 
-## Tipos exportados
+## Exported Types
 
 - `LibCardVariant` — `'default' \| 'accent' \| 'muted'`
 - `RetroCardPadding` — `'none' \| 'sm' \| 'md' \| 'lg'`
 
-## Ejemplo mínimo
+## Minimal example
 
 ```html
-<!-- Tarjeta interactiva con variante accent -->
+<!-- Interactive card with accent variant -->
 <retro-card [interactive]="true" variant="accent" (cardClicked)="onSelect()">
-  <p>Contenido</p>
+  <p>Content</p>
 </retro-card>
 
-<!-- Hover sin click (tarjeta navegable por enlace interno) -->
+<!-- Hover without click (card navigable via inner link) -->
 <retro-card [hoverable]="true">
-  <a routerLink="/detalle">Ver detalle</a>
+  <a routerLink="/detail">View detail</a>
 </retro-card>
 
-<!-- Estado deshabilitado mientras carga -->
+<!-- Disabled state while loading -->
 <retro-card [interactive]="true" [disabled]="isLoading()" (cardClicked)="onSelect()">
-  <p>No clicable mientras carga</p>
+  <p>Not clickable while loading</p>
 </retro-card>
 ```
 
 ## Gotchas
 
-- `padded` está deprecated. Migrarlo a `padding="md"` o `padding="none"` según el valor booleano que usaba.
-- `disabled` tiene prioridad total sobre `interactive` y `hoverable`: bloquea clicks, elimina hover y saca la tarjeta del tab order (`tabindex="-1"`).
-- `selected` es independiente de `interactive`: una tarjeta puede mostrarse seleccionada sin ser clicable.
+- `padded` is deprecated. Migrate it to `padding="md"` or `padding="none"` according to the boolean value it used.
+- `disabled` takes full priority over `interactive` and `hoverable`: it blocks clicks, removes hover, and takes the card out of the tab order (`tabindex="-1"`).
+- `selected` is independent of `interactive`: a card can appear selected without being clickable.

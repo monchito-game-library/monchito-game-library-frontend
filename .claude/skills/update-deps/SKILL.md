@@ -1,96 +1,94 @@
 ---
 description: "Updates project dependencies to their latest safe versions: auto-applies patches and minors, stops at majors or incompatible peer-deps for user decision, enforces exact versions (no ^ or ~), and verifies build/test/lint/knip before finishing. Use when the user wants to update dependencies ('actualiza las dependencias', 'sube las deps', 'update dependencies')."
-argument-hint: '[paquete1 paquete2...]'
+argument-hint: '[package1 package2...]'
 ---
 
-Actualiza las dependencias del proyecto a sus últimas versiones seguras siguiendo la convención del proyecto. Aplica patches y minors de forma automatizada y se detiene en majors o peer-deps incompatibles para que decida el usuario.
+> Flow context: `CLAUDE.md` section "npm Dependencies" / "Dependency update process". Reason: the process repeats every few weeks (detect → classify → ng update vs npm install → pin exact versions → build/test/lint/knip → commit) and has project-specific rules that cannot be delegated to `npm update`.
 
-> Contexto del flujo: `CLAUDE.md` sección "Dependencias npm" / "Proceso de actualización de dependencias". Razón de existir: el proceso es repetitivo cada pocas semanas (detectar → clasificar → ng update vs npm install → fijar versiones exactas → build/test/lint/knip → commit) y tiene reglas específicas del proyecto que no se pueden delegar a `npm update`.
+Argument: $ARGUMENTS — optional. If the user passes a list of packages, limit the update to those. Without an argument, update everything safe.
 
-Argumento: $ARGUMENTS — opcional. Si el usuario pasa una lista de paquetes, limita la actualización a esos. Sin argumento, actualiza todo lo seguro.
+## Step 1 — Create branch
 
-## Paso 1 — Crear rama
-
-Desde `master` actualizado:
+From an updated `master`:
 
 ```bash
 git checkout master && git pull --ff-only origin master
-git checkout -b chore/dependency-updates-<mes-año>
+git checkout -b chore/dependency-updates-<month-year>
 ```
 
-Ejemplo: `chore/dependency-updates-mayo-2026`. Si ya existe una rama así abierta, pregunta al usuario si la reutiliza o crea una nueva.
+Example: `chore/dependency-updates-may-2026`. If a branch like this already exists, ask the user whether to reuse it or create a new one.
 
-## Paso 2 — Detectar candidatas
+## Step 2 — Detect candidates
 
-Ejecuta en paralelo:
+Run in parallel:
 
 ```bash
 npm outdated
 npx ng update
 ```
 
-`npm outdated` lista todas las dependencias con versión nueva disponible. `npx ng update` lista las del ecosistema Angular gestionables atómicamente vía esa herramienta.
+`npm outdated` lists all dependencies with a new version available. `npx ng update` lists those in the Angular ecosystem that can be managed atomically by that tool.
 
-## Paso 3 — Clasificar por riesgo
+## Step 3 — Classify by risk
 
-Para cada paquete con actualización, clasifícalo usando esta tabla:
+For each package with an update, classify it using this table:
 
-| Categoría                      | Criterio                                                            | Acción                                                 |
-| ------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------ |
-| **A — Angular patch/minor**    | Dentro de la misma major (21.x → 21.y), gestionable por `ng update` | Actualizar en bloque vía `ng update`                   |
-| **B — Resto patch/minor**      | `npm outdated` muestra cambio dentro de la misma major              | Instalar con `--save-exact`                            |
-| **C — Major**                  | Cambio de `X.y.z` → `(X+1).0.0` o superior                          | **STOP** — generar informe y pedir decisión al usuario |
-| **D — Bloqueado por peer-dep** | Conflicto con `@angular/build` o equivalente que Vercel no acepta   | **STOP** — documentar y descartar                      |
+| Category                    | Criterion                                                                | Action                                                 |
+| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
+| **A — Angular patch/minor** | Within the same major (21.x → 21.y), manageable via `ng update`          | Update in bulk via `ng update`                         |
+| **B — Other patch/minor**   | `npm outdated` shows a change within the same major                      | Install with `--save-exact`                            |
+| **C — Major**               | Change from `X.y.z` → `(X+1).0.0` or higher                              | **STOP** — generate report and ask user for a decision |
+| **D — Blocked by peer-dep** | Conflict with `@angular/build` or equivalent that Vercel does not accept | **STOP** — document and discard                        |
 
-### Conocimientos del proyecto a aplicar al clasificar
+### Project knowledge to apply when classifying
 
-Antes de marcar un paquete como categoría B, comprueba si tiene un peer-dep que lo metería en D:
+Before marking a package as category B, check whether it has a peer-dep that would push it into D:
 
-- **TypeScript ≥ 6**: bloqueado por `@angular/build` (peer `typescript: ">=5.9 <6.0"`). Vercel no acepta `--legacy-peer-deps`. Espera a Angular 22.
-- **typescript-eslint** debe ser compatible con la versión de TS instalada (revisar peer `typescript: ">=4.8.4 <X"`).
-- **knip 6.10+** introduce un check estricto de exports usados solo dentro del propio fichero. Si lo subes y no estaba ya, hay que añadir `ignoreExportsUsedInFile: true` al `knip.config.ts` (la convención del proyecto es exportar todos los tipos del schema de DB para auto-documentación).
+- **TypeScript >= 6**: blocked by `@angular/build` (peer `typescript: ">=5.9 <6.0"`). Vercel does not accept `--legacy-peer-deps`. Wait for Angular 22.
+- **typescript-eslint** must be compatible with the installed TS version (check peer `typescript: ">=4.8.4 <X"`).
+- **knip 6.10+** introduces a strict check for exports used only inside their own file. If you upgrade to this range and it was not already enabled, add `ignoreExportsUsedInFile: true` to `knip.config.ts` (project convention is to export all DB schema types for self-documentation).
 
-Cuando un paquete entra en C o D, **muestra al usuario** un bloque con: paquete, versión actual, versión candidata, motivo del bloqueo o riesgo, y pregúntale si quiere saltárselo o intentar igualmente.
+When a package falls into C or D, **show the user** a block with: package, current version, candidate version, reason for the block or risk, and ask whether they want to skip it or try anyway.
 
-## Paso 4 — Aplicar las actualizaciones seguras
+## Step 4 — Apply safe updates
 
-### 4a — Categoría A (Angular ecosystem)
+### 4a — Category A (Angular ecosystem)
 
-Una sola invocación atómica para que `ng update` resuelva peer-deps en bloque:
+A single atomic invocation so `ng update` resolves peer-deps in one pass:
 
 ```bash
 npx ng update @angular/cli @angular/core @angular/material angular-eslint
 ```
 
-Añade o quita paquetes de la lista según lo que `npx ng update` haya reportado.
+Add or remove packages from the list based on what `npx ng update` reported.
 
-### 4b — Categoría B (resto)
+### 4b — Category B (rest)
 
 ```bash
-npm install --save-exact paquete-1@version paquete-2@version ...
+npm install --save-exact package-1@version package-2@version ...
 ```
 
-Una sola invocación con todos los paquetes para que npm resuelva en una sola pasada. **`--save-exact` es obligatorio** — Vercel no acepta `--legacy-peer-deps` y los rangos abiertos causan fallos de build por desajustes de peer deps entre entornos.
+One single invocation with all packages so npm resolves in a single pass. **`--save-exact` is mandatory** — see exact-versions rule below.
 
-## Paso 5 — Quitar rangos `^` y `~`
+## Step 5 — Remove `^` and `~` ranges
 
-Después de las dos instalaciones, abre `package.json` y comprueba que **ninguna** dependencia tiene `^` o `~`. Si npm añadió alguno, quítalo manualmente. Repite hasta que el grep esté limpio:
+After both installations, open `package.json` and verify that **no** dependency has `^` or `~`. If npm added any, remove them manually. Repeat until the grep is clean:
 
 ```bash
 grep -E '"\^|"~' package.json
 ```
 
-## Paso 6 — Sincronizar lock file
+## Step 6 — Sync lock file
 
 ```bash
 npm install
 ```
 
-Sin argumentos, para que `package-lock.json` quede consistente con el `package.json` actualizado.
+Without arguments, so `package-lock.json` stays consistent with the updated `package.json`.
 
-## Paso 7 — Verificar
+## Step 7 — Verify
 
-Ejecuta en este orden, parando al primer fallo:
+Run in this order, stopping at the first failure:
 
 ```bash
 npm run build
@@ -99,36 +97,36 @@ npm run lint
 npm run check:unused
 ```
 
-- **Build**: el bundle de producción debe compilar.
-- **Tests**: 100 % verde.
-- **Lint**: 0 errores y 0 warnings.
-- **Knip**: limpio.
+- **Build**: the production bundle must compile.
+- **Tests**: 100% green.
+- **Lint**: 0 errors and 0 warnings.
+- **Knip**: clean.
 
-### Si knip falla tras subir el propio knip
+### If knip fails after upgrading knip itself
 
-Es esperable cuando se sube `knip` a una versión con un check nuevo (ej. el de exports usados solo dentro de su fichero). Antes de tocar código, valida los hallazgos:
+Expected when upgrading `knip` to a version with a new check (e.g. exports used only within their own file). Before touching code, validate the findings:
 
-1. Para cada export flagueado, busca si se usa en otro fichero (`grep -rn "\bSimbolo\b" src --include="*.ts"`).
-2. Si **solo se usa en su propio fichero** como base de tipos derivados (`extends`, `Pick<X>`, `Partial<X>`, propiedad de otra interface), es el patrón "export redundante por convención del proyecto" — la solución es añadir `ignoreExportsUsedInFile: true` al `knip.config.ts`, **no** quitar el `export`.
-3. Si **no se usa en ningún sitio**, es código muerto real — bórralo.
-4. Si está **duplicado** (definición idéntica en dos ficheros), unifica importando del canónico.
+1. For each flagged export, check whether it is used in another file (`grep -rn "\bSymbol\b" src --include="*.ts"`).
+2. If it is **only used in its own file** as a base for derived types (`extends`, `Pick<X>`, `Partial<X>`, property of another interface), this is the "redundant export by project convention" pattern — the fix is to add `ignoreExportsUsedInFile: true` to `knip.config.ts`, **not** to remove the `export`.
+3. If it is **not used anywhere**, it is real dead code — delete it.
+4. If it is **duplicated** (identical definition in two files), unify by importing from the canonical one.
 
-## Paso 8 — Reportar y dejar listo para PR
+## Step 8 — Report and leave ready for PR
 
-Resume al usuario, en un único mensaje:
+Summarise for the user in a single message:
 
-- Categoría A actualizada (Angular X.Y.Z → X.Y.W).
-- Categoría B actualizada (lista compacta).
-- Categoría C / D omitida y por qué (un párrafo por paquete).
-- Resultado de los 4 checks de verificación.
-- Cambios adicionales aplicados (knip config, dedups, etc.).
+- Category A updated (Angular X.Y.Z → X.Y.W).
+- Category B updated (compact list).
+- Category C / D skipped and why (one paragraph per package).
+- Result of the 4 verification checks.
+- Additional changes applied (knip config, dedups, etc.).
 
-No hagas commit ni push. El usuario decide cuándo abrir PR (`/pr`).
+Do not commit or push. The user decides when to open a PR (`/pr`).
 
-## Reglas
+## Rules
 
-- **Versiones exactas siempre**. Sin `^` ni `~`. Es la convención del proyecto y la única forma de evitar que Vercel falle.
-- **Angular ecosystem solo vía `ng update`**. Nunca `npm install` directo para `@angular/*`, `@angular-devkit/*` ni `@angular-eslint/*` — `ng update` resuelve peer-deps de forma atómica que npm no replica.
-- **Majors no se aplican automáticamente**. Aunque parezcan inocuos. Cada major requiere lectura del CHANGELOG y validación.
-- **Sin `--legacy-peer-deps` jamás**. Vercel lo prohíbe; si un paquete no instala sin ese flag, va a categoría D.
-- **No hacer commit ni push**. El skill deja la rama lista; el usuario lanza `/pr` cuando quiera.
+- **Exact versions always.** No `^` or `~`. This is the project convention and the only way to prevent Vercel build failures caused by peer-dep mismatches between environments.
+- **Angular ecosystem only via `ng update`.** Never `npm install` directly for `@angular/*`, `@angular-devkit/*`, or `@angular-eslint/*` — `ng update` resolves peer-deps atomically in a way npm cannot replicate.
+- **Majors are never applied automatically.** Even if they look harmless. Every major requires reading the CHANGELOG and validation.
+- **Never `--legacy-peer-deps`.** Vercel forbids it; if a package cannot install without that flag, it goes to category D.
+- **No commit or push.** The skill leaves the branch ready; the user runs `/pr` when ready.

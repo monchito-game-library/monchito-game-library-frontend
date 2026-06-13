@@ -1,17 +1,15 @@
 ---
-description: "Analyzes the current state of the project and proposes the next task to tackle, reading BUGS.md first (pending bugs take priority) and then ROADMAP.md. Use when the user wants to know what to work on next ('qué hago ahora', 'siguiente tarea', 'qué es lo próximo')."
+description: "Analyzes the current state of the project and proposes the next task to tackle, reading BUGS.md first (pending bugs take priority) and then ROADMAP.md. Use when the user wants to know what to work on next ('que hago ahora', 'siguiente tarea', 'que es lo proximo')."
 ---
 
-Analiza el estado del proyecto y propón la siguiente tarea a abordar.
+Steps:
 
-Pasos:
+1. Read `docs/BUGS.md`. If there are pending bugs (not marked as resolved), list them by priority.
+2. If there are no pending bugs, read `docs/ROADMAP.md` and identify the next pending improvement by priority.
+3. Propose the highest-priority task with:
+   - What needs to be done and why
+   - Which files will be affected (estimate)
+   - Approximate complexity level (small / medium / large)
+4. Ask the user whether to proceed with that task or prefer a different one.
 
-1. Lee `docs/BUGS.md`. Si hay bugs pendientes (no marcados como resueltos), listarlos por prioridad.
-2. Si no hay bugs pendientes, lee `docs/ROADMAP.md` e identifica la siguiente mejora pendiente según prioridad.
-3. Propón la tarea más prioritaria con:
-   - Qué hay que hacer y por qué
-   - Qué ficheros se verán afectados (estimación)
-   - Nivel de complejidad aproximado (pequeño / medio / grande)
-4. Pregunta al usuario si quiere proceder con esa tarea o prefiere otra.
-
-No empieces a implementar nada hasta que el usuario confirme.
+Do not start implementing anything until the user confirms.

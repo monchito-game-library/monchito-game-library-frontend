@@ -1,120 +1,92 @@
 ---
 description: "Generates a new component in lib/retro/ following the library's structural and coding conventions: standalone OnPush component, BEM styles, typed inputs/outputs, spec with 90% coverage target, and initial README. Use when the user wants to add a new retro component ('crea el componente retro', 'genera el componente en la lib', 'nuevo componente retro')."
-argument-hint: '[nombre]'
+argument-hint: '[name]'
 ---
 
-Genera un componente nuevo en `lib/retro/` siguiendo el patrón de la librería.
+Argument: $ARGUMENTS — component name without the `retro-` prefix, in kebab-case (e.g. `badge`, `progress-bar`, `tooltip`). The final component will be named `retro-<name>`.
 
-Argumento: $ARGUMENTS — nombre del componente sin prefijo `retro-` en kebab-case (ej: `badge`, `progress-bar`, `tooltip`). El componente final se llamará `retro-<nombre>`.
+## Structural rules
 
-## Reglas estructurales obligatorias
+See CLAUDE.md — "Estructura de carpetas en lib/retro/" for the full folder layout rules.
 
-- Carpeta raíz: `lib/retro/retro-<nombre>/`.
-- En la raíz de la carpeta **solo** pueden vivir estos ficheros:
-  - `retro-<nombre>.component.ts`
-  - `retro-<nombre>.component.html`
-  - `retro-<nombre>.component.scss`
-  - `retro-<nombre>.component.spec.ts`
-  - `retro-<nombre>.types.ts` (solo si el componente expone tipos públicos: variants, sizes, modes, etc.)
+Quick summary:
+
+- Root folder: `lib/retro/retro-<name>/`.
+- Only these files live at the root:
+  - `retro-<name>.component.ts`
+  - `retro-<name>.component.html`
+  - `retro-<name>.component.scss`
+  - `retro-<name>.component.spec.ts`
+  - `retro-<name>.types.ts` (only if the component exposes public types: variants, sizes, modes, etc.)
   - `README.md`
-- Todo lo demás (componentes hijos, directivas, interfaces, constantes, tokens) va en subcarpetas: `components/retro-<nombre>-xxx/`, `directive/`, `interfaces/`, `constantes/`, `tokens/`.
-- `lib/retro/` **no puede importar nada de `src/`** ni usar los aliases `@/*`. Solo `@retro/*`, `@retro/testing/*` o paquetes npm. Esta regla está enforzada por ESLint.
+- Everything else (child components, directives, interfaces, constants, tokens) goes in subdirectories: `components/retro-<name>-xxx/`, `directive/`, `interfaces/`, `constants/`, `tokens/`.
+- `lib/retro/` must not import anything from `src/` or use `@/*` aliases. Only `@retro/*`, `@retro/testing/*`, or npm packages. Enforced by ESLint.
 
-## Convenciones del componente (.component.ts)
+## Component conventions (.component.ts)
+
+See CLAUDE.md — "Orden en componentes Angular" and "Convenciones de nombrado" for member ordering, naming, and JSDoc rules.
+
+Additional lib-specific rules:
 
 - `standalone: true`, `changeDetection: ChangeDetectionStrategy.OnPush`.
-- Selector exacto: `retro-<nombre>`.
-- Inputs con `input<T>()` o `input.required<T>()`, tipados explícitamente como `InputSignal<T>`.
-- Outputs con `output<T>()`, tipados explícitamente como `OutputEmitterRef<T>`.
-- Signals computados con `computed<T>()`, tipados como `Signal<T>`.
-- Campos y métodos `private` con prefijo `_` (incluidos los `private readonly` de inyección).
-- Tipos explícitos en todas las declaraciones (nunca inferencia para `signal`, `inject`, `computed`).
-- JSDoc obligatorio en:
-  - Encabezado de la clase (qué hace, slots disponibles, comportamiento en mobile si aplica).
-  - Cada input, output y signal público (una línea).
-  - Cada método público y privado (excepto lifecycle hooks: `ngOnInit`, `ngOnDestroy`).
-- Orden dentro de la clase:
-  1. Inyecciones privadas (`private readonly _...`)
-  2. Variables privadas
-  3. Variables públicas readonly
-  4. Signals públicos (inputs primero, luego computed/writable)
-  5. Outputs
-  6. Lifecycle hooks
-  7. Métodos públicos (handlers `onXxx`)
-  8. Métodos privados (`_xxx`)
+- Exact selector: `retro-<name>`.
+- Inputs with `input<T>()` or `input.required<T>()`, explicitly typed as `InputSignal<T>`.
+- Outputs with `output<T>()`, explicitly typed as `OutputEmitterRef<T>`.
+- Computed signals with `computed<T>()`, typed as `Signal<T>`.
+- JSDoc on the class header: what it does, available slots, mobile behavior if applicable.
+- JSDoc on each input, output, and public signal (one line).
 
-## Convenciones del template (.component.html)
+## Template conventions (.component.html)
 
-- Clase BEM con bloque `retro-<nombre>`, elementos `retro-<nombre>__elemento`, modificadores `retro-<nombre>--modificador` aplicados con `[class.retro-<nombre>--xxx]="condicion()"`.
-- Slots con `<ng-content select="[slot=xxx]" />` y nombres semánticos (`start`, `end`, `header`, `footer`).
-- Atributos ARIA condicionales según interactividad.
+- BEM class with block `retro-<name>`, elements `retro-<name>__element`, modifiers `retro-<name>--modifier` applied with `[class.retro-<name>--xxx]="condition()"`.
+- Slots with `<ng-content select="[slot=xxx]" />` and semantic names (`start`, `end`, `header`, `footer`).
+- Conditional ARIA attributes based on interactivity.
 
-## Convenciones de estilos (.component.scss)
+## Style conventions (.component.scss)
 
-- `:host { display: contents; }` salvo que el componente necesite ser un contenedor con dimensiones propias.
-- Espaciados en `rem`, múltiplos de `0.25rem` (excepción tolerada: micro-espaciados decorativos en `px`).
-- Clases completas dentro de bloques, **nunca** `&__elemento`. Los modificadores `&--modificador` sí pueden usar `&`.
-- Custom properties con prefijo `--retro-<nombre>-xxx` para tokens públicos consumibles desde fuera.
-- Bloques `@media` al final del fichero, con comentario separador del breakpoint.
+See CLAUDE.md — "SCSS" for spacing units, BEM class norms, and `@media` block placement.
 
-## Convenciones de tipos (.types.ts)
+Additional lib-specific rules:
 
-Solo si el componente expone variantes/tamaños/modos públicos. Cada tipo lleva JSDoc breve.
+- `:host { display: contents; }` unless the component needs to be a container with its own dimensions.
+- Custom properties with prefix `--retro-<name>-xxx` for public tokens consumable from outside.
 
-## Convenciones del spec (.component.spec.ts)
+## Types conventions (.types.ts)
+
+Only if the component exposes public variants/sizes/modes. Each type carries a brief JSDoc.
+
+## Spec conventions (.component.spec.ts)
 
 - `TestBed.configureTestingModule({ imports: [RetroXxxComponent] })`.
-- Un `it` por input/variante/modificador relevante: comprueba la presencia de la clase BEM correspondiente.
-- Si hay outputs: un `it` que dispara la acción y verifica `emit`.
-- Si hay slots: subdescribe `'named slots'` con `TestHost` por slot que comprueba la proyección.
-- Si hay estados deshabilitados/loading: un `it` por estado.
-- Cobertura objetivo: 90% (threshold de la lib).
+- One `it` per input/variant/modifier: checks the corresponding BEM class is present.
+- If there are outputs: one `it` that triggers the action and verifies `emit`.
+- If there are slots: a nested `describe('named slots')` with a `TestHost` per slot checking projection.
+- If there are disabled/loading states: one `it` per state.
+- Coverage target: 90% (lib threshold).
 
-## README.md inicial
+## Initial README.md
 
-Estructura obligatoria (mismo orden, coherente con el skill `retro-readme`):
+Follow the template at `.claude/skills/retro-readme/references/readme-template.md` for the exact section order, headings, and formatting rules.
 
-```markdown
-# retro-<nombre>
+For a brand-new component the minimum required sections are:
 
-<una frase: qué es + para qué sirve>
+- Component name heading and one-sentence description.
+- Metadata line: `**Selector:** \`retro-<name>\` · **Standalone:** yes · **CVA:** no/yes`.
+- `## When to use / When NOT to use`
+- `## API — Inputs` (if there are public inputs).
+- `## Minimal example`
 
-**Selector:** `retro-<nombre>` · **Standalone:** sí · **CVA:** no
+Omit any other section that does not apply yet; never leave empty sections or tables with no rows.
 
-## Cuándo usar / Cuándo NO usar
+## Final steps
 
-- Usar cuando: ...
-- NO usar cuando: ...
+1. Add the export to `lib/retro/public-api.ts` in the `Componentes` section (preserve the existing grouped order).
+2. If the component exposes public types, add them in the `Tipos expuestos a consumidores externos` section with `export type { ... }`.
+3. List the created files for the user.
+4. Do **not** commit or push. Do **not** run lint/tests unless the user explicitly asks.
 
-## API — Inputs
+## References in the repo
 
-| Nombre | Tipo Angular | Default | Descripción |
-| ------ | ------------ | ------- | ----------- |
-
-## Ejemplo mínimo
-
-\`\`\`html
-<retro-<nombre> />
-\`\`\`
-```
-
-Notas para completar el README inicial:
-
-- Si el componente implementa `ControlValueAccessor`, añadir la sección `## Contrato CVA` y marcar `CVA: sí` en la línea de metadatos. Si no, omitirla.
-- Si hay gotchas conocidos al crear el componente, añadir la sección `## Gotchas`. Si no, omitirla.
-- Completar las secciones `## API — Outputs`, `## Slots`, `## Tokens CSS expuestos` y `## Tipos exportados` solo si aplican; omitirlas completamente si no (nunca dejar una sección vacía ni tabla sin filas).
-- Columna "Tipo Angular": usar `InputSignal<T>`, `InputSignal<T> (required)`, `OutputEmitterRef<T>`, `Signal<T>` según corresponda.
-- Columna "Default": usar `—` para required, valor literal entre backticks para opcionales.
-
-## Pasos finales
-
-1. Añadir el export a `lib/retro/public-api.ts` en la sección `Componentes` (preservar el orden agrupado existente).
-2. Si el componente expone tipos públicos, añadirlos también en la sección `Tipos expuestos a consumidores externos` con `export type { ... }`.
-3. Listar los ficheros creados al usuario.
-4. **No** hacer commit ni push. **No** ejecutar lint/test salvo que el usuario lo pida explícitamente.
-
-## Referencias en el repo
-
-- Componente simple con tipos: `lib/retro/retro-button/`.
-- Componente con signals computed y handlers: `lib/retro/retro-card/`.
-- Componente con icono dependiente y computed de tamaño: `lib/retro/retro-chip/`.
+- Simple component with types: `lib/retro/retro-button/`.
+- Component with computed signals and handlers: `lib/retro/retro-card/`.
+- Component with dependent icon and computed size: `lib/retro/retro-chip/`.
