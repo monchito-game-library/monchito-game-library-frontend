@@ -20,7 +20,9 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
@@ -63,6 +65,7 @@ export class RetroTabsComponent implements AfterViewInit {
   private readonly _zone: NgZone = inject(NgZone);
   private readonly _host: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly _router: Router = inject(Router);
 
   // ── Variables privadas ──────────────────────────────────────────────────────
   private _resizeObserver?: ResizeObserver;
@@ -132,6 +135,13 @@ export class RetroTabsComponent implements AfterViewInit {
         queueMicrotask(() => this._updateIndicator());
       }
     });
+
+    this._router.events
+      .pipe(
+        filter((event) => this.isRouterMode() && event instanceof NavigationEnd),
+        takeUntilDestroyed(this._destroyRef),
+      )
+      .subscribe(() => setTimeout(() => this._updateIndicator(), 0));
   }
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
