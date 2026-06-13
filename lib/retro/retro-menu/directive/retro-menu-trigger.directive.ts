@@ -4,6 +4,7 @@ import {
   HostListener,
   InputSignal,
   OnDestroy,
+  OutputRefSubscription,
   ViewContainerRef,
   inject,
   input,
@@ -38,7 +39,7 @@ export class RetroMenuTriggerDirective implements OnDestroy {
 
   private _overlayRef: OverlayRef | null = null;
   private _keyManager: ActiveDescendantKeyManager<RetroMenuItemComponent> | null = null;
-  private _menuSubs: Subscription[] = [];
+  private _menuSubs: (Subscription | OutputRefSubscription)[] = [];
   private _focusTimeoutIds: ReturnType<typeof setTimeout>[] = [];
 
   /** Referencia al RetroMenuComponent que este trigger va a abrir. */
@@ -129,6 +130,10 @@ export class RetroMenuTriggerDirective implements OnDestroy {
     );
 
     this._setupKeyManager();
+
+    menuComponent.menuItems.forEach((item) => {
+      this._menuSubs.push(item.clicked.subscribe(() => this._closeMenu()));
+    });
   }
 
   /**
