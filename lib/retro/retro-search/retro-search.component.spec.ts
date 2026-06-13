@@ -635,4 +635,111 @@ describe('RetroSearchComponent (integración con opciones)', () => {
     (search as any)._syncSelectedLabel();
     expect(search._displayValue()).toBe('texto previo');
   });
+
+  it('_userEditing activo: _syncSelectedLabel no sobreescribe _displayValue mientras el usuario edita', () => {
+    fixture.detectChanges();
+    // Seleccionar un valor inicial para que _syncSelectedLabel tenga algo que sincronizar
+    search.writeValue('ps5');
+    // Simular que el usuario empieza a editar el input
+    const event = { target: { value: 'play' } } as unknown as Event;
+    search.onInput(event);
+    // En este punto _userEditing es true y _displayValue es 'play'
+    expect(search._displayValue()).toBe('play');
+
+    // Simular que llegan opciones nuevas y _syncSelectedLabel se ejecuta
+    const matchOpt = {
+      value: () => 'ps5',
+      isDisabled: () => false,
+      getLabel: () => 'PlayStation 5',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    (search as any)._options = {
+      find: (fn: (o: RetroOptionComponent) => boolean) => [matchOpt].find(fn),
+      forEach: vi.fn(),
+      length: 1
+    };
+
+    // _syncSelectedLabel NO debe reemplazar 'play' porque el usuario está editando
+    (search as any)._syncSelectedLabel();
+    expect(search._displayValue()).toBe('play');
+  });
+
+  it('_userEditing desactivado por onClear: _syncSelectedLabel sí actualiza _displayValue', () => {
+    fixture.detectChanges();
+    search.writeValue('ps5');
+    // Simular edición
+    const event = { target: { value: 'play' } } as unknown as Event;
+    search.onInput(event);
+
+    // onClear resetea _userEditing a false
+    (search as any)._overlayRef = null;
+    (search as any)._options = { toArray: () => [], forEach: vi.fn(), length: 0 };
+    search.onClear();
+
+    // Ahora escribir de nuevo un valor seleccionado
+    search.writeValue('ps5');
+    const matchOpt = {
+      value: () => 'ps5',
+      isDisabled: () => false,
+      getLabel: () => 'PlayStation 5',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-1'
+    } as unknown as RetroOptionComponent;
+    (search as any)._options = {
+      find: (fn: (o: RetroOptionComponent) => boolean) => [matchOpt].find(fn),
+      forEach: vi.fn(),
+      length: 1
+    };
+
+    // Forzar _displayValue a '' para comprobar que _syncSelectedLabel lo restaura
+    search._displayValue.set('');
+    (search as any)._syncSelectedLabel();
+    // _userEditing es false → debe actualizar _displayValue con el label de la opción
+    expect(search._displayValue()).toBe('PlayStation 5');
+  });
+
+  it('_userEditing desactivado por selectOption: _syncSelectedLabel sí actualiza _displayValue', () => {
+    fixture.detectChanges();
+    search.writeValue('ps5');
+    // Simular edición
+    const event = { target: { value: 'xbo' } } as unknown as Event;
+    search.onInput(event);
+    expect((search as any)._userEditing).toBe(true);
+
+    // Seleccionar una opción — esto llama a _emitSelected que pone _userEditing = false
+    const mockOption = {
+      value: () => 'xbox',
+      isDisabled: () => false,
+      getLabel: () => 'Xbox Series X',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-xbox'
+    } as unknown as RetroOptionComponent;
+    (search as any)._options = { toArray: () => [], forEach: vi.fn(), length: 0 };
+    (search as any)._overlayRef = null;
+    search.selectOption(mockOption);
+    expect((search as any)._userEditing).toBe(false);
+
+    // _syncSelectedLabel ahora sí debe actualizar _displayValue
+    search.writeValue('xbox');
+    const matchOpt = {
+      value: () => 'xbox',
+      isDisabled: () => false,
+      getLabel: () => 'Xbox Series X',
+      setActive: vi.fn(),
+      setSelected: vi.fn(),
+      id: 'opt-xbox'
+    } as unknown as RetroOptionComponent;
+    (search as any)._options = {
+      find: (fn: (o: RetroOptionComponent) => boolean) => [matchOpt].find(fn),
+      forEach: vi.fn(),
+      length: 1
+    };
+    search._displayValue.set('');
+    (search as any)._syncSelectedLabel();
+    expect(search._displayValue()).toBe('Xbox Series X');
+  });
 });

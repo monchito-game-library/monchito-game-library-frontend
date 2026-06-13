@@ -110,6 +110,15 @@ describe('GameFormComponent', () => {
       expect(component.coverTransform()).toBe('scale(1)'));
   });
 
+  describe('formatOptions', () => {
+    it('expone exactamente dos opciones con los valores "physical" y "digital"', () => {
+      const options = component.formatOptions();
+      expect(options).toHaveLength(2);
+      expect(options[0].value).toBe('physical');
+      expect(options[1].value).toBe('digital');
+    });
+  });
+
   describe('coverObjectPosition', () => {
     it('devuelve la posición cuando _coverPosition tiene valor', () => {
       (component as any)._coverPosition.set('30% 70%');
