@@ -40,8 +40,7 @@ import { AvailableLanguageInterface } from '@/interfaces/available-language.inte
 import { AvatarCropDialogComponent } from '@/pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component';
 import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
-import { RetroSegmentedComponent } from '@retro/public-api';
-import { RetroSegmentedOption } from '@retro/public-api';
+import { RetroSegmentedComponent, RetroSegmentedOption } from '@retro/public-api';
 import { ThemeType } from '@/types/theme.type';
 import { LanguageType } from '@/types/language.type';
 
@@ -198,24 +197,23 @@ export class SettingsComponent implements OnInit, OnDestroy {
   onThemeChange(value: 'light' | 'dark'): void {
     const currentlyDark: boolean = this.isDark();
     if (value === 'dark' && !currentlyDark) {
-      this._themeService.setDarkTheme();
+      this._themeService.setTheme('dark');
       this._savePreferences();
     } else if (value === 'light' && currentlyDark) {
-      this._themeService.setLightTheme();
+      this._themeService.setTheme('light');
       this._savePreferences();
     }
   }
 
   /**
-   * Sets the active language by value and persists the preference in Supabase.
-   * Replicates the behaviour of the selectedLangControl valueChanges subscription.
+   * Sets the selected language control value, letting the valueChanges subscription
+   * propagate the change to TranslocoService and persist the preference.
    *
    * @param {LanguageType} value - The selected language code
    */
   onLanguageChange(value: LanguageType): void {
     if (!value) return;
-    this._transloco.setActiveLang(value);
-    this._savePreferences();
+    this.selectedLangControl.setValue(value);
   }
 
   /**

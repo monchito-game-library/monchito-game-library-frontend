@@ -23,6 +23,7 @@ describe('SettingsComponent', () => {
   let mockThemeService: {
     theme: ReturnType<typeof signal<ThemeType>>;
     toggleTheme: ReturnType<typeof vi.fn>;
+    setTheme: ReturnType<typeof vi.fn>;
   };
   let mockUserPreferencesState: {
     avatarUrl: ReturnType<typeof signal>;
@@ -49,7 +50,8 @@ describe('SettingsComponent', () => {
 
     mockThemeService = {
       theme: signal<ThemeType>('light'),
-      toggleTheme: vi.fn()
+      toggleTheme: vi.fn(),
+      setTheme: vi.fn()
     };
 
     mockUserPreferencesState = {
@@ -210,17 +212,29 @@ describe('SettingsComponent', () => {
     });
   });
 
-  describe('toggleTheme', () => {
-    it('delega en themeService.toggleTheme cuando el tema actual es claro', () => {
+  describe('onThemeChange', () => {
+    it('llama a setTheme(dark) cuando el valor es dark y el tema actual es claro', () => {
       mockThemeService.theme.set('light');
-      component.toggleTheme();
-      expect(mockThemeService.toggleTheme).toHaveBeenCalledOnce();
+      component.onThemeChange('dark');
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('dark');
     });
 
-    it('delega en themeService.toggleTheme cuando el tema actual es oscuro', () => {
+    it('no llama al servicio cuando el valor dark ya está activo', () => {
       mockThemeService.theme.set('dark');
-      component.toggleTheme();
-      expect(mockThemeService.toggleTheme).toHaveBeenCalledOnce();
+      component.onThemeChange('dark');
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
+    });
+
+    it('llama a setTheme(light) cuando el valor es light y el tema actual es oscuro', () => {
+      mockThemeService.theme.set('dark');
+      component.onThemeChange('light');
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('light');
+    });
+
+    it('no llama al servicio cuando el valor light ya está activo', () => {
+      mockThemeService.theme.set('light');
+      component.onThemeChange('light');
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
     });
   });
 
