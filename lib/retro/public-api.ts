@@ -26,6 +26,7 @@ export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-tri
 export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
 export { RetroTabComponent } from './retro-tabs/components/retro-tab/retro-tab.component';
 export { RetroTooltipDirective } from './retro-tooltip/directive/retro-tooltip.directive';
+export { RetroSegmentedComponent } from './retro-segmented/retro-segmented.component';
 
 // ─── Servicios ────────────────────────────────────────────────────────────────
 export { RetroSnackbarService } from './retro-snackbar/services/retro-snackbar.service';
@@ -61,6 +62,7 @@ export type {
   RetroListItemVariant,
   RetroListItemPadding
 } from './retro-list/components/retro-list-item/retro-list-item.types';
+export type { RetroSegmentedOption } from './retro-segmented/retro-segmented.types';
 
 // ─── Interfaces expuestas a consumidores externos ─────────────────────────────
 export type { RetroTabItem } from './retro-tabs/interfaces/retro-tab-item.interface';
