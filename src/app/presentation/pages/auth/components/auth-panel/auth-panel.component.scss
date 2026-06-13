@@ -14,8 +14,8 @@
   overflow-y: auto;
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--mat-sys-primary) 65%, black) 0%,
-    color-mix(in srgb, var(--mat-sys-primary) 30%, black) 100%
+    color-mix(in srgb, var(--primary) 65%, black) 0%,
+    color-mix(in srgb, var(--primary) 30%, black) 100%
   );
 }
 
@@ -28,10 +28,10 @@
   min-height: 22rem;
   padding: 2.5rem 2rem;
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 88%, transparent);
+  background: color-mix(in srgb, var(--bg-surface-hi) 88%, transparent);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--mat-sys-outline-variant);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
 }
 
@@ -42,11 +42,9 @@
   gap: 0.25rem;
   margin-bottom: 1.75rem;
 
-  mat-icon {
-    font-size: var(--text-display);
-    width: var(--text-display);
-    height: var(--text-display);
-    color: var(--mat-sys-primary);
+  retro-icon {
+    --_size: var(--text-display);
+    color: var(--primary);
   }
 }
 
@@ -55,7 +53,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 // ─── Projected content styles ─────────────────────────────────────────────────
@@ -66,14 +64,14 @@
     margin: 0 0 1.5rem;
     font-size: var(--text-2xl);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
     text-align: center;
   }
 
   .auth-panel__description {
     margin: 0 0 1.5rem;
     font-size: var(--text-sm);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     text-align: center;
     line-height: 1.5;
   }
@@ -97,26 +95,24 @@
     font-size: var(--text-sm);
     line-height: 1.4;
 
-    mat-icon {
-      font-size: var(--text-lg);
-      width: var(--text-lg);
-      height: var(--text-lg);
+    retro-icon {
+      --_size: var(--icon-md);
       flex-shrink: 0;
     }
 
     &--error {
-      background: var(--mat-sys-error-container);
-      color: var(--mat-sys-on-error-container);
+      background: var(--bg-surface-hi);
+      color: var(--accent-rose);
     }
 
     &--success {
-      background: var(--mat-sys-secondary-container);
-      color: var(--mat-sys-on-secondary-container);
+      background: var(--bg-surface-hi);
+      color: var(--text-hi);
     }
 
     &--info {
-      background: var(--mat-sys-surface-container-highest);
-      color: var(--mat-sys-on-surface-variant);
+      background: var(--bg-elev);
+      color: var(--text-mid);
       margin-bottom: 0.5rem;
     }
   }
@@ -140,7 +136,7 @@
   }
 
   .auth-link {
-    color: var(--mat-sys-primary);
+    color: var(--primary);
     text-decoration: none;
     font-size: var(--text-sm);
     font-weight: 500;
@@ -153,10 +149,10 @@
   .auth-prompt {
     margin-top: 1.25rem;
     padding-top: 1.25rem;
-    border-top: 1px solid var(--mat-sys-outline-variant);
+    border-top: 1px solid var(--border);
     text-align: center;
     font-size: var(--text-sm);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
     span {
       margin-right: 0.25rem;
@@ -168,7 +164,7 @@
     align-items: center;
     gap: 0.75rem;
     margin: 0.25rem 0;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     font-size: var(--text-sm);
 
     &::before,
@@ -176,7 +172,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--mat-sys-outline-variant);
+      background: var(--border);
     }
   }
 
@@ -186,24 +182,11 @@
     gap: 0.5rem;
   }
 
-  .auth-oauth-btn {
-    height: 44px;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-
-    .mdc-button__label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-    }
-
-    svg {
-      width: 1.25rem;
-      height: 1.25rem;
-      flex-shrink: 0;
-    }
+  /* Tamaño del SVG proyectado en los botones OAuth */
+  retro-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
   }
 }
 

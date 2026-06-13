@@ -14,15 +14,14 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
 
 import { CONSOLE_USE_CASES, ConsoleUseCasesContract } from '@/domain/use-cases/console/console.use-cases.contract';
 import {
@@ -44,18 +43,13 @@ export type { HardwareLoanItem };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
-    TranslocoPipe
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroSectionHeaderComponent,
+    RetroInputComponent,
+    RetroDatepickerComponent
   ]
 })
 export class HardwareLoanFormComponent implements OnInit {
@@ -63,7 +57,7 @@ export class HardwareLoanFormComponent implements OnInit {
   private readonly _controllerUseCases: ControllerUseCasesContract | null = inject(CONTROLLER_USE_CASES, {
     optional: true
   });
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -131,10 +125,18 @@ export class HardwareLoanFormComponent implements OnInit {
     this.form.disable();
     try {
       const loanId = await this._useCase().createLoan(loan);
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.loanSuccess'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.loanSuccess'),
+        duration: 3000,
+        variant: 'success'
+      });
       this.saved.emit({ ...it, activeLoanId: loanId, activeLoanTo: loan.loanedTo, activeLoanAt: loan.loanedAt });
     } catch {
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.loanError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.loanError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
       this.form.enable();
@@ -152,10 +154,18 @@ export class HardwareLoanFormComponent implements OnInit {
     this.returning.set(true);
     try {
       await this._useCase().returnLoan(it.activeLoanId, it.id, this._userId);
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.returnSuccess'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.returnSuccess'),
+        duration: 3000,
+        variant: 'success'
+      });
       this.saved.emit({ ...it, activeLoanId: null, activeLoanTo: null, activeLoanAt: null });
     } catch {
-      this._snackBar.open(this._transloco.translate('hardwareLoan.snack.returnError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('hardwareLoan.snack.returnError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.returning.set(false);
     }

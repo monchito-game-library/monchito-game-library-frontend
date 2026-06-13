@@ -14,7 +14,7 @@
   font-size: var(--text-base);
   font-weight: 600;
   margin: 0;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -23,7 +23,7 @@
 
 .edit-panel__subtitle {
   font-weight: 400;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .edit-panel__form {
@@ -38,7 +38,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   padding: 0.25rem 0 0;
 }
 
@@ -71,8 +71,8 @@
 }
 
 .edit-panel__delete-btn {
-  color: var(--mat-sys-error);
-  border-color: var(--mat-sys-error);
+  color: var(--accent-rose);
+  border-color: var(--accent-rose);
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────

@@ -16,8 +16,9 @@
   [extraFieldsTpl]="extraFieldsTpl"
   (cancelClick)="onCancel()"
   (submitClick)="onSubmit()"
-  (brandChange)="onBrandChange($event)"
-  (modelChange)="onModelChange($event)">
+  (brandQuery)="onBrandQuery($event)"
+  (modelQuery)="onModelQuery($event)"
+  (storeQuery)="onStoreQuery($event)">
 </app-hardware-form-shell>
 
 <ng-template #extraFieldsTpl>
@@ -29,12 +30,9 @@
     </div>
   </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'controllerPage.compatibility' | transloco }}</mat-label>
-    <mat-select [formControl]="form.controls.compatibility">
-      @for (compat of availableCompatibilities; track compat.code) {
-        <mat-option [value]="compat.code">{{ compat.labelKey | transloco }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  <retro-select [label]="'controllerPage.compatibility' | transloco" [formControl]="form.controls.compatibility">
+    @for (compat of availableCompatibilities; track compat.code) {
+      <retro-option [value]="compat.code">{{ compat.labelKey | transloco }}</retro-option>
+    }
+  </retro-select>
 </ng-template>

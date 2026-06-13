@@ -1,0 +1,8 @@
+<div class="retro-section-header">
+  <span class="retro-section-header__prefix" aria-hidden="true">&gt;</span>
+  <h2 class="retro-section-header__label">{{ label() }}</h2>
+  @if (count() !== null) {
+    <span class="retro-section-header__count">[{{ count() }}]</span>
+  }
+  <ng-content select="[slot=actions]" />
+</div>

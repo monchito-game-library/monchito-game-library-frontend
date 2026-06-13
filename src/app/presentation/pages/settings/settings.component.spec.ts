@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { SettingsComponent } from './settings.component';
 import { ThemeService } from '@/services/theme/theme.service';
+import { ThemeType } from '@/types/theme.type';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { RawgSearchStateService } from '@/services/rawg-search-state/rawg-search-state.service';
@@ -12,17 +13,17 @@ import { USER_PREFERENCES_USE_CASES } from '@/domain/use-cases/user-preferences/
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { AUTH_USE_CASES } from '@/domain/use-cases/auth/auth.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
   let fixture: ComponentFixture<SettingsComponent>;
 
   let mockThemeService: {
-    isDarkMode: ReturnType<typeof signal<boolean>>;
-    setLightTheme: ReturnType<typeof vi.fn>;
-    setDarkTheme: ReturnType<typeof vi.fn>;
+    theme: ReturnType<typeof signal<ThemeType>>;
+    toggleTheme: ReturnType<typeof vi.fn>;
+    setTheme: ReturnType<typeof vi.fn>;
   };
   let mockUserPreferencesState: {
     avatarUrl: ReturnType<typeof signal>;
@@ -48,9 +49,9 @@ describe('SettingsComponent', () => {
     vi.clearAllMocks();
 
     mockThemeService = {
-      isDarkMode: signal(false),
-      setLightTheme: vi.fn(),
-      setDarkTheme: vi.fn()
+      theme: signal<ThemeType>('light'),
+      toggleTheme: vi.fn(),
+      setTheme: vi.fn()
     };
 
     mockUserPreferencesState = {
@@ -104,8 +105,11 @@ describe('SettingsComponent', () => {
             setActiveLang: vi.fn()
           }
         },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -208,19 +212,29 @@ describe('SettingsComponent', () => {
     });
   });
 
-  describe('toggleTheme', () => {
-    it('llama a setDarkTheme cuando el tema actual es claro', () => {
-      mockThemeService.isDarkMode.set(false);
-      component.toggleTheme();
-      expect(mockThemeService.setDarkTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setLightTheme).not.toHaveBeenCalled();
+  describe('onThemeChange', () => {
+    it('llama a setTheme(dark) cuando el valor es dark y el tema actual es claro', () => {
+      mockThemeService.theme.set('light');
+      component.onThemeChange('dark');
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('dark');
     });
 
-    it('llama a setLightTheme cuando el tema actual es oscuro', () => {
-      mockThemeService.isDarkMode.set(true);
-      component.toggleTheme();
-      expect(mockThemeService.setLightTheme).toHaveBeenCalledOnce();
-      expect(mockThemeService.setDarkTheme).not.toHaveBeenCalled();
+    it('no llama al servicio cuando el valor dark ya está activo', () => {
+      mockThemeService.theme.set('dark');
+      component.onThemeChange('dark');
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
+    });
+
+    it('llama a setTheme(light) cuando el valor es light y el tema actual es oscuro', () => {
+      mockThemeService.theme.set('dark');
+      component.onThemeChange('light');
+      expect(mockThemeService.setTheme).toHaveBeenCalledWith('light');
+    });
+
+    it('no llama al servicio cuando el valor light ya está activo', () => {
+      mockThemeService.theme.set('light');
+      component.onThemeChange('light');
+      expect(mockThemeService.setTheme).not.toHaveBeenCalled();
     });
   });
 
@@ -299,9 +313,8 @@ describe('SettingsComponent', () => {
   });
 
   describe('onRawgSearch', () => {
-    it('actualiza rawgSearchQuery con el valor del input', () => {
-      const event = { target: { value: 'zelda' } } as unknown as Event;
-      component.onRawgSearch(event);
+    it('actualiza rawgSearchQuery con el valor recibido', () => {
+      component.onRawgSearch('zelda');
       expect(mockRawgSearchState.rawgSearchQuery()).toBe('zelda');
     });
   });
@@ -309,7 +322,7 @@ describe('SettingsComponent', () => {
   describe('onSaveName — error path', () => {
     it('muestra snackbar cuando updateDisplayName lanza un error', async () => {
       const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       authUseCases.updateDisplayName.mockRejectedValue(new Error('Auth error'));
       mockUserContext.getDisplayName.mockReturnValue('Old Name');
       component.nameInputValue.set('New Name');
@@ -322,14 +335,14 @@ describe('SettingsComponent', () => {
 
     it('usa el mensaje de transloco cuando el error no es instanceof Error', async () => {
       const authUseCases = TestBed.inject(AUTH_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       authUseCases.updateDisplayName.mockRejectedValue('string error');
       mockUserContext.getDisplayName.mockReturnValue('Old Name');
       component.nameInputValue.set('New Name');
 
       await component.onSaveName();
 
-      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.updateName', expect.any(String), expect.any(Object));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.updateName' }));
       expect(component.savingName()).toBe(false);
     });
   });
@@ -346,17 +359,6 @@ describe('SettingsComponent', () => {
     });
   });
 
-  describe('selectedLangControl — valor falsy', () => {
-    it('no llama a setActiveLang cuando lang es vacío', () => {
-      const transloco = TestBed.inject(TranslocoService as any) as any;
-      component.ngOnInit();
-
-      component.selectedLangControl.setValue('');
-
-      expect(transloco.setActiveLang).not.toHaveBeenCalled();
-    });
-  });
-
   describe('onAvatarFileSelected — error no-Error', () => {
     function mockFileEvent(file?: File): Event {
       const input = { files: file ? [file] : null, value: '' } as unknown as HTMLInputElement;
@@ -364,9 +366,9 @@ describe('SettingsComponent', () => {
     }
 
     it('usa mensaje de transloco cuando el error del avatar no es instanceof Error', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadAvatar.mockRejectedValue('string error');
@@ -374,7 +376,7 @@ describe('SettingsComponent', () => {
 
       await component.onAvatarFileSelected(mockFileEvent(file));
 
-      expect(snackBar.open).toHaveBeenCalledWith('settings.errors.uploadImage', expect.any(String), expect.any(Object));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.uploadImage' }));
       expect(mockUserPreferencesState.uploadingAvatar()).toBe(false);
     });
   });
@@ -442,13 +444,13 @@ describe('SettingsComponent', () => {
     }
 
     it('retorna sin abrir diálogo cuando no hay fichero', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       await component.onAvatarFileSelected(mockFileEvent());
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('retorna sin subir cuando el diálogo se cancela (blob null)', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(null) });
       const file = new File(['data'], 'avatar.jpg', { type: 'image/jpeg' });
@@ -459,7 +461,7 @@ describe('SettingsComponent', () => {
     });
 
     it('sube el avatar cuando el diálogo confirma un blob', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -474,9 +476,9 @@ describe('SettingsComponent', () => {
     });
 
     it('muestra snackbar cuando la subida falla', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadAvatar.mockRejectedValue(new Error('Storage error'));
@@ -489,7 +491,7 @@ describe('SettingsComponent', () => {
     });
 
     it('retorna sin subir cuando no hay userId', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -509,13 +511,13 @@ describe('SettingsComponent', () => {
     }
 
     it('retorna sin abrir diálogo cuando no hay fichero', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       await component.onBannerFileSelected(mockFileEvent());
       expect(dialog.open).not.toHaveBeenCalled();
     });
 
     it('retorna sin subir cuando el diálogo se cancela', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(null) });
       const file = new File(['data'], 'banner.jpg', { type: 'image/jpeg' });
@@ -526,7 +528,7 @@ describe('SettingsComponent', () => {
     });
 
     it('sube el banner cuando el diálogo confirma un blob', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -541,9 +543,9 @@ describe('SettingsComponent', () => {
     });
 
     it('muestra snackbar cuando la subida del banner falla', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadBanner.mockRejectedValue(new Error('Storage error'));
@@ -556,9 +558,9 @@ describe('SettingsComponent', () => {
     });
 
     it('usa mensaje de transloco cuando el error del banner no es instanceof Error', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
       useCases.uploadBanner.mockRejectedValue('string error');
@@ -566,16 +568,12 @@ describe('SettingsComponent', () => {
 
       await component.onBannerFileSelected(mockFileEvent(file));
 
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'settings.errors.uploadBanner',
-        expect.any(String),
-        expect.any(Object)
-      );
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ text: 'settings.errors.uploadBanner' }));
       expect(mockUserPreferencesState.uploadingBanner()).toBe(false);
     });
 
     it('retorna sin subir cuando no hay userId', async () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       const useCases = TestBed.inject(USER_PREFERENCES_USE_CASES as any) as any;
       const blob = new Blob(['data'], { type: 'image/jpeg' });
       dialog.open.mockReturnValue({ afterClosed: () => of(blob) });
@@ -585,6 +583,18 @@ describe('SettingsComponent', () => {
       await component.onBannerFileSelected(mockFileEvent(file));
 
       expect(useCases.uploadBanner).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onLanguageChange', () => {
+    it('actualiza selectedLangControl con el valor recibido', () => {
+      component.onLanguageChange('en');
+      expect(component.selectedLangControl.value).toBe('en');
+    });
+
+    it('actualiza selectedLangControl al cambiar a otro idioma', () => {
+      component.onLanguageChange('es');
+      expect(component.selectedLangControl.value).toBe('es');
     });
   });
 });

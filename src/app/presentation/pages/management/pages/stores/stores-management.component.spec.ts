@@ -7,7 +7,7 @@ import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contra
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { StoreModel } from '@/models/store/store.model';
 
 function makeStore(overrides: Partial<StoreModel> = {}): StoreModel {
@@ -38,7 +38,7 @@ describe('StoresManagementComponent', () => {
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn() } },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
         { provide: TranslocoService, useValue: mockTransloco },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        { provide: RetroDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -106,6 +106,63 @@ describe('StoresManagementComponent', () => {
     });
   });
 
+  describe('searchTerm / filteredStores / commandFlags (valores iniciales)', () => {
+    it('searchTerm empieza vacío', () => expect(component.searchTerm()).toBe(''));
+    it('filteredStores devuelve todos los stores cuando searchTerm es vacío', () => {
+      const stores = [makeStore({ id: 'a', label: 'Nintendo' }), makeStore({ id: 'b', label: 'Amazon' })];
+      component.stores.set(stores);
+      expect(component.filteredStores()).toEqual(stores);
+    });
+    it('commandFlags es [] cuando no hay término', () => expect(component.commandFlags()).toEqual([]));
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('nint');
+      expect(component.searchTerm()).toBe('nint');
+    });
+
+    it('resetea searchTerm a cadena vacía cuando se llama con vacío', () => {
+      component.searchTerm.set('algo');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
+    });
+  });
+
+  describe('filteredStores (filtrado)', () => {
+    it('dado "Nintendo" y "Amazon", buscar "nint" devuelve solo Nintendo', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' }), makeStore({ id: 'b', label: 'Amazon' })]);
+      component.searchTerm.set('nint');
+      expect(component.filteredStores()).toHaveLength(1);
+      expect(component.filteredStores()[0].label).toBe('Nintendo');
+    });
+
+    it('la búsqueda es case-insensitive', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' })]);
+      component.searchTerm.set('NINT');
+      expect(component.filteredStores()).toHaveLength(1);
+    });
+
+    it('devuelve lista vacía cuando ningún store coincide', () => {
+      component.stores.set([makeStore({ id: 'a', label: 'Nintendo' })]);
+      component.searchTerm.set('xyz');
+      expect(component.filteredStores()).toHaveLength(0);
+    });
+  });
+
+  describe('commandFlags (computed)', () => {
+    it('incluye el término cuando searchTerm no está vacío', () => {
+      component.searchTerm.set('nint');
+      expect(component.commandFlags()).toEqual(['search="nint"']);
+    });
+
+    it('vuelve a [] al limpiar el término', () => {
+      component.searchTerm.set('nint');
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+  });
+
   describe('_loadStores (vía ngOnInit)', () => {
     it('rellena stores y pone loading a false', async () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
@@ -122,7 +179,7 @@ describe('StoresManagementComponent', () => {
   describe('onDeleteStore', () => {
     it('no elimina el store si el dialog se cancela', () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.selectedStore.set(makeStore());
@@ -135,7 +192,7 @@ describe('StoresManagementComponent', () => {
       const storeUseCases = TestBed.inject(STORE_USE_CASES as any) as any;
       storeUseCases.deleteStore.mockResolvedValue(undefined);
       storeUseCases.getAllStores.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.selectedStore.set(makeStore());
@@ -147,7 +204,7 @@ describe('StoresManagementComponent', () => {
     });
 
     it('no hace nada si no hay store seleccionado', () => {
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       component.selectedStore.set(undefined);
       component.onDeleteStore();
       expect(dialog.open).not.toHaveBeenCalled();

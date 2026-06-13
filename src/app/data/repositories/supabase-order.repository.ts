@@ -65,11 +65,12 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
         `
         )
         .eq('id', orderId)
-        .single(),
+        .maybeSingle(),
       this._supabase.rpc('get_order_members_info', { p_order_id: orderId })
     ]);
 
     if (orderError) throw new Error(`Failed to fetch order: ${orderError.message}`);
+    if (!orderData) throw new Error('Order not found or access denied');
     if (membersError) throw new Error(`Failed to fetch order members: ${membersError.message}`);
 
     const dto = orderData as OrderDetailDto;
@@ -129,9 +130,13 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
 
     const cleanPayload = Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined));
 
-    const { error } = await this._supabase.from('orders').update(cleanPayload).eq('id', orderId);
+    const { error, count } = await this._supabase
+      .from('orders')
+      .update(cleanPayload, { count: 'exact' })
+      .eq('id', orderId);
 
     if (error) throw new Error(`Failed to update order: ${error.message}`);
+    if (count === 0) throw new Error('No se pudo actualizar el pedido: sin permisos o sesión expirada');
   }
 
   /**
@@ -140,8 +145,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * @param {string} orderId - UUID del pedido
    */
   async delete(orderId: string): Promise<void> {
-    const { error } = await this._supabase.from('orders').delete().eq('id', orderId);
+    const { error, count } = await this._supabase.from('orders').delete({ count: 'exact' }).eq('id', orderId);
     if (error) throw new Error(`Failed to delete order: ${error.message}`);
+    if (count === 0) throw new Error('No se pudo eliminar el pedido: sin permisos o sesión expirada');
   }
 
   /**
@@ -186,9 +192,13 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
       }).filter(([, v]) => v !== undefined)
     );
 
-    const { error } = await this._supabase.from('order_lines').update(payload).eq('id', lineId);
+    const { error, count } = await this._supabase
+      .from('order_lines')
+      .update(payload, { count: 'exact' })
+      .eq('id', lineId);
 
     if (error) throw new Error(`Failed to update order line: ${error.message}`);
+    if (count === 0) throw new Error('No se pudo actualizar la línea: sin permisos o sesión expirada');
   }
 
   /**
@@ -197,8 +207,9 @@ export class SupabaseOrderRepository implements OrderRepositoryContract {
    * @param {string} lineId - UUID de la línea de pedido
    */
   async deleteLine(lineId: string): Promise<void> {
-    const { error } = await this._supabase.from('order_lines').delete().eq('id', lineId);
+    const { error, count } = await this._supabase.from('order_lines').delete({ count: 'exact' }).eq('id', lineId);
     if (error) throw new Error(`Failed to delete order line: ${error.message}`);
+    if (count === 0) throw new Error('No se pudo eliminar la línea: sin permisos o sesión expirada');
   }
 
   /**

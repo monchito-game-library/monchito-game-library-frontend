@@ -1,0 +1,17 @@
+<button
+  class="retro-cb"
+  [class.retro-cb--on]="_value()"
+  [class.retro-cb--disabled]="_isDisabled()"
+  [class.retro-cb--sm]="size() === 'sm'"
+  [class.retro-cb--md]="size() === 'md'"
+  type="button"
+  role="checkbox"
+  [attr.aria-checked]="_value()"
+  [attr.aria-disabled]="_isDisabled() ? 'true' : null"
+  [disabled]="_isDisabled()"
+  (click)="onToggle()">
+  <span class="retro-cb__box">{{ _value() ? '[X]' : '[ ]' }}</span>
+  @if (label()) {
+    <span class="retro-cb__label">{{ label() }}</span>
+  }
+</button>

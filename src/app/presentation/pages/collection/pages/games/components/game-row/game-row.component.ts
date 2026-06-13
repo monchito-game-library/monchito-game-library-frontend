@@ -12,17 +12,18 @@ import {
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { Router } from '@angular/router';
 
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { availableGameStatuses } from '@/constants/game-status.constant';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { GAME_USE_CASES, GameUseCasesContract } from '@/domain/use-cases/game/game.use-cases.contract';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { GameListModel } from '@/models/game/game-list.model';
@@ -35,12 +36,21 @@ import { UserContextService } from '@/services/user-context/user-context.service
   styleUrl: './game-row.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, NgOptimizedImage, MatIconButton, MatIcon, MatTooltip, TranslocoPipe, BadgeChipComponent]
+  imports: [
+    CurrencyPipe,
+    NgOptimizedImage,
+    RetroIconComponent,
+    RetroListItemComponent,
+    RetroTooltipDirective,
+    TranslocoPipe,
+    RetroChipComponent,
+    RetroIconButtonComponent
+  ]
 })
 export class GameRowComponent {
   private readonly _router: Router = inject(Router);
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -90,14 +100,14 @@ export class GameRowComponent {
     const game: GameListModel = this.game();
     if (!game.uuid) return;
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate('gameCard.dialog.delete.title'),
         message: this._transloco.translate('gameCard.dialog.delete.message')
       } satisfies ConfirmDialogInterface
     });
 
-    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: unknown) => {
       if (confirmed && game.uuid && game.id !== undefined) {
         await this._gameUseCases.deleteGame(this._userId, game.uuid);
         this.gameDeleted.emit(game.id);

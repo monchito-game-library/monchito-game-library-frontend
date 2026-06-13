@@ -28,7 +28,7 @@
     font-size: var(--text-2xl);
     font-weight: 600;
     margin: 0;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
   }
 
   .game-form-page__content {
@@ -68,8 +68,8 @@
     aspect-ratio: 3 / 4;
     border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--mat-sys-surface-variant);
-    border: 2px solid var(--mat-sys-outline-variant);
+    background: var(--bg-surface-hi);
+    border: 2px solid var(--border);
   }
 
   .game-cover-panel__image {
@@ -107,12 +107,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
-    mat-icon {
-      font-size: var(--text-display);
-      width: var(--text-display);
-      height: var(--text-display);
+    retro-icon {
+      --_size: var(--text-display);
     }
 
     span {
@@ -136,7 +134,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--mat-sys-outline-variant);
+      background: var(--border);
       border-radius: var(--radius-xs);
     }
   }
@@ -167,11 +165,11 @@
     }
 
     &--active {
-      border-color: var(--mat-sys-primary);
+      border-color: var(--primary);
     }
 
     &:hover:not(.game-cover-panel__thumb--active) {
-      border-color: var(--mat-sys-outline);
+      border-color: var(--border-strong);
     }
   }
 
@@ -181,17 +179,17 @@
 
   .game-cover-panel__info {
     padding: 0.75rem;
-    background: var(--mat-sys-surface-container);
+    background: var(--bg-surface);
     border-radius: var(--radius-sm);
-    border: 2px solid var(--mat-sys-outline-variant);
-    border-left: 5px solid var(--mat-sys-primary);
+    border: 2px solid var(--border);
+    border-left: 5px solid var(--primary);
   }
 
   .game-cover-panel__info-title {
     margin: 0 0 0.5rem 0;
     font-weight: 500;
     font-size: var(--text-sm);
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
     line-height: 1.3;
   }
 
@@ -199,16 +197,14 @@
     display: flex;
     gap: 0.75rem;
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
     span {
       display: flex;
       gap: 0.25rem;
 
-      mat-icon {
-        font-size: var(--text-sm);
-        width: var(--text-sm);
-        height: var(--text-sm);
+      retro-icon {
+        --_size: var(--text-sm);
         line-height: 1;
       }
     }
@@ -217,7 +213,7 @@
   .game-cover-panel__info-genres {
     margin: 0.5rem 0 0;
     font-size: var(--text-xs);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     opacity: 0.8;
   }
 }
@@ -252,32 +248,10 @@
       display: flex;
       flex-direction: column;
 
-      // Propagates stretch through the entire Material wrapper chain via flexbox
-      ::ng-deep .mat-mdc-text-field-wrapper {
+      retro-textarea {
         flex: 1;
         display: flex;
         flex-direction: column;
-      }
-
-      ::ng-deep .mat-mdc-form-field-flex {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      ::ng-deep .mat-mdc-form-field-infix {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        min-width: 0;
-      }
-
-      ::ng-deep textarea {
-        flex: 1;
-        resize: none;
-        overflow-y: auto;
       }
     }
   }
@@ -292,7 +266,7 @@
     align-items: center;
     gap: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--mat-sys-outline-variant);
+    border-top: 1px solid var(--border);
     margin-top: auto;
   }
 
@@ -310,7 +284,7 @@
 
   .game-form__toggle-label {
     font-size: var(--text-sm);
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
   }
 
   .game-form__footer-actions {
@@ -319,8 +293,8 @@
   }
 
   .game-form__delete-btn {
-    color: var(--mat-sys-error) !important;
-    border-color: var(--mat-sys-error) !important;
+    color: var(--accent-rose) !important;
+    border-color: var(--accent-rose) !important;
   }
 
   .game-form__submit-btn {
@@ -414,7 +388,7 @@
     }
 
     .game-form__field--description {
-      ::ng-deep textarea {
+      retro-textarea {
         min-height: 100px;
       }
     }

@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -13,7 +13,7 @@ import { HARDWARE_MODEL_USE_CASES } from '@/domain/use-cases/hardware-model/hard
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { ControllerModel } from '@/models/controller/controller.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
 function makeController(overrides: Partial<ControllerModel> = {}): ControllerModel {
@@ -87,7 +87,7 @@ describe('ControllersComponent', () => {
         { provide: HARDWARE_MODEL_USE_CASES, useValue: mockModelUseCases },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: Router, useValue: mockRouter },
-        { provide: MatSnackBar, useValue: mockSnackBar }
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -117,7 +117,7 @@ describe('ControllersComponent', () => {
 
       await component.ngOnInit();
 
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
     });
   });

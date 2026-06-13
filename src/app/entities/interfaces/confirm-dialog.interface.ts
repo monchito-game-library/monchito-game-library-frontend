@@ -1,4 +1,4 @@
-/** Data payload for the confirmation dialog, passed as `MatDialog` data. */
+/** Data payload for the confirmation dialog, passed via `RetroDialogService`. */
 export interface ConfirmDialogInterface {
   /** Title shown at the top of the dialog. */
   title: string;

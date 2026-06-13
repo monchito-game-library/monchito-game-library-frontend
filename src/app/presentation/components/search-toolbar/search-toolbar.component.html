@@ -1,0 +1,9 @@
+<retro-input
+  prefixText="$ "
+  size="md"
+  [hideSubscript]="true"
+  [placeholder]="placeholder()"
+  [ngModel]="value()"
+  [disabled]="disabled()"
+  (ngModelChange)="onInput($event)" />
+<retro-command-bar [path]="commandPath()" [flags]="commandFlags()" />

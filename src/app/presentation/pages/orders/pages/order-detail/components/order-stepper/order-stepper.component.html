@@ -32,7 +32,7 @@
                 } @else {
                   <div
                     class="order-detail-page__stepper-member-avatar order-detail-page__stepper-member-avatar--placeholder">
-                    <mat-icon>person</mat-icon>
+                    <retro-icon name="person" />
                   </div>
                 }
                 <span class="order-detail-page__stepper-member-name">{{ m.displayName ?? m.email ?? m.userId }}</span>
@@ -87,14 +87,22 @@
     }
 
     <div class="order-detail-page__stepper-nav">
-      <button mat-stroked-button (click)="onPrevStep()" [disabled]="currentStep() === 0">
-        <mat-icon>arrow_back</mat-icon>
-        {{ 'orders.ready.prev' | transloco }}
-      </button>
-      <button mat-stroked-button (click)="onNextStep()" [disabled]="currentStep() === packSteps().length - 1">
-        {{ 'orders.ready.next' | transloco }}
-        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-      </button>
+      <retro-button
+        [label]="'orders.ready.prev' | transloco"
+        variant="ghost"
+        size="md"
+        [disabled]="currentStep() === 0"
+        (clicked)="onPrevStep()">
+        <retro-icon slot="start" name="arrow_back" size="sm" />
+      </retro-button>
+      <retro-button
+        [label]="'orders.ready.next' | transloco"
+        variant="ghost"
+        size="md"
+        [disabled]="currentStep() === packSteps().length - 1"
+        (clicked)="onNextStep()">
+        <retro-icon slot="end" name="arrow_forward" size="sm" />
+      </retro-button>
     </div>
   </div>
 </div>

@@ -9,11 +9,12 @@ import {
   WritableSignal
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { lastValueFrom } from 'rxjs';
@@ -38,7 +39,7 @@ import { AddEditLineDialogComponent } from './components/add-edit-line-dialog/ad
 import { AddEditLineDialogData } from '@/interfaces/orders/add-edit-line-dialog.interface';
 import { optimizePacks } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { allMembersReady } from '@/shared/order-member/order-member.util';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -48,17 +49,17 @@ import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatTooltip,
-    SkeletonComponent,
+    RetroIconButtonComponent,
+    RetroTooltipDirective,
+    RetroSkeletonComponent,
     TranslocoPipe,
     OrderInfoSectionComponent,
     OrderCostSummaryComponent,
     OrderProductListComponent,
     OrderStepperComponent,
-    OrderPlacingComponent
+    OrderPlacingComponent,
+    RetroButtonComponent,
+    RetroIconComponent
   ]
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
@@ -67,8 +68,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private _orderId: string = '';
@@ -229,7 +230,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       await this._ordersUseCases.update(this._orderId, { status: next });
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -251,7 +256,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -261,6 +270,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Advances the order to 'ordering'. Lines are already saved per-step; only the status changes.
    */
   async onConfirmPacks(): Promise<void> {
+    if (!this.isOwner()) return;
     this.saving.set(true);
     try {
       await this._ordersUseCases.update(this._orderId, { status: ORDER_STATUS.ORDERING });
@@ -268,7 +278,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.allPacksSelected.set(false);
       await this._loadOrderSilent();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -298,10 +312,18 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.addLine(this._orderId, userId, result);
-      this._snackBar.open(this._transloco.translate('orders.snack.lineAdded'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineAdded'),
+        duration: 3000,
+        variant: 'success'
+      });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineAddError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineAddError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -327,10 +349,18 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.updateLine(line.id, { quantityNeeded: result.quantityNeeded, notes: result.notes });
-      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdated'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineUpdated'),
+        duration: 3000,
+        variant: 'success'
+      });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineUpdateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineUpdateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -355,10 +385,18 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.deleteLine(lineId);
-      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleted'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineDeleted'),
+        duration: 3000,
+        variant: 'success'
+      });
       await this._loadOrder();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.lineDeleteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.lineDeleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -387,7 +425,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
           : o
       );
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -404,9 +446,17 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       const token: string = await this._ordersUseCases.createInvitation(this._orderId);
       const url: string = `${window.location.origin}/orders/invite/${token}`;
       await navigator.clipboard.writeText(url);
-      this._snackBar.open(this._transloco.translate('orders.snack.inviteCopied'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.inviteCopied'),
+        duration: 3000,
+        variant: 'success'
+      });
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.inviteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.inviteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -432,10 +482,14 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     try {
       await this._ordersUseCases.delete(this._orderId);
-      this._snackBar.open(this._transloco.translate('orders.snack.deleted'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.deleted'), duration: 3000, variant: 'success' });
       await this._router.navigate(['/orders']);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.deleteError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -443,6 +497,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Sets order status to 'selecting_packs' in the DB and initializes the stepper.
    */
   private async _onAdvanceToSelectingPacks(): Promise<void> {
+    if (!this.isOwner()) return;
     this.saving.set(true);
     try {
       if (this.products().length === 0) await this._loadProducts();
@@ -451,7 +506,11 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.order.set(result);
       await this._initStepper(result);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }
@@ -511,7 +570,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * If the order is in 'ordering' and the user is the owner, pre-loads the products catalogue.
    */
   private async _loadOrder(): Promise<void> {
-    if (!this._orderId) return;
+    if (!this._orderId || !this.userContext.userId()) return;
 
     this.loading.set(true);
     try {
@@ -519,7 +578,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       this.order.set(result);
       await this._initForStatus(result);
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.loadError'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.loadError'), duration: 3000, variant: 'error' });
     } finally {
       this.loading.set(false);
     }
@@ -530,7 +589,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
    * Used by the realtime subscription to avoid flickering.
    */
   private async _loadOrderSilent(): Promise<void> {
-    if (!this._orderId) return;
+    if (!this._orderId || !this.userContext.userId()) return;
     try {
       const result: OrderModel = await this._ordersUseCases.getById(this._orderId);
       this.order.set(result);

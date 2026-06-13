@@ -1,11 +1,21 @@
 <div class="protectors-page" [class.protectors-page--panel-open]="panelOpen()">
   <header class="protectors-page__header">
     <h1 class="protectors-page__title">{{ 'management.products.title' | transloco }}</h1>
-    <button mat-flat-button color="primary" (click)="onAddProtector()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.products.addBtn' | transloco }}
-    </button>
+    <retro-button
+      [label]="'management.products.addBtn' | transloco"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddProtector()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
+
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.products.search.placeholder' | transloco"
+    commandPath="monchito ~/management/protectors"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
 
   @if (panelOpen()) {
     <div class="protectors-edit-panel-wrapper">
@@ -24,13 +34,13 @@
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="protectors-skeleton__card">
             <div class="protectors-skeleton__header">
-              <app-skeleton width="55%" height="14px" />
-              <app-skeleton width="60px" height="20px" borderRadius="var(--radius-lg)" />
+              <retro-skeleton width="55%" height="14px" />
+              <retro-skeleton width="60px" height="20px" />
             </div>
-            <app-skeleton width="70%" height="12px" />
+            <retro-skeleton width="70%" height="12px" />
             <div class="protectors-skeleton__chips">
-              <app-skeleton width="48px" height="20px" borderRadius="var(--radius-sm)" />
-              <app-skeleton width="48px" height="20px" borderRadius="var(--radius-sm)" />
+              <retro-skeleton width="48px" height="20px" />
+              <retro-skeleton width="48px" height="20px" />
             </div>
           </div>
         }
@@ -39,12 +49,14 @@
       <p class="protectors-page__empty">{{ 'management.products.empty' | transloco }}</p>
     } @else {
       <div class="protectors-grid">
-        @for (protector of protectors(); track protector.id) {
-          <div
+        @for (protector of filteredProtectors(); track protector.id) {
+          <retro-card
             class="protector-card"
             [class.protector-card--inactive]="!protector.isActive"
-            [class.protector-card--selected]="selectedProtector()?.id === protector.id"
-            (click)="onSelectProtector(protector)">
+            padding="md"
+            [interactive]="true"
+            [selected]="selectedProtector()?.id === protector.id"
+            (cardClicked)="onSelectProtector(protector)">
             <div class="protector-card__header">
               <span class="protector-card__name">{{ protector.name }}</span>
               <span class="protector-card__category-chip protector-card__category-chip--{{ protector.category }}">
@@ -73,9 +85,15 @@
             @if (!protector.isActive) {
               <span class="protector-card__inactive-badge">{{ 'management.products.inactive' | transloco }}</span>
             }
-          </div>
+          </retro-card>
         }
       </div>
+      @if (searchTerm() && filteredProtectors().length === 0) {
+        <div class="protectors-page__no-results">
+          <p>{{ 'management.products.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
     }
   </div>
 </div>

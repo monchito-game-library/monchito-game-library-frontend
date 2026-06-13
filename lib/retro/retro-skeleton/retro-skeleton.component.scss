@@ -1,0 +1,37 @@
+.retro-skeleton {
+  display: block;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 0%,
+    rgba(124, 58, 237, 0.14) 40%,
+    var(--bg-surface-hi) 60%,
+    var(--bg-surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: retro-skeleton-shimmer 1.4s linear infinite;
+
+  // Alias semánticos — no cambian la geometría
+  &--line,
+  &--square,
+  &--block {
+    // sin overrides; reservado para tweaks futuros
+  }
+}
+
+@keyframes retro-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// ────────────────────────── prefers-reduced-motion ──────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .retro-skeleton {
+    animation: none;
+    background: var(--bg-surface-hi);
+  }
+}

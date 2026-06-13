@@ -6,7 +6,7 @@
 }
 
 .delete-user-dialog__title-icon {
-  color: var(--mat-sys-error);
+  color: var(--accent-rose);
 }
 
 .delete-user-dialog__content {
@@ -27,13 +27,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .delete-user-dialog__irreversible {
   margin: 0;
   font-weight: 600;
-  color: var(--mat-sys-error);
+  color: var(--accent-rose);
 }
 
 .delete-user-dialog__form {

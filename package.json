@@ -10,33 +10,40 @@
     "ng": "ng",
     "start": "ng serve --configuration development",
     "build": "ng build",
-    "test": "ng test",
+    "test": "npm run test:retro && npm run test:app",
     "test:watch": "ng test --watch",
-    "test:coverage": "ng test --configuration=coverage",
+    "test:retro": "ng test --configuration=retro",
+    "test:app": "ng test --configuration=app",
+    "test:coverage": "npm run test:retro:coverage && npm run test:app:coverage",
+    "test:retro:coverage": "ng test --configuration=retro-coverage",
+    "test:app:coverage": "ng test --configuration=app-coverage",
     "test:eslint-rules": "node eslint-rules/no-inline-types-in-layer/index.spec.js && node eslint-rules/clean-architecture-boundaries/index.spec.js",
-    "check:unused": "knip",
+    "check:unused": "npm run check:unused:retro && npm run check:unused:app",
+    "check:unused:retro": "knip --config knip.retro.config.ts",
+    "check:unused:app": "knip --config knip.config.ts",
     "clean:install": "rm -rf node_modules && rm package-lock.json && npm i",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint:retro": "eslint --config lib/retro/eslint.config.js lib/",
+    "lint:app": "eslint .",
+    "lint": "npm run lint:retro && npm run lint:app",
+    "lint:fix": "npm run lint:retro -- --fix && npm run lint:app -- --fix",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
     "vercel-build": "node scripts/set-env.js && ng build --configuration production",
     "lighthouse": "node --import tsx/esm scripts/lighthouse.mts",
     "db:apply": "node --env-file=.env scripts/db-apply.mjs",
-    "db:dump": "node --env-file=.env scripts/db-dump.mjs"
+    "db:dump": "node --env-file=.env scripts/db-dump.mjs",
+    "docs:retro-check": "node scripts/check-retro-readme-sync.mjs"
   },
   "dependencies": {
     "@angular-eslint/eslint-plugin": "21.3.1",
     "@angular-eslint/eslint-plugin-template": "21.3.1",
     "@angular-eslint/template-parser": "21.3.1",
-    "@angular/animations": "21.2.11",
     "@angular/cdk": "21.2.9",
     "@angular/common": "21.2.11",
     "@angular/compiler": "21.2.11",
     "@angular/core": "21.2.11",
     "@angular/forms": "21.2.11",
     "@angular/localize": "21.2.11",
-    "@angular/material": "21.2.9",
     "@angular/platform-browser": "21.2.11",
     "@angular/platform-browser-dynamic": "21.2.11",
     "@angular/router": "21.2.11",
@@ -77,8 +84,16 @@
     "vitest": "4.1.5"
   },
   "lint-staged": {
-    "*.{ts,html,scss}": [
+    "lib/**/*.{ts,html}": [
+      "eslint --config lib/retro/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{ts,html,scss}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "eslint.config.js": [],
+    "*.{json,md}": [
       "prettier --write"
     ]
   }

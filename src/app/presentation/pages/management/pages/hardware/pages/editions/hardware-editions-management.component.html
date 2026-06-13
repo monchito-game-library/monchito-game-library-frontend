@@ -1,25 +1,33 @@
 <div class="editions-page" [class.editions-page--panel-open]="panelOpen() || modelPanelOpen()">
   <header class="editions-page__header">
     <div class="editions-page__header-left">
-      <mat-icon class="editions-page__back-icon" (click)="onBack()">arrow_back</mat-icon>
+      <retro-icon class="editions-page__back-icon" name="arrow_back" (click)="onBack()" />
       <div class="editions-page__titles">
         <span class="editions-page__breadcrumb">{{ 'management.hardware.title' | transloco }}</span>
         <h1 class="editions-page__title">{{ model()?.name ?? '…' }}</h1>
       </div>
-      <button
-        mat-icon-button
-        type="button"
+      <retro-icon-button
+        icon="edit"
+        size="sm"
         class="editions-page__edit-btn"
-        [attr.aria-label]="'common.edit' | transloco"
-        (click)="onEditModel()">
-        <mat-icon>edit</mat-icon>
-      </button>
+        [ariaLabel]="'common.edit' | transloco"
+        (clicked)="onEditModel()" />
     </div>
-    <button mat-flat-button color="primary" (click)="onAddEdition()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.editions.addBtn' | transloco }}
-    </button>
+    <retro-button
+      [label]="'management.hardware.editions.addBtn' | transloco"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddEdition()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
+
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.hardware.editions.search.placeholder' | transloco"
+    [commandPath]="commandPath()"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
 
   @if (modelPanelOpen()) {
     <div class="model-edit-panel-wrapper">
@@ -47,21 +55,33 @@
       <div class="editions-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="editions-skeleton__card">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-sm)" />
-            <app-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>
     } @else if (editions().length === 0) {
       <p class="editions-page__empty">{{ 'management.hardware.editions.empty' | transloco }}</p>
     } @else {
+      @if (searchTerm() && filteredEditions().length === 0) {
+        <div class="editions-page__no-results">
+          <p>{{ 'management.hardware.editions.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
       <div class="editions-grid">
-        @for (edition of editions(); track edition.id) {
-          <app-catalog-item-card
-            icon="star_outline"
-            [name]="edition.name"
+        @for (edition of filteredEditions(); track edition.id) {
+          <retro-card
+            class="edition-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedEdition()?.id === edition.id"
-            (cardClick)="onSelectEdition(edition)" />
+            (cardClicked)="onSelectEdition(edition)">
+            <div class="edition-card__top">
+              <retro-icon name="star_outline" size="lg" />
+              <span class="edition-card__name">{{ edition.name }}</span>
+            </div>
+          </retro-card>
         }
       </div>
     }

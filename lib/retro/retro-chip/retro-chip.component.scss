@@ -1,0 +1,85 @@
+.retro-chip {
+  --c: var(--text-mid);
+  --_h: 1.25rem;
+  --_px: 8px;
+  --_fs: 0.6875rem;
+  --_gap: 0.25rem;
+  --_close: 1rem;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--_gap);
+  height: var(--_h);
+  padding: 0 var(--_px); /* reason: micro-espaciado decorativo de chip */
+  border: 1px solid var(--c);
+  color: var(--c);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--_fs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 0;
+  background: transparent;
+
+  &--sm {
+    --_h: 1rem;
+    --_px: 6px;
+    --_fs: 0.625rem;
+    --_gap: 0.125rem;
+    --_close: 0.875rem;
+  }
+
+  &--lg {
+    --_h: 1.5rem;
+    --_px: 10px;
+    --_fs: 0.75rem;
+    --_gap: 0.375rem;
+    --_close: 1.25rem;
+  }
+
+  &--primary {
+    --c: var(--primary);
+  }
+  &--green {
+    --c: var(--accent-green);
+  }
+  &--amber {
+    --c: var(--accent-amber);
+  }
+  &--rose {
+    --c: var(--accent-rose);
+  }
+  &--blue {
+    --c: var(--accent-blue);
+  }
+  &--neutral {
+    --c: var(--text-mid);
+  }
+
+  &--filled {
+    background: var(--c);
+    color: var(--bg-void);
+  }
+
+  .retro-chip__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--_close);
+    height: var(--_close);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--c);
+    cursor: pointer;
+  }
+}
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .retro-chip .retro-chip__close {
+    /* touch target mínimo 24px para el área clicable */
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

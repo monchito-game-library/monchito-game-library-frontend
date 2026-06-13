@@ -4,15 +4,15 @@
   gap: 0.75rem;
   width: 100%;
   padding: 1rem 1.25rem;
-  background: var(--mat-sys-surface-container);
-  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
   transition: background var(--transition-fast);
 
   &:hover {
-    background: var(--mat-sys-surface-container-high);
+    background: var(--bg-surface-hi);
   }
 
   .order-card__header {
@@ -25,7 +25,7 @@
   .order-card__title {
     font-size: var(--text-base);
     font-weight: 600;
-    color: var(--mat-sys-on-surface);
+    color: var(--text-hi);
   }
 
   .order-card__status {
@@ -36,8 +36,8 @@
     text-transform: capitalize;
 
     &--draft {
-      background: var(--mat-sys-surface-variant);
-      color: var(--mat-sys-on-surface-variant);
+      background: var(--bg-surface-hi);
+      color: var(--text-mid);
     }
 
     &--ordered {
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
     font-size: var(--text-sm);
   }
 
@@ -69,11 +69,5 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-
-    mat-icon {
-      font-size: var(--text-base);
-      width: var(--text-base);
-      height: var(--text-base);
-    }
   }
 }

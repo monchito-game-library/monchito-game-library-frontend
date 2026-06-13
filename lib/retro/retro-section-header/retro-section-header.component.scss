@@ -1,0 +1,33 @@
+.retro-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+
+  .retro-section-header__prefix {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .retro-section-header__label {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-mid);
+  }
+
+  .retro-section-header__count {
+    font-size: 0.6875rem;
+    color: var(--text-lo);
+  }
+
+  /* Acciones proyectadas en slot=actions se desplazan al extremo derecho */
+  ::ng-deep [slot='actions'] {
+    margin-left: auto;
+  }
+}

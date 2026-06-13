@@ -12,6 +12,8 @@
   [resolveStoreName]="resolveStoreName.bind(this)"
   [cardHeaderTpl]="cardHeaderTpl"
   [cardChipsTpl]="cardChipsTpl"
+  commandPath="monchito ~/library/consoles"
+  [commandFlags]="commandFlags()"
   (searchChange)="searchQuery.set($event)"
   (addClick)="onAdd()"
   (detailClick)="onDetail($any($event))">
@@ -26,13 +28,14 @@
 </ng-template>
 
 <ng-template #cardChipsTpl let-console>
-  <app-badge-chip
+  <retro-chip
+    size="sm"
     [label]="
       (console.condition === GAME_CONDITION.NEW ? 'consolesPage.condition.new' : 'consolesPage.condition.used')
         | transloco
     "
-    [variant]="console.condition === GAME_CONDITION.NEW ? 'new' : 'used'" />
+    [color]="console.condition === GAME_CONDITION.NEW ? 'green' : 'neutral'" />
   @if (console.region) {
-    <app-badge-chip [label]="console.region" variant="neutral" />
+    <retro-chip [label]="console.region" color="neutral" size="sm" />
   }
 </ng-template>

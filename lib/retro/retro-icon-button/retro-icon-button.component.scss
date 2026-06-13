@@ -1,0 +1,79 @@
+// display: contents hace que el host no genere un box propio.
+// matTooltip y matMenuTriggerFor aplicados al host se disparan sobre el <button> interno.
+:host {
+  display: contents;
+}
+
+.retro-icon-btn {
+  --color: var(--text-mid);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  margin-bottom: var(--retro-btn-bottom-offset, 0);
+  background: transparent;
+  color: var(--color);
+  cursor: pointer;
+  border-radius: 0;
+  transition:
+    color 120ms linear,
+    border-color 120ms linear,
+    background-color 120ms linear;
+
+  &--sm {
+    width: 32px;
+    height: 32px;
+  }
+
+  &--md {
+    width: 40px;
+    height: 40px;
+  }
+
+  &--lg {
+    width: 44px;
+    height: 44px;
+  }
+
+  &--primary {
+    --color: var(--primary);
+  }
+  &--danger {
+    --color: var(--accent-rose);
+  }
+  &--ghost {
+    --color: var(--text-mid);
+  }
+
+  @media (hover: hover) {
+    &:not(:disabled):hover {
+      color: var(--text-hi);
+      border-color: var(--border-active);
+      background-color: var(--bg-surface-hi);
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// ────────────────────────── Responsive: ≤ 768 ──────────────────────────
+// Touch target mínimo 44px en mobile incluso para variantes sm/md.
+@media (max-width: 768px) {
+  .retro-icon-btn {
+    &--sm,
+    &--md {
+      width: 44px;
+      height: 44px;
+    }
+  }
+}

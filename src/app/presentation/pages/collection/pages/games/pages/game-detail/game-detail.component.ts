@@ -13,12 +13,14 @@ import { CurrencyPipe, DatePipe, DecimalPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
+import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
+import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameEditModel } from '@/models/game/game-edit.model';
@@ -40,7 +42,10 @@ import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
 import { GameLoanFormComponent } from './components/game-loan-form/game-loan-form.component';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroSectionHeaderComponent } from '@retro/retro-section-header/retro-section-header.component';
 
 @Component({
   selector: 'app-game-detail',
@@ -52,16 +57,19 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
     CurrencyPipe,
     DatePipe,
     DecimalPipe,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatProgressSpinner,
+    RetroIconComponent,
+    RetroMenuComponent,
+    RetroMenuItemComponent,
+    RetroMenuTriggerDirective,
+    RetroIconButtonComponent,
+    RetroSpinnerComponent,
     TranslocoPipe,
     SaleFormComponent,
     GameLoanFormComponent,
-    BadgeChipComponent
+    RetroButtonComponent,
+    RetroChipComponent,
+    RetroDataRowComponent,
+    RetroSectionHeaderComponent
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -71,8 +79,8 @@ export class GameDetailComponent implements OnInit {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _workUseCases: WorkUseCasesContract = inject(WORK_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
 
@@ -376,7 +384,11 @@ export class GameDetailComponent implements OnInit {
       await this._gameUseCases.updateSaleStatus(this._userId, g.uuid, sale);
       this.game.set({ ...g, forSale: false, salePrice: null, soldAt: null, soldPriceFinal: null });
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.sale.snack.undoError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.sale.snack.undoError'),
+        duration: 3000,
+        variant: 'error'
+      });
     }
   }
 
@@ -406,7 +418,7 @@ export class GameDetailComponent implements OnInit {
       } satisfies ConfirmDialogInterface
     });
 
-    const confirmed: boolean | undefined = await firstValueFrom(ref.afterClosed());
+    const confirmed = await firstValueFrom(ref.afterClosed());
     if (!confirmed || !game.uuid) return;
 
     this.deleting.set(true);
@@ -414,7 +426,11 @@ export class GameDetailComponent implements OnInit {
       await this._gameUseCases.deleteGame(this._userId, game.uuid);
       void this._router.navigate(['/collection/games']);
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.snack.deleteError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.snack.deleteError'),
+        duration: 3000,
+        variant: 'error'
+      });
       this.deleting.set(false);
     }
   }
@@ -444,7 +460,11 @@ export class GameDetailComponent implements OnInit {
       const copies: GameModel[] = await this._workUseCases.getCopies(this._userId, game.workId);
       this.copies.set(copies);
     } catch {
-      this._snackBar.open(this._transloco.translate('gameDetail.snack.loadError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('gameDetail.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
       void this._router.navigate(['/collection/games']);
     } finally {
       this.loading.set(false);

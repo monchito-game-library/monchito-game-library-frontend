@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { MatIcon } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 import {
   AUDIT_LOG_USE_CASES,
@@ -19,11 +21,11 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslocoPipe, DatePipe, SkeletonComponent]
+  imports: [RetroIconComponent, TranslocoPipe, DatePipe, RetroSkeletonComponent, RetroListComponent, RetroListItemComponent]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Whether the log list is being loaded. */
@@ -73,9 +75,10 @@ export class AuditLogManagementComponent implements OnInit {
       const entries: AuditLogModel[] = await this._auditLogUseCases.getRecentLogs(100);
       this.entries.set(entries);
     } catch {
-      this._snackBar.open(this._transloco.translate('management.auditLog.loadError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.auditLog.loadError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.loading.set(false);

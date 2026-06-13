@@ -1,0 +1,99 @@
+<retro-form-field
+  [size]="size()"
+  [disabled]="_isDisabled()"
+  [clearable]="clearable()"
+  [clearAriaLabel]="clearAriaLabel()"
+  [hideSubscript]="hideSubscript()"
+  [controlRef]="this"
+  (cleared)="onClear()">
+  <retro-label>{{ label() }}</retro-label>
+
+  @if (prefixIcon()) {
+    <retro-icon [name]="prefixIcon()!" size="sm" retroPrefix />
+  }
+
+  <input
+    #inputEl
+    retroInput
+    type="text"
+    readonly
+    [placeholder]="placeholder()"
+    [disabled]="_isDisabled()"
+    [value]="_displayText()"
+    (focus)="onInputFocus()"
+    (blur)="onInputBlur()" />
+
+  <retro-icon-button
+    retroSuffix
+    icon="calendar_today"
+    ariaLabel="Abrir calendario"
+    variant="ghost"
+    size="sm"
+    (clicked)="toggle()" />
+
+  @if (error()) {
+    <retro-error>{{ error() }}</retro-error>
+  }
+  @if (hint()) {
+    <retro-hint>{{ hint() }}</retro-hint>
+  }
+</retro-form-field>
+
+<!-- Panel de calendario (teleportado via CDK Portal) -->
+<ng-template #calendar>
+  <div
+    class="retro-datepicker__dialog"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="headerId"
+    (keydown)="onDialogKeydown($event)">
+    <!-- Header -->
+    <div class="retro-datepicker__header">
+      <retro-icon-button icon="chevron_left" [ariaLabel]="'Mes anterior'" (clicked)="prevMonth()" />
+      <span class="retro-datepicker__header-label" [id]="headerId">
+        {{ headerLabel() }}
+      </span>
+      <retro-icon-button icon="chevron_right" [ariaLabel]="'Mes siguiente'" (clicked)="nextMonth()" />
+    </div>
+
+    <!-- Day-of-week headers -->
+    <div class="retro-datepicker__grid-header">
+      @for (d of dayHeaders; track d) {
+        <span class="retro-datepicker__weekday" aria-hidden="true">{{ d }}</span>
+      }
+    </div>
+
+    <!-- Calendar grid -->
+    <table class="retro-datepicker__grid" role="grid" [attr.aria-labelledby]="headerId">
+      <tbody>
+        @for (week of weeks(); track $index) {
+          <tr role="row">
+            @for (day of week; track day.date?.toISOString()) {
+              <td
+                role="gridcell"
+                [class.retro-datepicker__day--outside]="!day.inMonth"
+                [class.retro-datepicker__day--today]="day.isToday"
+                [class.retro-datepicker__day--selected]="day.isSelected"
+                [class.retro-datepicker__day--active]="day.date && _activeDate() && isSameDay(day.date, _activeDate()!)"
+                [class.retro-datepicker__day--disabled]="day.isDisabled"
+                [attr.aria-selected]="day.isSelected ? true : null"
+                [attr.aria-current]="day.isToday ? 'date' : null"
+                [attr.aria-disabled]="day.isDisabled ? true : null"
+                [attr.tabindex]="day.date && _activeDate() && isSameDay(day.date, _activeDate()!) ? 0 : -1"
+                (click)="onDayClick(day)"
+                (keydown)="onDayKeydown($event, day)">
+                <span class="retro-datepicker__day-label">{{ day.label }}</span>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="retro-datepicker__footer">
+      <button type="button" class="retro-datepicker__today-btn" (click)="selectToday()">Hoy</button>
+      <button type="button" class="retro-datepicker__close-btn" (click)="close()">Cerrar</button>
+    </div>
+  </div>
+</ng-template>

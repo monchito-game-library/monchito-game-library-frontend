@@ -9,10 +9,13 @@ import {
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
+import { RetroTabComponent } from '@retro/retro-tabs/components/retro-tab/retro-tab.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
@@ -31,13 +34,23 @@ import { Router } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [marketRepositoryProvider, marketUseCasesProvider],
-  imports: [CurrencyPipe, DatePipe, MatIcon, MatProgressSpinner, MatTab, MatTabGroup, MatTabLabel, TranslocoPipe]
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    RetroIconComponent,
+    RetroTabsComponent,
+    RetroTabComponent,
+    RetroListComponent,
+    RetroListItemComponent,
+    TranslocoPipe,
+    RetroSpinnerComponent
+  ]
 })
 export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Active tab: 'available' or 'history'. */
@@ -90,7 +103,11 @@ export class SaleComponent implements OnInit {
       this.availableItems.set(available);
       this.soldItems.set(sold);
     } catch {
-      this._snackBar.open(this._transloco.translate('salePage.snack.loadError'), undefined, { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('salePage.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }
@@ -104,6 +121,16 @@ export class SaleComponent implements OnInit {
   setTab(tab: SaleTab): void {
     this.activeTab.set(tab);
     this.activeFilter.set('all');
+  }
+
+  /**
+   * Callback para selectedIndexChange de retro-tabs.
+   * Mapea el índice numérico a la clave SaleTab correspondiente.
+   *
+   * @param {number} index - Índice del tab seleccionado (0 = available, 1 = history).
+   */
+  onTabIndexChange(index: number): void {
+    this.setTab(index === 0 ? 'available' : 'history');
   }
 
   /**

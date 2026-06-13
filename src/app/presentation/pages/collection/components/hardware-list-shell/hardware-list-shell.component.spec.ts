@@ -127,7 +127,7 @@ describe('HardwareListShellComponent', () => {
     });
 
     it('muestra el bloque de empty state', () => {
-      const empty = fixture.debugElement.query(By.css('.hw-list__empty'));
+      const empty = fixture.debugElement.query(By.css('retro-empty-state'));
       expect(empty).not.toBeNull();
     });
 
@@ -202,7 +202,7 @@ describe('HardwareListShellComponent', () => {
   describe('stats', () => {
     it('muestra skeletons cuando loading es true', () => {
       setupComponent({ loading: true, items: [], filteredItems: [] });
-      const skeletons = fixture.debugElement.queryAll(By.css('app-skeleton'));
+      const skeletons = fixture.debugElement.queryAll(By.css('retro-skeleton'));
       expect(skeletons.length).toBeGreaterThanOrEqual(2);
     });
 
@@ -210,8 +210,8 @@ describe('HardwareListShellComponent', () => {
       const items = [makeItem({ id: 'item-1' }), makeItem({ id: 'item-2' })];
       setupComponent({ loading: false, items, filteredItems: items });
 
-      const statSpans = fixture.debugElement.queryAll(By.css('.hw-list__stat span'));
-      const countSpan = statSpans[0];
+      const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
+      const countSpan = statDivs[0].query(By.css('span:not(.retro-icon)'));
       expect(countSpan.nativeElement.textContent.trim()).toBe('2');
     });
 
@@ -223,8 +223,8 @@ describe('HardwareListShellComponent', () => {
         totalSpent: 300
       });
 
-      const statSpans = fixture.debugElement.queryAll(By.css('.hw-list__stat span'));
-      const spentSpan = statSpans[1];
+      const statDivs = fixture.debugElement.queryAll(By.css('.hw-list__stat'));
+      const spentSpan = statDivs[1].query(By.css('span:not(.retro-icon)'));
       expect(spentSpan.nativeElement.textContent).toContain('300');
     });
   });
@@ -270,15 +270,15 @@ describe('HardwareListShellComponent', () => {
   });
 
   describe('onDetail (detailClick)', () => {
-    it('emite detailClick con el item correcto al hacer click en una card', () => {
+    it('emite detailClick con el item correcto al disparar cardClicked en la retro-card', () => {
       const item = makeItem({ id: 'item-click' });
       setupComponent({ loading: false, items: [item], filteredItems: [item] });
 
       const spy = vi.fn();
       component.detailClick.subscribe(spy);
 
-      const card = fixture.debugElement.query(By.css('.hw-list__card'));
-      card.nativeElement.click();
+      const card = fixture.debugElement.query(By.css('retro-card.hw-list__card'));
+      card.triggerEventHandler('cardClicked', new MouseEvent('click'));
 
       expect(spy).toHaveBeenCalledWith(item);
     });
@@ -299,6 +299,26 @@ describe('HardwareListShellComponent', () => {
 
       const nativeEl: HTMLElement = fixture.nativeElement;
       expect(nativeEl.textContent).toContain('chips:item-tpl');
+    });
+  });
+
+  describe('command bar — delegado a list-page-header', () => {
+    it('pasa commandPath al app-list-page-header cuando se proporciona', () => {
+      setupComponent({ loading: false, items: [makeItem()], filteredItems: [makeItem()] });
+      fixture.componentRef.setInput('commandPath', 'monchito ~/library/consoles');
+      fixture.detectChanges();
+
+      const header = fixture.debugElement.query(By.css('app-list-page-header'));
+      expect(header.componentInstance.commandPath()).toBe('monchito ~/library/consoles');
+    });
+
+    it('pasa commandFlags al app-list-page-header cuando se proporciona', () => {
+      setupComponent({ loading: false, items: [makeItem()], filteredItems: [makeItem()] });
+      fixture.componentRef.setInput('commandFlags', ['--filter=active']);
+      fixture.detectChanges();
+
+      const header = fixture.debugElement.query(By.css('app-list-page-header'));
+      expect(header.componentInstance.commandFlags()).toEqual(['--filter=active']);
     });
   });
 

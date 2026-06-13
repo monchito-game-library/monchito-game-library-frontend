@@ -1,0 +1,50 @@
+.retro-cmd {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-lo);
+  border-bottom: 1px solid var(--border);
+
+  .retro-cmd__path {
+    color: var(--accent-green);
+  }
+
+  .retro-cmd__sep {
+    color: var(--text-mid);
+  }
+
+  .retro-cmd__flag {
+    color: var(--accent-amber);
+  }
+
+  .retro-cmd__cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--text-hi);
+    animation: retro-cmd-blink 1s steps(2) infinite;
+  }
+}
+
+@keyframes retro-cmd-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+// ────────────────────────── Responsive: < 1024px ──────────────────────────
+@media (max-width: 1024px) {
+  .retro-cmd {
+    display: none;
+  }
+}
+
+// ────────────────────────── prefers-reduced-motion ──────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .retro-cmd__cursor {
+    animation: none;
+  }
+}

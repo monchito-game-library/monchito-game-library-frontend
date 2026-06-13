@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareListBaseComponent } from '@/abstract/hardware-list-base/hardware-list-base.component';
@@ -8,7 +8,7 @@ import {
   ControllerUseCasesContract
 } from '@/domain/use-cases/controller/controller.use-cases.contract';
 import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
-import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 
 @Component({
   selector: 'app-controllers',
@@ -16,7 +16,7 @@ import { BadgeChipComponent } from '@/components/ad-hoc/badge-chip/badge-chip.co
   styleUrls: ['./controllers.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslocoPipe, HardwareListShellComponent, BadgeChipComponent]
+  imports: [TranslocoPipe, HardwareListShellComponent, RetroChipComponent]
 })
 export class ControllersComponent extends HardwareListBaseComponent<ControllerModel> {
   private readonly _controllerUseCases: ControllerUseCasesContract = inject(CONTROLLER_USE_CASES);
@@ -28,6 +28,16 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
 
   /** List of controllers owned by the user. */
   readonly items: WritableSignal<ControllerModel[]> = signal<ControllerModel[]>([]);
+
+  /**
+   * Flags dinámicos para el retro-command-bar según el estado actual de la lista.
+   * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
+   */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const flags: string[] = [];
+    if (this.searchQuery()) flags.push(`search="${this.searchQuery()}"`);
+    return flags;
+  });
 
   async ngOnInit(): Promise<void> {
     this._initScrollRestoration();

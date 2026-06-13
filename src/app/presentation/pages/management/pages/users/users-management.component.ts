@@ -10,18 +10,22 @@ import {
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 
-import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom } from 'rxjs';
 
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { DeleteUserDialogComponent } from './components/delete-user-dialog/delete-user-dialog.component';
 import { DeleteUserDialogInterface } from '@/interfaces/management/delete-user-dialog.interface';
 
@@ -47,14 +51,17 @@ import { formatRelativeTime } from '@/shared/relative-time/relative-time.util';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIcon,
-    MatProgressSpinner,
-    MatButton,
-    MatIconButton,
-    MatTooltip,
+    RetroIconComponent,
+    RetroSpinnerComponent,
+    RetroTooltipDirective,
+    RetroIconButtonComponent,
     TranslocoPipe,
     NgOptimizedImage,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    RetroCardComponent,
+    RetroListComponent,
+    RetroListItemComponent
   ]
 })
 export class UsersManagementComponent implements OnInit {
@@ -62,8 +69,8 @@ export class UsersManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
 
   /** Whether the user list is being loaded. */
   readonly loading: WritableSignal<boolean> = signal(false);
@@ -79,13 +86,6 @@ export class UsersManagementComponent implements OnInit {
 
   /** Active role filter applied to the lists. */
   readonly activeFilter: WritableSignal<RoleFilterType> = signal('all');
-
-  /** Available filter chips shown in the toolbar. */
-  readonly filters: ReadonlyArray<{ id: RoleFilterType; labelKey: string }> = [
-    { id: 'all', labelKey: 'management.users.filter.all' },
-    { id: 'admin', labelKey: 'management.users.filter.admins' },
-    { id: 'member', labelKey: 'management.users.filter.members' }
-  ];
 
   /** Owner row extracted from the loaded users — rendered as hero, never in the list. */
   readonly ownerUser: Signal<UserAdminModel | null> = computed((): UserAdminModel | null => {
@@ -152,14 +152,14 @@ export class UsersManagementComponent implements OnInit {
     const titleKey = newRole === 'admin' ? 'management.users.promote.title' : 'management.users.demote.title';
     const messageKey = newRole === 'admin' ? 'management.users.promote.message' : 'management.users.demote.message';
 
-    const dialogRef: MatDialogRef<ConfirmDialogComponent> = this._dialog.open(ConfirmDialogComponent, {
+    const dialogRef: RetroDialogRef<ConfirmDialogComponent, boolean> = this._dialog.open(ConfirmDialogComponent, {
       data: {
         title: this._transloco.translate(titleKey),
         message: this._transloco.translate(messageKey, { email: user.email })
       } satisfies ConfirmDialogInterface
     });
 
-    const confirmed: boolean = await firstValueFrom(dialogRef.afterClosed());
+    const confirmed: boolean | undefined = await firstValueFrom(dialogRef.afterClosed());
     if (!confirmed) return;
     await this._applyRoleChange(user, newRole);
   }
@@ -175,7 +175,7 @@ export class UsersManagementComponent implements OnInit {
     if (user.role === 'owner') return;
     if (user.userId === this._userContext.userId()) return;
 
-    const dialogRef: MatDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
+    const dialogRef: RetroDialogRef<DeleteUserDialogComponent, boolean> = this._dialog.open(DeleteUserDialogComponent, {
       data: { email: user.email } satisfies DeleteUserDialogInterface,
       autoFocus: false
     });
@@ -228,14 +228,16 @@ export class UsersManagementComponent implements OnInit {
         entityId: user.userId,
         description: `${user.email}: ${user.role} → ${newRole}`
       });
-      this._snackBar.open(this._transloco.translate('management.users.changeRoleSuccess'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.changeRoleSuccess'),
         duration: 3000,
-        panelClass: ['snack-mobile']
+        variant: 'success'
       });
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.changeRoleError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.changeRoleError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.updatingUserId.set(null);
@@ -259,14 +261,16 @@ export class UsersManagementComponent implements OnInit {
         entityId: user.userId,
         description: `${user.email} (${user.role})`
       });
-      this._snackBar.open(this._transloco.translate('management.users.delete.success', { email: user.email }), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.delete.success', { email: user.email }),
         duration: 3000,
-        panelClass: ['snack-mobile']
+        variant: 'success'
       });
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.delete.error'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.delete.error'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.deletingUserId.set(null);
@@ -282,9 +286,10 @@ export class UsersManagementComponent implements OnInit {
       const users: UserAdminModel[] = await this._userAdminUseCases.getAllUsers();
       this.users.set(users);
     } catch {
-      this._snackBar.open(this._transloco.translate('management.users.loadError'), '', {
+      this._snack.open({
+        text: this._transloco.translate('management.users.loadError'),
         duration: 4000,
-        panelClass: ['snack-mobile']
+        variant: 'error'
       });
     } finally {
       this.loading.set(false);

@@ -1,6 +1,6 @@
-<h2 mat-dialog-title>{{ 'gameForm.cover.repositionTitle' | transloco }}</h2>
+<h2 retroDialogTitle>{{ 'gameForm.cover.repositionTitle' | transloco }}</h2>
 
-<mat-dialog-content>
+<div retroDialogContent>
   <div
     class="cover-pos-dialog__preview"
     [class.cover-pos-dialog__preview--grabbing]="isDragging()"
@@ -26,11 +26,14 @@
       alt="" />
   </div>
   <p class="cover-pos-dialog__hint">{{ 'cropDialog.hint' | transloco }}</p>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end">
-  <button mat-stroked-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
-  <button mat-flat-button color="primary" type="button" [disabled]="!imageLoaded()" (click)="onConfirm()">
-    {{ 'common.confirm' | transloco }}
-  </button>
-</mat-dialog-actions>
+<footer retroDialogActions align="end">
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" (clicked)="onCancel()" />
+  <retro-button
+    [label]="'common.confirm' | transloco"
+    variant="primary"
+    size="md"
+    [disabled]="!imageLoaded()"
+    (clicked)="onConfirm()" />
+</footer>

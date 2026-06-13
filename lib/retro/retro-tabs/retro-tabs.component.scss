@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.retro-tabs {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.retro-tabs--local {
+  height: 100%;
+  overflow: hidden;
+}
+
+.retro-tabs__list {
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+
+  @media (pointer: coarse) {
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.retro-tabs__tab {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: none;
+  color: var(--text-mid);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms ease;
+
+  &--active {
+    color: var(--text-hi);
+    text-shadow: 0 0 6px color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+
+  @media (hover: hover) {
+    &:not(.retro-tabs__tab--active):hover {
+      color: var(--text-hi);
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--border-active);
+    outline-offset: -1px;
+  }
+}
+
+/* Indicador deslizante con glow neón */
+.retro-tabs__indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  width: var(--ind-width, 0px);
+  transform: translateX(var(--ind-left, 0px));
+  background: var(--primary);
+  border-radius: 1px;
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--primary) 70%, transparent),
+    0 0 14px color-mix(in srgb, var(--primary) 35%, transparent);
+  pointer-events: none;
+  transition:
+    transform 260ms cubic-bezier(0.65, 0, 0.25, 1),
+    width 260ms cubic-bezier(0.65, 0, 0.25, 1),
+    box-shadow 200ms ease;
+  will-change: transform, width;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 60%, white) 50%, transparent);
+    opacity: 0;
+    filter: blur(2px);
+    transition: opacity 220ms ease;
+  }
+}
+
+.retro-tabs__list:has(.retro-tabs__tab:active) .retro-tabs__indicator::after {
+  opacity: 0.6;
+}
+
+.retro-tabs__panels {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.retro-tabs__panel {
+  &:not([hidden]) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+// ────────────────────────── Responsive: reduced motion ────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .retro-tabs__indicator,
+  .retro-tabs__indicator::after {
+    transition: none;
+  }
+
+  .retro-tabs__tab--active {
+    text-shadow: none;
+  }
+}

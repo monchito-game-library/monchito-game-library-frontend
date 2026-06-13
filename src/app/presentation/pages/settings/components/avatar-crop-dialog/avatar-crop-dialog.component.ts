@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CropDialogDataInterface } from '@/interfaces/crop-dialog-data.interface';
 import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-interaction.base';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-avatar-crop-dialog',
@@ -19,15 +20,23 @@ import { CropInteractionBase } from '@/abstract/crop-interaction-base/crop-inter
   styleUrl: './avatar-crop-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, MatProgressSpinner, TranslocoPipe]
+  imports: [
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    TranslocoPipe,
+    RetroSpinnerComponent,
+    RetroButtonComponent,
+    RetroIconComponent
+  ]
 })
 export class AvatarCropDialogComponent extends CropInteractionBase implements OnDestroy {
-  private readonly _dialogRef: MatDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
-    MatDialogRef<AvatarCropDialogComponent, Blob | null>
+  private readonly _dialogRef: RetroDialogRef<AvatarCropDialogComponent, Blob | null> = inject(
+    RetroDialogRef<AvatarCropDialogComponent, Blob | null>
   );
 
   /** Cropper configuration received from the parent component. */
-  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(MAT_DIALOG_DATA);
+  readonly config: CropDialogDataInterface = inject<CropDialogDataInterface>(RETRO_DIALOG_DATA);
 
   /** Object URL pointing to the file being cropped. Revoked on destroy. */
   readonly imageUrl!: string;

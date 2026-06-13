@@ -1,11 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -28,9 +38,12 @@ import { HardwareModelType } from '@/types/hardware-model.type';
 import { HARDWARE_MODEL_TYPE } from '@/constants/hardware-model.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
 import { HardwareModelEditPanelComponent } from '../../components/hardware-model-edit-panel/hardware-model-edit-panel.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
+import { toCommandSlug } from '@/shared/command-slug/command-slug.util';
 
 /** Management page for hardware models belonging to a specific brand. */
 @Component({
@@ -42,18 +55,20 @@ import { HardwareModelEditPanelComponent } from '../../components/hardware-model
   imports: [
     HardwareBrandEditPanelComponent,
     HardwareModelEditPanelComponent,
-    CatalogItemCardComponent,
-    MatButton,
-    MatIconButton,
-    MatIcon,
+    RetroCardComponent,
+    RetroChipComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
     TranslocoPipe,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    SearchToolbarComponent
   ]
 })
 export class HardwareModelsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
   private readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
@@ -86,9 +101,39 @@ export class HardwareModelsManagementComponent implements OnInit {
   /** Whether the brand edit panel is visible. */
   readonly brandPanelOpen: WritableSignal<boolean> = signal<boolean>(false);
 
+  /** Término de búsqueda activo para filtrar por nombre. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista filtrada según searchTerm. */
+  readonly filteredModels: Signal<HardwareModelModel[]> = computed((): HardwareModelModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.models();
+    return this.models().filter((item) => item.name.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
+
+  /** Terminal command bar path — includes brand slug when loaded. */
+  readonly commandPath: Signal<string> = computed((): string => {
+    const brand = this.brand();
+    return brand ? `monchito ~/management/hardware/${toCommandSlug(brand.name)}` : 'monchito ~/management/hardware';
+  });
+
   async ngOnInit(): Promise<void> {
     this._brandId = this._route.snapshot.paramMap.get('brandId') ?? '';
     await Promise.all([this._loadBrand(), this._loadModels()]);
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**
@@ -160,7 +205,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(b.id);
       this.onBack();
@@ -243,7 +288,7 @@ export class HardwareModelsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.models.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._modelUseCases.delete(model.id);
       await this._loadModels();

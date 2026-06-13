@@ -1,7 +1,7 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -112,7 +112,10 @@ function setupTestBed(consoleId: string | null): void {
         provide: UserContextService,
         useValue: { requireUserId: vi.fn().mockReturnValue('user-1'), userId: vi.fn().mockReturnValue('user-1') }
       },
-      { provide: MatSnackBar, useValue: { open: vi.fn() } },
+      {
+        provide: RetroSnackbarService,
+        useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+      },
       { provide: Router, useValue: { navigate: vi.fn() } },
       {
         provide: ActivatedRoute,
@@ -192,7 +195,7 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
     it('muestra snackbar de error si add lanza', async () => {
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
       consoleUseCases.add.mockRejectedValue(new Error('save error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       component.form.controls.brandId.setValue('11111111-1111-1111-1111-111111111111');
       component.form.controls.modelId.setValue('22222222-2222-2222-2222-222222222222');
@@ -221,6 +224,29 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
       await component.onSubmit();
 
       expect(consoleUseCases.add).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onBrandQuery / onModelQuery / onStoreQuery', () => {
+    it('onBrandQuery actualiza el query de búsqueda de marca y filtra filteredBrands', async () => {
+      await component.ngOnInit();
+      component.onBrandQuery('Sony');
+      const brands = component.filteredBrands();
+      expect(Array.isArray(brands)).toBe(true);
+    });
+
+    it('onModelQuery actualiza el query de búsqueda de modelo y filtra filteredModels', async () => {
+      await component.ngOnInit();
+      component.onModelQuery('PlayStation');
+      const models = component.filteredModels();
+      expect(Array.isArray(models)).toBe(true);
+    });
+
+    it('onStoreQuery actualiza el query de búsqueda de tienda y filtra filteredStores', async () => {
+      await component.ngOnInit();
+      component.onStoreQuery('Game');
+      const stores = component.filteredStores();
+      expect(Array.isArray(stores)).toBe(true);
     });
   });
 });
@@ -267,7 +293,7 @@ describe('CreateUpdateConsoleComponent — modo edición', () => {
     it('muestra snackbar de error y navega a /collection/consoles si la carga lanza', async () => {
       const consoleUseCases = TestBed.inject(CONSOLE_USE_CASES as any) as any;
       consoleUseCases.getById.mockRejectedValue(new Error('DB error'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const router = TestBed.inject(Router as any) as any;
 
       await component.ngOnInit();

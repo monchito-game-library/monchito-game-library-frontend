@@ -5,13 +5,15 @@
     [searchPlaceholder]="i18nPrefix() + '.search'"
     [showAddBtn]="true"
     [disabled]="loading()"
+    [commandPath]="commandPath()"
+    [commandFlags]="commandFlags()"
     (searchChange)="searchChange.emit($event)"
     (addClick)="addClick.emit()">
     <!-- stat: item count -->
     <div class="hw-list__stat">
-      <mat-icon>{{ statIcon() }}</mat-icon>
+      <retro-icon [name]="statIcon()" />
       @if (loading()) {
-        <app-skeleton width="24px" height="12px" />
+        <retro-skeleton width="24px" height="12px" />
       } @else {
         <span>{{ filteredItems().length }}</span>
       }
@@ -19,9 +21,9 @@
     <div class="hw-list__stat-divider"></div>
     <!-- stat: total spent -->
     <div class="hw-list__stat">
-      <mat-icon>payments</mat-icon>
+      <retro-icon name="payments" />
       @if (loading()) {
-        <app-skeleton width="60px" height="12px" />
+        <retro-skeleton width="60px" height="12px" />
       } @else {
         <span>{{ totalSpent() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
       }
@@ -33,56 +35,42 @@
     @if (loading()) {
       <div class="hw-list__grid">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
-          <div class="hw-list__card">
+          <div class="hw-list__card hw-list__card--skeleton">
             <div class="hw-list__card-header">
-              <app-skeleton width="32px" height="32px" borderRadius="var(--radius-full)" />
+              <retro-skeleton width="32px" height="32px" />
               <div class="hw-list__card-titles">
-                <app-skeleton width="140px" height="16px" />
-                <app-skeleton width="90px" height="12px" borderRadius="4px" />
+                <retro-skeleton width="140px" height="16px" />
+                <retro-skeleton width="90px" height="12px" />
               </div>
             </div>
             <div class="hw-list__card-chips">
-              <app-skeleton width="64px" height="22px" borderRadius="var(--radius-sm)" />
-              <app-skeleton width="48px" height="22px" borderRadius="var(--radius-sm)" />
+              <retro-skeleton width="64px" height="22px" />
+              <retro-skeleton width="48px" height="22px" />
             </div>
-            <app-skeleton width="110px" height="12px" borderRadius="4px" />
+            <retro-skeleton width="110px" height="12px" />
           </div>
         }
       </div>
     } @else if (items().length === 0) {
-      <div class="hw-list__empty">
-        <svg class="hw-list__empty-svg" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect class="es-shape" x="14" y="28" width="132" height="56" rx="14" stroke-width="3" />
-          <rect class="es-shape" x="54" y="74" width="52" height="10" rx="4" stroke-width="2" />
-          <rect class="es-shape" x="44" y="84" width="72" height="6" rx="3" stroke-width="2" />
-          <circle class="es-accent" cx="92" cy="56" r="12" opacity="0.15" />
-          <circle class="es-ring" cx="92" cy="56" r="12" stroke-width="2.5" />
-          <line class="es-accent-stroke" x1="88" y1="52" x2="96" y2="60" stroke-width="3" stroke-linecap="round" />
-          <line class="es-accent-stroke" x1="96" y1="52" x2="88" y2="60" stroke-width="3" stroke-linecap="round" />
-          <rect class="es-accent" x="30" y="48" width="8" height="8" rx="2" opacity="0.7" />
-          <rect class="es-accent" x="44" y="48" width="8" height="8" rx="2" opacity="0.5" />
-          <circle class="es-accent" cx="124" cy="52" r="5" opacity="0.8" />
-          <circle class="es-shape" cx="124" cy="52" r="3" stroke-width="0" />
-        </svg>
-        <p class="hw-list__empty-title">{{ i18nPrefix() + '.empty.title' | transloco }}</p>
-        <p class="hw-list__empty-subtitle">{{ i18nPrefix() + '.empty.subtitle' | transloco }}</p>
-      </div>
+      <retro-empty-state
+        [title]="i18nPrefix() + '.empty.title' | transloco"
+        [subtitle]="i18nPrefix() + '.empty.subtitle' | transloco" />
     } @else if (filteredItems().length === 0) {
       <div class="hw-list__no-results">
-        <mat-icon>search_off</mat-icon>
+        <retro-icon name="search_off" />
         <p>{{ i18nPrefix() + '.noResults' | transloco }}</p>
       </div>
     } @else {
       <div class="hw-list__grid">
-        @for (item of filteredItems(); track item.id; let i = $index) {
-          <button type="button" class="hw-list__card" [style]="{ '--i': i }" (click)="detailClick.emit(item)">
+        @for (item of filteredItems(); track item.id) {
+          <retro-card class="hw-list__card" [interactive]="true" padding="md" (cardClicked)="detailClick.emit(item)">
             <div class="hw-list__card-header">
               <ng-container [ngTemplateOutlet]="cardHeaderTpl()" [ngTemplateOutletContext]="{ $implicit: item }" />
               <div class="hw-list__card-titles">
                 <span class="hw-list__card-model">{{ resolveModelName()(item.modelId) }}</span>
                 <span class="hw-list__card-brand">{{ resolveBrandName()(item.brandId) }}</span>
               </div>
-              <mat-icon class="hw-list__card-chevron">chevron_right</mat-icon>
+              <span class="hw-list__card-chevron" aria-hidden="true">&gt;</span>
             </div>
 
             <div class="hw-list__card-chips">
@@ -90,37 +78,34 @@
             </div>
 
             <div class="hw-list__card-meta">
-              <div class="hw-list__meta-row">
-                @if (item.price !== null) {
-                  <span class="hw-list__meta-item">
-                    <mat-icon>payments</mat-icon>
-                    {{ item.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                  </span>
-                }
-                @if (item.purchaseDate) {
-                  <span class="hw-list__meta-item">
-                    <mat-icon>calendar_today</mat-icon>
-                    {{ item.purchaseDate | date: 'dd/MM/yyyy' }}
-                  </span>
-                }
-              </div>
+              @if (item.price !== null) {
+                <retro-data-row
+                  label="PRECIO"
+                  icon="payments"
+                  [value]="(item.price | currency: 'EUR' : 'symbol' : '1.2-2') ?? ''" />
+              }
+              @if (item.purchaseDate) {
+                <retro-data-row
+                  label="FECHA"
+                  icon="calendar_today"
+                  [value]="(item.purchaseDate | date: 'dd/MM/yyyy') ?? ''" />
+              }
               @if (item.store) {
-                <div class="hw-list__meta-row">
-                  <span class="hw-list__meta-item">
-                    <mat-icon>storefront</mat-icon>
-                    {{ resolveStoreName()(item.store) }}
-                  </span>
-                </div>
+                <retro-data-row label="TIENDA" icon="storefront" [value]="resolveStoreName()(item.store)" />
               }
             </div>
-          </button>
+          </retro-card>
         }
       </div>
     }
   </div>
 
   <!-- FAB: mobile only -->
-  <button mat-fab class="hw-list__fab" [attr.aria-label]="i18nPrefix() + '.add' | transloco" (click)="addClick.emit()">
-    <mat-icon>add</mat-icon>
+  <button
+    type="button"
+    class="hw-list__fab"
+    [attr.aria-label]="i18nPrefix() + '.add' | transloco"
+    (click)="addClick.emit()">
+    <retro-icon name="add" />
   </button>
 </div>

@@ -1,8 +1,6 @@
 <div class="hw-form">
   <div class="hw-form__header">
-    <button mat-icon-button type="button" (click)="cancelClick.emit()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+    <retro-icon-button icon="arrow_back" [ariaLabel]="'common.back' | transloco" (clicked)="cancelClick.emit()" />
     <h2 class="hw-form__title">
       @if (isEditMode()) {
         {{ i18nPrefix() + '.editTitle' | transloco }}
@@ -14,128 +12,93 @@
 
   @if (loading()) {
     <div class="hw-form__form">
-      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton class="hw-form__field--full" height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton height="56px" borderRadius="var(--radius-sm)" />
-      <app-skeleton class="hw-form__field--full" height="80px" borderRadius="var(--radius-sm)" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton height="56px" />
+      <retro-skeleton class="hw-form__field--full" height="80px" />
       <div class="hw-form__footer">
-        <app-skeleton width="100px" height="36px" borderRadius="var(--radius-sm)" />
-        <app-skeleton width="80px" height="36px" borderRadius="var(--radius-sm)" />
+        <retro-skeleton width="100px" height="36px" />
+        <retro-skeleton width="80px" height="36px" />
       </div>
     </div>
   } @else {
-    <form [formGroup]="form()" (ngSubmit)="submitClick.emit()" class="hw-form__form">
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.brand' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="brandAuto" formControlName="brandId" />
-        <mat-autocomplete
-          #brandAuto="matAutocomplete"
-          [displayWith]="displayBrandLabel()"
-          (optionSelected)="brandChange.emit($event.option.value)">
-          @for (brand of filteredBrands(); track brand.id) {
-            <mat-option [value]="brand.id">{{ brand.name }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (form().get('brandId')?.value) {
-          <button
-            matSuffix
-            mat-icon-button
-            type="button"
-            (click)="form().get('brandId')?.setValue(null); brandChange.emit(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+    <form [formGroup]="form()" class="hw-form__form">
+      <retro-search
+        class="hw-form__field--full"
+        [label]="i18nPrefix() + '.brand' | transloco"
+        formControlName="brandId"
+        [displayWith]="displayBrandLabel()"
+        (queryChange)="brandQuery.emit($event)">
+        @for (brand of filteredBrands(); track brand.id) {
+          <retro-option [value]="brand.id">{{ brand.name }}</retro-option>
         }
-      </mat-form-field>
+      </retro-search>
 
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.model' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="modelAuto" formControlName="modelId" />
-        <mat-autocomplete
-          #modelAuto="matAutocomplete"
-          [displayWith]="displayModelLabel()"
-          (optionSelected)="modelChange.emit($event.option.value)">
-          @for (model of filteredModels(); track model.id) {
-            <mat-option [value]="model.id">{{ model.name }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (form().get('modelId')?.value) {
-          <button
-            matSuffix
-            mat-icon-button
-            type="button"
-            (click)="form().get('modelId')?.setValue(null); modelChange.emit(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+      <retro-search
+        class="hw-form__field--full"
+        [label]="i18nPrefix() + '.model' | transloco"
+        formControlName="modelId"
+        [displayWith]="displayModelLabel()"
+        (queryChange)="modelQuery.emit($event)">
+        @for (model of filteredModels(); track model.id) {
+          <retro-option [value]="model.id">{{ model.name }}</retro-option>
         }
-      </mat-form-field>
+      </retro-search>
 
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.edition' | transloco }}</mat-label>
-        <mat-select formControlName="editionId">
-          <mat-option [value]="null">—</mat-option>
-          @for (edition of editions(); track edition.id) {
-            <mat-option [value]="edition.id">{{ edition.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <retro-select
+        class="hw-form__field--full"
+        [label]="i18nPrefix() + '.edition' | transloco"
+        formControlName="editionId">
+        <retro-option [value]="null">—</retro-option>
+        @for (edition of editions(); track edition.id) {
+          <retro-option [value]="edition.id">{{ edition.name }}</retro-option>
+        }
+      </retro-select>
 
       <ng-container [ngTemplateOutlet]="extraFieldsTpl()" />
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ i18nPrefix() + '.condition.label' | transloco }}</mat-label>
-        <mat-select formControlName="condition">
-          <mat-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + '.condition.new' | transloco }}</mat-option>
-          <mat-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + '.condition.used' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <retro-select [label]="i18nPrefix() + '.condition.label' | transloco" formControlName="condition">
+        <retro-option [value]="GAME_CONDITION.NEW">{{ i18nPrefix() + '.condition.new' | transloco }}</retro-option>
+        <retro-option [value]="GAME_CONDITION.USED">{{ i18nPrefix() + '.condition.used' | transloco }}</retro-option>
+      </retro-select>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ i18nPrefix() + '.price' | transloco }}</mat-label>
-        <input matInput type="number" formControlName="price" min="0" step="0.01" />
-      </mat-form-field>
+      <retro-input
+        [label]="i18nPrefix() + '.price' | transloco"
+        formControlName="price"
+        type="number"
+        min="0"
+        step="0.01" />
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ i18nPrefix() + '.store' | transloco }}</mat-label>
-        <input type="text" matInput [matAutocomplete]="storeAuto" formControlName="store" />
-        <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel()">
-          @for (store of filteredStores(); track store.id) {
-            <mat-option [value]="store.id">{{ store.label }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (form().get('store')?.value) {
-          <button matSuffix mat-icon-button type="button" (click)="form().get('store')?.setValue(null)">
-            <mat-icon>close</mat-icon>
-          </button>
+      <retro-search
+        [label]="i18nPrefix() + '.store' | transloco"
+        formControlName="store"
+        [displayWith]="displayStoreLabel()"
+        (queryChange)="storeQuery.emit($event)">
+        @for (store of filteredStores(); track store.id) {
+          <retro-option [value]="store.id">{{ store.label }}</retro-option>
         }
-      </mat-form-field>
+      </retro-search>
 
-      <mat-form-field appearance="outline" [appDatepickerFieldClick]="purchaseDatePicker">
-        <mat-label>{{ i18nPrefix() + '.purchaseDate' | transloco }}</mat-label>
-        <input matInput [matDatepicker]="purchaseDatePicker" formControlName="purchaseDate" [readonly]="true" />
-        <mat-datepicker-toggle matIconSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #purchaseDatePicker></mat-datepicker>
-      </mat-form-field>
+      <retro-datepicker [label]="i18nPrefix() + '.purchaseDate' | transloco" formControlName="purchaseDate" />
 
-      <mat-form-field appearance="outline" class="hw-form__field--full">
-        <mat-label>{{ i18nPrefix() + '.notes' | transloco }}</mat-label>
-        <textarea matInput formControlName="notes" rows="3"></textarea>
-      </mat-form-field>
+      <retro-textarea
+        class="hw-form__field--full"
+        [label]="i18nPrefix() + '.notes' | transloco"
+        formControlName="notes"
+        [rows]="3" />
 
       <div class="hw-form__footer">
-        <button mat-stroked-button type="button" (click)="cancelClick.emit()">
-          {{ i18nPrefix() + '.cancel' | transloco }}
-        </button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form().invalid || saving()">
-          @if (saving()) {
-            <mat-progress-spinner diameter="20" mode="indeterminate" />
-          } @else {
-            {{ i18nPrefix() + '.save' | transloco }}
-          }
-        </button>
+        <retro-button variant="ghost" [label]="i18nPrefix() + '.cancel' | transloco" (clicked)="cancelClick.emit()" />
+        <retro-button
+          variant="primary"
+          [label]="i18nPrefix() + '.save' | transloco"
+          [disabled]="form().invalid || saving()"
+          [loading]="saving()"
+          (clicked)="submitClick.emit()" />
       </div>
     </form>
   }
