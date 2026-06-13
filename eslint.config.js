@@ -226,6 +226,21 @@ module.exports = [
       ...prettier.rules
     }
   },
+  // ── lib/retro overrides ──────────────────────────────────────────────────
+  // The retro library uses the "retro-" prefix, not the app-wide "app-" prefix.
+  {
+    files: ['lib/retro/**/*.ts'],
+    rules: {
+      '@angular-eslint/component-selector': [
+        'error',
+        { type: 'element', prefix: 'retro', style: 'kebab-case' }
+      ],
+      '@angular-eslint/directive-selector': [
+        'error',
+        { type: 'attribute', prefix: 'retro', style: 'camelCase' }
+      ]
+    }
+  },
   {
     files: ['**/*.html'],
     plugins: {
