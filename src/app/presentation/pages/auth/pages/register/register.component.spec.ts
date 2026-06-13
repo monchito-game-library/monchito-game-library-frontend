@@ -272,4 +272,110 @@ describe('RegisterComponent', () => {
       expect(component.loading()).toBe(false);
     });
   });
+
+  describe('_getDisplayNameError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getDisplayNameError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.registerForm.get('displayName')!.setValue('Alice');
+      component.registerForm.get('displayName')!.markAsTouched();
+      expect(component._getDisplayNameError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.registerForm.get('displayName')!.markAsTouched();
+      component.registerForm.get('displayName')!.setValue('');
+      expect(component._getDisplayNameError()).toBe('auth.register.displayNameRequired');
+    });
+
+    it('devuelve la clave de minlength cuando el nombre es demasiado corto', () => {
+      component.registerForm.get('displayName')!.markAsTouched();
+      component.registerForm.get('displayName')!.setValue('Al');
+      expect(component._getDisplayNameError()).toBe('auth.register.displayNameMinLength');
+    });
+  });
+
+  describe('_getEmailError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.registerForm.get('email')!.setValue('user@test.com');
+      component.registerForm.get('email')!.markAsTouched();
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.registerForm.get('email')!.markAsTouched();
+      component.registerForm.get('email')!.setValue('');
+      expect(component._getEmailError()).toBe('auth.register.emailRequired');
+    });
+
+    it('devuelve la clave de email inválido cuando el email está mal formado', () => {
+      component.registerForm.get('email')!.markAsTouched();
+      component.registerForm.get('email')!.setValue('no-es-email');
+      expect(component._getEmailError()).toBe('auth.register.emailInvalid');
+    });
+  });
+
+  describe('_getPasswordError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.registerForm.get('password')!.setValue('pass123');
+      component.registerForm.get('password')!.markAsTouched();
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.registerForm.get('password')!.markAsTouched();
+      component.registerForm.get('password')!.setValue('');
+      expect(component._getPasswordError()).toBe('auth.register.passwordRequired');
+    });
+
+    it('devuelve la clave de minlength cuando la contraseña es corta', () => {
+      component.registerForm.get('password')!.markAsTouched();
+      component.registerForm.get('password')!.setValue('abc');
+      expect(component._getPasswordError()).toBe('auth.register.passwordMinLength');
+    });
+  });
+
+  describe('_getConfirmPasswordError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getConfirmPasswordError()).toBeNull();
+    });
+
+    it('devuelve null cuando confirmPassword coincide con password y está tocado', () => {
+      component.registerForm.setValue({
+        displayName: 'Alice',
+        email: 'a@b.com',
+        password: 'pass123',
+        confirmPassword: 'pass123'
+      });
+      component.registerForm.get('confirmPassword')!.markAsTouched();
+      expect(component._getConfirmPasswordError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.registerForm.get('confirmPassword')!.markAsTouched();
+      component.registerForm.get('confirmPassword')!.setValue('');
+      expect(component._getConfirmPasswordError()).toBe('auth.register.confirmPasswordRequired');
+    });
+
+    it('devuelve la clave de passwordMismatch cuando las contraseñas no coinciden', () => {
+      component.registerForm.setValue({
+        displayName: 'Alice',
+        email: 'a@b.com',
+        password: 'pass123',
+        confirmPassword: 'diferente'
+      });
+      component.registerForm.get('confirmPassword')!.markAsTouched();
+      expect(component._getConfirmPasswordError()).toBe('auth.register.passwordMismatch');
+    });
+  });
 });

@@ -10,11 +10,11 @@ import { STORE_USE_CASES } from '@/domain/use-cases/store/store.use-cases.contra
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
 import { GamesFilterService } from '@/pages/collection/pages/games/services/games-filter.service';
 
 function makeGame(overrides: Partial<GameListModel> = {}): GameListModel {
@@ -64,10 +64,13 @@ describe('GamesComponent', () => {
           }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: RetroBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -499,7 +502,7 @@ describe('GamesComponent', () => {
     it('recarga la lista y muestra snackbar de confirmación', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.getAllGamesForList.mockResolvedValue([]);
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onGameDeleted();
 
@@ -531,29 +534,30 @@ describe('GamesComponent', () => {
 
   describe('openFilters', () => {
     it('en mobile abre el bottom sheet con el data correcto', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const bottomSheet = TestBed.inject(RetroBottomSheetService as any) as any;
       component.isMobile.set(true);
       component.openFilters();
       expect(bottomSheet.open).toHaveBeenCalled();
     });
 
-    it('en desktop hace toggle del drawer', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
-      const drawerToggleSpy = vi.fn().mockResolvedValue('open');
-      vi.spyOn(component, 'filtersDrawer').mockReturnValue({ toggle: drawerToggleSpy } as any);
+    it('en desktop alterna el estado filtersOpen', () => {
+      const bottomSheet = TestBed.inject(RetroBottomSheetService as any) as any;
       component.isMobile.set(false);
+      component.filtersOpen.set(false);
       component.openFilters();
-      expect(drawerToggleSpy).toHaveBeenCalledOnce();
+      expect(component.filtersOpen()).toBe(true);
+      component.openFilters();
+      expect(component.filtersOpen()).toBe(false);
       expect(bottomSheet.open).not.toHaveBeenCalled();
     });
 
     it('la función clearAllFilters del data limpia los filtros', () => {
-      const bottomSheet = TestBed.inject(MatBottomSheet as any) as any;
+      const bottomSheet = TestBed.inject(RetroBottomSheetService as any) as any;
       component.isMobile.set(true);
       component.searchTerm.set('zelda');
       component.selectedConsole.set('PS5');
       component.openFilters();
-      const data = bottomSheet.open.mock.calls[0][1].data;
+      const data = bottomSheet.open.mock.calls[0][1];
       data.clearAllFilters();
       expect(component.searchTerm()).toBe('');
       expect(component.selectedConsole()).toBe('');
@@ -610,7 +614,7 @@ describe('GamesComponent', () => {
     it('muestra snackbar si la carga desde Supabase falla', async () => {
       const gameUseCases = TestBed.inject(GAME_USE_CASES as any) as any;
       gameUseCases.getAllGamesForList.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await (component as any)._loadGames(true);
 
@@ -642,6 +646,28 @@ describe('GamesComponent', () => {
       expect(spy).toHaveBeenCalledWith(['/collection/games/add']);
     });
   });
+
+  describe('commandFlags', () => {
+    it('está vacío cuando no hay filtros ni búsqueda ni viewMode list', () => {
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('incluye "view=list" cuando viewMode es list', () => {
+      component.viewMode.set('list');
+      expect(component.commandFlags()).toContain('view=list');
+    });
+
+    it('incluye search con el término cuando hay búsqueda activa', () => {
+      component.searchTerm.set('zelda');
+      expect(component.commandFlags()).toContain('search="zelda"');
+    });
+
+    it('incluye filters con el count cuando hay filtros activos', () => {
+      component.selectedConsole.set('PS5');
+      component.selectedStatus.set('platinum');
+      expect(component.commandFlags()).toContain('filters=2');
+    });
+  });
 });
 
 describe('GamesComponent — _userId sin usuario autenticado', () => {
@@ -671,10 +697,13 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
           }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: RetroBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -682,7 +711,7 @@ describe('GamesComponent — _userId sin usuario autenticado', () => {
     TestBed.overrideComponent(GamesComponent, { set: { imports: [], template: '' } });
     const fixture = TestBed.createComponent(GamesComponent);
     const component = fixture.componentInstance;
-    const snackBar = TestBed.inject(MatSnackBar as any) as any;
+    const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
     await (component as any)._loadGames(true);
 
@@ -717,10 +746,13 @@ describe('GamesComponent — breakpoint observer', () => {
           }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         provideRouter([]),
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(bpSubject.asObservable()) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: RetroBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -861,11 +893,14 @@ describe('GamesComponent — carga inicial', () => {
           }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: RetroBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -909,11 +944,14 @@ describe('GamesComponent — scroll restoration', () => {
           useValue: { allGames: signal<GameListModel[]>([]), gameListScrollOffset: scrollOffsetSignal }
         },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: Router, useValue: { navigate: vi.fn(), events: NEVER } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: BreakpointObserver, useValue: { observe: vi.fn().mockReturnValue(NEVER) } },
-        { provide: MatBottomSheet, useValue: { open: vi.fn() } },
+        { provide: RetroBottomSheetService, useValue: { open: vi.fn() } },
         GamesFilterService
       ],
       schemas: [NO_ERRORS_SCHEMA]

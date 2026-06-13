@@ -8,26 +8,26 @@
       <div class="audit-log-skeleton">
         @for (n of [0, 1, 2, 3, 4]; track n) {
           <div class="audit-log-skeleton__row">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-full)" />
+            <retro-skeleton width="36px" height="36px" />
             <div class="audit-log-skeleton__body">
-              <app-skeleton width="50%" height="14px" />
-              <app-skeleton width="30%" height="12px" />
+              <retro-skeleton width="50%" height="14px" />
+              <retro-skeleton width="30%" height="12px" />
             </div>
-            <app-skeleton width="60px" height="12px" />
+            <retro-skeleton width="60px" height="12px" />
           </div>
         }
       </div>
     } @else if (entries().length === 0) {
       <div class="audit-log-empty">
-        <mat-icon class="audit-log-empty__icon">history</mat-icon>
+        <retro-icon class="audit-log-empty__icon" name="history" />
         <p class="audit-log-empty__text">{{ 'management.auditLog.empty' | transloco }}</p>
       </div>
     } @else {
-      <div class="audit-log-list">
+      <retro-list>
         @for (entry of entries(); track entry.id) {
-          <div class="audit-log-entry">
-            <div class="audit-log-entry__icon-wrap">
-              <mat-icon class="audit-log-entry__icon">{{ getActionIcon(entry.action) }}</mat-icon>
+          <retro-list-item padding="sm">
+            <div class="audit-log-entry__icon-wrap" retroListItemLeading>
+              <retro-icon class="audit-log-entry__icon" [name]="getActionIcon(entry.action)" />
             </div>
 
             <div class="audit-log-entry__body">
@@ -40,12 +40,12 @@
               }
             </div>
 
-            <div class="audit-log-entry__date">
+            <div class="audit-log-entry__date" retroListItemTrailing>
               {{ entry.createdAt | date: 'dd/MM/yy HH:mm' }}
             </div>
-          </div>
+          </retro-list-item>
         }
-      </div>
+      </retro-list>
     }
   </div>
 </div>

@@ -1,13 +1,10 @@
 <div class="game-form-page" [class.game-form-page--search-mode]="searchMode()">
   <header class="game-form-page__header">
     @if (searchMode()) {
-      <button
-        mat-icon-button
-        type="button"
-        (click)="closeSearchMode()"
-        [attr.aria-label]="'gameForm.aria.backToForm' | transloco">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+      <retro-icon-button
+        icon="arrow_back"
+        [ariaLabel]="'gameForm.aria.backToForm' | transloco"
+        (clicked)="closeSearchMode()" />
       <h1 class="game-form-page__title">{{ 'gameForm.search.title' | transloco }}</h1>
     } @else {
       <h1 class="game-form-page__title">
@@ -18,7 +15,7 @@
 
   @if (loading()) {
     <div class="game-form-page__loading">
-      <mat-spinner diameter="48" />
+      <retro-spinner size="md" />
     </div>
   } @else if (!searchMode()) {
     <div class="game-form-page__content">
@@ -34,25 +31,19 @@
               [style.object-position]="coverObjectPosition()"
               [style.transform]="coverTransform()"
               class="game-cover-panel__image" />
-            <button
-              mat-icon-button
-              type="button"
-              (click)="openCoverPositionDialog()"
+            <retro-icon-button
+              icon="open_with"
               class="game-cover-panel__reposition-btn"
-              [attr.aria-label]="'gameForm.cover.repositionTooltip' | transloco">
-              <mat-icon>open_with</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              type="button"
-              (click)="clearSelectedGame()"
+              [ariaLabel]="'gameForm.cover.repositionTooltip' | transloco"
+              (clicked)="openCoverPositionDialog()" />
+            <retro-icon-button
+              icon="close"
               class="game-cover-panel__clear-btn"
-              [attr.aria-label]="'gameForm.aria.clearSelection' | transloco">
-              <mat-icon>close</mat-icon>
-            </button>
+              [ariaLabel]="'gameForm.aria.clearSelection' | transloco"
+              (clicked)="clearSelectedGame()" />
           } @else {
             <div class="game-cover-panel__placeholder">
-              <mat-icon>sports_esports</mat-icon>
+              <retro-icon name="sports_esports" />
               <span>{{ 'gameForm.cover.noCover' | transloco }}</span>
             </div>
           }
@@ -61,7 +52,7 @@
         @if (screenshotsLoading()) {
           <div class="game-cover-panel__thumbnails">
             @for (i of [1, 2, 3, 4, 5]; track i) {
-              <app-skeleton width="72px" height="48px" borderRadius="6px" class="game-cover-panel__thumb-skeleton" />
+              <retro-skeleton width="72px" height="48px" class="game-cover-panel__thumb-skeleton" />
             }
           </div>
         } @else if (coverImages().length > 1) {
@@ -78,12 +69,15 @@
           </div>
         }
 
-        <button mat-flat-button type="button" (click)="openSearchMode()" class="game-cover-panel__search-btn">
-          <mat-icon>{{ selectedGame() ? 'swap_horiz' : 'search' }}</mat-icon>
-          {{
+        <retro-button
+          [label]="
             selectedGame() ? ('gameForm.cover.changeGame' | transloco) : ('gameForm.cover.searchCatalogue' | transloco)
-          }}
-        </button>
+          "
+          variant="ghost"
+          class="game-cover-panel__search-btn"
+          (clicked)="openSearchMode()">
+          <retro-icon slot="start" [name]="selectedGame() ? 'swap_horiz' : 'search'" size="sm" />
+        </retro-button>
 
         @if (selectedGame()) {
           <div class="game-cover-panel__info">
@@ -91,13 +85,13 @@
             <div class="game-cover-panel__info-meta">
               @if (selectedGame()!.released_date) {
                 <span>
-                  <mat-icon>calendar_today</mat-icon>
+                  <retro-icon name="calendar_today" />
                   {{ selectedGame()!.released_date | date: 'yyyy' }}
                 </span>
               }
               @if (selectedGame()!.rating > 0) {
                 <span>
-                  <mat-icon>star</mat-icon>
+                  <retro-icon name="star" />
                   {{ selectedGame()!.rating }}
                 </span>
               }
@@ -111,167 +105,119 @@
 
       <!-- Right column: form fields -->
       <form class="game-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-          <mat-label>{{ 'gameForm.fields.title' | transloco }}</mat-label>
-          <input matInput formControlName="title" [readonly]="!!selectedGame()" />
-          @if (selectedGame()) {
-            <mat-icon matSuffix>lock</mat-icon>
-          }
-          @if (form.controls.title.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-          }
-        </mat-form-field>
+        <retro-input
+          class="game-form__field game-form__field--full"
+          [label]="'gameForm.fields.title' | transloco"
+          formControlName="title"
+          [readonly]="!!selectedGame()"
+          [error]="form.controls.title.hasError('required') ? ('gameForm.errors.required' | transloco) : null"
+          [suffixIcon]="selectedGame() ? 'lock' : null" />
 
-        <mat-form-field appearance="outline" class="game-form__field game-form__field--full">
-          <mat-label>{{ 'gameForm.fields.edition' | transloco }}</mat-label>
-          <input matInput formControlName="edition" [placeholder]="'gameForm.fields.editionPlaceholder' | transloco" />
-          <mat-icon matSuffix>local_offer</mat-icon>
-        </mat-form-field>
+        <retro-input
+          class="game-form__field game-form__field--full"
+          [label]="'gameForm.fields.edition' | transloco"
+          formControlName="edition"
+          [placeholder]="'gameForm.fields.editionPlaceholder' | transloco"
+          suffixIcon="local_offer" />
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.platform' | transloco }}</mat-label>
-          <input type="text" matInput [matAutocomplete]="platformAuto" [formControl]="form.controls.platform" />
-          <mat-autocomplete #platformAuto="matAutocomplete" [displayWith]="displayPlatformLabel">
-            @for (platform of filteredPlatforms(); track platform.code) {
-              <mat-option [value]="platform.code">{{ platform.labelKey | transloco }}</mat-option>
-            }
-          </mat-autocomplete>
-          @if (form.controls.platform.value) {
-            <button
-              class="game-form__clear-btn"
-              mat-icon-button
-              matSuffix
-              type="button"
-              (click)="form.controls.platform.setValue(null)">
-              <mat-icon>close</mat-icon>
-            </button>
+        <retro-search
+          class="game-form__field"
+          [label]="'gameForm.fields.platform' | transloco"
+          [formControl]="form.controls.platform"
+          [displayWith]="displayPlatformLabel"
+          [error]="_getPlatformError()"
+          (queryChange)="onPlatformQuery($event)">
+          @for (platform of filteredPlatforms(); track platform.code) {
+            <retro-option [value]="platform.code">{{ platform.labelKey | transloco }}</retro-option>
           }
-          @if (form.controls.platform.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-          } @else if (form.controls.platform.hasError('invalidOption')) {
-            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
+        </retro-search>
+
+        <retro-search
+          class="game-form__field"
+          [label]="'gameForm.fields.store' | transloco"
+          [formControl]="form.controls.store"
+          [displayWith]="displayStoreLabel"
+          [error]="_getStoreError()"
+          (queryChange)="onStoreQuery($event)">
+          @for (store of filteredStores(); track store.id) {
+            <retro-option [value]="store.id">{{ store.label }}</retro-option>
           }
-        </mat-form-field>
+        </retro-search>
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.store' | transloco }}</mat-label>
-          <input type="text" matInput [matAutocomplete]="storeAuto" [formControl]="form.controls.store" />
-          <mat-autocomplete #storeAuto="matAutocomplete" [displayWith]="displayStoreLabel">
-            @for (store of filteredStores(); track store.id) {
-              <mat-option [value]="store.id">{{ store.label }}</mat-option>
-            }
-          </mat-autocomplete>
-          @if (form.controls.store.value) {
-            <button
-              class="game-form__clear-btn"
-              mat-icon-button
-              matSuffix
-              type="button"
-              (click)="form.controls.store.setValue(null)">
-              <mat-icon>close</mat-icon>
-            </button>
+        <retro-select
+          class="game-form__field"
+          [label]="'gameForm.fields.condition' | transloco"
+          [formControl]="form.controls.condition">
+          @for (condition of conditions; track condition.code) {
+            <retro-option [value]="condition.code">{{ condition.labelKey | transloco }}</retro-option>
           }
-          @if (form.controls.store.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-          } @else if (form.controls.store.hasError('invalidOption')) {
-            <mat-error>{{ 'gameForm.errors.invalidOption' | transloco }}</mat-error>
+        </retro-select>
+
+        <retro-select class="game-form__field" [label]="'gameForm.fields.status' | transloco" formControlName="status">
+          @for (status of gameStatuses; track status.code) {
+            <retro-option [value]="status.code">
+              <retro-icon [name]="status.icon" [style.color]="status.color" />
+              {{ status.labelKey | transloco }}
+            </retro-option>
           }
-        </mat-form-field>
+        </retro-select>
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.condition' | transloco }}</mat-label>
-          <mat-select [formControl]="form.controls.condition">
-            @for (condition of conditions; track condition.code) {
-              <mat-option [value]="condition.code">{{ condition.labelKey | transloco }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <retro-input
+          class="game-form__field"
+          [label]="'gameForm.fields.price' | transloco"
+          formControlName="price"
+          type="number"
+          placeholder="0"
+          suffixIcon="euro"
+          [error]="form.controls.price.hasError('required') ? ('gameForm.errors.required' | transloco) : null" />
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.status' | transloco }}</mat-label>
-          <mat-select formControlName="status">
-            @for (status of gameStatuses; track status.code) {
-              <mat-option [value]="status.code">
-                <mat-icon [style.color]="status.color">{{ status.icon }}</mat-icon>
-                {{ status.labelKey | transloco }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+        <retro-input
+          class="game-form__field"
+          [label]="'gameForm.fields.rating' | transloco"
+          formControlName="personal_rating"
+          type="number"
+          min="0"
+          max="10"
+          step="0.1"
+          [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco"
+          suffixIcon="star_rate"
+          [error]="_getRatingError()" />
 
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.price' | transloco }}</mat-label>
-          <input matInput formControlName="price" type="number" placeholder="0" />
-          <mat-icon matSuffix>euro</mat-icon>
-          @if (form.controls.price.hasError('required')) {
-            <mat-error>{{ 'gameForm.errors.required' | transloco }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="game-form__field">
-          <mat-label>{{ 'gameForm.fields.rating' | transloco }}</mat-label>
-          <input
-            matInput
-            formControlName="personal_rating"
-            [errorStateMatcher]="dirtyMatcher"
-            type="number"
-            min="0"
-            max="10"
-            step="0.1"
-            [placeholder]="'gameForm.fields.ratingPlaceholder' | transloco" />
-          <mat-icon matSuffix>star_rate</mat-icon>
-          @if (form.controls.personal_rating.hasError('min')) {
-            <mat-error>{{ 'gameForm.errors.ratingMin' | transloco }}</mat-error>
-          } @else if (form.controls.personal_rating.hasError('max')) {
-            <mat-error>{{ 'gameForm.errors.ratingMax' | transloco }}</mat-error>
-          } @else if (form.controls.personal_rating.hasError('invalidStep')) {
-            <mat-error>{{ 'gameForm.errors.ratingStep' | transloco }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field
-          appearance="outline"
-          class="game-form__field game-form__field--full game-form__field--description">
-          <mat-label>{{ 'gameForm.fields.description' | transloco }}</mat-label>
-          <textarea matInput formControlName="description"></textarea>
-        </mat-form-field>
+        <retro-textarea
+          class="game-form__field game-form__field--full game-form__field--description"
+          [label]="'gameForm.fields.description' | transloco"
+          formControlName="description" />
 
         <div class="game-form__footer">
           <div class="game-form__toggles">
-            <div class="game-form__toggle-row">
-              <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
-              <app-toggle-switch
-                [checked]="formatValue() === 'digital'"
-                (changed)="onFormatChange($event ? 'digital' : 'physical')"
-                icon="album"
-                iconChecked="cloud" />
-            </div>
+            <retro-segmented
+              [options]="formatOptions()"
+              [value]="formatValue() ?? 'physical'"
+              [ariaLabel]="'gameForm.fields.format' | transloco"
+              (changed)="onFormatChange($event)" />
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
-              <app-toggle-switch formControlName="is_favorite" icon="favorite" iconChecked="favorite" />
+              <retro-checkbox formControlName="is_favorite" />
             </div>
           </div>
 
           <div class="game-form__footer-actions">
-            <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="saving()">
-              <mat-icon>close</mat-icon>
-              {{ 'common.cancel' | transloco }}
-            </button>
-            <button
-              mat-flat-button
-              color="primary"
+            <retro-button
+              [label]="'common.cancel' | transloco"
+              variant="ghost"
+              [disabled]="saving()"
+              (clicked)="onCancel()">
+              <retro-icon slot="start" name="close" size="sm" />
+            </retro-button>
+            <retro-button
+              [label]="isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco)"
+              variant="primary"
               type="submit"
-              [disabled]="form.invalid || saving() || !hasChanges()"
-              class="game-form__submit-btn">
-              <span class="game-form__submit-content">
-                @if (saving()) {
-                  <mat-spinner diameter="18" />
-                } @else {
-                  <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-                }
-                {{ isEditMode ? ('gameForm.buttons.update' | transloco) : ('gameForm.buttons.add' | transloco) }}
-              </span>
-            </button>
+              class="game-form__submit-btn"
+              [loading]="saving()"
+              [disabled]="form.invalid || saving() || !hasChanges()">
+              <retro-icon slot="start" [name]="isEditMode ? 'save' : 'add'" size="sm" />
+            </retro-button>
           </div>
         </div>
       </form>

@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { ProtectorModel } from '@/models/protector/protector.model';
@@ -20,18 +21,15 @@ import { ProtectorFormResult } from '@/interfaces/management/protector-form-resu
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatSuffix,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatTooltip,
-    TranslocoPipe
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    RetroTooltipDirective,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroTextareaComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ],
   templateUrl: './protector-edit-panel.component.html',
   styleUrl: './protector-edit-panel.component.scss'

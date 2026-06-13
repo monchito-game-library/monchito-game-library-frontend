@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { mockLocation } from '@/testing/location.mock';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -56,8 +56,11 @@ describe('WishlistDetailComponent', () => {
           }
         },
         { provide: UserContextService, useValue: { userId: signal<string | null>('user-1') } },
-        { provide: MatDialog, useValue: { open: vi.fn() } },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
+        { provide: RetroDialogService, useValue: { open: vi.fn() } },
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } },
         { provide: Router, useValue: { navigate: vi.fn() } },
         { provide: Location, useValue: mockLocation },
@@ -143,7 +146,7 @@ describe('WishlistDetailComponent', () => {
     it('muestra snackbar de error y navega atrás si la carga falla', async () => {
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.getAllForUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const location = TestBed.inject(Location as any) as any;
 
       await component.ngOnInit();
@@ -190,7 +193,7 @@ describe('WishlistDetailComponent', () => {
     it('no elimina si el dialog se cancela', async () => {
       component.item.set(makeItem());
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       await component.onDelete();
@@ -201,7 +204,7 @@ describe('WishlistDetailComponent', () => {
     it('elimina el item y navega atrás si el dialog se confirma', async () => {
       component.item.set(makeItem());
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const location = TestBed.inject(Location as any) as any;
 
@@ -213,9 +216,9 @@ describe('WishlistDetailComponent', () => {
 
     it('muestra snackbar de éxito al eliminar', async () => {
       component.item.set(makeItem());
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDelete();
 
@@ -226,9 +229,9 @@ describe('WishlistDetailComponent', () => {
       component.item.set(makeItem());
       const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
       wishlistUseCases.deleteItem.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDelete();
 
@@ -248,7 +251,7 @@ describe('WishlistDetailComponent', () => {
   describe('onOwn', () => {
     it('no navega si el dialog se cancela', async () => {
       component.item.set(makeItem());
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -259,7 +262,7 @@ describe('WishlistDetailComponent', () => {
 
     it('navega a /collection/games/add con catalogEntry y wishlistItemId si el dialog se confirma', async () => {
       component.item.set(makeItem());
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -273,7 +276,7 @@ describe('WishlistDetailComponent', () => {
 
     it('establece source como "rawg" cuando rawgId es truthy', async () => {
       component.item.set(makeItem({ rawgId: 58175 }));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 
@@ -285,7 +288,7 @@ describe('WishlistDetailComponent', () => {
 
     it('establece source como "manual" cuando rawgId es null', async () => {
       component.item.set(makeItem({ rawgId: null }));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;
 

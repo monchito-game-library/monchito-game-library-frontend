@@ -9,6 +9,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { ThemeService } from '@/services/theme/theme.service';
+import { ThemeType } from '@/types/theme.type';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 
 describe('AppComponent', () => {
@@ -57,7 +58,10 @@ describe('AppComponent', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: UserPreferencesService, useValue: mockUserPrefsState },
         { provide: UserPreferencesInitService, useValue: { loadPreferences: vi.fn().mockResolvedValue(undefined) } },
-        { provide: ThemeService, useValue: { initTheme: vi.fn(), setDarkTheme: vi.fn(), setLightTheme: vi.fn() } },
+        {
+          provide: ThemeService,
+          useValue: { theme: signal<ThemeType>('light'), setTheme: vi.fn(), toggleTheme: vi.fn() }
+        },
         { provide: PwaUpdateService, useValue: { init: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -70,8 +74,6 @@ describe('AppComponent', () => {
   it('se crea correctamente', () => {
     fixture.detectChanges();
     expect(component).toBeTruthy();
-    // Acceder a menuTriggers para cubrir la propiedad @ViewChildren
-    expect(component.menuTriggers).toBeDefined();
   });
 
   describe('isAuthenticated', () => {
@@ -175,13 +177,11 @@ describe('AppComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('inicializa el tema y el servicio PWA', () => {
-      const themeService = TestBed.inject(ThemeService as any) as any;
+    it('inicializa el servicio PWA', () => {
       const pwaUpdate = TestBed.inject(PwaUpdateService as any) as any;
 
       component.ngOnInit();
 
-      expect(themeService.initTheme).toHaveBeenCalled();
       expect(pwaUpdate.init).toHaveBeenCalled();
     });
 
@@ -308,7 +308,10 @@ describe('AppComponent — router subscription (NavigationEnd)', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: UserPreferencesService, useValue: mockUserPrefsState },
         { provide: UserPreferencesInitService, useValue: { loadPreferences: vi.fn().mockResolvedValue(undefined) } },
-        { provide: ThemeService, useValue: { initTheme: vi.fn(), setDarkTheme: vi.fn(), setLightTheme: vi.fn() } },
+        {
+          provide: ThemeService,
+          useValue: { theme: signal<ThemeType>('light'), setTheme: vi.fn(), toggleTheme: vi.fn() }
+        },
         { provide: PwaUpdateService, useValue: { init: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]

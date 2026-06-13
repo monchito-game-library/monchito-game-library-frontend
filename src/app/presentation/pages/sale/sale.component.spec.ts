@@ -6,11 +6,11 @@ import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { SaleComponent } from './sale.component';
 import { MARKET_USE_CASES } from '@/domain/use-cases/market/market.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { AvailableItemModel, SoldItemModel } from '@/models/market/market-item.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 
 function makeAvailable(overrides: Partial<AvailableItemModel> = {}): AvailableItemModel {
@@ -69,7 +69,7 @@ describe('SaleComponent', () => {
         { provide: MARKET_USE_CASES, useValue: mockMarketUseCases },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: Router, useValue: mockRouter },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -311,7 +311,7 @@ describe('SaleComponent', () => {
 
       await component.ngOnInit();
 
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
     });
   });

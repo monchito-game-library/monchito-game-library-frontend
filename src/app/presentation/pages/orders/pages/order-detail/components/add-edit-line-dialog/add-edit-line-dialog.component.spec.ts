@@ -1,7 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
@@ -49,8 +48,8 @@ const setupTestBed = (data: AddEditLineDialogData): ComponentFixture<AddEditLine
       })
     ],
     providers: [
-      { provide: MatDialogRef, useValue: mockDialogRef },
-      { provide: MAT_DIALOG_DATA, useValue: data }
+      { provide: RetroDialogRef, useValue: mockDialogRef },
+      { provide: RETRO_DIALOG_DATA, useValue: data }
     ],
     schemas: [NO_ERRORS_SCHEMA]
   });
@@ -84,12 +83,8 @@ describe('AddEditLineDialogComponent — modo crear (sin line)', () => {
     expect(component.isEditMode).toBe(false);
   });
 
-  it('productSearchControl comienza con valor null', () => {
-    expect(component.productSearchControl.value).toBeNull();
-  });
-
-  it('productSearchControl está habilitado', () => {
-    expect(component.productSearchControl.enabled).toBe(true);
+  it('form.controls.productId comienza con valor null', () => {
+    expect(component.form.controls.productId.value).toBeNull();
   });
 
   it('form.controls.productId está habilitado', () => {
@@ -117,12 +112,8 @@ describe('AddEditLineDialogComponent — modo editar (con line)', () => {
     expect(component.isEditMode).toBe(true);
   });
 
-  it('productSearchControl muestra el nombre del producto', () => {
-    expect(component.productSearchControl.value).toBe('Producto Alpha');
-  });
-
-  it('productSearchControl está deshabilitado', () => {
-    expect(component.productSearchControl.disabled).toBe(true);
+  it('form.controls.productId tiene el ID del producto en edición', () => {
+    expect(component.form.controls.productId.value).toBe('product-1');
   });
 
   it('form.controls.productId está deshabilitado', () => {
@@ -130,77 +121,64 @@ describe('AddEditLineDialogComponent — modo editar (con line)', () => {
   });
 });
 
-describe('AddEditLineDialogComponent — modo editar con producto no encontrado', () => {
-  it('productSearchControl es null cuando el productId del pedido no existe en la lista de productos', () => {
-    vi.clearAllMocks();
-    const existingLine = makeOrderLine({ productId: 'unknown-product-id' });
-    const fixture = setupTestBed({ products, line: existingLine });
-    const component = fixture.componentInstance;
+// ─── displayProductName ────────────────────────────────────────────────────────
 
-    expect(component.productSearchControl.value).toBeNull();
-  });
-});
-
-// ─── onProductSelected ────────────────────────────────────────────────────────
-
-describe('AddEditLineDialogComponent — onProductSelected()', () => {
+describe('AddEditLineDialogComponent — displayProductName()', () => {
   let component: AddEditLineDialogComponent;
-  let fixture: ComponentFixture<AddEditLineDialogComponent>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    fixture = setupTestBed({ products, takenProductIds: ['product-2'] });
+    const fixture = setupTestBed({ products, takenProductIds: ['product-2'] });
     component = fixture.componentInstance;
   });
 
-  it('establece el productId en el formulario', () => {
-    const event = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
-
-    component.onProductSelected(event);
-
-    expect(component.form.controls.productId.value).toBe('product-1');
+  it('devuelve el nombre del producto dado su ID', () => {
+    expect(component.displayProductName('product-1')).toBe('Producto Alpha');
   });
 
-  it('establece el nombre del producto en productSearchControl', () => {
-    const event = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
-
-    component.onProductSelected(event);
-
-    expect(component.productSearchControl.value).toBe('Producto Alpha');
+  it('devuelve cadena vacía para ID desconocido', () => {
+    expect(component.displayProductName('unknown-id')).toBe('');
   });
 
-  it('establece el error alreadyExists cuando el producto está en takenProductIds', () => {
-    const event = { option: { value: 'product-2' } } as MatAutocompleteSelectedEvent;
-
-    component.onProductSelected(event);
-
-    expect(component.form.controls.productId.errors).toEqual({ alreadyExists: true });
-    expect(component.productSearchControl.errors).toEqual({ alreadyExists: true });
-  });
-
-  it('limpia los errores cuando el producto NO está en takenProductIds', () => {
-    const invalidEvent = { option: { value: 'product-2' } } as MatAutocompleteSelectedEvent;
-    component.onProductSelected(invalidEvent);
-
-    const validEvent = { option: { value: 'product-1' } } as MatAutocompleteSelectedEvent;
-    component.onProductSelected(validEvent);
-
-    expect(component.form.controls.productId.errors).toBeNull();
-    expect(component.productSearchControl.errors).toBeNull();
-  });
-
-  it('establece null en productSearchControl cuando el productId no existe en la lista', () => {
-    const event = { option: { value: 'unknown-product-id' } } as MatAutocompleteSelectedEvent;
-
-    component.onProductSelected(event);
-
-    expect(component.productSearchControl.value).toBeNull();
+  it('devuelve cadena vacía para null', () => {
+    expect(component.displayProductName(null)).toBe('');
   });
 });
 
-// ─── filteredProducts ─────────────────────────────────────────────────────────
+// ─── onProductValueChange ─────────────────────────────────────────────────────
 
-describe('AddEditLineDialogComponent — filteredProducts signal', () => {
+describe('AddEditLineDialogComponent — onProductValueChange()', () => {
+  let component: AddEditLineDialogComponent;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    const fixture = setupTestBed({ products, takenProductIds: ['product-2'] });
+    component = fixture.componentInstance;
+  });
+
+  it('establece el error alreadyExists cuando el producto está en takenProductIds', () => {
+    component.onProductValueChange('product-2');
+
+    expect(component.form.controls.productId.errors).toEqual({ alreadyExists: true });
+  });
+
+  it('limpia los errores cuando el producto NO está en takenProductIds', () => {
+    component.onProductValueChange('product-2');
+    component.onProductValueChange('product-1');
+
+    expect(component.form.controls.productId.errors).toBeNull();
+  });
+
+  it('no añade el error alreadyExists cuando el ID es null', () => {
+    component.onProductValueChange(null);
+
+    expect(component.form.controls.productId.errors?.['alreadyExists']).toBeUndefined();
+  });
+});
+
+// ─── onProductQuery ────────────────────────────────────────────────────────────
+
+describe('AddEditLineDialogComponent — onProductQuery()', () => {
   let component: AddEditLineDialogComponent;
   let fixture: ComponentFixture<AddEditLineDialogComponent>;
 
@@ -210,15 +188,16 @@ describe('AddEditLineDialogComponent — filteredProducts signal', () => {
     component = fixture.componentInstance;
   });
 
-  it('devuelve [] cuando la búsqueda está vacía', () => {
-    component.productSearchControl.setValue('');
+  it('devuelve el catálogo completo cuando la búsqueda está vacía', () => {
+    component.onProductQuery('');
     fixture.detectChanges();
 
-    expect(component.filteredProducts()).toEqual([]);
+    expect(component.filteredProducts()).toHaveLength(products.length);
+    expect(component.filteredProducts()).toEqual(products);
   });
 
   it('filtra productos por nombre cuando hay texto de búsqueda', () => {
-    component.productSearchControl.setValue('alpha');
+    component.onProductQuery('alpha');
     fixture.detectChanges();
 
     expect(component.filteredProducts()).toHaveLength(1);
@@ -226,7 +205,7 @@ describe('AddEditLineDialogComponent — filteredProducts signal', () => {
   });
 
   it('filtra productos por categoría cuando hay texto de búsqueda', () => {
-    component.productSearchControl.setValue('categoría b');
+    component.onProductQuery('categoría b');
     fixture.detectChanges();
 
     expect(component.filteredProducts()).toHaveLength(1);
@@ -234,17 +213,10 @@ describe('AddEditLineDialogComponent — filteredProducts signal', () => {
   });
 
   it('devuelve todos los coincidentes cuando el término es general', () => {
-    component.productSearchControl.setValue('producto');
+    component.onProductQuery('producto');
     fixture.detectChanges();
 
     expect(component.filteredProducts()).toHaveLength(2);
-  });
-
-  it('trata el valor null como cadena vacía y devuelve lista vacía', () => {
-    component.productSearchControl.setValue(null);
-    fixture.detectChanges();
-
-    expect(component.filteredProducts()).toEqual([]);
   });
 });
 

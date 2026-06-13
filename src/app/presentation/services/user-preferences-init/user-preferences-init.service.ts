@@ -37,11 +37,7 @@ export class UserPreferencesInitService {
         return;
       }
 
-      if (prefs.theme === 'dark') {
-        this._themeService.setDarkTheme();
-      } else {
-        this._themeService.setLightTheme();
-      }
+      this._themeService.setTheme(prefs.theme);
 
       if (prefs.language) {
         this._transloco.setActiveLang(prefs.language);

@@ -7,7 +7,7 @@
 }
 
 .ready-dialog__intro {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   font-size: var(--text-sm);
 }
 
@@ -31,7 +31,7 @@
 
 .ready-dialog__line-needed {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .ready-dialog__suggestions {
@@ -46,20 +46,20 @@
   gap: 0.25rem;
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
-  border: 2px solid var(--mat-sys-outline-variant);
+  border: 2px solid var(--border);
   cursor: pointer;
   transition:
     border-color 0.15s,
     background-color 0.15s;
 
   &--selected {
-    border-color: var(--mat-sys-primary);
-    background-color: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+    border-color: var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
   }
 
   &:hover:not(.ready-dialog__suggestion--selected) {
-    border-color: var(--mat-sys-outline);
-    background-color: var(--mat-sys-surface-variant);
+    border-color: var(--border-strong);
+    background-color: var(--bg-surface-hi);
   }
 }
 
@@ -70,30 +70,30 @@
 
 .ready-dialog__suggestion-units {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
 }
 
 .ready-dialog__suggestion-excess {
-  color: var(--mat-sys-tertiary);
+  color: var(--accent-blue);
   margin-left: 0.25rem;
 }
 
 .ready-dialog__suggestion-cost {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
 }
 
 .ready-dialog__suggestion-unit-price {
   font-weight: 400;
   font-size: var(--text-xs);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   margin-left: 0.25rem;
 }
 
 .ready-dialog__no-packs {
   font-size: var(--text-sm);
-  color: var(--mat-sys-error);
+  color: var(--accent-rose);
 }
 
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────

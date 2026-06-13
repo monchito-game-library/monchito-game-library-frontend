@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -22,18 +21,12 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatButton,
-    MatIconButton,
-    MatProgressSpinner,
-    MatIcon,
-    MatError,
-    MatPrefix,
-    MatSuffix,
+    RetroIconButtonComponent,
+    RetroIconComponent,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    RetroButtonComponent,
+    RetroInputComponent
   ]
 })
 /** Login page component. Handles user authentication and redirects to the game list on success. */
@@ -41,7 +34,6 @@ export class LoginComponent extends AuthBaseComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-
   /** returnUrl recibido por query param. Se propaga al link de registro y al éxito de signIn. */
   readonly returnUrl: string | null = this._route.snapshot.queryParamMap.get('returnUrl');
 
@@ -66,6 +58,28 @@ export class LoginComponent extends AuthBaseComponent {
     if (!result.success) {
       this._setError(result.error, 'auth.login.oauthFailed');
     }
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo email, o null si no hay error visible.
+   */
+  _getEmailError(): string | null {
+    const ctrl = this.loginForm.get('email');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.login.emailRequired');
+    if (ctrl.hasError('email')) return this._transloco.translate('auth.login.emailInvalid');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo password, o null si no hay error visible.
+   */
+  _getPasswordError(): string | null {
+    const ctrl = this.loginForm.get('password');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.login.passwordRequired');
+    if (ctrl.hasError('minlength')) return this._transloco.translate('auth.login.passwordMinLength');
+    return null;
   }
 
   /**

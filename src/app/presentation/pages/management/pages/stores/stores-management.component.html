@@ -1,11 +1,21 @@
 <div class="stores-page" [class.stores-page--panel-open]="panelOpen()">
   <header class="stores-page__header">
     <h1 class="stores-page__title">{{ 'management.stores.title' | transloco }}</h1>
-    <button mat-flat-button color="primary" (click)="onAddStore()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.stores.addBtn' | transloco }}
-    </button>
+    <retro-button
+      [label]="'management.stores.addBtn' | transloco"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddStore()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
+
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.stores.search.placeholder' | transloco"
+    commandPath="monchito ~/management/stores"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
 
   @if (panelOpen()) {
     <div class="stores-edit-panel-wrapper">
@@ -22,24 +32,42 @@
       <div class="stores-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="stores-skeleton__card">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-sm)" />
-            <app-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>
-    } @else if (stores().length === 0) {
-      <p class="stores-page__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
     } @else {
       <div class="stores-grid">
-        @for (store of stores(); track store.id) {
-          <app-catalog-item-card
-            icon="storefront"
-            [name]="store.label"
-            [chips]="store.formatHint ? [getFormatHintLabel(store.formatHint)] : []"
+        @for (store of filteredStores(); track store.id) {
+          <retro-card
+            class="store-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedStore()?.id === store.id"
-            (cardClick)="onSelectStore(store)" />
+            (cardClicked)="onSelectStore(store)">
+            <div class="store-card__top">
+              <retro-icon name="storefront" size="lg" />
+              <span class="store-card__name">{{ store.label }}</span>
+            </div>
+            @if (store.formatHint) {
+              <hr class="store-card__divider" />
+              <div class="store-card__chips">
+                <retro-chip [label]="getFormatHintLabel(store.formatHint)" size="sm" />
+              </div>
+            }
+          </retro-card>
         }
       </div>
+      @if (searchTerm() && filteredStores().length === 0) {
+        <div class="stores-page__no-results">
+          <p>{{ 'management.stores.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
+      @if (stores().length === 0) {
+        <p class="stores-page__empty">{{ 'management.stores.emptyCustom' | transloco }}</p>
+      }
     }
   </div>
 </div>

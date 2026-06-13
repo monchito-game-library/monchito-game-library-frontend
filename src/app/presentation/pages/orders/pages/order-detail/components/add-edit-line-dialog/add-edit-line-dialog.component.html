@@ -1,4 +1,4 @@
-<div mat-dialog-title>
+<div retroDialogTitle>
   @if (isEditMode) {
     {{ 'orders.lines.dialogEditTitle' | transloco }}
   } @else {
@@ -6,44 +6,43 @@
   }
 </div>
 
-<mat-dialog-content>
+<div retroDialogContent>
   <form [formGroup]="form" class="add-edit-line-dialog__form">
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.productLabel' | transloco }}</mat-label>
-      <input matInput [formControl]="productSearchControl" [matAutocomplete]="productAuto" />
-      <mat-autocomplete #productAuto="matAutocomplete" (optionSelected)="onProductSelected($event)">
-        @for (product of filteredProducts(); track product.id) {
-          <mat-option [value]="product.id">{{ product.name }} ({{ product.category }})</mat-option>
-        }
-      </mat-autocomplete>
-      @if (form.controls.productId.hasError('required') && form.controls.productId.touched) {
-        <mat-error>{{ 'orders.lines.productRequired' | transloco }}</mat-error>
+    <retro-search
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.productLabel' | transloco"
+      [formControl]="form.controls.productId"
+      [displayWith]="displayProductName"
+      [error]="_getProductError()"
+      (queryChange)="onProductQuery($event)">
+      @for (product of filteredProducts(); track product.id) {
+        <retro-option [value]="product.id">{{ product.name }} ({{ product.category }})</retro-option>
       }
-      @if (productSearchControl.hasError('alreadyExists')) {
-        <mat-error>{{ 'orders.lines.productAlreadyExists' | transloco }}</mat-error>
-      }
-    </mat-form-field>
+    </retro-search>
 
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.qtyNeededLabel' | transloco }}</mat-label>
-      <input matInput type="number" formControlName="quantityNeeded" min="1" />
-      @if (form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')) {
-        <mat-error>{{ 'orders.lines.qtyNeededRequired' | transloco }}</mat-error>
-      }
-    </mat-form-field>
+    <retro-input
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.qtyNeededLabel' | transloco"
+      formControlName="quantityNeeded"
+      type="number"
+      min="1"
+      [error]="
+        form.controls.quantityNeeded.hasError('required') || form.controls.quantityNeeded.hasError('min')
+          ? ('orders.lines.qtyNeededRequired' | transloco)
+          : null
+      " />
 
-    <mat-form-field appearance="outline" class="add-edit-line-dialog__field">
-      <mat-label>{{ 'orders.lines.notesLabel' | transloco }}</mat-label>
-      <textarea matInput formControlName="notes" rows="3"></textarea>
-    </mat-form-field>
+    <retro-textarea
+      class="add-edit-line-dialog__field"
+      [label]="'orders.lines.notesLabel' | transloco"
+      formControlName="notes"
+      [rows]="3" />
   </form>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="onCancel()">
-    {{ 'orders.header.cancel' | transloco }}
-  </button>
-  <button mat-flat-button type="button" (click)="onSubmit()">
-    {{ 'orders.header.save' | transloco }}
-  </button>
-</mat-dialog-actions>
+<footer retroDialogActions align="end">
+  <retro-button [label]="'orders.header.cancel' | transloco" variant="ghost" size="md" (clicked)="onCancel()" />
+  <retro-button [label]="'orders.header.save' | transloco" variant="primary" size="md" (clicked)="onSubmit()">
+    <retro-icon slot="start" name="save" size="sm" />
+  </retro-button>
+</footer>

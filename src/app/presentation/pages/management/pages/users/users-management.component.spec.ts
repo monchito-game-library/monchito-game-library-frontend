@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -33,7 +33,7 @@ describe('UsersManagementComponent', () => {
       getActiveLang: vi.fn(() => 'es')
     };
     mockDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<MatDialogRef<unknown>>)
+      open: vi.fn().mockReturnValue({ afterClosed: () => of(true) } as Partial<RetroDialogRef<unknown>>)
     };
     mockUserContext = { userId: vi.fn(() => 'u-owner') };
 
@@ -51,8 +51,11 @@ describe('UsersManagementComponent', () => {
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn().mockResolvedValue(undefined) } },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: TranslocoService, useValue: mockTransloco },
-        { provide: MatSnackBar, useValue: { open: vi.fn() } },
-        { provide: MatDialog, useValue: mockDialog }
+        {
+          provide: RetroSnackbarService,
+          useValue: { open: vi.fn(), dismiss: vi.fn(), dismissAll: vi.fn(), messages: () => [] }
+        },
+        { provide: RetroDialogService, useValue: mockDialog }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -66,7 +69,6 @@ describe('UsersManagementComponent', () => {
     it('updatingUserId es null', () => expect(component.updatingUserId()).toBeNull());
     it('users es []', () => expect(component.users()).toEqual([]));
     it('activeFilter por defecto es "all"', () => expect(component.activeFilter()).toBe('all'));
-    it('filters expone los 3 chips', () => expect(component.filters).toHaveLength(3));
   });
 
   describe('computed signals con el listado completo', () => {
@@ -189,7 +191,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error si setUserRole falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.setUserRole.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
 
@@ -288,7 +290,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de éxito al borrar correctamente', async () => {
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.onDeleteUser(member);
 
@@ -301,7 +303,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error y NO modifica la lista si deleteUser falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.deleteUser.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
       const member: any = mockUsers[3];
       component.users.set(mockUsers);
 
@@ -360,7 +362,7 @@ describe('UsersManagementComponent', () => {
     it('muestra snackbar de error y pone loading a false si la carga falla', async () => {
       const useCases = TestBed.inject(USER_ADMIN_USE_CASES as any) as any;
       useCases.getAllUsers.mockRejectedValue(new Error('fail'));
-      const snackBar = TestBed.inject(MatSnackBar as any) as any;
+      const snackBar = TestBed.inject(RetroSnackbarService as any) as any;
 
       await component.ngOnInit();
 

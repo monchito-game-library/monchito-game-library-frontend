@@ -185,4 +185,52 @@ describe('ResetPasswordComponent', () => {
       expect(mockAuthUseCases.signOut).not.toHaveBeenCalled();
     });
   });
+
+  describe('_getPasswordError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.resetPasswordForm.get('password')!.setValue('pass123');
+      component.resetPasswordForm.get('password')!.markAsTouched();
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.resetPasswordForm.get('password')!.markAsTouched();
+      component.resetPasswordForm.get('password')!.setValue('');
+      expect(component._getPasswordError()).toBe('auth.resetPassword.passwordRequired');
+    });
+
+    it('devuelve la clave de minlength cuando la contraseña es corta', () => {
+      component.resetPasswordForm.get('password')!.markAsTouched();
+      component.resetPasswordForm.get('password')!.setValue('abc');
+      expect(component._getPasswordError()).toBe('auth.resetPassword.passwordMinLength');
+    });
+  });
+
+  describe('_getConfirmPasswordError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getConfirmPasswordError()).toBeNull();
+    });
+
+    it('devuelve null cuando confirmPassword coincide con password y está tocado', () => {
+      component.resetPasswordForm.setValue({ password: 'pass123', confirmPassword: 'pass123' });
+      component.resetPasswordForm.get('confirmPassword')!.markAsTouched();
+      expect(component._getConfirmPasswordError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.resetPasswordForm.get('confirmPassword')!.markAsTouched();
+      component.resetPasswordForm.get('confirmPassword')!.setValue('');
+      expect(component._getConfirmPasswordError()).toBe('auth.resetPassword.confirmPasswordRequired');
+    });
+
+    it('devuelve la clave de passwordMismatch cuando las contraseñas no coinciden', () => {
+      component.resetPasswordForm.setValue({ password: 'pass123', confirmPassword: 'diferente' });
+      component.resetPasswordForm.get('confirmPassword')!.markAsTouched();
+      expect(component._getConfirmPasswordError()).toBe('auth.resetPassword.passwordMismatch');
+    });
+  });
 });

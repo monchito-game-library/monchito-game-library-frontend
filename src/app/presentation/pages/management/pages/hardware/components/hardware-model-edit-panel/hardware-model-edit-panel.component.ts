@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, Signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareModelModel } from '@/models/hardware-model/hardware-model.model';
@@ -25,15 +24,12 @@ import { CONSOLE_SPECS_MEDIA } from '@/constants/console-specs-media.constant';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatError,
-    MatInput,
-    MatSelect,
-    MatOption,
-    MatButton,
-    MatIcon,
-    TranslocoPipe
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroIconComponent,
+    RetroInputComponent,
+    RetroSelectComponent,
+    RetroOptionComponent
   ],
   templateUrl: './hardware-model-edit-panel.component.html',
   styleUrl: './hardware-model-edit-panel.component.scss'

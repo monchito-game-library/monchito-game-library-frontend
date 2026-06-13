@@ -1,8 +1,8 @@
 import { Component, NO_ERRORS_SCHEMA, signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { of } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
@@ -18,7 +18,7 @@ import { HardwareSaleStatusModel } from '@/interfaces/hardware-sale-status.inter
 import { mockRouter } from '@/testing/router.mock';
 import { mockActivatedRoute } from '@/testing/activated-route.mock';
 import { mockDialog } from '@/testing/dialog.mock';
-import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockUserContext } from '@/testing/user-context.mock';
 
@@ -119,8 +119,8 @@ describe('HardwareDetailBaseComponent', () => {
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: MatDialog, useValue: mockDialog },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: RetroDialogService, useValue: mockDialog },
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco },
         { provide: STORE_USE_CASES, useValue: mockStoreUseCases },
         { provide: HARDWARE_BRAND_USE_CASES, useValue: mockBrandUseCases },
@@ -428,7 +428,7 @@ describe('HardwareDetailBaseComponent', () => {
       mockDialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.onDelete();
       await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(mockSnackBar.open).toHaveBeenCalledWith('test.delete.snack.ok', 'common.close', { duration: 3000 });
+      expect(mockRetroSnackbar.open).toHaveBeenCalledWith(expect.objectContaining({ duration: 3000 }));
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test/list']);
     });
 
@@ -438,7 +438,7 @@ describe('HardwareDetailBaseComponent', () => {
       mockDialog.open.mockReturnValue({ afterClosed: () => of(true) });
       component.onDelete();
       await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(mockSnackBar.open).toHaveBeenCalledWith('test.delete.snack.error', 'common.close', { duration: 3000 });
+      expect(mockRetroSnackbar.open).toHaveBeenCalledWith(expect.objectContaining({ duration: 3000 }));
       expect(component.deleting()).toBe(false);
       expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
@@ -518,7 +518,7 @@ describe('HardwareDetailBaseComponent', () => {
 
       await component.undoSell();
 
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 

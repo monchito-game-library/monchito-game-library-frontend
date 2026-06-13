@@ -1,5 +1,5 @@
 import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { ErrorStateMatcher } from '@/interfaces/error-state-matcher.interface';
 
 /**
  * Shows mat-error as soon as the control is dirty (while typing),

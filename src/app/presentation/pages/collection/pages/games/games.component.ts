@@ -8,19 +8,19 @@ import {
   OnInit,
   Signal,
   signal,
-  viewChild,
   ViewChild,
   WritableSignal
 } from '@angular/core';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, Subject, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { MatButton, MatFabButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatDrawer, MatDrawerContainer, MatDrawerContent } from '@angular/material/sidenav';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameListModel } from '@/models/game/game-list.model';
@@ -38,7 +38,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GameCardComponent } from '@/pages/collection/pages/games/components/game-card/game-card.component';
 import { GameRowComponent } from '@/pages/collection/pages/games/components/game-row/game-row.component';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { GameListFiltersSheetComponent } from '@/pages/collection/pages/games/components/game-list-filters-sheet/game-list-filters-sheet.component';
 import { GameListFiltersBarComponent } from '@/pages/collection/pages/games/components/game-list-filters-bar/game-list-filters-bar.component';
 import { GameListFiltersSheetData } from '@/interfaces/game-list-filters-sheet.interface';
@@ -55,32 +55,30 @@ import { GamesFilterService } from '@/pages/collection/pages/games/services/game
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
-    MatButton,
-    MatFabButton,
-    MatDrawer,
-    MatDrawerContainer,
-    MatDrawerContent,
-    MatIcon,
+    RetroIconComponent,
     TranslocoPipe,
     GameCardComponent,
     RouterLink,
-    SkeletonComponent,
+    RetroSkeletonComponent,
     ListPageHeaderComponent,
     GameListFiltersBarComponent,
     GameListFiltersSheetComponent,
-    GameRowComponent
+    GameRowComponent,
+    RetroButtonComponent,
+    RetroEmptyStateComponent,
+    RetroListComponent
   ]
 })
 export class GamesComponent implements OnInit, OnDestroy {
   private readonly _gameUseCases: GameUseCasesContract = inject(GAME_USE_CASES);
   private readonly _storeUseCases: StoreUseCasesContract = inject(STORE_USE_CASES);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _router: Router = inject(Router);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
-  private readonly _bottomSheet: MatBottomSheet = inject(MatBottomSheet);
+  private readonly _bottomSheet: RetroBottomSheetService = inject(RetroBottomSheetService);
   private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
   private _bpSubscription?: Subscription;
@@ -89,8 +87,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer')
   private _scrollContainer?: ElementRef<HTMLElement>;
 
-  /** Reference to the desktop filters drawer; toggled by openFilters() in non-mobile viewports. */
-  readonly filtersDrawer = viewChild<MatDrawer>('filtersDrawer');
+  /** Whether the desktop filters side panel is open. */
+  readonly filtersOpen: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Available platform options used to populate the platform filter. */
   readonly consoles: AvailablePlatformInterface[] = availablePlatformsConstant;
@@ -240,6 +238,18 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.filteredGames().reduce((acc: number, game: GameListModel): number => acc + (game.price || 0), 0)
   );
 
+  /**
+   * Flags dinámicos para el retro-command-bar según el estado actual de la lista.
+   * Solo visible en desktop >= 1024px (el componente lo oculta por CSS).
+   */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const flags: string[] = [];
+    if (this.viewMode() === 'list') flags.push('view=list');
+    if (this.searchTerm()) flags.push(`search="${this.searchTerm()}"`);
+    if (this.activeFilterCount() > 0) flags.push(`filters=${this.activeFilterCount()}`);
+    return flags;
+  });
+
   /** Bundle of writable signals shared with the desktop filters bar and the mobile filters sheet. */
   readonly filtersData: GameListFiltersSheetData = {
     selectedConsole: this.selectedConsole,
@@ -310,11 +320,7 @@ export class GamesComponent implements OnInit, OnDestroy {
    */
   async onGameDeleted(): Promise<void> {
     await this._loadGames(true);
-    this._snackBar.open(
-      this._transloco.translate('gameList.snack.deleted'),
-      this._transloco.translate('common.close'),
-      { duration: 2000 }
-    );
+    this._snack.open({ text: this._transloco.translate('gameList.snack.deleted'), duration: 2000, variant: 'success' });
   }
 
   /**
@@ -347,10 +353,10 @@ export class GamesComponent implements OnInit, OnDestroy {
    */
   openFilters(): void {
     if (this.isMobile()) {
-      this._bottomSheet.open(GameListFiltersSheetComponent, { data: this.filtersData });
+      this._bottomSheet.open(GameListFiltersSheetComponent, this.filtersData);
       return;
     }
-    void this.filtersDrawer()?.toggle();
+    this.filtersOpen.update((open: boolean) => !open);
   }
 
   // Saves scroll position on each scroll event so it survives the browser resetting
@@ -425,11 +431,11 @@ export class GamesComponent implements OnInit, OnDestroy {
       this.allGames.set(data);
       this._userPreferencesState.allGames.set(data);
     } catch {
-      this._snackBar.open(
-        this._transloco.translate('gameList.snack.loadError'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('gameList.snack.loadError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.loading.set(false);
     }

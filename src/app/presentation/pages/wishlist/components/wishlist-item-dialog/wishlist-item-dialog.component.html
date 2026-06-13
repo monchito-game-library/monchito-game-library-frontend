@@ -1,8 +1,8 @@
-<h2 mat-dialog-title>
+<h2 retroDialogTitle>
   {{ (config.mode === 'add' ? 'wishlist.dialog.addTitle' : 'wishlist.dialog.editTitle') | transloco }}
 </h2>
 
-<mat-dialog-content>
+<div retroDialogContent>
   @if (showSearch()) {
     <!-- Step 1 (add mode): search for a game -->
     <p class="wishlist-item-dialog__hint">{{ 'wishlist.dialog.searchHint' | transloco }}</p>
@@ -23,13 +23,10 @@
             <span class="wishlist-item-dialog__game-year">{{ game.released_date | slice: 0 : 4 }}</span>
           }
         </div>
-        <button
-          mat-icon-button
-          type="button"
-          (click)="onChangGame()"
-          [attr.aria-label]="'wishlist.dialog.changeGame' | transloco">
-          <mat-icon>close</mat-icon>
-        </button>
+        <retro-icon-button
+          icon="close"
+          [ariaLabel]="'wishlist.dialog.changeGame' | transloco"
+          (clicked)="onChangGame()" />
       </div>
     }
 
@@ -39,30 +36,28 @@
         <span class="wishlist-item-dialog__priority-label">{{ 'wishlist.fields.priority' | transloco }}</span>
         <div class="wishlist-item-dialog__priority-stars">
           @for (level of priorityOptions; track level) {
-            <button
-              mat-icon-button
-              type="button"
-              (click)="form.controls.priority.setValue(level)"
-              [attr.aria-label]="level">
-              <mat-icon>{{ level <= form.controls.priority.value ? 'star' : 'star_border' }}</mat-icon>
-            </button>
+            <retro-icon-button
+              [icon]="level <= form.controls.priority.value ? 'star' : 'star_border'"
+              [ariaLabel]="'' + level"
+              variant="primary"
+              (clicked)="form.controls.priority.setValue(level)" />
           }
         </div>
       </div>
 
       <!-- Platform (required in add mode, static in edit mode) -->
       @if (config.mode === 'add') {
-        <mat-form-field appearance="outline" class="wishlist-item-dialog__field">
-          <mat-label>{{ 'wishlist.fields.platform' | transloco }}</mat-label>
-          <mat-select formControlName="platform">
-            @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
-              <mat-option [value]="platform">{{ platform }}</mat-option>
-            }
-          </mat-select>
-          @if (form.controls.platform.hasError('required')) {
-            <mat-error>{{ 'wishlist.fields.platformRequired' | transloco }}</mat-error>
+        <retro-select
+          class="wishlist-item-dialog__field"
+          [label]="'wishlist.fields.platform' | transloco"
+          formControlName="platform"
+          [error]="
+            form.controls.platform.hasError('required') ? ('wishlist.fields.platformRequired' | transloco) : null
+          ">
+          @for (platform of selectedCatalogEntry()?.platforms ?? []; track platform) {
+            <retro-option [value]="platform">{{ platform }}</retro-option>
           }
-        </mat-form-field>
+        </retro-select>
       } @else if (config.item?.platform) {
         <div class="wishlist-item-dialog__platform-display">
           <span class="wishlist-item-dialog__platforms-label">{{ 'wishlist.fields.platform' | transloco }}</span>
@@ -73,38 +68,36 @@
       }
 
       <!-- Desired price (required) -->
-      <mat-form-field appearance="outline" class="wishlist-item-dialog__field">
-        <mat-label>{{ 'wishlist.fields.desiredPrice' | transloco }}</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="desiredPrice"
-          [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco" />
-        @if (form.controls.desiredPrice.hasError('required')) {
-          <mat-error>{{ 'wishlist.fields.desiredPriceRequired' | transloco }}</mat-error>
-        }
-      </mat-form-field>
+      <retro-input
+        class="wishlist-item-dialog__field"
+        [label]="'wishlist.fields.desiredPrice' | transloco"
+        type="number"
+        min="0"
+        step="0.01"
+        formControlName="desiredPrice"
+        [placeholder]="'wishlist.fields.desiredPricePlaceholder' | transloco"
+        [error]="
+          form.controls.desiredPrice.hasError('required') ? ('wishlist.fields.desiredPriceRequired' | transloco) : null
+        " />
 
       <!-- Notes (optional) -->
-      <mat-form-field appearance="outline" class="wishlist-item-dialog__field">
-        <mat-label>{{ 'wishlist.fields.notes' | transloco }}</mat-label>
-        <textarea
-          matInput
-          formControlName="notes"
-          rows="3"
-          [placeholder]="'wishlist.fields.notesPlaceholder' | transloco"></textarea>
-      </mat-form-field>
+      <retro-textarea
+        class="wishlist-item-dialog__field"
+        [label]="'wishlist.fields.notes' | transloco"
+        formControlName="notes"
+        [placeholder]="'wishlist.fields.notesPlaceholder' | transloco" />
     </form>
   }
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end">
-  <button mat-stroked-button type="button" (click)="onCancel()">{{ 'common.cancel' | transloco }}</button>
+<footer retroDialogActions align="end">
+  <retro-button variant="ghost" size="md" [label]="'common.cancel' | transloco" (clicked)="onCancel()" />
   @if (!showSearch()) {
-    <button mat-flat-button color="primary" type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
-      {{ 'common.confirm' | transloco }}
-    </button>
+    <retro-button
+      variant="primary"
+      size="md"
+      [label]="'common.confirm' | transloco"
+      [disabled]="!canConfirm()"
+      (clicked)="onConfirm()" />
   }
-</mat-dialog-actions>
+</footer>

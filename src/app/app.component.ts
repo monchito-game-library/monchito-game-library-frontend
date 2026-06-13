@@ -6,25 +6,26 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  QueryList,
   Signal,
   signal,
-  ViewChildren,
   WritableSignal
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
+import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
+import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
+import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
+import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
 
 @Component({
   selector: 'app-root',
@@ -35,12 +36,14 @@ import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
   imports: [
     RouterOutlet,
     RouterLink,
-    MatIcon,
-    MatMenu,
-    MatMenuTrigger,
-    SkeletonComponent,
+    RetroSkeletonComponent,
+    RetroIconComponent,
     TranslocoPipe,
-    NgOptimizedImage
+    NgOptimizedImage,
+    RetroSnackbarHostComponent,
+    RetroMenuComponent,
+    RetroMenuItemComponent,
+    RetroMenuTriggerDirective
   ]
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -103,9 +106,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Total number of visible bottom-nav items, used to size the pill. */
   readonly navItemCount: Signal<number> = computed((): number => this.bottomNavItems().length);
 
-  /** References to the profile menu triggers (rail + topbar). */
-  @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
-
   constructor() {
     effect(() => {
       const userId: string | null = this.userContext.userId();
@@ -116,7 +116,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._themeService.initTheme();
     this._pwaUpdate.init();
     this._mobileQuery.addEventListener('change', (e) => this._isMobile.set((e as MediaQueryListEvent).matches), {
       signal: this._mobileAbort.signal
@@ -136,10 +135,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navigates to the settings page and closes the profile menu.
+   * Navigates to the settings page.
    */
   onNavigateToSettings(): void {
-    this._closeMenu();
     void this._router.navigate(['/settings']);
   }
 
@@ -205,12 +203,5 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   logout(): void {
     this.userContext.clearUser();
-  }
-
-  /**
-   * Closes all active profile menu triggers.
-   */
-  private _closeMenu(): void {
-    this.menuTriggers?.forEach((trigger: MatMenuTrigger) => trigger.closeMenu());
   }
 }

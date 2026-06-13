@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { RETRO_BOTTOM_SHEET_DATA } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
+import { RETRO_OVERLAY_REF } from '@retro/retro-overlay/services/retro-overlay.service';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { GameListFiltersSheetComponent } from './game-list-filters-sheet.component';
@@ -8,13 +9,13 @@ import { GameListFiltersSheetComponent } from './game-list-filters-sheet.compone
 describe('GameListFiltersSheetComponent', () => {
   let component: GameListFiltersSheetComponent;
   let fixture: ComponentFixture<GameListFiltersSheetComponent>;
-  let mockSheetRef: { dismiss: ReturnType<typeof vi.fn> };
+  let mockSheetRef: { close: ReturnType<typeof vi.fn> };
 
   let mockData: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockSheetRef = { dismiss: vi.fn() };
+    mockSheetRef = { close: vi.fn() };
     mockData = {
       selectedConsole: signal(''),
       selectedStore: signal(''),
@@ -30,8 +31,8 @@ describe('GameListFiltersSheetComponent', () => {
     TestBed.configureTestingModule({
       imports: [GameListFiltersSheetComponent],
       providers: [
-        { provide: MatBottomSheetRef, useValue: mockSheetRef },
-        { provide: MAT_BOTTOM_SHEET_DATA, useValue: mockData }
+        { provide: RETRO_OVERLAY_REF, useValue: mockSheetRef },
+        { provide: RETRO_BOTTOM_SHEET_DATA, useValue: mockData }
       ]
     });
     TestBed.overrideComponent(GameListFiltersSheetComponent, { set: { imports: [], template: '' } });
@@ -46,7 +47,7 @@ describe('GameListFiltersSheetComponent', () => {
   describe('close', () => {
     it('cierra el bottom sheet', () => {
       component.close();
-      expect(mockSheetRef.dismiss).toHaveBeenCalledOnce();
+      expect(mockSheetRef.close).toHaveBeenCalledOnce();
     });
   });
 
@@ -58,7 +59,7 @@ describe('GameListFiltersSheetComponent', () => {
 
     it('cierra el bottom sheet', () => {
       component.onClearAll();
-      expect(mockSheetRef.dismiss).toHaveBeenCalledOnce();
+      expect(mockSheetRef.close).toHaveBeenCalledOnce();
     });
   });
 

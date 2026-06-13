@@ -1,7 +1,7 @@
 import { Directive, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 import { StoreModel } from '@/models/store/store.model';
@@ -38,7 +38,7 @@ export abstract class HardwareFormBaseComponent {
   protected readonly _modelUseCases: HardwareModelUseCasesContract = inject(HARDWARE_MODEL_USE_CASES);
   protected readonly _editionUseCases: HardwareEditionUseCasesContract = inject(HARDWARE_EDITION_USE_CASES);
   protected readonly _userContext: UserContextService = inject(UserContextService);
-  protected readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  protected readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _storeModels: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
@@ -108,9 +108,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the store label from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Store UUID
+   * @param {unknown} value - Store UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayStoreLabel = (id: string | null): string => {
+  displayStoreLabel = (value: unknown): string => {
+    const id = value as string | null;
     const store: StoreModel | undefined = this._storeModels().find((s: StoreModel): boolean => s.id === id);
     return store?.label ?? '';
   };
@@ -118,9 +119,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the brand name from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Brand UUID
+   * @param {unknown} value - Brand UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayBrandLabel = (id: string | null): string => {
+  displayBrandLabel = (value: unknown): string => {
+    const id = value as string | null;
     const brand: HardwareBrandModel | undefined = this.brands().find((b: HardwareBrandModel): boolean => b.id === id);
     return brand?.name ?? '';
   };
@@ -128,9 +130,10 @@ export abstract class HardwareFormBaseComponent {
   /**
    * Returns the model name from its UUID for display in the autocomplete.
    *
-   * @param {string | null} id - Model UUID
+   * @param {unknown} value - Model UUID (typed as unknown to satisfy displayWith contract)
    */
-  displayModelLabel = (id: string | null): string => {
+  displayModelLabel = (value: unknown): string => {
+    const id = value as string | null;
     const model: HardwareModelModel | undefined = this.models().find((m: HardwareModelModel): boolean => m.id === id);
     return model?.name ?? '';
   };
@@ -227,9 +230,7 @@ export abstract class HardwareFormBaseComponent {
       }
       return item;
     } catch {
-      this._snackBar.open(this._transloco.translate(this._i18nLoadError), this._transloco.translate('common.close'), {
-        duration: 3000
-      });
+      this._snack.open({ text: this._transloco.translate(this._i18nLoadError), duration: 3000, variant: 'error' });
       void this._router.navigate([this._listRoute]);
       return null;
     } finally {
@@ -280,14 +281,10 @@ export abstract class HardwareFormBaseComponent {
     this.saving.set(true);
     try {
       await saveFn();
-      this._snackBar.open(this._transloco.translate(successKey), this._transloco.translate('common.close'), {
-        duration: 3000
-      });
+      this._snack.open({ text: this._transloco.translate(successKey), duration: 3000, variant: 'success' });
       void this._router.navigate([this._listRoute]);
     } catch {
-      this._snackBar.open(this._transloco.translate(errorKey), this._transloco.translate('common.close'), {
-        duration: 3000
-      });
+      this._snack.open({ text: this._transloco.translate(errorKey), duration: 3000, variant: 'error' });
     } finally {
       this.saving.set(false);
     }

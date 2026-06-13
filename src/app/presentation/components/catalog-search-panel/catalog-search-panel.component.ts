@@ -13,11 +13,13 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { CATALOG_USE_CASES, CatalogUseCasesContract } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
@@ -33,12 +35,12 @@ import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
     DatePipe,
     DecimalPipe,
     NgOptimizedImage,
-    MatFormField,
-    MatLabel,
-    MatPrefix,
-    MatInput,
-    MatIcon,
-    MatProgressSpinner,
+    FormsModule,
+    RetroIconComponent,
+    RetroSpinnerComponent,
+    RetroInputComponent,
+    RetroListComponent,
+    RetroListItemComponent,
     TranslocoPipe
   ]
 })
@@ -77,12 +79,12 @@ export class CatalogSearchPanelComponent implements OnInit {
   }
 
   /**
-   * Handles the search input event and pushes the value to the debounce subject.
+   * Maneja el cambio de valor del campo de búsqueda y lo pasa al sujeto debounce.
    *
-   * @param {Event} event - Input event from the search field
+   * @param {string} value - Valor actual del campo de búsqueda.
    */
-  onSearchInput(event: Event): void {
-    const query: string = (event.target as HTMLInputElement).value.trim();
+  onSearchChange(value: string): void {
+    const query: string = value.trim();
     this.searchQuery.set(query);
     this._searchSubject.next(query);
   }

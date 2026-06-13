@@ -4,6 +4,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
+import { RETRO_LIST_PARENT } from '@retro/retro-list/tokens/retro-list-parent.token';
 import { WishlistCardComponent } from './wishlist-card.component';
 
 const baseItem: WishlistItemModel = {
@@ -40,6 +41,7 @@ describe('WishlistCardComponent', () => {
           translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
         })
       ],
+      providers: [{ provide: RETRO_LIST_PARENT, useValue: {} }],
       schemas: [NO_ERRORS_SCHEMA]
     });
 

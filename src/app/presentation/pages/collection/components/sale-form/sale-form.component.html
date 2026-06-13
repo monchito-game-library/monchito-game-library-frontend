@@ -1,13 +1,11 @@
 <div class="sale-form">
   <!-- Header -->
   <div class="sale-form__header">
-    <button
-      mat-icon-button
+    <retro-icon-button
+      icon="arrow_back"
+      [ariaLabel]="'common.back' | transloco"
       class="sale-form__back-btn"
-      (click)="onCancel()"
-      [attr.aria-label]="'common.back' | transloco">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+      (clicked)="onCancel()" />
     <h2 class="sale-form__title">{{ i18nPrefix() + '.title' | transloco }}</h2>
   </div>
 
@@ -18,86 +16,70 @@
 
       <div class="sale-form__toggle-row">
         <span class="sale-form__toggle-label">{{ i18nPrefix() + '.forSale' | transloco }}</span>
-        <mat-slide-toggle formControlName="forSale" color="primary" />
+        <retro-checkbox formControlName="forSale" />
       </div>
 
       @if (isForSale) {
-        <mat-form-field appearance="outline" class="sale-form__field">
-          <mat-label>{{ i18nPrefix() + '.salePrice' | transloco }}</mat-label>
-          <input
-            matInput
-            type="number"
-            min="0"
-            step="0.01"
-            formControlName="salePrice"
-            [placeholder]="i18nPrefix() + '.salePricePlaceholder' | transloco" />
-          <span matTextSuffix>€</span>
-        </mat-form-field>
+        <retro-input
+          class="sale-form__field"
+          [label]="i18nPrefix() + '.salePrice' | transloco"
+          type="number"
+          min="0"
+          step="0.01"
+          formControlName="salePrice"
+          [placeholder]="i18nPrefix() + '.salePricePlaceholder' | transloco">
+          <span retroSuffix class="sale-form__currency">€</span>
+        </retro-input>
       }
 
-      <button
-        mat-flat-button
-        color="primary"
-        type="button"
+      <retro-button
+        [label]="i18nPrefix() + '.saveBtn' | transloco"
+        variant="primary"
         class="sale-form__save-btn"
-        (click)="onSave()"
-        [disabled]="saving() || selling()">
-        @if (saving()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>save</mat-icon>
-        }
-        {{ i18nPrefix() + '.saveBtn' | transloco }}
-      </button>
+        [loading]="saving()"
+        [disabled]="saving() || selling()"
+        (clicked)="onSave()">
+        <retro-icon slot="start" name="save" size="sm" />
+      </retro-button>
     </section>
 
-    <mat-divider />
+    <hr class="retro-divider" />
 
     <!-- Section 2: Register sale -->
     <section class="sale-form__section">
       <h3 class="sale-form__section-title">{{ i18nPrefix() + '.registerSection' | transloco }}</h3>
 
-      <mat-form-field appearance="outline" class="sale-form__field">
-        <mat-label>{{ i18nPrefix() + '.soldPriceFinal' | transloco }}</mat-label>
-        <input
-          matInput
-          type="number"
-          min="0"
-          step="0.01"
-          formControlName="soldPriceFinal"
-          [placeholder]="i18nPrefix() + '.soldPricePlaceholder' | transloco" />
-        <span matTextSuffix>€</span>
-      </mat-form-field>
+      <retro-input
+        class="sale-form__field"
+        [label]="i18nPrefix() + '.soldPriceFinal' | transloco"
+        type="number"
+        min="0"
+        step="0.01"
+        formControlName="soldPriceFinal"
+        [placeholder]="i18nPrefix() + '.soldPricePlaceholder' | transloco">
+        <span retroSuffix class="sale-form__currency">€</span>
+      </retro-input>
 
-      <mat-form-field appearance="outline" class="sale-form__field" [appDatepickerFieldClick]="soldAtPicker">
-        <mat-label>{{ i18nPrefix() + '.soldAt' | transloco }}</mat-label>
-        <input matInput [matDatepicker]="soldAtPicker" formControlName="soldAt" [readonly]="true" />
-        <mat-datepicker-toggle matIconSuffix [for]="soldAtPicker"></mat-datepicker-toggle>
-        <mat-datepicker #soldAtPicker></mat-datepicker>
-        @if (form.controls.soldAt.hasError('matDatepickerParse')) {
-          <mat-error>{{ i18nPrefix() + '.soldAtInvalid' | transloco }}</mat-error>
-        }
-      </mat-form-field>
+      <retro-datepicker
+        class="sale-form__field"
+        [label]="i18nPrefix() + '.soldAt' | transloco"
+        formControlName="soldAt"
+        [error]="form.controls.soldAt.hasError('invalidDate') ? (i18nPrefix() + '.soldAtInvalid' | transloco) : null" />
 
       <p class="sale-form__warning">
-        <mat-icon>warning</mat-icon>
+        <retro-icon name="warning" />
         {{ i18nPrefix() + '.soldWarning' | transloco }}
       </p>
 
-      <button
-        mat-flat-button
-        color="warn"
-        type="button"
+      <retro-button
+        [label]="i18nPrefix() + '.markAsSoldBtn' | transloco"
+        variant="danger"
         class="sale-form__sold-btn"
-        (click)="onMarkAsSold()"
-        [disabled]="!canMarkAsSold || saving() || selling()">
-        @if (selling()) {
-          <mat-icon>hourglass_empty</mat-icon>
-        } @else {
-          <mat-icon>sell</mat-icon>
-        }
-        {{ i18nPrefix() + '.markAsSoldBtn' | transloco }}
-      </button>
+        [loading]="selling()"
+        [disabled]="!canMarkAsSold || saving() || selling()"
+        (clicked)="onMarkAsSold()">
+        <retro-icon slot="start" name="sell" size="sm" />
+      </retro-button>
     </section>
   </form>
 </div>

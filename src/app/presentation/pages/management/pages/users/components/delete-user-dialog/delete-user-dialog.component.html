@@ -1,9 +1,9 @@
-<h2 mat-dialog-title class="delete-user-dialog__title">
-  <mat-icon class="delete-user-dialog__title-icon">warning</mat-icon>
+<h2 retroDialogTitle class="delete-user-dialog__title">
+  <retro-icon class="delete-user-dialog__title-icon" name="warning" />
   <span>{{ 'management.users.delete.title' | transloco }}</span>
 </h2>
 
-<mat-dialog-content class="delete-user-dialog__content">
+<div retroDialogContent class="delete-user-dialog__content">
   <p class="delete-user-dialog__warning">
     {{ 'management.users.delete.warning' | transloco: { email: data.email } }}
   </p>
@@ -20,18 +20,25 @@
   </p>
 
   <form [formGroup]="form" class="delete-user-dialog__form" (ngSubmit)="onConfirm()">
-    <mat-form-field appearance="outline" class="delete-user-dialog__field">
-      <mat-label>{{ 'management.users.delete.field.label' | transloco }}</mat-label>
-      <input matInput type="email" autocomplete="off" formControlName="emailConfirmation" [placeholder]="data.email" />
-      <mat-hint>{{ 'management.users.delete.field.hint' | transloco }}</mat-hint>
-    </mat-form-field>
+    <retro-input
+      class="delete-user-dialog__field"
+      [label]="'management.users.delete.field.label' | transloco"
+      type="email"
+      autocomplete="off"
+      formControlName="emailConfirmation"
+      [placeholder]="data.email"
+      [hint]="'management.users.delete.field.hint' | transloco" />
   </form>
-</mat-dialog-content>
+</div>
 
-<mat-dialog-actions align="end" class="delete-user-dialog__actions">
-  <button mat-button mat-dialog-close type="button">{{ 'common.cancel' | transloco }}</button>
-  <button mat-flat-button color="warn" type="button" [disabled]="!canConfirm()" (click)="onConfirm()">
-    <mat-icon>delete_forever</mat-icon>
-    <span>{{ 'management.users.delete.confirm' | transloco }}</span>
-  </button>
-</mat-dialog-actions>
+<footer retroDialogActions align="end" class="delete-user-dialog__actions">
+  <retro-button [label]="'common.cancel' | transloco" variant="ghost" size="md" retroDialogClose />
+  <retro-button
+    [label]="'management.users.delete.confirm' | transloco"
+    variant="danger"
+    size="md"
+    [disabled]="!canConfirm()"
+    (clicked)="onConfirm()">
+    <retro-icon slot="start" name="delete_forever" size="sm" />
+  </retro-button>
+</footer>

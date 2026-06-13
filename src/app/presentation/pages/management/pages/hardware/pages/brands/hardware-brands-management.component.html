@@ -3,11 +3,21 @@
     <div class="brands-page__header-left">
       <h1 class="brands-page__title">{{ 'management.hardware.title' | transloco }}</h1>
     </div>
-    <button mat-flat-button color="primary" (click)="onAddBrand()" [disabled]="loading()">
-      <mat-icon>add</mat-icon>
-      {{ 'management.hardware.brands.addBtn' | transloco }}
-    </button>
+    <retro-button
+      [label]="'management.hardware.brands.addBtn' | transloco"
+      variant="primary"
+      [disabled]="loading()"
+      (clicked)="onAddBrand()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   </header>
+
+  <app-search-toolbar
+    [value]="searchTerm()"
+    [placeholder]="'management.hardware.brands.search.placeholder' | transloco"
+    commandPath="monchito ~/management/hardware"
+    [commandFlags]="commandFlags()"
+    (valueChange)="onSearchChange($event)" />
 
   @if (panelOpen()) {
     <div class="brands-edit-panel-wrapper">
@@ -24,22 +34,34 @@
       <div class="brands-skeleton">
         @for (n of [0, 1, 2, 3, 4, 5]; track n) {
           <div class="brands-skeleton__card">
-            <app-skeleton width="36px" height="36px" borderRadius="var(--radius-sm)" />
-            <app-skeleton width="60%" height="14px" />
+            <retro-skeleton width="36px" height="36px" />
+            <retro-skeleton width="60%" height="14px" />
           </div>
         }
       </div>
     } @else if (brands().length === 0) {
       <p class="brands-page__empty">{{ 'management.hardware.brands.empty' | transloco }}</p>
     } @else {
+      @if (searchTerm() && filteredBrands().length === 0) {
+        <div class="brands-page__no-results">
+          <p>{{ 'management.hardware.brands.search.noResults' | transloco: { term: searchTerm() } }}</p>
+          <retro-button variant="ghost" size="sm" [label]="'common.clear' | transloco" (clicked)="onSearchChange('')" />
+        </div>
+      }
       <div class="brands-grid">
-        @for (brand of brands(); track brand.id) {
-          <app-catalog-item-card
-            icon="memory"
-            [name]="brand.name"
+        @for (brand of filteredBrands(); track brand.id) {
+          <retro-card
+            class="brand-card"
+            padding="sm"
+            [interactive]="true"
             [selected]="selectedBrand()?.id === brand.id"
-            [showChevron]="true"
-            (cardClick)="onOpenModels(brand)" />
+            (cardClicked)="onOpenModels(brand)">
+            <div class="brand-card__top">
+              <retro-icon name="memory" size="lg" />
+              <span class="brand-card__name">{{ brand.name }}</span>
+              <retro-icon name="chevron_right" size="sm" />
+            </div>
+          </retro-card>
         }
       </div>
     }

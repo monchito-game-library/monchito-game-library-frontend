@@ -1,7 +1,9 @@
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { RetroDialogRef, RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
@@ -34,6 +36,16 @@ const mockGame: GameListModel = {
   activeLoanAt: null
 };
 
+@Component({
+  standalone: true,
+  imports: [RetroListComponent, GameRowComponent],
+  template: `<retro-list><app-game-row [game]="game" (gameDeleted)="onDeleted($event)" /></retro-list>`
+})
+class TestHostComponent {
+  game: GameListModel = mockGame;
+  onDeleted = vi.fn();
+}
+
 describe('GameRowComponent', () => {
   let component: GameRowComponent;
   let routerNavigate: ReturnType<typeof vi.fn>;
@@ -41,10 +53,10 @@ describe('GameRowComponent', () => {
   let deleteGame: ReturnType<typeof vi.fn>;
 
   function build(game: GameListModel = mockGame): GameRowComponent {
-    const fixture = TestBed.createComponent(GameRowComponent);
-    fixture.componentRef.setInput('game', game);
+    const fixture = TestBed.createComponent(TestHostComponent);
+    fixture.componentInstance.game = game;
     fixture.detectChanges();
-    return fixture.componentInstance;
+    return fixture.debugElement.query(By.directive(GameRowComponent)).componentInstance;
   }
 
   beforeEach(() => {
@@ -55,7 +67,7 @@ describe('GameRowComponent', () => {
 
     TestBed.configureTestingModule({
       imports: [
-        GameRowComponent,
+        TestHostComponent,
         TranslocoTestingModule.forRoot({
           langs: { en: {} },
           translocoConfig: { availableLangs: ['en'], defaultLang: 'en' }
@@ -68,7 +80,7 @@ describe('GameRowComponent', () => {
           provide: GAME_USE_CASES,
           useValue: { deleteGame } as Partial<GameUseCasesContract>
         },
-        { provide: MatDialog, useValue: { open: dialogOpen } },
+        { provide: RetroDialogService, useValue: { open: dialogOpen } },
         {
           provide: UserContextService,
           useValue: { userId: signal('user-1') }
@@ -150,13 +162,13 @@ describe('GameRowComponent', () => {
 
     it('detiene la propagación del click', () => {
       const evt = makeEvent();
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as RetroDialogRef<unknown>);
       component.onDelete(evt);
       expect(evt.stopPropagation).toHaveBeenCalledOnce();
     });
 
     it('abre el diálogo de confirmación', () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as RetroDialogRef<unknown>);
       component.onDelete(makeEvent());
       expect(dialogOpen).toHaveBeenCalledOnce();
     });
@@ -168,7 +180,7 @@ describe('GameRowComponent', () => {
     });
 
     it('elimina el juego y emite gameDeleted cuando se confirma', async () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(true) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(true) } as unknown as RetroDialogRef<unknown>);
       const emitSpy = vi.fn();
       component.gameDeleted.subscribe(emitSpy);
 
@@ -181,7 +193,7 @@ describe('GameRowComponent', () => {
     });
 
     it('no llama a deleteGame cuando se cancela', async () => {
-      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as MatDialogRef<unknown>);
+      dialogOpen.mockReturnValue({ afterClosed: () => of(false) } as unknown as RetroDialogRef<unknown>);
       component.onDelete(makeEvent());
       await Promise.resolve();
       expect(deleteGame).not.toHaveBeenCalled();

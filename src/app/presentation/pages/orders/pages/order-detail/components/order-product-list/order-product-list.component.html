@@ -1,10 +1,9 @@
 <div class="order-detail-page__section-header" [class.order-detail-page__section-header--collapsed]="editingHeader()">
   <div class="order-detail-page__section-title">{{ 'orders.lines.title' | transloco }}</div>
   @if (order().status === ORDER_STATUS.DRAFT && !editingHeader()) {
-    <button mat-flat-button (click)="lineAdd.emit()">
-      <mat-icon>add</mat-icon>
-      {{ 'orders.lines.add' | transloco }}
-    </button>
+    <retro-button [label]="'orders.lines.add' | transloco" variant="primary" (clicked)="lineAdd.emit()">
+      <retro-icon slot="start" name="add" size="sm" />
+    </retro-button>
   }
 </div>
 
@@ -12,13 +11,13 @@
   <div class="order-detail-page__section-body-inner">
     @if (!isOwner() && order().status === ORDER_STATUS.SELECTING_PACKS) {
       <div class="order-detail-page__selecting-banner">
-        <mat-icon>schedule</mat-icon>
+        <retro-icon name="schedule" />
         {{ 'orders.lines.selectingPacks' | transloco }}
       </div>
     }
     @if (!isOwner() && order().status === ORDER_STATUS.ORDERING) {
       <div class="order-detail-page__selecting-banner">
-        <mat-icon>shopping_cart</mat-icon>
+        <retro-icon name="shopping_cart" />
         {{ 'orders.lines.placingOrder' | transloco }}
       </div>
     }
@@ -50,27 +49,26 @@
                           target="_blank"
                           rel="noopener noreferrer"
                           [attr.aria-label]="line.productName">
-                          <mat-icon>open_in_new</mat-icon>
+                          <retro-icon name="open_in_new" />
                         </a>
                       }
                     </div>
                   </td>
                   <td>{{ line.quantityNeeded ?? '—' }}</td>
                   <td class="order-detail-page__line-actions">
-                    <button
-                      mat-icon-button
-                      [matTooltip]="'orders.lines.edit' | transloco"
-                      [attr.aria-label]="'orders.lines.edit' | transloco"
-                      (click)="lineEdit.emit(line)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <button
-                      mat-icon-button
-                      [matTooltip]="'orders.lines.delete' | transloco"
-                      [attr.aria-label]="'orders.lines.delete' | transloco"
-                      (click)="lineDelete.emit(line.id)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
+                    <retro-icon-button
+                      icon="edit"
+                      size="sm"
+                      [ariaLabel]="'orders.lines.edit' | transloco"
+                      [retroTooltip]="'orders.lines.edit' | transloco"
+                      (clicked)="lineEdit.emit(line)" />
+                    <retro-icon-button
+                      icon="delete"
+                      variant="danger"
+                      size="sm"
+                      [ariaLabel]="'orders.lines.delete' | transloco"
+                      [retroTooltip]="'orders.lines.delete' | transloco"
+                      (clicked)="lineDelete.emit(line.id)" />
                   </td>
                 </tr>
               }
@@ -107,7 +105,7 @@
                           target="_blank"
                           rel="noopener noreferrer"
                           [attr.aria-label]="line.productName">
-                          <mat-icon>open_in_new</mat-icon>
+                          <retro-icon name="open_in_new" />
                         </a>
                       }
                     </div>

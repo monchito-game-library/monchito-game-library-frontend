@@ -6,8 +6,8 @@ import { ProtectorsManagementComponent } from './protectors-management.component
 import { PROTECTOR_USE_CASES } from '@/domain/use-cases/protector/protector.use-cases.contract';
 import { AUDIT_LOG_USE_CASES } from '@/domain/use-cases/audit-log/audit-log.use-cases.contract';
 import { TranslocoService } from '@jsverse/transloco';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { ProtectorModel } from '@/models/protector/protector.model';
 
 function makeProtector(overrides: Partial<ProtectorModel> = {}): ProtectorModel {
@@ -38,7 +38,7 @@ describe('ProtectorsManagementComponent', () => {
         },
         { provide: AUDIT_LOG_USE_CASES, useValue: { log: vi.fn() } },
         { provide: TranslocoService, useValue: mockTransloco },
-        { provide: MatDialog, useValue: { open: vi.fn() } }
+        { provide: RetroDialogService, useValue: { open: vi.fn() } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -121,7 +121,7 @@ describe('ProtectorsManagementComponent', () => {
   describe('onToggleActive', () => {
     it('no llama a toggleProtectorActive si el dialog se cancela', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.onToggleActive(makeProtector());
@@ -133,7 +133,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.onToggleActive(makeProtector({ isActive: true }));
@@ -146,7 +146,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.toggleProtectorActive.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.onToggleActive(makeProtector({ isActive: false }));
@@ -159,7 +159,7 @@ describe('ProtectorsManagementComponent', () => {
   describe('onDeleteProtector', () => {
     it('no llama a deleteProtector si el dialog se cancela', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(false) });
 
       component.onDeleteProtector(makeProtector());
@@ -171,7 +171,7 @@ describe('ProtectorsManagementComponent', () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.deleteProtector.mockResolvedValue(undefined);
       protectorUseCases.getAllProtectors.mockResolvedValue([]);
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
 
       component.panelOpen.set(true);
@@ -186,15 +186,66 @@ describe('ProtectorsManagementComponent', () => {
     it('muestra snackbar de error si deleteProtector lanza', async () => {
       const protectorUseCases = TestBed.inject(PROTECTOR_USE_CASES as any) as any;
       protectorUseCases.deleteProtector.mockRejectedValue(new Error('delete error'));
-      const dialog = TestBed.inject(MatDialog as any) as any;
+      const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
-      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBar = TestBed.inject(RetroSnackbarService);
       vi.spyOn(snackBar, 'open');
 
       component.onDeleteProtector(makeProtector());
       await new Promise((r) => setTimeout(r, 0));
 
-      expect(snackBar.open).toHaveBeenCalledWith(expect.any(String), '', expect.objectContaining({ duration: 4000 }));
+      expect(snackBar.open).toHaveBeenCalledWith(expect.objectContaining({ duration: 4000 }));
+    });
+  });
+
+  describe('searchTerm / filteredProtectors / commandFlags', () => {
+    it('searchTerm es "" por defecto', () => {
+      expect(component.searchTerm()).toBe('');
+    });
+
+    it('filteredProtectors devuelve todos cuando searchTerm está vacío', () => {
+      const protectors = [
+        makeProtector({ id: 'p1', name: 'BigBen PS5' }),
+        makeProtector({ id: 'p2', name: 'Hori Switch' })
+      ];
+      component.protectors.set(protectors);
+      expect(component.filteredProtectors()).toEqual(protectors);
+    });
+
+    it('filteredProtectors filtra por nombre (case-insensitive)', () => {
+      const p1 = makeProtector({ id: 'p1', name: 'BigBen PS5' });
+      const p2 = makeProtector({ id: 'p2', name: 'Hori Switch' });
+      component.protectors.set([p1, p2]);
+      component.searchTerm.set('bigben');
+      expect(component.filteredProtectors()).toEqual([p1]);
+    });
+
+    it('filteredProtectors devuelve [] cuando ningún nombre coincide', () => {
+      component.protectors.set([makeProtector({ name: 'BigBen PS5' })]);
+      component.searchTerm.set('inexistente');
+      expect(component.filteredProtectors()).toEqual([]);
+    });
+
+    it('commandFlags devuelve [] cuando searchTerm está vacío', () => {
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('commandFlags incluye el término cuando searchTerm no está vacío', () => {
+      component.searchTerm.set('bigben');
+      expect(component.commandFlags()).toEqual(['search="bigben"']);
+    });
+  });
+
+  describe('onSearchChange', () => {
+    it('actualiza searchTerm con el valor recibido', () => {
+      component.onSearchChange('hori');
+      expect(component.searchTerm()).toBe('hori');
+    });
+
+    it('limpia searchTerm al llamar con cadena vacía', () => {
+      component.searchTerm.set('hori');
+      component.onSearchChange('');
+      expect(component.searchTerm()).toBe('');
     });
   });
 

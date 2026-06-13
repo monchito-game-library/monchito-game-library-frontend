@@ -1,232 +1,209 @@
 <div class="sale-page">
-  <mat-tab-group
-    class="sale-page__tab-group"
-    animationDuration="150ms"
-    (selectedTabChange)="setTab($event.index === 0 ? 'available' : 'history')">
+  <retro-tabs class="sale-page__tab-group" (selectedIndexChange)="onTabIndexChange($event)">
     <!-- ─── Tab: For sale ─────────────────────────────────────────────────── -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>sell</mat-icon>
-        <span class="sale-page__tab-label">{{ 'salePage.tabs.available' | transloco }}</span>
+    <retro-tab [label]="'salePage.tabs.available' | transloco" icon="sell">
+      <ng-template>
+        <div class="sale-page__tab-content">
+          <!-- Type filters -->
+          <div class="sale-page__filters">
+            @for (
+              filter of [
+                ['all', 'apps'],
+                ['game', 'sports_esports'],
+                ['console', 'tv'],
+                ['controller', 'gamepad']
+              ];
+              track filter[0]
+            ) {
+              <button
+                class="sale-page__filter-chip"
+                [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+                [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
+                (click)="setFilter($any(filter[0]))">
+                <retro-icon [name]="filter[1]" />
+                <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
+              </button>
+            }
+          </div>
+
+          <!-- Content -->
+          <div class="sale-page__content">
+            @if (loading()) {
+              <div class="sale-page__loading">
+                <retro-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
+              </div>
+            } @else if (filteredAvailable().length === 0) {
+              <div class="sale-page__empty">
+                <svg class="sale-page__empty-svg" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    class="es-shape"
+                    d="M80 14 L130 64 C134 68 134 74 130 78 L88 120 C84 124 78 124 74 120 L24 70 C22 68 20 65 20 62 L22 30 C22 22 28 16 36 16 L68 14 C72 14 78 12 80 14 Z"
+                    stroke-width="3"
+                    stroke-linejoin="round" />
+                  <circle class="es-accent" cx="50" cy="44" r="7" opacity="0.9" />
+                  <line
+                    class="es-accent-stroke"
+                    x1="60"
+                    y1="76"
+                    x2="96"
+                    y2="112"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    opacity="0.4" />
+                  <line
+                    class="es-accent-stroke"
+                    x1="74"
+                    y1="62"
+                    x2="110"
+                    y2="98"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    opacity="0.25" />
+                </svg>
+                <p class="sale-page__empty-title">{{ 'salePage.available.empty.title' | transloco }}</p>
+                <p class="sale-page__empty-subtitle">{{ 'salePage.available.empty.subtitle' | transloco }}</p>
+              </div>
+            } @else {
+              <div class="sale-page__summary">
+                <span class="sale-page__summary-count">{{ filteredAvailable().length }}</span>
+                <span class="sale-page__summary-label">{{ 'salePage.available.items' | transloco }}</span>
+                <span class="sale-page__summary-divider"></span>
+                <retro-icon name="payments" />
+                <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <retro-list>
+                @for (item of filteredAvailable(); track item.id; let i = $index) {
+                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                    <div class="sale-page__item-icon" retroListItemLeading>
+                      <retro-icon [name]="typeIcon(item.itemType)" />
+                    </div>
+                    <div class="sale-page__item-info">
+                      <span class="sale-page__item-name">{{ item.itemName }}</span>
+                      @if (item.detailLeft || item.detailRight) {
+                        <span class="sale-page__item-details">
+                          @if (item.detailLeft) {
+                            <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
+                          }
+                          @if (getDetailRight(item)) {
+                            <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
+                          }
+                        </span>
+                      }
+                    </div>
+                    <div class="sale-page__item-price" retroListItemTrailing>
+                      @if (item.salePrice !== null) {
+                        {{ item.salePrice | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                      } @else {
+                        <span class="sale-page__item-no-price">{{ 'salePage.available.noPrice' | transloco }}</span>
+                      }
+                    </div>
+                  </retro-list-item>
+                }
+              </retro-list>
+            }
+          </div>
+        </div>
       </ng-template>
-
-      <div class="sale-page__tab-content">
-        <!-- Type filters -->
-        <div class="sale-page__filters">
-          @for (
-            filter of [
-              ['all', 'apps'],
-              ['game', 'sports_esports'],
-              ['console', 'tv'],
-              ['controller', 'gamepad']
-            ];
-            track filter[0]
-          ) {
-            <button
-              class="sale-page__filter-chip"
-              [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
-              [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
-              (click)="setFilter($any(filter[0]))">
-              <mat-icon aria-hidden="true">{{ filter[1] }}</mat-icon>
-              <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
-            </button>
-          }
-        </div>
-
-        <!-- Content -->
-        <div class="sale-page__content">
-          @if (loading()) {
-            <div class="sale-page__loading">
-              <mat-progress-spinner
-                diameter="48"
-                mode="indeterminate"
-                [attr.aria-label]="'common.loading' | transloco" />
-            </div>
-          } @else if (filteredAvailable().length === 0) {
-            <div class="sale-page__empty">
-              <svg class="sale-page__empty-svg" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  class="es-shape"
-                  d="M80 14 L130 64 C134 68 134 74 130 78 L88 120 C84 124 78 124 74 120 L24 70 C22 68 20 65 20 62 L22 30 C22 22 28 16 36 16 L68 14 C72 14 78 12 80 14 Z"
-                  stroke-width="3"
-                  stroke-linejoin="round" />
-                <circle class="es-accent" cx="50" cy="44" r="7" opacity="0.9" />
-                <line
-                  class="es-accent-stroke"
-                  x1="60"
-                  y1="76"
-                  x2="96"
-                  y2="112"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  opacity="0.4" />
-                <line
-                  class="es-accent-stroke"
-                  x1="74"
-                  y1="62"
-                  x2="110"
-                  y2="98"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  opacity="0.25" />
-              </svg>
-              <p class="sale-page__empty-title">{{ 'salePage.available.empty.title' | transloco }}</p>
-              <p class="sale-page__empty-subtitle">{{ 'salePage.available.empty.subtitle' | transloco }}</p>
-            </div>
-          } @else {
-            <div class="sale-page__summary">
-              <span class="sale-page__summary-count">{{ filteredAvailable().length }}</span>
-              <span class="sale-page__summary-label">{{ 'salePage.available.items' | transloco }}</span>
-              <span class="sale-page__summary-divider"></span>
-              <mat-icon>payments</mat-icon>
-              <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            </div>
-            <div class="sale-page__list">
-              @for (item of filteredAvailable(); track item.id; let i = $index) {
-                <div
-                  class="sale-page__item"
-                  [style]="{ '--i': i }"
-                  role="button"
-                  (click)="onItemClick(item.itemType, item.id)">
-                  <div class="sale-page__item-icon">
-                    <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
-                  </div>
-                  <div class="sale-page__item-info">
-                    <span class="sale-page__item-name">{{ item.itemName }}</span>
-                    @if (item.detailLeft || item.detailRight) {
-                      <span class="sale-page__item-details">
-                        @if (item.detailLeft) {
-                          <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
-                        }
-                        @if (getDetailRight(item)) {
-                          <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
-                        }
-                      </span>
-                    }
-                  </div>
-                  <div class="sale-page__item-price">
-                    @if (item.salePrice !== null) {
-                      {{ item.salePrice | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                    } @else {
-                      <span class="sale-page__item-no-price">{{ 'salePage.available.noPrice' | transloco }}</span>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </div>
-      </div>
-    </mat-tab>
+    </retro-tab>
 
     <!-- ─── Tab: History ─────────────────────────────────────────────────── -->
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>history</mat-icon>
-        <span class="sale-page__tab-label">{{ 'salePage.tabs.history' | transloco }}</span>
-      </ng-template>
+    <retro-tab [label]="'salePage.tabs.history' | transloco" icon="history">
+      <ng-template>
+        <div class="sale-page__tab-content">
+          <!-- Type filters -->
+          <div class="sale-page__filters">
+            @for (
+              filter of [
+                ['all', 'apps'],
+                ['game', 'sports_esports'],
+                ['console', 'tv'],
+                ['controller', 'gamepad']
+              ];
+              track filter[0]
+            ) {
+              <button
+                class="sale-page__filter-chip"
+                [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
+                [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
+                (click)="setFilter($any(filter[0]))">
+                <retro-icon [name]="filter[1]" />
+                <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
+              </button>
+            }
+          </div>
 
-      <div class="sale-page__tab-content">
-        <!-- Type filters -->
-        <div class="sale-page__filters">
-          @for (
-            filter of [
-              ['all', 'apps'],
-              ['game', 'sports_esports'],
-              ['console', 'tv'],
-              ['controller', 'gamepad']
-            ];
-            track filter[0]
-          ) {
-            <button
-              class="sale-page__filter-chip"
-              [class.sale-page__filter-chip--active]="activeFilter() === filter[0]"
-              [attr.aria-label]="'salePage.filter.' + filter[0] | transloco"
-              (click)="setFilter($any(filter[0]))">
-              <mat-icon aria-hidden="true">{{ filter[1] }}</mat-icon>
-              <span class="sale-page__filter-chip-label">{{ 'salePage.filter.' + filter[0] | transloco }}</span>
-            </button>
-          }
-        </div>
-
-        <!-- Content -->
-        <div class="sale-page__content">
-          @if (loading()) {
-            <div class="sale-page__loading">
-              <mat-progress-spinner
-                diameter="48"
-                mode="indeterminate"
-                [attr.aria-label]="'common.loading' | transloco" />
-            </div>
-          } @else if (filteredSold().length === 0) {
-            <div class="sale-page__empty">
-              <svg class="sale-page__empty-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle class="es-shape" cx="70" cy="70" r="50" stroke-width="3" />
-                <path class="es-ring" d="M38 70 A32 32 0 1 1 60 38" stroke-width="3" stroke-linecap="round" />
-                <path
-                  class="es-accent-stroke"
-                  d="M38 38 L38 70 L56 70"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round" />
-                <circle class="es-accent" cx="70" cy="70" r="4" opacity="0.8" />
-                <path
-                  class="es-accent-stroke"
-                  d="M70 42 L70 70 L88 70"
-                  stroke-width="3.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-              <p class="sale-page__empty-title">{{ 'salePage.history.empty.title' | transloco }}</p>
-              <p class="sale-page__empty-subtitle">{{ 'salePage.history.empty.subtitle' | transloco }}</p>
-            </div>
-          } @else {
-            <div class="sale-page__summary">
-              <span class="sale-page__summary-count">{{ filteredSold().length }}</span>
-              <span class="sale-page__summary-label">{{ 'salePage.history.items' | transloco }}</span>
-              <span class="sale-page__summary-divider"></span>
-              <mat-icon>payments</mat-icon>
-              <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            </div>
-            <div class="sale-page__list">
-              @for (item of filteredSold(); track item.id; let i = $index) {
-                <div
-                  class="sale-page__item"
-                  [style]="{ '--i': i }"
-                  role="button"
-                  (click)="onItemClick(item.itemType, item.id)">
-                  <div class="sale-page__item-icon">
-                    <mat-icon>{{ typeIcon(item.itemType) }}</mat-icon>
-                  </div>
-                  <div class="sale-page__item-info">
-                    <span class="sale-page__item-name">{{ item.itemName }}</span>
-                    @if (item.detailLeft || item.detailRight) {
-                      <span class="sale-page__item-details">
-                        @if (item.detailLeft) {
-                          <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
-                        }
-                        @if (getDetailRight(item)) {
-                          <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
+          <!-- Content -->
+          <div class="sale-page__content">
+            @if (loading()) {
+              <div class="sale-page__loading">
+                <retro-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
+              </div>
+            } @else if (filteredSold().length === 0) {
+              <div class="sale-page__empty">
+                <svg class="sale-page__empty-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="es-shape" cx="70" cy="70" r="50" stroke-width="3" />
+                  <path class="es-ring" d="M38 70 A32 32 0 1 1 60 38" stroke-width="3" stroke-linecap="round" />
+                  <path
+                    class="es-accent-stroke"
+                    d="M38 38 L38 70 L56 70"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <circle class="es-accent" cx="70" cy="70" r="4" opacity="0.8" />
+                  <path
+                    class="es-accent-stroke"
+                    d="M70 42 L70 70 L88 70"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                <p class="sale-page__empty-title">{{ 'salePage.history.empty.title' | transloco }}</p>
+                <p class="sale-page__empty-subtitle">{{ 'salePage.history.empty.subtitle' | transloco }}</p>
+              </div>
+            } @else {
+              <div class="sale-page__summary">
+                <span class="sale-page__summary-count">{{ filteredSold().length }}</span>
+                <span class="sale-page__summary-label">{{ 'salePage.history.items' | transloco }}</span>
+                <span class="sale-page__summary-divider"></span>
+                <retro-icon name="payments" />
+                <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <retro-list>
+                @for (item of filteredSold(); track item.id; let i = $index) {
+                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                    <div class="sale-page__item-icon" retroListItemLeading>
+                      <retro-icon [name]="typeIcon(item.itemType)" />
+                    </div>
+                    <div class="sale-page__item-info">
+                      <span class="sale-page__item-name">{{ item.itemName }}</span>
+                      @if (item.detailLeft || item.detailRight) {
+                        <span class="sale-page__item-details">
+                          @if (item.detailLeft) {
+                            <span class="sale-page__item-detail-chip">{{ item.detailLeft }}</span>
+                          }
+                          @if (getDetailRight(item)) {
+                            <span class="sale-page__item-detail-chip">{{ getDetailRight(item) }}</span>
+                          }
+                        </span>
+                      }
+                    </div>
+                    <div class="sale-page__item-right" retroListItemTrailing>
+                      <span class="sale-page__item-sold-price">
+                        @if (item.soldPriceFinal !== null) {
+                          {{ item.soldPriceFinal | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                        } @else {
+                          —
                         }
                       </span>
-                    }
-                  </div>
-                  <div class="sale-page__item-right">
-                    <span class="sale-page__item-sold-price">
-                      @if (item.soldPriceFinal !== null) {
-                        {{ item.soldPriceFinal | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                      } @else {
-                        —
-                      }
-                    </span>
-                    <span class="sale-page__item-date">{{ item.soldAt | date: 'dd/MM/yyyy' }}</span>
-                  </div>
-                </div>
-              }
-            </div>
-          }
+                      <span class="sale-page__item-date">{{ item.soldAt | date: 'dd/MM/yyyy' }}</span>
+                    </div>
+                  </retro-list-item>
+                }
+              </retro-list>
+            }
+          </div>
         </div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+      </ng-template>
+    </retro-tab>
+  </retro-tabs>
 </div>

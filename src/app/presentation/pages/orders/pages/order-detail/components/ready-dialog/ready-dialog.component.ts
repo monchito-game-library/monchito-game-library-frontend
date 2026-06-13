@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle
-} from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { formatBreakdown } from '@/shared/pack-optimizer/pack-optimizer.util';
 import { ReadyDialogData } from '@/interfaces/orders/ready-dialog.interface';
 import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
+import {
+  RETRO_DIALOG_DATA,
+  RetroDialogActionsDirective,
+  RetroDialogContentDirective,
+  RetroDialogRef,
+  RetroDialogTitleDirective
+} from '@retro/retro-dialog/services/retro-dialog.service';
 
 @Component({
   selector: 'app-ready-dialog',
@@ -20,15 +20,22 @@ import { ReadyDialogResult } from '@/types/ready-dialog-result.type';
   styleUrl: './ready-dialog.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatDialogTitle, MatDialogContent, MatDialogActions, MatButton, TranslocoPipe]
+  imports: [
+    DecimalPipe,
+    RetroDialogTitleDirective,
+    RetroDialogContentDirective,
+    RetroDialogActionsDirective,
+    TranslocoPipe,
+    RetroButtonComponent
+  ]
 })
 export class ReadyDialogComponent {
-  private readonly _dialogRef: MatDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined> = inject(
-    MatDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined>
+  private readonly _dialogRef: RetroDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined> = inject(
+    RetroDialogRef<ReadyDialogComponent, ReadyDialogResult | undefined>
   );
 
   /** Data injected by the parent: lines with suggestions. */
-  readonly data: ReadyDialogData = inject<ReadyDialogData>(MAT_DIALOG_DATA);
+  readonly data: ReadyDialogData = inject<ReadyDialogData>(RETRO_DIALOG_DATA);
 
   /** Returns the human-readable breakdown of a suggestion. */
   readonly formatBreakdown = formatBreakdown;

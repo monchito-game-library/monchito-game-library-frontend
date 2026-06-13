@@ -64,3 +64,10 @@ backups/
 # Python
 __pycache__/
 *.pyc
+
+# Plan files (never committed)
+PLAN.md
+.plans/
+
+.playwright-mcp/
+__pycache__/

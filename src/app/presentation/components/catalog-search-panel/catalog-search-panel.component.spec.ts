@@ -43,10 +43,9 @@ describe('CatalogSearchPanelComponent', () => {
     it('searchQuery es ""', () => expect(component.searchQuery()).toBe(''));
   });
 
-  describe('onSearchInput', () => {
-    it('actualiza searchQuery con el valor del input (trim)', () => {
-      const event = { target: { value: '  god of war  ' } } as unknown as Event;
-      component.onSearchInput(event);
+  describe('onSearchChange', () => {
+    it('actualiza searchQuery con el valor recibido (trim)', () => {
+      component.onSearchChange('  god of war  ');
       expect(component.searchQuery()).toBe('god of war');
     });
   });

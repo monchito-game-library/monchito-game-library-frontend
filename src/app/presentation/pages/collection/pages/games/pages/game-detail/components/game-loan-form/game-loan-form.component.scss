@@ -39,9 +39,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--mat-sys-outline);
+  color: var(--border-strong);
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--border);
 }
 
 .game-loan-form__info-row {
@@ -49,14 +49,12 @@
   align-items: center;
   gap: 0.75rem;
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 
-  mat-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+  retro-icon {
+    --_size: var(--icon-lg);
     flex-shrink: 0;
-    color: var(--mat-sys-primary);
+    color: var(--primary);
   }
 }
 
@@ -65,7 +63,8 @@
 }
 
 .game-loan-form__action-btn {
-  align-self: flex-start;
+  display: flex;
+  justify-content: flex-end;
 }
 
 // ────────────────────────── Responsive: ≤ 768px (portrait) ──────────────────────────

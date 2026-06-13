@@ -1,28 +1,14 @@
+// game-card usa app-retro-card como host, que ya aporta border 1px --border y fondo --bg-surface.
+// Este fichero sólo define el interior: flip, imagen, overlay y chips.
+
 .game-card {
-  background-color: transparent;
-  color: var(--mat-sys-on-surface);
-  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0;
-  cursor: default;
-  // perspective required for the 3D effect — cannot have overflow:hidden
+  // perspective requerida para el efecto 3D de flip — no puede tener overflow:hidden
   perspective: 1200px;
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px var(--dominant-glow, rgba(0, 0, 0, 0.25));
-
-    .game-card__image {
-      transform: scale(1.04);
-    }
-  }
-
-  // Inner element that rotates — defines the 3D space
+  // Inner element que rota — define el espacio 3D
   .game-card__inner {
     position: relative;
     width: 100%;
@@ -35,25 +21,24 @@
     }
   }
 
-  // Front face — normal layout
+  // Cara frontal — layout normal
   .game-card__front {
     display: flex;
     flex-direction: column;
     aspect-ratio: 3 / 4;
-    border-radius: var(--radius-md);
     overflow: hidden;
-    background-color: var(--mat-sys-surface-container-high);
-    border: 1px solid var(--mat-sys-outline-variant);
+    background-color: var(--bg-surface);
+    border-radius: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
   }
 
-  // Disable pointer events on front face when flipped so back face receives clicks
+  // Desactiva eventos de puntero en la cara frontal cuando está girada
   .game-card__front--flipped {
     pointer-events: none;
   }
 
-  // Digital copy — coloured stripe at the top of the card
+  // Copia digital — franja mono plana en la parte superior
   .game-card__front--digital {
     position: relative;
 
@@ -63,26 +48,27 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2.5rem;
-      background: linear-gradient(90deg, var(--color-digital-start), var(--color-digital-end));
+      height: 1.5rem;
+      background: var(--accent-blue);
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: var(--text-xs);
-      font-weight: 800;
-      letter-spacing: 0.15em;
-      color: rgba(255, 255, 255, 0.9);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--bg-void);
     }
   }
 
-  // Back face — pre-rotated 180deg, shown on flip
+  // Cara trasera — pre-rotada 180deg, visible al flip
   .game-card__back {
     position: absolute;
     inset: 0;
-    border-radius: var(--radius-md);
     overflow: hidden;
-    border: 1px solid var(--mat-sys-outline-variant);
+    border: 1px solid var(--border);
+    border-radius: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform: rotateY(180deg);
@@ -90,17 +76,11 @@
     background-position: center;
   }
 
-  // Semi-transparent layer over the background image — bottom tinted with the cover's dominant color
+  // Capa semitransparente sobre la imagen de fondo — fondo plano sin blur
   .game-card__back-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top,
-      var(--dominant-glow, rgba(0, 0, 0, 0.7)) 0%,
-      rgba(0, 0, 0, 0.65) 40%,
-      rgba(0, 0, 0, 0.45) 100%
-    );
-    backdrop-filter: blur(6px);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -118,9 +98,10 @@
 
   .game-card__back-title {
     margin: 0;
-    font-size: var(--text-base);
-    font-weight: 700;
-    color: white;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-hi);
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -130,10 +111,11 @@
 
   .game-card__back-edition {
     margin: 0;
-    font-size: var(--text-xs);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
     font-style: italic;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--text-mid);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -141,9 +123,10 @@
 
   .game-card__back-description {
     margin: 0.25rem 0 0;
-    font-size: var(--text-xs);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-mid);
     white-space: pre-wrap;
     overflow-y: auto;
     flex: 1;
@@ -174,78 +157,36 @@
     object-fit: cover;
     display: block;
     opacity: 0;
-    transition:
-      opacity var(--transition-base),
-      transform var(--transition-slow);
+    transition: opacity var(--transition-base);
 
     &--loaded {
       opacity: 1;
     }
   }
 
-  // Status badge — top left
+  // Status badge — esquina superior izquierda
   .game-card__status-badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 8px;
+    left: 8px;
     z-index: 3;
-    box-shadow: var(--shadow-sm);
-
-    mat-icon {
-      color: white;
-      font-size: var(--text-lg);
-      width: var(--text-lg);
-      height: var(--text-lg);
-    }
   }
 
-  // Favourite — top right
+  // Favorito — esquina superior derecha
   .game-card__favorite {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    border-radius: var(--radius-full);
-    background: linear-gradient(135deg, var(--color-favorite-start), var(--color-favorite-end));
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 8px;
+    right: 8px;
     z-index: 3;
-    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.45);
-    animation: heartbeat 2s ease-in-out infinite;
-
-    mat-icon {
-      color: white;
-      font-size: var(--text-base);
-      width: var(--text-base);
-      height: var(--text-base);
-    }
   }
 
-  @keyframes heartbeat {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.12);
-    }
-  }
-
-  // Overlay covers the full card — content aligned to the bottom.
-  // padding-right reserves space for the flip button so content never overlaps it.
+  // Overlay cubre la card completa — contenido alineado al fondo
+  // padding-right reserva espacio para el botón de flip
   .game-card__overlay {
     position: absolute;
     inset: 0;
     padding: 0.75rem 2.75rem 0.75rem 0.75rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -271,54 +212,11 @@
     gap: 0.25rem;
   }
 
-  .game-card__loan-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 2px 0.4rem;
-    border-radius: var(--radius-sm);
-    font-size: var(--text-xs);
-    font-weight: 700;
-    color: white;
-    background: linear-gradient(135deg, var(--color-loan-start), var(--color-loan-end));
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    mat-icon {
-      font-size: var(--text-xs);
-      width: var(--text-xs);
-      height: var(--text-xs);
-      flex-shrink: 0;
-    }
-  }
-
-  .game-card__loan-name {
-    max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .game-card__sale-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px 0.4rem;
-    border-radius: var(--radius-sm);
-    color: white;
-    background: linear-gradient(135deg, var(--color-sale-start), var(--color-sale-end));
-    border: 1px solid rgba(255, 255, 255, 0.2);
-
-    mat-icon {
-      font-size: var(--text-xs);
-      width: var(--text-xs);
-      height: var(--text-xs);
-    }
-  }
-
   .game-card__title {
-    font-size: var(--text-sm);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-hi);
     line-height: 1.3;
     margin: 0;
     display: -webkit-box;
@@ -329,14 +227,15 @@
 
   .game-card__edition {
     margin: 0;
-    font-size: var(--text-xs);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
     font-style: italic;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-mid);
     line-height: 1.3;
   }
 
-  // Footer row — flows naturally at the bottom of the flex overlay
+  // Footer — fluye al fondo del overlay flex
   .game-card__footer {
     display: flex;
     align-items: center;
@@ -345,10 +244,18 @@
   }
 
   .game-card__price {
-    font-size: var(--text-base);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
     font-weight: 700;
-    color: white;
+    color: var(--text-hi);
     white-space: nowrap;
+  }
+
+  // Hover: propaga el color dominante al border de retro-card (cae a --border-active si no hay dominante)
+  @media (hover: hover) {
+    &:hover {
+      --retro-card-hover-border: var(--dominant-glow, var(--border-active));
+    }
   }
 }
 
@@ -360,11 +267,17 @@
     }
 
     .game-card__title {
-      font-size: var(--text-sm);
+      font-size: 0.8125rem;
     }
 
     .game-card__price {
-      font-size: var(--text-sm);
+      font-size: 0.8125rem;
+    }
+
+    // Touch target fix: flip-btn mínimo 44×44px en mobile
+    .game-card__flip-btn {
+      width: 44px !important;
+      height: 44px !important;
     }
   }
 }
@@ -378,12 +291,8 @@
       gap: 0.25rem;
     }
 
-    .game-card__loan-name {
-      display: none;
-    }
-
     .game-card__loan-chip {
-      padding: 2px 0.3rem;
+      // El label del chip ya muestra texto truncado desde el TS
     }
   }
 }

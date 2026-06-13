@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { AuthStateService } from '@/services/auth-state/auth-state.service';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderInvitationModel } from '@/models/order/order-invitation.model';
@@ -19,14 +18,13 @@ import { OrderInvitationModel } from '@/models/order/order-invitation.model';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatProgressSpinner,
-    MatIcon,
+    RetroIconComponent,
     TranslocoPipe,
     DatePipe,
     RouterLink,
     NgTemplateOutlet,
-    SkeletonComponent
+    RetroSkeletonComponent,
+    RetroButtonComponent
   ]
 })
 export class OrderInviteComponent implements OnInit {

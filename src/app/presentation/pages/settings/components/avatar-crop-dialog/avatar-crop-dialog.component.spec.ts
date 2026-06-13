@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
 
 import { AvatarCropDialogComponent } from './avatar-crop-dialog.component';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoService } from '@jsverse/transloco';
 
 describe('AvatarCropDialogComponent', () => {
@@ -21,10 +21,10 @@ describe('AvatarCropDialogComponent', () => {
       imports: [AvatarCropDialogComponent],
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: RETRO_DIALOG_DATA,
           useValue: { file: new Blob([''], { type: 'image/jpeg' }), aspectRatio: 1, resizeToWidth: 280 }
         },
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: RetroDialogRef, useValue: mockDialogRef },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ]
     });

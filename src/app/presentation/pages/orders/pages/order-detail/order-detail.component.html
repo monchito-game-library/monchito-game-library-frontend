@@ -1,33 +1,29 @@
 <div class="order-detail-page">
   @if (loading()) {
     <div class="order-detail-page__title-row">
-      <button mat-icon-button routerLink="/orders" [attr.aria-label]="'orders.backToList' | transloco">
-        <mat-icon>close</mat-icon>
-      </button>
-      <app-skeleton width="200px" height="20px" />
+      <retro-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
+      <retro-skeleton width="200px" height="20px" />
     </div>
     <div class="order-detail-page__section">
-      <app-skeleton width="100px" height="14px" />
+      <retro-skeleton width="100px" height="14px" />
       <div class="order-detail-page__skeleton-rows">
         @for (n of [0, 1, 2, 3]; track n) {
-          <app-skeleton height="16px" />
+          <retro-skeleton height="16px" />
         }
       </div>
     </div>
     <div class="order-detail-page__section">
-      <app-skeleton width="80px" height="14px" />
+      <retro-skeleton width="80px" height="14px" />
       <div class="order-detail-page__skeleton-rows">
         @for (n of [0, 1, 2]; track n) {
-          <app-skeleton height="44px" borderRadius="var(--radius-sm)" />
+          <retro-skeleton height="44px" />
         }
       </div>
     </div>
   } @else if (order(); as ord) {
     <!-- Header -->
     <div class="order-detail-page__title-row">
-      <button mat-icon-button routerLink="/orders" [attr.aria-label]="'orders.backToList' | transloco">
-        <mat-icon>close</mat-icon>
-      </button>
+      <retro-icon-button icon="close" [ariaLabel]="'orders.backToList' | transloco" routerLink="/orders" />
       <div class="order-detail-page__title">{{ ord.title ?? ('orders.create' | transloco) }}</div>
 
       <div
@@ -38,113 +34,116 @@
             @for (m of ord.members; track m.id) {
               @if (m.userId === userContext.userId()) {
                 @if (!m.isReady) {
-                  <button mat-flat-button (click)="onToggleMemberReady()" [disabled]="saving()">
-                    <mat-icon>check_circle</mat-icon>
-                    {{ 'orders.header.markReady' | transloco }}
-                  </button>
+                  <retro-button
+                    [label]="'orders.header.markReady' | transloco"
+                    variant="success"
+                    size="md"
+                    [disabled]="saving()"
+                    (clicked)="onToggleMemberReady()">
+                    <retro-icon slot="start" name="check_circle" size="sm" />
+                  </retro-button>
                 } @else {
-                  <button mat-stroked-button (click)="onToggleMemberReady()" [disabled]="saving()">
-                    <mat-icon>cancel</mat-icon>
-                    {{ 'orders.header.cancelReady' | transloco }}
-                  </button>
+                  <retro-button
+                    [label]="'orders.header.cancelReady' | transloco"
+                    variant="ghost"
+                    size="md"
+                    [disabled]="saving()"
+                    (clicked)="onToggleMemberReady()">
+                    <retro-icon slot="start" name="cancel" size="sm" />
+                  </retro-button>
                 }
               }
             }
           }
           @if (isOwner()) {
             @if (ord.status === ORDER_STATUS.DRAFT) {
-              <button
-                mat-icon-button
-                [matTooltip]="'orders.header.shareInvite' | transloco"
-                [attr.aria-label]="'orders.header.shareInvite' | transloco"
-                (click)="onShareInvitation()"
-                [disabled]="saving()">
-                <mat-icon>link</mat-icon>
-              </button>
+              <retro-icon-button
+                icon="link"
+                [ariaLabel]="'orders.header.shareInvite' | transloco"
+                [retroTooltip]="'orders.header.shareInvite' | transloco"
+                [disabled]="saving()"
+                (clicked)="onShareInvitation()" />
             }
             @if (ord.status === ORDER_STATUS.DRAFT) {
-              <button
-                mat-icon-button
-                [matTooltip]="'orders.header.edit' | transloco"
-                [attr.aria-label]="'orders.header.edit' | transloco"
-                (click)="onEditHeader()">
-                <mat-icon>edit</mat-icon>
-              </button>
+              <retro-icon-button
+                icon="edit"
+                [ariaLabel]="'orders.header.edit' | transloco"
+                [retroTooltip]="'orders.header.edit' | transloco"
+                (clicked)="onEditHeader()" />
             }
-            <button
-              mat-icon-button
-              [matTooltip]="'orders.header.delete' | transloco"
-              [attr.aria-label]="'orders.header.delete' | transloco"
-              (click)="onDeleteOrder()">
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              [matTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
-              [attr.aria-label]="'orders.header.advanceStatus' | transloco"
-              (click)="onRegressStatus()"
-              [disabled]="saving() || !prevStatus()">
-              <mat-icon>arrow_back</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              [matTooltip]="'orders.header.nextStep' | transloco"
-              [attr.aria-label]="'orders.header.nextStep' | transloco"
-              (click)="onAdvanceStatus()"
+            <retro-icon-button
+              icon="delete"
+              variant="danger"
+              [ariaLabel]="'orders.header.delete' | transloco"
+              [retroTooltip]="'orders.header.delete' | transloco"
+              (clicked)="onDeleteOrder()" />
+            <retro-icon-button
+              icon="arrow_back"
+              [ariaLabel]="'orders.header.advanceStatus' | transloco"
+              [retroTooltip]="prevStatus() ? ('orders.status.' + prevStatus() | transloco) : ''"
+              [disabled]="saving() || !prevStatus()"
+              (clicked)="onRegressStatus()" />
+            <retro-icon-button
+              icon="arrow_forward"
+              [ariaLabel]="'orders.header.nextStep' | transloco"
+              [retroTooltip]="'orders.header.nextStep' | transloco"
               [disabled]="
                 saving() ||
                 !nextStatus() ||
                 (nextStatus() === ORDER_STATUS.SELECTING_PACKS && !allMembersReady(ord.members))
-              ">
-              <mat-icon>arrow_forward</mat-icon>
-            </button>
+              "
+              (clicked)="onAdvanceStatus()" />
           }
         }
         @if (selectingPacks() && isOwner()) {
-          <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            [matTooltip]="'orders.status.' + prevStatus() | transloco"
-            (click)="onRegressStatus()"
-            [disabled]="saving()">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            [matTooltip]="'orders.header.nextStep' | transloco"
-            [attr.aria-label]="'orders.header.nextStep' | transloco"
-            (click)="onConfirmPacks()"
-            [disabled]="saving() || !allPacksSelected()">
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
+          <retro-icon-button
+            icon="edit"
+            [ariaLabel]="'orders.header.edit' | transloco"
+            [retroTooltip]="'orders.header.edit' | transloco"
+            (clicked)="onEditHeader()" />
+          <retro-icon-button
+            icon="delete"
+            variant="danger"
+            [ariaLabel]="'orders.header.delete' | transloco"
+            [retroTooltip]="'orders.header.delete' | transloco"
+            (clicked)="onDeleteOrder()" />
+          <retro-icon-button
+            icon="arrow_back"
+            [ariaLabel]="'orders.header.regressStatus' | transloco"
+            [retroTooltip]="'orders.status.' + prevStatus() | transloco"
+            [disabled]="saving()"
+            (clicked)="onRegressStatus()" />
+          <retro-icon-button
+            icon="arrow_forward"
+            [ariaLabel]="'orders.header.nextStep' | transloco"
+            [retroTooltip]="'orders.header.nextStep' | transloco"
+            [disabled]="saving() || !allPacksSelected()"
+            (clicked)="onConfirmPacks()" />
         }
         @if (placingOrder() && isOwner()) {
-          <button mat-icon-button [matTooltip]="'orders.header.edit' | transloco" (click)="onEditHeader()">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button [matTooltip]="'orders.header.delete' | transloco" (click)="onDeleteOrder()">
-            <mat-icon>delete</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            [matTooltip]="'orders.status.' + prevStatus() | transloco"
-            (click)="onRegressStatus()"
-            [disabled]="saving()">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            [matTooltip]="'orders.header.nextStep' | transloco"
-            [attr.aria-label]="'orders.header.nextStep' | transloco"
-            (click)="onAdvanceStatus()"
-            [disabled]="saving()">
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
+          <retro-icon-button
+            icon="edit"
+            [ariaLabel]="'orders.header.edit' | transloco"
+            [retroTooltip]="'orders.header.edit' | transloco"
+            (clicked)="onEditHeader()" />
+          <retro-icon-button
+            icon="delete"
+            variant="danger"
+            [ariaLabel]="'orders.header.delete' | transloco"
+            [retroTooltip]="'orders.header.delete' | transloco"
+            (clicked)="onDeleteOrder()" />
+          <retro-icon-button
+            icon="arrow_back"
+            [ariaLabel]="'orders.header.regressStatus' | transloco"
+            [retroTooltip]="'orders.status.' + prevStatus() | transloco"
+            [disabled]="saving()"
+            (clicked)="onRegressStatus()" />
+          <retro-icon-button
+            icon="arrow_forward"
+            [ariaLabel]="'orders.header.nextStep' | transloco"
+            [retroTooltip]="'orders.header.nextStep' | transloco"
+            [disabled]="saving()"
+            (clicked)="onAdvanceStatus()" />
         }
       </div>
     </div>

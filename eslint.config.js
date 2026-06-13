@@ -25,7 +25,7 @@ const lifecyclePattern = LIFECYCLE_HOOKS.join('|');
 
 module.exports = [
   {
-    ignores: ['coverage/**', '.angular/**', 'dist/**', 'node_modules/**']
+    ignores: ['coverage/**', '.angular/**', 'dist/**', 'node_modules/**', 'lib/**']
   },
   {
     files: ['**/*.ts'],
@@ -48,7 +48,7 @@ module.exports = [
     rules: {
       '@angular-eslint/directive-selector': [
         'error',
-        { type: 'attribute', prefix: 'app', style: 'camelCase' }
+        { type: 'attribute', prefix: ['app', 'lib'], style: 'camelCase' }
       ],
       '@angular-eslint/component-selector': [
         'error',
@@ -226,6 +226,21 @@ module.exports = [
       ...prettier.rules
     }
   },
+  // ── lib/retro overrides ──────────────────────────────────────────────────
+  // The retro library uses the "retro-" prefix, not the app-wide "app-" prefix.
+  {
+    files: ['lib/retro/**/*.ts'],
+    rules: {
+      '@angular-eslint/component-selector': [
+        'error',
+        { type: 'element', prefix: 'retro', style: 'kebab-case' }
+      ],
+      '@angular-eslint/directive-selector': [
+        'error',
+        { type: 'attribute', prefix: 'retro', style: 'camelCase' }
+      ]
+    }
+  },
   {
     files: ['**/*.html'],
     plugins: {
@@ -238,5 +253,20 @@ module.exports = [
       '@angular-eslint/template/banana-in-box': 'error',
       '@angular-eslint/template/no-negated-async': 'warn'
     }
-  }
+  },
+  // Bloquea deep imports a @retro/retro-form-field/** desde src/ (componente @internal).
+  // lib/ queda excluido intencionalmente: los componentes retro sí pueden importarse entre sí.
+  {
+    files: ['src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['@retro/retro-form-field/**'],
+            message: 'RetroFormFieldComponent es @internal. Usa retro-input, retro-select, retro-search o retro-datepicker según corresponda.'
+          }
+        ]
+      }]
+    }
+  },
 ];

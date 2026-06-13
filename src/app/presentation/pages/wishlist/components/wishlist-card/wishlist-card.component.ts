@@ -9,13 +9,16 @@ import {
   Signal
 } from '@angular/core';
 import { DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
+import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
+import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
+import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 @Component({
   selector: 'app-wishlist-card',
@@ -23,7 +26,17 @@ import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constan
   styleUrl: './wishlist-card.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, NgOptimizedImage, MatIcon, MatIconButton, MatTooltip, TranslocoPipe]
+  imports: [
+    DecimalPipe,
+    NgOptimizedImage,
+    RetroIconComponent,
+    RetroTooltipDirective,
+    RetroIconButtonComponent,
+    TranslocoPipe,
+    RetroChipComponent,
+    RetroDataRowComponent,
+    RetroListItemComponent
+  ]
 })
 export class WishlistCardComponent {
   /** Wishlist item to display. */

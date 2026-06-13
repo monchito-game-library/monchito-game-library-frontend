@@ -19,7 +19,19 @@
   font-size: var(--text-2xl);
   font-weight: 600;
   margin: 0 0 0.25rem;
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
+}
+
+.settings__card-title {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-hi);
+  margin: 0 0 1rem;
+  padding: 0 0 0.5rem;
+  border-bottom: 1px solid var(--border);
 }
 
 // ─── Profile section ──────────────────────────────────────────────────────────
@@ -56,7 +68,7 @@
   height: 80px;
   border-radius: var(--radius-full);
   object-fit: cover;
-  border: 2px solid var(--mat-sys-outline-variant);
+  border: 2px solid var(--border);
   display: block;
 
   &--loaded {
@@ -91,10 +103,8 @@
   transition: opacity var(--transition-fast);
   color: white;
 
-  mat-icon {
-    font-size: var(--text-2xl);
-    width: var(--text-2xl);
-    height: var(--text-2xl);
+  retro-icon {
+    --_size: var(--icon-xl);
   }
 }
 
@@ -108,7 +118,7 @@
 .settings__name {
   font-weight: 600;
   font-size: var(--text-base);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -116,7 +126,7 @@
 
 .settings__email {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -124,7 +134,7 @@
 
 .settings__avatar-hint {
   font-size: var(--text-xs);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   opacity: 0.85;
   margin-top: 4px;
 }
@@ -147,17 +157,15 @@
   background: none;
   border: none;
   padding: 2px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   cursor: pointer;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   flex-shrink: 0;
   opacity: 0.6;
   transition: opacity var(--transition-fast);
 
-  mat-icon {
-    font-size: var(--text-sm);
-    width: var(--text-sm);
-    height: var(--text-sm);
+  retro-icon {
+    --_size: var(--icon-sm);
   }
 
   &:hover {
@@ -168,10 +176,10 @@
 .settings__name-input {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--mat-sys-on-surface);
-  background: var(--mat-sys-surface-container-highest);
-  border: 1px solid var(--mat-sys-primary);
-  border-radius: var(--radius-sm);
+  color: var(--text-hi);
+  background: var(--bg-elev);
+  border: 1px solid var(--primary);
+  border-radius: 0;
   padding: 2px 0.5rem;
   outline: none;
   min-width: 0;
@@ -186,38 +194,26 @@
   background: none;
   border: none;
   padding: 3px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   cursor: pointer;
   flex-shrink: 0;
   transition: background var(--transition-fast);
 
-  mat-icon {
-    font-size: var(--text-base);
-    width: var(--text-base);
-    height: var(--text-base);
-  }
-
   &--confirm {
-    color: var(--mat-sys-primary);
+    color: var(--primary);
 
     &:hover {
-      background: var(--mat-sys-primary-container);
+      background: var(--bg-surface-hi);
     }
   }
 
   &--cancel {
-    color: var(--mat-sys-on-surface-variant);
+    color: var(--text-mid);
 
     &:hover {
-      background: var(--mat-sys-surface-container-highest);
+      background: var(--bg-elev);
     }
   }
-}
-
-// mat-card has overflow: hidden by default — overridden here to
-// allow horizontal scroll on the cover grid
-::ng-deep .settings__card {
-  overflow: visible !important;
 }
 
 // ─── Section subtitles ────────────────────────────────────────────────────────
@@ -227,10 +223,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--mat-sys-primary);
+  color: var(--primary);
   margin: 0.75rem 0 0.75rem;
   padding-left: 0.5rem;
-  border-left: 3px solid var(--mat-sys-primary);
+  border-left: 3px solid var(--primary);
 }
 
 .settings__section-divider {
@@ -261,20 +257,16 @@
   height: 120px;
   background-size: cover;
   background-position: center;
-  border-radius: var(--radius-md);
+  border-radius: 0;
   position: relative;
   overflow: hidden;
-
-  &--loaded {
-    animation: banner-fade-in 300ms ease;
-  }
 }
 
 .settings__banner-upload-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--mat-sys-surface-container-highest);
+  background: var(--bg-elev);
 }
 
 .settings__banner-overlay {
@@ -288,10 +280,8 @@
   transition: opacity var(--transition-fast);
   color: white;
 
-  mat-icon {
-    font-size: var(--text-2xl);
-    width: var(--text-2xl);
-    height: var(--text-2xl);
+  retro-icon {
+    --_size: var(--icon-xl);
   }
 }
 
@@ -301,13 +291,13 @@
   }
 
   .settings__banner-placeholder {
-    border-color: var(--mat-sys-primary);
-    background: var(--mat-sys-primary-container);
+    border-color: var(--primary);
+    background: var(--bg-surface-hi);
 
-    mat-icon,
+    retro-icon,
     span {
       opacity: 1;
-      color: var(--mat-sys-on-primary-container);
+      color: var(--text-hi);
     }
   }
 }
@@ -315,22 +305,20 @@
 .settings__banner-placeholder {
   width: 100%;
   height: 120px;
-  border-radius: var(--radius-md);
-  border: 2px dashed var(--mat-sys-outline-variant);
+  border-radius: 0;
+  border: 2px dashed var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   transition:
     border-color var(--transition-fast),
     background var(--transition-fast);
 
-  mat-icon {
-    font-size: var(--text-3xl);
-    width: var(--text-3xl);
-    height: var(--text-3xl);
+  retro-icon {
+    --_size: var(--icon-2xl);
     opacity: 0.6;
   }
 
@@ -360,7 +348,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--mat-sys-outline-variant);
+    background: var(--border);
     border-radius: var(--radius-xs);
   }
 }
@@ -369,26 +357,26 @@
   flex-shrink: 0;
   width: 88px;
   height: 58px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
   border: 2px solid transparent;
   padding: 0;
   position: relative;
-  transition:
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
+  transition: border-color var(--transition-fast);
 
   img {
     object-fit: cover;
   }
 
   &--active {
-    border-color: var(--mat-sys-primary);
+    border-color: var(--primary);
   }
 
-  &:not(.settings__banner-thumb--active):hover {
-    transform: scale(1.05);
+  @media (hover: hover) {
+    &:not(.settings__banner-thumb--active):hover {
+      border-color: var(--border-active);
+    }
   }
 }
 
@@ -400,18 +388,16 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
 
-  mat-icon {
-    color: var(--mat-sys-primary);
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
+  retro-icon {
+    --_size: var(--icon-lg);
+    color: var(--primary);
     filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
   }
 }
 
 .settings__banner-empty {
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--text-mid);
   text-align: center;
   padding: 1rem 0;
   margin: 0;
@@ -432,44 +418,11 @@
   align-items: center;
   gap: 0.75rem;
   font-size: var(--text-sm);
-  color: var(--mat-sys-on-surface);
+  color: var(--text-hi);
 
-  mat-icon {
-    font-size: var(--text-xl);
-    width: var(--text-xl);
-    height: var(--text-xl);
-    color: var(--mat-sys-on-surface-variant);
-  }
-}
-
-.settings__lang-toggle {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.settings__lang-btn {
-  padding: 5px 1rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: transparent;
-  color: var(--mat-sys-on-surface-variant);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  cursor: pointer;
-  line-height: 1.4;
-  transition:
-    background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast);
-
-  &--active {
-    background: var(--mat-sys-primary);
-    color: var(--mat-sys-on-primary);
-    border-color: var(--mat-sys-primary);
-  }
-
-  &:not(.settings__lang-btn--active):hover {
-    background: var(--mat-sys-surface-container-highest);
+  retro-icon {
+    --_size: var(--icon-lg);
+    color: var(--text-mid);
   }
 }
 

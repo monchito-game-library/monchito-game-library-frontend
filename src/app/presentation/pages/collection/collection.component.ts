@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
-import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { RouterOutlet } from '@angular/router';
+import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
+import { RetroTabItem } from '@retro/retro-tabs/interfaces/retro-tab-item.interface';
 
 @Component({
   selector: 'app-collection',
@@ -10,6 +9,14 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styleUrls: ['./collection.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatTabNav, MatTabLink, MatTabNavPanel, MatIcon, TranslocoPipe]
+  imports: [RetroTabsComponent, RouterOutlet]
 })
-export class CollectionComponent {}
+export class CollectionComponent {
+  /** Items de navegación de la colección para retro-tabs en modo router. */
+  readonly navItems: readonly RetroTabItem[] = [
+    { path: '/collection', label: 'collectionOverview.tabOverview', icon: 'home', exact: true },
+    { path: '/collection/games', label: 'collectionOverview.tabGames', icon: 'sports_esports' },
+    { path: '/collection/consoles', label: 'collectionOverview.tabConsoles', icon: 'tv' },
+    { path: '/collection/controllers', label: 'collectionOverview.tabControllers', icon: 'gamepad' }
+  ];
+}

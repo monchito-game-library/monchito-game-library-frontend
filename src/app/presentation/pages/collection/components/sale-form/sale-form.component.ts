@@ -12,16 +12,13 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-
-import { DatepickerFieldClickDirective } from '@/shared/datepicker-field-click/datepicker-field-click.directive';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDivider } from '@angular/material/divider';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroDatepickerComponent } from '@retro/retro-datepicker/retro-datepicker.component';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import {
@@ -40,25 +37,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    MatIcon,
-    MatError,
-    MatFormField,
-    MatLabel,
-    MatSuffix,
-    MatInput,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    DatepickerFieldClickDirective,
-    MatSlideToggle,
-    MatDivider,
-    TranslocoPipe
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    RetroCheckboxComponent,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroDatepickerComponent
   ]
 })
 export class SaleFormComponent implements OnInit {
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   /** Initial sale values used to pre-fill the form. */
@@ -157,13 +146,17 @@ export class SaleFormComponent implements OnInit {
     this.form.disable();
     try {
       await this.saveFn()(values);
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.saveSuccess`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.saveSuccess`),
+        duration: 3000,
+        variant: 'success'
       });
       this.saveCompleted.emit(values);
     } catch {
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.saveError`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.saveError`),
+        duration: 3000,
+        variant: 'error'
       });
     } finally {
       this.saving.set(false);
@@ -187,13 +180,17 @@ export class SaleFormComponent implements OnInit {
     this.form.disable();
     try {
       await this.sellFn()(values);
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.soldSuccess`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.soldSuccess`),
+        duration: 3000,
+        variant: 'success'
       });
       this.sellCompleted.emit(values);
     } catch {
-      this._snackBar.open(this._transloco.translate(`${this.i18nPrefix()}.snack.soldError`), undefined, {
-        duration: 3000
+      this._snack.open({
+        text: this._transloco.translate(`${this.i18nPrefix()}.snack.soldError`),
+        duration: 3000,
+        variant: 'error'
       });
       this.selling.set(false);
       this.form.enable();

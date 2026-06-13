@@ -12,12 +12,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe, NgOptimizedImage } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
+import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { ORDERS_USE_CASES, OrdersUseCasesContract } from '@/domain/use-cases/orders/orders.use-cases.contract';
@@ -39,20 +38,17 @@ import { ORDER_STATUS } from '@/constants/order-status.constant';
     DatePipe,
     DecimalPipe,
     NgOptimizedImage,
-    MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
-    MatIcon,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    TranslocoPipe
+    RetroIconComponent,
+    TranslocoPipe,
+    RetroButtonComponent,
+    RetroInputComponent,
+    RetroTextareaComponent
   ]
 })
 export class OrderInfoSectionComponent implements OnDestroy {
   private readonly _ordersUseCases: OrdersUseCasesContract = inject(ORDERS_USE_CASES);
   private readonly _fb: FormBuilder = inject(FormBuilder);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
 
   private readonly _HIDE_ACTIONS_MS: number = 350;
@@ -156,7 +152,7 @@ export class OrderInfoSectionComponent implements OnDestroy {
     try {
       const patch: Partial<OrderFormValue> = this.headerForm.getRawValue();
       await this._ordersUseCases.update(this.order().id, patch);
-      this._snackBar.open(this._transloco.translate('orders.snack.updated'), '', { duration: 3000 });
+      this._snack.open({ text: this._transloco.translate('orders.snack.updated'), duration: 3000, variant: 'success' });
       this.hidingActions.set(true);
       if (this._hideActionsTimer !== null) clearTimeout(this._hideActionsTimer);
       this._hideActionsTimer = setTimeout(() => this.hidingActions.set(false), this._HIDE_ACTIONS_AFTER_SAVE_MS);
@@ -164,7 +160,11 @@ export class OrderInfoSectionComponent implements OnDestroy {
       this.editingEnded.emit();
       this.headerSaved.emit();
     } catch {
-      this._snackBar.open(this._transloco.translate('orders.snack.updateError'), '', { duration: 3000 });
+      this._snack.open({
+        text: this._transloco.translate('orders.snack.updateError'),
+        duration: 3000,
+        variant: 'error'
+      });
     } finally {
       this.saving.set(false);
     }

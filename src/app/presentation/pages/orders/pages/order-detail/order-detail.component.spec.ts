@@ -1,8 +1,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { of } from 'rxjs';
 import { describe, beforeEach, afterEach, expect, it, vi } from 'vitest';
@@ -12,7 +12,7 @@ import { ORDERS_USE_CASES } from '@/domain/use-cases/orders/orders.use-cases.con
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { OrderModel } from '@/models/order/order.model';
 import { mockRouter } from '@/testing/router.mock';
-import { mockSnackBar } from '@/testing/snack-bar.mock';
+import { mockRetroSnackbar } from '@retro/testing/retro-snackbar.mock';
 import { mockTransloco } from '@/testing/transloco.mock';
 import { mockDialog } from '@/testing/dialog.mock';
 
@@ -77,8 +77,8 @@ describe('OrderDetailComponent', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: ActivatedRoute, useValue: mockRoute },
         { provide: Router, useValue: mockRouter },
-        { provide: MatDialog, useValue: mockDialog },
-        { provide: MatSnackBar, useValue: mockSnackBar },
+        { provide: RetroDialogService, useValue: mockDialog },
+        { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -294,14 +294,14 @@ describe('OrderDetailComponent', () => {
       });
       component.ngOnInit();
       await Promise.resolve();
-      mockSnackBar.open.mockClear();
+      mockRetroSnackbar.open.mockClear();
       mockOrdersUseCases.getById.mockRejectedValueOnce(new Error('realtime error'));
 
       memberCallback!();
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(mockSnackBar.open).not.toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).not.toHaveBeenCalled();
     });
 
     it('usa cadena vacía cuando paramMap no devuelve id', () => {
@@ -344,7 +344,7 @@ describe('OrderDetailComponent', () => {
       mockOrdersUseCases.getById.mockRejectedValue(new Error('network error'));
       component.ngOnInit();
       await Promise.resolve();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 
@@ -475,7 +475,7 @@ describe('OrderDetailComponent', () => {
       component.order.set(makeOrder({ status: 'ordering' }));
       mockOrdersUseCases.update.mockRejectedValue(new Error('error'));
       await component.onAdvanceStatus();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
 
@@ -493,7 +493,7 @@ describe('OrderDetailComponent', () => {
       mockOrdersUseCases.getProducts.mockResolvedValue([]);
       mockOrdersUseCases.update.mockRejectedValue(new Error('network error'));
       await component.onAdvanceStatus();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
   });
@@ -825,7 +825,7 @@ describe('OrderDetailComponent', () => {
       component.order.set(makeOrder({ status: 'ordering' }));
       mockOrdersUseCases.update.mockRejectedValue(new Error('error'));
       await component.onRegressStatus();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
   });
@@ -834,6 +834,7 @@ describe('OrderDetailComponent', () => {
 
   describe('onConfirmPacks()', () => {
     it('calls update with ordering status', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       mockOrdersUseCases.update.mockResolvedValue(undefined);
       mockOrdersUseCases.getById.mockResolvedValue(makeOrder({ status: 'ordering' }));
       await component.onConfirmPacks();
@@ -841,6 +842,7 @@ describe('OrderDetailComponent', () => {
     });
 
     it('resets packSteps and allPacksSelected', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       component.packSteps.set([
         { productId: 'p1', productName: 'P', totalNeeded: 1, suggestions: [], lineIds: [], memberBreakdown: [] }
       ]);
@@ -853,10 +855,18 @@ describe('OrderDetailComponent', () => {
     });
 
     it('shows snackbar and saving false on error', async () => {
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
       mockOrdersUseCases.update.mockRejectedValue(new Error('error'));
       await component.onConfirmPacks();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
+    });
+
+    it('does nothing when user is not the owner', async () => {
+      mockUserContext.userId.mockReturnValue('other-user');
+      component.order.set(makeOrder({ status: 'selecting_packs' }));
+      await component.onConfirmPacks();
+      expect(mockOrdersUseCases.update).not.toHaveBeenCalled();
     });
   });
 
@@ -970,7 +980,7 @@ describe('OrderDetailComponent', () => {
       );
       mockOrdersUseCases.setMemberReady.mockRejectedValue(new Error('error'));
       await component.onToggleMemberReady();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
   });
@@ -990,14 +1000,14 @@ describe('OrderDetailComponent', () => {
       await component.onShareInvitation();
       expect(mockOrdersUseCases.createInvitation).toHaveBeenCalledWith('order-1');
       expect(clipboardSpy).toHaveBeenCalled();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
 
     it('shows snackbar on error', async () => {
       mockOrdersUseCases.createInvitation.mockRejectedValue(new Error('error'));
       await component.onShareInvitation();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.saving()).toBe(false);
     });
   });
@@ -1033,7 +1043,7 @@ describe('OrderDetailComponent', () => {
       component.order.set(makeOrder());
       mockOrdersUseCases.delete.mockRejectedValue(new Error('error'));
       await component.onDeleteOrder();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 
@@ -1052,14 +1062,14 @@ describe('OrderDetailComponent', () => {
       mockOrdersUseCases.getById.mockResolvedValue(makeOrder());
       await component.onDeleteLine('line-1');
       expect(mockOrdersUseCases.deleteLine).toHaveBeenCalledWith('line-1');
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
 
     it('shows snackbar on delete error', async () => {
       mockDialog.open.mockReturnValue({ afterClosed: () => of(true) });
       mockOrdersUseCases.deleteLine.mockRejectedValue(new Error('error'));
       await component.onDeleteLine('line-1');
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 
@@ -1102,7 +1112,7 @@ describe('OrderDetailComponent', () => {
       mockOrdersUseCases.getById.mockResolvedValue(makeOrder());
       await component.onAddLine();
       expect(mockOrdersUseCases.addLine).toHaveBeenCalledWith('order-1', 'user-1', formValue);
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
 
     it('shows snackbar on addLine error', async () => {
@@ -1112,7 +1122,7 @@ describe('OrderDetailComponent', () => {
       component.order.set(makeOrder());
       mockOrdersUseCases.addLine.mockRejectedValue(new Error('error'));
       await component.onAddLine();
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 
@@ -1161,7 +1171,7 @@ describe('OrderDetailComponent', () => {
       mockOrdersUseCases.getById.mockResolvedValue(makeOrder());
       await component.onEditLine(line);
       expect(mockOrdersUseCases.updateLine).toHaveBeenCalledWith('line-1', { quantityNeeded: 2, notes: 'note' });
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
 
     it('shows snackbar on updateLine error', async () => {
@@ -1170,7 +1180,7 @@ describe('OrderDetailComponent', () => {
       mockDialog.open.mockReturnValue({ afterClosed: () => of(formValue) });
       mockOrdersUseCases.updateLine.mockRejectedValue(new Error('error'));
       await component.onEditLine(line);
-      expect(mockSnackBar.open).toHaveBeenCalled();
+      expect(mockRetroSnackbar.open).toHaveBeenCalled();
     });
   });
 });

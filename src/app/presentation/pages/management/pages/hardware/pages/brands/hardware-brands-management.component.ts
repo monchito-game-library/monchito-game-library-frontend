@@ -1,11 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 
 import {
   HARDWARE_BRAND_USE_CASES,
@@ -15,8 +24,9 @@ import { HardwareBrandModel } from '@/models/hardware-brand/hardware-brand.model
 import { HardwareBrandFormResult } from '@/interfaces/management/hardware-brand-form-result.interface';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
-import { CatalogItemCardComponent } from '@/pages/management/components/catalog-item-card/catalog-item-card.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand-edit-panel/hardware-brand-edit-panel.component';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 
 /** Management page for hardware brands. Entry point of the hardware catalog drill-down. */
 @Component({
@@ -27,16 +37,17 @@ import { HardwareBrandEditPanelComponent } from '../../components/hardware-brand
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HardwareBrandEditPanelComponent,
-    MatButton,
-    MatIcon,
     TranslocoPipe,
-    CatalogItemCardComponent,
-    SkeletonComponent
+    RetroCardComponent,
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    RetroIconComponent,
+    SearchToolbarComponent
   ]
 })
 export class HardwareBrandsManagementComponent implements OnInit {
   private readonly _router: Router = inject(Router);
-  private readonly _dialog: MatDialog = inject(MatDialog);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _brandUseCases: HardwareBrandUseCasesContract = inject(HARDWARE_BRAND_USE_CASES);
 
@@ -54,8 +65,32 @@ export class HardwareBrandsManagementComponent implements OnInit {
   /** Whether the edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal<boolean>(false);
 
+  /** Término de búsqueda activo para filtrar por nombre. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista filtrada según searchTerm. */
+  readonly filteredBrands: Signal<HardwareBrandModel[]> = computed((): HardwareBrandModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.brands();
+    return this.brands().filter((item) => item.name.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
+
   async ngOnInit(): Promise<void> {
     await this._loadBrands();
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**
@@ -121,7 +156,7 @@ export class HardwareBrandsManagementComponent implements OnInit {
         message: this._transloco.translate('management.hardware.brands.deleteWarning')
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._brandUseCases.delete(brand.id);
       await this._loadBrands();

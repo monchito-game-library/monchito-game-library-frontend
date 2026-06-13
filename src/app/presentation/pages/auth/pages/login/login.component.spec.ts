@@ -184,4 +184,52 @@ describe('LoginComponent', () => {
       expect(component.returnUrl).toBe('/orders/invite/abc');
     });
   });
+
+  describe('_getEmailError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.loginForm.setValue({ email: 'user@test.com', password: 'secret123' });
+      component.loginForm.get('email')!.markAsTouched();
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.loginForm.get('email')!.markAsTouched();
+      component.loginForm.get('email')!.setValue('');
+      expect(component._getEmailError()).toBe('auth.login.emailRequired');
+    });
+
+    it('devuelve la clave de email inválido cuando el email está mal formado y tocado', () => {
+      component.loginForm.get('email')!.markAsTouched();
+      component.loginForm.get('email')!.setValue('no-es-email');
+      expect(component._getEmailError()).toBe('auth.login.emailInvalid');
+    });
+  });
+
+  describe('_getPasswordError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.loginForm.get('password')!.setValue('secret123');
+      component.loginForm.get('password')!.markAsTouched();
+      expect(component._getPasswordError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.loginForm.get('password')!.markAsTouched();
+      component.loginForm.get('password')!.setValue('');
+      expect(component._getPasswordError()).toBe('auth.login.passwordRequired');
+    });
+
+    it('devuelve la clave de minlength cuando está tocado y la contraseña es corta', () => {
+      component.loginForm.get('password')!.markAsTouched();
+      component.loginForm.get('password')!.setValue('abc');
+      expect(component._getPasswordError()).toBe('auth.login.passwordMinLength');
+    });
+  });
 });

@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
+
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroCommandBarComponent } from '@retro/retro-command-bar/retro-command-bar.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 
 @Component({
   selector: 'app-list-page-header',
@@ -11,7 +14,15 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styleUrl: './list-page-header.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIconButton, MatFormField, MatLabel, MatPrefix, MatIcon, MatInput, TranslocoPipe]
+  imports: [
+    FormsModule,
+    RetroButtonComponent,
+    RetroCommandBarComponent,
+    RetroIconComponent,
+    RetroIconButtonComponent,
+    RetroInputComponent,
+    TranslocoPipe
+  ]
 })
 export class ListPageHeaderComponent {
   /** Transloco key for the search field label. */
@@ -49,4 +60,10 @@ export class ListPageHeaderComponent {
 
   /** Emitted when the view-mode toggle is clicked. */
   readonly viewModeToggle = output<void>();
+
+  /** Path shown in the retro command bar (e.g. 'monchito ~/library/games'). Empty hides the bar. */
+  readonly commandPath = input<string>('');
+
+  /** Dynamic flags shown in the retro command bar. */
+  readonly commandFlags = input<readonly string[]>([]);
 }

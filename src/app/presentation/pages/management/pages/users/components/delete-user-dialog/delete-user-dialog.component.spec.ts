@@ -1,10 +1,10 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslocoService } from '@jsverse/transloco';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { DeleteUserDialogComponent } from './delete-user-dialog.component';
+import { RETRO_DIALOG_DATA, RetroDialogRef } from '@retro/retro-dialog/services/retro-dialog.service';
 
 describe('DeleteUserDialogComponent', () => {
   let component: DeleteUserDialogComponent;
@@ -16,8 +16,8 @@ describe('DeleteUserDialogComponent', () => {
     TestBed.configureTestingModule({
       imports: [DeleteUserDialogComponent],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { email: 'target@test.com' } },
-        { provide: MatDialogRef, useValue: mockDialogRef },
+        { provide: RETRO_DIALOG_DATA, useValue: { email: 'target@test.com' } },
+        { provide: RetroDialogRef, useValue: mockDialogRef },
         { provide: TranslocoService, useValue: { translate: vi.fn((k: string) => k) } }
       ],
       schemas: [NO_ERRORS_SCHEMA]

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatIcon } from '@angular/material/icon';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AUTH_USE_CASES, AuthResult, AuthUseCasesContract } from '@/domain/use-cases/auth/auth.use-cases.contract';
@@ -22,18 +21,12 @@ import { AuthBaseComponent } from '@/abstract/auth-base/auth-base.component';
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatButton,
-    MatIconButton,
-    MatProgressSpinner,
-    MatIcon,
-    MatError,
-    MatPrefix,
-    MatSuffix,
+    RetroIconButtonComponent,
+    RetroIconComponent,
     TranslocoPipe,
-    AuthPanelComponent
+    AuthPanelComponent,
+    RetroButtonComponent,
+    RetroInputComponent
   ]
 })
 /** Registration page component. Creates a new account and redirects to login on success. */
@@ -41,7 +34,6 @@ export class RegisterComponent extends AuthBaseComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _authUseCases: AuthUseCasesContract = inject(AUTH_USE_CASES);
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
-
   /** Whether the confirm-password field is hidden. */
   readonly hideConfirmPassword: WritableSignal<boolean> = signal<boolean>(true);
 
@@ -72,6 +64,52 @@ export class RegisterComponent extends AuthBaseComponent {
     if (!result.success) {
       this._setError(result.error, 'auth.register.oauthFailed');
     }
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo displayName, o null si no hay error visible.
+   */
+  _getDisplayNameError(): string | null {
+    const ctrl = this.registerForm.get('displayName');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.register.displayNameRequired');
+    if (ctrl.hasError('minlength')) return this._transloco.translate('auth.register.displayNameMinLength');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo email, o null si no hay error visible.
+   */
+  _getEmailError(): string | null {
+    const ctrl = this.registerForm.get('email');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.register.emailRequired');
+    if (ctrl.hasError('email')) return this._transloco.translate('auth.register.emailInvalid');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo password, o null si no hay error visible.
+   */
+  _getPasswordError(): string | null {
+    const ctrl = this.registerForm.get('password');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.register.passwordRequired');
+    if (ctrl.hasError('minlength')) return this._transloco.translate('auth.register.passwordMinLength');
+    return null;
+  }
+
+  /**
+   * Devuelve el mensaje de error del campo confirmPassword.
+   * Combina el error de nivel control (required) y el de nivel formulario (passwordMismatch).
+   */
+  _getConfirmPasswordError(): string | null {
+    const ctrl = this.registerForm.get('confirmPassword');
+    if (!ctrl?.touched) return null;
+    if (ctrl.hasError('required')) return this._transloco.translate('auth.register.confirmPasswordRequired');
+    if (this.registerForm.hasError('passwordMismatch'))
+      return this._transloco.translate('auth.register.passwordMismatch');
+    return null;
   }
 
   /**

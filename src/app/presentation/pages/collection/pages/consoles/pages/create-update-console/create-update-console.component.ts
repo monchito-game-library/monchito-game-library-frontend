@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
+import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { HardwareFormBaseComponent } from '@/abstract/hardware-form-base/hardware-form-base.component';
@@ -25,23 +24,18 @@ import { ConsoleRegionType } from '@/types/console-region.type';
   styleUrls: ['./create-update-console.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
-    TranslocoPipe,
-    HardwareFormShellComponent
-  ]
+  imports: [ReactiveFormsModule, TranslocoPipe, HardwareFormShellComponent, RetroSelectComponent, RetroOptionComponent]
 })
 export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _consoleUseCases: ConsoleUseCasesContract = inject(CONSOLE_USE_CASES);
 
-  private readonly _storeInput: Signal<string | null>;
-  private readonly _brandInput: Signal<string | null>;
-  private readonly _modelInput: Signal<string | null>;
+  /** Texto de búsqueda del campo brand, usado para filtrar las opciones. */
+  private readonly _brandSearchQuery: WritableSignal<string> = signal<string>('');
+  /** Texto de búsqueda del campo model, usado para filtrar las opciones. */
+  private readonly _modelSearchQuery: WritableSignal<string> = signal<string>('');
+  /** Texto de búsqueda del campo store, usado para filtrar las opciones. */
+  private readonly _storeSearchQuery: WritableSignal<string> = signal<string>('');
 
   private _consoleId: string | null = null;
 
@@ -64,22 +58,22 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
     notes: this._fb.control<string | null>(null)
   });
 
-  /** Stores filtered by the current autocomplete input value. */
+  /** Stores filtered by the current search query. */
   readonly filteredStores: Signal<StoreModel[]> = computed((): StoreModel[] => {
-    const input: string = this._storeInput()?.toString().toLowerCase() ?? '';
-    return this.stores().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(input));
+    const query: string = this._storeSearchQuery().toLowerCase();
+    return this.stores().filter((s: StoreModel): boolean => s.label.toLowerCase().includes(query));
   });
 
-  /** Brands filtered by the current autocomplete input value. */
+  /** Brands filtered by the current search query. */
   readonly filteredBrands: Signal<HardwareBrandModel[]> = computed((): HardwareBrandModel[] => {
-    const input: string = this._brandInput()?.toString().toLowerCase() ?? '';
-    return this.brands().filter((b: HardwareBrandModel): boolean => b.name.toLowerCase().includes(input));
+    const query: string = this._brandSearchQuery().toLowerCase();
+    return this.brands().filter((b: HardwareBrandModel): boolean => b.name.toLowerCase().includes(query));
   });
 
-  /** Models filtered by the current autocomplete input value. */
+  /** Models filtered by the current search query. */
   readonly filteredModels: Signal<HardwareModelModel[]> = computed((): HardwareModelModel[] => {
-    const input: string = this._modelInput()?.toString().toLowerCase() ?? '';
-    return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(input));
+    const query: string = this._modelSearchQuery().toLowerCase();
+    return this.models().filter((m: HardwareModelModel): boolean => m.name.toLowerCase().includes(query));
   });
 
   protected readonly _listRoute = '/collection/consoles';
@@ -109,9 +103,14 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
 
   constructor() {
     super();
-    this._storeInput = toSignal(this.form.controls.store.valueChanges, { initialValue: null });
-    this._brandInput = toSignal(this.form.controls.brandId.valueChanges, { initialValue: null });
-    this._modelInput = toSignal(this.form.controls.modelId.valueChanges, { initialValue: null });
+    // Al seleccionar una marca en retro-search, el FormControl se actualiza.
+    // Reaccionar a esos cambios para cargar la cascada modelo → edición.
+    this.form.controls.brandId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((brandId: string | null) => void this.onBrandChange(brandId));
+    this.form.controls.modelId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((modelId: string | null) => void this.onModelChange(modelId));
   }
 
   async ngOnInit(): Promise<void> {
@@ -131,6 +130,33 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
   }
 
   /**
+   * Actualiza el query de búsqueda de marca para filtrar las opciones visibles.
+   *
+   * @param {string} query - Texto escrito por el usuario en el campo de búsqueda de marca
+   */
+  onBrandQuery(query: string): void {
+    this._brandSearchQuery.set(query);
+  }
+
+  /**
+   * Actualiza el query de búsqueda de modelo para filtrar las opciones visibles.
+   *
+   * @param {string} query - Texto escrito por el usuario en el campo de búsqueda de modelo
+   */
+  onModelQuery(query: string): void {
+    this._modelSearchQuery.set(query);
+  }
+
+  /**
+   * Actualiza el query de búsqueda de tienda para filtrar las opciones visibles.
+   *
+   * @param {string} query - Texto escrito por el usuario en el campo de búsqueda de tienda
+   */
+  onStoreQuery(query: string): void {
+    this._storeSearchQuery.set(query);
+  }
+
+  /**
    * Validates the form and saves the console (create or update).
    * Navigates back to the list on success.
    */
@@ -141,11 +167,11 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
 
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!value.brandId || !uuidRegex.test(value.brandId) || !value.modelId || !uuidRegex.test(value.modelId)) {
-      this._snackBar.open(
-        this._transloco.translate('consolePage.snack.selectBrandModel'),
-        this._transloco.translate('common.close'),
-        { duration: 3000 }
-      );
+      this._snack.open({
+        text: this._transloco.translate('consolePage.snack.selectBrandModel'),
+        duration: 3000,
+        variant: 'warning'
+      });
       return;
     }
 

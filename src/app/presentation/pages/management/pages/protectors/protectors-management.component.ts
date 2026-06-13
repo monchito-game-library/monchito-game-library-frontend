@@ -1,13 +1,23 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { SkeletonComponent } from '@/components/ad-hoc/skeleton/skeleton.component';
+import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
+import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
 import {
   AUDIT_LOG_USE_CASES,
   AuditLogUseCasesContract
@@ -21,6 +31,7 @@ import { ProtectorCategory } from '@/types/protector-category.type';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { ProtectorFormResult } from '@/interfaces/management/protector-form-result.interface';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 import { ProtectorEditPanelComponent } from './components/protector-edit-panel/protector-edit-panel.component';
 
 @Component({
@@ -29,11 +40,20 @@ import { ProtectorEditPanelComponent } from './components/protector-edit-panel/p
   styleUrl: './protectors-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProtectorEditPanelComponent, MatButton, MatIcon, TranslocoPipe, DecimalPipe, SkeletonComponent]
+  imports: [
+    ProtectorEditPanelComponent,
+    SearchToolbarComponent,
+    TranslocoPipe,
+    DecimalPipe,
+    RetroSkeletonComponent,
+    RetroButtonComponent,
+    RetroIconComponent,
+    RetroCardComponent
+  ]
 })
 export class ProtectorsManagementComponent implements OnInit {
-  private readonly _dialog: MatDialog = inject(MatDialog);
-  private readonly _snackBar: MatSnackBar = inject(MatSnackBar);
+  private readonly _dialog: RetroDialogService = inject(RetroDialogService);
+  private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _protectorUseCases: ProtectorUseCasesContract = inject(PROTECTOR_USE_CASES);
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);
@@ -49,6 +69,22 @@ export class ProtectorsManagementComponent implements OnInit {
 
   /** Whether the edit panel is visible. */
   readonly panelOpen: WritableSignal<boolean> = signal(false);
+
+  /** Término de búsqueda activo para filtrar por nombre. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** Lista de protectores filtrada según searchTerm. */
+  readonly filteredProtectors: Signal<ProtectorModel[]> = computed((): ProtectorModel[] => {
+    const term = this.searchTerm().toLowerCase().trim();
+    if (!term) return this.protectors();
+    return this.protectors().filter((p) => p.name.toLowerCase().includes(term));
+  });
+
+  /** Flags para retro-command-bar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
 
   async ngOnInit(): Promise<void> {
     await this._loadProtectors();
@@ -78,6 +114,15 @@ export class ProtectorsManagementComponent implements OnInit {
   onClosePanel(): void {
     this.panelOpen.set(false);
     this.selectedProtector.set(undefined);
+  }
+
+  /**
+   * Actualiza el término de búsqueda cuando el usuario escribe en el toolbar.
+   *
+   * @param {string} term - Valor ya debounced recibido del SearchToolbarComponent
+   */
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
   }
 
   /**
@@ -122,7 +167,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       await this._protectorUseCases.toggleProtectorActive(protector.id, nextActive);
       void this._auditLogUseCases.log({
@@ -168,7 +213,7 @@ export class ProtectorsManagementComponent implements OnInit {
         message: ''
       } satisfies ConfirmDialogInterface
     });
-    ref.afterClosed().subscribe(async (confirmed: boolean) => {
+    ref.afterClosed().subscribe(async (confirmed: unknown) => {
       if (!confirmed) return;
       try {
         await this._protectorUseCases.deleteProtector(protector.id);
@@ -178,16 +223,18 @@ export class ProtectorsManagementComponent implements OnInit {
           entityId: protector.id,
           description: protector.name
         });
-        this._snackBar.open(this._transloco.translate('management.products.deleted'), '', {
+        this._snack.open({
+          text: this._transloco.translate('management.products.deleted'),
           duration: 3000,
-          panelClass: ['snack-mobile']
+          variant: 'success'
         });
         await this._loadProtectors();
         this.onClosePanel();
       } catch {
-        this._snackBar.open(this._transloco.translate('management.products.deleteError'), '', {
+        this._snack.open({
+          text: this._transloco.translate('management.products.deleteError'),
           duration: 4000,
-          panelClass: ['snack-mobile']
+          variant: 'error'
         });
       }
     });
