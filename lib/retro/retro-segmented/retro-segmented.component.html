@@ -12,7 +12,7 @@
       class="retro-segmented-segment"
       [class.retro-segmented-segment--active]="option.value === value()"
       [attr.aria-checked]="option.value === value()"
-      [attr.tabindex]="(option.value === value() || (value() === undefined && i === 0)) ? 0 : -1"
+      [attr.tabindex]="(option.value === value() || (!options().some(o => o.value === value()) && i === 0)) ? 0 : -1"
       [disabled]="disabled()"
       (click)="onSelect(option.value)"
       (keydown)="onKeydown($event, i)"

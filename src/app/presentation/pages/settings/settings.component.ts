@@ -137,9 +137,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   readonly savingName: WritableSignal<boolean> = signal(false);
 
   /** Reactive form control for the selected language. */
-  readonly selectedLangControl: FormControl<string> = new FormControl(this._transloco.getActiveLang(), {
-    nonNullable: true
-  });
+  readonly selectedLangControl: FormControl<LanguageType> = new FormControl(
+    this._transloco.getActiveLang() as LanguageType,
+    { nonNullable: true }
+  );
 
   /** Reference to the name input element, used to focus it when edit mode is activated. */
   @ViewChild('nameInput') nameInputRef?: ElementRef<HTMLInputElement>;
@@ -151,7 +152,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.selectedLangControl.valueChanges.subscribe((lang: string) => {
+    this.selectedLangControl.valueChanges.subscribe((lang: LanguageType) => {
       if (!lang) return;
       this._transloco.setActiveLang(lang);
       this._savePreferences();
