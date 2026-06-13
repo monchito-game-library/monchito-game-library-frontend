@@ -27,7 +27,11 @@ const config: KnipConfig = {
     '@angular-eslint/builder',
     '@typescript-eslint/eslint-plugin',
     // Node types used in scripts
-    '@types/express'
+    '@types/express',
+    // Lighthouse and Playwright used only in npm scripts, not imported in source
+    'lighthouse',
+    'playwright',
+    'playwright-lighthouse'
   ]
 };
 
