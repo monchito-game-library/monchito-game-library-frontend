@@ -153,7 +153,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.selectedLangControl.valueChanges.subscribe((lang: LanguageType) => {
-      if (!lang) return;
       this._transloco.setActiveLang(lang);
       this._savePreferences();
     });
@@ -213,7 +212,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * @param {LanguageType} value - The selected language code
    */
   onLanguageChange(value: LanguageType): void {
-    if (!value) return;
     this.selectedLangControl.setValue(value);
   }
 

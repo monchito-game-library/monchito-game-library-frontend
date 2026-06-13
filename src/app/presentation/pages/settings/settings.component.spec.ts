@@ -359,17 +359,6 @@ describe('SettingsComponent', () => {
     });
   });
 
-  describe('selectedLangControl — valor falsy', () => {
-    it('no llama a setActiveLang cuando lang es vacío', () => {
-      const transloco = TestBed.inject(TranslocoService as any) as any;
-      component.ngOnInit();
-
-      component.selectedLangControl.setValue('');
-
-      expect(transloco.setActiveLang).not.toHaveBeenCalled();
-    });
-  });
-
   describe('onAvatarFileSelected — error no-Error', () => {
     function mockFileEvent(file?: File): Event {
       const input = { files: file ? [file] : null, value: '' } as unknown as HTMLInputElement;
