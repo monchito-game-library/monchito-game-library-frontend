@@ -15,6 +15,7 @@ import { DatePipe, Location, NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RetroCheckboxComponent } from '@retro/retro-checkbox/retro-checkbox.component';
+import { RetroSegmentedComponent, RetroSegmentedOption } from '@retro/public-api';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
 import { RetroTextareaComponent } from '@retro/retro-textarea/retro-textarea.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
@@ -72,6 +73,7 @@ import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.util
     ReactiveFormsModule,
     DatePipe,
     RetroCheckboxComponent,
+    RetroSegmentedComponent,
     RetroIconComponent,
     RetroSpinnerComponent,
     RetroIconButtonComponent,
@@ -149,6 +151,14 @@ export class GameFormComponent implements OnInit {
 
   /** Available game status options. */
   readonly gameStatuses: GameStatusOption[] = availableGameStatuses;
+
+  /** Options for the format segmented control (Físico / Digital). */
+  readonly formatOptions: Signal<RetroSegmentedOption<GameFormatType>[]> = computed(
+    (): RetroSegmentedOption<GameFormatType>[] => [
+      { value: 'physical', label: this._transloco.translate('gameForm.formats.physical') },
+      { value: 'digital', label: this._transloco.translate('gameForm.formats.digital') }
+    ]
+  );
 
   /** Shows mat-error while typing (dirty), without waiting for blur. */
   readonly dirtyMatcher = new DirtyErrorStateMatcher();

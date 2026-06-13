@@ -190,12 +190,11 @@
 
         <div class="game-form__footer">
           <div class="game-form__toggles">
-            <div class="game-form__toggle-row">
-              <span class="game-form__toggle-label">{{ 'gameForm.fields.format' | transloco }}</span>
-              <retro-checkbox
-                [checked]="formatValue() === 'digital'"
-                (changed)="onFormatChange($event ? 'digital' : 'physical')" />
-            </div>
+            <retro-segmented
+              [options]="formatOptions()"
+              [value]="formatValue() ?? 'physical'"
+              [ariaLabel]="'gameForm.fields.format' | transloco"
+              (changed)="onFormatChange($event)" />
             <div class="game-form__toggle-row">
               <span class="game-form__toggle-label">{{ 'gameForm.fields.is_favorite' | transloco }}</span>
               <retro-checkbox formControlName="is_favorite" />
