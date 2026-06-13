@@ -122,4 +122,28 @@ describe('ForgotPasswordComponent', () => {
       expect(component.loading()).toBe(false);
     });
   });
+
+  describe('_getEmailError', () => {
+    it('devuelve null cuando el campo no ha sido tocado', () => {
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.forgotPasswordForm.get('email')!.setValue('user@test.com');
+      component.forgotPasswordForm.get('email')!.markAsTouched();
+      expect(component._getEmailError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.forgotPasswordForm.get('email')!.markAsTouched();
+      component.forgotPasswordForm.get('email')!.setValue('');
+      expect(component._getEmailError()).toBe('auth.forgotPassword.emailRequired');
+    });
+
+    it('devuelve la clave de email inválido cuando el email está mal formado y tocado', () => {
+      component.forgotPasswordForm.get('email')!.markAsTouched();
+      component.forgotPasswordForm.get('email')!.setValue('no-es-email');
+      expect(component._getEmailError()).toBe('auth.forgotPassword.emailInvalid');
+    });
+  });
 });

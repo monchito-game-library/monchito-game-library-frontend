@@ -292,7 +292,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Fichero                                                                                 | Tests | Estado      |
 | --------------------------------------------------------------------------------------- | ----- | ----------- |
 | `pages/sale/sale.component.spec.ts`                                                     | 39    | ✅ Cubierto |
-| `pages/settings/settings.component.spec.ts`                                             | 48    | ✅ Cubierto |
+| `pages/settings/settings.component.spec.ts`                                             | 50    | ✅ Cubierto |
 | `pages/settings/components/avatar-crop-dialog/avatar-crop-dialog.component.spec.ts`     | 7     | ✅ Cubierto |
 | `pages/wishlist/wishlist.component.spec.ts`                                             | 45    | ✅ Cubierto |
 | `pages/wishlist/components/wishlist-card/wishlist-card.component.spec.ts`               | 12    | ✅ Cubierto |
@@ -409,7 +409,7 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 | Componentes   | 84       | 1577  |
 | Utilidades    | 8        | 106   |
 
-> Fuente autoritativa: `npm run test:app`. Vitest reporta actualmente **144 ficheros / 2566 tests passed**. Ejecutar `/update-testing app` para sincronizar la tabla por capa con los conteos exactos.
+> Fuente autoritativa: `npm run test:app`. Vitest reporta actualmente **146 ficheros / 2736 tests passed**. Ejecutar `/update-testing app` para sincronizar la tabla por capa con los conteos exactos.
 
 ---
 
@@ -417,10 +417,10 @@ Mocks centralizados reutilizables en `TestBed.providers`:
 
 | Métrica    | Valor                    |
 | ---------- | ------------------------ |
-| Statements | 96.98% (5043 / 5200)     |
-| Branches   | **93.12%** (3279 / 3521) |
-| Functions  | 97.96% (1158 / 1182)     |
-| Lines      | 98.09% (4166 / 4247)     |
+| Statements | 98.65% (5271 / 5343)     |
+| Branches   | **95.13%** (3445 / 3621) |
+| Functions  | 98.93% (1209 / 1222)     |
+| Lines      | 99.45% (4347 / 4371)     |
 
 ```bash
 npm run test:app:coverage
@@ -428,7 +428,7 @@ npm run test:app:coverage
 
 El informe HTML se genera en `coverage/monchito-game-library/`.
 
-> **El 93.12 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
+> **El 95.13 % de ramas es cercano al máximo alcanzable.** El resto de ramas sin cubrir pertenecen a las cuatro categorías descritas a continuación.
 
 ---
 

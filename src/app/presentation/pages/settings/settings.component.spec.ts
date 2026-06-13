@@ -585,4 +585,16 @@ describe('SettingsComponent', () => {
       expect(useCases.uploadBanner).not.toHaveBeenCalled();
     });
   });
+
+  describe('onLanguageChange', () => {
+    it('actualiza selectedLangControl con el valor recibido', () => {
+      component.onLanguageChange('en');
+      expect(component.selectedLangControl.value).toBe('en');
+    });
+
+    it('actualiza selectedLangControl al cambiar a otro idioma', () => {
+      component.onLanguageChange('es');
+      expect(component.selectedLangControl.value).toBe('es');
+    });
+  });
 });

@@ -97,7 +97,7 @@ export class AddEditLineDialogComponent {
         ? this.data.products.filter(
             (p: OrderProductModel) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
           )
-        : []
+        : this.data.products
     );
   }
 

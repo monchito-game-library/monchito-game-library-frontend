@@ -188,11 +188,12 @@ describe('AddEditLineDialogComponent — onProductQuery()', () => {
     component = fixture.componentInstance;
   });
 
-  it('devuelve [] cuando la búsqueda está vacía', () => {
+  it('devuelve el catálogo completo cuando la búsqueda está vacía', () => {
     component.onProductQuery('');
     fixture.detectChanges();
 
-    expect(component.filteredProducts()).toEqual([]);
+    expect(component.filteredProducts()).toHaveLength(products.length);
+    expect(component.filteredProducts()).toEqual(products);
   });
 
   it('filtra productos por nombre cuando hay texto de búsqueda', () => {

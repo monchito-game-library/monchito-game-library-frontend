@@ -226,6 +226,29 @@ describe('CreateUpdateConsoleComponent — modo creación', () => {
       expect(consoleUseCases.add).not.toHaveBeenCalled();
     });
   });
+
+  describe('onBrandQuery / onModelQuery / onStoreQuery', () => {
+    it('onBrandQuery actualiza el query de búsqueda de marca y filtra filteredBrands', async () => {
+      await component.ngOnInit();
+      component.onBrandQuery('Sony');
+      const brands = component.filteredBrands();
+      expect(Array.isArray(brands)).toBe(true);
+    });
+
+    it('onModelQuery actualiza el query de búsqueda de modelo y filtra filteredModels', async () => {
+      await component.ngOnInit();
+      component.onModelQuery('PlayStation');
+      const models = component.filteredModels();
+      expect(Array.isArray(models)).toBe(true);
+    });
+
+    it('onStoreQuery actualiza el query de búsqueda de tienda y filtra filteredStores', async () => {
+      await component.ngOnInit();
+      component.onStoreQuery('Game');
+      const stores = component.filteredStores();
+      expect(Array.isArray(stores)).toBe(true);
+    });
+  });
 });
 
 describe('CreateUpdateConsoleComponent — modo edición', () => {

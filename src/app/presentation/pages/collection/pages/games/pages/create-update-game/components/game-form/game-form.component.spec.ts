@@ -670,6 +670,60 @@ describe('GameFormComponent', () => {
       expect(result[0].labelKey).toBe('Consola Desconocida');
     });
   });
+
+  describe('_getPlatformError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getPlatformError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.form.controls.platform.setValue('PS5' as any);
+      component.form.controls.platform.markAsTouched();
+      expect(component._getPlatformError()).toBeNull();
+    });
+
+    it('devuelve la clave de required cuando está tocado y vacío', () => {
+      component.form.controls.platform.markAsTouched();
+      component.form.controls.platform.setValue(null);
+      expect(component._getPlatformError()).toBe('gameForm.errors.required');
+    });
+  });
+
+  describe('_getStoreError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getStoreError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo es válido y está tocado', () => {
+      component.form.controls.store.setValue(null);
+      component.form.controls.store.markAsTouched();
+      expect(component._getStoreError()).toBeNull();
+    });
+  });
+
+  describe('_getRatingError', () => {
+    it('devuelve null cuando el campo no está tocado ni sucio', () => {
+      expect(component._getRatingError()).toBeNull();
+    });
+
+    it('devuelve null cuando el campo tiene un valor válido y está tocado', () => {
+      component.form.controls.personal_rating.setValue(3);
+      component.form.controls.personal_rating.markAsTouched();
+      expect(component._getRatingError()).toBeNull();
+    });
+
+    it('devuelve la clave de min cuando el valor es menor que el mínimo', () => {
+      component.form.controls.personal_rating.markAsTouched();
+      component.form.controls.personal_rating.setValue(-1);
+      expect(component._getRatingError()).toBe('gameForm.errors.ratingMin');
+    });
+
+    it('devuelve la clave de max cuando el valor supera el máximo', () => {
+      component.form.controls.personal_rating.markAsTouched();
+      component.form.controls.personal_rating.setValue(11);
+      expect(component._getRatingError()).toBe('gameForm.errors.ratingMax');
+    });
+  });
 });
 
 describe('GameFormComponent — ngOnInit', () => {

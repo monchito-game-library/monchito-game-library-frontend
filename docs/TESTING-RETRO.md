@@ -28,10 +28,10 @@
 
 | Métrica    | Valor                | Threshold | Techo real |
 | ---------- | -------------------- | --------- | ---------- |
-| Statements | 95.35% (1397 / 1465) | 90% ✅    | ~95%       |
-| Branches   | 95.02% (955 / 1005)  | —         | ~95%       |
-| Functions  | 93.69% (297 / 317)   | —         | ~94%       |
-| Lines      | 97.09% (1171 / 1206) | 90% ✅    | ~97%       |
+| Statements | 95.98% (1578 / 1644) | 90% ✅    | ~96%       |
+| Branches   | 94.81% (1043 / 1100) | —         | ~95%       |
+| Functions  | 93.06% (322 / 346)   | —         | ~93%       |
+| Lines      | 98.02% (1339 / 1366) | 90% ✅    | ~98%       |
 
 > El resto de gaps no cubiertos son artefactos V8/signals (Cat. 1–3) documentados en "Ramas sin cobertura".
 
@@ -70,6 +70,7 @@
 | `retro-section-header/retro-section-header.component.spec.ts`                         | 4     |
 | `retro-select/retro-select.component.spec.ts`                                         | 50    |
 | `retro-select/components/retro-option/retro-option.component.spec.ts`                 | 9     |
+| `retro-segmented/retro-segmented.component.spec.ts`                                   | 22    |
 | `retro-select/tokens/retro-option-parent.token.spec.ts`                               | 1     |
 | `retro-skeleton/retro-skeleton.component.spec.ts`                                     | 4     |
 | `retro-snackbar/services/retro-snackbar.service.spec.ts`                              | 10    |
@@ -80,7 +81,7 @@
 | `retro-textarea/retro-textarea.component.spec.ts`                                     | 27    |
 | `retro-tooltip/directive/retro-tooltip.directive.spec.ts`                             | 10    |
 
-**Total**: 38 ficheros de spec / 523 tests
+**Total**: 39 ficheros de spec / 602 tests
 
 ---
 
@@ -145,5 +146,5 @@ Ramas que requieren un entorno CDK real (Overlay, Portal, TemplateRef) que happy
 
 | Categoría                     | Ficheros | Tests   |
 | ----------------------------- | -------- | ------- |
-| Librería retro (`lib/retro/`) | 38       | 523     |
-| **Total**                     | **38**   | **523** |
+| Librería retro (`lib/retro/`) | 39       | 602     |
+| **Total**                     | **39**   | **602** |
