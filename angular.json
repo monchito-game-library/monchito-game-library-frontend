@@ -112,6 +112,7 @@
               ]
             },
             "retro": {
+              "tsConfig": "tsconfig.spec.retro.json",
               "include": ["../lib/**/*.spec.ts"],
               "coverageExclude": ["**/*.html", "**/*.spec.ts", "**/*-spec.helpers.ts", "lib/retro/testing/**", "src/**"]
             },
@@ -133,6 +134,7 @@
               }
             },
             "retro-coverage": {
+              "tsConfig": "tsconfig.spec.retro.json",
               "coverage": true,
               "include": ["../lib/**/*.spec.ts"],
               "coverageExclude": [
