@@ -119,6 +119,7 @@ export class RetroSearchComponent
   private _overlayPanelSubs: Subscription[] = [];
   private _activeIndex: number = -1;
   private _blurTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private _userEditing: boolean = false;
 
   // ── Variables públicas readonly (RetroFormFieldControl + inputs + outputs) ───
 
@@ -319,6 +320,7 @@ export class RetroSearchComponent
    * @param {Event} event - Evento input del input nativo.
    */
   onInput(event: Event): void {
+    this._userEditing = true;
     const value: string = (event.target as HTMLInputElement).value;
     this._displayValue.set(value);
     this.queryChange.emit(value);
@@ -383,6 +385,7 @@ export class RetroSearchComponent
    * El panel se cierra primero para evitar parpadeo de estado visual.
    */
   onClear(): void {
+    this._userEditing = false;
     this._closePanel();
     this._displayValue.set('');
     this._selectedValue.set(null);
@@ -450,6 +453,7 @@ export class RetroSearchComponent
    * Cierra el panel overlay sin emitir selección.
    */
   private _closePanel(): void {
+    this._userEditing = false;
     this._overlayPanelSubs.forEach((s) => s.unsubscribe());
     this._overlayPanelSubs = [];
     this._overlayRef?.detach();
@@ -509,6 +513,7 @@ export class RetroSearchComponent
    * ya hay un valor seleccionado (ej. carga asíncrona de opciones).
    */
   private _syncSelectedLabel(): void {
+    if (this._userEditing) return;
     const value: unknown = this._selectedValue();
     if (value === null || value === undefined) return;
     const displayFn = this.displayWith();
@@ -541,6 +546,7 @@ export class RetroSearchComponent
    * @param {RetroOptionComponent} option - Opción seleccionada.
    */
   private _emitSelected(option: RetroOptionComponent): void {
+    this._userEditing = false;
     const value: unknown = option.value();
     this._selectedValue.set(value);
     const displayFn = this.displayWith();
