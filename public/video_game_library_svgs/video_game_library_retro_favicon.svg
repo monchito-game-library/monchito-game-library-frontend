@@ -55,11 +55,11 @@
     -->
     <!-- Sun clip (above horizon) -->
     <clipPath id="sunClip">
-      <rect x="203" y="88" width="193" height="130"/>
+      <rect x="203" y="108" width="193" height="130"/>
     </clipPath>
     <!-- Screen clip -->
     <clipPath id="screenClip">
-      <rect x="203" y="88" width="193" height="162"/>
+      <rect x="203" y="108" width="193" height="162"/>
     </clipPath>
     <!-- Outer glow filter -->
     <filter id="outerGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -140,119 +140,103 @@
 
     <!-- === SCREEN BEZEL === -->
     <!-- Outer bezel frame (mauve, slightly raised look) -->
-    <rect x="189" y="76" width="210" height="188" rx="7" fill="#6E3D75" stroke="#0a0118" stroke-width="2"/>
+    <rect x="189" y="96" width="210" height="188" rx="7" fill="#6E3D75" stroke="#0a0118" stroke-width="2"/>
     <!-- Inner dark border inset -->
-    <rect x="196" y="81" width="200" height="178" rx="5" fill="#1a0530" opacity="0.85"/>
+    <rect x="196" y="101" width="200" height="178" rx="5" fill="#1a0530" opacity="0.85"/>
     <!-- Screen display -->
-    <rect x="203" y="88" width="193" height="162" fill="url(#skyGrad)"/>
+    <rect x="203" y="108" width="193" height="162" fill="url(#skyGrad)"/>
 
     <!-- === SYNTHWAVE SCENE === -->
     <!-- Sun halo glow -->
-    <ellipse cx="299.5" cy="175" rx="65" ry="58" fill="url(#sunGlowGrad)" clip-path="url(#sunClip)"/>
+    <ellipse cx="299.5" cy="195" rx="65" ry="58" fill="url(#sunGlowGrad)" clip-path="url(#sunClip)"/>
     <!-- Sun disc (clipped above horizon) -->
-    <circle cx="299.5" cy="182" r="42" fill="url(#sunGrad)" clip-path="url(#sunClip)"/>
+    <circle cx="299.5" cy="202" r="42" fill="url(#sunGrad)" clip-path="url(#sunClip)"/>
     <!-- Sun horizontal blinds -->
     <g class="px" stroke="#160522" stroke-width="3.5" clip-path="url(#sunClip)">
-      <line x1="243" y1="160" x2="356" y2="160"/>
-      <line x1="243" y1="167" x2="356" y2="167"/>
-      <line x1="243" y1="174" x2="356" y2="174"/>
-      <line x1="243" y1="181" x2="356" y2="181"/>
-      <line x1="243" y1="188" x2="356" y2="188"/>
-      <line x1="243" y1="195" x2="356" y2="195"/>
-      <line x1="243" y1="202" x2="356" y2="202"/>
-      <line x1="243" y1="209" x2="356" y2="209"/>
-      <line x1="243" y1="216" x2="356" y2="216"/>
+      <line x1="243" y1="180" x2="356" y2="180"/>
+      <line x1="243" y1="187" x2="356" y2="187"/>
+      <line x1="243" y1="194" x2="356" y2="194"/>
+      <line x1="243" y1="201" x2="356" y2="201"/>
+      <line x1="243" y1="208" x2="356" y2="208"/>
+      <line x1="243" y1="215" x2="356" y2="215"/>
+      <line x1="243" y1="222" x2="356" y2="222"/>
+      <line x1="243" y1="229" x2="356" y2="229"/>
+      <line x1="243" y1="236" x2="356" y2="236"/>
     </g>
 
     <!-- Mountain silhouettes at horizon (pixelated, color #6B0F5B) -->
     <!-- Left mountains -->
     <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
-      <rect x="203" y="210" width="8"  height="8"/>
-      <rect x="212" y="206" width="6"  height="12"/>
-      <rect x="217" y="212" width="8"  height="6"/>
-      <rect x="226" y="208" width="6"  height="10"/>
-      <rect x="231" y="214" width="8"  height="4"/>
-      <rect x="240" y="210" width="6"  height="8"/>
-      <rect x="245" y="216" width="8"  height="2"/>
+      <rect x="203" y="230" width="8"  height="8"/>
+      <rect x="212" y="226" width="6"  height="12"/>
+      <rect x="217" y="232" width="8"  height="6"/>
+      <rect x="226" y="228" width="6"  height="10"/>
+      <rect x="231" y="234" width="8"  height="4"/>
+      <rect x="240" y="230" width="6"  height="8"/>
+      <rect x="245" y="236" width="8"  height="2"/>
     </g>
     <!-- Right mountains -->
     <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
-      <rect x="353" y="216" width="8"  height="2"/>
-      <rect x="361" y="210" width="6"  height="8"/>
-      <rect x="366" y="214" width="8"  height="4"/>
-      <rect x="375" y="208" width="6"  height="10"/>
-      <rect x="380" y="212" width="8"  height="6"/>
-      <rect x="388" y="206" width="6"  height="12"/>
-      <rect x="393" y="210" width="3"  height="8"/>
+      <rect x="353" y="236" width="8"  height="2"/>
+      <rect x="361" y="230" width="6"  height="8"/>
+      <rect x="366" y="234" width="8"  height="4"/>
+      <rect x="375" y="228" width="6"  height="10"/>
+      <rect x="380" y="232" width="8"  height="6"/>
+      <rect x="388" y="226" width="6"  height="12"/>
+      <rect x="393" y="230" width="3"  height="8"/>
     </g>
 
-    <!-- Synthwave grid floor (below horizon at y=218) -->
+    <!-- Synthwave grid floor (below horizon at y=238) -->
     <g clip-path="url(#screenClip)">
       <!-- Floor dark bg (purple synthwave) -->
-      <rect x="203" y="218" width="193" height="32" fill="#3A0257"/>
+      <rect x="203" y="238" width="193" height="32" fill="#3A0257"/>
       <!-- Vertical converging lines -->
       <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
-        <line x1="300" y1="218" x2="203" y2="250"/>
-        <line x1="300" y1="218" x2="222" y2="250"/>
-        <line x1="300" y1="218" x2="242" y2="250"/>
-        <line x1="300" y1="218" x2="261" y2="250"/>
-        <line x1="300" y1="218" x2="280" y2="250"/>
-        <line x1="300" y1="218" x2="300" y2="250"/>
-        <line x1="300" y1="218" x2="319" y2="250"/>
-        <line x1="300" y1="218" x2="338" y2="250"/>
-        <line x1="300" y1="218" x2="359" y2="250"/>
-        <line x1="300" y1="218" x2="378" y2="250"/>
-        <line x1="300" y1="218" x2="396" y2="250"/>
+        <line x1="300" y1="238" x2="203" y2="270"/>
+        <line x1="300" y1="238" x2="222" y2="270"/>
+        <line x1="300" y1="238" x2="242" y2="270"/>
+        <line x1="300" y1="238" x2="261" y2="270"/>
+        <line x1="300" y1="238" x2="280" y2="270"/>
+        <line x1="300" y1="238" x2="300" y2="270"/>
+        <line x1="300" y1="238" x2="319" y2="270"/>
+        <line x1="300" y1="238" x2="338" y2="270"/>
+        <line x1="300" y1="238" x2="359" y2="270"/>
+        <line x1="300" y1="238" x2="378" y2="270"/>
+        <line x1="300" y1="238" x2="396" y2="270"/>
       </g>
       <!-- Horizontal grid lines -->
       <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
-        <line x1="203" y1="224" x2="396" y2="224"/>
-        <line x1="203" y1="232" x2="396" y2="232"/>
-        <line x1="203" y1="241" x2="396" y2="241"/>
-        <line x1="203" y1="250" x2="396" y2="250"/>
+        <line x1="203" y1="244" x2="396" y2="244"/>
+        <line x1="203" y1="252" x2="396" y2="252"/>
+        <line x1="203" y1="261" x2="396" y2="261"/>
+        <line x1="203" y1="270" x2="396" y2="270"/>
       </g>
     </g>
 
     <!-- Screen pixel sparkles (2 converted to + crosses) -->
     <g class="px">
       <!-- + cross pink upper-left of screen -->
-      <rect x="214" y="98"  width="9" height="3" fill="#ff55b8"/>
-      <rect x="218" y="95"  width="3" height="9" fill="#ff55b8"/>
+      <rect x="214" y="118"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="218" y="115"  width="3" height="9" fill="#ff55b8"/>
       <!-- + cross pink upper-right of screen -->
-      <rect x="378" y="96"  width="9" height="3" fill="#ff55b8"/>
-      <rect x="382" y="93"  width="3" height="9" fill="#ff55b8"/>
+      <rect x="378" y="116"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="382" y="113"  width="3" height="9" fill="#ff55b8"/>
       <!-- small dot sparkles -->
-      <rect x="361" y="108" width="4" height="4" fill="#7838f0"/>
-      <rect x="228" y="110" width="4" height="4" fill="#00c4ff" opacity="0.8"/>
+      <rect x="361" y="128" width="4" height="4" fill="#7838f0"/>
+      <rect x="228" y="130" width="4" height="4" fill="#00c4ff" opacity="0.8"/>
     </g>
 
-    <!-- === D-PAD (centered at x=256, y=368) === -->
-    <!-- Centered in device body (x=134 to x=378, center x=256) -->
-    <!-- Vertical arm: x=240, y=330, w=32, h=76 -->
-    <!-- Horizontal arm: x=206, y=352, w=100, h=32 -->
-
-    <!-- Shadow -->
-    <rect x="238" y="328" width="36" height="80" rx="5" fill="#040208" opacity="0.95"/>
-    <rect x="204" y="350" width="104" height="36" rx="5" fill="#040208" opacity="0.95"/>
-
-    <!-- D-pad vertical body -->
-    <rect x="240" y="330" width="32" height="76" rx="4" fill="#C9A9C9"/>
-    <!-- D-pad horizontal body -->
-    <rect x="206" y="352" width="100" height="32" rx="4" fill="#C9A9C9"/>
-
-    <!-- D-pad outer strokes (dark) -->
-    <rect x="240" y="330" width="32" height="76" rx="4" fill="none" stroke="#2A1633" stroke-width="3.5"/>
-    <rect x="206" y="352" width="100" height="32" rx="4" fill="none" stroke="#2A1633" stroke-width="3.5"/>
-
-    <!-- D-pad highlight bisel (top-left edges) -->
-    <rect x="240" y="330" width="32" height="2" rx="1" fill="#FFEEF0" class="px"/>
-    <rect x="240" y="330" width="2" height="76" rx="1" fill="#FFEEF0" class="px"/>
-    <rect x="206" y="352" width="100" height="2" rx="1" fill="#FFEEF0" class="px"/>
-    <rect x="206" y="352" width="2" height="32" rx="1" fill="#FFEEF0" class="px"/>
-
-    <!-- Center inset -->
-    <rect x="246" y="356" width="20" height="20" rx="3" fill="#311D41"/>
-    <circle cx="256" cy="366" r="6" fill="#241235"/>
+    <!-- === BADGE CERO (synthwave) === -->
+    <rect x="214" y="322" width="84" height="96" rx="12" fill="#040208" opacity="0.95"/>
+    <rect x="216" y="320" width="80" height="92" rx="11" fill="#0A0018" stroke="#8109E0" stroke-width="3"/>
+    <rect x="221" y="325" width="70" height="82" rx="8" fill="none" stroke="#A020E0" stroke-width="1.5" opacity="0.7"/>
+    <rect x="221" y="325" width="70" height="20" rx="8" fill="#1F0044"/>
+    <rect x="221" y="338" width="70" height="7" fill="#1F0044"/>
+    <text x="256" y="340" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" fill="#C060FF">CERO</text>
+    <text x="256" y="389" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="44" font-weight="800" fill="#C060FF">A</text>
+    <text x="256" y="389" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="44" font-weight="800" fill="#FF12A0" opacity="0.35">A</text>
+    <rect x="221" y="396" width="70" height="11" rx="0" fill="#1F0044"/>
+    <text x="256" y="405" text-anchor="middle" font-family="'Hiragino Sans','Yu Gothic',sans-serif" font-size="9" font-weight="600" letter-spacing="0.5" fill="#FF6AA3">全年齢対象</text>
 
   </g>
 
