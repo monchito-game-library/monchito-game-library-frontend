@@ -96,13 +96,13 @@
 
     <!-- === DEVICE BODY === -->
     <!-- Shadow -->
-    <rect x="118" y="64" width="276" height="380" rx="14" fill="#280060" opacity="0.40" filter="url(#softGlow)"/>
+    <path d="M140 62 L372 62 L394 84 L394 426 L372 448 L140 448 L118 426 L118 84 Z" fill="#280060" opacity="0.40" filter="url(#softGlow)"/>
 
     <!-- Main body -->
-    <rect x="124" y="68" width="264" height="374" rx="12" fill="url(#bodyGrad)" stroke="#100616" stroke-width="2.5"/>
+    <path d="M146 68 L366 68 L388 90 L388 420 L366 442 L146 442 L124 420 L124 90 Z" fill="url(#bodyGrad)" stroke="#100616" stroke-width="2.5"/>
 
     <!-- Top edge shimmer -->
-    <rect x="124" y="68" width="264" height="22" rx="12" fill="#ff80d0" opacity="0.22"/>
+    <path d="M124 90 L146 68 L366 68 L388 90 Z" fill="#ff80d0" opacity="0.22"/>
 
     <!-- (right magenta rail placed after ribs for z-order) -->
 
