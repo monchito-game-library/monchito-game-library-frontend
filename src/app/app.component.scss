@@ -34,8 +34,11 @@
     color: var(--primary);
     gap: 0.25rem;
 
-    retro-icon {
-      --_size: var(--icon-2xl);
+    .app-brand__logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      display: block;
     }
 
     .nav-rail__brand-version {
@@ -151,6 +154,14 @@
 
   .app-topbar__brand {
     color: var(--primary);
+  }
+
+  .app-topbar__logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
   }
 
   .app-topbar__title {

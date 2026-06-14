@@ -2,18 +2,6 @@
   <title id="title">Retro Video Game Library Favicon</title>
   <desc id="desc">A simplified neon retro handheld console icon for a video game library favicon.</desc>
   <defs>
-    <!-- Background: very dark purple-black -->
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#020010"/>
-      <stop offset="0.5" stop-color="#0B002E"/>
-      <stop offset="1" stop-color="#000008"/>
-    </linearGradient>
-    <!-- Border neon gradient -->
-    <linearGradient id="borderGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#A020E0"/>
-      <stop offset="0.5" stop-color="#8109E0"/>
-      <stop offset="1" stop-color="#5A0695"/>
-    </linearGradient>
     <!-- Console body: muted mauve/grey-purple with warm shadow -->
     <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#ECA2BC"/>
@@ -61,11 +49,6 @@
     <clipPath id="screenClip">
       <rect x="203" y="108" width="193" height="162"/>
     </clipPath>
-    <!-- Outer glow filter -->
-    <filter id="outerGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="10" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
     <!-- Soft glow filter -->
     <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
       <feGaussianBlur stdDeviation="8" result="blur"/>
@@ -76,18 +59,10 @@
       <feGaussianBlur stdDeviation="4" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <!-- Outer clip -->
-    <clipPath id="outerClip"><rect x="12" y="12" width="488" height="488" rx="96"/></clipPath>
     <style>.px{shape-rendering:crispEdges}</style>
   </defs>
 
-  <g clip-path="url(#outerClip)">
-    <!-- Background -->
-    <rect width="512" height="512" fill="url(#bg)"/>
-
-    <!-- Ambient purple glow -->
-    <ellipse cx="256" cy="282" rx="190" ry="200" fill="#2A0860" opacity="0.15"/>
-
+  <g>
     <!-- === NEON EDGE LINES (behind device) === -->
     <!-- Cyan left glow (behind) -->
     <line x1="80" y1="70" x2="80" y2="440" stroke="#52E3F9" stroke-width="6" opacity="0.15" filter="url(#lineGlow)"/>
@@ -241,7 +216,7 @@
   </g>
 
   <!-- === BACKGROUND PIXEL DECORATIONS === -->
-  <g clip-path="url(#outerClip)">
+  <g>
     <!-- Small pink pixel dot upper-left (mantenido) -->
     <rect x="100" y="106" width="8" height="8" fill="#d830a8" opacity="0.90" class="px"/>
 
@@ -251,6 +226,4 @@
 
   </g>
 
-  <!-- Rounded border with neon glow -->
-  <rect x="12" y="12" width="488" height="488" rx="96" fill="none" stroke="url(#borderGrad)" stroke-width="8" filter="url(#outerGlow)"/>
 </svg>
