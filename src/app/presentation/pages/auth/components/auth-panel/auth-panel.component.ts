@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 
 @Component({
   selector: 'app-auth-panel',
@@ -7,6 +6,6 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
   styleUrl: './auth-panel.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RetroIconComponent]
+  imports: []
 })
 export class AuthPanelComponent {}
