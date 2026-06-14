@@ -1,0 +1,274 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Retro Video Game Library Favicon</title>
+  <desc id="desc">A simplified neon retro handheld console icon for a video game library favicon.</desc>
+  <defs>
+    <!-- Background: very dark purple-black -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020010"/>
+      <stop offset="0.5" stop-color="#0B002E"/>
+      <stop offset="1" stop-color="#000008"/>
+    </linearGradient>
+    <!-- Border neon gradient -->
+    <linearGradient id="borderGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A020E0"/>
+      <stop offset="0.5" stop-color="#8109E0"/>
+      <stop offset="1" stop-color="#5A0695"/>
+    </linearGradient>
+    <!-- Console body: muted mauve/grey-purple with warm shadow -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ECA2BC"/>
+      <stop offset="0.28" stop-color="#9E7C9E"/>
+      <stop offset="0.62" stop-color="#6E3D75"/>
+      <stop offset="1" stop-color="#450445"/>
+    </linearGradient>
+    <!-- Screen sky: deep indigo → purple → hot pink → dark -->
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#140346"/>
+      <stop offset="0.3" stop-color="#2D015E"/>
+      <stop offset="0.55" stop-color="#7A0367"/>
+      <stop offset="0.78" stop-color="#BB075E"/>
+      <stop offset="1" stop-color="#1F0044"/>
+    </linearGradient>
+    <!-- Sun: warm yellow → orange → red -->
+    <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFD040"/>
+      <stop offset="25%"  stop-color="#FF8820"/>
+      <stop offset="60%"  stop-color="#FF4410"/>
+      <stop offset="100%" stop-color="#EE1035"/>
+    </linearGradient>
+    <!-- Sun glow -->
+    <radialGradient id="sunGlowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#FFA040" stop-opacity="0.55"/>
+      <stop offset="50%"  stop-color="#FF5020" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#FF2010" stop-opacity="0"/>
+    </radialGradient>
+    <!--
+      LAYOUT (512x512):
+      Device body: x=134, y=68, w=244, h=374, rx=12
+      Ribs zone: x=140, y=76 → w=64 (to x=204), full height inside body
+      Screen bezel: x=210, y=78, w=160, h=182, rx=6
+      Screen display: x=218, y=88, w=144, h=162
+      Horizon: y=88+130=218 (80% down)
+      Sun center: x=290, y=178 (screen x=218+72=290), r=40
+      Grid: y=218 to y=250
+      D-pad center: x=256, y=368 (horizontally centered in device)
+    -->
+    <!-- Sun clip (above horizon) -->
+    <clipPath id="sunClip">
+      <rect x="218" y="88" width="144" height="130"/>
+    </clipPath>
+    <!-- Screen clip -->
+    <clipPath id="screenClip">
+      <rect x="218" y="88" width="144" height="162"/>
+    </clipPath>
+    <!-- Outer glow filter -->
+    <filter id="outerGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Soft glow filter -->
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Strong glow for border lines -->
+    <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Outer clip -->
+    <clipPath id="outerClip"><rect x="12" y="12" width="488" height="488" rx="96"/></clipPath>
+    <style>.px{shape-rendering:crispEdges}</style>
+  </defs>
+
+  <g clip-path="url(#outerClip)">
+    <!-- Background -->
+    <rect width="512" height="512" fill="url(#bg)"/>
+
+    <!-- Ambient purple glow -->
+    <ellipse cx="256" cy="282" rx="190" ry="200" fill="#2A0860" opacity="0.15"/>
+
+    <!-- === NEON EDGE LINES (behind device) === -->
+    <!-- Cyan left glow (behind) -->
+    <line x1="126" y1="70" x2="126" y2="440" stroke="#52E3F9" stroke-width="6" opacity="0.9" filter="url(#lineGlow)"/>
+    <!-- Magenta right glow (behind) -->
+    <line x1="390" y1="70" x2="390" y2="440" stroke="#FF6AA3" stroke-width="12" opacity="0.95" filter="url(#lineGlow)"/>
+
+    <!-- === DEVICE BODY === -->
+    <!-- Shadow -->
+    <rect x="118" y="64" width="276" height="380" rx="14" fill="#280060" opacity="0.40" filter="url(#softGlow)"/>
+
+    <!-- Main body -->
+    <rect x="124" y="68" width="264" height="374" rx="12" fill="url(#bodyGrad)" stroke="#100616" stroke-width="2.5"/>
+
+    <!-- Top edge shimmer -->
+    <rect x="124" y="68" width="264" height="22" rx="12" fill="#ff80d0" opacity="0.22"/>
+
+    <!-- (right magenta rail placed after ribs for z-order) -->
+
+    <!-- === RIBBED SPINE (left zone) === -->
+    <!-- Spine dark background -->
+    <rect x="130" y="80" width="62" height="342" rx="0" fill="#170827" opacity="0.95"/>
+    <!-- Rib stripes — mauve bars with volume -->
+    <g class="px" fill="#9A639A" opacity="0.95">
+      <rect x="138" y="92"  width="46" height="9"/>
+      <rect x="138" y="109" width="46" height="9"/>
+      <rect x="138" y="126" width="46" height="9"/>
+      <rect x="138" y="143" width="46" height="9"/>
+      <rect x="138" y="160" width="46" height="9"/>
+      <rect x="138" y="177" width="46" height="9"/>
+      <rect x="138" y="194" width="46" height="9"/>
+      <rect x="138" y="211" width="46" height="9"/>
+      <rect x="138" y="228" width="46" height="9"/>
+      <rect x="138" y="245" width="46" height="9"/>
+      <rect x="138" y="262" width="46" height="9"/>
+      <rect x="138" y="279" width="46" height="9"/>
+      <rect x="138" y="296" width="46" height="9"/>
+      <rect x="138" y="313" width="46" height="9"/>
+      <rect x="138" y="330" width="46" height="9"/>
+      <rect x="138" y="347" width="46" height="9"/>
+      <rect x="138" y="364" width="46" height="9"/>
+      <rect x="138" y="381" width="46" height="9"/>
+      <rect x="138" y="398" width="46" height="9"/>
+    </g>
+
+    <!-- Cyan left rail solid (on top of body, z-order) -->
+    <rect x="124" y="68" width="5" height="374" rx="2" fill="#52E3F9" opacity="0.9" filter="url(#lineGlow)"/>
+    <!-- Magenta right rail solid (on top of body, z-order) -->
+    <rect x="382" y="68" width="6" height="374" rx="2" fill="#FF6AA3" opacity="0.9" filter="url(#lineGlow)"/>
+
+    <!-- === SCREEN BEZEL === -->
+    <!-- Outer bezel frame (mauve, slightly raised look) -->
+    <rect x="208" y="76" width="164" height="188" rx="7" fill="#6E3D75" stroke="#0a0118" stroke-width="2"/>
+    <!-- Inner dark border inset -->
+    <rect x="213" y="81" width="154" height="178" rx="5" fill="#1a0530" opacity="0.85"/>
+    <!-- Screen display -->
+    <rect x="218" y="88" width="144" height="162" fill="url(#skyGrad)"/>
+
+    <!-- === SYNTHWAVE SCENE === -->
+    <!-- Sun halo glow -->
+    <ellipse cx="290" cy="175" rx="65" ry="58" fill="url(#sunGlowGrad)" clip-path="url(#sunClip)"/>
+    <!-- Sun disc (clipped above horizon) -->
+    <circle cx="290" cy="182" r="42" fill="url(#sunGrad)" clip-path="url(#sunClip)"/>
+    <!-- Sun horizontal blinds -->
+    <g class="px" stroke="#160522" stroke-width="3.5" clip-path="url(#sunClip)">
+      <line x1="248" y1="160" x2="332" y2="160"/>
+      <line x1="248" y1="167" x2="332" y2="167"/>
+      <line x1="248" y1="174" x2="332" y2="174"/>
+      <line x1="248" y1="181" x2="332" y2="181"/>
+      <line x1="248" y1="188" x2="332" y2="188"/>
+      <line x1="248" y1="195" x2="332" y2="195"/>
+      <line x1="248" y1="202" x2="332" y2="202"/>
+      <line x1="248" y1="209" x2="332" y2="209"/>
+      <line x1="248" y1="216" x2="332" y2="216"/>
+    </g>
+
+    <!-- Mountain silhouettes at horizon (pixelated, color #6B0F5B) -->
+    <!-- Left mountains -->
+    <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
+      <rect x="218" y="210" width="6"  height="8"/>
+      <rect x="224" y="206" width="4"  height="12"/>
+      <rect x="228" y="212" width="6"  height="6"/>
+      <rect x="234" y="208" width="4"  height="10"/>
+      <rect x="238" y="214" width="6"  height="4"/>
+      <rect x="244" y="210" width="4"  height="8"/>
+      <rect x="248" y="216" width="6"  height="2"/>
+    </g>
+    <!-- Right mountains -->
+    <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
+      <rect x="330" y="216" width="6"  height="2"/>
+      <rect x="336" y="210" width="4"  height="8"/>
+      <rect x="340" y="214" width="6"  height="4"/>
+      <rect x="346" y="208" width="4"  height="10"/>
+      <rect x="350" y="212" width="6"  height="6"/>
+      <rect x="356" y="206" width="4"  height="12"/>
+      <rect x="360" y="210" width="2"  height="8"/>
+    </g>
+
+    <!-- Synthwave grid floor (below horizon at y=218) -->
+    <g clip-path="url(#screenClip)">
+      <!-- Floor dark bg (purple synthwave) -->
+      <rect x="218" y="218" width="144" height="32" fill="#3A0257"/>
+      <!-- Vertical converging lines -->
+      <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
+        <line x1="290" y1="218" x2="218" y2="250"/>
+        <line x1="290" y1="218" x2="232" y2="250"/>
+        <line x1="290" y1="218" x2="247" y2="250"/>
+        <line x1="290" y1="218" x2="261" y2="250"/>
+        <line x1="290" y1="218" x2="275" y2="250"/>
+        <line x1="290" y1="218" x2="290" y2="250"/>
+        <line x1="290" y1="218" x2="305" y2="250"/>
+        <line x1="290" y1="218" x2="319" y2="250"/>
+        <line x1="290" y1="218" x2="334" y2="250"/>
+        <line x1="290" y1="218" x2="348" y2="250"/>
+        <line x1="290" y1="218" x2="362" y2="250"/>
+      </g>
+      <!-- Horizontal grid lines -->
+      <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
+        <line x1="218" y1="224" x2="362" y2="224"/>
+        <line x1="218" y1="232" x2="362" y2="232"/>
+        <line x1="218" y1="241" x2="362" y2="241"/>
+        <line x1="218" y1="250" x2="362" y2="250"/>
+      </g>
+    </g>
+
+    <!-- Screen pixel sparkles (2 converted to + crosses) -->
+    <g class="px">
+      <!-- + cross pink upper-left of screen -->
+      <rect x="226" y="98"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="229" y="95"  width="3" height="9" fill="#ff55b8"/>
+      <!-- + cross pink upper-right of screen -->
+      <rect x="348" y="96"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="351" y="93"  width="3" height="9" fill="#ff55b8"/>
+      <!-- small dot sparkles -->
+      <rect x="336" y="108" width="4" height="4" fill="#7838f0"/>
+      <rect x="236" y="110" width="4" height="4" fill="#00c4ff" opacity="0.8"/>
+    </g>
+
+    <!-- === D-PAD (centered at x=256, y=368) === -->
+    <!-- Centered in device body (x=134 to x=378, center x=256) -->
+    <!-- Vertical arm: x=240, y=330, w=32, h=76 -->
+    <!-- Horizontal arm: x=206, y=352, w=100, h=32 -->
+
+    <!-- Shadow -->
+    <rect x="238" y="328" width="36" height="80" rx="5" fill="#040208" opacity="0.95"/>
+    <rect x="204" y="350" width="104" height="36" rx="5" fill="#040208" opacity="0.95"/>
+
+    <!-- D-pad vertical body -->
+    <rect x="240" y="330" width="32" height="76" rx="4" fill="#C9A9C9"/>
+    <!-- D-pad horizontal body -->
+    <rect x="206" y="352" width="100" height="32" rx="4" fill="#C9A9C9"/>
+
+    <!-- D-pad outer strokes (dark) -->
+    <rect x="240" y="330" width="32" height="76" rx="4" fill="none" stroke="#2A1633" stroke-width="3.5"/>
+    <rect x="206" y="352" width="100" height="32" rx="4" fill="none" stroke="#2A1633" stroke-width="3.5"/>
+
+    <!-- D-pad highlight bisel (top-left edges) -->
+    <rect x="240" y="330" width="32" height="2" rx="1" fill="#FFEEF0" class="px"/>
+    <rect x="240" y="330" width="2" height="76" rx="1" fill="#FFEEF0" class="px"/>
+    <rect x="206" y="352" width="100" height="2" rx="1" fill="#FFEEF0" class="px"/>
+    <rect x="206" y="352" width="2" height="32" rx="1" fill="#FFEEF0" class="px"/>
+
+    <!-- Center inset -->
+    <rect x="246" y="356" width="20" height="20" rx="3" fill="#311D41"/>
+    <circle cx="256" cy="366" r="6" fill="#241235"/>
+
+  </g>
+
+  <!-- === BACKGROUND PIXEL DECORATIONS === -->
+  <g clip-path="url(#outerClip)">
+    <!-- Small pink pixel dot upper-left (mantenido) -->
+    <rect x="100" y="106" width="8" height="8" fill="#d830a8" opacity="0.90" class="px"/>
+
+    <!-- Small scattered pixels right side (mantenidos) -->
+    <rect x="396" y="106" width="8" height="8" fill="#7830d8" opacity="0.72" class="px"/>
+    <rect x="388" y="192" width="8" height="8" fill="#28d0f8" opacity="0.75" class="px"/>
+
+    <!-- Magenta right rail glow (visible outside device body, x=378 is right edge of body) -->
+    <rect x="387" y="68" width="8" height="374" fill="#FF6AA3" opacity="1"/>
+    <rect x="387" y="68" width="8" height="374" fill="#FF6AA3" opacity="0.7" filter="url(#lineGlow)"/>
+  </g>
+
+  <!-- Rounded border with neon glow -->
+  <rect x="12" y="12" width="488" height="488" rx="96" fill="none" stroke="url(#borderGrad)" stroke-width="8" filter="url(#outerGlow)"/>
+</svg>
