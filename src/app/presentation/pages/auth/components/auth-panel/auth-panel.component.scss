@@ -46,6 +46,13 @@
     --_size: var(--text-display);
     color: var(--primary);
   }
+
+  .auth-panel__logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: block;
+  }
 }
 
 .auth-panel__app-name {

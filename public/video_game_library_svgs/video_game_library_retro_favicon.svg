@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Retro Video Game Library Favicon</title>
+  <desc id="desc">A simplified neon retro handheld console icon for a video game library favicon.</desc>
+  <defs>
+    <!-- Console body: muted mauve/grey-purple with warm shadow -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ECA2BC"/>
+      <stop offset="0.28" stop-color="#9E7C9E"/>
+      <stop offset="0.62" stop-color="#6E3D75"/>
+      <stop offset="1" stop-color="#450445"/>
+    </linearGradient>
+    <!-- Screen sky: deep indigo → purple → hot pink → dark -->
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#140346"/>
+      <stop offset="0.3" stop-color="#2D015E"/>
+      <stop offset="0.55" stop-color="#7A0367"/>
+      <stop offset="0.78" stop-color="#BB075E"/>
+      <stop offset="1" stop-color="#1F0044"/>
+    </linearGradient>
+    <!-- Sun: warm yellow → orange → red -->
+    <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFD040"/>
+      <stop offset="25%"  stop-color="#FF8820"/>
+      <stop offset="60%"  stop-color="#FF4410"/>
+      <stop offset="100%" stop-color="#EE1035"/>
+    </linearGradient>
+    <!-- Sun glow -->
+    <radialGradient id="sunGlowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#FFA040" stop-opacity="0.55"/>
+      <stop offset="50%"  stop-color="#FF5020" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#FF2010" stop-opacity="0"/>
+    </radialGradient>
+    <!--
+      LAYOUT (512x512):
+      Device body: x=72..440 w=368, y=68..442, octagon chamfers rx≈38
+      Spine bg: x=80, y=110, w=86, h=290 (starts at flat-left edge y=110)
+      Screen bezel: x=189, y=76, w=210, h=188, rx=7
+      Screen display: x=203, y=88, w=193, h=162
+      Horizon: y=88+130=218 (80% down)
+      Sun center: x=299.5 (203+193/2), y=182, r=42
+      Grid: y=218 to y=250
+      D-pad center: x=256, y=368 (horizontally centered in device)
+    -->
+    <!-- Sun clip (above horizon) -->
+    <clipPath id="sunClip">
+      <rect x="203" y="108" width="193" height="130"/>
+    </clipPath>
+    <!-- Screen clip -->
+    <clipPath id="screenClip">
+      <rect x="203" y="108" width="193" height="162"/>
+    </clipPath>
+    <!-- Soft glow filter -->
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Strong glow for border lines -->
+    <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>.px{shape-rendering:crispEdges}</style>
+  </defs>
+
+  <g>
+    <!-- === NEON EDGE LINES (behind device) === -->
+    <!-- Cyan left glow (behind) -->
+    <line x1="80" y1="70" x2="80" y2="440" stroke="#52E3F9" stroke-width="6" opacity="0.15" filter="url(#lineGlow)"/>
+    <!-- Magenta right glow (behind) -->
+    <line x1="432" y1="70" x2="432" y2="440" stroke="#FF6AA3" stroke-width="12" opacity="0.15" filter="url(#lineGlow)"/>
+
+    <!-- === DEVICE BODY === -->
+    <!-- Shadow -->
+    <path d="M106 60 L406 60 L448 102 L448 408 L406 450 L106 450 L64 408 L64 102 Z" fill="#280060" opacity="0.40" filter="url(#softGlow)"/>
+
+    <!-- Main body -->
+    <path d="M114 68 L398 68 L440 110 L440 400 L398 442 L114 442 L72 400 L72 110 Z" fill="url(#bodyGrad)" stroke="#100616" stroke-width="2.5"/>
+
+    <!-- Bisel 3D — cara clara (luz superior-izquierda) -->
+    <path d="M398 68 L114 68 L72 110 L72 400 L82 400 L82 110 L114 78 L398 78 Z" fill="#FFE0EC" opacity="0.30"/>
+
+    <!-- Bisel 3D — cara oscura (sombra inferior-derecha) -->
+    <path d="M440 110 L440 400 L398 442 L114 442 L114 432 L398 432 L430 400 L430 110 Z" fill="#1A0010" opacity="0.35"/>
+
+    <!-- Top edge shimmer -->
+    <path d="M72 110 L114 68 L398 68 L440 110 Z" fill="#ff80d0" opacity="0.22"/>
+
+    <!-- (right magenta rail placed after ribs for z-order) -->
+
+    <!-- === RIBBED SPINE (left zone) === -->
+    <!-- Spine dark background -->
+    <rect x="80" y="110" width="86" height="290" rx="0" fill="#170827" opacity="0.95"/>
+    <!-- Rib stripes — mauve bars with volume -->
+    <g class="px" fill="#9A639A" opacity="0.95">
+      <rect x="92" y="110" width="64" height="9"/>
+      <rect x="92" y="126" width="64" height="9"/>
+      <rect x="92" y="143" width="64" height="9"/>
+      <rect x="92" y="160" width="64" height="9"/>
+      <rect x="92" y="177" width="64" height="9"/>
+      <rect x="92" y="194" width="64" height="9"/>
+      <rect x="92" y="211" width="64" height="9"/>
+      <rect x="92" y="228" width="64" height="9"/>
+      <rect x="92" y="245" width="64" height="9"/>
+      <rect x="92" y="262" width="64" height="9"/>
+      <rect x="92" y="279" width="64" height="9"/>
+      <rect x="92" y="296" width="64" height="9"/>
+      <rect x="92" y="313" width="64" height="9"/>
+      <rect x="92" y="330" width="64" height="9"/>
+      <rect x="92" y="347" width="64" height="9"/>
+      <rect x="92" y="364" width="64" height="9"/>
+      <rect x="92" y="381" width="64" height="9"/>
+      <rect x="92" y="398" width="64" height="2"/>
+    </g>
+
+
+    <!-- === SCREEN BEZEL === -->
+    <!-- Outer bezel frame (mauve, slightly raised look) -->
+    <rect x="189" y="96" width="210" height="188" rx="7" fill="#6E3D75" stroke="#0a0118" stroke-width="2"/>
+    <!-- Inner dark border inset -->
+    <rect x="196" y="101" width="200" height="178" rx="5" fill="#1a0530" opacity="0.85"/>
+    <!-- Screen display -->
+    <rect x="203" y="108" width="193" height="162" fill="url(#skyGrad)"/>
+
+    <!-- === SYNTHWAVE SCENE === -->
+    <!-- Sun halo glow -->
+    <ellipse cx="299.5" cy="195" rx="65" ry="58" fill="url(#sunGlowGrad)" clip-path="url(#sunClip)"/>
+    <!-- Sun disc (clipped above horizon) -->
+    <circle cx="299.5" cy="202" r="42" fill="url(#sunGrad)" clip-path="url(#sunClip)"/>
+    <!-- Sun horizontal blinds -->
+    <g class="px" stroke="#160522" stroke-width="3.5" clip-path="url(#sunClip)">
+      <line x1="243" y1="180" x2="356" y2="180"/>
+      <line x1="243" y1="187" x2="356" y2="187"/>
+      <line x1="243" y1="194" x2="356" y2="194"/>
+      <line x1="243" y1="201" x2="356" y2="201"/>
+      <line x1="243" y1="208" x2="356" y2="208"/>
+      <line x1="243" y1="215" x2="356" y2="215"/>
+      <line x1="243" y1="222" x2="356" y2="222"/>
+      <line x1="243" y1="229" x2="356" y2="229"/>
+      <line x1="243" y1="236" x2="356" y2="236"/>
+    </g>
+
+    <!-- Mountain silhouettes at horizon (pixelated, color #6B0F5B) -->
+    <!-- Left mountains -->
+    <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
+      <rect x="203" y="230" width="8"  height="8"/>
+      <rect x="212" y="226" width="6"  height="12"/>
+      <rect x="217" y="232" width="8"  height="6"/>
+      <rect x="226" y="228" width="6"  height="10"/>
+      <rect x="231" y="234" width="8"  height="4"/>
+      <rect x="240" y="230" width="6"  height="8"/>
+      <rect x="245" y="236" width="8"  height="2"/>
+    </g>
+    <!-- Right mountains -->
+    <g class="px" fill="#6B0F5B" clip-path="url(#screenClip)">
+      <rect x="353" y="236" width="8"  height="2"/>
+      <rect x="361" y="230" width="6"  height="8"/>
+      <rect x="366" y="234" width="8"  height="4"/>
+      <rect x="375" y="228" width="6"  height="10"/>
+      <rect x="380" y="232" width="8"  height="6"/>
+      <rect x="388" y="226" width="6"  height="12"/>
+      <rect x="393" y="230" width="3"  height="8"/>
+    </g>
+
+    <!-- Synthwave grid floor (below horizon at y=238) -->
+    <g clip-path="url(#screenClip)">
+      <!-- Floor dark bg (purple synthwave) -->
+      <rect x="203" y="238" width="193" height="32" fill="#3A0257"/>
+      <!-- Vertical converging lines -->
+      <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
+        <line x1="300" y1="238" x2="203" y2="270"/>
+        <line x1="300" y1="238" x2="222" y2="270"/>
+        <line x1="300" y1="238" x2="242" y2="270"/>
+        <line x1="300" y1="238" x2="261" y2="270"/>
+        <line x1="300" y1="238" x2="280" y2="270"/>
+        <line x1="300" y1="238" x2="300" y2="270"/>
+        <line x1="300" y1="238" x2="319" y2="270"/>
+        <line x1="300" y1="238" x2="338" y2="270"/>
+        <line x1="300" y1="238" x2="359" y2="270"/>
+        <line x1="300" y1="238" x2="378" y2="270"/>
+        <line x1="300" y1="238" x2="396" y2="270"/>
+      </g>
+      <!-- Horizontal grid lines -->
+      <g stroke="#FF12A0" stroke-width="2.2" fill="none" opacity="0.93">
+        <line x1="203" y1="244" x2="396" y2="244"/>
+        <line x1="203" y1="252" x2="396" y2="252"/>
+        <line x1="203" y1="261" x2="396" y2="261"/>
+        <line x1="203" y1="270" x2="396" y2="270"/>
+      </g>
+    </g>
+
+    <!-- Screen pixel sparkles (2 converted to + crosses) -->
+    <g class="px">
+      <!-- + cross pink upper-left of screen -->
+      <rect x="214" y="118"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="218" y="115"  width="3" height="9" fill="#ff55b8"/>
+      <!-- + cross pink upper-right of screen -->
+      <rect x="378" y="116"  width="9" height="3" fill="#ff55b8"/>
+      <rect x="382" y="113"  width="3" height="9" fill="#ff55b8"/>
+      <!-- small dot sparkles -->
+      <rect x="361" y="128" width="4" height="4" fill="#7838f0"/>
+      <rect x="228" y="130" width="4" height="4" fill="#00c4ff" opacity="0.8"/>
+    </g>
+
+    <!-- === BADGE CERO (synthwave) === -->
+    <rect x="252" y="324" width="84" height="96" rx="12" fill="#040208" opacity="0.95"/>
+    <rect x="254" y="322" width="80" height="92" rx="11" fill="#0A0018" stroke="#8109E0" stroke-width="3"/>
+    <rect x="259" y="327" width="70" height="82" rx="8" fill="none" stroke="#A020E0" stroke-width="1.5" opacity="0.7"/>
+    <rect x="259" y="327" width="70" height="20" rx="8" fill="#1F0044"/>
+    <rect x="259" y="340" width="70" height="7" fill="#1F0044"/>
+    <text x="294" y="342" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" fill="#C060FF">CERO</text>
+    <text x="294" y="391" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="44" font-weight="800" fill="#C060FF">A</text>
+    <text x="294" y="391" text-anchor="middle" font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif" font-size="44" font-weight="800" fill="#FF12A0" opacity="0.35">A</text>
+    <rect x="259" y="398" width="70" height="11" rx="0" fill="#1F0044"/>
+    <text x="294" y="407" text-anchor="middle" font-family="'Hiragino Sans','Yu Gothic',sans-serif" font-size="9" font-weight="600" letter-spacing="0.5" fill="#FF6AA3">全年齢対象</text>
+
+  </g>
+
+  <!-- === BACKGROUND PIXEL DECORATIONS === -->
+  <g>
+    <!-- Small pink pixel dot upper-left (mantenido) -->
+    <rect x="100" y="106" width="8" height="8" fill="#d830a8" opacity="0.90" class="px"/>
+
+    <!-- Small scattered pixels right side (mantenidos) -->
+    <rect x="396" y="106" width="8" height="8" fill="#7830d8" opacity="0.72" class="px"/>
+    <rect x="388" y="192" width="8" height="8" fill="#28d0f8" opacity="0.75" class="px"/>
+
+  </g>
+
+</svg>
