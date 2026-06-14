@@ -101,6 +101,12 @@
     <!-- Main body -->
     <path d="M146 68 L366 68 L388 90 L388 420 L366 442 L146 442 L124 420 L124 90 Z" fill="url(#bodyGrad)" stroke="#100616" stroke-width="2.5"/>
 
+    <!-- Bisel 3D — cara clara (luz superior-izquierda) -->
+    <path d="M366 68 L146 68 L124 90 L124 420 L134 420 L134 90 L146 78 L366 78 Z" fill="#FFE0EC" opacity="0.30"/>
+
+    <!-- Bisel 3D — cara oscura (sombra inferior-derecha) -->
+    <path d="M388 90 L388 420 L366 442 L146 442 L146 432 L366 432 L378 420 L378 90 Z" fill="#1A0010" opacity="0.35"/>
+
     <!-- Top edge shimmer -->
     <path d="M124 90 L146 68 L366 68 L388 90 Z" fill="#ff80d0" opacity="0.22"/>
 
