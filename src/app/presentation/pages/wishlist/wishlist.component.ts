@@ -87,6 +87,9 @@ export class WishlistComponent implements OnInit {
   /** Item being edited in mobile form mode (null = add mode). */
   private _editingItem: WishlistItemModel | null = null;
 
+  /** Signal that exposes the item being edited so the template can read it reactively. */
+  readonly editingItem: WritableSignal<WishlistItemModel | null> = signal<WishlistItemModel | null>(null);
+
   /** Whether the current edit was initiated from the detail page. */
   private _returnToDetail: boolean = false;
 
@@ -215,6 +218,7 @@ export class WishlistComponent implements OnInit {
    */
   onAddItem(): void {
     this._editingItem = null;
+    this.editingItem.set(null);
     this.pendingCatalogEntry.set(null);
     this._resetMobileForm(null);
     this.viewMode.set('search');
@@ -228,6 +232,7 @@ export class WishlistComponent implements OnInit {
    */
   onEditItem(item: WishlistItemModel): void {
     this._editingItem = item;
+    this.editingItem.set(item);
     this._resetMobileForm(item);
     this.editPlatforms.set([]);
     this.viewMode.set('form');
@@ -334,6 +339,8 @@ export class WishlistComponent implements OnInit {
           duration: 2000,
           variant: 'success'
         });
+        this._editingItem = null;
+        this.editingItem.set(null);
         if (this._returnToDetail && this._returnToDetailId) {
           const updated: WishlistItemModel | undefined = this.items().find((i) => i.id === this._returnToDetailId);
           this._returnToDetail = false;
@@ -386,6 +393,7 @@ export class WishlistComponent implements OnInit {
    */
   onMobileCancel(): void {
     this._editingItem = null;
+    this.editingItem.set(null);
     this.pendingCatalogEntry.set(null);
     if (this._returnToDetail) {
       this._returnToDetail = false;
