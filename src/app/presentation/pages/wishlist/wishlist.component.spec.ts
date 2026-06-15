@@ -107,6 +107,8 @@ describe('WishlistComponent', () => {
     it('filteredItems() es [] cuando items está vacío', () => {
       expect(component.filteredItems()).toEqual([]);
     });
+
+    it('editingItem es null', () => expect(component.editingItem()).toBeNull());
   });
 
   describe('filteredItems', () => {
@@ -162,6 +164,18 @@ describe('WishlistComponent', () => {
       component.onClearSearch();
       expect(component.searchTerm()).toBe('');
       expect(component.filteredItems()).toHaveLength(2);
+    });
+  });
+
+  describe('commandFlags', () => {
+    it('devuelve [] cuando searchTerm está vacío', () => {
+      component.searchTerm.set('');
+      expect(component.commandFlags()).toEqual([]);
+    });
+
+    it('devuelve el flag con el término cuando searchTerm tiene valor', () => {
+      component.searchTerm.set('zelda');
+      expect(component.commandFlags()).toEqual(['search="zelda"']);
     });
   });
 
@@ -222,6 +236,12 @@ describe('WishlistComponent', () => {
       component.onAddItem();
       expect(component.pendingCatalogEntry()).toBeNull();
     });
+
+    it('resetea editingItem a null', () => {
+      component.editingItem.set(makeItem());
+      component.onAddItem();
+      expect(component.editingItem()).toBeNull();
+    });
   });
 
   describe('onEditItem', () => {
@@ -241,6 +261,12 @@ describe('WishlistComponent', () => {
     it('activa editPlatformsLoading cuando el item tiene rawgId', () => {
       component.onEditItem(makeItem({ rawgId: 58175 }));
       expect(component.editPlatformsLoading()).toBe(true);
+    });
+
+    it('establece editingItem con el item recibido', () => {
+      const item = makeItem({ title: 'Zelda' });
+      component.onEditItem(item);
+      expect(component.editingItem()).toEqual(item);
     });
   });
 
@@ -312,6 +338,12 @@ describe('WishlistComponent', () => {
       component.onMobileCancel();
 
       expect(location.back).toHaveBeenCalled();
+    });
+
+    it('resetea editingItem a null', () => {
+      component.editingItem.set(makeItem());
+      component.onMobileCancel();
+      expect(component.editingItem()).toBeNull();
     });
   });
 
@@ -497,6 +529,21 @@ describe('WishlistComponent', () => {
 
       expect(wishlistUseCases.updateItem).toHaveBeenCalled();
       expect(component.viewMode()).toBe('list');
+    });
+
+    it('resetea editingItem a null tras actualizar con éxito', async () => {
+      const wishlistUseCases = TestBed.inject(WISHLIST_USE_CASES as any) as any;
+      wishlistUseCases.updateItem.mockResolvedValue(undefined);
+      wishlistUseCases.getAllForUser.mockResolvedValue([]);
+
+      const item = makeItem();
+      (component as any)._editingItem = item;
+      component.editingItem.set(item);
+      component.mobileForm.setValue({ priority: 4, platform: 'PS4', desiredPrice: 30, notes: null });
+
+      await component.onMobileConfirm();
+
+      expect(component.editingItem()).toBeNull();
     });
 
     it('navega a la pantalla de detalle tras actualizar si _returnToDetail es true', async () => {

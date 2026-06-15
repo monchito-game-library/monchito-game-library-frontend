@@ -146,6 +146,19 @@
             }
           </div>
         </div>
+      } @else if (editingItem(); as item) {
+        <!-- Game info preview (edit mode) — informative only, not editable -->
+        <div class="wishlist-view__game-preview">
+          @if (item.imageUrl) {
+            <img class="wishlist-view__game-cover" [src]="item.imageUrl" [alt]="item.title" />
+          }
+          <div class="wishlist-view__game-info">
+            <span class="wishlist-view__game-title">{{ item.title }}</span>
+            @if (item.releasedDate) {
+              <span class="wishlist-view__game-year">{{ item.releasedDate | slice: 0 : 4 }}</span>
+            }
+          </div>
+        </div>
       }
 
       <form [formGroup]="mobileForm" class="wishlist-view__form">
