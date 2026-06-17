@@ -1,4 +1,16 @@
-import { Directive, ElementRef, HostListener, inject, input, InputSignal, OnDestroy, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  InputSignal,
+  OnDestroy,
+  Renderer2,
+  Signal
+} from '@angular/core';
+
+import { RETRO_TOOLTIP_TEXT } from '../tokens/retro-tooltip-text.token';
 
 /**
  * Directiva de tooltip nativa sin CDK Overlay.
@@ -26,6 +38,7 @@ export class RetroTooltipDirective implements OnDestroy {
 
   private readonly _el: ElementRef<HTMLElement> = inject(ElementRef);
   private readonly _renderer: Renderer2 = inject(Renderer2);
+  private readonly _tokenText: Signal<string> | null = inject(RETRO_TOOLTIP_TEXT, { optional: true });
   private readonly _tooltipId: string = `retro-tooltip-${++RetroTooltipDirective._idCounter}`;
 
   private _tooltipEl?: HTMLElement;
@@ -33,8 +46,8 @@ export class RetroTooltipDirective implements OnDestroy {
   private _visible = false;
   private _repositionHandler?: () => void;
 
-  /** Texto del tooltip. */
-  readonly retroTooltip: InputSignal<string> = input.required<string>();
+  /** Texto del tooltip. Si se suministra el token RETRO_TOOLTIP_TEXT, éste tiene prioridad. */
+  readonly retroTooltip: InputSignal<string> = input<string>('');
 
   /** Retardo en ms antes de mostrar el tooltip (por defecto 500ms). */
   readonly retroTooltipDelay: InputSignal<number> = input<number>(500);
@@ -99,7 +112,7 @@ export class RetroTooltipDirective implements OnDestroy {
    */
   private _show(): void {
     if (this._tooltipEl) return;
-    const text = this.retroTooltip();
+    const text = this._tokenText !== null ? this._tokenText() : this.retroTooltip();
     if (!text) return;
 
     const panel: HTMLElement = this._renderer.createElement('div');

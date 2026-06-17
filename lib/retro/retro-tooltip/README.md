@@ -11,10 +11,10 @@ Native tooltip directive without CDK Overlay. Creates a `<div class="retro-toolt
 
 ## API — Inputs
 
-| Name                | Angular type                     | Default | Description                                                    |
-| ------------------- | -------------------------------- | ------- | -------------------------------------------------------------- |
-| `retroTooltip`      | `InputSignal<string> (required)` | —       | Tooltip text. If empty, nothing is displayed.                  |
-| `retroTooltipDelay` | `InputSignal<number>`            | `500`   | Delay in ms before showing the tooltip after mouseenter/focus. |
+| Name                | Angular type          | Default | Description                                                                                                                                                |
+| ------------------- | --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retroTooltip`      | `InputSignal<string>` | `''`    | Tooltip text. If empty, nothing is displayed. When `RETRO_TOOLTIP_TEXT` token is provided in the injector, the token value takes priority over this input. |
+| `retroTooltipDelay` | `InputSignal<number>` | `500`   | Delay in ms before showing the tooltip after mouseenter/focus.                                                                                             |
 
 ## Minimal example
 
