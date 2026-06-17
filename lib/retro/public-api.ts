@@ -26,6 +26,7 @@ export { RetroMenuTriggerDirective } from './retro-menu/directive/retro-menu-tri
 export { RetroTabsComponent } from './retro-tabs/retro-tabs.component';
 export { RetroTabComponent } from './retro-tabs/components/retro-tab/retro-tab.component';
 export { RetroTooltipDirective } from './retro-tooltip/directive/retro-tooltip.directive';
+export { RetroEllipsisTooltipDirective } from './retro-ellipsis-tooltip/directive/retro-ellipsis-tooltip.directive';
 export { RetroSegmentedComponent } from './retro-segmented/retro-segmented.component';
 
 // ─── Servicios ────────────────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ export {
 // ─── Tokens expuestos a consumidores externos ─────────────────────────────────
 export { RETRO_FORM_FIELD_CONTROL } from './retro-form-field/tokens/retro-form-field-control.token';
 export type { RetroFormFieldControl } from './retro-form-field/tokens/retro-form-field-control.token';
+export { RETRO_TOOLTIP_TEXT } from './retro-tooltip/tokens/retro-tooltip-text.token';
 
 // ─── Tipos expuestos a consumidores externos ──────────────────────────────────
 export type { RetroChipColor } from './retro-chip/retro-chip.types';
