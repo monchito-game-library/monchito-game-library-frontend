@@ -16,6 +16,7 @@ import { RetroTabsComponent } from '@retro/retro-tabs/retro-tabs.component';
 import { RetroTabComponent } from '@retro/retro-tabs/components/retro-tab/retro-tab.component';
 import { RetroListComponent } from '@retro/retro-list/retro-list.component';
 import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
+import { RetroEllipsisTooltipDirective } from '@retro/retro-ellipsis-tooltip/directive/retro-ellipsis-tooltip.directive';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
@@ -43,7 +44,8 @@ import { Router } from '@angular/router';
     RetroListComponent,
     RetroListItemComponent,
     TranslocoPipe,
-    RetroSpinnerComponent
+    RetroSpinnerComponent,
+    RetroEllipsisTooltipDirective
   ]
 })
 export class SaleComponent implements OnInit {

@@ -11,10 +11,10 @@ Native tooltip directive without CDK Overlay. Creates a `<div class="retro-toolt
 
 ## API — Inputs
 
-| Name                | Angular type                     | Default | Description                                                    |
-| ------------------- | -------------------------------- | ------- | -------------------------------------------------------------- |
-| `retroTooltip`      | `InputSignal<string> (required)` | —       | Tooltip text. If empty, nothing is displayed.                  |
-| `retroTooltipDelay` | `InputSignal<number>`            | `500`   | Delay in ms before showing the tooltip after mouseenter/focus. |
+| Name                | Angular type          | Default | Description                                                                                                                                                |
+| ------------------- | --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retroTooltip`      | `InputSignal<string>` | `''`    | Tooltip text. If empty, nothing is displayed. When `RETRO_TOOLTIP_TEXT` token is provided in the injector, the token value takes priority over this input. |
+| `retroTooltipDelay` | `InputSignal<number>` | `500`   | Delay in ms before showing the tooltip after mouseenter/focus.                                                                                             |
 
 ## Minimal example
 
@@ -24,6 +24,25 @@ Native tooltip directive without CDK Overlay. Creates a `<div class="retro-toolt
   ariaLabel="More information"
   [retroTooltip]="'Click to see details'"
   [retroTooltipDelay]="300" />
+```
+
+## Token RETRO_TOOLTIP_TEXT
+
+| Name                 | Type                             | Description                                                                                                                                                                                                    |
+| -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RETRO_TOOLTIP_TEXT` | `InjectionToken<Signal<string>>` | Token de inyección opcional. Una directiva externa puede proveerlo en el mismo elemento host para suministrar el texto dinámicamente. Cuando está presente, tiene **prioridad** sobre el input `retroTooltip`. |
+
+Use this token when the tooltip text is controlled programmatically by a companion directive rather than being set directly in the template. `RetroEllipsisTooltipDirective` is an example: it provides this token automatically so the tooltip only appears when the text overflows.
+
+```ts
+// Example: companion directive providing dynamic text via the token
+providers: [
+  {
+    provide: RETRO_TOOLTIP_TEXT,
+    useFactory: (dir: MyDirective) => dir.tooltipText, // Signal<string>
+    deps: [MyDirective]
+  }
+];
 ```
 
 ## Gotchas

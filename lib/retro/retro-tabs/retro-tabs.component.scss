@@ -136,3 +136,14 @@
     text-shadow: none;
   }
 }
+
+// ────────────────────────── Responsive: < 768px ──────────────────────────
+@media (max-width: 768px) {
+  .retro-tabs__tab {
+    gap: 0;
+  }
+
+  .retro-tabs__tab > span {
+    display: none;
+  }
+}
