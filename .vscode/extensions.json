@@ -1,24 +1,31 @@
 {
   "recommendations": [
-    "madhusuthanan.angular-unit-testing-snippets",
-    "nrwl.angular-console",
     "angular.ng-template",
-    "johnpapa.angular2",
-    "aaron-bond.better-comments",
-    "alefragnani.bookmarks",
-    "pranaygp.vscode-css-peek",
-    "sporiley.css-auto-prefix",
-    "ms-azuretools.vscode-docker",
     "dbaeumer.vscode-eslint",
-    "mhutchie.git-graph",
-    "thibault-vanderseypen.i18n-json-editor",
     "esbenp.prettier-vscode",
-    "rangav.vscode-thunder-client",
-    "gruntfuggly.todo-tree",
-    "redhat.vscode-yaml",
-    "usernamehw.errorlens",
     "editorconfig.editorconfig",
+    "vitest.explorer",
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense",
+    "yoavbls.pretty-ts-errors",
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "mikestead.dotenv",
+    "gruntfuggly.todo-tree",
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker",
+    "pranaygp.vscode-css-peek",
+    "ms-playwright.playwright",
+    "thibault-vanderseypen.i18n-json-editor",
+    "ms-azuretools.vscode-docker"
+  ],
+  "unwantedRecommendations": [
+    "johnpapa.angular2",
+    "madhusuthanan.angular-unit-testing-snippets",
+    "stylelint.vscode-stylelint",
+    "sporiley.css-auto-prefix",
     "zignd.html-css-class-completion",
-    "stylelint.vscode-stylelint"
+    "rangav.vscode-thunder-client",
+    "nrwl.angular-console"
   ]
 }

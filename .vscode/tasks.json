@@ -1,0 +1,67 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: start",
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "ng serve --configuration development"
+    },
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: test",
+      "type": "npm",
+      "script": "test",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: test:watch",
+      "type": "npm",
+      "script": "test:watch",
+      "isBackground": true,
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: test:coverage",
+      "type": "npm",
+      "script": "test:coverage",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: lint",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: lint:fix",
+      "type": "npm",
+      "script": "lint:fix",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: format",
+      "type": "npm",
+      "script": "format",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: check:unused",
+      "type": "npm",
+      "script": "check:unused",
+      "problemMatcher": []
+    }
+  ]
+}
