@@ -17,7 +17,7 @@
     "**/coverage": true
   },
   "eslint.useFlatConfig": true,
-  "eslint.validate": ["typescript", "html"],
+  "eslint.validate": ["typescript", "html", "javascript"],
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "non-relative",
