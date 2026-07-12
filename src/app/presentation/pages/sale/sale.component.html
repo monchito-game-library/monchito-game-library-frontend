@@ -1,5 +1,5 @@
 <div class="sale-page">
-  <retro-tabs class="sale-page__tab-group" (selectedIndexChange)="onTabIndexChange($event)">
+  <retro-tabs class="sale-page__tab-group" (selectedIndexChange)="onTabIndexChange($event)" [hideLabels]="isMobile()">
     <!-- ─── Tab: For sale ─────────────────────────────────────────────────── -->
     <retro-tab [label]="'salePage.tabs.available' | transloco" icon="sell">
       <ng-template>

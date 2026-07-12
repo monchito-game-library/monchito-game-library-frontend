@@ -19,7 +19,7 @@
           @if (item.icon) {
             <retro-icon [name]="item.icon" size="sm" />
           }
-          <span>{{ item.label | transloco }}</span>
+          <span [class.retro-tabs__label--hidden]="hideLabels()">{{ item.label | transloco }}</span>
         </a>
       }
       <span class="retro-tabs__indicator" aria-hidden="true"></span>
@@ -48,7 +48,7 @@
           @if (tab.icon()) {
             <retro-icon [name]="tab.icon()!" size="sm" />
           }
-          <span>{{ tab.label() }}</span>
+          <span [class.retro-tabs__label--hidden]="hideLabels()">{{ tab.label() }}</span>
         </button>
       }
       <span class="retro-tabs__indicator" aria-hidden="true"></span>
