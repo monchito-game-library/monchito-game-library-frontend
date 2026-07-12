@@ -7,7 +7,14 @@
       "script": "start",
       "isBackground": true,
       "group": "build",
-      "problemMatcher": [],
+      "problemMatcher": {
+        "base": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*(Building|Rebuilding)\\.\\.\\.$",
+          "endsPattern": "^.*Application bundle generation complete.*$"
+        }
+      },
       "detail": "ng serve --configuration development"
     },
     {
@@ -30,7 +37,15 @@
       "script": "test:watch",
       "isBackground": true,
       "group": "test",
-      "problemMatcher": []
+      "problemMatcher": {
+        "base": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*(Building|Rebuilding)\\.\\.\\.$",
+          "endsPattern": "^.*Waiting for file changes\\.\\.\\.$"
+        }
+      },
+      "detail": "ng test --watch"
     },
     {
       "label": "npm: test:coverage",

@@ -3,12 +3,15 @@ import {
   Component,
   computed,
   inject,
+  OnDestroy,
   OnInit,
   Signal,
   signal,
   WritableSignal
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Subscription } from 'rxjs';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
@@ -20,6 +23,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { AvailableItemModel, MarketItemType, SoldItemModel } from '@/models/market/market-item.model';
 import { availablePlatformsConstant } from '@/constants/available-platforms.constant';
+import { BREAKPOINTS } from '@/constants/breakpoints.constant';
 import { MARKET_USE_CASES, MarketUseCasesContract } from '@/domain/use-cases/market/market.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
@@ -46,12 +50,18 @@ import { Router } from '@angular/router';
     RetroSpinnerComponent
   ]
 })
-export class SaleComponent implements OnInit {
+export class SaleComponent implements OnInit, OnDestroy {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
   private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
+  private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+
+  private _bpSubscription?: Subscription;
+
+  /** True cuando el viewport es ≤ 768px (móvil). Oculta los labels de los tabs. */
+  readonly isMobile: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Active tab: 'available' or 'history'. */
   readonly activeTab: WritableSignal<SaleTab> = signal<SaleTab>('available');
@@ -95,6 +105,11 @@ export class SaleComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const userId = this._userContext.userId();
     if (!userId) return;
+    this._bpSubscription = this._breakpointObserver
+      .observe([`(max-width: ${BREAKPOINTS.mobile}px)`])
+      .subscribe((state): void => {
+        this.isMobile.set(state.matches);
+      });
     try {
       const [available, sold] = await Promise.all([
         this._marketUseCases.getAvailableItems(userId),
@@ -111,6 +126,10 @@ export class SaleComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  ngOnDestroy(): void {
+    this._bpSubscription?.unsubscribe();
   }
 
   /**

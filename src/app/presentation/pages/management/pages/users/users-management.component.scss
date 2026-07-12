@@ -262,6 +262,14 @@ retro-card.users-stats__card--members .retro-card {
   object-fit: cover;
 }
 
+.user-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  width: 100%;
+}
+
 .user-card__email {
   font-size: var(--text-sm);
   font-weight: 500;

@@ -125,6 +125,10 @@
   }
 }
 
+.retro-tabs__label--hidden {
+  display: none;
+}
+
 // ────────────────────────── Responsive: reduced motion ────────────────────────
 @media (prefers-reduced-motion: reduce) {
   .retro-tabs__indicator,

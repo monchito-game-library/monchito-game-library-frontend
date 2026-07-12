@@ -23,10 +23,6 @@
   min-height: 0;
 }
 
-.sale-page__tab-label {
-  margin-left: 0.5rem;
-}
-
 // ── Tab content ────────────────────────────────────────────────────────────────
 
 .sale-page__tab-content {
@@ -190,6 +186,7 @@
 
 .sale-page__item-info {
   flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
@@ -227,6 +224,7 @@
   font-weight: 700;
   color: var(--primary);
   flex-shrink: 0;
+  margin-left: 0.5rem;
 }
 
 .sale-page__item-no-price {
@@ -241,6 +239,7 @@
   align-items: flex-end;
   gap: 0.125rem;
   flex-shrink: 0;
+  margin-left: 0.5rem;
 }
 
 .sale-page__item-sold-price {
@@ -262,10 +261,6 @@
 
   .sale-page__content {
     padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
-  }
-
-  .sale-page__tab-label {
-    display: none;
   }
 
   .sale-page__filter-chip-label {
