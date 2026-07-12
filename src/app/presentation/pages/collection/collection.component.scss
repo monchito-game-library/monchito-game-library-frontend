@@ -23,17 +23,4 @@
     flex-direction: column;
     min-height: 0;
   }
-
-  .games__tab-label {
-    margin-left: 0.5rem;
-  }
-}
-
-// ────────────────────────── Responsive: ≤ 768px ──────────────────────────
-@media (max-width: 768px) {
-  .games {
-    .games__tab-label {
-      display: none;
-    }
-  }
 }
