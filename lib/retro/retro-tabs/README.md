@@ -97,6 +97,7 @@ readonly activeTab = signal(0);
 ## Gotchas
 
 - **Unique IDs with static counter**: `retro-tab` generates its `id` using a monotonic static counter (`retro-tab-1`, `retro-tab-2`…). The counter does not reset between tests; in SSR or with multiple instances on the same page, IDs are always unique.
+- **Active panel layout via `retro-tabs__panel`**: the active tabpanel div carries `class="retro-tabs__panel"`, which applies `flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden`. This guarantees the projected content fills the available height and its inner scroll container behaves correctly. If you bypass `<retro-tab>` and project raw content, you are responsible for replicating this layout contract.
 - **Index clamping**: both `selectedIndex` and the programmatic `select(n)` method clamp the value to `[0, tabs.length - 1]`. An out-of-bounds index activates the tab closest to the limit.
 - **MutationObserver scoped to `childList`**: the observer that updates the indicator only listens for addition/removal of direct children of `.retro-tabs__list`; it does not observe attribute changes or deep descendants.
 - **Router mode on mobile**: the tab list is horizontally scrollable on touch devices (`overflow-x: auto` with a hidden scrollbar).

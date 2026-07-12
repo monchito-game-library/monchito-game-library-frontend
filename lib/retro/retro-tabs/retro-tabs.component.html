@@ -56,6 +56,7 @@
     <div class="retro-tabs__panels">
       @for (tab of tabsArray(); track tab.id; let i = $index) {
         <div
+          class="retro-tabs__panel"
           role="tabpanel"
           [id]="'retro-tabpanel-' + tab.id"
           [attr.aria-labelledby]="'retro-tab-' + tab.id"
