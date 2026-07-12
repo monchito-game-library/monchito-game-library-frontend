@@ -23,10 +23,6 @@
   min-height: 0;
 }
 
-.sale-page__tab-label {
-  margin-left: 0.5rem;
-}
-
 // ── Tab content ────────────────────────────────────────────────────────────────
 
 .sale-page__tab-content {
@@ -262,10 +258,6 @@
 
   .sale-page__content {
     padding: 1rem 1rem calc(var(--bottom-nav-height) + 1rem);
-  }
-
-  .sale-page__tab-label {
-    display: none;
   }
 
   .sale-page__filter-chip-label {
