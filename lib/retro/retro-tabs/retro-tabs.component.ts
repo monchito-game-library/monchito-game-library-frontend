@@ -80,6 +80,9 @@ export class RetroTabsComponent implements AfterViewInit {
   /** Etiqueta aria para el contenedor de tabs. */
   readonly ariaLabel: InputSignal<string | undefined> = input<string | undefined>(undefined);
 
+  /** When true, hides the text label of every tab (icon-only). Default: false. */
+  readonly hideLabels: InputSignal<boolean> = input<boolean>(false);
+
   /** Índice del tab activo inicial en modo local. Ignorado en modo router. */
   readonly selectedIndex: InputSignal<number> = input<number>(0);
 

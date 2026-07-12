@@ -16,6 +16,7 @@ Unified tabs component supporting two operation modes: **router mode** (navigati
 | `items`         | `InputSignal<readonly RetroTabItem[] \| undefined>` | `undefined` | Navigation items. When provided, activates router mode with `<a routerLink>`. |
 | `selectedIndex` | `InputSignal<number>`                               | `0`         | Initial active tab index. Applies only in local mode.                         |
 | `ariaLabel`     | `InputSignal<string \| undefined>`                  | `undefined` | Aria label for the tab container (`<nav>` or `[role=tablist]`).               |
+| `hideLabels`    | `InputSignal<boolean>`                              | `false`     | When true, hides the text label of every tab (icon-only). The consumer decides when to set it (typically from `BreakpointObserver`). |
 
 ## API — Outputs
 
@@ -101,3 +102,4 @@ readonly activeTab = signal(0);
 - **MutationObserver scoped to `childList`**: the observer that updates the indicator only listens for addition/removal of direct children of `.retro-tabs__list`; it does not observe attribute changes or deep descendants.
 - **Router mode on mobile**: the tab list is horizontally scrollable on touch devices (`overflow-x: auto` with a hidden scrollbar).
 - **`prefers-reduced-motion`**: the sliding indicator transition and the neon text-shadow on the active tab are disabled.
+- **`hideLabels` does not auto-detect viewport**: the consumer is responsible for setting `[hideLabels]` (typically from a `BreakpointObserver` watching `(max-width: 768px)`). When `true`, the lib applies `class="retro-tabs__label--hidden"` to every label `<span>` and hides it via its own SCSS — no `::ng-deep` or external CSS is required.

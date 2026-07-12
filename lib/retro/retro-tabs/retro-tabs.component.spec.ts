@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
@@ -14,7 +14,7 @@ import { RetroTabItem } from './interfaces/retro-tab-item.interface';
   standalone: true,
   imports: [RetroTabsComponent, RetroTabComponent],
   template: `
-    <retro-tabs (selectedIndexChange)="onTabChange($event)">
+    <retro-tabs (selectedIndexChange)="onTabChange($event)" [hideLabels]="hideLabels()">
       <retro-tab label="Disponible" icon="sell">
         <ng-template>Panel disponible</ng-template>
       </retro-tab>
@@ -25,6 +25,7 @@ import { RetroTabItem } from './interfaces/retro-tab-item.interface';
   `
 })
 class TabsIntegrationHostComponent {
+  readonly hideLabels = input<boolean>(false);
   lastSelectedIndex = -1;
 
   /**
@@ -168,6 +169,22 @@ describe('router mode', () => {
     const nav = fixture.nativeElement.querySelector('nav');
     expect(nav.getAttribute('aria-label')).toBe('Navegación principal');
   });
+
+  it('applies retro-tabs__label--hidden to each label when hideLabels=true and removes it when false', () => {
+    fixture.componentRef.setInput('hideLabels', true);
+    fixture.detectChanges();
+    const labels = fixture.nativeElement.querySelectorAll('a > span');
+    expect(labels.length).toBe(ITEMS.length);
+    labels.forEach((span: HTMLElement) => {
+      expect(span.classList.contains('retro-tabs__label--hidden')).toBe(true);
+    });
+
+    fixture.componentRef.setInput('hideLabels', false);
+    fixture.detectChanges();
+    labels.forEach((span: HTMLElement) => {
+      expect(span.classList.contains('retro-tabs__label--hidden')).toBe(false);
+    });
+  });
 });
 
 describe('RetroTabsComponent', () => {
@@ -301,6 +318,22 @@ describe('RetroTabsComponent', () => {
     tabsComp.select(10);
     fixture.detectChanges();
     expect(tabsComp.activeIndex()).toBe(1);
+  });
+
+  it('local mode: aplica retro-tabs__label--hidden cuando hideLabels=true', () => {
+    fixture.componentRef.setInput('hideLabels', true);
+    fixture.detectChanges();
+    const labels = fixture.nativeElement.querySelectorAll('button[role="tab"] > span');
+    expect(labels.length).toBe(2);
+    labels.forEach((span: HTMLElement) => {
+      expect(span.classList.contains('retro-tabs__label--hidden')).toBe(true);
+    });
+
+    fixture.componentRef.setInput('hideLabels', false);
+    fixture.detectChanges();
+    labels.forEach((span: HTMLElement) => {
+      expect(span.classList.contains('retro-tabs__label--hidden')).toBe(false);
+    });
   });
 });
 
