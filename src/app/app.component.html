@@ -21,13 +21,14 @@
               <span class="nav-rail__label">{{ item.label | transloco }}</span>
             </a>
             @if (item.route === '/collection' && isCollectionActive()) {
-              <nav class="nav-rail__subitems" aria-label="Sub-navegación de colección">
+              <nav class="nav-rail__subitems nav-rail__subitems--icons" aria-label="Sub-navegación de colección">
                 @for (sub of collectionSubItems(); track sub.route) {
                   <a
-                    class="nav-rail__subitem"
+                    class="nav-rail__subitem nav-rail__subitem--icon"
                     [routerLink]="sub.route"
-                    [attr.aria-label]="sub.label | transloco">
-                    <span class="nav-rail__subitem-dot" aria-hidden="true"></span>
+                    [attr.aria-label]="sub.label | transloco"
+                    [retroTooltip]="sub.label | transloco">
+                    <retro-icon [name]="sub.icon" size="sm" />
                   </a>
                 }
               </nav>

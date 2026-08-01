@@ -75,12 +75,12 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
   /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
-  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string }> => {
+  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => {
     const lang: string = this._transloco.getActiveLang();
     return [
-      { route: '/collection/games', label: lang === 'es' ? 'Juegos' : 'Games' },
-      { route: '/collection/consoles', label: lang === 'es' ? 'Consolas' : 'Consoles' },
-      { route: '/collection/controllers', label: lang === 'es' ? 'Mandos' : 'Controllers' }
+      { route: '/collection/games', icon: 'videogame_asset', label: lang === 'es' ? 'Juegos' : 'Games' },
+      { route: '/collection/consoles', icon: 'tv', label: lang === 'es' ? 'Consolas' : 'Consoles' },
+      { route: '/collection/controllers', icon: 'gamepad', label: lang === 'es' ? 'Mandos' : 'Controllers' }
     ];
   });
 
