@@ -26,6 +26,7 @@ import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/ret
 import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
 import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
 import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-root',
@@ -52,6 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesInit: UserPreferencesInitService = inject(UserPreferencesInitService);
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
+  private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
   private readonly _mobileQuery: MediaQueryList = window.matchMedia('(max-width: 767px)');
   private readonly _mobileAbort: AbortController = new AbortController();
@@ -69,6 +71,19 @@ export class AppComponent implements OnInit, OnDestroy {
 
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
+
+  /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
+  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string }> => {
+    const lang: string = this._transloco.getActiveLang();
+    return [
+      { route: '/collection/games', label: lang === 'es' ? 'Juegos' : 'Games' },
+      { route: '/collection/consoles', label: lang === 'es' ? 'Consolas' : 'Consoles' },
+      { route: '/collection/controllers', label: lang === 'es' ? 'Mandos' : 'Controllers' }
+    ];
+  });
+
+  /** True cuando la ruta activa está dentro de /collection/* (incluyendo overview). */
+  readonly isCollectionActive = computed((): boolean => this.currentRoute().startsWith('/collection'));
 
   /** Management navigation items. */
   readonly managementNavItems: NavItemInterface[] = [
@@ -94,7 +109,13 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly bottomNavItems: Signal<NavItemInterface[]> = computed((): NavItemInterface[] => {
     const isMobile = this._isMobile();
     const items = [...this.navItems, ...(this.isAdmin() ? this.managementNavItems : [])];
-    return isMobile ? items.filter((item) => !item.tabletOnly) : items;
+    if (isMobile) {
+      // En mobile `Pedidos` queda excluido (sólo tablet/desktop). Para mantener
+      // 4 items estables y que el pill deslizante no descuadre, añadimos `Ajustes`
+      // como cuarta entrada.
+      return [...items.filter((item) => !item.tabletOnly), this.settingsNavItem];
+    }
+    return items;
   });
 
   /** Index of the active item in the bottom-nav, used to position the sliding pill. */
