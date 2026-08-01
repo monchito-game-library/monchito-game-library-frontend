@@ -1,13 +1,18 @@
 <retro-list-item class="wishlist-card" [interactive]="mobileMode()" padding="md" (itemClicked)="onCardClick()">
   <!-- Leading: cover con aspect-ratio fijo -->
   <div class="wishlist-card__cover-wrapper" retroListItemLeading>
-    @if (item().imageUrl) {
+    @if (item().imageUrl && !useNativeImg()) {
       <img
         class="wishlist-card__cover"
         [ngSrc]="item().imageUrl!"
         [alt]="item().title"
         fill
         [priority]="priority()" />
+    } @else if (item().imageUrl && useNativeImg()) {
+      <img
+        class="wishlist-card__cover"
+        [src]="item().imageUrl!"
+        [alt]="item().title" />
     } @else {
       <div class="wishlist-card__cover--placeholder">
         <retro-icon name="image_not_supported" />

@@ -56,7 +56,7 @@ const genHardware = (n, prefix) => Array.from({ length: n }, (_, i) => {
 
 const genWishlist = (n) => Array.from({ length: n }, (_, i) => ({
   id: uuid(i + 7000), user_id: USER_ID, game_catalog_id: uuid(i + 8000),
-  title: pickTitle(i + 100), image_url: null, released_date: '2024-01-15',
+  title: pickTitle(i + 100), image_url: fakeCover(i + 100), released_date: '2024-01-15',
   rating: 4, rating_top: 5, genres: ['Action', 'RPG'], stores: [], tags: [],
   metacritic_score: null, description: null, source: 'rawg', added_by_user_id: USER_ID,
   times_added_by_users: 0, desired_price: 20 + i, priority: (i % 5) + 1, notes: null,

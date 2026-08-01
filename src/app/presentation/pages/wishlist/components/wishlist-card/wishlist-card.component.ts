@@ -59,6 +59,16 @@ export class WishlistCardComponent {
   /** Emitted when the user clicks "I have this game". */
   readonly ownClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
 
+  /**
+   * Whether the cover image URL is an unsupported Base64/data-URL.
+   * NgOptimizedImage throws NG02952 for data URLs, breaking the whole card.
+   * Fall back to plain <img src> for those cases.
+   */
+  readonly useNativeImg: Signal<boolean> = computed<boolean>(() => {
+    const url: string | null = this.item().imageUrl;
+    return !!url && url.startsWith('data:');
+  });
+
   /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
   readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {
     const platform = this.item().platform;
