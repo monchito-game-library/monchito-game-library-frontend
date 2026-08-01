@@ -608,6 +608,7 @@
     },
     "title": "Management",
     "nav": {
+      "home": "Home",
       "stores": "Stores",
       "users": "Users",
       "auditLog": "Activity log",

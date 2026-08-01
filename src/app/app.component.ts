@@ -14,6 +14,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
@@ -39,6 +40,7 @@ import { TranslocoService } from '@jsverse/transloco';
     RouterLink,
     RetroSkeletonComponent,
     RetroIconComponent,
+    RetroTooltipDirective,
     TranslocoPipe,
     NgOptimizedImage,
     RetroSnackbarHostComponent,
@@ -84,6 +86,27 @@ export class AppComponent implements OnInit, OnDestroy {
 
   /** True cuando la ruta activa está dentro de /collection/* (incluyendo overview). */
   readonly isCollectionActive = computed((): boolean => this.currentRoute().startsWith('/collection'));
+
+  /** True cuando la ruta activa está dentro de /management/*. */
+  readonly isManagementActive = computed((): boolean => this.currentRoute().startsWith('/management'));
+
+  /**
+   * Sub-items mostrados bajo "Gestión" en el sidebar cuando está activo (solo desktop).
+   * Usa iconos Material en lugar de dots para mayor claridad.
+   */
+  readonly managementSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => {
+    const items: Array<{ route: string; label: string; icon: string }> = [
+      { route: '/management', icon: 'home', label: 'management.nav.home' },
+      { route: '/management/protectors', icon: 'videogame_asset', label: 'management.nav.products' },
+      { route: '/management/stores', icon: 'storefront', label: 'management.nav.stores' },
+      { route: '/management/users', icon: 'group', label: 'management.nav.users' },
+      { route: '/management/hardware', icon: 'memory', label: 'management.nav.hardware' }
+    ];
+    if (!this._userPreferencesState.isOwner()) {
+      return items.filter((i) => i.route !== '/management/users');
+    }
+    return items;
+  });
 
   /** Management navigation items. */
   readonly managementNavItems: NavItemInterface[] = [

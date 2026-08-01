@@ -7,25 +7,11 @@
           src="/video_game_library_svgs/video_game_library_retro_favicon.svg"
           alt="Monchito logo"
           class="app-brand__logo" />
-        <span class="nav-rail__brand-version">v2.0</span>
       </div>
 
       <div class="nav-rail__items">
         @for (item of navItems; track item.route) {
-          <a
-            class="nav-rail__item"
-            [class.nav-rail__item--active]="isNavActive(item.route)"
-            [routerLink]="item.route"
-            [attr.aria-label]="item.label | transloco">
-            <retro-icon [name]="item.icon" />
-            <span class="nav-rail__label">{{ item.label | transloco }}</span>
-          </a>
-        }
-
-        @if (isAdmin()) {
-          <div class="nav-rail__divider"></div>
-
-          @for (item of managementNavItems; track item.route) {
+          <div class="nav-rail__item-group">
             <a
               class="nav-rail__item"
               [class.nav-rail__item--active]="isNavActive(item.route)"
@@ -34,7 +20,49 @@
               <retro-icon [name]="item.icon" />
               <span class="nav-rail__label">{{ item.label | transloco }}</span>
             </a>
-          }
+            @if (item.route === '/collection' && isCollectionActive()) {
+              <nav class="nav-rail__subitems" aria-label="Sub-navegación de colección">
+                @for (sub of collectionSubItems(); track sub.route) {
+                  <a
+                    class="nav-rail__subitem"
+                    [routerLink]="sub.route"
+                    [attr.aria-label]="sub.label | transloco">
+                    <span class="nav-rail__subitem-dot" aria-hidden="true"></span>
+                  </a>
+                }
+              </nav>
+            }
+          </div>
+        }
+
+        @if (isAdmin()) {
+          <div class="nav-rail__divider"></div>
+
+          <div class="nav-rail__item-group">
+            @for (item of managementNavItems; track item.route) {
+              <a
+                class="nav-rail__item"
+                [class.nav-rail__item--active]="isNavActive(item.route)"
+                [routerLink]="item.route"
+                [attr.aria-label]="item.label | transloco">
+                <retro-icon [name]="item.icon" />
+                <span class="nav-rail__label">{{ item.label | transloco }}</span>
+              </a>
+            }
+            @if (isManagementActive()) {
+              <nav class="nav-rail__subitems nav-rail__subitems--icons" aria-label="Sub-navegación de gestión">
+                @for (sub of managementSubItems(); track sub.route) {
+                  <a
+                    class="nav-rail__subitem nav-rail__subitem--icon"
+                    [routerLink]="sub.route"
+                    [attr.aria-label]="sub.label | transloco"
+                    [retroTooltip]="sub.label | transloco">
+                    <retro-icon [name]="sub.icon" size="sm" />
+                  </a>
+                }
+              </nav>
+            }
+          </div>
         }
       </div>
 
@@ -51,7 +79,8 @@
               [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="40"
-              height="40" />
+              height="40"
+              priority />
           } @else {
             <retro-skeleton width="40px" height="40px" />
           }
@@ -67,7 +96,10 @@
           src="/video_game_library_svgs/video_game_library_retro_favicon.svg"
           alt="Monchito logo"
           class="app-topbar__logo" />
-        <span class="app-topbar__title">{{ getPageTitle() | transloco }}</span>
+        <span class="app-topbar__title">
+          <retro-icon name="chevron_right" />
+          {{ getPageTitle() | transloco }}
+        </span>
         <div
           class="app-topbar__user"
           role="button"
@@ -79,7 +111,8 @@
               [ngSrc]="getAvatarUrl()"
               [alt]="getDisplayName()"
               width="36"
-              height="36" />
+              height="36"
+              priority />
           } @else {
             <retro-skeleton width="36px" height="36px" />
           }
