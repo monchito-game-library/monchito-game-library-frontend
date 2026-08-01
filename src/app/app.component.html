@@ -3,10 +3,24 @@
     <!-- Navigation Rail — desktop only -->
     <nav class="nav-rail" role="navigation" [attr.aria-label]="'nav.aria.mainNav' | transloco">
       <div class="nav-rail__brand">
-        <img
-          src="/video_game_library_svgs/video_game_library_retro_favicon.svg"
-          alt="Monchito logo"
-          class="app-brand__logo" />
+        <div
+          class="nav-rail__user"
+          [retroMenuTriggerFor]="profileMenu"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'nav.aria.userMenu' | transloco: { name: getDisplayName() }">
+          @if (preferencesLoaded()) {
+            <img
+              class="nav-rail__avatar nav-rail__avatar--loaded"
+              [ngSrc]="getAvatarUrl()"
+              [alt]="getDisplayName()"
+              width="40"
+              height="40"
+              priority />
+          } @else {
+            <retro-skeleton width="40px" height="40px" />
+          }
+        </div>
       </div>
 
       <div class="nav-rail__items">
@@ -68,24 +82,10 @@
       </div>
 
       <div class="nav-rail__footer">
-        <div
-          class="nav-rail__user"
-          [retroMenuTriggerFor]="profileMenu"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="'nav.aria.userMenu' | transloco: { name: getDisplayName() }">
-          @if (preferencesLoaded()) {
-            <img
-              class="nav-rail__avatar nav-rail__avatar--loaded"
-              [ngSrc]="getAvatarUrl()"
-              [alt]="getDisplayName()"
-              width="40"
-              height="40"
-              priority />
-          } @else {
-            <retro-skeleton width="40px" height="40px" />
-          }
-        </div>
+        <img
+          src="/video_game_library_svgs/video_game_library_retro_favicon.svg"
+          alt="Monchito logo"
+          class="app-brand__logo" />
       </div>
     </nav>
 

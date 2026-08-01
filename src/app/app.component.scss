@@ -29,17 +29,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    margin-bottom: 0.5rem;
+    padding-top: 0.75rem;
+    margin-bottom: 0.75rem;
     color: var(--primary);
     gap: 0.25rem;
-
-    .app-brand__logo {
-      width: 2rem;
-      height: 2rem;
-      object-fit: contain;
-      display: block;
-    }
 
     .nav-rail__brand-version {
       font-family: var(--font-mono);
@@ -47,6 +40,13 @@
       color: var(--text-lo);
       letter-spacing: 0.06em;
     }
+  }
+
+  .app-brand__logo {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+    display: block;
   }
 
   .nav-rail__items {
@@ -179,6 +179,8 @@
     align-items: center;
     justify-content: center;
     padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color: var(--primary);
   }
 
   .nav-rail__user {
