@@ -1,4 +1,6 @@
 <div class="games">
-  <retro-tabs [items]="navItems" class="games__tabs" [hideLabels]="isMobile()" />
+  @if (isMobile()) {
+    <retro-tabs [items]="navItems" class="games__tabs" [hideLabels]="isMobile()" />
+  }
   <router-outlet />
 </div>

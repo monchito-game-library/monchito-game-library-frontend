@@ -22,16 +22,7 @@ describe('canActivateDesktopOnly', () => {
     setViewportWidth(1024);
   });
 
-  it('devuelve true cuando el ancho de pantalla es igual al mínimo (768px)', () => {
-    setViewportWidth(768);
-
-    const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
-
-    expect(result).toBe(true);
-    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
-  });
-
-  it('devuelve true cuando el ancho de pantalla es mayor que el mínimo', () => {
+  it('devuelve true en cualquier viewport (la UI la gestiona el shell)', () => {
     setViewportWidth(1920);
 
     const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
@@ -40,21 +31,12 @@ describe('canActivateDesktopOnly', () => {
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 
-  it('devuelve false y redirige a /collection cuando el ancho es menor que el mínimo', () => {
-    setViewportWidth(767);
-
-    const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
-
-    expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
-  });
-
-  it('devuelve false y redirige a /collection en pantallas muy pequeñas (320px)', () => {
+  it('devuelve true también en pantallas pequeñas (no redirige)', () => {
     setViewportWidth(320);
 
     const result = TestBed.runInInjectionContext(() => canActivateDesktopOnly({} as never, {} as never));
 
-    expect(result).toBe(false);
-    expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/collection');
+    expect(result).toBe(true);
+    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
   });
 });

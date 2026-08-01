@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
 
+import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+
 /**
  * Cabecera de sección estilo terminal de la lib Terminal Collector.
  * Muestra `> SECTION_NAME [count]` con borde inferior 1px --border.
@@ -8,7 +10,7 @@ import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular
 @Component({
   selector: 'retro-section-header',
   standalone: true,
-  imports: [],
+  imports: [RetroIconComponent],
   templateUrl: './retro-section-header.component.html',
   styleUrl: './retro-section-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

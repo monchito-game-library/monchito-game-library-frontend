@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   OnDestroy,
@@ -104,6 +105,42 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   /** Full list of games in the user's collection. */
   readonly allGames: WritableSignal<GameListModel[]> = signal<GameListModel[]>([]);
+
+  /**
+   * Page size for client-side pagination. We render `visibleCount()` items and
+   * let the user load more with a "Cargar más" button instead of rendering the
+   * whole list at once. Resets to the initial page size whenever filters change.
+   */
+  readonly initialPageSize: number = 24;
+  readonly pageIncrement: number = 24;
+  readonly visibleCount: WritableSignal<number> = signal<number>(this.initialPageSize);
+
+  /** Resets the visible count to the initial page size (called when filters change). */
+  private readonly _resetVisibleCountOnFilters = effect((): void => {
+    // Re-evaluar dependencias: cualquier cambio en filtros resetea la paginación.
+    void this.searchTerm();
+    void this.selectedConsole();
+    void this.selectedStore();
+    void this.selectedStatus();
+    void this.selectedFormat();
+    void this.onlyFavorites();
+    this.visibleCount.set(this.initialPageSize);
+  });
+
+  /** Number of items currently visible after pagination. */
+  readonly visibleGames: Signal<GameListModel[]> = computed((): GameListModel[] => {
+    return this.filteredGames().slice(0, this.visibleCount());
+  });
+
+  /** True if there are more items to load beyond the current visible page. */
+  readonly hasMoreGames: Signal<boolean> = computed(
+    (): boolean => this.filteredGames().length > this.visibleCount()
+  );
+
+  /** Loads the next page of items. */
+  loadMore(): void {
+    this.visibleCount.update((current: number): number => current + this.pageIncrement);
+  }
 
   /** Current value of the title search input. */
   readonly searchTerm: WritableSignal<string> = this._filtersService.searchTerm;

@@ -9,6 +9,7 @@
   [type]="type()"
   [disabled]="disabled()"
   [attr.aria-label]="ariaLabel()"
+  [retroTooltip]="tooltip()"
   (click)="clicked.emit($event)">
   <retro-icon class="retro-icon-btn__icon" [name]="icon()" [size]="size()" />
 </button>

@@ -1,1 +1,20 @@
-<router-outlet />
+@if (isMobile()) {
+  <section class="orders-mobile-fallback" role="region" aria-labelledby="orders-mobile-fallback-title">
+    <retro-card class="orders-mobile-fallback__card">
+      <div class="orders-mobile-fallback__icon" aria-hidden="true">
+        <retro-icon name="desktop_windows" />
+      </div>
+      <h2 id="orders-mobile-fallback-title" class="orders-mobile-fallback__title">
+        {{ 'orders.mobileFallback.title' | transloco }}
+      </h2>
+      <p class="orders-mobile-fallback__body">
+        {{ 'orders.mobileFallback.body' | transloco }}
+      </p>
+      <p class="orders-mobile-fallback__hint">
+        {{ 'orders.mobileFallback.hint' | transloco }}
+      </p>
+    </retro-card>
+  </section>
+} @else {
+  <router-outlet />
+}

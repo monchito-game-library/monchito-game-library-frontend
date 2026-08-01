@@ -1,5 +1,15 @@
 :host {
   display: flex;
-  flex-direction: column;
+  flex-direction: var(--retro-list-direction, column);
+  flex-wrap: var(--retro-list-wrap, nowrap);
   gap: var(--retro-list-gap, 0.5rem);
+
+  // ─── Modifiers ─────────────────────────────────────────────────────────────
+  // Apply grid layout via [class] in the parent or via the modifier class so
+  // retro-list can act as both a flex column (default) and a grid container
+  // (e.g. multi-column card grids on desktop).
+  &.retro-list--grid {
+    display: grid;
+    grid-template-columns: var(--retro-list-grid-cols, repeat(auto-fill, minmax(220px, 1fr)));
+  }
 }

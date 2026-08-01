@@ -70,7 +70,11 @@
                 <span class="hw-list__card-model">{{ resolveModelName()(item.modelId) }}</span>
                 <span class="hw-list__card-brand">{{ resolveBrandName()(item.brandId) }}</span>
               </div>
-              <span class="hw-list__card-chevron" aria-hidden="true">&gt;</span>
+              <retro-icon
+                class="hw-list__card-chevron"
+                name="chevron_right"
+                size="sm"
+                aria-hidden="true" />
             </div>
 
             <div class="hw-list__card-chips">

@@ -1,0 +1,8 @@
+{
+  "/rawg-media": {
+    "target": "https://media.rawg.io",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/rawg-media": "" }
+  }
+}

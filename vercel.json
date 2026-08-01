@@ -31,10 +31,19 @@
           "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://egevnihppclxucorhdjt.supabase.co https://media.rawg.io; connect-src 'self' https://egevnihppclxucorhdjt.supabase.co wss://egevnihppclxucorhdjt.supabase.co https://api.rawg.io; manifest-src 'self'; worker-src 'self'"
         }
       ]
+    },
+    {
+      "source": "/rawg-media/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, immutable"
+        }
+      ]
     }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/rawg-media/(.*)", "destination": "https://media.rawg.io/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

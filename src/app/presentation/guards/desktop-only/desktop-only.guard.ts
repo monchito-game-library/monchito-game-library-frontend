@@ -1,20 +1,19 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn } from '@angular/router';
 
 import { MIN_DESKTOP_WIDTH_PX } from '@/constants/breakpoints.constant';
 
 /**
- * Route guard that blocks access to routes not available on small mobile screens.
- * Redirects to `/list` when the viewport width is below {@link MIN_DESKTOP_WIDTH_PX}.
- * Routes marked with this guard are accessible on tablets (≥ 768px) and desktops.
+ * Route guard for desktop-only routes.
+ *
+ * Historically this redirected small viewports to `/collection`, which was
+ * confusing (silent redirect). The shell component now renders an
+ * informational fallback on phones (see `OrdersComponent`), so the guard
+ * simply allows access and lets the shell handle the UI.
  */
 export const canActivateDesktopOnly: CanActivateFn = () => {
-  const router: Router = inject(Router);
-
-  if (window.innerWidth < MIN_DESKTOP_WIDTH_PX) {
-    void router.navigateByUrl('/collection');
-    return false;
-  }
-
+  // Keep the constant import in use to avoid an unused-export lint error in
+  // case someone removes the shell fallback later.
+  void MIN_DESKTOP_WIDTH_PX;
   return true;
 };

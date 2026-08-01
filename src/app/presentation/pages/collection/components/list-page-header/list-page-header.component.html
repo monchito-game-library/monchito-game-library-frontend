@@ -20,6 +20,7 @@
       class="list-page-header__view-btn"
       [icon]="viewMode() === 'grid' ? 'view_list' : 'view_module'"
       [ariaLabel]="'gameList.aria.toggleViewMode' | transloco"
+      [tooltip]="'gameList.aria.toggleViewMode' | transloco"
       [disabled]="disabled()"
       (clicked)="viewModeToggle.emit()" />
   }

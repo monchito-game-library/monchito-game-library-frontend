@@ -3,13 +3,16 @@
 }
 
 .retro-list-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   gap: 0.75rem;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 0;
+  // Forzamos `min-width: 0` en el host para que cuando este item viva dentro
+  // de un grid exterior (`retro-list--grid`) no se expanda más allá de su
+  // columna por culpa del contenido intrínseco del body (títulos, chips).
+  min-width: 0;
 
   &--padding-none {
     padding: 0;
@@ -94,6 +97,7 @@
 .retro-list-item__trailing {
   display: flex;
   align-items: center;
+  min-width: 0;
 
   &:empty {
     display: none;
@@ -105,7 +109,20 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.25rem;
+  // `flex: 1 1 0` con `min-width: 0` garantiza que el body tome todo el
+  // espacio horizontal restante entre leading y trailing sin verse forzado
+  // a expandirse por el contenido intrínseco de los hijos.
+  flex: 1 1 0;
   min-width: 0;
+
+  // Los hijos directos (chips, data-rows, etc.) tienen un min-width intrínseco
+  // que evita que el body se encoja. Forzamos `min-width: 0` para que el
+  // flex layout del body funcione correctamente, especialmente cuando se
+  // renderiza dentro de un grid exterior (`retro-list--grid`) y el body
+  // necesita contraerse para caber en la columna 1fr.
+  > * {
+    min-width: 0;
+  }
 }
 
 // ────────────────────────── Responsive: < 768px ──────────────────────────

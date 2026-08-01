@@ -2,7 +2,10 @@
 <div class="filters-sheet">
   <!-- Header -->
   <div class="filters-sheet__header">
-    <span class="filters-sheet__title">{{ 'gameList.filters.filters' | transloco }}</span>
+    <span class="filters-sheet__title">
+      <retro-icon name="chevron_right" />
+      {{ 'gameList.filters.filters' | transloco }}
+    </span>
     <retro-icon-button icon="close" [ariaLabel]="'common.close' | transloco" (clicked)="close()" />
   </div>
 
