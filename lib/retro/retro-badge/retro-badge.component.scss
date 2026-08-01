@@ -1,0 +1,57 @@
+.retro-badge {
+  --c: var(--text-mid);
+  --_h: 1.25rem;
+  --_px: 6px;
+  --_fs: 0.6875rem;
+  --_min-w: 1.5rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--_h);
+  min-width: var(--_min-w);
+  padding: 0 var(--_px); /* reason: micro-espaciado decorativo de badge */
+  border: 1px solid var(--c);
+  color: var(--c);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--_fs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+  background: transparent;
+  user-select: none;
+
+  &--sm {
+    --_h: 1rem;
+    --_px: 4px;
+    --_fs: 0.625rem;
+    --_min-w: 1.25rem;
+  }
+
+  &--lg {
+    --_h: 1.5rem;
+    --_px: 8px;
+    --_fs: 0.75rem;
+    --_min-w: 2rem;
+  }
+
+  &--primary {
+    --c: var(--primary);
+  }
+  &--green {
+    --c: var(--accent-green);
+  }
+  &--amber {
+    --c: var(--accent-amber);
+  }
+  &--rose {
+    --c: var(--accent-rose);
+  }
+  &--blue {
+    --c: var(--accent-blue);
+  }
+  &--neutral {
+    --c: var(--text-mid);
+  }
+}
