@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { firstValueFrom, map } from 'rxjs';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
+import { RetroBadgeComponent } from '@retro/retro-badge/retro-badge.component';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
@@ -66,7 +67,8 @@ import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolb
     RetroTextareaComponent,
     RetroListComponent,
     SearchToolbarComponent,
-    FormsModule
+    FormsModule,
+    RetroBadgeComponent
   ]
 })
 export class WishlistComponent implements OnInit {

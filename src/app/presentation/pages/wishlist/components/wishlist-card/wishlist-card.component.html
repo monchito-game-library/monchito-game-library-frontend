@@ -19,15 +19,21 @@
   <div class="wishlist-card__content">
     <div class="wishlist-card__header">
       <h3 class="wishlist-card__title" [retroTooltip]="item().title">{{ item().title }}</h3>
-      <div
-        class="wishlist-card__priority"
-        [attr.aria-label]="'wishlist.card.priority' | transloco">
-        @for (level of priorityRange; track level) {
-          <retro-icon
-            class="wishlist-card__star"
-            [class.wishlist-card__star--filled]="level <= item().priority"
-            [name]="level <= item().priority ? 'star' : 'star_border'" />
-        }
+      <div class="wishlist-card__priority">
+        <retro-badge
+          [value]="item().priority"
+          [tooltip]="
+            item().priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : item().priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)"
+          [attr.aria-label]="
+            item().priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : item().priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)" />
       </div>
     </div>
 

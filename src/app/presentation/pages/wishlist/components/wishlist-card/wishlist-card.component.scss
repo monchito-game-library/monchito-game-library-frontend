@@ -62,21 +62,9 @@
 }
 
 .wishlist-card__priority {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.0625rem;
   flex-shrink: 0;
-}
-
-.wishlist-card__star {
-  font-size: 1rem;
-  width: 1rem;
-  height: 1rem;
-  color: var(--text-lo);
-
-  &--filled {
-    color: var(--accent-amber);
-  }
 }
 
 .wishlist-card__meta {

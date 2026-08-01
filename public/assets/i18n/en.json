@@ -283,6 +283,11 @@
     "empty": "No orders yet. Create the first one!",
     "create": "New order",
     "backToList": "Orders",
+    "mobileFallback": {
+      "title": "Orders unavailable on mobile",
+      "body": "The order editor needs more room than a small screen offers. Open it from a desktop or tablet to create and manage your orders.",
+      "hint": "Resume from a device with a viewport ≥ 768 px."
+    },
     "status": {
       "draft": "Draft",
       "selecting_packs": "Selecting packs",
@@ -337,7 +342,8 @@
       "delete": "Delete line",
       "deleteTitle": "Delete line",
       "deleteMessage": "Delete this line from the order?",
-      "empty": "No lines yet. Add the first one.",
+      "empty": "No lines yet.",
+      "addFirst": "Add first line",
       "dialogAddTitle": "Add line",
       "dialogEditTitle": "Edit line",
       "productLabel": "Product",
@@ -449,8 +455,12 @@
     },
     "card": {
       "priority": "Priority",
-      "ownTooltip": "I have this game",
-      "searchIn": "Search on {{ label }}"
+      "priorityHigh": "High priority",
+      "priorityMedium": "Medium priority",
+      "priorityLow": "Low priority",
+      "ownTooltip": "I own this game",
+      "searchIn": "Search in {{ label }}",
+      "price": "Price"
     },
     "snack": {
       "added": "Game added to wishlist",

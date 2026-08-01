@@ -68,14 +68,21 @@
 
       <!-- Priority + Platform -->
       <div class="wishlist-detail__meta">
-        <div class="wishlist-detail__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
-          @for (level of priorityRange; track level) {
-            <retro-icon
-              class="wishlist-detail__star"
-              [class.wishlist-detail__star--filled]="level <= i.priority"
-              [name]="level <= i.priority ? 'star' : 'star_border'" />
-          }
-        </div>
+        <retro-badge
+          class="wishlist-detail__priority"
+          [value]="i.priority"
+          [tooltip]="
+            i.priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : i.priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)"
+          [attr.aria-label]="
+            i.priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : i.priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)" />
         @if (i.platform) {
           <retro-chip [label]="i.platform" color="primary" size="sm" />
         }

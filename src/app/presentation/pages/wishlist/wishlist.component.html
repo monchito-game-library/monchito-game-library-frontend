@@ -165,13 +165,21 @@
         <!-- Priority (optional, default 3) -->
         <div class="wishlist-view__priority">
           <span class="wishlist-view__label">{{ 'wishlist.fields.priority' | transloco }}</span>
-          <div class="wishlist-view__stars">
+          <div class="wishlist-view__priority-options">
             @for (level of priorityOptions; track level) {
-              <retro-icon-button
-                [icon]="level <= mobileForm.controls.priority.value ? 'star' : 'star_border'"
-                [ariaLabel]="'' + level"
-                variant="primary"
-                (clicked)="mobileForm.controls.priority.setValue(level)" />
+              <button
+                type="button"
+                class="wishlist-view__priority-btn"
+                [class.wishlist-view__priority-btn--active]="level === mobileForm.controls.priority.value"
+                [attr.aria-label]="
+                  level <= 1
+                    ? ('wishlist.card.priorityHigh' | transloco)
+                    : level <= 3
+                      ? ('wishlist.card.priorityMedium' | transloco)
+                      : ('wishlist.card.priorityLow' | transloco)"
+                (click)="mobileForm.controls.priority.setValue(level)">
+                <retro-badge [value]="level" />
+              </button>
             }
           </div>
         </div>

@@ -15,9 +15,8 @@ import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tool
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
-import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
+import { RetroBadgeComponent } from '@retro/retro-badge/retro-badge.component';
 import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
-import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
 import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 @Component({
@@ -34,8 +33,8 @@ import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-
     RetroIconButtonComponent,
     TranslocoPipe,
     RetroChipComponent,
-    RetroDataRowComponent,
-    RetroListItemComponent
+    RetroListItemComponent,
+    RetroBadgeComponent
   ]
 })
 export class WishlistCardComponent {
@@ -59,9 +58,6 @@ export class WishlistCardComponent {
 
   /** Emitted when the user clicks "I have this game". */
   readonly ownClicked: OutputEmitterRef<WishlistItemModel> = output<WishlistItemModel>();
-
-  /** Priority star range used to render the star icons. */
-  readonly priorityRange: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** Store search links derived from the item's title and platform. Recomputed only when item changes. */
   readonly storeLinks: Signal<{ label: string; url: string }[]> = computed(() => {

@@ -283,6 +283,11 @@
     "empty": "Aún no hay pedidos. ¡Crea el primero!",
     "create": "Nuevo pedido",
     "backToList": "Pedidos",
+    "mobileFallback": {
+      "title": "Pedidos no disponible en móvil",
+      "body": "El editor de pedidos necesita más espacio del que ofrece una pantalla pequeña. Ábrelo desde un escritorio o tablet para crear y gestionar tus pedidos.",
+      "hint": "Reanuda la sesión desde un dispositivo con pantalla ≥ 768 px."
+    },
     "status": {
       "draft": "Borrador",
       "selecting_packs": "Seleccionando packs",
@@ -335,7 +340,8 @@
       "delete": "Eliminar línea",
       "deleteTitle": "Eliminar línea",
       "deleteMessage": "¿Eliminar esta línea del pedido?",
-      "empty": "No hay líneas. Añade la primera.",
+      "empty": "No hay líneas todavía.",
+      "addFirst": "Añadir primera línea",
       "selectingPacks": "El organizador está seleccionando las cantidades del pedido…",
       "placingOrder": "El organizador está realizando el pedido…",
       "dialogAddTitle": "Añadir línea",
@@ -449,8 +455,12 @@
     },
     "card": {
       "priority": "Prioridad",
+      "priorityHigh": "Prioridad alta",
+      "priorityMedium": "Prioridad media",
+      "priorityLow": "Prioridad baja",
       "ownTooltip": "Tengo este juego",
-      "searchIn": "Buscar en {{ label }}"
+      "searchIn": "Buscar en {{ label }}",
+      "price": "Precio"
     },
     "snack": {
       "added": "Juego añadido a deseados",

@@ -22,9 +22,9 @@ import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES, WishlistUseCasesContract } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
-import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
+import { RetroBadgeComponent } from '@retro/retro-badge/retro-badge.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { RetroDataRowComponent } from '@retro/retro-data-row/retro-data-row.component';
@@ -46,7 +46,8 @@ import { RetroButtonComponent } from '@retro/retro-button/retro-button.component
     RetroSkeletonComponent,
     RetroChipComponent,
     RetroDataRowComponent,
-    RetroButtonComponent
+    RetroButtonComponent,
+    RetroBadgeComponent
   ]
 })
 export class WishlistDetailComponent implements OnInit {
@@ -58,9 +59,6 @@ export class WishlistDetailComponent implements OnInit {
   private readonly _dialog: RetroDialogService = inject(RetroDialogService);
   private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
-
-  /** Priority star range used to render the star icons. */
-  readonly priorityRange: number[] = WISHLIST_PRIORITY_OPTIONS;
 
   /** Whether the item is being loaded from the service (fallback path). */
   readonly loading: WritableSignal<boolean> = signal<boolean>(false);

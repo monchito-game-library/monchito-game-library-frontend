@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RetroBadgeComponent } from '@retro/retro-badge/retro-badge.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { RetroOptionComponent } from '@retro/retro-select/components/retro-option/retro-option.component';
@@ -42,7 +43,8 @@ import {
     RetroInputComponent,
     RetroTextareaComponent,
     RetroSelectComponent,
-    RetroOptionComponent
+    RetroOptionComponent,
+    RetroBadgeComponent
   ]
 })
 export class WishlistItemDialogComponent {
