@@ -1,39 +1,52 @@
 <!-- ─── LIST MODE ──────────────────────────────────────────────────────────── -->
 @if (viewMode() === 'list') {
   <div class="wishlist-page">
-    <header class="wishlist-page__header">
-      <div class="wishlist-page__header-info">
-        <h1 class="wishlist-page__title">{{ 'nav.wishlist' | transloco }}</h1>
-        @if (!loading()) {
-          <div class="wishlist-page__stats">
-            <span class="wishlist-page__stat">
-              <retro-icon class="wishlist-page__stat-icon" name="bookmark" />
-              {{ items().length }}
-            </span>
-            @if (itemsWithPrice() > 0) {
-              <span class="wishlist-page__stat">
-                <retro-icon class="wishlist-page__stat-icon" name="sell" />
-                ~{{ totalEstimatedSpend() | number: '1.2-2' }} €
-              </span>
-            }
-          </div>
-        }
-      </div>
-      @if (!loading() && items().length > 0) {
-        <div class="wishlist-page__header-add-btn">
-          <retro-button variant="primary" [label]="'wishlist.addBtn' | transloco" (clicked)="onAddItem()">
-            <retro-icon slot="start" name="add" size="sm" />
-          </retro-button>
-        </div>
-      }
-    </header>
+    <!-- Backdrop (desktop only) — closes the filters panel when clicked -->
+    @if (filtersOpen()) {
+      <div class="wishlist-page__drawer-backdrop" (click)="filtersOpen.set(false)"></div>
+    }
 
-    <app-search-toolbar
-      [value]="searchTerm()"
-      [placeholder]="'wishlist.filters.title' | transloco"
-      commandPath="monchito ~/library/wishlist"
-      [commandFlags]="commandFlags()"
-      (valueChange)="onSearchChange($event)" />
+    <!-- Filters side panel (desktop) — opens from the right -->
+    <aside
+      class="wishlist-page__filters-drawer"
+      [class.wishlist-page__filters-drawer--open]="filtersOpen()">
+      <app-wishlist-list-filters-sheet [dataInput]="filtersSheetData()" (closed)="filtersOpen.set(false)" />
+    </aside>
+
+    <header class="wishlist-page__header">
+      <div class="wishlist-page__title-row">
+        <h1 class="wishlist-page__title">{{ 'nav.wishlist' | transloco }}</h1>
+      </div>
+
+      <app-list-page-header
+        [searchValue]="searchTerm()"
+        [searchPlaceholder]="'wishlist.filters.title' | transloco"
+        [showAddBtn]="!loading() && items().length > 0"
+        [showFilterBtn]="!loading() && items().length > 0"
+        [filterCount]="activeFilterCount()"
+        [disabled]="loading()"
+        [commandPath]="'monchito ~/library/wishlist'"
+        [commandFlags]="commandFlags()"
+        (searchChange)="onSearchChange($event)"
+        (filterClick)="onFiltersClick()"
+        (addClick)="onAddItem()">
+        @if (!loading()) {
+          <span class="wishlist-page__stat">
+            <retro-icon class="wishlist-page__stat-icon" name="bookmark" />
+            {{ filteredItems().length }}
+            @if (activeFilterCount() > 0 && filteredItems().length !== items().length) {
+              <span class="wishlist-page__stat-sub">/ {{ items().length }}</span>
+            }
+          </span>
+          @if (itemsWithPrice() > 0) {
+            <span class="wishlist-page__stat">
+              <retro-icon class="wishlist-page__stat-icon" name="sell" />
+              ~{{ totalEstimatedSpend() | number: '1.2-2' }} €
+            </span>
+          }
+        }
+      </app-list-page-header>
+    </header>
 
     @if (loading()) {
       <div class="wishlist-page__list">
@@ -56,12 +69,16 @@
           <retro-icon slot="start" name="add" size="sm" />
         </retro-button>
       </retro-empty-state>
-    } @else if (filteredItems().length === 0 && searchTerm()) {
+    } @else if (filteredItems().length === 0) {
       <retro-empty-state
         [title]="'wishlist.empty.noResults' | transloco"
         [subtitle]="'wishlist.empty.noResultsSubtitle' | transloco"
-        hint="$ try --search=reset">
-        <retro-button [label]="'wishlist.empty.clearFilters' | transloco" (clicked)="onClearSearch()" />
+        hint="$ try --filter=reset">
+        <retro-button
+          [label]="'wishlist.filters.clear' | transloco"
+          (clicked)="filters.clearAllFilters()">
+          <retro-icon slot="start" name="filter_alt_off" size="sm" />
+        </retro-button>
       </retro-empty-state>
     } @else {
       <retro-list class="wishlist-page__list">

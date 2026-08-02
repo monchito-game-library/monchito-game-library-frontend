@@ -473,7 +473,22 @@
       "notFound": "El juego deseado no existe o fue eliminado"
     },
     "filters": {
-      "title": "Buscar por título..."
+      "title": "Buscar por título...",
+      "panel": "Filtros",
+      "priority": "Prioridad P",
+      "allPriorities": "Todas",
+      "platform": "Plataforma",
+      "allPlatforms": "Todas",
+      "sortBy": "Ordenar por",
+      "withPrice": "Solo con precio",
+      "withNotes": "Solo con notas",
+      "clear": "Limpiar filtros"
+    },
+    "sort": {
+      "priority": "Prioridad",
+      "title": "Título",
+      "price": "Precio",
+      "recent": "Más recientes"
     },
     "empty": {
       "title": "Tu lista de deseados está vacía",
@@ -494,10 +509,17 @@
       "mainNav": "Navegación principal",
       "userMenu": "Menú de {{ name }}",
       "openUserMenu": "Abrir menú de usuario",
-      "bottomNav": "Navegación"
+      "bottomNav": "Navegación",
+      "collectionSubnav": "Sub-navegación de colección",
+      "managementSubnav": "Sub-navegación de gestión"
     },
     "management": "Gestión",
-    "sale": "En venta"
+    "sale": "En venta",
+    "subnav": {
+      "games": "Juegos",
+      "consoles": "Consolas",
+      "controllers": "Mandos"
+    }
   },
   "selectUser": {
     "title": "Seleccionar usuario"

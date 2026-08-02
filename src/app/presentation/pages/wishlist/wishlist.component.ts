@@ -33,14 +33,20 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wishlist-item-form.interface';
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';
+import { WishlistFilterService } from '@/pages/wishlist/services/wishlist-filter.service';
+import {
+  WishlistListFiltersSheetComponent,
+  WishlistListFiltersSheetData
+} from '@/pages/wishlist/components/wishlist-list-filters-sheet/wishlist-list-filters-sheet.component';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';
+import { ListPageHeaderComponent } from '@/pages/collection/components/list-page-header/list-page-header.component';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
 import { RetroEmptyStateComponent } from '@retro/retro-empty-state/retro-empty-state.component';
 import { RetroButtonComponent } from '@retro/retro-button/retro-button.component';
 import { RetroListComponent } from '@retro/retro-list/retro-list.component';
-import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
 
 @Component({
   selector: 'app-wishlist',
@@ -59,6 +65,7 @@ import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolb
     RetroOptionComponent,
     TranslocoPipe,
     WishlistCardComponent,
+    WishlistListFiltersSheetComponent,
     CatalogSearchPanelComponent,
     RetroSkeletonComponent,
     RetroEmptyStateComponent,
@@ -66,7 +73,7 @@ import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolb
     RetroInputComponent,
     RetroTextareaComponent,
     RetroListComponent,
-    SearchToolbarComponent,
+    ListPageHeaderComponent,
     FormsModule,
     RetroBadgeComponent
   ]
@@ -82,6 +89,9 @@ export class WishlistComponent implements OnInit {
   private readonly _location: Location = inject(Location);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly _catalogUseCases: CatalogUseCasesContract = inject(CATALOG_USE_CASES);
+  private readonly _bottomSheet: RetroBottomSheetService = inject(RetroBottomSheetService);
+  /** Route-level filter state shared by the wishlist list and the filter sheet. */
+  readonly filters: WishlistFilterService = inject(WishlistFilterService);
 
   /** Reactive form status signal, used to drive mobileCanConfirm. */
   private readonly _mobileFormStatus: Signal<string>;
@@ -97,6 +107,9 @@ export class WishlistComponent implements OnInit {
 
   /** ID of the item whose detail page to return to after edit. */
   private _returnToDetailId: string | null = null;
+
+  /** Whether the desktop filters side panel is open. */
+  readonly filtersOpen: WritableSignal<boolean> = signal<boolean>(false);
 
   /** Whether items are being loaded from Supabase. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
@@ -114,20 +127,80 @@ export class WishlistComponent implements OnInit {
     (): number => this.items().filter((item) => item.desiredPrice !== null).length
   );
 
-  /** Término de búsqueda activo para filtrar por título. */
-  readonly searchTerm: WritableSignal<string> = signal<string>('');
+  /** Término de búsqueda activo (delegated to WishlistFilterService). */
+  readonly searchTerm = this.filters.searchTerm;
 
-  /** Lista filtrada por título según searchTerm. */
-  readonly filteredItems: Signal<WishlistItemModel[]> = computed(() => {
-    const search = this.searchTerm().toLowerCase();
-    if (!search) return this.items();
-    return this.items().filter((item) => item.title.toLowerCase().includes(search));
+  /** Unique platforms derived from items, used to populate the platform filter. */
+  readonly availablePlatforms: Signal<string[]> = computed(() => {
+    const set = new Set<string>();
+    for (const item of this.items()) {
+      if (item.platform) set.add(item.platform);
+    }
+    return Array.from(set).sort();
   });
 
-  /** Flags para retro-command-bar — refleja el filtro activo. */
+  /** Lista filtrada por título, prioridad, plataforma, toggles y ordenada. */
+  readonly filteredItems: Signal<WishlistItemModel[]> = computed(() => {
+    const search = this.searchTerm().toLowerCase().trim();
+    const priority = this.filters.selectedPriority();
+    const platform = this.filters.selectedPlatform();
+    const onlyWithPrice = this.filters.onlyWithPrice();
+    const onlyWithNotes = this.filters.onlyWithNotes();
+    const sortBy = this.filters.sortBy();
+    const sortDir: 'asc' | 'desc' = this.filters.sortDirection();
+
+    const filtered: WishlistItemModel[] = this.items().filter((item) => {
+      if (search && !item.title.toLowerCase().includes(search)) return false;
+      if (priority && item.priority !== Number(priority)) return false;
+      if (platform && item.platform !== platform) return false;
+      if (onlyWithPrice && item.desiredPrice === null) return false;
+      if (onlyWithNotes && !item.notes) return false;
+      return true;
+    });
+
+    const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1;
+    return filtered.slice().sort((a, b) => {
+      switch (sortBy) {
+        case 'title':
+          return a.title.localeCompare(b.title) * dir;
+        case 'desiredPrice':
+          return ((a.desiredPrice ?? 0) - (b.desiredPrice ?? 0)) * dir;
+        case 'createdAt':
+          return a.createdAt.localeCompare(b.createdAt) * dir;
+        case 'priority':
+        default:
+          // Priority asc = P1 first (highest priority); desc = P5 first.
+          return (a.priority - b.priority) * dir;
+      }
+    });
+  });
+
+  /** Count of active filters (used as badge on the filter button). */
+  readonly activeFilterCount: Signal<number> = computed(() => this.filters.activeFilterCount());
+
+  /** Data passed to the filters bottom-sheet when opened on mobile. */
+  readonly filtersSheetData: Signal<WishlistListFiltersSheetData> = computed(
+    () => ({
+      searchTerm: this.filters.searchTerm,
+      selectedPriority: this.filters.selectedPriority,
+      selectedPlatform: this.filters.selectedPlatform,
+      onlyWithPrice: this.filters.onlyWithPrice,
+      onlyWithNotes: this.filters.onlyWithNotes,
+      sortBy: this.filters.sortBy,
+      sortDirection: this.filters.sortDirection,
+      clearAllFilters: () => this.filters.clearAllFilters(),
+      availablePlatforms: this.availablePlatforms
+    })
+  );
+
+  /** Flags para retro-command-bar — refleja los filtros activos. */
   readonly commandFlags: Signal<readonly string[]> = computed(() => {
     const term = this.searchTerm();
-    return term ? [`search="${term}"`] : [];
+    const flags: string[] = [];
+    if (term) flags.push(`search="${term}"`);
+    if (this.filters.selectedPriority()) flags.push(`priority=${this.filters.selectedPriority()}`);
+    if (this.filters.selectedPlatform()) flags.push(`platform=${this.filters.selectedPlatform()}`);
+    return flags;
   });
 
   /** Whether the viewport is mobile (≤ 768px). */
@@ -205,14 +278,26 @@ export class WishlistComponent implements OnInit {
    * @param {string} value - Valor ya procesado por el debounce del toolbar.
    */
   onSearchChange(value: string): void {
-    this.searchTerm.set(value.trim());
+    this.filters.searchTerm.set(value.trim());
   }
 
   /**
    * Limpia el filtro de búsqueda activo.
    */
   onClearSearch(): void {
-    this.searchTerm.set('');
+    this.filters.searchTerm.set('');
+  }
+
+  /**
+   * Opens the filters panel: a right-side drawer on desktop and a bottom sheet on mobile.
+   * The same sheet component is reused in both contexts.
+   */
+  onFiltersClick(): void {
+    if (this.isMobile()) {
+      void this._bottomSheet.open(WishlistListFiltersSheetComponent, this.filtersSheetData());
+      return;
+    }
+    this.filtersOpen.update((open: boolean) => !open);
   }
 
   /**

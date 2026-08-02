@@ -473,7 +473,22 @@
       "notFound": "Wishlist item not found or was removed"
     },
     "filters": {
-      "title": "Search by title..."
+      "title": "Search by title...",
+      "panel": "Filters",
+      "priority": "Priority P",
+      "allPriorities": "All",
+      "platform": "Platform",
+      "allPlatforms": "All",
+      "sortBy": "Sort by",
+      "withPrice": "Only with price",
+      "withNotes": "Only with notes",
+      "clear": "Clear filters"
+    },
+    "sort": {
+      "priority": "Priority",
+      "title": "Title",
+      "price": "Price",
+      "recent": "Most recent"
     },
     "empty": {
       "title": "Your wishlist is empty",
@@ -494,10 +509,17 @@
       "mainNav": "Main navigation",
       "userMenu": "Menu for {{ name }}",
       "openUserMenu": "Open user menu",
-      "bottomNav": "Navigation"
+      "bottomNav": "Navigation",
+      "collectionSubnav": "Collection sub-navigation",
+      "managementSubnav": "Management sub-navigation"
     },
     "management": "Management",
-    "sale": "For sale"
+    "sale": "For sale",
+    "subnav": {
+      "games": "Games",
+      "consoles": "Consoles",
+      "controllers": "Controllers"
+    }
   },
   "selectUser": {
     "title": "Select User"
