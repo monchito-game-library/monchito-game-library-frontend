@@ -51,6 +51,16 @@ Self-contained Terminal Collector text field. Internalises `retro-form-field` + 
 - `registerOnChange`: emits `string` (`emptyValue: ''` — never emits `null` to the form).
 - `setDisabledState`: reflects `disabled`.
 
+## Imperative API
+
+| Method         | Returns   | Description                                                                                                                |
+| -------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `focusInput()` | `boolean` | Sets focus on the underlying native `<input>`. Returns `false` if the input is not yet rendered or is disabled.             |
+
+> The method is named `focusInput()` (not `focus()`) because the component already exposes a `focus` Output event — keeping both avoids a name clash in TypeScript while still being self-descriptive.
+
+Use `focusInput()` when a parent component needs to redirect focus to the field programmatically (for example, a keyboard shortcut that jumps to a search box). The method is safe to call before the view is initialised; in that case it simply returns `false` and the caller can decide what to do.
+
 ## Minimal example
 
 ```html
@@ -76,8 +86,23 @@ Self-contained Terminal Collector text field. Internalises `retro-form-field` + 
 <retro-input label="Command" formControlName="command" prefixText="$ " placeholder="npm install" />
 ```
 
+```html
+<!-- Programmatic focus from a parent component -->
+<retro-input #searchInput />
+```
+
+```ts
+// Parent component
+private readonly searchInput = viewChild<RetroInputComponent>('searchInput');
+
+onSomeShortcut(): void {
+  this.searchInput()?.focusInput();
+}
+```
+
 ## Gotchas
 
 - When the field is cleared (manual deletion or clear button), the form receives `''`, not `null`. `Validators.required` correctly detects the empty field.
 - `prefixIcon` and `prefixText` are mutually exclusive in the template: if both have a value, `prefixText` takes priority.
 - The `[retroPrefix]` slot is always rendered, even when `prefixIcon` or `prefixText` is also present. Use one or the other to avoid visual duplicates.
+- `focusInput()` is a no-op (returns `false`) when the input is disabled — useful for keeping keyboard shortcuts silent during loading states.

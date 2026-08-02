@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RetroIconButtonComponent } from '@retro/retro-icon-button/retro-icon-button.component';
 import { RetroInputComponent } from '@retro/retro-input/retro-input.component';
@@ -25,6 +25,9 @@ import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
   ]
 })
 export class ListPageHeaderComponent {
+  /** Referencia al `<retro-input>` interno para exponer foco programático al padre. */
+  private readonly _searchInput = viewChild(RetroInputComponent);
+
   /** Transloco key for the search field label. */
   readonly searchPlaceholder = input<string>('');
 
@@ -66,4 +69,16 @@ export class ListPageHeaderComponent {
 
   /** Dynamic flags shown in the retro command bar. */
   readonly commandFlags = input<readonly string[]>([]);
+
+  /**
+   * Enfoca el campo de búsqueda del header de forma programática.
+   * Pensado para que la página (p.ej. `games`) pueda enganchar atajos de teclado
+   * (Tab global → buscador) sin tener que conocer la estructura interna.
+   *
+   * @returns {boolean} `true` si el foco se aplicó; `false` si el campo aún
+   * no está montado o está deshabilitado.
+   */
+  focusSearch(): boolean {
+    return this._searchInput()?.focusInput() ?? false;
+  }
 }

@@ -5,7 +5,8 @@ import {
   InputSignal,
   output,
   OutputEmitterRef,
-  TemplateRef
+  TemplateRef,
+  viewChild
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
@@ -47,6 +48,9 @@ import { RetroCardComponent } from '@retro/retro-card/retro-card.component';
   ]
 })
 export class HardwareListShellComponent {
+  /** Referencia al header interno para delegar foco programático al buscador. */
+  private readonly _listPageHeader = viewChild(ListPageHeaderComponent);
+
   /** Whether the data is still loading. */
   readonly loading: InputSignal<boolean> = input.required<boolean>();
 
@@ -106,4 +110,16 @@ export class HardwareListShellComponent {
 
   /** Emits the tapped item when the user clicks a card. */
   readonly detailClick: OutputEmitterRef<HardwareListItem> = output<HardwareListItem>();
+
+  /**
+   * Enfoca el campo de búsqueda del header de forma programática.
+   * Pensado para que la página pueda enganchar atajos de teclado (Tab global
+   * → buscador) sin tener que conocer la estructura interna del shell.
+   *
+   * @returns {boolean} `true` si el foco se aplicó; `false` si el header aún
+   * no está montado.
+   */
+  focusSearch(): boolean {
+    return this._listPageHeader()?.focusSearch() ?? false;
+  }
 }

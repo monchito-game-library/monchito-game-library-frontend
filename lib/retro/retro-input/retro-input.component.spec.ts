@@ -73,6 +73,45 @@ describe('RetroInputComponent', () => {
     expect(clearEmitted).toBe(true);
   });
 
+  describe('focusInput', () => {
+    it('enfoca el input nativo y devuelve true', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement | null = (fixture.nativeElement as HTMLElement).querySelector('input');
+      expect(inputEl).toBeTruthy();
+      const focusSpy = vi.spyOn(inputEl!, 'focus');
+
+      const result: boolean = component.focusInput();
+
+      expect(result).toBe(true);
+      expect(focusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('devuelve false si el input está deshabilitado', () => {
+      component.setDisabledState(true);
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement | null = (fixture.nativeElement as HTMLElement).querySelector('input');
+      const focusSpy = vi.spyOn(inputEl!, 'focus');
+
+      const result: boolean = component.focusInput();
+
+      expect(result).toBe(false);
+      expect(focusSpy).not.toHaveBeenCalled();
+    });
+
+    it('devuelve false si el input nativo está disabled (propiedad)', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement | null = (fixture.nativeElement as HTMLElement).querySelector('input');
+      expect(inputEl).toBeTruthy();
+      inputEl!.disabled = true;
+      const focusSpy = vi.spyOn(inputEl!, 'focus');
+
+      const result: boolean = component.focusInput();
+
+      expect(result).toBe(false);
+      expect(focusSpy).not.toHaveBeenCalled();
+    });
+  });
+
   it('errorState es false sin NgControl', () => {
     expect(component.errorState).toBe(false);
   });

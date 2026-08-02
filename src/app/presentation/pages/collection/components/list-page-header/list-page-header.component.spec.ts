@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { describe, beforeEach, expect, it } from 'vitest';
+import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { ListPageHeaderComponent } from './list-page-header.component';
 
@@ -106,6 +106,35 @@ describe('ListPageHeaderComponent', () => {
       fixture.detectChanges();
       const bar = fixture.debugElement.query(By.css('retro-command-bar'));
       expect(bar.componentInstance.flags()).toEqual(['view=list', 'filters=2']);
+    });
+  });
+
+  describe('focusSearch', () => {
+    it('enfoca el input del buscador y devuelve true tras montar', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement | null = fixture.debugElement.query(By.css('input'))
+        ?.nativeElement as HTMLInputElement | null;
+      expect(inputEl).toBeTruthy();
+      const focusSpy = vi.spyOn(inputEl!, 'focus');
+
+      const result: boolean = component.focusSearch();
+
+      expect(result).toBe(true);
+      expect(focusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('devuelve false cuando el input nativo está deshabilitado (vía setDisabledState)', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement | null = fixture.debugElement.query(By.css('input'))
+        ?.nativeElement as HTMLInputElement | null;
+      expect(inputEl).toBeTruthy();
+      inputEl!.disabled = true;
+      const focusSpy = vi.spyOn(inputEl!, 'focus');
+
+      const result: boolean = component.focusSearch();
+
+      expect(result).toBe(false);
+      expect(focusSpy).not.toHaveBeenCalled();
     });
   });
 });
