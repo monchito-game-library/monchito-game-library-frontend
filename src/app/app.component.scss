@@ -63,6 +63,31 @@
     flex-direction: column;
   }
 
+  .nav-rail__subitems-wrapper {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease;
+
+    &--collapsed {
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+
+      .nav-rail__subitems-wrapper-inner {
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+    }
+  }
+
+  .nav-rail__subitems-wrapper-inner {
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition: opacity 0.2s ease 0.1s;
+  }
+
   .nav-rail__subitems {
     display: flex;
     flex-direction: column;

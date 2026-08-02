@@ -27,7 +27,6 @@ import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/ret
 import { RetroMenuComponent } from '@retro/retro-menu/retro-menu.component';
 import { RetroMenuItemComponent } from '@retro/retro-menu/components/retro-menu-item/retro-menu-item.component';
 import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-menu-trigger.directive';
-import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-root',
@@ -55,7 +54,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   private readonly _userPreferencesInit: UserPreferencesInitService = inject(UserPreferencesInitService);
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
-  private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
   private readonly _mobileQuery: MediaQueryList = window.matchMedia('(max-width: 767px)');
   private readonly _mobileAbort: AbortController = new AbortController();
@@ -75,20 +73,30 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
   /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
-  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => {
-    const lang: string = this._transloco.getActiveLang();
-    return [
-      { route: '/collection/games', icon: 'videogame_asset', label: lang === 'es' ? 'Juegos' : 'Games' },
-      { route: '/collection/consoles', icon: 'tv', label: lang === 'es' ? 'Consolas' : 'Consoles' },
-      { route: '/collection/controllers', icon: 'gamepad', label: lang === 'es' ? 'Mandos' : 'Controllers' }
-    ];
-  });
+  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => [
+    { route: '/collection/games', icon: 'videogame_asset', label: 'nav.subnav.games' },
+    { route: '/collection/consoles', icon: 'tv', label: 'nav.subnav.consoles' },
+    { route: '/collection/controllers', icon: 'gamepad', label: 'nav.subnav.controllers' }
+  ]);
 
   /** True cuando la ruta activa está dentro de /collection/* (incluyendo overview). */
   readonly isCollectionActive = computed((): boolean => this.currentRoute().startsWith('/collection'));
 
   /** True cuando la ruta activa está dentro de /management/*. */
   readonly isManagementActive = computed((): boolean => this.currentRoute().startsWith('/management'));
+
+  /**
+   * Estado animado del sub-nav de "Colección" en el sidebar.
+   * Se sincroniza automáticamente con la ruta activa; se mantiene como WritableSignal
+   * para permitir override manual futuro (botón chevron, etc.) sin refactor.
+   */
+  readonly collectionOpen: WritableSignal<boolean> = signal(false);
+
+  /**
+   * Estado animado del sub-nav de "Gestión" en el sidebar.
+   * @see collectionOpen
+   */
+  readonly managementOpen: WritableSignal<boolean> = signal(false);
 
   /**
    * Sub-items mostrados bajo "Gestión" en el sidebar cuando está activo (solo desktop).
@@ -156,6 +164,14 @@ export class AppComponent implements OnInit, OnDestroy {
       if (userId) {
         void this._userPreferencesInit.loadPreferences(userId);
       }
+    });
+
+    effect(() => {
+      this.collectionOpen.set(this.isCollectionActive());
+    });
+
+    effect(() => {
+      this.managementOpen.set(this.isManagementActive());
     });
   }
 
