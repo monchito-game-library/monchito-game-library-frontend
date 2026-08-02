@@ -1,4 +1,4 @@
-import { computed, Directive, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, Directive, inject, OnDestroy, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { TranslocoService } from '@jsverse/transloco';
@@ -19,6 +19,7 @@ import {
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
+import { HardwareListShellComponent } from '@/pages/collection/components/hardware-list-shell/hardware-list-shell.component';
 
 /**
  * Abstract base class that encapsulates shared state, injections and helper methods
@@ -41,6 +42,9 @@ export abstract class HardwareListBaseComponent<
   protected readonly _userPreferencesState: UserPreferencesService = inject(UserPreferencesService);
   protected readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   protected readonly _transloco: TranslocoService = inject(TranslocoService);
+
+  /** Referencia al shell interno para delegar el foco al buscador desde el atajo de teclado. */
+  private readonly _hardwareShell = viewChild(HardwareListShellComponent);
 
   protected readonly _stores: WritableSignal<StoreModel[]> = signal<StoreModel[]>([]);
   protected readonly _brands: WritableSignal<HardwareBrandModel[]> = signal<HardwareBrandModel[]>([]);
@@ -97,6 +101,15 @@ export abstract class HardwareListBaseComponent<
   }
 
   /**
+   * Registra el atajo de teclado "Tab → buscador" para esta página.
+   * Llamar al inicio de ngOnInit (antes de cualquier `await`) para que esté
+   * activo desde el primer render. Se desregistra automáticamente en ngOnDestroy.
+   */
+  protected _initTabFocusShortcut(): void {
+    document.addEventListener('keydown', this._onTabKeyDown);
+  }
+
+  /**
    * Restores the scroll position saved before the last navigation away from this list.
    * Call after data has finished loading so the container is in the DOM.
    */
@@ -111,6 +124,7 @@ export abstract class HardwareListBaseComponent<
 
   ngOnDestroy(): void {
     document.removeEventListener('scroll', this._onHwListScroll, true);
+    document.removeEventListener('keydown', this._onTabKeyDown);
   }
 
   abstract ngOnInit(): Promise<void>;
@@ -167,6 +181,21 @@ export abstract class HardwareListBaseComponent<
     const t = e.target as HTMLElement;
     if (t.classList.contains('hw-list__content')) {
       this._scrollOffsetSignal.set(t.scrollTop);
+    }
+  };
+
+  /**
+   * Listener de teclado: la primera pulsación de Tab tras entrar a la página
+   * enfoca el buscador para que el usuario pueda empezar a escribir
+   * directamente. Una vez el foco está en cualquier elemento focuseable
+   * (botones del header, cards, inputs del drawer, etc.) dejamos que el
+   * flujo nativo de Tab tome el control; Shift+Tab también se respeta.
+   */
+  private readonly _onTabKeyDown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Tab' || event.shiftKey) return;
+    if (document.activeElement !== document.body) return;
+    if (this._hardwareShell()?.focusSearch()) {
+      event.preventDefault();
     }
   };
 

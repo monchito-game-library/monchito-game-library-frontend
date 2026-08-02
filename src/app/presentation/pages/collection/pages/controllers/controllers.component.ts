@@ -41,6 +41,7 @@ export class ControllersComponent extends HardwareListBaseComponent<ControllerMo
 
   async ngOnInit(): Promise<void> {
     this._initScrollRestoration();
+    this._initTabFocusShortcut();
     const userId: string | null = this._userContext.userId();
     if (!userId) return;
     await Promise.all([

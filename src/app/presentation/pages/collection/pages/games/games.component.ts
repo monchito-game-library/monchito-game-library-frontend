@@ -9,6 +9,7 @@ import {
   OnInit,
   Signal,
   signal,
+  viewChild,
   ViewChild,
   WritableSignal
 } from '@angular/core';
@@ -82,6 +83,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _bottomSheet: RetroBottomSheetService = inject(RetroBottomSheetService);
   private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
+  /** Referencia al header de página para delegar foco al buscador desde atajos de teclado. */
+  private readonly _listPageHeader = viewChild(ListPageHeaderComponent);
   private _bpSubscription?: Subscription;
   private _searchDebounce?: Subscription;
 
@@ -310,6 +313,9 @@ export class GamesComponent implements OnInit, OnDestroy {
 
     // Show cache immediately if available while reloading from Supabase
     document.addEventListener('scroll', this._onViewportScroll, { capture: true, passive: true });
+    // Atajo de teclado: Tab → buscador. Solo en esta página; el componente se destruye al
+    // navegar fuera, así que el listener queda libre automáticamente.
+    document.addEventListener('keydown', this._onTabKeyDown);
 
     const cached = this._userPreferencesState.allGames();
     if (cached.length > 0) {
@@ -342,6 +348,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     this._bpSubscription?.unsubscribe();
     this._searchDebounce?.unsubscribe();
     document.removeEventListener('scroll', this._onViewportScroll, true);
+    document.removeEventListener('keydown', this._onTabKeyDown);
   }
 
   /**
@@ -403,6 +410,21 @@ export class GamesComponent implements OnInit, OnDestroy {
     const t = e.target as HTMLElement;
     if (t.classList.contains('game-list__grid') || t.classList.contains('game-list__list')) {
       this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
+    }
+  };
+
+  /**
+   * Listener de teclado: la primera pulsación de Tab tras entrar a /games
+   * enfoca el buscador para que el usuario pueda empezar a escribir
+   * directamente. Una vez el foco está en cualquier elemento focuseable
+   * (botones del header, cards, inputs del drawer, etc.) dejamos que el
+   * flujo nativo de Tab tome el control; Shift+Tab también se respeta.
+   */
+  private readonly _onTabKeyDown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Tab' || event.shiftKey) return;
+    if (document.activeElement !== document.body) return;
+    if (this._listPageHeader()?.focusSearch()) {
+      event.preventDefault();
     }
   };
 
