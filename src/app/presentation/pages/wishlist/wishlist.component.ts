@@ -34,10 +34,8 @@ import { WishlistItemForm, WishlistItemFormValue } from '@/interfaces/forms/wish
 import { WISHLIST_PRIORITY_OPTIONS } from '@/constants/wishlist-priority.constant';
 import { WishlistCardComponent } from '@/pages/wishlist/components/wishlist-card/wishlist-card.component';
 import { WishlistFilterService } from '@/pages/wishlist/services/wishlist-filter.service';
-import {
-  WishlistListFiltersSheetComponent,
-  WishlistListFiltersSheetData
-} from '@/pages/wishlist/components/wishlist-list-filters-sheet/wishlist-list-filters-sheet.component';
+import { WishlistListFiltersSheetComponent } from '@/pages/wishlist/components/wishlist-list-filters-sheet/wishlist-list-filters-sheet.component';
+import { WishlistListFiltersSheetData } from '@/interfaces/wishlist-list-filters-sheet.interface';
 import { ConfirmDialogComponent } from '@/components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogInterface } from '@/interfaces/confirm-dialog.interface';
 import { CatalogSearchPanelComponent } from '@/components/catalog-search-panel/catalog-search-panel.component';

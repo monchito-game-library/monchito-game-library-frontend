@@ -1,7 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 
-/** Field used to sort the wishlist items. */
-export type WishlistSortField = 'priority' | 'title' | 'desiredPrice' | 'createdAt';
+import { WishlistSortField } from '@/types/wishlist-sort-field.type';
 
 /**
  * Holds filter and sort state for the wishlist.
@@ -14,7 +13,9 @@ export class WishlistFilterService {
   readonly searchTerm: WritableSignal<string> = signal('');
 
   /** Selected priority filter. '' = all, otherwise '1'..'5' (1 = highest). */
-  readonly selectedPriority: WritableSignal<'' | '1' | '2' | '3' | '4' | '5'> = signal<'' | '1' | '2' | '3' | '4' | '5'>('');
+  readonly selectedPriority: WritableSignal<'' | '1' | '2' | '3' | '4' | '5'> = signal<
+    '' | '1' | '2' | '3' | '4' | '5'
+  >('');
 
   /** Selected platform filter. '' = all. */
   readonly selectedPlatform: WritableSignal<string> = signal('');

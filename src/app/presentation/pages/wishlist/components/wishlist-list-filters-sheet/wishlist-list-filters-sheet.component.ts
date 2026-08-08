@@ -9,20 +9,7 @@ import { RetroOptionComponent } from '@retro/retro-select/components/retro-optio
 import { RetroSelectComponent } from '@retro/retro-select/retro-select.component';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { WishlistFilterService } from '@/pages/wishlist/services/wishlist-filter.service';
-
-/** Interface shared between bottom-sheet DI and the drawer host. */
-export interface WishlistListFiltersSheetData {
-  readonly searchTerm: WishlistFilterService['searchTerm'];
-  readonly selectedPriority: WishlistFilterService['selectedPriority'];
-  readonly selectedPlatform: WishlistFilterService['selectedPlatform'];
-  readonly onlyWithPrice: WishlistFilterService['onlyWithPrice'];
-  readonly onlyWithNotes: WishlistFilterService['onlyWithNotes'];
-  readonly sortBy: WishlistFilterService['sortBy'];
-  readonly sortDirection: WishlistFilterService['sortDirection'];
-  readonly clearAllFilters: () => void;
-  readonly availablePlatforms: () => string[];
-}
+import { WishlistListFiltersSheetData } from '@/interfaces/wishlist-list-filters-sheet.interface';
 
 /**
  * Filter sheet for the wishlist list. Mirrors the games pattern:
