@@ -5,21 +5,61 @@ import { mkdirSync } from 'node:fs';
 
 const SUPABASE_ORIGIN = 'https://egevnihppclxucorhdjt.supabase.co';
 const USER_ID = '17ac7e60-4d2e-4189-8e7c-05436e629ff4';
-const uuid = (i) => `00000000-0000-4000-8000-${(i).toString(16).padStart(12, '0')}`;
+const uuid = (i) => `00000000-0000-4000-8000-${i.toString(16).padStart(12, '0')}`;
 const dateOffset = (d) => new Date(Date.now() - d * 86400000).toISOString();
 
 const TITLES = [
-  'The Legend of Zelda', 'Final Fantasy VII', 'God of War', 'Metal Gear Solid',
-  'Resident Evil 4', 'Chrono Trigger', 'Bloodborne', 'Dark Souls', 'Elden Ring',
-  'Hollow Knight', 'Hades', 'Disco Elysium', 'Red Dead Redemption', 'The Witcher 3',
-  'Cyberpunk 2077', 'Persona 5', 'Metal Gear Solid 2', 'Silent Hill 2', 'Shadow of the Colossus',
-  'Bioshock', 'Mass Effect 2', 'Dragon Age Origins', 'Baldurs Gate 3', 'Divinity Original Sin 2',
-  'Skyrim', 'Oblivion', 'Morrowind', 'Fallout New Vegas', 'Fallout 3',
-  'Diablo 4', 'Path of Exile', 'Stardew Valley', 'Hollow Knight Silksong', 'Celeste',
-  'Ori and the Blind Forest', 'Ori Will of the Wisps', 'Inside', 'Limbo', 'Death Stranding',
-  'Control', 'Alan Wake 2', 'Silent Hill', 'Resident Evil 2', 'Resident Evil Village',
-  'Resident Evil 7', 'Devil May Cry 5', 'Bayonetta 3', 'Nier Automata', 'Nier Replicant',
-  'Sekiro', 'Ghost of Tsushima'
+  'The Legend of Zelda',
+  'Final Fantasy VII',
+  'God of War',
+  'Metal Gear Solid',
+  'Resident Evil 4',
+  'Chrono Trigger',
+  'Bloodborne',
+  'Dark Souls',
+  'Elden Ring',
+  'Hollow Knight',
+  'Hades',
+  'Disco Elysium',
+  'Red Dead Redemption',
+  'The Witcher 3',
+  'Cyberpunk 2077',
+  'Persona 5',
+  'Metal Gear Solid 2',
+  'Silent Hill 2',
+  'Shadow of the Colossus',
+  'Bioshock',
+  'Mass Effect 2',
+  'Dragon Age Origins',
+  'Baldurs Gate 3',
+  'Divinity Original Sin 2',
+  'Skyrim',
+  'Oblivion',
+  'Morrowind',
+  'Fallout New Vegas',
+  'Fallout 3',
+  'Diablo 4',
+  'Path of Exile',
+  'Stardew Valley',
+  'Hollow Knight Silksong',
+  'Celeste',
+  'Ori and the Blind Forest',
+  'Ori Will of the Wisps',
+  'Inside',
+  'Limbo',
+  'Death Stranding',
+  'Control',
+  'Alan Wake 2',
+  'Silent Hill',
+  'Resident Evil 2',
+  'Resident Evil Village',
+  'Resident Evil 7',
+  'Devil May Cry 5',
+  'Bayonetta 3',
+  'Nier Automata',
+  'Nier Replicant',
+  'Sekiro',
+  'Ghost of Tsushima'
 ];
 const PALETTE = ['#5b3a8c', '#276738', '#a05e0a', '#be1238', '#1e6091', '#7c2d12'];
 const fakeCover = (i) =>
@@ -62,12 +102,12 @@ const FAKE_SESSION = {
 };
 
 const VIEWPORTS = [
-  { name: '1920x1080-full',   w: 1920, h: 1080, label: 'full 1080p' },
-  { name: '960x1080-half',    w: 960,  h: 1080, label: 'split 50/50' },
+  { name: '1920x1080-full', w: 1920, h: 1080, label: 'full 1080p' },
+  { name: '960x1080-half', w: 960, h: 1080, label: 'split 50/50' },
   { name: '1280x1080-twothirds', w: 1280, h: 1080, label: 'split 2/3' },
-  { name: '800x1080-small',   w: 800,  h: 1080, label: 'narrow window' },
-  { name: '2560x1440-2k',     w: 2560, h: 1440, label: '2K' },
-  { name: '3840x2160-4k',     w: 3840, h: 2160, label: '4K' }
+  { name: '800x1080-small', w: 800, h: 1080, label: 'narrow window' },
+  { name: '2560x1440-2k', w: 2560, h: 1440, label: '2K' },
+  { name: '3840x2160-4k', w: 3840, h: 2160, label: '4K' }
 ];
 
 const OUT_DIR = '.playwright-mcp/shots/wishlist-split-diagnostic';
@@ -98,8 +138,11 @@ for (const vp of VIEWPORTS) {
     }
     if (t === 'user_preferences') {
       return route.fulfill({
-        status: 200, contentType: 'application/json',
-        body: JSON.stringify([{ user_id: USER_ID, language: 'es', theme: 'dark', role: 'user', avatar_url: null, banner_url: null }])
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { user_id: USER_ID, language: 'es', theme: 'dark', role: 'user', avatar_url: null, banner_url: null }
+        ])
       });
     }
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) });
@@ -115,11 +158,9 @@ for (const vp of VIEWPORTS) {
 
   // Esperar a que aparezcan las 50 cards (o 20s max)
   try {
-    await page.waitForFunction(
-      (n) => document.querySelectorAll('app-wishlist-card').length >= n,
-      WISHLIST_COUNT,
-      { timeout: 20000 }
-    );
+    await page.waitForFunction((n) => document.querySelectorAll('app-wishlist-card').length >= n, WISHLIST_COUNT, {
+      timeout: 20000
+    });
   } catch {
     const present = await page.evaluate(() => document.querySelectorAll('app-wishlist-card').length);
     console.log(`  ⚠ solo ${present}/${WISHLIST_COUNT} cards después de 20s`);
@@ -152,7 +193,8 @@ for (const vp of VIEWPORTS) {
     out.viewport = viewport;
 
     // Nav rail (sidebar)
-    const navRail = document.querySelector('.nav-rail') || document.querySelector('aside.nav-rail') || document.querySelector('nav');
+    const navRail =
+      document.querySelector('.nav-rail') || document.querySelector('aside.nav-rail') || document.querySelector('nav');
     if (navRail) {
       const r = navRail.getBoundingClientRect();
       out.navRail = { width: r.width, left: r.left, display: getComputedStyle(navRail).display };
@@ -249,8 +291,8 @@ for (const r of allResults) {
   const v = r.viewport;
   const d = r.data;
   const cols = d.columnCount ?? '?';
-  const ovfX = d.retroList ? (d.retroList.scrollWidth - d.retroList.clientWidth) : '?';
-  const pageOvfX = d.wishlistPage ? (d.wishlistPage.scrollWidth - d.wishlistPage.clientWidth) : '?';
+  const ovfX = d.retroList ? d.retroList.scrollWidth - d.retroList.clientWidth : '?';
+  const pageOvfX = d.wishlistPage ? d.wishlistPage.scrollWidth - d.wishlistPage.clientWidth : '?';
   const gridCols = d.retroList?.gridTemplateColumns ?? '-';
   console.log(
     `${v.name.padEnd(24)} cols=${cols}  retroList.overflowX=${ovfX}  page.overflowX=${pageOvfX}  grid-cols="${gridCols}"`

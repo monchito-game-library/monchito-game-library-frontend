@@ -204,19 +204,17 @@ export class WishlistComponent implements OnInit {
   readonly activeFilterCount: Signal<number> = computed(() => this.filters.activeFilterCount());
 
   /** Data passed to the filters bottom-sheet when opened on mobile. */
-  readonly filtersSheetData: Signal<WishlistListFiltersSheetData> = computed(
-    () => ({
-      searchTerm: this.filters.searchTerm,
-      selectedPriority: this.filters.selectedPriority,
-      selectedPlatform: this.filters.selectedPlatform,
-      onlyWithPrice: this.filters.onlyWithPrice,
-      onlyWithNotes: this.filters.onlyWithNotes,
-      sortBy: this.filters.sortBy,
-      sortDirection: this.filters.sortDirection,
-      clearAllFilters: () => this.filters.clearAllFilters(),
-      availablePlatforms: this.availablePlatforms
-    })
-  );
+  readonly filtersSheetData: Signal<WishlistListFiltersSheetData> = computed(() => ({
+    searchTerm: this.filters.searchTerm,
+    selectedPriority: this.filters.selectedPriority,
+    selectedPlatform: this.filters.selectedPlatform,
+    onlyWithPrice: this.filters.onlyWithPrice,
+    onlyWithNotes: this.filters.onlyWithNotes,
+    sortBy: this.filters.sortBy,
+    sortDirection: this.filters.sortDirection,
+    clearAllFilters: () => this.filters.clearAllFilters(),
+    availablePlatforms: this.availablePlatforms
+  }));
 
   /** Flags para retro-command-bar — refleja los filtros activos. */
   readonly commandFlags: Signal<readonly string[]> = computed(() => {
