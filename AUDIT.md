@@ -91,6 +91,19 @@
 - [ ] Validar que `/collection/games/new`, `/collection/consoles/new`, `/collection/controllers/new` montan el formulario (no el detail) tras el follow-up del Bug 6 (rutas estáticas `new`). Los unit tests actuales solo validan el tratamiento defensivo en los formularios; falta un test de routing real.
 - [ ] Verificar que el flujo inline de wishlist (`onAddItem() → viewMode='search'`) funciona end-to-end.
 
+### Validación exhaustiva del hallazgo visual "cards cortadas en split screen" (2026-08-08)
+
+Tras la duda del usuario, se ejecutó una segunda ronda de validación con Playwright en **24 escenarios**:
+
+- **13 viewports probados** (todos sin clipping): 1920×1080, 1680×1050, 1440×900, 1366×768, 1280×800, 960×1080 (split 50/50 en 1920), 960×800, 768×1024, 640×960, 2560×1440, 3840×2160, 3840×1080, 3440×1440.
+- **11 escenarios alternativos** (todos sin clipping): zoom 110/150/200% @ 1920×1080 y @ 960×1080, dynamic resize 1920→960→640→2560, hover primera card, scroll horizontal forzado, mobile emulation Pixel 5/iPad Mini/iPhone SE.
+
+**Sanity check**: forzando `retro-list--grid` sobre `<retro-list>` en wishlist (lo cual **NO está aplicado en el código actual**) el síntoma SÍ se reproduce (3 cols @ 960×1080 cortadas, 7 cols @ 1920×1080 con +26 px overflow).
+
+**Conclusión**: el síntoma reportado por el usuario NO ocurre en el estado actual. `<retro-list>` usa `display: flex` por defecto y `min-width: 0` en los items previene el overflow. Solo se reproduciría si alguien activara `retro-list--grid` en wishlist — y la rama actual NO lo hace.
+
+**Decisión final**: mantener Opción C (no tocar). El hallazgo queda documentado para futuro: cualquier reactivación del grid requiere validación visual con el script `scripts/playwright-wishlist-split-grid-test.mjs`.
+
 ### Validaciones ya completadas (pase 3)
 
 - [x] Validación visual con contenido real (juegos, wishlist items, sales, etc.) — datos de prueba añadidos 2026-08-08 (ver "Datos de prueba" abajo).
