@@ -666,12 +666,39 @@ En el template de la card, marcar la primera card con `[priority]="isFirst"`. O 
 
 Donde `isFirstCard` es `true` solo para la primera iteración del `@for`.
 
-**Solución aplicada:**
-El componente `wishlist-card` **ya tenía implementado** el `@Input() priority: boolean` y el template ya propagaba `[priority]="first"` desde el `@for` del padre. El bug probablemente se reprodujo contra un build cacheado o en una versión previa de la rama.
+**Solución aplicada (definitiva tras 3 iteraciones):**
 
-Nota pendiente: las imágenes con esquema `data:` (placeholders inline) usan `<img [src]>` plano por incompatibilidad con `NgOptimizedImage` y no se pueden migrar a `ngSrc`. Solo las imágenes remotas (`rawg.io`) reciben `priority`.
+**v1 (fallido)**: pasar `[priority]="first"` al primer `$first` del `@for`. No funciona si la primera card tiene placeholder.
 
-**Sin cambios necesarios** — solo había que validar manualmente.
+**v2 (intermitente)**: pasar `priority` a `firstImageIndex` (primer item con imagen). Falla cuando las primeras N imágenes no cargan (ORB/CORS/404) y una imagen posterior termina siendo LCP.
+
+**v3 (definitivo)**: pasar `priority` a las primeras 10 cards con imagen del array.
+
+```ts
+// wishlist.component.ts
+readonly priorityIndices: Signal<ReadonlySet<number>> = computed((): ReadonlySet<number> => {
+  const items: readonly WishlistItemModel[] = this.filteredItems();
+  const indices: Set<number> = new Set<number>();
+  let count: number = 0;
+  const limit: number = 10;
+  for (let i: number = 0; i < items.length && count < limit; i++) {
+    if (items[i].imageUrl) {
+      indices.add(i);
+      count++;
+    }
+  }
+  return indices;
+});
+
+// wishlist.component.html
+[priority]="priorityIndices().has(i)"
+```
+
+**Validado con Playwright** (5 cargas consecutivas): 0 ocurrencias de NG02955. LCP siempre cae en una de las primeras 10 cards con imagen.
+
+**Justificación del límite 10**: cubre el caso observado donde 5 imágenes fallaron en cascada (ORB en primera card). En desktop con grid de 3 columnas y viewport 1080p, ~9 cards son above-the-fold, así que el límite está alineado con la realidad visual. Cards más allá usan lazy loading.
+
+**Nota técnica**: las imágenes `data:` (placeholders inline) usan `<img [src]>` plano por incompatibilidad con `NgOptimizedImage` y no entran en el pipeline de LCP. Solo las imágenes remotas (`rawg.io`) reciben `priority`.
 
 ---
 

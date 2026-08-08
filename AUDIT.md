@@ -133,6 +133,22 @@ fetch('https://egevnihppclxucorhdjt.supabase.co/rest/v1/user_games?user_id=eq.a2
 
 (repetir para `user_works`, `user_wishlist`, `user_consoles`, `user_controllers`).
 
+## Hallazgos visuales post-pase 3 (reportados por el usuario, 2026-08-08)
+
+### Cards cortadas en modo pantalla partida / split-screen
+
+**Síntoma reportado:** En viewports anchos (≥ 1920px) o cuando el navegador está en modo pantalla partida (split view), las cards de la wishlist salen cortadas. Típicamente se ven 3 columnas pero la columna de la izquierda queda cortada.
+
+**Estado:** Pendiente de validación. El usuario reporta el síntoma pero no está claro:
+
+- Si es un problema del grid CSS (número de columnas hardcodeado que no escala con viewport).
+- Si es un problema del contenedor (ancho fijo o `overflow: hidden`).
+- Si está relacionado con algún breakpoint intermedio no contemplado.
+
+**Decisión:** este hallazgo requiere investigación visual antes de proponer un fix. Cambiar el grid puede romper el diseño responsive establecido. Pendiente de priorización por el usuario.
+
+**Tests pendientes:** capturar screenshots en viewports 2560×1440 y 3840×2160 con split-screen activo para confirmar el síntoma.
+
 ## Docs del proyecto relacionados
 
 - [`docs/quality/BUGS.md`](docs/quality/BUGS.md) — registro histórico de bugs con formato establecido.

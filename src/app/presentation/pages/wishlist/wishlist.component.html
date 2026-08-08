@@ -78,11 +78,11 @@
       </retro-empty-state>
     } @else {
       <retro-list class="wishlist-page__list">
-        @for (item of filteredItems(); track item.id; let first = $first; let i = $index) {
+        @for (item of filteredItems(); track item.id; let i = $index) {
           <app-wishlist-card
             [item]="item"
             [mobileMode]="isMobile()"
-            [priority]="first"
+            [priority]="priorityIndices().has(i)"
             [style]="{ '--i': i }"
             (cardClicked)="onCardClicked($event)"
             (editClicked)="onEditItem($event)"

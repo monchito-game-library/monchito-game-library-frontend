@@ -175,6 +175,31 @@ export class WishlistComponent implements OnInit {
     });
   });
 
+  /**
+   * Indices of the first wishlist cards (up to 10) that have an imageUrl,
+   * used to mark their covers as LCP priority for NgOptimizedImage. Marking
+   * only the first image is not enough because the actual LCP element is
+   * only known at runtime — the first several items may render a placeholder
+   * (imageUrl=null) or their request may fail (e.g. ERR_BLOCKED_BY_ORB,
+   * CORS, 404), in which case a later image takes over as LCP. A limit of 10
+   * covers observed edge cases (5 failed cards in a row in one load) while
+   * keeping eager-load bandwidth acceptable for the full ~50-item list.
+   * Cards beyond that range fall back to lazy loading.
+   */
+  readonly priorityIndices: Signal<ReadonlySet<number>> = computed((): ReadonlySet<number> => {
+    const items: readonly WishlistItemModel[] = this.filteredItems();
+    const indices: Set<number> = new Set<number>();
+    let count: number = 0;
+    const limit: number = 10;
+    for (let i: number = 0; i < items.length && count < limit; i++) {
+      if (items[i].imageUrl) {
+        indices.add(i);
+        count++;
+      }
+    }
+    return indices;
+  });
+
   /** Count of active filters (used as badge on the filter button). */
   readonly activeFilterCount: Signal<number> = computed(() => this.filters.activeFilterCount());
 
