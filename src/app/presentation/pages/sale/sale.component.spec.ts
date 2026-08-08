@@ -1,6 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { SaleComponent } from './sale.component';
@@ -56,12 +57,24 @@ describe('SaleComponent', () => {
     userId: vi.fn()
   };
 
+  let bpState: { matches: boolean };
+  const mockBreakpointObserver = {
+    observe: vi.fn()
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockUserContext.userId.mockReturnValue('user-1');
     mockMarketUseCases.getAvailableItems.mockResolvedValue([]);
     mockMarketUseCases.getSoldItems.mockResolvedValue([]);
+    bpState = { matches: false };
+    mockBreakpointObserver.observe.mockImplementation(() => ({
+      subscribe: (fn: (state: { matches: boolean }) => void) => {
+        fn(bpState);
+        return { unsubscribe: () => {} };
+      }
+    }));
 
     TestBed.configureTestingModule({
       imports: [SaleComponent],
@@ -70,7 +83,8 @@ describe('SaleComponent', () => {
         { provide: UserContextService, useValue: mockUserContext },
         { provide: Router, useValue: mockRouter },
         { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
-        { provide: TranslocoService, useValue: mockTransloco }
+        { provide: TranslocoService, useValue: mockTransloco },
+        { provide: BreakpointObserver, useValue: mockBreakpointObserver }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -313,6 +327,26 @@ describe('SaleComponent', () => {
 
       expect(mockRetroSnackbar.open).toHaveBeenCalled();
       expect(component.loading()).toBe(false);
+    });
+  });
+
+  describe('isMobile (signal del componente, no el binding en template)', () => {
+    it('isMobile() es false por defecto antes de ngOnInit', () => {
+      expect(component.isMobile()).toBe(false);
+    });
+
+    it('isMobile() se actualiza a true cuando BreakpointObserver emite matches=true', async () => {
+      bpState = { matches: true };
+      await component.ngOnInit();
+
+      expect(component.isMobile()).toBe(true);
+    });
+
+    it('isMobile() permanece false cuando BreakpointObserver emite matches=false', async () => {
+      bpState = { matches: false };
+      await component.ngOnInit();
+
+      expect(component.isMobile()).toBe(false);
     });
   });
 });

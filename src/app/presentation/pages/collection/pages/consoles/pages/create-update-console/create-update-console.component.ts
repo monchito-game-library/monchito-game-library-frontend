@@ -17,6 +17,7 @@ import { availableConsoleRegions } from '@/constants/available-console-regions.c
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { GameConditionType } from '@/types/game-condition.type';
 import { ConsoleRegionType } from '@/types/console-region.type';
+import { ROUTE_PLACEHOLDER_IDS } from '@/constants/route-placeholders.constant';
 
 @Component({
   selector: 'app-create-update-console',
@@ -115,7 +116,9 @@ export class CreateUpdateConsoleComponent extends HardwareFormBaseComponent {
 
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id');
-    if (id) {
+    // Treat route placeholders (`new`, `add`) as create mode so we never fire
+    // a `user_consoles?id=eq.<placeholder>` query that Supabase rejects with 400.
+    if (id && !ROUTE_PLACEHOLDER_IDS.includes(id)) {
       this._consoleId = id;
       this.isEditMode.set(true);
       // In edit mode, wait for brands and stores to load before patching the form

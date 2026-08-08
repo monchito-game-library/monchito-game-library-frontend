@@ -29,6 +29,11 @@ export const gamesRoutes: Routes = [
           import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
       },
       {
+        path: 'new',
+        loadChildren: () =>
+          import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)
+      },
+      {
         path: 'edit/:id',
         loadChildren: () =>
           import('./pages/create-update-game/create-and-update-game.routes').then((m) => m.createUpdateGameRoutes)

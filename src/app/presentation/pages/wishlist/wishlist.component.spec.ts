@@ -67,7 +67,10 @@ describe('WishlistComponent', () => {
       imports: [WishlistComponent, ReactiveFormsModule],
       providers: [
         WishlistFilterService,
-        { provide: RetroBottomSheetService, useValue: { open: vi.fn().mockResolvedValue({ afterClosed: () => of(null) }) } },
+        {
+          provide: RetroBottomSheetService,
+          useValue: { open: vi.fn().mockResolvedValue({ afterClosed: () => of(null) }) }
+        },
         {
           provide: WISHLIST_USE_CASES,
           useValue: {
@@ -463,7 +466,7 @@ describe('WishlistComponent', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('navega a /games/add con el catalog entry si el dialog se confirma', async () => {
+    it('navega a /collection/games/add con el catalog entry si el dialog se confirma', async () => {
       const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;

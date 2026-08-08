@@ -7,9 +7,7 @@
     }
 
     <!-- Filters side panel (desktop) — opens from the right -->
-    <aside
-      class="wishlist-page__filters-drawer"
-      [class.wishlist-page__filters-drawer--open]="filtersOpen()">
+    <aside class="wishlist-page__filters-drawer" [class.wishlist-page__filters-drawer--open]="filtersOpen()">
       <app-wishlist-list-filters-sheet [dataInput]="filtersSheetData()" (closed)="filtersOpen.set(false)" />
     </aside>
 
@@ -20,7 +18,7 @@
 
       <app-list-page-header
         [searchValue]="searchTerm()"
-        [searchPlaceholder]="'wishlist.filters.title' | transloco"
+        [searchPlaceholder]="'wishlist.filters.title'"
         [showAddBtn]="!loading() && items().length > 0"
         [showFilterBtn]="!loading() && items().length > 0"
         [filterCount]="activeFilterCount()"
@@ -74,9 +72,7 @@
         [title]="'wishlist.empty.noResults' | transloco"
         [subtitle]="'wishlist.empty.noResultsSubtitle' | transloco"
         hint="$ try --filter=reset">
-        <retro-button
-          [label]="'wishlist.filters.clear' | transloco"
-          (clicked)="filters.clearAllFilters()">
+        <retro-button [label]="'wishlist.filters.clear' | transloco" (clicked)="filters.clearAllFilters()">
           <retro-icon slot="start" name="filter_alt_off" size="sm" />
         </retro-button>
       </retro-empty-state>
@@ -193,7 +189,8 @@
                     ? ('wishlist.card.priorityHigh' | transloco)
                     : level <= 3
                       ? ('wishlist.card.priorityMedium' | transloco)
-                      : ('wishlist.card.priorityLow' | transloco)"
+                      : ('wishlist.card.priorityLow' | transloco)
+                "
                 (click)="mobileForm.controls.priority.setValue(level)">
                 <retro-badge [value]="level" />
               </button>
