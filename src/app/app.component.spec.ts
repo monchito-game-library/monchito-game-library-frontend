@@ -69,6 +69,7 @@ describe('AppComponent', () => {
     TestBed.overrideComponent(AppComponent, { set: { imports: [], template: '' } });
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('se crea correctamente', () => {
