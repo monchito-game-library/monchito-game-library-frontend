@@ -1,5 +1,7 @@
 <div class="retro-section-header">
-  <span class="retro-section-header__prefix" aria-hidden="true">&gt;</span>
+  <span class="retro-section-header__prefix" aria-hidden="true">
+    <retro-icon name="chevron_right" />
+  </span>
   <h2 class="retro-section-header__label">{{ label() }}</h2>
   @if (count() !== null) {
     <span class="retro-section-header__count">[{{ count() }}]</span>

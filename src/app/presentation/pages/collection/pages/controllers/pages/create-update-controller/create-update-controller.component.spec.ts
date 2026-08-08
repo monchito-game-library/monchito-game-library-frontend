@@ -432,3 +432,29 @@ describe('CreateUpdateControllerComponent — modo edición', () => {
     });
   });
 });
+
+describe('CreateUpdateControllerComponent — route placeholders', () => {
+  it('con id="new" no llama a getById y entra en modo creación', async () => {
+    setupTestBed('new');
+    const fixture = TestBed.createComponent(CreateUpdateControllerComponent);
+    const component = fixture.componentInstance;
+    const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+
+    await component.ngOnInit();
+
+    expect(component.isEditMode()).toBe(false);
+    expect(controllerUseCases.getById).not.toHaveBeenCalled();
+  });
+
+  it('con id="add" no llama a getById y entra en modo creación', async () => {
+    setupTestBed('add');
+    const fixture = TestBed.createComponent(CreateUpdateControllerComponent);
+    const component = fixture.componentInstance;
+    const controllerUseCases = TestBed.inject(CONTROLLER_USE_CASES as any) as any;
+
+    await component.ngOnInit();
+
+    expect(component.isEditMode()).toBe(false);
+    expect(controllerUseCases.getById).not.toHaveBeenCalled();
+  });
+});

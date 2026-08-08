@@ -322,6 +322,20 @@ describe('HardwareListShellComponent', () => {
     });
   });
 
+  describe('focusSearch', () => {
+    it('delegates focus on the inner list-page-header and devuelve true', () => {
+      setupComponent({ loading: false, items: [makeItem()], filteredItems: [makeItem()] });
+
+      const header = fixture.debugElement.query(By.css('app-list-page-header'));
+      const focusSpy = vi.spyOn(header.componentInstance, 'focusSearch').mockReturnValue(true);
+
+      const result: boolean = component.focusSearch();
+
+      expect(result).toBe(true);
+      expect(focusSpy).toHaveBeenCalledOnce();
+    });
+  });
+
   describe('resolvers', () => {
     it('llama a resolveModelName con el modelId del item y muestra el resultado', () => {
       const spyModel = vi.fn().mockReturnValue('PlayStation 5');

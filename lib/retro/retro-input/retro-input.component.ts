@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   forwardRef,
   inject,
   Injector,
@@ -11,6 +12,7 @@ import {
   output,
   OutputEmitterRef,
   signal,
+  viewChild,
   WritableSignal
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -66,10 +68,14 @@ export class RetroInputComponent implements ControlValueAccessor, RetroFormField
   private readonly _injector: Injector = inject(Injector);
   private readonly _focusSubject: Subject<boolean> = new Subject<boolean>();
 
+  /** Referencia al elemento `<input>` nativo, expuesta para foco programático. */
+  private readonly _inputRef = viewChild<ElementRef<HTMLInputElement>>('input');
+
   // ── Variables privadas ───────────────────────────────────────────────────────
 
   /** Valor interno del input. */
   private _internalValue: string = '';
+
 
   // ── Variables públicas readonly (RetroFormFieldControl + inputs + outputs) ───
 
@@ -180,6 +186,22 @@ export class RetroInputComponent implements ControlValueAccessor, RetroFormField
   }
 
   // ── Métodos públicos (CVA) ───────────────────────────────────────────────────
+
+  /**
+   * Enfoca el `<input>` nativo subyacente de forma programática.
+   * Pensado para que el contenedor (p.ej. `list-page-header`) pueda delegar
+   * atajos de teclado (Tab global → buscador, etc.) sin tener que conocer
+   * el marcado interno.
+   *
+   * @returns {boolean} `true` si el foco se aplicó; `false` si el input aún
+   * no está renderizado o está deshabilitado.
+   */
+  focusInput(): boolean {
+    const input: HTMLInputElement | undefined = this._inputRef()?.nativeElement;
+    if (!input || input.disabled) return false;
+    input.focus();
+    return true;
+  }
 
   /** @inheritdoc */
   writeValue(value: string | null): void {

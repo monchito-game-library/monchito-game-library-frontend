@@ -14,6 +14,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.component';
@@ -38,6 +39,7 @@ import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-men
     RouterLink,
     RetroSkeletonComponent,
     RetroIconComponent,
+    RetroTooltipDirective,
     TranslocoPipe,
     NgOptimizedImage,
     RetroSnackbarHostComponent,
@@ -70,6 +72,52 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
+  /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
+  readonly collectionSubItems = computed(
+    (): ReadonlyArray<{ route: string; label: string; icon: string }> => [
+      { route: '/collection/games', icon: 'videogame_asset', label: 'nav.subnav.games' },
+      { route: '/collection/consoles', icon: 'tv', label: 'nav.subnav.consoles' },
+      { route: '/collection/controllers', icon: 'gamepad', label: 'nav.subnav.controllers' }
+    ]
+  );
+
+  /** True cuando la ruta activa está dentro de /collection/* (incluyendo overview). */
+  readonly isCollectionActive = computed((): boolean => this.currentRoute().startsWith('/collection'));
+
+  /** True cuando la ruta activa está dentro de /management/*. */
+  readonly isManagementActive = computed((): boolean => this.currentRoute().startsWith('/management'));
+
+  /**
+   * Estado animado del sub-nav de "Colección" en el sidebar.
+   * Se sincroniza automáticamente con la ruta activa; se mantiene como WritableSignal
+   * para permitir override manual futuro (botón chevron, etc.) sin refactor.
+   */
+  readonly collectionOpen: WritableSignal<boolean> = signal(false);
+
+  /**
+   * Estado animado del sub-nav de "Gestión" en el sidebar.
+   * @see collectionOpen
+   */
+  readonly managementOpen: WritableSignal<boolean> = signal(false);
+
+  /**
+   * Sub-items mostrados bajo "Gestión" en el sidebar cuando está activo (solo desktop).
+   * Usa iconos Material en lugar de dots para mayor claridad.
+   */
+  readonly managementSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => {
+    const items: Array<{ route: string; label: string; icon: string }> = [
+      { route: '/management', icon: 'home', label: 'management.nav.home' },
+      { route: '/management/protectors', icon: 'videogame_asset', label: 'management.nav.products' },
+      { route: '/management/stores', icon: 'storefront', label: 'management.nav.stores' },
+      { route: '/management/users', icon: 'group', label: 'management.nav.users' },
+      { route: '/management/hardware', icon: 'memory', label: 'management.nav.hardware' }
+    ];
+    if (!this._userPreferencesState.isOwner()) {
+      return items.filter((i) => i.route !== '/management/users');
+    }
+    return items;
+  });
+
   /** Management navigation items. */
   readonly managementNavItems: NavItemInterface[] = [
     { icon: 'admin_panel_settings', label: 'nav.management', route: '/management' }
@@ -94,7 +142,13 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly bottomNavItems: Signal<NavItemInterface[]> = computed((): NavItemInterface[] => {
     const isMobile = this._isMobile();
     const items = [...this.navItems, ...(this.isAdmin() ? this.managementNavItems : [])];
-    return isMobile ? items.filter((item) => !item.tabletOnly) : items;
+    if (isMobile) {
+      // En mobile `Pedidos` queda excluido (sólo tablet/desktop). Para mantener
+      // 4 items estables y que el pill deslizante no descuadre, añadimos `Ajustes`
+      // como cuarta entrada.
+      return [...items.filter((item) => !item.tabletOnly), this.settingsNavItem];
+    }
+    return items;
   });
 
   /** Index of the active item in the bottom-nav, used to position the sliding pill. */
@@ -112,6 +166,14 @@ export class AppComponent implements OnInit, OnDestroy {
       if (userId) {
         void this._userPreferencesInit.loadPreferences(userId);
       }
+    });
+
+    effect(() => {
+      this.collectionOpen.set(this.isCollectionActive());
+    });
+
+    effect(() => {
+      this.managementOpen.set(this.isManagementActive());
     });
   }
 

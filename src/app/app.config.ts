@@ -12,6 +12,7 @@ import { provideRouter, Router, withInMemoryScrolling } from '@angular/router';
 import * as Sentry from '@sentry/angular';
 
 import { routes } from './app.routes';
+import { optimizeImageUrl } from '@/shared/image-url/image-url.utils';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
@@ -39,7 +40,10 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
-    { provide: IMAGE_LOADER, useValue: (config: ImageLoaderConfig) => config.src },
+    {
+      provide: IMAGE_LOADER,
+      useValue: (config: ImageLoaderConfig) => optimizeImageUrl(config.src, config.width)
+    },
     authRepositoryProvider,
     authUseCasesProvider,
     userPreferencesRepositoryProvider,

@@ -11,17 +11,103 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding: 1.5rem;
-  gap: 1.5rem;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
+// ─── Filters drawer (desktop) ────────────────────────────────────────────────
+
+.wishlist-page__drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.wishlist-page__filters-drawer {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 22rem;
+  max-width: 90vw;
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border);
+  z-index: calc(var(--z-overlay) + 1);
+  transform: translateX(100%);
+  transition: transform var(--transition-base);
+  overflow-y: auto;
+
+  &--open {
+    transform: translateX(0);
+  }
+}
+
 .wishlist-page__header {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky, 10);
+  background-color: var(--bg-void);
+  // El padding-top evita que el contenido se solape con el scrollbar.
+  padding-top: 0.75rem;
+}
+
+.wishlist-page__title-row {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  background-color: var(--bg-void);
+  padding: 0.5rem 1.5rem 0;
+}
+
+.wishlist-page__toolbar {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 0 1.5rem 0.5rem;
+  background-color: var(--bg-void);
+}
+
+.wishlist-page__toolbar-header {
+  flex: 1;
+  min-width: 0;
+}
+
+// El AÑADIR usa el mismo retro-button que games — no necesita estilos propios
+// porque hereda el visual del componente retro-button.
+.wishlist-page__add-btn {
+  flex-shrink: 0;
+}
+
+.wishlist-page__list-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+// El list-page-header tiene padding por defecto (0.75rem 1.5rem) y un
+// background-color propio (var(--bg-surface)). En wishlist, tanto el padding
+// como el background son redundantes con el del toolbar, así que los
+// anulamos para que el header se vea como un único banner continuo.
+.wishlist-page app-list-page-header {
+  padding: 0;
+  background: transparent;
+  border-bottom: none;
+
+  .list-page-header__stats {
+    color: var(--text-mid);
+  }
+
+  .list-page-header__search {
+    max-width: none;
+  }
 }
 
 .wishlist-page__header-info {
@@ -189,11 +275,28 @@
   min-width: 80px;
 }
 
-.wishlist-view__stars {
-  display: flex;
+.wishlist-view__priority-options {
+  display: inline-flex;
+  gap: 0.375rem;
+}
 
-  retro-icon {
-    color: var(--accent-amber);
+.wishlist-view__priority-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 }
 
@@ -263,14 +366,11 @@
   .wishlist-page__header {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.5rem;
   }
 
   .wishlist-page__title {
     font-size: 1.25rem;
-  }
-
-  .wishlist-page__header-add-btn {
-    display: none;
   }
 
   .wishlist-page__fab {

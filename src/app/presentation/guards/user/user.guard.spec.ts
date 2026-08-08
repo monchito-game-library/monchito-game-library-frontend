@@ -47,6 +47,17 @@ describe('canActivateUser', () => {
     });
   });
 
+  it('redirige a /auth/login con returnUrl=/sale cuando la ruta protegida es /sale sin sesión', () => {
+    vi.mocked(mockAuthState.isAuthenticated!).mockReturnValue(false);
+
+    const result = TestBed.runInInjectionContext(() => canActivateUser({} as never, { url: '/sale' } as never));
+
+    expect(result).toBe(false);
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { returnUrl: '/sale' }
+    });
+  });
+
   function setupDeferredGuard(
     authenticated: boolean,
     url: string

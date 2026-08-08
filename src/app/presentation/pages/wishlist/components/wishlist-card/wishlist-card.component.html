@@ -1,13 +1,10 @@
 <retro-list-item class="wishlist-card" [interactive]="mobileMode()" padding="md" (itemClicked)="onCardClick()">
-  <!-- Leading: cover -->
+  <!-- Leading: cover con aspect-ratio fijo -->
   <div class="wishlist-card__cover-wrapper" retroListItemLeading>
-    @if (item().imageUrl) {
-      <img
-        class="wishlist-card__cover"
-        [ngSrc]="item().imageUrl!"
-        [alt]="item().title"
-        fill
-        [priority]="priority()" />
+    @if (item().imageUrl && !useNativeImg()) {
+      <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
+    } @else if (item().imageUrl && useNativeImg()) {
+      <img class="wishlist-card__cover" [src]="item().imageUrl!" [alt]="item().title" />
     } @else {
       <div class="wishlist-card__cover--placeholder">
         <retro-icon name="image_not_supported" />
@@ -15,33 +12,46 @@
     }
   </div>
 
-  <!-- Body (slot default): content -->
+  <!-- Body: slot default con info + meta + acciones -->
   <div class="wishlist-card__content">
     <div class="wishlist-card__header">
-      <h3 class="wishlist-card__title">{{ item().title }}</h3>
-
-      <!-- Priority stars -->
-      <div class="wishlist-card__priority" [attr.aria-label]="'wishlist.card.priority' | transloco">
-        @for (level of priorityRange; track level) {
-          <retro-icon
-            class="wishlist-card__star"
-            [class.wishlist-card__star--filled]="level <= item().priority"
-            [name]="level <= item().priority ? 'star' : 'star_border'" />
-        }
+      <h3 class="wishlist-card__title" [retroTooltip]="item().title">{{ item().title }}</h3>
+      <div class="wishlist-card__priority">
+        <retro-badge
+          [value]="item().priority"
+          [tooltip]="
+            item().priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : item().priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)
+          "
+          [attr.aria-label]="
+            item().priority <= 1
+              ? ('wishlist.card.priorityHigh' | transloco)
+              : item().priority <= 3
+                ? ('wishlist.card.priorityMedium' | transloco)
+                : ('wishlist.card.priorityLow' | transloco)
+          " />
       </div>
     </div>
 
-    <!-- Platform badge -->
-    @if (item().platform) {
-      <retro-chip [label]="item().platform!" color="primary" size="sm" />
-    }
+    <div class="wishlist-card__meta">
+      @if (item().desiredPrice !== null) {
+        <div class="wishlist-card__price">
+          <retro-icon name="payments" size="sm" class="wishlist-card__price-icon" />
+          <span class="wishlist-card__price-label">PRECIO</span>
+          <span class="wishlist-card__price-value">{{ item().desiredPrice | number: '1.2-2' }} €</span>
+        </div>
+      }
+      @if (item().platform) {
+        <div class="wishlist-card__platform">
+          <retro-icon name="videogame_asset" size="sm" class="wishlist-card__platform-icon" />
+          <span class="wishlist-card__platform-label">{{ item().platform }}</span>
+        </div>
+      }
+    </div>
 
-    <!-- Price -->
-    @if (item().desiredPrice !== null) {
-      <retro-data-row label="PRECIO" icon="sell" [value]="(item().desiredPrice | number: '1.2-2') + ' €'" />
-    }
-
-    <!-- Genres -->
     @if (item().genres.length > 0) {
       <div class="wishlist-card__genres">
         @for (genre of item().genres.slice(0, 3); track genre) {
@@ -50,13 +60,11 @@
       </div>
     }
 
-    <!-- Notes -->
     @if (item().notes) {
       <p class="wishlist-card__notes">{{ item().notes }}</p>
     }
 
     @if (!mobileMode()) {
-      <!-- Store search links -->
       <div class="wishlist-card__store-links">
         @for (link of storeLinks(); track link.label) {
           <a
@@ -72,38 +80,30 @@
     }
   </div>
 
-  <!-- Trailing: chevron (mobile) or actions (desktop) -->
-  @if (mobileMode()) {
-    <div class="wishlist-card__trailing" retroListItemTrailing>
-      <retro-icon name="chevron_right" />
-    </div>
-  } @else {
-    <div class="wishlist-card__trailing" retroListItemTrailing>
-      <!-- Actions -->
-      <div class="wishlist-card__actions">
-        <retro-icon-button
-          icon="shopping_bag"
-          variant="primary"
-          size="sm"
-          class="wishlist-card__own-btn"
-          [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
-          [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
-          (clicked)="onOwn()" />
-        <retro-icon-button
-          icon="edit"
-          size="sm"
-          [ariaLabel]="'common.edit' | transloco"
-          [retroTooltip]="'common.edit' | transloco"
-          (clicked)="onEdit()" />
-        <retro-icon-button
-          icon="delete"
-          variant="danger"
-          size="sm"
-          class="wishlist-card__delete-btn"
-          [ariaLabel]="'common.delete' | transloco"
-          [retroTooltip]="'common.delete' | transloco"
-          (clicked)="onDelete()" />
-      </div>
-    </div>
-  }
+  <!-- Trailing: acciones -->
+  <div class="wishlist-card__trailing" retroListItemTrailing>
+    <retro-icon-button
+      icon="shopping_bag"
+      variant="primary"
+      size="sm"
+      class="wishlist-card__own-btn"
+      [ariaLabel]="'wishlist.card.ownTooltip' | transloco"
+      [retroTooltip]="'wishlist.card.ownTooltip' | transloco"
+      (clicked)="onOwn(); $event.stopPropagation()" />
+    @if (!mobileMode()) {
+      <retro-icon-button
+        icon="edit"
+        size="sm"
+        [ariaLabel]="'common.edit' | transloco"
+        [retroTooltip]="'common.edit' | transloco"
+        (clicked)="onEdit(); $event.stopPropagation()" />
+    }
+    <retro-icon-button
+      icon="delete"
+      variant="danger"
+      size="sm"
+      [ariaLabel]="'common.delete' | transloco"
+      [retroTooltip]="'common.delete' | transloco"
+      (clicked)="onDelete(); $event.stopPropagation()" />
+  </div>
 </retro-list-item>

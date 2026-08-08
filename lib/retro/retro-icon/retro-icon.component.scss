@@ -32,6 +32,9 @@
 }
 
 .retro-icon {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
   font-size: inherit; /* hereda del :host — ya no tiene valor propio */
   line-height: 1;
   display: inline-block;
@@ -40,4 +43,20 @@
   text-align: center;
   overflow: hidden; /* evita que el glifo desborde su em-box */
   user-select: none;
+  font-variation-settings:
+    'FILL' var(--retro-icon-fill, 0),
+    'wght' var(--retro-icon-wght, 400),
+    'GRAD' 0,
+    'opsz' 24;
+
+  /* Los iconos `star` deben renderizarse filled aunque el default sea outlined. */
+  &[data-icon='star'] {
+    --retro-icon-fill: 1;
+  }
+  &[data-icon='favorite'] {
+    --retro-icon-fill: 1;
+  }
+  &[data-icon='bookmark'] {
+    --retro-icon-fill: 1;
+  }
 }

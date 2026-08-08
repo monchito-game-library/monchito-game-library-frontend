@@ -21,7 +21,14 @@ import { AuditLogModel } from '@/models/audit-log/audit-log.model';
   styleUrl: './audit-log-management.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RetroIconComponent, TranslocoPipe, DatePipe, RetroSkeletonComponent, RetroListComponent, RetroListItemComponent]
+  imports: [
+    RetroIconComponent,
+    TranslocoPipe,
+    DatePipe,
+    RetroSkeletonComponent,
+    RetroListComponent,
+    RetroListItemComponent
+  ]
 })
 export class AuditLogManagementComponent implements OnInit {
   private readonly _auditLogUseCases: AuditLogUseCasesContract = inject(AUDIT_LOG_USE_CASES);

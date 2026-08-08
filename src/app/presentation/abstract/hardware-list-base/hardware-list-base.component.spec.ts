@@ -393,6 +393,67 @@ describe('HardwareListBaseComponent', () => {
     });
   });
 
+  describe('_initTabFocusShortcut', () => {
+    it('registra el listener de keydown en documento', () => {
+      const spy = vi.spyOn(document, 'addEventListener');
+
+      (component as any)._initTabFocusShortcut();
+
+      expect(spy).toHaveBeenCalledWith('keydown', expect.any(Function));
+      spy.mockRestore();
+    });
+  });
+
+  describe('_onTabKeyDown', () => {
+    it('enfoca el buscador y hace preventDefault cuando es Tab desde body', () => {
+      const focusSpy = vi.fn().mockReturnValue(true);
+      (component as any)._hardwareShell = () => ({ focusSearch: focusSpy });
+
+      const event = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+      Object.defineProperty(event, 'target', { value: document.body, configurable: true });
+      // Stub activeElement a body.
+      Object.defineProperty(document, 'activeElement', { value: document.body, configurable: true });
+
+      (component as any)._onTabKeyDown(event);
+
+      expect(focusSpy).toHaveBeenCalledOnce();
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('no intercepta cuando se pulsa Shift+Tab', () => {
+      const focusSpy = vi.fn().mockReturnValue(true);
+      (component as any)._hardwareShell = () => ({ focusSearch: focusSpy });
+
+      const event = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, cancelable: true });
+      (component as any)._onTabKeyDown(event);
+
+      expect(focusSpy).not.toHaveBeenCalled();
+      expect(event.defaultPrevented).toBe(false);
+    });
+
+    it('no intercepta cuando el foco activo no es body', () => {
+      const focusSpy = vi.fn().mockReturnValue(true);
+      (component as any)._hardwareShell = () => ({ focusSearch: focusSpy });
+      const button = document.createElement('button');
+      Object.defineProperty(document, 'activeElement', { value: button, configurable: true });
+
+      const event = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+      (component as any)._onTabKeyDown(event);
+
+      expect(focusSpy).not.toHaveBeenCalled();
+    });
+
+    it('no intercepta cuando la tecla no es Tab', () => {
+      const focusSpy = vi.fn().mockReturnValue(true);
+      (component as any)._hardwareShell = () => ({ focusSearch: focusSpy });
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true });
+      (component as any)._onTabKeyDown(event);
+
+      expect(focusSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('ngOnDestroy', () => {
     it('elimina el listener de scroll del documento', () => {
       const spy = vi.spyOn(document, 'removeEventListener');
@@ -400,6 +461,15 @@ describe('HardwareListBaseComponent', () => {
       component.ngOnDestroy();
 
       expect(spy).toHaveBeenCalledWith('scroll', expect.any(Function), true);
+      spy.mockRestore();
+    });
+
+    it('elimina el listener de keydown del documento', () => {
+      const spy = vi.spyOn(document, 'removeEventListener');
+
+      component.ngOnDestroy();
+
+      expect(spy).toHaveBeenCalledWith('keydown', expect.any(Function));
       spy.mockRestore();
     });
   });

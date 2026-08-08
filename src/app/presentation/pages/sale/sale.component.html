@@ -73,7 +73,11 @@
               </div>
               <retro-list>
                 @for (item of filteredAvailable(); track item.id; let i = $index) {
-                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                  <retro-list-item
+                    [interactive]="true"
+                    [staggered]="true"
+                    [style.--i]="i"
+                    (itemClicked)="onItemClick(item.itemType, item.id)">
                     <div class="sale-page__item-icon" retroListItemLeading>
                       <retro-icon [name]="typeIcon(item.itemType)" />
                     </div>
@@ -170,7 +174,11 @@
               </div>
               <retro-list>
                 @for (item of filteredSold(); track item.id; let i = $index) {
-                  <retro-list-item [interactive]="true" [staggered]="true" [style.--i]="i" (itemClicked)="onItemClick(item.itemType, item.id)">
+                  <retro-list-item
+                    [interactive]="true"
+                    [staggered]="true"
+                    [style.--i]="i"
+                    (itemClicked)="onItemClick(item.itemType, item.id)">
                     <div class="sale-page__item-icon" retroListItemLeading>
                       <retro-icon [name]="typeIcon(item.itemType)" />
                     </div>

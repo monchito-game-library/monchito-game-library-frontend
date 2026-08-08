@@ -36,6 +36,11 @@ export const consolesRoutes: Routes = [
           import('./pages/create-update-console/create-update-console.routes').then((m) => m.createUpdateConsoleRoutes)
       },
       {
+        path: 'new',
+        loadChildren: () =>
+          import('./pages/create-update-console/create-update-console.routes').then((m) => m.createUpdateConsoleRoutes)
+      },
+      {
         path: 'edit/:id',
         loadChildren: () =>
           import('./pages/create-update-console/create-update-console.routes').then((m) => m.createUpdateConsoleRoutes)

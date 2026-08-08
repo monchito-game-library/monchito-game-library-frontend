@@ -72,9 +72,11 @@
 }
 
 .game-list__stat-sep {
-  font-family: var(--font-mono);
-  color: var(--text-lo);
-  font-size: var(--text-sm);
+  width: 1px;
+  height: 1rem;
+  background-color: var(--border);
+  margin: 0 0.5rem;
+  flex-shrink: 0;
   user-select: none;
 }
 
@@ -188,6 +190,9 @@
   .game-list__grid {
     padding: 0.5rem;
     gap: 0.5rem;
+    // Reservar espacio al final para que los FABs (filtro / añadir) no tapen
+    // la última fila de cards. 80px cubre ambos FABs (48px) + su gap (8px) + margen.
+    padding-bottom: 5rem;
   }
 
   .game-list__skeleton {

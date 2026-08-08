@@ -34,6 +34,13 @@ export const controllersRoutes: Routes = [
           )
       },
       {
+        path: 'new',
+        loadChildren: () =>
+          import('./pages/create-update-controller/create-update-controller.routes').then(
+            (m) => m.createUpdateControllerRoutes
+          )
+      },
+      {
         path: 'edit/:id',
         loadChildren: () =>
           import('./pages/create-update-controller/create-update-controller.routes').then(

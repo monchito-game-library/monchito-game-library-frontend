@@ -5,6 +5,7 @@ export { RetroCardComponent } from './retro-card/retro-card.component';
 export { RetroListComponent } from './retro-list/retro-list.component';
 export { RetroListItemComponent } from './retro-list/components/retro-list-item/retro-list-item.component';
 export { RetroChipComponent } from './retro-chip/retro-chip.component';
+export { RetroBadgeComponent } from './retro-badge/retro-badge.component';
 export { RetroDataRowComponent } from './retro-data-row/retro-data-row.component';
 export { RetroSectionHeaderComponent } from './retro-section-header/retro-section-header.component';
 export { RetroCommandBarComponent } from './retro-command-bar/retro-command-bar.component';
@@ -56,6 +57,7 @@ export type { RetroFormFieldControl } from './retro-form-field/tokens/retro-form
 
 // ─── Tipos expuestos a consumidores externos ──────────────────────────────────
 export type { RetroChipColor } from './retro-chip/retro-chip.types';
+export type { RetroBadgeVariant, RetroBadgeSize } from './retro-badge/retro-badge.types';
 export type { LibSnackbarVariant } from './retro-snackbar/interfaces/retro-snackbar-message.interface';
 export type { RetroSnackbarMessage } from './retro-snackbar/services/retro-snackbar.service';
 export type {

@@ -36,9 +36,11 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-mid);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 
-  &::before {
-    content: '> ';
+  retro-icon {
     color: var(--primary);
   }
 }

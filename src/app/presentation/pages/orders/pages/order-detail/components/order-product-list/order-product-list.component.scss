@@ -73,7 +73,22 @@
 .order-detail-page__empty {
   color: var(--text-mid);
   font-size: var(--text-sm);
-  padding: 1rem 0;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.order-detail-page__empty-text {
+  margin: 0;
+}
+
+.order-detail-page__empty-action {
+  // El botón principal grande centra la atención del usuario en la única acción
+  // posible desde este empty state (añadir primera línea).
+  min-width: 12rem;
 }
 
 // table-wrapper: last link in the chain, enables real scroll

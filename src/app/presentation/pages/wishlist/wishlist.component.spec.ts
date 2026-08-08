@@ -8,12 +8,14 @@ import { of } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 import { WishlistComponent } from './wishlist.component';
+import { WishlistFilterService } from '@/pages/wishlist/services/wishlist-filter.service';
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { GameCatalogDto } from '@/dtos/supabase/game-catalog.dto';
 import { WISHLIST_USE_CASES } from '@/domain/use-cases/wishlist/wishlist.use-cases.contract';
 import { CATALOG_USE_CASES } from '@/domain/use-cases/catalog/catalog.use-cases.contract';
 import { UserContextService } from '@/services/user-context/user-context.service';
 import { TranslocoService } from '@jsverse/transloco';
+import { RetroBottomSheetService } from '@retro/retro-bottom-sheet/services/retro-bottom-sheet.service';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
 import { RetroDialogService } from '@retro/retro-dialog/services/retro-dialog.service';
 import { Router } from '@angular/router';
@@ -64,6 +66,11 @@ describe('WishlistComponent', () => {
     TestBed.configureTestingModule({
       imports: [WishlistComponent, ReactiveFormsModule],
       providers: [
+        WishlistFilterService,
+        {
+          provide: RetroBottomSheetService,
+          useValue: { open: vi.fn().mockResolvedValue({ afterClosed: () => of(null) }) }
+        },
         {
           provide: WISHLIST_USE_CASES,
           useValue: {
@@ -459,7 +466,7 @@ describe('WishlistComponent', () => {
       expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    it('navega a /games/add con el catalog entry si el dialog se confirma', async () => {
+    it('navega a /collection/games/add con el catalog entry si el dialog se confirma', async () => {
       const dialog = TestBed.inject(RetroDialogService as any) as any;
       dialog.open.mockReturnValue({ afterClosed: () => of(true) });
       const router = TestBed.inject(Router as any) as any;

@@ -1,6 +1,8 @@
 <div class="collection-overview">
   <div class="collection-overview__header">
-    <span class="collection-overview__header-prefix" aria-hidden="true">&gt;</span>
+    <span class="collection-overview__header-prefix" aria-hidden="true">
+      <retro-icon name="chevron_right" />
+    </span>
     <h1 class="collection-overview__title">{{ 'collectionOverview.title' | transloco }}</h1>
   </div>
 
@@ -22,7 +24,7 @@
       <retro-section-header [label]="'collectionOverview.games.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.games.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">
-        <retro-data-row label="ITEMS" icon="tag">
+        <retro-data-row label="ITEMS" icon="inventory_2">
           @if (gamesCount() === null) {
             <retro-skeleton width="80px" height="1rem" />
           } @else if (gamesCount() === 1) {
@@ -47,7 +49,7 @@
       <retro-section-header [label]="'collectionOverview.consolesCategory.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.consolesCategory.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">
-        <retro-data-row label="ITEMS" icon="tag">
+        <retro-data-row label="ITEMS" icon="inventory_2">
           @if (consolesCount() === null) {
             <retro-skeleton width="80px" height="1rem" />
           } @else if (consolesCount() === 1) {
@@ -72,7 +74,7 @@
       <retro-section-header [label]="'collectionOverview.controllers.title' | transloco" />
       <p class="collection-overview__card-subtitle">{{ 'collectionOverview.controllers.subtitle' | transloco }}</p>
       <div class="collection-overview__card-data">
-        <retro-data-row label="ITEMS" icon="tag">
+        <retro-data-row label="ITEMS" icon="inventory_2">
           @if (controllersCount() === null) {
             <retro-skeleton width="80px" height="1rem" />
           } @else if (controllersCount() === 1) {

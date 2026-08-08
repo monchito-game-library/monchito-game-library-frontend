@@ -24,7 +24,17 @@
 
     @if (order().status === ORDER_STATUS.DRAFT) {
       @if (visibleLines(order().lines).length === 0) {
-        <div class="order-detail-page__empty">{{ 'orders.lines.empty' | transloco }}</div>
+        <div class="order-detail-page__empty">
+          <p class="order-detail-page__empty-text">{{ 'orders.lines.empty' | transloco }}</p>
+          <retro-button
+            class="order-detail-page__empty-action"
+            [label]="'orders.lines.addFirst' | transloco"
+            variant="primary"
+            size="lg"
+            (clicked)="lineAdd.emit()">
+            <retro-icon slot="start" name="add" size="sm" />
+          </retro-button>
+        </div>
       } @else {
         <div class="order-detail-page__table-wrapper">
           <table class="order-detail-page__table">

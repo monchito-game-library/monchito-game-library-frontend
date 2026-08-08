@@ -897,6 +897,24 @@ describe('GameFormComponent — ngOnInit', () => {
     expect(component.hasChanges()).toBe(true);
   });
 
+  it('modo creación con route placeholder "new" — no llama a getGameForEdit y entra en modo create', async () => {
+    setup('new');
+    await component.ngOnInit();
+
+    expect(component.isEditMode).toBe(false);
+    expect(gameUseCasesMock.getGameForEdit).not.toHaveBeenCalled();
+    expect(component.loading()).toBe(false);
+  });
+
+  it('modo creación con route placeholder "add" — no llama a getGameForEdit y entra en modo create', async () => {
+    setup('add');
+    await component.ngOnInit();
+
+    expect(component.isEditMode).toBe(false);
+    expect(gameUseCasesMock.getGameForEdit).not.toHaveBeenCalled();
+    expect(component.loading()).toBe(false);
+  });
+
   it('modo edición — usa rawgId como identificador cuando rawgSlug es null', async () => {
     setup('game-uuid', { ...editGame, rawgSlug: null, rawgId: 58175 });
     const catalogUseCases = TestBed.inject(CATALOG_USE_CASES);

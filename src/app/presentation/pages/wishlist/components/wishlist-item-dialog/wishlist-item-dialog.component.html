@@ -34,13 +34,22 @@
       <!-- Priority (optional, default 3) -->
       <div class="wishlist-item-dialog__priority">
         <span class="wishlist-item-dialog__priority-label">{{ 'wishlist.fields.priority' | transloco }}</span>
-        <div class="wishlist-item-dialog__priority-stars">
+        <div class="wishlist-item-dialog__priority-options">
           @for (level of priorityOptions; track level) {
-            <retro-icon-button
-              [icon]="level <= form.controls.priority.value ? 'star' : 'star_border'"
-              [ariaLabel]="'' + level"
-              variant="primary"
-              (clicked)="form.controls.priority.setValue(level)" />
+            <button
+              type="button"
+              class="wishlist-item-dialog__priority-btn"
+              [class.wishlist-item-dialog__priority-btn--active]="level === form.controls.priority.value"
+              [attr.aria-label]="
+                level <= 1
+                  ? ('wishlist.card.priorityHigh' | transloco)
+                  : level <= 3
+                    ? ('wishlist.card.priorityMedium' | transloco)
+                    : ('wishlist.card.priorityLow' | transloco)
+              "
+              (click)="form.controls.priority.setValue(level)">
+              <retro-badge [value]="level" />
+            </button>
           }
         </div>
       </div>

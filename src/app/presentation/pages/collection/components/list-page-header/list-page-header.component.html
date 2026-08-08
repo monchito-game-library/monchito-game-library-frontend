@@ -6,6 +6,7 @@
 <!-- Search and actions -->
 <div class="list-page-header__filters">
   <retro-input
+    #searchInput
     class="list-page-header__search"
     [placeholder]="searchPlaceholder() | transloco"
     [ngModel]="searchValue()"
@@ -20,6 +21,7 @@
       class="list-page-header__view-btn"
       [icon]="viewMode() === 'grid' ? 'view_list' : 'view_module'"
       [ariaLabel]="'gameList.aria.toggleViewMode' | transloco"
+      [tooltip]="'gameList.aria.toggleViewMode' | transloco"
       [disabled]="disabled()"
       (clicked)="viewModeToggle.emit()" />
   }

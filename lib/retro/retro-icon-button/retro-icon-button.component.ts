@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
 import { RetroIconComponent } from '../retro-icon/retro-icon.component';
+import { RetroTooltipDirective } from '../retro-tooltip/directive/retro-tooltip.directive';
 import { LibIconButtonSize, LibIconButtonVariant } from './retro-icon-button.types';
 import { LibButtonType } from '../retro-button/retro-button.types';
 
@@ -11,7 +12,7 @@ import { LibButtonType } from '../retro-button/retro-button.types';
 @Component({
   selector: 'retro-icon-button',
   standalone: true,
-  imports: [RetroIconComponent],
+  imports: [RetroIconComponent, RetroTooltipDirective],
   templateUrl: './retro-icon-button.component.html',
   styleUrl: './retro-icon-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,6 +35,9 @@ export class RetroIconButtonComponent {
 
   /** Tipo del elemento button HTML nativo. */
   readonly type: InputSignal<LibButtonType> = input<LibButtonType>('button');
+
+  /** Texto del tooltip al pasar el ratón (opcional). */
+  readonly tooltip: InputSignal<string> = input<string>('');
 
   /** Emite el MouseEvent al hacer clic (solo si no está deshabilitado). */
   readonly clicked: OutputEmitterRef<MouseEvent> = output<MouseEvent>();

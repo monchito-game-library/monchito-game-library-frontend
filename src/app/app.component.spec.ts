@@ -69,6 +69,7 @@ describe('AppComponent', () => {
     TestBed.overrideComponent(AppComponent, { set: { imports: [], template: '' } });
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('se crea correctamente', () => {
@@ -264,6 +265,60 @@ describe('AppComponent', () => {
   describe('navItemCount', () => {
     it('devuelve el número total de items de navegación', () => {
       expect(component.navItemCount()).toBeGreaterThan(0);
+    });
+  });
+
+  describe('collectionOpen', () => {
+    it('es false cuando no hay ruta de colección activa', () => {
+      component.currentRoute.set('/wishlist');
+      TestBed.tick();
+      expect(component.collectionOpen()).toBe(false);
+    });
+
+    it('es true cuando la ruta activa está dentro de /collection/*', () => {
+      component.currentRoute.set('/collection/games');
+      TestBed.tick();
+      expect(component.collectionOpen()).toBe(true);
+    });
+
+    it('es true cuando la ruta activa es /collection (overview)', () => {
+      component.currentRoute.set('/collection');
+      TestBed.tick();
+      expect(component.collectionOpen()).toBe(true);
+    });
+
+    it('se actualiza al cambiar de una ruta de colección a otra que no lo es', () => {
+      component.currentRoute.set('/collection/games');
+      TestBed.tick();
+      expect(component.collectionOpen()).toBe(true);
+
+      component.currentRoute.set('/wishlist');
+      TestBed.tick();
+      expect(component.collectionOpen()).toBe(false);
+    });
+  });
+
+  describe('managementOpen', () => {
+    it('es false cuando la ruta activa no es de gestión', () => {
+      component.currentRoute.set('/collection');
+      TestBed.tick();
+      expect(component.managementOpen()).toBe(false);
+    });
+
+    it('es true cuando la ruta activa está dentro de /management/*', () => {
+      component.currentRoute.set('/management/users');
+      TestBed.tick();
+      expect(component.managementOpen()).toBe(true);
+    });
+
+    it('se actualiza al cambiar entre rutas de gestión y no-gestión', () => {
+      component.currentRoute.set('/management');
+      TestBed.tick();
+      expect(component.managementOpen()).toBe(true);
+
+      component.currentRoute.set('/sale');
+      TestBed.tick();
+      expect(component.managementOpen()).toBe(false);
     });
   });
 });

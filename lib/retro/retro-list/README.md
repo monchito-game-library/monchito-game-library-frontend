@@ -17,9 +17,10 @@ Component family for Terminal Collector lists. `retro-list` is the required pare
 
 ## Exposed CSS Tokens
 
-| Variable           | Default  | Description                 |
-| ------------------ | -------- | --------------------------- |
-| `--retro-list-gap` | `0.5rem` | Spacing between list items. |
+| Variable                 | Default                                 | Description                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--retro-list-gap`       | `0.5rem`                                | Spacing between list items.                                                                                                                                                                                                                                                                                                                       |
+| `--retro-list-grid-cols` | `repeat(auto-fill, minmax(220px, 1fr))` | Plantilla de columnas cuando se aplica la clase modificadora `.retro-list--grid`. **Cada consumidor debe sobreescribir este valor según el ancho mínimo de sus items**, ya que el default puede ser demasiado estrecho. Por ejemplo, cards con cover + body + acciones necesitan `--retro-list-grid-cols: repeat(auto-fill, minmax(420px, 1fr))`. |
 
 ## Minimal example
 
@@ -32,6 +33,30 @@ Component family for Terminal Collector lists. `retro-list` is the required pare
   }
 </retro-list>
 ```
+
+## Grid layout (opt-in)
+
+`retro-list` puede actuar como contenedor grid añadiendo la clase modificadora `.retro-list--grid` desde el consumidor:
+
+```html
+<retro-list class="retro-list--grid">
+  @for (item of items(); track item.id) {
+  <retro-list-item>...</retro-list-item>
+  }
+</retro-list>
+```
+
+CSS variables relacionadas:
+
+| Variable                 | Default                                 | Descripción                                                                                                                                                                                                                                                                            |
+| ------------------------ | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--retro-list-grid-cols` | `repeat(auto-fill, minmax(220px, 1fr))` | Plantilla de columnas. **Cada consumidor debe sobreescribir este valor según el ancho mínimo de sus items**, ya que el default puede ser demasiado estrecho. Por ejemplo, cards con cover + body + acciones necesitan `--retro-list-grid-cols: repeat(auto-fill, minmax(420px, 1fr))`. |
+
+**Importante**: el default de 220px está calibrado para items de retro-list delgados (solo texto). Consumers con cards complejas deben definir su propio `--retro-list-grid-cols`. Aplicar el grid sin sobreescribir la variable puede provocar overflow horizontal en viewports estrechos.
+
+### Consumidores activos
+
+A la fecha de la última auditoría (2026-08-08), **ningún consumidor de `src/` aplica `retro-list--grid`**. La clase está disponible pero no usada.
 
 ## Parent-child contract
 

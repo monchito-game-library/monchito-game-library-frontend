@@ -2,12 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   OnDestroy,
   OnInit,
   Signal,
   signal,
+  viewChild,
   ViewChild,
   WritableSignal
 } from '@angular/core';
@@ -81,6 +83,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   private readonly _bottomSheet: RetroBottomSheetService = inject(RetroBottomSheetService);
   private readonly _filtersService: GamesFilterService = inject(GamesFilterService);
   private readonly _searchInput$ = new Subject<string>();
+  /** Referencia al header de página para delegar foco al buscador desde atajos de teclado. */
+  private readonly _listPageHeader = viewChild(ListPageHeaderComponent);
   private _bpSubscription?: Subscription;
   private _searchDebounce?: Subscription;
 
@@ -104,6 +108,40 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   /** Full list of games in the user's collection. */
   readonly allGames: WritableSignal<GameListModel[]> = signal<GameListModel[]>([]);
+
+  /**
+   * Page size for client-side pagination. We render `visibleCount()` items and
+   * let the user load more with a "Cargar más" button instead of rendering the
+   * whole list at once. Resets to the initial page size whenever filters change.
+   */
+  readonly initialPageSize: number = 24;
+  readonly pageIncrement: number = 24;
+  readonly visibleCount: WritableSignal<number> = signal<number>(this.initialPageSize);
+
+  /** Resets the visible count to the initial page size (called when filters change). */
+  private readonly _resetVisibleCountOnFilters = effect((): void => {
+    // Re-evaluar dependencias: cualquier cambio en filtros resetea la paginación.
+    void this.searchTerm();
+    void this.selectedConsole();
+    void this.selectedStore();
+    void this.selectedStatus();
+    void this.selectedFormat();
+    void this.onlyFavorites();
+    this.visibleCount.set(this.initialPageSize);
+  });
+
+  /** Number of items currently visible after pagination. */
+  readonly visibleGames: Signal<GameListModel[]> = computed((): GameListModel[] => {
+    return this.filteredGames().slice(0, this.visibleCount());
+  });
+
+  /** True if there are more items to load beyond the current visible page. */
+  readonly hasMoreGames: Signal<boolean> = computed((): boolean => this.filteredGames().length > this.visibleCount());
+
+  /** Loads the next page of items. */
+  loadMore(): void {
+    this.visibleCount.update((current: number): number => current + this.pageIncrement);
+  }
 
   /** Current value of the title search input. */
   readonly searchTerm: WritableSignal<string> = this._filtersService.searchTerm;
@@ -273,6 +311,9 @@ export class GamesComponent implements OnInit, OnDestroy {
 
     // Show cache immediately if available while reloading from Supabase
     document.addEventListener('scroll', this._onViewportScroll, { capture: true, passive: true });
+    // Atajo de teclado: Tab → buscador. Solo en esta página; el componente se destruye al
+    // navegar fuera, así que el listener queda libre automáticamente.
+    document.addEventListener('keydown', this._onTabKeyDown);
 
     const cached = this._userPreferencesState.allGames();
     if (cached.length > 0) {
@@ -305,6 +346,7 @@ export class GamesComponent implements OnInit, OnDestroy {
     this._bpSubscription?.unsubscribe();
     this._searchDebounce?.unsubscribe();
     document.removeEventListener('scroll', this._onViewportScroll, true);
+    document.removeEventListener('keydown', this._onTabKeyDown);
   }
 
   /**
@@ -366,6 +408,21 @@ export class GamesComponent implements OnInit, OnDestroy {
     const t = e.target as HTMLElement;
     if (t.classList.contains('game-list__grid') || t.classList.contains('game-list__list')) {
       this._userPreferencesState.gameListScrollOffset.set(t.scrollTop);
+    }
+  };
+
+  /**
+   * Listener de teclado: la primera pulsación de Tab tras entrar a /games
+   * enfoca el buscador para que el usuario pueda empezar a escribir
+   * directamente. Una vez el foco está en cualquier elemento focuseable
+   * (botones del header, cards, inputs del drawer, etc.) dejamos que el
+   * flujo nativo de Tab tome el control; Shift+Tab también se respeta.
+   */
+  private readonly _onTabKeyDown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Tab' || event.shiftKey) return;
+    if (document.activeElement !== document.body) return;
+    if (this._listPageHeader()?.focusSearch()) {
+      event.preventDefault();
     }
   };
 

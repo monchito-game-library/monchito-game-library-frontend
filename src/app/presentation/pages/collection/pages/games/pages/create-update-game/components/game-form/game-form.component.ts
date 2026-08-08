@@ -61,6 +61,7 @@ import { AvailableConditionInterface } from '@/interfaces/available-condition.in
 import { cardActionType } from '@/types/card-action.type';
 import { GameCatalog } from '@/dtos/rawg/rawg-game.dto';
 import { mapRawgPlatformToCode } from '@/shared/rawg-platform/rawg-platform.utils';
+import { ROUTE_PLACEHOLDER_IDS } from '@/constants/route-placeholders.constant';
 
 @Component({
   selector: 'app-game-form',
@@ -333,7 +334,10 @@ export class GameFormComponent implements OnInit {
     if (navState?.forceWorkId) this._pendingTargetWorkId = navState.forceWorkId;
 
     const idParam: string | null = this._route.snapshot.paramMap.get('id');
-    if (!idParam) {
+    // Treat route placeholders (`new`, `add`) as create mode so we never fire
+    // a `user_games_full?id=eq.<placeholder>` query that Supabase rejects with 400.
+    const isPlaceholderId: boolean = idParam !== null && ROUTE_PLACEHOLDER_IDS.includes(idParam);
+    if (!idParam || isPlaceholderId) {
       // Create mode — preload catalog entry from wishlist if available
       if (this._pendingCatalogEntry) {
         this.selectGameFromSearch(this._pendingCatalogEntry);

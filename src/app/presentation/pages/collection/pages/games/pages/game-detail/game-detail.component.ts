@@ -38,6 +38,7 @@ import { GameStatusOption } from '@/interfaces/game-status-option.interface';
 import { defaultGameCover } from '@/constants/game-library.constant';
 import { PLATFORM_COLORS } from '@/constants/platform-colors.constant';
 import { extractDominantColor } from '@/shared/dominant-color/dominant-color.util';
+import { optimizeImageUrl } from '@/shared/image-url/image-url.utils';
 import { SaleFormComponent } from '@/pages/collection/components/sale-form/sale-form.component';
 import { SaleAvailabilityValues, SaleSoldValues } from '@/interfaces/forms/sale-form.interface';
 import { GameSaleStatusModel } from '@/interfaces/game-sale-status.interface';
@@ -124,7 +125,8 @@ export class GameDetailComponent implements OnInit {
   /** Cover image URL with fallback to default cover. */
   readonly coverUrl: Signal<string> = computed((): string => {
     const g = this.game();
-    return g?.imageUrl ?? defaultGameCover;
+    const raw = g?.imageUrl ?? defaultGameCover;
+    return optimizeImageUrl(raw, 1280) ?? defaultGameCover;
   });
 
   /** CSS object-position for the foreground cover image (respects user-set positioning). */

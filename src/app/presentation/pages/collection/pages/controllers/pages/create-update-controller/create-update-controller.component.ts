@@ -20,6 +20,7 @@ import { availableControllerCompatibilities } from '@/constants/available-contro
 import { GAME_CONDITION } from '@/constants/game-condition.constant';
 import { GameConditionType } from '@/types/game-condition.type';
 import { ControllerCompatibilityType } from '@/types/controller-compatibility.type';
+import { ROUTE_PLACEHOLDER_IDS } from '@/constants/route-placeholders.constant';
 
 @Component({
   selector: 'app-create-update-controller',
@@ -124,7 +125,9 @@ export class CreateUpdateControllerComponent extends HardwareFormBaseComponent {
     void this._loadStores();
     void this._loadBrands();
     const id = this._route.snapshot.paramMap.get('id');
-    if (id) {
+    // Treat route placeholders (`new`, `add`) as create mode so we never fire
+    // a `user_controllers?id=eq.<placeholder>` query that Supabase rejects with 400.
+    if (id && !ROUTE_PLACEHOLDER_IDS.includes(id)) {
       this._controllerId = id;
       this.isEditMode.set(true);
       await this._loadController(id);
