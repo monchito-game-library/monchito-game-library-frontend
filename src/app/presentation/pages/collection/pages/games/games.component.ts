@@ -136,9 +136,7 @@ export class GamesComponent implements OnInit, OnDestroy {
   });
 
   /** True if there are more items to load beyond the current visible page. */
-  readonly hasMoreGames: Signal<boolean> = computed(
-    (): boolean => this.filteredGames().length > this.visibleCount()
-  );
+  readonly hasMoreGames: Signal<boolean> = computed((): boolean => this.filteredGames().length > this.visibleCount());
 
   /** Loads the next page of items. */
   loadMore(): void {

@@ -35,11 +35,11 @@
               <span class="nav-rail__label">{{ item.label | transloco }}</span>
             </a>
             @if (item.route === '/collection') {
-              <div
-                class="nav-rail__subitems-wrapper"
-                [class.nav-rail__subitems-wrapper--collapsed]="!collectionOpen()">
+              <div class="nav-rail__subitems-wrapper" [class.nav-rail__subitems-wrapper--collapsed]="!collectionOpen()">
                 <div class="nav-rail__subitems-wrapper-inner">
-                  <nav class="nav-rail__subitems nav-rail__subitems--icons" [attr.aria-label]="'nav.aria.collectionSubnav' | transloco">
+                  <nav
+                    class="nav-rail__subitems nav-rail__subitems--icons"
+                    [attr.aria-label]="'nav.aria.collectionSubnav' | transloco">
                     @for (sub of collectionSubItems(); track sub.route) {
                       <a
                         class="nav-rail__subitem nav-rail__subitem--icon"
@@ -71,11 +71,11 @@
               </a>
             }
             @if (isAdmin()) {
-              <div
-                class="nav-rail__subitems-wrapper"
-                [class.nav-rail__subitems-wrapper--collapsed]="!managementOpen()">
+              <div class="nav-rail__subitems-wrapper" [class.nav-rail__subitems-wrapper--collapsed]="!managementOpen()">
                 <div class="nav-rail__subitems-wrapper-inner">
-                  <nav class="nav-rail__subitems nav-rail__subitems--icons" [attr.aria-label]="'nav.aria.managementSubnav' | transloco">
+                  <nav
+                    class="nav-rail__subitems nav-rail__subitems--icons"
+                    [attr.aria-label]="'nav.aria.managementSubnav' | transloco">
                     @for (sub of managementSubItems(); track sub.route) {
                       <a
                         class="nav-rail__subitem nav-rail__subitem--icon"

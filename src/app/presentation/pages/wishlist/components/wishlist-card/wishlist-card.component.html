@@ -2,17 +2,9 @@
   <!-- Leading: cover con aspect-ratio fijo -->
   <div class="wishlist-card__cover-wrapper" retroListItemLeading>
     @if (item().imageUrl && !useNativeImg()) {
-      <img
-        class="wishlist-card__cover"
-        [ngSrc]="item().imageUrl!"
-        [alt]="item().title"
-        fill
-        [priority]="priority()" />
+      <img class="wishlist-card__cover" [ngSrc]="item().imageUrl!" [alt]="item().title" fill [priority]="priority()" />
     } @else if (item().imageUrl && useNativeImg()) {
-      <img
-        class="wishlist-card__cover"
-        [src]="item().imageUrl!"
-        [alt]="item().title" />
+      <img class="wishlist-card__cover" [src]="item().imageUrl!" [alt]="item().title" />
     } @else {
       <div class="wishlist-card__cover--placeholder">
         <retro-icon name="image_not_supported" />
@@ -32,13 +24,15 @@
               ? ('wishlist.card.priorityHigh' | transloco)
               : item().priority <= 3
                 ? ('wishlist.card.priorityMedium' | transloco)
-                : ('wishlist.card.priorityLow' | transloco)"
+                : ('wishlist.card.priorityLow' | transloco)
+          "
           [attr.aria-label]="
             item().priority <= 1
               ? ('wishlist.card.priorityHigh' | transloco)
               : item().priority <= 3
                 ? ('wishlist.card.priorityMedium' | transloco)
-                : ('wishlist.card.priorityLow' | transloco)" />
+                : ('wishlist.card.priorityLow' | transloco)
+          " />
       </div>
     </div>
 

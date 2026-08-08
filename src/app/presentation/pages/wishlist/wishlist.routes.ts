@@ -25,9 +25,7 @@ export const wishlistRoutes: Routes = [
       {
         path: ':id',
         loadComponent: () =>
-          import('./pages/wishlist-detail/wishlist-detail.component').then(
-            (m) => m.WishlistDetailComponent
-          ),
+          import('./pages/wishlist-detail/wishlist-detail.component').then((m) => m.WishlistDetailComponent),
         canActivate: [canActivateUser]
       }
     ]

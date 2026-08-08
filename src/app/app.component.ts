@@ -73,11 +73,13 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
   /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
-  readonly collectionSubItems = computed((): ReadonlyArray<{ route: string; label: string; icon: string }> => [
-    { route: '/collection/games', icon: 'videogame_asset', label: 'nav.subnav.games' },
-    { route: '/collection/consoles', icon: 'tv', label: 'nav.subnav.consoles' },
-    { route: '/collection/controllers', icon: 'gamepad', label: 'nav.subnav.controllers' }
-  ]);
+  readonly collectionSubItems = computed(
+    (): ReadonlyArray<{ route: string; label: string; icon: string }> => [
+      { route: '/collection/games', icon: 'videogame_asset', label: 'nav.subnav.games' },
+      { route: '/collection/consoles', icon: 'tv', label: 'nav.subnav.consoles' },
+      { route: '/collection/controllers', icon: 'gamepad', label: 'nav.subnav.controllers' }
+    ]
+  );
 
   /** True cuando la ruta activa está dentro de /collection/* (incluyendo overview). */
   readonly isCollectionActive = computed((): boolean => this.currentRoute().startsWith('/collection'));

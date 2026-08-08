@@ -76,13 +76,15 @@
               ? ('wishlist.card.priorityHigh' | transloco)
               : i.priority <= 3
                 ? ('wishlist.card.priorityMedium' | transloco)
-                : ('wishlist.card.priorityLow' | transloco)"
+                : ('wishlist.card.priorityLow' | transloco)
+          "
           [attr.aria-label]="
             i.priority <= 1
               ? ('wishlist.card.priorityHigh' | transloco)
               : i.priority <= 3
                 ? ('wishlist.card.priorityMedium' | transloco)
-                : ('wishlist.card.priorityLow' | transloco)" />
+                : ('wishlist.card.priorityLow' | transloco)
+          " />
         @if (i.platform) {
           <retro-chip [label]="i.platform" color="primary" size="sm" />
         }

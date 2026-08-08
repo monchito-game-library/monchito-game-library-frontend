@@ -49,7 +49,7 @@ for (const vp of viewports) {
   await page.goto('http://localhost:4200/wishlist', { waitUntil: 'networkidle' });
   await page.waitForTimeout(3000);
   await page.screenshot({ path: `.playwright-mcp/shots/wishlist-redesign-${vp.name}.png`, fullPage: false });
-  
+
   // Verificar dimensiones de la primera card
   const cardInfo = await page.evaluate(() => {
     const card = document.querySelector('retro-list-item.wishlist-card');

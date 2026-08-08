@@ -3,8 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { optimizeImageUrl } from '@/shared/image-url/image-url.utils';
 
 const RAWG_ORIGINAL = 'https://media.rawg.io/media/games/foo/bar.jpg';
-const RAWG_PROXIED_RESIZED = (w: number) =>
-  `/rawg-media/media/resize/${w}/-/games/foo/bar.jpg`;
+const RAWG_PROXIED_RESIZED = (w: number) => `/rawg-media/media/resize/${w}/-/games/foo/bar.jpg`;
 
 describe('optimizeImageUrl', () => {
   it('devuelve null cuando la url es null', () => {

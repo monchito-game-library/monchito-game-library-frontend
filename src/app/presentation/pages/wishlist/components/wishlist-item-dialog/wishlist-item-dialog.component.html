@@ -45,7 +45,8 @@
                   ? ('wishlist.card.priorityHigh' | transloco)
                   : level <= 3
                     ? ('wishlist.card.priorityMedium' | transloco)
-                    : ('wishlist.card.priorityLow' | transloco)"
+                    : ('wishlist.card.priorityLow' | transloco)
+              "
               (click)="form.controls.priority.setValue(level)">
               <retro-badge [value]="level" />
             </button>
