@@ -53,6 +53,25 @@
                 </div>
               </div>
             }
+            @if (item.route === '/sale') {
+              <div class="nav-rail__subitems-wrapper" [class.nav-rail__subitems-wrapper--collapsed]="!saleOpen()">
+                <div class="nav-rail__subitems-wrapper-inner">
+                  <nav class="nav-rail__subitems nav-rail__subitems--icons" [attr.aria-label]="'nav.sale' | transloco">
+                    @for (sub of saleSubItems; track sub.route) {
+                      <a
+                        class="nav-rail__subitem nav-rail__subitem--icon"
+                        [routerLink]="sub.route"
+                        routerLinkActive="router-link-active"
+                        ariaCurrentWhenActive="page"
+                        [attr.aria-label]="sub.label | transloco"
+                        [retroTooltip]="sub.label | transloco">
+                        <retro-icon [name]="sub.icon" size="sm" />
+                      </a>
+                    }
+                  </nav>
+                </div>
+              </div>
+            }
           </div>
         }
 
@@ -137,7 +156,11 @@
       </div>
 
       <!-- Bottom Navigation — mobile only -->
-      <nav class="bottom-nav" role="navigation" [attr.aria-label]="'nav.aria.bottomNav' | transloco">
+      <nav
+        class="bottom-nav"
+        [class.is-dense]="isDenseNav()"
+        role="navigation"
+        [attr.aria-label]="'nav.aria.bottomNav' | transloco">
         @for (item of bottomNavItems(); track item.route) {
           <a
             class="bottom-nav__item"

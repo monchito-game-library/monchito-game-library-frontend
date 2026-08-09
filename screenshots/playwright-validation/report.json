@@ -1,0 +1,183 @@
+{
+  "results": [
+    {
+      "path": "/auth/login",
+      "label": "login",
+      "withAuth": false,
+      "finalUrl": "http://127.0.0.1:4200/auth/login",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/login-noauth.png"
+    },
+    {
+      "path": "/sale",
+      "label": "sale-no-auth",
+      "withAuth": false,
+      "finalUrl": "http://127.0.0.1:4200/auth/login?returnUrl=%2Fsale",
+      "redirected": true,
+      "expectedRedirect": "/auth/login",
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/sale-no-auth-noauth.png"
+    },
+    {
+      "path": "/wishlist",
+      "label": "wishlist",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/wishlist",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/wishlist-auth.png"
+    },
+    {
+      "path": "/collection",
+      "label": "collection",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/collection-auth.png"
+    },
+    {
+      "path": "/collection/games",
+      "label": "collection-games",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/games",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/collection-games-auth.png"
+    },
+    {
+      "path": "/collection/consoles",
+      "label": "collection-consoles",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/consoles",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/collection-consoles-auth.png"
+    },
+    {
+      "path": "/collection/controllers",
+      "label": "collection-controllers",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/controllers",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/collection-controllers-auth.png"
+    },
+    {
+      "path": "/sale",
+      "label": "sale-auth",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/sale",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/sale-auth-auth.png"
+    },
+    {
+      "path": "/collection/games/new",
+      "label": "games-new",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/games/new",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/games-new-auth.png"
+    },
+    {
+      "path": "/collection/consoles/new",
+      "label": "consoles-new",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/consoles/new",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/consoles-new-auth.png"
+    },
+    {
+      "path": "/collection/controllers/new",
+      "label": "controllers-new",
+      "withAuth": true,
+      "finalUrl": "http://127.0.0.1:4200/collection/controllers/new",
+      "redirected": false,
+      "expectedRedirect": null,
+      "errors": [],
+      "networkErrors": [],
+      "consoleMessages": [],
+      "ng02955": 0,
+      "ng02956": 0,
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/controllers-new-auth.png"
+    }
+  ],
+  "bug9": [
+    {
+      "iteration": 1,
+      "ng02955": 0,
+      "ng02956": 0,
+      "errors": [],
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/wishlist-bug9-1.png"
+    },
+    {
+      "iteration": 2,
+      "ng02955": 0,
+      "ng02956": 0,
+      "errors": [],
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/wishlist-bug9-2.png"
+    },
+    {
+      "iteration": 3,
+      "ng02955": 0,
+      "ng02956": 0,
+      "errors": [],
+      "screenshot": "/home/espinilleitor/repos/own/monchito-game-library-frontend/screenshots/playwright-validation/wishlist-bug9-3.png"
+    }
+  ],
+  "allConsoleErrors": [],
+  "allNetworkErrors": []
+}

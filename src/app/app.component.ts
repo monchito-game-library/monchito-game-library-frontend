@@ -11,7 +11,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { Router, RouterLink, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroTooltipDirective } from '@retro/retro-tooltip/directive/retro-tooltip.directive';
@@ -21,6 +21,7 @@ import { RetroSkeletonComponent } from '@retro/retro-skeleton/retro-skeleton.com
 import { ThemeService } from '@/services/theme/theme.service';
 import { UserPreferencesService } from '@/services/user-preferences/user-preferences.service';
 import { UserPreferencesInitService } from '@/services/user-preferences-init/user-preferences-init.service';
+import { BREAKPOINTS } from '@/constants/breakpoints.constant';
 import { NavItemInterface } from '@/interfaces/nav-item.interface';
 import { PwaUpdateService } from '@/services/pwa-update/pwa-update.service';
 import { RetroSnackbarHostComponent } from '@retro/retro-snackbar/components/retro-snackbar-host/retro-snackbar-host.component';
@@ -37,6 +38,7 @@ import { RetroMenuTriggerDirective } from '@retro/retro-menu/directive/retro-men
   imports: [
     RouterOutlet,
     RouterLink,
+    RouterLinkActive,
     RetroSkeletonComponent,
     RetroIconComponent,
     RetroTooltipDirective,
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private readonly _userPreferencesInit: UserPreferencesInitService = inject(UserPreferencesInitService);
   private readonly _pwaUpdate: PwaUpdateService = inject(PwaUpdateService);
   private readonly _publicRoutes: string[] = ['/auth/login', '/auth/register', '/auth/forgot-password'];
-  private readonly _mobileQuery: MediaQueryList = window.matchMedia('(max-width: 767px)');
+  private readonly _mobileQuery: MediaQueryList = window.matchMedia(`(max-width: ${BREAKPOINTS.mobile}px)`);
   private readonly _mobileAbort: AbortController = new AbortController();
   private readonly _isMobile: WritableSignal<boolean> = signal(this._mobileQuery.matches);
 
@@ -72,6 +74,12 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Settings item — only shown in mobile bottom nav (desktop uses profile menu). */
   readonly settingsNavItem: NavItemInterface = { icon: 'settings', label: 'nav.settings', route: '/settings' };
 
+  /** Sub-items mostrados bajo "Venta" en el sidebar (solo desktop) y bottom nav (mobile). */
+  readonly saleSubItems: ReadonlyArray<NavItemInterface> = [
+    { icon: 'sell', label: 'salePage.tabs.available', route: '/sale/available' },
+    { icon: 'history', label: 'salePage.tabs.history', route: '/sale/history' }
+  ];
+
   /** Sub-items mostrados bajo "Colección" en el sidebar cuando está activo (solo desktop). */
   readonly collectionSubItems = computed(
     (): ReadonlyArray<{ route: string; label: string; icon: string }> => [
@@ -87,6 +95,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /** True cuando la ruta activa está dentro de /management/*. */
   readonly isManagementActive = computed((): boolean => this.currentRoute().startsWith('/management'));
 
+  /** True cuando la ruta activa está dentro de /sale/*. */
+  readonly isSaleActive = computed((): boolean => this.currentRoute().startsWith('/sale'));
+
   /**
    * Estado animado del sub-nav de "Colección" en el sidebar.
    * Se sincroniza automáticamente con la ruta activa; se mantiene como WritableSignal
@@ -99,6 +110,12 @@ export class AppComponent implements OnInit, OnDestroy {
    * @see collectionOpen
    */
   readonly managementOpen: WritableSignal<boolean> = signal(false);
+
+  /**
+   * Estado animado del sub-nav de "Venta" en el sidebar.
+   * @see collectionOpen
+   */
+  readonly saleOpen: WritableSignal<boolean> = signal(false);
 
   /**
    * Sub-items mostrados bajo "Gestión" en el sidebar cuando está activo (solo desktop).
@@ -141,7 +158,15 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Items visible in the bottom nav — filters tablet-only items on mobile. */
   readonly bottomNavItems: Signal<NavItemInterface[]> = computed((): NavItemInterface[] => {
     const isMobile = this._isMobile();
-    const items = [...this.navItems, ...(this.isAdmin() ? this.managementNavItems : [])];
+    // En el bottom nav, expandimos `/sale` en sus dos subitems (En venta
+    // + Historial) para que el usuario pueda cambiar de pestaña sin abrir
+    // un submenú. El rail de escritorio sigue mostrando el padre y
+    // despliega los subitems al hacer hover.
+    const items: NavItemInterface[] = [
+      ...this.navItems.filter((item) => item.route !== '/sale'),
+      ...this.saleSubItems,
+      ...(this.isAdmin() ? this.managementNavItems : [])
+    ];
     if (isMobile) {
       // En mobile `Pedidos` queda excluido (sólo tablet/desktop). Para mantener
       // 4 items estables y que el pill deslizante no descuadre, añadimos `Ajustes`
@@ -160,6 +185,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /** Total number of visible bottom-nav items, used to size the pill. */
   readonly navItemCount: Signal<number> = computed((): number => this.bottomNavItems().length);
 
+  /** True cuando el bottom nav tiene más de 5 entradas y debe compactarse. */
+  readonly isDenseNav: Signal<boolean> = computed((): boolean => this.navItemCount() > 5);
+
   constructor() {
     effect(() => {
       const userId: string | null = this.userContext.userId();
@@ -174,6 +202,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     effect(() => {
       this.managementOpen.set(this.isManagementActive());
+    });
+
+    effect(() => {
+      this.saleOpen.set(this.isSaleActive());
     });
   }
 
@@ -228,11 +260,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
   /**
    * Returns the transloco key for the current page title, used in the mobile topbar.
-   * Falls back to an empty string for routes not matched by any nav item.
+   * Prioriza los subitems cuyo `route` coincide EXACTO con la URL actual
+   * (p.ej. `/sale/available` → `salePage.tabs.available`) sobre el match
+   * por `startsWith` de los items padre. Esto da títulos más específicos
+   * al navegar a un subitem, manteniendo los labels padre como fallback.
    */
   getPageTitle(): string {
     const route = this.currentRoute();
     if (route.startsWith('/collection/games/edit/')) return 'nav.add';
+    const subItems: ReadonlyArray<{ route: string; label: string; icon?: string }> = [
+      ...this.collectionSubItems(),
+      ...this.managementSubItems(),
+      ...this.saleSubItems
+    ];
+    const exactSub = subItems.find((item) => item.route === route);
+    if (exactSub) return exactSub.label;
     const allItems = [...this.navItems, this.settingsNavItem, ...this.managementNavItems];
     const match = allItems.find((item) => route.startsWith(item.route));
     return match?.label ?? '';

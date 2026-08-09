@@ -1,5 +1,9 @@
 <div class="sale-page">
-  <retro-tabs class="sale-page__tab-group" (selectedIndexChange)="onTabIndexChange($event)" [hideLabels]="isMobile()">
+  <retro-tabs
+    class="sale-page__tab-group"
+    [selectedIndex]="selectedIndex()"
+    (selectedIndexChange)="onTabIndexChange($event)"
+    [hideLabels]="isMobile()">
     <!-- ─── Tab: For sale ─────────────────────────────────────────────────── -->
     <retro-tab [label]="'salePage.tabs.available' | transloco" icon="sell">
       <ng-template>
@@ -26,13 +30,23 @@
             }
           </div>
 
+          <!-- Search -->
+          <app-search-toolbar
+            class="sale-page__search"
+            [value]="searchTerm()"
+            [placeholder]="'salePage.search.placeholder' | transloco"
+            commandPath="monchito ~/market/sale"
+            [commandFlags]="commandFlags()"
+            [disabled]="loading()"
+            (valueChange)="onSearchChange($event)" />
+
           <!-- Content -->
           <div class="sale-page__content">
             @if (loading()) {
               <div class="sale-page__loading">
                 <retro-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
               </div>
-            } @else if (filteredAvailable().length === 0) {
+            } @else if (filteredByNameAvailable().length === 0) {
               <div class="sale-page__empty">
                 <svg class="sale-page__empty-svg" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -65,14 +79,14 @@
               </div>
             } @else {
               <div class="sale-page__summary">
-                <span class="sale-page__summary-count">{{ filteredAvailable().length }}</span>
+                <span class="sale-page__summary-count">{{ filteredByNameAvailable().length }}</span>
                 <span class="sale-page__summary-label">{{ 'salePage.available.items' | transloco }}</span>
                 <span class="sale-page__summary-divider"></span>
                 <retro-icon name="payments" />
                 <span>{{ totalAvailable() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
               </div>
               <retro-list>
-                @for (item of filteredAvailable(); track item.id; let i = $index) {
+                @for (item of filteredByNameAvailable(); track item.id; let i = $index) {
                   <retro-list-item
                     [interactive]="true"
                     [staggered]="true"
@@ -136,13 +150,23 @@
             }
           </div>
 
+          <!-- Search -->
+          <app-search-toolbar
+            class="sale-page__search"
+            [value]="searchTerm()"
+            [placeholder]="'salePage.search.placeholder' | transloco"
+            commandPath="monchito ~/market/sale"
+            [commandFlags]="commandFlags()"
+            [disabled]="loading()"
+            (valueChange)="onSearchChange($event)" />
+
           <!-- Content -->
           <div class="sale-page__content">
             @if (loading()) {
               <div class="sale-page__loading">
                 <retro-spinner size="md" [ariaLabel]="'common.loading' | transloco" />
               </div>
-            } @else if (filteredSold().length === 0) {
+            } @else if (filteredByNameSold().length === 0) {
               <div class="sale-page__empty">
                 <svg class="sale-page__empty-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle class="es-shape" cx="70" cy="70" r="50" stroke-width="3" />
@@ -166,14 +190,14 @@
               </div>
             } @else {
               <div class="sale-page__summary">
-                <span class="sale-page__summary-count">{{ filteredSold().length }}</span>
+                <span class="sale-page__summary-count">{{ filteredByNameSold().length }}</span>
                 <span class="sale-page__summary-label">{{ 'salePage.history.items' | transloco }}</span>
                 <span class="sale-page__summary-divider"></span>
                 <retro-icon name="payments" />
                 <span>{{ totalSold() | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
               </div>
               <retro-list>
-                @for (item of filteredSold(); track item.id; let i = $index) {
+                @for (item of filteredByNameSold(); track item.id; let i = $index) {
                   <retro-list-item
                     [interactive]="true"
                     [staggered]="true"

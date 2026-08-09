@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
   Signal,
   signal,
@@ -11,7 +11,8 @@ import {
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RetroIconComponent } from '@retro/retro-icon/retro-icon.component';
 import { RetroSpinnerComponent } from '@retro/retro-spinner/retro-spinner.component';
 import { RetroSnackbarService } from '@retro/retro-snackbar/services/retro-snackbar.service';
@@ -29,7 +30,7 @@ import { UserContextService } from '@/services/user-context/user-context.service
 import { marketRepositoryProvider } from '@/di/repositories/market.repository.provider';
 import { marketUseCasesProvider } from '@/di/use-cases/market.use-cases.provider';
 import { SaleFilterType, SaleTab } from '@/types/sale-page.type';
-import { Router } from '@angular/router';
+import { SearchToolbarComponent } from '@/components/search-toolbar/search-toolbar.component';
 
 @Component({
   selector: 'app-sale',
@@ -47,29 +48,39 @@ import { Router } from '@angular/router';
     RetroListComponent,
     RetroListItemComponent,
     TranslocoPipe,
-    RetroSpinnerComponent
+    RetroSpinnerComponent,
+    SearchToolbarComponent
   ]
 })
-export class SaleComponent implements OnInit, OnDestroy {
+export class SaleComponent implements OnInit {
   private readonly _marketUseCases: MarketUseCasesContract = inject(MARKET_USE_CASES);
   private readonly _userContext: UserContextService = inject(UserContextService);
   private readonly _router: Router = inject(Router);
+  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _destroyRef: DestroyRef = inject(DestroyRef);
   private readonly _snack: RetroSnackbarService = inject(RetroSnackbarService);
   private readonly _transloco: TranslocoService = inject(TranslocoService);
   private readonly _breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
 
-  private _bpSubscription?: Subscription;
-
   /** True cuando el viewport es ≤ 768px (móvil). Oculta los labels de los tabs. */
   readonly isMobile: WritableSignal<boolean> = signal<boolean>(false);
 
-  /** Active tab: 'available' or 'history'. */
+  /**
+   * Tab activo, derivado de la URL (`/sale/available` o `/sale/history`).
+   * Single source of truth: la ruta. Se actualiza vía `route.url`.
+   */
   readonly activeTab: WritableSignal<SaleTab> = signal<SaleTab>('available');
+
+  /** Índice numérico del tab activo para `<retro-tabs [selectedIndex]>`. */
+  readonly selectedIndex: Signal<number> = computed(() => (this.activeTab() === 'history' ? 1 : 0));
 
   /** Active item type filter. */
   readonly activeFilter: WritableSignal<SaleFilterType> = signal<SaleFilterType>('all');
 
-  /** True while initial data is loading. */
+  /** Search term applied on top of the type filter. */
+  readonly searchTerm: WritableSignal<string> = signal<string>('');
+
+  /** True mientras initial data is loading. */
   readonly loading: WritableSignal<boolean> = signal<boolean>(true);
 
   /** All items currently listed for sale. */
@@ -92,21 +103,66 @@ export class SaleComponent implements OnInit, OnDestroy {
     return filter === 'all' ? items : items.filter((i) => i.itemType === filter);
   });
 
+  /** Available items filtered by active type filter and normalized search term. */
+  readonly filteredByNameAvailable: Signal<AvailableItemModel[]> = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const items = this.filteredAvailable();
+    if (!term) return items;
+    return items.filter((i) => i.itemName.toLowerCase().includes(term));
+  });
+
+  /** Sold items filtered by active type filter and normalized search term. */
+  readonly filteredByNameSold: Signal<SoldItemModel[]> = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const items = this.filteredSold();
+    if (!term) return items;
+    return items.filter((i) => i.itemName.toLowerCase().includes(term));
+  });
+
+  /** Flags for retro-command-bar shown inside the search toolbar. */
+  readonly commandFlags: Signal<readonly string[]> = computed((): readonly string[] => {
+    const term = this.searchTerm();
+    return term ? [`search="${term}"`] : [];
+  });
+
   /** Total value of available items in the filtered view. */
   readonly totalAvailable: Signal<number> = computed(() =>
-    this.filteredAvailable().reduce((acc, i) => acc + (i.salePrice ?? 0), 0)
+    this.filteredByNameAvailable().reduce((acc, i) => acc + (i.salePrice ?? 0), 0)
   );
 
   /** Total revenue from sold items in the filtered view. */
   readonly totalSold: Signal<number> = computed(() =>
-    this.filteredSold().reduce((acc, i) => acc + (i.soldPriceFinal ?? 0), 0)
+    this.filteredByNameSold().reduce((acc, i) => acc + (i.soldPriceFinal ?? 0), 0)
   );
+
+  constructor() {
+    // Deriva `activeTab` desde los segmentos de la URL. Como la ruta
+    // `/sale*` usa un matcher que mantiene la misma instancia del componente
+    // para `/sale`, `/sale/available` y `/sale/history`, este observable
+    // emite cada vez que el navegador cambia entre pestañas sin destruir
+    // el componente.
+    this._route.url.pipe(takeUntilDestroyed(this._destroyRef)).subscribe((segments) => {
+      const last = segments[segments.length - 1];
+      const next: SaleTab = last?.path === 'history' ? 'history' : 'available';
+      const previous = this.activeTab();
+      this.activeTab.set(next);
+      // Resetea el filtro solo cuando el tab realmente cambia para no
+      // machacar la selección del usuario al navegar entre rutas hermanas.
+      if (previous !== next) {
+        this.activeFilter.set('all');
+      }
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     const userId = this._userContext.userId();
-    if (!userId) return;
-    this._bpSubscription = this._breakpointObserver
+    if (!userId) {
+      this.loading.set(false);
+      return;
+    }
+    this._breakpointObserver
       .observe([`(max-width: ${BREAKPOINTS.mobile}px)`])
+      .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((state): void => {
         this.isMobile.set(state.matches);
       });
@@ -128,25 +184,24 @@ export class SaleComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this._bpSubscription?.unsubscribe();
-  }
-
   /**
-   * Switches the active tab.
+   * Cambia la pestaña navegando a la subruta correspondiente. La
+   * actualización reactiva de `activeTab` la hace la suscripción a
+   * `route.url` en el constructor, evitando entradas duplicadas.
    *
-   * @param {SaleTab} tab - Tab to activate
+   * @param {SaleTab} tab - Tab al que navegar ('available' o 'history')
    */
   setTab(tab: SaleTab): void {
-    this.activeTab.set(tab);
-    this.activeFilter.set('all');
+    if (this.activeTab() === tab) return;
+    void this._router.navigate(['/sale', tab]);
   }
 
   /**
-   * Callback para selectedIndexChange de retro-tabs.
-   * Mapea el índice numérico a la clave SaleTab correspondiente.
+   * Callback para `selectedIndexChange` de `<retro-tabs>`. Mapea el
+   * índice numérico a la clave `SaleTab` correspondiente y delega en
+   * `setTab`, que se encarga de la navegación.
    *
-   * @param {number} index - Índice del tab seleccionado (0 = available, 1 = history).
+   * @param {number} index - Índice del tab (0 = available, 1 = history)
    */
   onTabIndexChange(index: number): void {
     this.setTab(index === 0 ? 'available' : 'history');
@@ -159,6 +214,16 @@ export class SaleComponent implements OnInit, OnDestroy {
    */
   setFilter(filter: SaleFilterType): void {
     this.activeFilter.set(filter);
+  }
+
+  /**
+   * Updates the search term with the value emitted by SearchToolbarComponent
+   * (already debounced inside the component).
+   *
+   * @param {string} value - Raw search value typed by the user
+   */
+  onSearchChange(value: string): void {
+    this.searchTerm.set(value);
   }
 
   /**
