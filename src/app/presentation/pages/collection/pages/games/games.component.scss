@@ -87,8 +87,8 @@
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   align-content: start;
   align-items: start;
-  gap: 0.75rem;
-  padding: 0.75rem;
+  gap: 1rem;
+  padding: 1rem;
   padding-bottom: 2.5rem;
   box-sizing: border-box;
   overflow-y: auto;
@@ -99,7 +99,8 @@
 .game-list__list {
   display: flex;
   flex-direction: column;
-  padding-bottom: 2.5rem;
+  --retro-list-gap: 1rem;
+  padding: 1rem 1rem 2.5rem;
   box-sizing: border-box;
   overflow-y: auto;
   flex: 1;
@@ -113,8 +114,8 @@
   grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
   align-content: start;
   align-items: start;
-  gap: 0.75rem;
-  padding: 0.75rem;
+  gap: 1rem;
+  padding: 1rem;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -188,16 +189,16 @@
   }
 
   .game-list__grid {
-    padding: 0.5rem;
-    gap: 0.5rem;
+    padding: 1rem;
+    gap: 1rem;
     // Reservar espacio al final para que los FABs (filtro / añadir) no tapen
     // la última fila de cards. 80px cubre ambos FABs (48px) + su gap (8px) + margen.
     padding-bottom: 5rem;
   }
 
   .game-list__skeleton {
-    padding: 0.5rem;
-    gap: 0.5rem;
+    padding: 1rem;
+    gap: 1rem;
   }
 
   .game-list__filter-fab {

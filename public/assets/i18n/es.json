@@ -1117,6 +1117,9 @@
       "console": "Consola",
       "controller": "Mando"
     },
+    "search": {
+      "placeholder": "Buscar por nombre…"
+    },
     "available": {
       "items": "artículos en venta",
       "noPrice": "Sin precio",

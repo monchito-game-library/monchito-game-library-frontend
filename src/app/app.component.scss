@@ -345,6 +345,18 @@
   }
 }
 
+// ─── Dense bottom-nav (>5 items) ─────────────────────────────────────────────
+// Solo reduce tipografía y letter-spacing de los labels para que las 6
+// entradas (5 + Gestión en admin) quepan sin overflow horizontal en
+// 375 px. No toca paddings, gaps ni layout del rail.
+
+.bottom-nav.is-dense {
+  .bottom-nav__label {
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
+  }
+}
+
 // ─── Profile menu ─────────────────────────────────────────────────────────────
 
 ::ng-deep .mat-mdc-menu-panel {

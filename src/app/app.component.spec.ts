@@ -28,6 +28,7 @@ describe('AppComponent', () => {
     bannerImageUrl: ReturnType<typeof signal<string | null>>;
     preferencesLoaded: ReturnType<typeof signal<boolean>>;
     isAdmin: ReturnType<typeof signal<boolean>>;
+    isOwner: ReturnType<typeof signal<boolean>>;
     role: ReturnType<typeof signal<string | null>>;
   };
 
@@ -48,6 +49,7 @@ describe('AppComponent', () => {
       bannerImageUrl: signal<string | null>(null),
       preferencesLoaded: signal(false),
       isAdmin: signal(false),
+      isOwner: signal(false),
       role: signal(null)
     };
 
@@ -221,6 +223,20 @@ describe('AppComponent', () => {
     });
   });
 
+  describe('managementSubItems', () => {
+    it('oculta usuarios cuando el usuario no es owner', () => {
+      mockUserPrefsState.isOwner.set(false);
+
+      expect(component.managementSubItems().some((item) => item.route === '/management/users')).toBe(false);
+    });
+
+    it('incluye usuarios cuando el usuario es owner', () => {
+      mockUserPrefsState.isOwner.set(true);
+
+      expect(component.managementSubItems().some((item) => item.route === '/management/users')).toBe(true);
+    });
+  });
+
   describe('bottomNavItems', () => {
     it('devuelve los items de navegación cuando isAdmin es false', () => {
       mockUserPrefsState.isAdmin.set(false);
@@ -346,6 +362,7 @@ describe('AppComponent — router subscription (NavigationEnd)', () => {
       bannerImageUrl: signal<string | null>(null),
       preferencesLoaded: signal(false),
       isAdmin: signal(false),
+      isOwner: signal(false),
       role: signal(null)
     };
 

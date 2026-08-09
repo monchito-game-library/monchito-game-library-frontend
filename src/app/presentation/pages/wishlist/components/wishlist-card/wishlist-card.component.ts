@@ -16,7 +16,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { WishlistItemModel } from '@/models/wishlist/wishlist-item.model';
 import { RetroBadgeComponent } from '@retro/retro-badge/retro-badge.component';
-import { RetroChipComponent } from '@retro/retro-chip/retro-chip.component';
 import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-item/retro-list-item.component';
 
 @Component({
@@ -32,7 +31,6 @@ import { RetroListItemComponent } from '@retro/retro-list/components/retro-list-
     RetroTooltipDirective,
     RetroIconButtonComponent,
     TranslocoPipe,
-    RetroChipComponent,
     RetroListItemComponent,
     RetroBadgeComponent
   ]

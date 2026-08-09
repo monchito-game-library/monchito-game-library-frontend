@@ -1072,6 +1072,9 @@
       "console": "Console",
       "controller": "Controller"
     },
+    "search": {
+      "placeholder": "Search by name…"
+    },
     "available": {
       "items": "items for sale",
       "noPrice": "No price",

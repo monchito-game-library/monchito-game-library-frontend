@@ -11,8 +11,11 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  // El scrollport es `.wishlist-page__list`. Mantener el contenedor padre sin
+  // scroll evita dobles scrollports y que el header se solape con el listado.
+  overflow: hidden;
   box-sizing: border-box;
+  padding: 1rem;
 }
 
 // ─── Filters drawer (desktop) ────────────────────────────────────────────────
@@ -49,9 +52,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky, 10);
+  // Bloque estático dentro del flow flex del `.wishlist-page`. Como flex
+  // item no debe encoger para garantizar su altura intrínseca.
+  flex-shrink: 0;
   background-color: var(--bg-void);
   // El padding-top evita que el contenido se solape con el scrollbar.
   padding-top: 0.75rem;
@@ -149,7 +152,14 @@
 .wishlist-page__list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  // Único scrollport del listado: ocupa el espacio restante dentro del
+  // flex column padre. `min-height: 0` es necesario para que `flex: 1 1 auto`
+  // pueda reducir la altura por debajo del contenido intrínseco y permitir
+  // el scroll interno sin empujar el viewport.
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .wishlist-page__card-skeleton {
@@ -352,14 +362,14 @@
 // ────────────────────────── Responsive: ≤ 1280x720 ──────────────────────────
 @media (max-width: 1280px) {
   .wishlist-page {
-    padding: 1.25rem;
+    padding: 1rem;
   }
 }
 
 // ────────────────────────── Responsive: mobile ──────────────────────────────
 @media (max-width: 768px) {
   .wishlist-page {
-    padding: 0.75rem 0.75rem calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 0.75rem);
+    padding: 1rem 1rem calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 1rem);
     gap: 1rem;
   }
 
