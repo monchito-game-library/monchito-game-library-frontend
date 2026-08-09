@@ -4,6 +4,24 @@
 // `auto minmax(0, 1fr) auto` para que el body siempre tenga el espacio
 // restante aunque el cover o las acciones pidan más anchura.
 
+// `box-sizing: border-box` en toda la card garantiza que los paddings de
+// `__content` (0.125rem 0.5rem), la border de `__cover-wrapper` y los
+// paddings del retro-list-item se contabilicen dentro del ancho asignado
+// por el flex row. Sin esto, en viewports estrechos los paddings pueden
+// empujar el contenido más allá del espacio disponible y provocar
+// desbordes que cortan el importe del precio o el título.
+.wishlist-card,
+.wishlist-card__cover-wrapper,
+.wishlist-card__cover,
+.wishlist-card__content,
+.wishlist-card__header,
+.wishlist-card__meta,
+.wishlist-card__price,
+.wishlist-card__platform,
+.wishlist-card__trailing {
+  box-sizing: border-box;
+}
+
 .wishlist-card__cover-wrapper {
   flex-shrink: 0;
   position: relative;
@@ -33,11 +51,16 @@
 .wishlist-card__content {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.75rem;
   min-width: 0;
   padding: 0.125rem 0.5rem;
   justify-content: center;
   overflow: hidden;
+  // `width: 100%` queda forzado por el `flex: 1 1 0` del slot body en
+  // retro-list-item; lo mantenemos explícito para que en viewports muy
+  // estrechos (donde `flex-basis: 0` puede colapsar a 0) el contenido
+  // siempre tenga el ancho disponible. Con `box-sizing: border-box` ya
+  // no compite con los paddings laterales.
   width: 100%;
 }
 
@@ -70,7 +93,7 @@
 
 .wishlist-card__meta {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.75rem;
   flex-wrap: wrap;
   min-width: 0;
@@ -78,17 +101,17 @@
 
 .wishlist-card__price {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.375rem;
   font-family: 'JetBrains Mono', monospace;
   min-width: 0;
   flex-shrink: 1;
-  min-width: 0;
 }
 
 .wishlist-card__price-icon {
   color: var(--text-lo);
   flex-shrink: 0;
+  align-self: center;
 }
 
 .wishlist-card__price-label {
@@ -112,7 +135,7 @@
 
 .wishlist-card__platform {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.25rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
@@ -124,6 +147,7 @@
 .wishlist-card__platform-icon {
   color: var(--text-lo);
   flex-shrink: 0;
+  align-self: center;
 }
 
 .wishlist-card__platform-label {
@@ -131,14 +155,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-}
-
-.wishlist-card__genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  min-width: 0;
-  overflow: hidden;
 }
 
 .wishlist-card__notes {
@@ -196,4 +212,61 @@
 
 .wishlist-card__own-btn {
   color: var(--accent-green);
+}
+
+// ────────────────────────── Responsive: ≤ 480px (phones estrechos) ──────────────────────────
+// En viewports ≤480 px reorganizamos la card para garantizar que el importe
+// completo del precio deseado sea siempre visible aunque el cover y las
+// acciones consuman buena parte del ancho.
+//
+//   1. Las acciones (trailing) se apilan verticalmente: cada retro-icon-btn
+//      mide 44×44 px en ≤768 px (ver lib/retro/retro-icon-button), así que
+//      siguen cumpliendo el target táctil mínimo. Vertical → la columna
+//      trailing pasa de ~140 px (3 botones horizontales) a ~48 px (1 botón).
+//   2. El meta (precio + plataforma) pasa a columna, con el precio
+//      ocupando una fila propia a ancho completo. Esto libera al precio
+//      de competir con la plataforma por el ancho inline y permite que el
+//      valor (`{{ desiredPrice | number:'1.2-2' }} €`) se muestre íntegro.
+//   3. Se oculta `__price-label` ("PRECIO") porque consume ~44 px y hace
+//      que el valor se recorte a ~74 px (vs los 84 px del número
+//      "1.000,50 €"). El icono `payments` ya aporta contexto semántico.
+//   4. Se mantiene `white-space: nowrap` en `__price-value` para que el
+//      número no se rompa en dos líneas aunque el contenedor tenga poco
+//      ancho. El `overflow: hidden` del `__content` lo recorta solo si
+//      realmente no entra (no debería entrar en este layout).
+@media (max-width: 480px) {
+  .wishlist-card__trailing {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .wishlist-card__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .wishlist-card__price {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .wishlist-card__price-label {
+    // El label "PRECIO" no entra junto al valor numérico en viewports
+    // estrechos. El icono `payments` ya identifica visualmente la fila.
+    display: none;
+  }
+
+  .wishlist-card__price-value {
+    // Aseguramos que el valor monetario nunca se trunque ni se rompa en
+    // dos líneas. El ancho de la fila ya está garantizado por
+    // `.wishlist-card__price { width: 100% }` y por el meta en columna.
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .wishlist-card__platform {
+    width: 100%;
+  }
 }

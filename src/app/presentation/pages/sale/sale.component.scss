@@ -73,12 +73,13 @@
 // ── Content ───────────────────────────────────────────────────────────────────
 
 .sale-page__content {
+  --retro-list-gap: 1rem;
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem;
   gap: 1rem;
 }
 

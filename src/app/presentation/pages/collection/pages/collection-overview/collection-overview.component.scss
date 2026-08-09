@@ -66,15 +66,31 @@
     align-items: center;
   }
 
+  // Grid dependiente del contenedor: cada celda pide >= 18rem y se reparte
+  // el resto a partes iguales. Hasta max-width 768px el @media inferior lo
+  // fuerza a una columna; entre 769px y 1920px el flujo auto-fit decide
+  // cuántas columnas caben respetando max-width 900px; en >=1920px se eleva
+  // a 1200px para llenar el ancho sin estirar las cards.
   .collection-overview__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
     gap: 1rem;
     width: 100%;
     max-width: 900px;
+    box-sizing: border-box;
+    // `min-width: 0` permite que cada celda se encoja por debajo del mínimo
+    // intrínseco del contenido (iconos + textos) cuando el contenedor es
+    // estrecho, evitando desbordes horizontales del grid.
+    min-width: 0;
   }
 
   retro-card.collection-overview__card {
+    // Las celdas del grid necesitan `min-width: 0` para que el contenido
+    // interno (icon + retro-data-row + skeleton) no fuerce la columna a
+    // expandirse más allá del 1fr disponible.
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .collection-overview__card-icon {
@@ -99,15 +115,6 @@
   }
 }
 
-// ────────────────────────── Responsive: 769–1024 (tablet) ──────────────────────────
-@media (max-width: 1024px) {
-  .collection-overview {
-    .collection-overview__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-}
-
 // ────────────────────────── Responsive: ≤ 768px ──────────────────────────
 @media (max-width: 768px) {
   :host {
@@ -122,6 +129,9 @@
       font-size: 1.75rem;
     }
 
+    // Una sola columna hasta 768 px. El `max-width: 100%` libera la card del
+    // cap de 900 px del estado base para que aproveche todo el ancho de la
+    // página en móvil.
     .collection-overview__grid {
       grid-template-columns: 1fr;
       max-width: 100%;

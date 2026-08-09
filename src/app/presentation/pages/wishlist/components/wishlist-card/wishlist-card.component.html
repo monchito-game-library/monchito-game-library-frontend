@@ -52,13 +52,7 @@
       }
     </div>
 
-    @if (item().genres.length > 0) {
-      <div class="wishlist-card__genres">
-        @for (genre of item().genres.slice(0, 3); track genre) {
-          <retro-chip [label]="genre" color="neutral" size="sm" />
-        }
-      </div>
-    }
+    <!-- Géneros RAWG ocultos en la card del listado: se muestran en la vista de detalle. -->
 
     @if (item().notes) {
       <p class="wishlist-card__notes">{{ item().notes }}</p>
