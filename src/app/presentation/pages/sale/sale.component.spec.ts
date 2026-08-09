@@ -1,7 +1,8 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { of, Subject } from 'rxjs';
 import { describe, beforeEach, expect, it, vi } from 'vitest';
 
 import { SaleComponent } from './sale.component';
@@ -57,6 +58,9 @@ describe('SaleComponent', () => {
     userId: vi.fn()
   };
 
+  let routeUrl$: Subject<UrlSegment[]>;
+  let mockActivatedRoute: { url: Subject<UrlSegment[]> };
+
   let bpState: { matches: boolean };
   const mockBreakpointObserver = {
     observe: vi.fn()
@@ -68,13 +72,10 @@ describe('SaleComponent', () => {
     mockUserContext.userId.mockReturnValue('user-1');
     mockMarketUseCases.getAvailableItems.mockResolvedValue([]);
     mockMarketUseCases.getSoldItems.mockResolvedValue([]);
+    routeUrl$ = new Subject<UrlSegment[]>();
+    mockActivatedRoute = { url: routeUrl$ };
     bpState = { matches: false };
-    mockBreakpointObserver.observe.mockImplementation(() => ({
-      subscribe: (fn: (state: { matches: boolean }) => void) => {
-        fn(bpState);
-        return { unsubscribe: () => {} };
-      }
-    }));
+    mockBreakpointObserver.observe.mockImplementation(() => of(bpState));
 
     TestBed.configureTestingModule({
       imports: [SaleComponent],
@@ -82,6 +83,7 @@ describe('SaleComponent', () => {
         { provide: MARKET_USE_CASES, useValue: mockMarketUseCases },
         { provide: UserContextService, useValue: mockUserContext },
         { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: RetroSnackbarService, useValue: mockRetroSnackbar },
         { provide: TranslocoService, useValue: mockTransloco },
         { provide: BreakpointObserver, useValue: mockBreakpointObserver }
@@ -95,28 +97,72 @@ describe('SaleComponent', () => {
 
   describe('valores iniciales', () => {
     it('activeTab es "available"', () => expect(component.activeTab()).toBe('available'));
+    it('selectedIndex es 0', () => expect(component.selectedIndex()).toBe(0));
     it('activeFilter es "all"', () => expect(component.activeFilter()).toBe('all'));
+    it('searchTerm está vacío', () => expect(component.searchTerm()).toBe(''));
     it('loading es true', () => expect(component.loading()).toBe(true));
     it('availableItems es []', () => expect(component.availableItems()).toEqual([]));
     it('soldItems es []', () => expect(component.soldItems()).toEqual([]));
   });
 
-  describe('setTab', () => {
-    it('cambia activeTab a "history"', () => {
-      component.setTab('history');
+  describe('activeTab reactivo desde ActivatedRoute', () => {
+    it('cambia a "history" y actualiza selectedIndex cuando la URL emite history', () => {
+      routeUrl$.next([new UrlSegment('sale', {}), new UrlSegment('history', {})]);
+
       expect(component.activeTab()).toBe('history');
+      expect(component.selectedIndex()).toBe(1);
     });
 
-    it('resetea activeFilter a "all" al cambiar de tab', () => {
+    it('resetea activeFilter al cambiar de tab', () => {
       component.activeFilter.set('game');
-      component.setTab('history');
+
+      routeUrl$.next([new UrlSegment('history', {})]);
+
       expect(component.activeFilter()).toBe('all');
     });
 
-    it('vuelve a "available"', () => {
-      component.setTab('history');
-      component.setTab('available');
+    it('mantiene activeFilter cuando la URL conserva el mismo tab', () => {
+      component.activeFilter.set('game');
+
+      routeUrl$.next([new UrlSegment('available', {})]);
+
+      expect(component.activeFilter()).toBe('game');
+    });
+
+    it('usa "available" cuando la URL no contiene un tab reconocido', () => {
+      routeUrl$.next([]);
+
       expect(component.activeTab()).toBe('available');
+    });
+  });
+
+  describe('setTab', () => {
+    it('navega a la subruta history', () => {
+      component.setTab('history');
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/sale', 'history']);
+    });
+
+    it('no navega cuando el tab solicitado ya está activo', () => {
+      component.setTab('available');
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onTabIndexChange', () => {
+    it('navega a available para el índice 0 desde history', () => {
+      routeUrl$.next([new UrlSegment('history', {})]);
+
+      component.onTabIndexChange(0);
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/sale', 'available']);
+    });
+
+    it('navega a history para cualquier índice distinto de 0', () => {
+      component.onTabIndexChange(1);
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/sale', 'history']);
     });
   });
 
@@ -193,6 +239,57 @@ describe('SaleComponent', () => {
       component.activeFilter.set('game');
       expect(component.filteredSold()).toHaveLength(1);
       expect(component.filteredSold()[0].itemType).toBe('game');
+    });
+  });
+
+  describe('búsqueda por nombre', () => {
+    beforeEach(() => {
+      component.availableItems.set([
+        makeAvailable({ id: 'a-1', itemType: 'game', itemName: 'God of War' }),
+        makeAvailable({ id: 'a-2', itemType: 'console', itemName: 'PlayStation 5' }),
+        makeAvailable({ id: 'a-3', itemType: 'game', itemName: 'Spider-Man 2' })
+      ]);
+      component.soldItems.set([
+        makeSold({ id: 's-1', itemName: 'The Last of Us' }),
+        makeSold({ id: 's-2', itemName: 'Gran Turismo 7' })
+      ]);
+    });
+
+    it('actualiza searchTerm mediante onSearchChange', () => {
+      component.onSearchChange('God');
+
+      expect(component.searchTerm()).toBe('God');
+      expect(component.commandFlags()).toEqual(['search="God"']);
+    });
+
+    it('filtra disponibles ignorando mayúsculas y espacios externos', () => {
+      component.onSearchChange('  GOD OF  ');
+
+      expect(component.filteredByNameAvailable().map((item) => item.id)).toEqual(['a-1']);
+    });
+
+    it('combina la búsqueda con el filtro de tipo', () => {
+      component.activeFilter.set('game');
+      component.onSearchChange('play');
+
+      expect(component.filteredByNameAvailable()).toEqual([]);
+    });
+
+    it('filtra vendidos por nombre', () => {
+      component.onSearchChange('turismo');
+
+      expect(component.filteredByNameSold().map((item) => item.id)).toEqual(['s-2']);
+    });
+
+    it('devuelve todos los elementos y ninguna flag con búsqueda vacía', () => {
+      component.onSearchChange('   ');
+
+      expect(component.filteredByNameAvailable()).toHaveLength(3);
+      expect(component.filteredByNameSold()).toHaveLength(2);
+      expect(component.commandFlags()).toEqual(['search="   "']);
+
+      component.onSearchChange('');
+      expect(component.commandFlags()).toEqual([]);
     });
   });
 
